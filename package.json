@@ -20,6 +20,9 @@
     "vue": "^2.5.17"
   },
   "dependencies": {
-    "admin-lte": "^3.0.0-alpha.2"
+    "admin-lte": "^3.0.0-alpha.2",
+    "validate.js": "^0.12.0",
+    "vue-router": "^3.0.2",
+    "vuex": "^3.0.1"
   }
 }
