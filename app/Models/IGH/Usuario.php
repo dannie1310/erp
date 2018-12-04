@@ -79,7 +79,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
      */
     public function getJWTIdentifier()
     {
-        $this->getKey();
+        return $this->getKey();
     }
 
     /**

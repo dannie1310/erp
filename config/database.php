@@ -33,6 +33,18 @@ return [
 
     'connections' => [
 
+        'cadeco' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_CADECO', 'localhost'),
+            'port' => env('DB_PORT_CADECO', '1433'),
+            'database' => env('DB_DATABASE_CADECO', 'forge'),
+            'username' => env('DB_USERNAME_CADECO', 'forge'),
+            'password' => env('DB_PASSWORD_CADECO', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
         'igh' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_IGH', '127.0.0.1'),
@@ -49,13 +61,13 @@ return [
             'engine' => null,
         ],
 
-        'sqlsrv' => [
+        'seguridad' => [
             'driver' => 'sqlsrv',
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'host' => env('DB_HOST_SEGURIDAD', 'localhost'),
+            'port' => env('DB_PORT_SEGURIDAD', '1433'),
+            'database' => env('DB_DATABASE_SEGURIDAD', 'forge'),
+            'username' => env('DB_USERNAME_SEGURIDAD', 'forge'),
+            'password' => env('DB_PASSWORD_SEGURIDAD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
