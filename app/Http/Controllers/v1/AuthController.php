@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\v1;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\SetContextRequest;
 use App\Services\ContextService;
 use App\Traits\AuthenticatesIghUsers;
@@ -38,7 +39,6 @@ class AuthController extends Controller
         $credentials = request(['usuario', 'clave']);
 
         if (!$token = auth()->attempt($credentials)) {
-
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -69,8 +69,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
+            'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
 

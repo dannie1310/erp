@@ -13,14 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group([
+$api = app('Dingo\Api\Routing\Router');
 
-    'middleware' => 'api',
-    'prefix' => 'auth'
-
-], function ($router) {
-
-    $router->post('login', 'AuthController@login');
-    $router->post('logout', 'AuthController@logout');
-    $router->post('context', 'AuthController@context');
+$api->version('v1', function ($api) {
+    $api->group(['middleware' => 'api', 'prefix' => 'auth'], function ($api) {
+        $api->post('login', 'App\Http\Controllers\v1\AuthController@login');
+        $api->post('logout', 'App\Http\Controllers\v1\AuthController@logout');
+        $api->post('context', 'App\Http\Controllers\v1\AuthController@context');
+    });
 });
