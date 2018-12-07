@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class SetContextRequest extends FormRequest
 {
@@ -25,9 +27,19 @@ class SetContextRequest extends FormRequest
      */
     public function rules()
     {
+        Validator::extend('obra_exists', function ($attribute, $value, $parameters, $validator) {
+            try {
+                config()->set('database.connections.cadeco.database', $validator->getData()['database']);
+                $query = DB::connection('cadeco')->table('obras')->select('*')->where($attribute, '=',  $value)->value($attribute);
+                return $query == $value;
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+
         return [
             'database' => ['required', 'string', 'exists:seguridad.proyectos,base_datos'],
-            'id_obra' => ['required', 'numeric']
+            'id_obra' => ['required', 'numeric', 'obra_exists']
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Contracts\Context;
 use Closure;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CheckForContext
 {
@@ -39,7 +40,7 @@ class CheckForContext
     public function handle($request, Closure $next)
     {
         if (! $this->context->isEstablished()) {
-            // TODO: Response si el contexto no está establecido
+            throw new BadRequestHttpException('No Context Established');
         }
         $this->setContext();
         return $next($request);
@@ -51,5 +52,7 @@ class CheckForContext
     private function setContext()
     {
         $this->config->set('database.connections.cadeco.database', $this->context->getDatabase());
+        session()->put('db', $this->context->getDatabase());
+        session()->put('id_obra', $this->context->getIdObra());
     }
 }

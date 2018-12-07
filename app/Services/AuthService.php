@@ -10,8 +10,9 @@ namespace App\Services;
 
 
 use App\Contracts\Context;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-class ContextService
+class AuthService
 {
     /**
      * @var Context
@@ -19,7 +20,7 @@ class ContextService
     private $context;
 
     /**
-     * ContextService constructor.
+     * AuthService constructor.
      * @param Context $context
      */
     public function __construct(Context $context)
@@ -29,5 +30,16 @@ class ContextService
 
     public function setContext(array $data) {
         return $this->context->setContext($data['database'], $data['id_obra']);
+    }
+
+    public function login(array $credentials) {
+        try {
+            if(! $token = auth()->attempt($credentials)) {
+                throw new UnauthorizedHttpException('Bearer', 'Unauthorized');
+            }
+            return $token;
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

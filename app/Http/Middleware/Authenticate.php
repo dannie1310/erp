@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use JWTAuth;
 
 class Authenticate extends Middleware
 {
@@ -16,15 +17,13 @@ class Authenticate extends Middleware
     public function handle($request, Closure $next, ...$guards)
     {
         try {
-            $user = $this->auth->userOrFail();
-        } catch (\Exception $e) {
-            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+            $user = JWTAuth::parseToken()->authenticate();
+        } catch (Exception $e) {
+            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
                 return response()->json(['status' => 'Token is Invalid']);
-            } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+            }else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
                 return response()->json(['status' => 'Token is Expired']);
-            } else if ($e instanceof \Tymon\JWTAuth\Exceptions\UserNotDefinedException) {
-                return response()->json(['status' => 'User not Defined']);
-            } else {
+            }else{
                 return response()->json(['status' => 'Authorization Token not found']);
             }
         }

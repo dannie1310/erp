@@ -91,4 +91,8 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     {
         return [];
     }
+
+    public function usuarioCadeco() {
+        return $this->hasOne(\App\Models\CADECO\Usuario::class, 'usuario', 'usuario');
+    }
 }

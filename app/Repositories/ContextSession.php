@@ -10,6 +10,7 @@ namespace App\Repositories;
 
 
 use App\Contracts\Context;
+use App\Models\CADECO\Obra;
 
 class ContextSession implements Context
 {
@@ -26,7 +27,27 @@ class ContextSession implements Context
 
     public function setContext(string $database, int $id_obra)
     {
-        return $this->auth->claims(['db' => $database, 'obra' => $id_obra])->refresh();
+        try {
+            config()->set('database.connections.cadeco.database', $database);
+
+            if(! $usuarioCadeco = $this->auth->user()->usuarioCadeco) {
+                $obras = Obra::query()->whereNull('obras.id_obra');
+            } else {
+                if($usuarioCadeco->tieneAccesoATodasLasObras()) {
+                    $obras = Obra::query();
+                } else {
+                    $obras = $usuarioCadeco->obras();
+                }
+            }
+
+            if($obras->where('obras.id_obra', '=', $id_obra)->first()) {
+                return $this->auth->claims(['db' => $database, 'obra' => $id_obra])->refresh();
+            } else {
+                abort('403', 'Forbidden');
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -36,7 +57,11 @@ class ContextSession implements Context
      */
     public function getIdObra()
     {
-        return $this->auth->payload()->get('obra');
+        try {
+            return $this->auth->payload()->get('obra');
+        } catch (\Exception $e) {
+            return session()->get('id_obra');
+        }
     }
 
     /**
@@ -46,7 +71,12 @@ class ContextSession implements Context
      */
     public function getDatabase()
     {
-        return $this->auth->payload()->get('db');
+        try {
+            return $this->auth->payload()->get('db');
+        } catch (\Exception $e) {
+            return session()->get('db');
+        }
+
     }
 
     /**
