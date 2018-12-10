@@ -71,7 +71,7 @@ trait AuthenticatesIghUsers
     }
 
     /**
-     * Attempt to log the user into the application.
+     * Attempt to guest the user into the application.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return bool

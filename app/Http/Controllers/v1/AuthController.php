@@ -8,6 +8,7 @@ use App\Http\Requests\SetContextRequest;
 use App\Services\AuthService;
 use App\Traits\AuthenticatesIghUsers;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -25,7 +26,7 @@ class AuthController extends Controller
     public function __construct(AuthService $auth)
     {
         $this->middleware('auth:api', ['except' => ['login']]);
-        $this->middleware('context', ['except' => ['login', 'context']]);
+        $this->middleware('context', ['except' => ['login', 'context', 'refresh']]);
         $this->middleware('refresh', ['only' => 'me']);
 
         $this->auth = $auth;
@@ -71,7 +72,8 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user()
         ]);
     }
 
@@ -86,9 +88,12 @@ class AuthController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function me() {
-        return auth()->user();
+    public function refresh(Request $request)
+    {
+        return $this->respondWithToken(auth()->refresh());
     }
 }

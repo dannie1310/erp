@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,6 +18,6 @@ $api->version('v1', function ($api) {
         $api->post('login', 'App\Http\Controllers\v1\AuthController@login');
         $api->post('logout', 'App\Http\Controllers\v1\AuthController@logout');
         $api->post('context', 'App\Http\Controllers\v1\AuthController@context');
-        $api->get('me', 'App\Http\Controllers\v1\AuthController@me');
+        $api->post('refresh', 'App\Http\Controllers\v1\AuthController@refresh');
     });
 });
