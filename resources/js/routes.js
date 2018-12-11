@@ -1,5 +1,5 @@
 //Components
-import Home from './components/Home.vue';
+import Home from './components/pages/Home.vue';
 import Login from './components/auth/Login.vue';
 import Obras from './components/auth/Obras.vue';
 import NotFound from './components/pages/NotFound.vue';
@@ -16,8 +16,11 @@ export const routes = [
         name: 'home',
         component: Home,
         meta: {
-            title: 'Inicio',
-            middleware: [auth, context]
+            title: 'INICIO',
+            middleware: [auth, context],
+            breadcrumb: [{
+                name: 'INICIO'
+            }]
         },
     },
     {
@@ -25,7 +28,7 @@ export const routes = [
         name: 'login',
         component: Login,
         meta: {
-            title: 'Iniciar Sesión',
+            title: 'INICIAR SESIÓN',
             middleware: [guest]
         },
     },
@@ -34,8 +37,11 @@ export const routes = [
         name: 'obras',
         component: Obras,
         meta: {
-            title: 'Seleccionar Obra',
-            middleware: auth
+            title: 'SELECCIONAR OBRA',
+            middleware: auth,
+            breadcrumb: [{
+                name: 'SELECCIONAR OBRA'
+            }]
         }
     },
     {

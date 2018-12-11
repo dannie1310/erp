@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\v1;
 
+use App\Facades\Context;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SetContextRequest;
+use App\Models\CADECO\Obra;
 use App\Services\AuthService;
 use App\Traits\AuthenticatesIghUsers;
 use Illuminate\Http\JsonResponse;
@@ -83,7 +85,12 @@ class AuthController extends Controller
     public function setContext(SetContextRequest $request)
     {
         $new_token = $this->auth->setContext($request->only(['database', 'id_obra']));
-        return $this->respondWithToken($new_token);
+        return response()->json([
+            'access_token' => $new_token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'obra' => Obra::find($request->id_obra)
+        ]);
     }
 
     /**
@@ -91,7 +98,7 @@ class AuthController extends Controller
      */
     public function getContext()
     {
-        return response()->json(['message' => 'context is established'], 200);
+        return response()->json(['message' => 'context is established', 'obra' => Obra::find(Context::getIdObra())], 200);
     }
 
         /**

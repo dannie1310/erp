@@ -1,12 +1,14 @@
-import {getLoggedinUser} from './partials/auth';
+import {getLoggedinUser, getObra } from './partials/auth';
 
 const user = getLoggedinUser();
+const obra = getObra();
 
 export default {
     namespaced: true,
 
     state: {
         currentUser: user,
+        currentObra: obra,
         jwt: null,
         isLoggedIn: false,
         loading: false,
@@ -33,6 +35,9 @@ export default {
         logout(state){
             state.isLoggedin = false;
             state.currentUser = null;
+        },
+        setObra(state, payload) {
+            state.currentObra = Object.assign({}, payload.obra);
         }
     },
 
@@ -45,6 +50,9 @@ export default {
         },
         currentUser(state){
             return state.currentUser;
+        },
+        currentObra(state){
+            return state.currentObra;
         },
         authError(state){
             return state.auth_error;

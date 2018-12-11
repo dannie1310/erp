@@ -1,10 +1,20 @@
 export function getLoggedinUser(){
 
-    const userStr = localStorage.getItem('vue-session-key')
+    const session = localStorage.getItem('vue-session-key')
 
-    if(!userStr){
+    if(!session){
         return null
     }
 
-    return JSON.parse(userStr).user;
+    return JSON.parse(session).user;
+}
+
+export function getObra() {
+    const session = localStorage.getItem('vue-session-key')
+
+    if(!session){
+        return null
+    }
+
+    return JSON.parse(session).obra;
 }

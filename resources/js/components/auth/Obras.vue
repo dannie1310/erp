@@ -35,19 +35,27 @@
                 fetch: 'obras/fetch'
             }),
             setContext(database, id_obra) {
-                axios.post('/api/auth/setContext', {database: database, id_obra: id_obra})
+
+                return new Promise((res, rej) => {
+                    axios.post('/api/auth/setContext', {database: database, id_obra: id_obra})
+                        .then(response => {
+                            res(response.data);
+                        })
+                        .catch(err => {
+                            rej(err)
+                        });
+                })
                     .then(res => {
-                        this.$session.set('jwt', res.data.access_token)
+                        this.$session.set('jwt', res.access_token)
+                        this.$session.set('obra', res.obra)
+
+                        this.$store.commit("auth/setObra", res)
                         this.$router.push({name: 'home'})
                     })
-                    .catch(err => {
-                        alert(err);
+                    .catch(error => {
+                        this.$store.commit("auth/loginFailed", {error});
                     })
             }
         }
     }
 </script>
-
-<style scoped>
-
-</style>

@@ -81,12 +81,6 @@
 </script>
 
 <style scoped>
-    .error
-    {
-        text-align: center;
-        color: red;
-    }
-
     #content {
         width: 100%; height: 100%;
         background-color: #d2d6de;
