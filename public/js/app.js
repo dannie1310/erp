@@ -60559,7 +60559,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         authenticate: function authenticate() {
             var _this = this;
 
-            this.$store.dispatch('login');
+            this.$store.dispatch('auth/login');
             return new Promise(function (res, rej) {
                 axios.post('/api/auth/login', _this.$data.formLogin).then(function (response) {
                     res(response.data);
@@ -60572,10 +60572,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.$session.set('jwt', res.access_token);
                 _this.$session.set('user', res.user);
 
-                _this.$store.commit("loginSuccess", res);
-                _this.$router.push({ path: '/' });
+                _this.$store.commit("auth/loginSuccess", res);
+                _this.$router.push({ name: 'obras' });
             }).catch(function (error) {
-                _this.$store.commit("loginFailed", { error: error });
+                _this.$store.commit("auth/loginFailed", { error: error });
             });
         }
     },
@@ -61325,14 +61325,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     name: 'app-header',
     methods: {
         logout: function logout() {
-            this.$store.commit('logout');
+            this.$store.commit('auth/logout');
             this.$session.destroy();
             this.$router.push('/login');
         }
     },
     computed: {
         currentUser: function currentUser() {
-            return this.$store.getters.currentUser;
+            return this.$store.getters['auth/currentUser'];
         }
     }
 });
@@ -61425,7 +61425,7 @@ var render = function() {
                                 [
                                   _vm._v(
                                     "\n                            " +
-                                      _vm._s(_vm.currentUser.name) +
+                                      _vm._s(_vm.currentUser.nombre) +
                                       " "
                                   ),
                                   _c("span", { staticClass: "caret" })

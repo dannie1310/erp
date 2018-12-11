@@ -5,6 +5,5 @@ export default function guest({ next, router }) {
         })
         .catch(err => {
             router.push({name: 'obras'});
-
         });
 }

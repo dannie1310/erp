@@ -19,7 +19,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{currentUser.name}} <span class="caret"></span>
+                                {{currentUser.nombre}} <span class="caret"></span>
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -38,14 +38,14 @@
         name: 'app-header',
         methods:{
             logout(){
-                this.$store.commit('logout');
+                this.$store.commit('auth/logout');
                 this.$session.destroy();
                 this.$router.push('/login');
             }
         },
         computed:{
             currentUser(){
-                return this.$store.getters.currentUser
+                return this.$store.getters['auth/currentUser']
             }
         }
     }

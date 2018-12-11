@@ -50,7 +50,7 @@
         },
         methods:{
             authenticate(){
-                this.$store.dispatch('login');
+                this.$store.dispatch('auth/login');
                 return new Promise((res, rej) => {
                     axios.post('/api/auth/login', this.$data.formLogin)
                         .then(response => {
@@ -66,11 +66,11 @@
                         this.$session.set('jwt', res.access_token);
                         this.$session.set('user', res.user);
 
-                        this.$store.commit("loginSuccess", res);
-                        this.$router.push({path: '/'});
+                        this.$store.commit("auth/loginSuccess", res);
+                        this.$router.push({name: 'obras'});
                     })
                     .catch(error => {
-                        this.$store.commit("loginFailed", {error});
+                        this.$store.commit("auth/loginFailed", {error});
                     })
             }
         },
