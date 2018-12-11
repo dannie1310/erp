@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\v1;
 
-use App\Facades\Context;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SetContextRequest;
@@ -27,7 +26,7 @@ class AuthController extends Controller
     public function __construct(AuthService $auth)
     {
         $this->middleware('auth:api', ['except' => ['login']]);
-        $this->middleware('context', ['except' => ['login', 'setContext', 'refresh', 'obras', 'getContext']]);
+        $this->middleware('context', ['except' => ['login', 'setContext', 'refresh', 'obras']]);
 
         $this->auth = $auth;
     }

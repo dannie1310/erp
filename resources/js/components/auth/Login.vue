@@ -1,43 +1,41 @@
 <template>
-    <div class="login-box">
+    <div id="content">
+        <div class="login-box">
 
-        <div class="login-logo">
-            <img src="../../../img/logo_hc.png" class="img-responsive img-rounded" width="100%">
-        </div>
+            <div class="login-logo">
+                <img src="../../../img/logo_hc.png" class="img-responsive img-rounded" width="100%">
+            </div>
 
-        <div class="card">
-            <div class="card-body login-card-body">
-                <p class="login-box-msg">Iniciar Sesión</p>
+            <div class="card">
+                <div class="card-body login-card-body">
+                    <p class="login-box-msg">Iniciar Sesión</p>
 
-                <form @submit.prevent="authenticate">
-                    <div class="input-group mb-3">
-                        <input type="text" name="usuario" v-validate="'required'" class="form-control" placeholder="Usuario" v-model="formLogin.usuario">
-                        <div class="input-group-append">
-                            <span class="fa fa-user input-group-text"></span>
+                    <form @submit.prevent="authenticate">
+                        <div class="input-group mb-3">
+                            <input required type="text" name="usuario" class="form-control" placeholder="Usuario" v-model="formLogin.usuario">
+                            <div class="input-group-append">
+                                <span class="fa fa-user input-group-text"></span>
+                            </div>
                         </div>
-                    </div>
-                    <span>{{ errors.first('usuario') }}</span>
-                    <div class="input-group mb-3">
-                        <input type="password" name="clave" v-validate="'required'" class="form-control" placeholder="Clave" v-model="formLogin.clave">
-                        <div class="input-group-append">
-                            <span class="fa fa-lock input-group-text"></span>
+                        <div class="input-group mb-3">
+                            <input required type="password" name="clave" class="form-control" placeholder="Contraseña" v-model="formLogin.clave">
+                            <div class="input-group-append">
+                                <span class="fa fa-lock input-group-text"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-
-    import { mapGetters, mapState } from 'vuex'
-
     export default {
         data(){
             return {
@@ -83,8 +81,15 @@
 </script>
 
 <style scoped>
-    .error{
+    .error
+    {
         text-align: center;
         color: red;
+    }
+
+    #content {
+        width: 100%; height: 100%;
+        background-color: #d2d6de;
+        position: absolute; top: 0; left: 0;
     }
 </style>

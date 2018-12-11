@@ -4,6 +4,7 @@ export default {
     state: {
         obras: []
     },
+
     mutations: {
         fetch(state, obras) {
             state.obras = obras;

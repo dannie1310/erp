@@ -23855,6 +23855,7 @@ function nextFactory(context, middleware, index) {
 }
 
 router.beforeEach(function (to, from, next) {
+    document.title = to.meta.title;
     if (to.meta.middleware) {
         var middleware = Array.isArray(to.meta.middleware) ? to.meta.middleware : [to.meta.middleware];
 
@@ -60254,6 +60255,7 @@ var routes = [{
     name: 'home',
     component: __WEBPACK_IMPORTED_MODULE_0__components_Home_vue___default.a,
     meta: {
+        title: 'Inicio',
         middleware: [__WEBPACK_IMPORTED_MODULE_4__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_6__middleware_context__["a" /* default */]]
     }
 }, {
@@ -60261,6 +60263,7 @@ var routes = [{
     name: 'login',
     component: __WEBPACK_IMPORTED_MODULE_1__components_auth_Login_vue___default.a,
     meta: {
+        title: 'Iniciar Sesión',
         middleware: [__WEBPACK_IMPORTED_MODULE_5__middleware_guest__["a" /* default */]]
     }
 }, {
@@ -60268,6 +60271,7 @@ var routes = [{
     name: 'obras',
     component: __WEBPACK_IMPORTED_MODULE_2__components_auth_Obras_vue___default.a,
     meta: {
+        title: 'Seleccionar Obra',
         middleware: __WEBPACK_IMPORTED_MODULE_4__middleware_auth__["a" /* default */]
     }
 }, {
@@ -60459,7 +60463,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "\n.error[data-v-4221c3ad]{\n    text-align: center;\n    color: red;\n}\n", ""]);
+exports.push([module.i, "\n.error[data-v-4221c3ad]\n{\n    text-align: center;\n    color: red;\n}\n#content[data-v-4221c3ad] {\n    width: 100%; height: 100%;\n    background-color: #d2d6de;\n    position: absolute; top: 0; left: 0;\n}\n", ""]);
 
 // exports
 
@@ -60503,7 +60507,6 @@ module.exports = function listToStyles (parentId, list) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(14);
 //
 //
 //
@@ -60540,9 +60543,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-
-
-
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -60594,101 +60595,91 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "login-box" }, [
-    _vm._m(0),
-    _vm._v(" "),
-    _c("div", { staticClass: "card" }, [
-      _c("div", { staticClass: "card-body login-card-body" }, [
-        _c("p", { staticClass: "login-box-msg" }, [_vm._v("Iniciar Sesión")]),
-        _vm._v(" "),
-        _c(
-          "form",
-          {
-            on: {
-              submit: function($event) {
-                $event.preventDefault()
-                return _vm.authenticate($event)
+  return _c("div", { attrs: { id: "content" } }, [
+    _c("div", { staticClass: "login-box" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body login-card-body" }, [
+          _c("p", { staticClass: "login-box-msg" }, [_vm._v("Iniciar Sesión")]),
+          _vm._v(" "),
+          _c(
+            "form",
+            {
+              on: {
+                submit: function($event) {
+                  $event.preventDefault()
+                  return _vm.authenticate($event)
+                }
               }
-            }
-          },
-          [
-            _c("div", { staticClass: "input-group mb-3" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "validate",
-                    rawName: "v-validate",
-                    value: "required",
-                    expression: "'required'"
-                  },
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.formLogin.usuario,
-                    expression: "formLogin.usuario"
-                  }
-                ],
-                staticClass: "form-control",
-                attrs: {
-                  type: "text",
-                  name: "usuario",
-                  placeholder: "Usuario"
-                },
-                domProps: { value: _vm.formLogin.usuario },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+            },
+            [
+              _c("div", { staticClass: "input-group mb-3" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.formLogin.usuario,
+                      expression: "formLogin.usuario"
                     }
-                    _vm.$set(_vm.formLogin, "usuario", $event.target.value)
-                  }
-                }
-              }),
-              _vm._v(" "),
-              _vm._m(1)
-            ]),
-            _vm._v(" "),
-            _c("span", [_vm._v(_vm._s(_vm.errors.first("usuario")))]),
-            _vm._v(" "),
-            _c("div", { staticClass: "input-group mb-3" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "validate",
-                    rawName: "v-validate",
-                    value: "required",
-                    expression: "'required'"
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    required: "",
+                    type: "text",
+                    name: "usuario",
+                    placeholder: "Usuario"
                   },
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.formLogin.clave,
-                    expression: "formLogin.clave"
-                  }
-                ],
-                staticClass: "form-control",
-                attrs: {
-                  type: "password",
-                  name: "clave",
-                  placeholder: "Clave"
-                },
-                domProps: { value: _vm.formLogin.clave },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+                  domProps: { value: _vm.formLogin.usuario },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.formLogin, "usuario", $event.target.value)
                     }
-                    _vm.$set(_vm.formLogin, "clave", $event.target.value)
                   }
-                }
-              }),
+                }),
+                _vm._v(" "),
+                _vm._m(1)
+              ]),
               _vm._v(" "),
-              _vm._m(2)
-            ]),
-            _vm._v(" "),
-            _vm._m(3)
-          ]
-        )
+              _c("div", { staticClass: "input-group mb-3" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.formLogin.clave,
+                      expression: "formLogin.clave"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    required: "",
+                    type: "password",
+                    name: "clave",
+                    placeholder: "Contraseña"
+                  },
+                  domProps: { value: _vm.formLogin.clave },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.formLogin, "clave", $event.target.value)
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _vm._m(2)
+              ]),
+              _vm._v(" "),
+              _vm._m(3)
+            ]
+          )
+        ])
       ])
     ])
   ])
@@ -61138,6 +61129,7 @@ function getLoggedinUser() {
     state: {
         obras: []
     },
+
     mutations: {
         fetch: function fetch(state, obras) {
             state.obras = obras;
@@ -61633,7 +61625,7 @@ exports = module.exports = __webpack_require__(12)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -61644,6 +61636,20 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -61661,9 +61667,42 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("H1", [_vm._v("NOT FOUND")])
+  return _c("section", { staticClass: "content" }, [
+    _c("div", { staticClass: "error-page" }, [
+      _c("h2", { staticClass: "headline text-warning" }, [_vm._v(" 404")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "error-content" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c(
+          "p",
+          [
+            _vm._v(
+              "\n                No pudimos encontrar la página que buscabas "
+            ),
+            _c("br"),
+            _vm._v(" "),
+            _c("router-link", { attrs: { to: "/" } }, [
+              _vm._v("Regresar a la página de inicio")
+            ])
+          ],
+          1
+        )
+      ])
+    ])
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", [
+      _c("i", { staticClass: "fa fa-warning text-warning" }),
+      _vm._v(" Oops! Pagina no encontrada.")
+    ])
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {

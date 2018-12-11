@@ -16,6 +16,7 @@ export const routes = [
         name: 'home',
         component: Home,
         meta: {
+            title: 'Inicio',
             middleware: [auth, context]
         },
     },
@@ -24,6 +25,7 @@ export const routes = [
         name: 'login',
         component: Login,
         meta: {
+            title: 'Iniciar Sesión',
             middleware: [guest]
         },
     },
@@ -32,6 +34,7 @@ export const routes = [
         name: 'obras',
         component: Obras,
         meta: {
+            title: 'Seleccionar Obra',
             middleware: auth
         }
     },
