@@ -1,17 +1,15 @@
 require('./bootstrap');
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Vuex from 'vuex';
-import VueSession from 'vue-session'
+import VueSession from 'vue-session';
+import VeeValidate from 'vee-validate';
 import {routes} from './routes';
-import StoreData from './store';
+import store from './store';
 import MainApp from './components/MainApp.vue';
 
 Vue.use(VueRouter);
-Vue.use(Vuex);
-Vue.use(VueSession, {persist: true})
-
-const store = new Vuex.Store(StoreData);
+Vue.use(VueSession, {persist: true});
+Vue.use(VeeValidate);
 
 const router = new VueRouter({
     routes,

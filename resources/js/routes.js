@@ -1,11 +1,13 @@
 //Components
 import Home from './components/Home.vue';
 import Login from './components/auth/Login.vue';
-import Dashboard from './components/Dashboard.vue';
+import Obras from './components/auth/Obras.vue';
+import NotFound from './components/pages/NotFound.vue';
 
 //Middlewares
 import auth from "./middleware/auth";
 import guest from "./middleware/guest";
+import context from "./middleware/context";
 
 //Routes
 export const routes = [
@@ -14,7 +16,7 @@ export const routes = [
         name: 'home',
         component: Home,
         meta: {
-            middleware: [guest]
+            middleware: [auth, context]
         },
     },
     {
@@ -26,12 +28,16 @@ export const routes = [
         },
     },
     {
-        path: '/dashboard',
-        name: 'dashboard',
-        component: Dashboard,
+        path: '/obras',
+        name: 'obras',
+        component: Obras,
         meta: {
-            middleware: [auth]
-        },
+            middleware: auth
+        }
     },
-
+    {
+        path: '*',
+        name: 'notFound',
+        component: NotFound,
+    }
 ];

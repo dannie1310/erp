@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\v1;
 
+use App\Facades\Context;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SetContextRequest;
@@ -26,8 +27,7 @@ class AuthController extends Controller
     public function __construct(AuthService $auth)
     {
         $this->middleware('auth:api', ['except' => ['login']]);
-        $this->middleware('context', ['except' => ['login', 'context', 'refresh']]);
-        $this->middleware('refresh', ['only' => 'me']);
+        $this->middleware('context', ['except' => ['login', 'setContext', 'refresh', 'obras', 'getContext']]);
 
         $this->auth = $auth;
     }
@@ -81,13 +81,21 @@ class AuthController extends Controller
      * @param SetContextRequest $request
      * @return JsonResponse
      */
-    public function context(SetContextRequest $request)
+    public function setContext(SetContextRequest $request)
     {
         $new_token = $this->auth->setContext($request->only(['database', 'id_obra']));
         return $this->respondWithToken($new_token);
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function getContext()
+    {
+        return response()->json(['message' => 'context is established'], 200);
+    }
+
+        /**
      * Refresh a token.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -95,5 +103,11 @@ class AuthController extends Controller
     public function refresh(Request $request)
     {
         return $this->respondWithToken(auth()->refresh());
+    }
+
+    public function obras() {
+        $obras = $this->auth->getObras();
+
+        return response()->json($obras, 200);
     }
 }

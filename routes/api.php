@@ -17,7 +17,9 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'auth'], function ($api) {
         $api->post('login', 'App\Http\Controllers\v1\AuthController@login');
         $api->post('logout', 'App\Http\Controllers\v1\AuthController@logout');
-        $api->post('context', 'App\Http\Controllers\v1\AuthController@context');
+        $api->post('setContext', 'App\Http\Controllers\v1\AuthController@setContext');
+        $api->post('getContext', 'App\Http\Controllers\v1\AuthController@getContext');
         $api->post('refresh', 'App\Http\Controllers\v1\AuthController@refresh');
+        $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');
     });
 });

@@ -4,5 +4,5 @@ export default function guest({ next, router }) {
         return next();
     }
 
-    router.push({name: 'dashboard'});
+    router.push({name: 'home'});
 }

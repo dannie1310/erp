@@ -3,6 +3,8 @@ import {getLoggedinUser} from './partials/auth';
 const user = getLoggedinUser();
 
 export default {
+    namespaced: true,
+
     state: {
         currentUser: user,
         jwt: null,
