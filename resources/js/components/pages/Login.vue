@@ -6,6 +6,10 @@
                 <img src="../../../img/logo_hc.png" class="img-responsive img-rounded" width="100%">
             </div>
 
+            <div v-if="authError" class="alert alert-danger">
+                <p>{{ authError }}</p>
+            </div>
+
             <div class="card">
                 <div class="card-body login-card-body">
                     <p class="login-box-msg">Iniciar Sesión</p>
@@ -25,7 +29,7 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
+                                <button type="submit" class="btn btn-primary btn-block btn-flat" v-bind:disabled="isLoading">Entrar</button>
                             </div>
                         </div>
                     </form>
@@ -55,7 +59,7 @@
                             res(response.data);
                         })
                         .catch(err => {
-                            rej('Wrong Email/Password combination.')
+                            rej('Usuario o Contraseña inválidos.');
                         });
                 })
                     .then(res => {
@@ -75,6 +79,9 @@
         computed:{
             authError(){
                 return this.$store.getters['auth/authError'];
+            },
+            isLoading(){
+                return this.$store.getters['auth/isLoading'];
             }
         }
     }

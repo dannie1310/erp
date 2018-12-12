@@ -108,7 +108,11 @@ class AuthController extends Controller
      */
     public function refresh(Request $request)
     {
-        return $this->respondWithToken(auth()->refresh());
+        return response()->json([
+            'access_token' => auth()->refresh(),
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
     }
 
     public function obras() {

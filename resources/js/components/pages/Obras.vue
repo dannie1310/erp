@@ -4,7 +4,7 @@
             <ul class="list-group">
                 <span v-for="(grupo, i) in obrasAgrupadas">
                     <li class="list-group-item disabled"><i class="fa fa-fw fa-database"></i>{{ i }}</li>
-                        <a v-for="obra in grupo" href="#" class="list-group-item" @click="setContext(i, obra.id_obra)">
+                        <a v-for="obra in grupo" href="#" class="list-group-item" @click="setContext(i, obra.id_obra)" v-bind:class="{disabled: loading}">
                         {{ obra.nombre }}
                     </a>
                 </span>
@@ -19,6 +19,12 @@
 
     export default {
         name: "Obras",
+
+        data() {
+            return {
+                loading: false
+            }
+        },
 
         computed: {
             obrasAgrupadas() {
@@ -35,7 +41,7 @@
                 fetch: 'obras/fetch'
             }),
             setContext(database, id_obra) {
-
+                this.loading = true;
                 return new Promise((res, rej) => {
                     axios.post('/api/auth/setContext', {database: database, id_obra: id_obra})
                         .then(response => {
@@ -43,7 +49,7 @@
                         })
                         .catch(err => {
                             rej(err)
-                        });
+                        })
                 })
                     .then(res => {
                         this.$session.set('jwt', res.access_token)
@@ -55,7 +61,16 @@
                     .catch(error => {
                         this.$store.commit("auth/loginFailed", {error});
                     })
+                    .then(() => {
+                        this.loading = false;
+                    })
             }
         }
     }
 </script>
+<style scoped>
+    a.disabled {
+        pointer-events: none;
+        cursor: default;
+    }
+</style>

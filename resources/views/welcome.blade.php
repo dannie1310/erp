@@ -10,7 +10,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet"/>
 
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini sidebar-collapse">
 <div id="app">
     <main-app/>
 </div>

@@ -6,6 +6,7 @@ export default function auth({ next, router }) {
             return next();
         })
         .catch(err => {
+            router.app.$store.commit('auth/logout');
             router.app.$session.destroy();
             return router.push({ name: 'login' });
         });

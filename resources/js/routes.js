@@ -1,7 +1,7 @@
 //Components
 import Home from './components/pages/Home.vue';
-import Login from './components/auth/Login.vue';
-import Obras from './components/auth/Obras.vue';
+import Login from './components/pages/Login.vue';
+import Obras from './components/pages/Obras.vue';
 import NotFound from './components/pages/NotFound.vue';
 
 //Middlewares

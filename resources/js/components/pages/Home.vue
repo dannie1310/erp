@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <h1>Hola {{ currentUser.nombre }} . . . welcome to your work space.</h1>
+        <p>Home</p>
     </div>
 </template>
 

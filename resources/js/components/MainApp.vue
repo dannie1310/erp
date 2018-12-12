@@ -4,64 +4,35 @@
             <app-header/>
             <app-sidebar/>
             <div class="content-wrapper">
-            <section class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1>{{ this.$router.currentRoute.meta.title }}</h1>
-                        </div>
-                        <div class="col-sm-6">
-                            <app-breadcrumb/>
-                        </div>
-                    </div>
-                </div><!-- /.container-fluid -->
-            </section>
-
-            <!-- Main content -->
-            <section class="content">
-                <router-view></router-view>
-                <!-- Default box -->
-                <!--<div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Title</h3>
-
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fa fa-minus"></i></button>
-                            <button type="button" class="btn btn-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                                <i class="fa fa-times"></i></button>
+                <section class="content-header">
+                    <div class="container">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1>{{ this.$router.currentRoute.meta.title }}</h1>
+                            </div>
+                            <div class="col-sm-6">
+                                <app-breadcrumb/>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        Start creating your amazing application!
-                    </div>
-                    &lt;!&ndash; /.card-body &ndash;&gt;
-                    <div class="card-footer">
-                        Footer
-                    </div>
-                    &lt;!&ndash; /.card-footer&ndash;&gt;
-                </div>-->
-                <!-- /.card -->
-
-            </section>
-            <!-- /.content -->
-        </div>
-            <!-- /.content-wrapper -->
-
-        <footer class="main-footer">
-            <div class="float-right d-none d-sm-block">
-                <b>Version</b> 3.0.0-alpha
+                </section>
+                <section class="content">
+                    <router-view></router-view>
+                </section>
             </div>
-            <strong>Copyright &copy; 2014-2018 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
-            reserved.
-        </footer>
 
-            <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-        </aside>
-            <!-- /.control-sidebar -->
-    </div>
+            <footer class="main-footer">
+                <div class="float-right d-none d-sm-block">
+                    <small>{{ currentObra ? currentObra.direccion : '' }}</small>
+                </div>
+                {{ currentObra ? currentObra.facturar : '' }}
+            </footer>
+
+            <aside class="control-sidebar control-sidebar-dark">
+
+            </aside>
+
+        </div>
         <div v-else>
             <router-view></router-view>
         </div>
@@ -78,7 +49,19 @@
         computed:{
             currentUser(){
                 return this.$store.getters['auth/currentUser']
+            },
+            currentObra() {
+                return this.$store.getters['auth/currentObra']
             }
         }
     }
 </script>
+<style>
+    a {
+        color: #68a34d;
+    }
+    .sidebar .nav-sidebar > .nav-item > .nav-link.active {
+         color: #ffffff;
+         background-color: #68a34d;
+     }
+</style>
