@@ -35,6 +35,7 @@ export default {
         logout(state){
             state.isLoggedin = false;
             state.currentUser = null;
+            state.currentObra = null;
         },
         setObra(state, payload) {
             state.currentObra = Object.assign({}, payload.obra);

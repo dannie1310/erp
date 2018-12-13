@@ -67,5 +67,18 @@ const app = new Vue({
     store,
     components: {
         MainApp
+    },
+    mounted() {
+        axios.interceptors.response.use(null, function(error) {
+            switch (error.response.status) {
+                case 401:
+                    app.$store.commit('auth/logout');
+                    app.$session.destroy();
+                    return app.$router.push({ name: 'login' });
+
+                default:
+                    return Promise.reject(error);
+            }
+        });
     }
 });
