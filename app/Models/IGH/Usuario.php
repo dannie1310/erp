@@ -8,6 +8,8 @@
 
 namespace App\Models\IGH;
 
+use App\Facades\Context;
+use App\Models\CADECO\Seguridad\Rol;
 use App\Traits\IghAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -95,5 +97,46 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function usuarioCadeco()
     {
         return $this->hasOne(\App\Models\CADECO\Usuario::class, 'usuario', 'usuario');
+    }
+
+    /**
+     * Check if user has a permission by its name.
+     *
+     * @param string|array $permission Permission string or array of permissions.
+     * @param bool         $requireAll All permissions in the array are required.
+     *
+     * @return bool
+     */
+    public function can($permiso, $requireAll = false)
+    {
+        if (is_array($permiso)) {
+            foreach ($permiso as $permName) {
+                $hasPerm = $this->can($permName);
+                if ($hasPerm && !$requireAll) {
+                    return true;
+                } elseif (!$hasPerm && $requireAll) {
+                    return false;
+                }
+            }
+            // If we've made it this far and $requireAll is FALSE, then NONE of the perms were found
+            // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
+            // Return the value of $requireAll;
+            return $requireAll;
+        } else {
+            foreach ($this->roles as $rol) {
+                // Validate against the Permission table
+                foreach ($rol->permisos as $perm) {
+                    if (str_is( $permiso, $perm->name) ) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
     }
 }

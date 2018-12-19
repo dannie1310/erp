@@ -9,6 +9,7 @@ export default {
     state: {
         currentUser: user,
         currentObra: obra,
+        sistemas: [],
         jwt: null,
         isLoggedIn: false,
         loading: false,
@@ -28,14 +29,15 @@ export default {
 
             window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + payload.access_token;
             },
-        loginFailed(state, payload){
+        loginFailed(state, payload) {
             state.loading = false;
             state.auth_error = payload.error;
         },
-        logout(state){
+        logout(state, payload = {}) {
             state.isLoggedin = false;
             state.currentUser = null;
             state.currentObra = null;
+            state.auth_error = payload.error;
         },
         setObra(state, payload) {
             state.currentObra = Object.assign({}, payload.obra);
@@ -63,6 +65,26 @@ export default {
     actions: {
         login(context){
             context.commit("login");
+        },
+
+        fetchPermisos(context, payload) {
+            axios.get('/api/auth/permiso', payload)
+                .then(res => {
+                    context.commit('fetch', res.data)
+                })
+                .catch(err => {
+                    alert(err);
+                });
+        },
+
+        fetchSistemas(context, payload) {
+            axios.get('/api/seguridad_erp/sistema', payload)
+                .then(res => {
+                    context.commit('fetch', res.data)
+                })
+                .catch(err => {
+                    alert(err);
+                });
         }
     },
 }

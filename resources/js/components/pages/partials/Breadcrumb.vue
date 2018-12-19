@@ -3,9 +3,21 @@
         <li class="breadcrumb-item"
             v-for="(breadcrumb, idx) in breadcrumbList"
             :key="idx"
-            @click="routeTo(idx)"
             :class="{'active': !!breadcrumb.link}">
-            {{ breadcrumb.name }}
+            <router-link v-if="breadcrumb.link" :to="breadcrumb.link"><span v-if="breadcrumb.name == 'INICIO'">
+                    <i class="fa fa-home"></i>
+                </span>
+                <span v-else>
+                    {{ breadcrumb.name }}
+                </span></router-link>
+            <span v-else>
+                <span v-if="breadcrumb.name == 'INICIO'">
+                    <i class="fa fa-home"></i>
+                </span>
+                <span v-else>
+                    {{ breadcrumb.name }}
+                </span>
+            </span>
         </li>
     </ol>
 </template>

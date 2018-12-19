@@ -36,7 +36,7 @@ function nextFactory(context, middleware, index) {
 }
 
 router.beforeEach((to, from, next) => {
-    document.title = to.meta.title;
+    document.title = 'SAO - ' + to.meta.title;
     if (to.meta.middleware) {
         const middleware = Array.isArray(to.meta.middleware)
             ? to.meta.middleware
@@ -72,10 +72,9 @@ const app = new Vue({
         axios.interceptors.response.use(null, function(error) {
             switch (error.response.status) {
                 case 401:
-                    app.$store.commit('auth/logout');
+                    app.$store.commit('auth/logout', {error:  error.response.data.status});
                     app.$session.destroy();
                     return app.$router.push({ name: 'login' });
-
                 default:
                     return Promise.reject(error);
             }

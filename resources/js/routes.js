@@ -1,52 +1,72 @@
-//Components
-import Home from './components/pages/Home.vue';
-import Login from './components/pages/Login.vue';
-import Obras from './components/pages/Obras.vue';
-import NotFound from './components/pages/NotFound.vue';
-
 //Middlewares
 import auth from "./middleware/auth";
 import guest from "./middleware/guest";
 import context from "./middleware/context";
+
 
 //Routes
 export const routes = [
     {
         path: '/',
         name: 'home',
-        component: Home,
+        component: require('./components/pages/Home.vue'),
         meta: {
-            title: 'INICIO',
+            title: 'Inicio',
             middleware: [auth, context],
-            breadcrumb: [{
-                name: 'INICIO'
-            }]
-        },
+            breadcrumb: [{'name': 'INICIO'}]
+        }
     },
     {
         path: '/login',
         name: 'login',
-        component: Login,
+        component: require('./components/pages/Login.vue'),
         meta: {
             title: 'INICIAR SESIÓN',
-            middleware: [guest]
+            middleware: guest,
         },
     },
     {
         path: '/obras',
         name: 'obras',
-        component: Obras,
+        component: require('./components/pages/Obras.vue'),
         meta: {
-            title: 'SELECCIONAR OBRA',
+            title: 'Seleccionar Obra',
             middleware: auth,
-            breadcrumb: [{
-                name: 'SELECCIONAR OBRA'
-            }]
+            breadcrumb: [{name: 'SELECCIONAR OBRA'}]
         }
+    },
+    {
+        path: '/contabilidad',
+        components: {
+            default: require('./components/contabilidad/partials/Layout.vue'),
+            menu: require('./components/contabilidad/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'contabilidad',
+                component: require('./components/contabilidad/Index'),
+                meta: {
+                    title: 'Contabilidad',
+                    breadcrumb: [{name: 'INICIO', link: '/'}, {name: 'CONTABILIDAD'}],
+                    middleware: [auth, context]
+                }
+            },
+            {
+                path: 'cuenta-almacen',
+                name: 'cuenta-almacen',
+                component: require('./components/contabilidad/cuenta-almacen/Index'),
+                meta: {
+                    title: 'Cuentas de Almacén',
+                    breadcrumb: [{name: 'INICIO', link: '/'}, {name: 'CONTABILIDAD', link: '/contabilidad'}, {name: 'CUENTAS DE ALMACÉN'}],
+                    middleware: [auth, context]
+                }
+            }
+        ]
     },
     {
         path: '*',
         name: 'notFound',
-        component: NotFound,
+        component: require('./components/pages/NotFound.vue'),
     }
 ];

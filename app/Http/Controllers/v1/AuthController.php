@@ -120,4 +120,10 @@ class AuthController extends Controller
 
         return response()->json($obras, 200);
     }
+
+    public function getPermisos(Request $request) {
+        $permissions = $this->auth->getPermissions();
+
+        return response()->json($permissions, 200);
+    }
 }

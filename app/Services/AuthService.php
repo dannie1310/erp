@@ -94,4 +94,8 @@ class AuthService
         }
         return $usuarioCadeco->obras()->orderBy('nombre')->get();
     }
+
+    public function getPermissions() {
+
+    }
 }
