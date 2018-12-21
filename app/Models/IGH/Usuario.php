@@ -10,9 +10,11 @@ namespace App\Models\IGH;
 
 use App\Facades\Context;
 use App\Models\CADECO\Seguridad\Rol;
+use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Traits\IghAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -103,7 +105,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param bool         $requireAll All permissions in the array are required.
+     * @param bool $requireAll All permissions in the array are required.
      *
      * @return bool
      */
@@ -126,7 +128,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
             foreach ($this->roles as $rol) {
                 // Validate against the Permission table
                 foreach ($rol->permisos as $perm) {
-                    if (str_is( $permiso, $perm->name) ) {
+                    if (str_is($permiso, $perm->name)) {
                         return true;
                     }
                 }
@@ -138,5 +140,18 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function roles()
     {
         return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
+    }
+
+    public function permisos()
+    {
+        $permisos = new Collection();
+        foreach ($this->roles as $rol) {
+            // Validate against the Permission table
+            foreach ($rol->permisos as $perm) {
+                $permisos->push($perm);
+            }
+        }
+
+        return $permisos;
     }
 }

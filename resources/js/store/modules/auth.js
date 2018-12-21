@@ -9,7 +9,7 @@ export default {
     state: {
         currentUser: user,
         currentObra: obra,
-        sistemas: [],
+        permisos: [],
         jwt: null,
         isLoggedIn: false,
         loading: false,
@@ -41,6 +41,9 @@ export default {
         },
         setObra(state, payload) {
             state.currentObra = Object.assign({}, payload.obra);
+        },
+        setPermisos(state, payload) {
+                state.permisos = Object.assign({}, payload.permisos);
         }
     },
 
@@ -57,34 +60,20 @@ export default {
         currentObra(state){
             return state.currentObra;
         },
+        datosContables(state){
+            return state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null
+        },
         authError(state){
             return state.auth_error;
         },
+        permisos(state){
+            return state.permisos;
+        }
     },
 
     actions: {
         login(context){
             context.commit("login");
-        },
-
-        fetchPermisos(context, payload) {
-            axios.get('/api/auth/permiso', payload)
-                .then(res => {
-                    context.commit('fetch', res.data)
-                })
-                .catch(err => {
-                    alert(err);
-                });
-        },
-
-        fetchSistemas(context, payload) {
-            axios.get('/api/seguridad_erp/sistema', payload)
-                .then(res => {
-                    context.commit('fetch', res.data)
-                })
-                .catch(err => {
-                    alert(err);
-                });
         }
     },
 }

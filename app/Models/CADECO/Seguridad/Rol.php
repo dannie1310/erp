@@ -39,6 +39,6 @@ class Rol extends Model
 
     public function permisos()
     {
-        return $this->belongsToMany(Permiso::class, Context::getDatabase() . '.Seguridad.permission_role');
+        return $this->belongsToMany(Permiso::class, Context::getDatabase() . '.Seguridad.permission_role', 'role_id', 'permission_id');
     }
 }

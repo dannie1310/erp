@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Contabilidad\DatosContables;
 use Illuminate\Database\Eloquent\Model;
 
 class Obra extends Model
@@ -18,4 +19,8 @@ class Obra extends Model
     protected $primaryKey = 'id_obra';
 
     public $timestamps = false;
+
+    public function datosContables() {
+        return $this->hasOne(DatosContables::class, 'id_obra');
+    }
 }

@@ -6,7 +6,7 @@
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
             </li>
-            <li class="nav-item d-none d-sm-inline-block">
+            <li v-if="currentObra" class="nav-item d-none d-sm-inline-block">
                 <router-link :to="{name: 'obras'}" class="nav-link" title="Cambiar Obra">{{ currentObra.nombre }}</router-link>
             </li>
         </ul>

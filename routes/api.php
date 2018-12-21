@@ -22,4 +22,16 @@ $api->version('v1', function ($api) {
         $api->post('refresh', 'App\Http\Controllers\v1\AuthController@refresh');
         $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');
     });
+
+    /**
+     * CONTABILIDAD
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
+        //CUENTAS DE ALMACÉN
+        $api->group(['prefix' => 'cuenta-almacen'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@find');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@update');
+        });
+    });
 });

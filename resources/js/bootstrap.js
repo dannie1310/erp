@@ -6,6 +6,7 @@ try {
 
     require('bootstrap');
     require('admin-lte');
+    window.Swal = require('sweetalert2')
 } catch (e) {}
 
 window.axios = require('axios');

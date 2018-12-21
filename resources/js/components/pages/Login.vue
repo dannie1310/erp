@@ -63,7 +63,6 @@
                         });
                 })
                     .then(res => {
-
                         this.$session.start();
                         this.$session.set('jwt', res.access_token);
                         this.$session.set('user', res.user);

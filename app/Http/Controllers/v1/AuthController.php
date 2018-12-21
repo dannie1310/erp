@@ -89,7 +89,7 @@ class AuthController extends Controller
             'access_token' => $new_token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'obra' => Obra::find($request->id_obra)
+            'obra' => Obra::with('datosContables')->find($request->id_obra)
         ]);
     }
 
@@ -98,7 +98,12 @@ class AuthController extends Controller
      */
     public function getContext()
     {
-        return response()->json(['message' => 'context is established', 'obra' => Obra::find(Context::getIdObra())], 200);
+        return response()->json([
+            'message' => 'context is established',
+            'obra' => Obra::find(Context::getIdObra()),
+            'permisos' => auth()->user()->permisos()
+
+        ], 200);
     }
 
         /**
@@ -119,11 +124,5 @@ class AuthController extends Controller
         $obras = $this->auth->getObras();
 
         return response()->json($obras, 200);
-    }
-
-    public function getPermisos(Request $request) {
-        $permissions = $this->auth->getPermissions();
-
-        return response()->json($permissions, 200);
-    }
+        }
 }
