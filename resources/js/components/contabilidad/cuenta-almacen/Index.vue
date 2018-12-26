@@ -54,21 +54,24 @@
             },
         },
         watch: {
-            cuentas(cuentas) {
-                let self = this
-                self.$data.data = []
-                cuentas.forEach(function (cuenta, i) {
-                    self.$data.data.push({
-                        index: cuenta.id,
-                        cuenta: cuenta.cuenta,
-                        id_almacen: cuenta.almacen.data.descripcion,
-                        tipo: cuenta.almacen.data.tipo,
-                        buttons: $.extend({}, {
-                            edit: self.$root.can('editar_cuenta_almacen') ? true : undefined,
-                            id: cuenta.id
+            cuentas: {
+                handler(cuentas) {
+                    let self = this
+                    self.$data.data = []
+                    cuentas.forEach(function (cuenta, i) {
+                        self.$data.data.push({
+                            index: cuenta.id,
+                            cuenta: cuenta.cuenta,
+                            id_almacen: cuenta.almacen.data.descripcion,
+                            tipo: cuenta.almacen.data.tipo,
+                            buttons: $.extend({}, {
+                                edit: self.$root.can('editar_cuenta_almacen') ? true : undefined,
+                                id: cuenta.id
+                            })
                         })
-                    })
-                });
+                    });
+                },
+                deep: true
             },
             meta: {
                 handler (meta) {

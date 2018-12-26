@@ -69263,23 +69263,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     watch: {
-        cuentas: function cuentas(_cuentas) {
-            var self = this;
-            self.$data.data = [];
-            _cuentas.forEach(function (cuenta, i) {
-                self.$data.data.push({
-                    index: cuenta.id,
-                    cuenta: cuenta.cuenta,
-                    id_almacen: cuenta.almacen.data.descripcion,
-                    tipo: cuenta.almacen.data.tipo,
-                    buttons: $.extend({}, {
-                        edit: self.$root.can('editar_cuenta_almacen') ? true : undefined,
-                        id: cuenta.id
-                    })
+        cuentas: {
+            handler: function handler(cuentas) {
+                var self = this;
+                self.$data.data = [];
+                cuentas.forEach(function (cuenta, i) {
+                    self.$data.data.push({
+                        index: cuenta.id,
+                        cuenta: cuenta.cuenta,
+                        id_almacen: cuenta.almacen.data.descripcion,
+                        tipo: cuenta.almacen.data.tipo,
+                        buttons: $.extend({}, {
+                            edit: self.$root.can('editar_cuenta_almacen') ? true : undefined,
+                            id: cuenta.id
+                        })
+                    });
                 });
-            });
-        },
+            },
 
+            deep: true
+        },
         meta: {
             handler: function handler(meta) {
                 var total = meta.pagination.total;
@@ -70031,6 +70034,14 @@ var URI = '/api/contabilidad/cuenta-almacen/';
         fetch: function fetch(state, payload) {
             state.cuentas = payload.data;
             state.meta = payload.meta;
+        },
+        update: function update(state, payload) {
+            state.cuentas = state.cuentas.map(function (cuenta) {
+                if (cuenta.id === payload.id) {
+                    return Object.assign({}, cuenta, payload.data);
+                }
+                return cuenta;
+            });
         }
     },
 
@@ -70054,7 +70065,7 @@ var URI = '/api/contabilidad/cuenta-almacen/';
         update: function update(context, payload) {
             return new Promise(function (resolve, reject) {
                 axios.patch(URI + payload.id, payload).then(function (response) {
-                    context.dispatch('fetch');
+                    context.commit('update', { id: payload.id, data: response.data.data });
                     resolve(response.data);
                 }).catch(function (error) {
                     reject(error);

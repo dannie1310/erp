@@ -11,6 +11,15 @@ export default {
             state.cuentas = payload.data;
             state.meta = payload.meta
         },
+
+        update(state, payload) {
+            state.cuentas = state.cuentas.map(cuenta => {
+                if (cuenta.id === payload.id) {
+                    return Object.assign({}, cuenta, payload.data)
+                }
+                return cuenta
+            })
+        }
     },
 
     actions: {
@@ -40,7 +49,7 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.patch(URI + payload.id, payload)
                     .then(response => {
-                        context.dispatch('fetch');
+                        context.commit('update', {id: payload.id, data: response.data.data});
                         resolve(response.data);
                     })
                     .catch(error => {
