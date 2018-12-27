@@ -33,5 +33,10 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@find');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@update');
         });
+
+        //PÓLIZAS
+        $api->group(['prefix' => 'poliza'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@index');
+        });
     });
 });

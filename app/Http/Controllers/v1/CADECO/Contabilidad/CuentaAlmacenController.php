@@ -10,7 +10,6 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CuentaAlmacenResource;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaAlmacenTransformer;
 use App\Services\CADECO\Contabilidad\CuentaAlmacenService;
 use Dingo\Api\Routing\Helpers;

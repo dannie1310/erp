@@ -61,6 +61,25 @@ export const routes = [
                     breadcrumb: [{name: 'INICIO', link: '/'}, {name: 'CONTABILIDAD', link: '/contabilidad'}, {name: 'CUENTAS DE ALMACÉN'}],
                     middleware: [auth, context]
                 }
+            },
+            {
+                path: 'poliza',
+                component: require('./components/contabilidad/poliza/Layout.vue'),
+                meta: {
+                    middleware: [auth, context]
+                },
+                children: [
+                    {
+                        path: '/',
+                        name: 'poliza',
+                        component: require('./components/contabilidad/poliza/Index'),
+                        meta: {
+                            title: 'Prepólizas Generadas',
+                            breadcrumb: [{name: 'INICIO', link: '/'}, {name: 'CONTABILIDAD', link: '/contabilidad'}, {name: 'PREPÓLIZAS GENERADAS'}],
+                            middleware: [auth, context]
+                        }
+                    }
+                ]
             }
         ]
     },

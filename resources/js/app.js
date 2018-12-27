@@ -5,6 +5,8 @@ import VueSession from 'vue-session';
 import VeeValidate, { Validator } from 'vee-validate';
 import es from 'vee-validate/dist/locale/es';
 import Datatable from 'vue2-datatable-component';
+import './utils';
+
 const VueInputMask = require('vue-inputmask').default;
 
 Vue.use(VueInputMask);

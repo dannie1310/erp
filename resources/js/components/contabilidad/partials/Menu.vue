@@ -25,10 +25,10 @@
 
             <li class="nav-header">MÓDULOS</li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <router-link :to="{name: 'poliza'}" class="nav-link">
                     <i class="fa fa-file-text nav-icon"></i>
                     <p>Prepólizas Generadas</p>
-                </a>
+                </router-link>
             </li>
         </ul>
     </nav>
