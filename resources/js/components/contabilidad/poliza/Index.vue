@@ -2,6 +2,25 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <div class="form-row">
+                        <div class="col">
+                            <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="$data.daterange"/>
+                        </div>
+                        <div class="col">
+                            <select class="form-control" v-model="id_estatus">
+                                <option value>-- Estatus --</option>
+                                <option v-for="item in estatus" v-bind:value="item.estatus">{{ item.descripcion }}</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <select class="form-control" v-model="id_tipo_poliza_contpaq">
+                                <option value>-- Tipo de Póliza --</option>
+                                <option v-for="item in tiposPolizaInterfaz" v-bind:value="item.id">{{ item.descripcion }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -17,8 +36,11 @@
 </template>
 
 <script>
+
+    import DateRangePicker from "../../globals/DateRangePicker";
     export default {
         name: "poliza-index",
+        components: {DateRangePicker},
         data() {
             return {
                 HeaderSettings: false,
@@ -26,7 +48,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Tipo de Póliza', field: 'id_tipo_poliza_interfaz', sortable: true },
                     { title: 'Tipo de Transacción', field: 'id_tipo_poliza_contpaq', sortable: true },
-                    { title: 'Concepto', field: 'concepto', sortable: false },
+                    { title: 'Concepto', field: 'concepto', sortable: true },
                     { title: 'Fecha', field: 'fecha'},
                     { title: 'Monto', field: 'total'},
                     { title: 'Cuadre', field: 'cuadre'},
@@ -36,17 +58,28 @@
                 data: [],
                 total: 0,
                 query: {
-                }
+                },
+                daterange: null,
+                id_tipo_poliza_contpaq: '',
+                id_estatus: ''
             }
         },
 
         mounted() {
             this.fetch()
+            this.getEstatus()
+            this.getTiposPolizaInterfaz()
         },
 
         methods: {
             fetch(payload = {}) {
                 return this.$store.dispatch('contabilidad/poliza/fetch', payload)
+            },
+            getEstatus() {
+                return this.$store.dispatch('contabilidad/poliza/getEstatus')
+            },
+            getTiposPolizaInterfaz() {
+                return this.$store.dispatch('contabilidad/poliza/getTiposPolizaInterfaz')
             }
         },
         computed: {
@@ -56,6 +89,12 @@
             meta(){
                 return this.$store.getters['contabilidad/poliza/meta'];
             },
+            estatus() {
+                return this.$store.getters['contabilidad/poliza/estatus']
+            },
+            tiposPolizaInterfaz() {
+                return this.$store.getters['contabilidad/poliza/tiposPolizaInterfaz']
+            }
         },
         watch: {
             polizas: {
@@ -75,7 +114,7 @@
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_prepolizas_generadas') ? true : undefined,
                                 show: true,
-                                historico: poliza.tiene_historico,
+                                historico: false,
                                 id: poliza.id
                             })
                         })
@@ -95,6 +134,22 @@
                     this.fetch(query)
                 },
                 deep: true
+            },
+            daterange: {
+                handler(dr) {
+                    this.$data.query.startDate = dr.startDate
+                    this.$data.query.endDate = dr.endDate
+                    this.fetch(this.$data.query)
+                },
+                deep: true
+            },
+            id_tipo_poliza_contpaq(id_tipo) {
+                this.$data.query.id_tipo_poliza_contpaq = id_tipo;
+                this.fetch(this.$data.query)
+            },
+            id_estatus(estatus) {
+                this.$data.query.estatus = estatus;
+                this.fetch(this.$data.query)
             }
         },
     }

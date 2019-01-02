@@ -3,6 +3,8 @@ export default {
     namespaced: true,
     state: {
         polizas: [],
+        estatus: [],
+        tiposPolizaInterfaz: [],
         meta: {}
     },
 
@@ -19,6 +21,12 @@ export default {
                 }
                 return poliza
             })
+        },
+        setEstatus(state, payload) {
+            state.estatus = payload.data;
+        },
+        setTiposPolizaInterfaz(state, payload) {
+            state.tiposPolizaInterfaz = payload.data;
         }
     },
 
@@ -45,16 +53,31 @@ export default {
             })
         },
 
-        update(context, payload) {
+        getEstatus(context){
             return new Promise((resolve, reject) => {
-                axios.patch(URI + payload.id, payload)
-                    .then(response => {
-                        context.commit('update', {id: payload.id, data: response.data.data});
-                        resolve(response.data);
+                axios.get(URI + 'estatus_prepoliza')
+                    .then(res => {
+                        resolve(res.data)
                     })
-                    .catch(error => {
-                        reject(error);
+                    .catch(err => {
+                        reject(err)
                     })
+            }).then(res => {
+                context.commit('setEstatus', res)
+            })
+        },
+
+        getTiposPolizaInterfaz(context) {
+            return new Promise((resolve, reject) => {
+                axios.get(URI + 'tipo_poliza_contpaq')
+                    .then(res => {
+                        resolve(res.data)
+                    })
+                    .catch(err => {
+                        reject(err)
+                    })
+            }).then(res => {
+                context.commit('setTiposPolizaInterfaz', res)
             })
         }
     },
@@ -66,6 +89,12 @@ export default {
 
         meta(state) {
             return state.meta
+        },
+        estatus(state) {
+            return state.estatus
+        },
+        tiposPolizaInterfaz(state) {
+            return state.tiposPolizaInterfaz
         }
     }
 }

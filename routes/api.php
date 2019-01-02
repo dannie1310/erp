@@ -37,6 +37,8 @@ $api->version('v1', function ($api) {
         //PÓLIZAS
         $api->group(['prefix' => 'poliza'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@index');
+            $api->get('estatus_prepoliza', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@estatus_prepoliza');
+            $api->get('tipo_poliza_contpaq', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@tipo_poliza_contpaq');
         });
     });
 });

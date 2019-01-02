@@ -10,7 +10,9 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Transformers\CADECO\Contabilidad\EstatusPrepolizaTransformer;
 use App\Http\Transformers\CADECO\Contabilidad\PolizaTransformer;
+use App\Http\Transformers\CADECO\Contabilidad\TipoPolizaContpaqTransformer;
 use App\Services\CADECO\Contabilidad\PolizaService;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
@@ -59,6 +61,22 @@ class PolizaController extends Controller
 
         $response = $this->fractal->createData($resource)->toArray();
 
+        return response()->json($response, 200);
+    }
+
+    public function estatus_prepoliza()
+    {
+        $data = $this->service->getEstatus();
+        $resource = new Collection($data, new EstatusPrepolizaTransformer);
+        $response = $this->fractal->createData($resource)->toArray();
+        return response()->json($response, 200);
+    }
+
+    public function tipo_poliza_contpaq()
+    {
+        $data = $this->service->getTiposPolizaContpaq();
+        $resource = new Collection($data, new TipoPolizaContpaqTransformer);
+        $response = $this->fractal->createData($resource)->toArray();
         return response()->json($response, 200);
     }
 }

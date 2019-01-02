@@ -17,7 +17,6 @@ trait RepositoryTrait
             $query = $this->model;
             if ($data['sort'])
             $query = $query->orderBy($data['sort'], $data['order']);
-
             return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
         }
 
