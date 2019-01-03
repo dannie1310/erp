@@ -45,10 +45,10 @@
 
             push(route) {
                 if(route.meta.breadcrumb.parent) {
-                    this.push(this.$router.resolve({name: route.meta.breadcrumb.parent}).resolved);
-                    this.breadcrumbList.push({...route.meta.breadcrumb, link: route == this.$route ? null : route.path});
+                    this.push(this.$router.resolve({name: route.meta.breadcrumb.parent, params: route.params}).resolved);
+                    this.breadcrumbList.push({...route.meta.breadcrumb, link: route == this.$route ? null : {name: route.name, params: route.params}});
                 } else {
-                    this.breadcrumbList.push({...route.meta.breadcrumb, link: route == this.$route ? null : route.path});
+                    this.breadcrumbList.push({...route.meta.breadcrumb, link: route == this.$route ? null : {name: route.name, params: route.params}});
                 }
             }
         }

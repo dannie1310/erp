@@ -82,10 +82,20 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'poliza-show',
+                        props: true,
+                        component: require('./components/contabilidad/poliza/Show'),
+                        meta: {
+                            title: 'Ver Prepóliza Generada',
+                            breadcrumb: {parent: 'poliza', name: 'VER'},
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'poliza-edit',
                         component: require('./components/contabilidad/poliza/Edit'),
                         meta: {
                             title: 'Editar Prepóliza Generada',
-                            breadcrumb: { parent: 'poliza', id: true },
+                            breadcrumb: { parent: 'poliza-show', name: 'EDITAR'},
                         }
                     }
                 ]

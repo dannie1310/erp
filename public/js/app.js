@@ -88898,10 +88898,19 @@ var routes = [{
         }, {
             path: ':id',
             name: 'poliza-show',
+            props: true,
+            component: __webpack_require__(477),
+            meta: {
+                title: 'Ver Prepóliza Generada',
+                breadcrumb: { parent: 'poliza', name: 'VER' }
+            }
+        }, {
+            path: ':id/edit',
+            name: 'poliza-edit',
             component: __webpack_require__(472),
             meta: {
                 title: 'Editar Prepóliza Generada',
-                breadcrumb: { parent: 'poliza', id: true }
+                breadcrumb: { parent: 'poliza-show', name: 'EDITAR' }
             }
         }]
     }]
@@ -93186,10 +93195,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         },
         push: function push(route) {
             if (route.meta.breadcrumb.parent) {
-                this.push(this.$router.resolve({ name: route.meta.breadcrumb.parent }).resolved);
-                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : route.path }));
+                this.push(this.$router.resolve({ name: route.meta.breadcrumb.parent, params: route.params }).resolved);
+                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : { name: route.name, params: route.params } }));
             } else {
-                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : route.path }));
+                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : { name: route.name, params: route.params } }));
             }
         }
     }
@@ -93787,6 +93796,92 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-2ae183c6", module.exports)
+  }
+}
+
+/***/ }),
+/* 477 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(480)
+/* template */
+var __vue_template__ = __webpack_require__(482)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/poliza/Show.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-919b818e", Component.options)
+  } else {
+    hotAPI.reload("data-v-919b818e", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 478 */,
+/* 479 */,
+/* 480 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "poliza-show",
+    props: ['id']
+});
+
+/***/ }),
+/* 481 */,
+/* 482 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("p", [_vm._v("SHOW")])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-919b818e", module.exports)
   }
 }
 
