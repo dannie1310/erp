@@ -40,6 +40,9 @@ class PolizaService
         if(isset($data['estatus'])) {
             $poliza = $poliza->where([['estatus', '=', $data['estatus']]]);
         }
+        if(isset($data['concepto'])) {
+            $poliza = $poliza->where([['concepto', 'LIKE', '%'.$data['concepto'].'%']]);
+        }
 
         return $poliza->all($data);
     }
