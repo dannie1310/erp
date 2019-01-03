@@ -88837,7 +88837,7 @@ var routes = [{
     meta: {
         title: 'Inicio',
         middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]],
-        breadcrumb: [{ 'name': 'INICIO' }]
+        breadcrumb: { name: 'INICIO' }
     }
 }, {
     path: '/login',
@@ -88868,7 +88868,7 @@ var routes = [{
         component: __webpack_require__(393),
         meta: {
             title: 'Contabilidad',
-            breadcrumb: [{ name: 'INICIO', link: '/' }, { name: 'CONTABILIDAD' }],
+            breadcrumb: { parent: 'home', name: 'CONTABILIDAD' },
             middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
         }
     }, {
@@ -88892,8 +88892,16 @@ var routes = [{
             component: __webpack_require__(414),
             meta: {
                 title: 'Prepólizas Generadas',
-                breadcrumb: [{ name: 'INICIO', link: '/' }, { name: 'CONTABILIDAD', link: '/contabilidad' }, { name: 'PREPÓLIZAS GENERADAS' }],
+                breadcrumb: { parent: 'contabilidad', name: 'PREPÓLIZAS GENERADAS' },
                 middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
+            }
+        }, {
+            path: ':id',
+            name: 'poliza-show',
+            component: __webpack_require__(472),
+            meta: {
+                title: 'Editar Prepóliza Generada',
+                breadcrumb: { parent: 'poliza', id: true }
             }
         }]
     }]
@@ -91370,7 +91378,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     destroyed: function destroyed() {
-        $('input[name="daterange"]').datepicker('destroy');
+        $('input[name="daterange"]').daterangepicker('destroy');
     }
 });
 
@@ -93124,6 +93132,10 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+//
+//
 //
 //
 //
@@ -93166,11 +93178,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     methods: {
-        routeTo: function routeTo(pRouteTo) {
-            if (this.breadcrumbList[pRouteTo].link) this.$router.push(this.breadcrumbList[pRouteTo].link);
-        },
         updateList: function updateList() {
-            this.breadcrumbList = this.$route.meta.breadcrumb;
+            this.breadcrumbList = [];
+            if (this.$route.name != null) {
+                this.push(this.$route);
+            }
+        },
+        push: function push(route) {
+            if (route.meta.breadcrumb.parent) {
+                this.push(this.$router.resolve({ name: route.meta.breadcrumb.parent }).resolved);
+                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : route.path }));
+            } else {
+                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : route.path }));
+            }
         }
     }
 });
@@ -93197,7 +93217,7 @@ var render = function() {
         [
           breadcrumb.link
             ? _c("router-link", { attrs: { to: breadcrumb.link } }, [
-                breadcrumb.name == "INICIO"
+                !breadcrumb.parent
                   ? _c("span", [_c("i", { staticClass: "fa fa-home" })])
                   : _c("span", [
                       _vm._v(
@@ -93208,7 +93228,7 @@ var render = function() {
                     ])
               ])
             : _c("span", [
-                breadcrumb.name == "INICIO"
+                !breadcrumb.parent
                   ? _c("span", [_c("i", { staticClass: "fa fa-home" })])
                   : _c("span", [
                       _vm._v(
@@ -93641,6 +93661,132 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-934a5192", module.exports)
+  }
+}
+
+/***/ }),
+/* 472 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(473)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(475)
+/* template */
+var __vue_template__ = __webpack_require__(476)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-2ae183c6"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/poliza/Edit.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2ae183c6", Component.options)
+  } else {
+    hotAPI.reload("data-v-2ae183c6", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 473 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(474);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("c976e5fa", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2ae183c6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Edit.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2ae183c6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Edit.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 474 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 475 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "poliza-edit"
+});
+
+/***/ }),
+/* 476 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div")
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-2ae183c6", module.exports)
   }
 }
 

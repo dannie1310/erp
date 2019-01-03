@@ -29,7 +29,7 @@
         },
 
         destroyed: function () {
-            $('input[name="daterange"]').datepicker('destroy');
+            $('input[name="daterange"]').daterangepicker('destroy');
         }
     }
 </script>

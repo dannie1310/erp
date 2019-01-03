@@ -13,7 +13,7 @@ export const routes = [
         meta: {
             title: 'Inicio',
             middleware: [auth, context],
-            breadcrumb: [{'name': 'INICIO'}]
+            breadcrumb: {name: 'INICIO'}
         }
     },
     {
@@ -48,7 +48,7 @@ export const routes = [
                 component: require('./components/contabilidad/Index'),
                 meta: {
                     title: 'Contabilidad',
-                    breadcrumb: [{name: 'INICIO', link: '/'}, {name: 'CONTABILIDAD'}],
+                    breadcrumb: { parent: 'home', name: 'CONTABILIDAD'},
                     middleware: [auth, context]
                 }
             },
@@ -75,8 +75,17 @@ export const routes = [
                         component: require('./components/contabilidad/poliza/Index'),
                         meta: {
                             title: 'Prepólizas Generadas',
-                            breadcrumb: [{name: 'INICIO', link: '/'}, {name: 'CONTABILIDAD', link: '/contabilidad'}, {name: 'PREPÓLIZAS GENERADAS'}],
+                            breadcrumb: {parent: 'contabilidad', name: 'PREPÓLIZAS GENERADAS'},
                             middleware: [auth, context]
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'poliza-show',
+                        component: require('./components/contabilidad/poliza/Edit'),
+                        meta: {
+                            title: 'Editar Prepóliza Generada',
+                            breadcrumb: { parent: 'poliza', id: true },
                         }
                     }
                 ]

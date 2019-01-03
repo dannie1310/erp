@@ -4,14 +4,16 @@
             v-for="(breadcrumb, idx) in breadcrumbList"
             :key="idx"
             :class="{'active': !!breadcrumb.link}">
-            <router-link v-if="breadcrumb.link" :to="breadcrumb.link"><span v-if="breadcrumb.name == 'INICIO'">
+            <router-link v-if="breadcrumb.link" :to="breadcrumb.link">
+                <span v-if="!breadcrumb.parent">
                     <i class="fa fa-home"></i>
                 </span>
                 <span v-else>
                     {{ breadcrumb.name }}
-                </span></router-link>
+                </span>
+            </router-link>
             <span v-else>
-                <span v-if="breadcrumb.name == 'INICIO'">
+                <span v-if="!breadcrumb.parent">
                     <i class="fa fa-home"></i>
                 </span>
                 <span v-else>
@@ -33,10 +35,22 @@
         mounted () { this.updateList() },
         watch: { '$route' () { this.updateList() } },
         methods: {
-            routeTo (pRouteTo) {
-                if (this.breadcrumbList[pRouteTo].link) this.$router.push(this.breadcrumbList[pRouteTo].link)
+            updateList () {
+                this.breadcrumbList = [];
+                if(this.$route.name != null) {
+                    this.push(this.$route)
+                }
+
             },
-            updateList () { this.breadcrumbList = this.$route.meta.breadcrumb }
+
+            push(route) {
+                if(route.meta.breadcrumb.parent) {
+                    this.push(this.$router.resolve({name: route.meta.breadcrumb.parent}).resolved);
+                    this.breadcrumbList.push({...route.meta.breadcrumb, link: route == this.$route ? null : route.path});
+                } else {
+                    this.breadcrumbList.push({...route.meta.breadcrumb, link: route == this.$route ? null : route.path});
+                }
+            }
         }
     }
 </script>
