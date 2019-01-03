@@ -91169,7 +91169,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             HeaderSettings: false,
-            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Tipo de Póliza', field: 'id_tipo_poliza_interfaz', sortable: true }, { title: 'Tipo de Transacción', field: 'id_tipo_poliza_contpaq', sortable: true }, { title: 'Concepto', field: 'concepto', sortable: true }, { title: 'Fecha', field: 'fecha' }, { title: 'Monto', field: 'total' }, { title: 'Cuadre', field: 'cuadre' }, { title: 'Estado', field: 'estatus', tdComp: __webpack_require__(419) }, { title: 'Acciones', field: 'buttons', tdComp: __webpack_require__(422) }],
+            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Tipo de Póliza', field: 'id_tipo_poliza_interfaz', sortable: true }, { title: 'Tipo de Transacción', field: 'id_tipo_poliza_contpaq', sortable: true }, { title: 'Concepto', field: 'concepto', thComp: __webpack_require__(467), sortable: true }, { title: 'Fecha', field: 'fecha' }, { title: 'Monto', field: 'total' }, { title: 'Cuadre', field: 'cuadre' }, { title: 'Estado', field: 'estatus', sortable: true, tdComp: __webpack_require__(419) }, { title: 'Acciones', field: 'buttons', tdComp: __webpack_require__(422) }],
             data: [],
             total: 0,
             query: {},
@@ -91219,7 +91219,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 self.$data.data = [];
                 polizas.forEach(function (poliza, i) {
                     self.$data.data.push({
-                        index: poliza.id,
+                        index: i + 1 + self.query.offset,
                         id_tipo_poliza_interfaz: poliza.transaccionInterfaz.data.descripcion,
                         id_tipo_poliza_contpaq: poliza.tipoPolizaContpaq.data.descripcion,
                         concepto: poliza.concepto,
@@ -91248,16 +91248,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             deep: true
         },
         query: {
-            handler: function handler(query) {
-                this.fetch(query);
+            handler: function handler() {
+                this.fetch(this.query);
             },
 
             deep: true
         },
-        daterange: {
-            handler: function handler(dr) {
-                this.$data.query.startDate = dr.startDate;
-                this.$data.query.endDate = dr.endDate;
+        'daterange.startDate': {
+            handler: function handler(sd) {
+                this.$data.query.startDate = sd.format('YYYY-MM-DD');
+                this.query.offset = 0;
+                this.fetch(this.$data.query);
+            },
+
+            deep: true
+        },
+        'daterange.endDate': {
+            handler: function handler(ed) {
+                this.$data.query.endDate = ed.format('YYYY-MM-DD');
+                this.query.offset = 0;
                 this.fetch(this.$data.query);
             },
 
@@ -91265,10 +91274,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         id_tipo_poliza_contpaq: function id_tipo_poliza_contpaq(id_tipo) {
             this.$data.query.id_tipo_poliza_contpaq = id_tipo;
+            this.query.offset = 0;
             this.fetch(this.$data.query);
         },
         id_estatus: function id_estatus(estatus) {
             this.$data.query.estatus = estatus;
+            this.query.offset = 0;
             this.fetch(this.$data.query);
         }
     }
@@ -91347,7 +91358,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 toLabel: 'A'
             }
         }).on('apply.daterangepicker', function (ev, picker) {
-            self.$emit('input', { startDate: picker.startDate.format('YYYY-MM-DD'), endDate: picker.endDate.format('YYYY-MM-DD') });
+            self.$emit('input', picker);
         });
     },
 
@@ -93395,6 +93406,243 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 456 */,
+/* 457 */,
+/* 458 */,
+/* 459 */,
+/* 460 */,
+/* 461 */,
+/* 462 */,
+/* 463 */,
+/* 464 */,
+/* 465 */,
+/* 466 */,
+/* 467 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(468)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(470)
+/* template */
+var __vue_template__ = __webpack_require__(471)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/globals/th-Filter.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-934a5192", Component.options)
+  } else {
+    hotAPI.reload("data-v-934a5192", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 468 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(469);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("9dbbcda4", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-934a5192\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./th-Filter.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-934a5192\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./th-Filter.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 469 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\ninput[type=search]::-webkit-search-cancel-button {\n    -webkit-appearance: searchfield-cancel-button;\n    cursor: pointer;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 470 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['field', 'title', 'query'],
+    data: function data() {
+        return {
+            keyword: ''
+        };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        $(this.$el).on('shown.bs.dropdown', function (e) {
+            return _this.$refs.input.focus();
+        });
+    },
+
+    watch: {
+        keyword: function keyword(kw) {
+            // reset immediately if empty
+            if (kw === '') this.search();
+        }
+    },
+    methods: {
+        search: function search() {
+            var query = this.query;
+            // `$props.query` would be initialized to `{ limit: 10, offset: 0, sort: '', order: '' }` by default
+            // custom query conditions must be set to observable by using `Vue.set / $vm.$set`
+
+            this.$set(query, this.field, this.keyword);
+            query.offset = 0; // reset pagination
+        }
+    }
+});
+
+/***/ }),
+/* 471 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "btn-group" }, [
+    _vm._v("\n    " + _vm._s(_vm.title) + "\n    "),
+    _c("a", { attrs: { href: "javascript:;", "data-toggle": "dropdown" } }, [
+      _c("i", {
+        staticClass: "fa fa-filter",
+        class: { "text-muted": !_vm.keyword }
+      })
+    ]),
+    _vm._v(" "),
+    _c(
+      "ul",
+      { staticClass: "dropdown-menu", staticStyle: { padding: "3px" } },
+      [
+        _c("div", { staticClass: "input-group input-group-sm" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.keyword,
+                expression: "keyword"
+              }
+            ],
+            ref: "input",
+            staticClass: "form-control",
+            attrs: {
+              type: "search",
+              placeholder: "Buscar " + _vm.field + "..."
+            },
+            domProps: { value: _vm.keyword },
+            on: {
+              keydown: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                return _vm.search($event)
+              },
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.keyword = $event.target.value
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("span", { staticClass: "input-group-btn" }, [
+            _c("button", {
+              staticClass: "btn btn-default fa fa-search",
+              on: { click: _vm.search }
+            })
+          ])
+        ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-934a5192", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

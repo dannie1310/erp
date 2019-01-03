@@ -18,7 +18,7 @@
                     toLabel: 'A',
                 }
             }).on('apply.daterangepicker', function(ev, picker) {
-                self.$emit('input', {startDate: picker.startDate.format('YYYY-MM-DD'), endDate: picker.endDate.format('YYYY-MM-DD')});
+                self.$emit('input', picker);
             });
         },
 

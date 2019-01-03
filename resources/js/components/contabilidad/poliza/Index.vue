@@ -48,11 +48,11 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Tipo de Póliza', field: 'id_tipo_poliza_interfaz', sortable: true },
                     { title: 'Tipo de Transacción', field: 'id_tipo_poliza_contpaq', sortable: true },
-                    { title: 'Concepto', field: 'concepto', sortable: true },
+                    { title: 'Concepto', field: 'concepto', thComp: require('../../globals/th-Filter'), sortable: true },
                     { title: 'Fecha', field: 'fecha'},
                     { title: 'Monto', field: 'total'},
                     { title: 'Cuadre', field: 'cuadre'},
-                    { title: 'Estado', field: 'estatus', tdComp: require('./partials/EstatusLabel')},
+                    { title: 'Estado', field: 'estatus', sortable: true, tdComp: require('./partials/EstatusLabel')},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -103,7 +103,7 @@
                     self.$data.data = []
                     polizas.forEach(function (poliza, i) {
                         self.$data.data.push({
-                            index: poliza.id,
+                            index: (i + 1) + self.query.offset,
                             id_tipo_poliza_interfaz: poliza.transaccionInterfaz.data.descripcion,
                             id_tipo_poliza_contpaq: poliza.tipoPolizaContpaq.data.descripcion,
                             concepto: poliza.concepto,
@@ -130,25 +130,35 @@
                 deep: true
             },
             query: {
-                handler (query) {
-                    this.fetch(query)
+                handler () {
+                    this.fetch(this.query)
                 },
                 deep: true
             },
-            daterange: {
-                handler(dr) {
-                    this.$data.query.startDate = dr.startDate
-                    this.$data.query.endDate = dr.endDate
+            'daterange.startDate': {
+                handler(sd) {
+                    this.$data.query.startDate = sd.format('YYYY-MM-DD')
+                    this.query.offset = 0;
+                    this.fetch(this.$data.query)
+                },
+                deep: true
+            },
+            'daterange.endDate': {
+                handler(ed) {
+                    this.$data.query.endDate = ed.format('YYYY-MM-DD')
+                    this.query.offset = 0;
                     this.fetch(this.$data.query)
                 },
                 deep: true
             },
             id_tipo_poliza_contpaq(id_tipo) {
                 this.$data.query.id_tipo_poliza_contpaq = id_tipo;
+                this.query.offset = 0;
                 this.fetch(this.$data.query)
             },
             id_estatus(estatus) {
                 this.$data.query.estatus = estatus;
+                this.query.offset = 0;
                 this.fetch(this.$data.query)
             }
         },
