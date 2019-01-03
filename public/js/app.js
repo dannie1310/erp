@@ -88854,7 +88854,7 @@ var routes = [{
     meta: {
         title: 'Seleccionar Obra',
         middleware: __WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */],
-        breadcrumb: [{ name: 'SELECCIONAR OBRA' }]
+        breadcrumb: { name: 'SELECCIONAR OBRA' }
     }
 }, {
     path: '/contabilidad',
@@ -88877,7 +88877,7 @@ var routes = [{
         component: __webpack_require__(398),
         meta: {
             title: 'Cuentas de Almacén',
-            breadcrumb: [{ name: 'INICIO', link: '/' }, { name: 'CONTABILIDAD', link: '/contabilidad' }, { name: 'CUENTAS DE ALMACÉN' }],
+            breadcrumb: { name: 'CUENTAS DE ALMACÉN', parent: 'contabilidad' },
             middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
         }
     }, {

@@ -32,7 +32,7 @@ export const routes = [
         meta: {
             title: 'Seleccionar Obra',
             middleware: auth,
-            breadcrumb: [{name: 'SELECCIONAR OBRA'}]
+            breadcrumb: {name: 'SELECCIONAR OBRA'}
         }
     },
     {
@@ -58,7 +58,7 @@ export const routes = [
                 component: require('./components/contabilidad/cuenta-almacen/Index'),
                 meta: {
                     title: 'Cuentas de Almacén',
-                    breadcrumb: [{name: 'INICIO', link: '/'}, {name: 'CONTABILIDAD', link: '/contabilidad'}, {name: 'CUENTAS DE ALMACÉN'}],
+                    breadcrumb: {name: 'CUENTAS DE ALMACÉN', parent: 'contabilidad'},
                     middleware: [auth, context]
                 }
             },
