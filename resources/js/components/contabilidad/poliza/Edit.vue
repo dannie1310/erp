@@ -47,7 +47,7 @@
                 <!-- /.row -->
 
                 <!-- Table row -->
-                <!--<div class="row">
+                <div class="row">
                     <div class="col-12 table-responsive">
                         <table class="table table-striped" v-if="!cargando">
                             <thead>
@@ -71,8 +71,8 @@
                             </tbody>
                         </table>
                     </div>
-                    &lt;!&ndash; /.col &ndash;&gt;
-                </div>-->
+                    <!-- /.col -->
+                </div>
                 <!-- /.row -->
 
                 <!-- this row will not appear when printing -->

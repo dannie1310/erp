@@ -17,4 +17,7 @@ class TipoTransaccion extends Model
     protected $table = 'dbo.TipoTran';
     public $timestamps = false;
 
+    public function getDescripcionAttribute($attr) {
+        return preg_replace("/[^a-zA-Z]*$/", '', $attr);
+    }
 }

@@ -94159,6 +94159,39 @@ var render = function() {
                   ])
                 ])
               ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-12 table-responsive" }, [
+                !_vm.cargando
+                  ? _c("table", { staticClass: "table table-striped" }, [
+                      _vm._m(1),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        _vm._l(_vm.poliza.movimientos.data, function(
+                          partida,
+                          i
+                        ) {
+                          return _c("tr", [
+                            _c("td", [_vm._v(_vm._s(i + 1))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(partida.cuenta_contable))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(i + 1))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(i + 1))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(i + 1))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(i + 1))])
+                          ])
+                        }),
+                        0
+                      )
+                    ])
+                  : _vm._e()
+              ])
             ])
           ])
         ])
@@ -94176,6 +94209,24 @@ var staticRenderFns = [
           _c("i", { staticClass: "fa fa-list" }),
           _vm._v("  Información de Prepóliza\n                    ")
         ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Cuenta Contable")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Tipo Cuenta Contable")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Tipo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Subtotal")])
       ])
     ])
   }
