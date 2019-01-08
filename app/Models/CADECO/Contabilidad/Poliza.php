@@ -11,6 +11,7 @@ namespace App\Models\CADECO\Contabilidad;
 
 use App\Facades\Context;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
+use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -79,9 +80,9 @@ class Poliza extends Model
         return $usuario;
     }
 
-    public function factura()
+    public function transaccionAntecedente()
     {
-        return $this->belongsTo(Factura::class, 'id_transaccion_sao');
+        return $this->belongsTo(Transaccion::class, 'id_transaccion_sao');
     }
 
     public function traspaso()

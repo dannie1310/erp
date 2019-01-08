@@ -94037,6 +94037,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -94060,7 +94065,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         find: function find(id) {
-            return this.$store.dispatch('contabilidad/poliza/find', { id: id, params: { include: 'factura,movimientos,traspaso' } });
+            return this.$store.dispatch('contabilidad/poliza/find', { id: id, params: { include: 'transaccionAntecedente,movimientos,traspaso' } });
         }
     },
 
@@ -94090,7 +94095,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return result;
         },
         color: function color() {
-            if (this.sumaDebe - this.sumaHaber > 0.99) {
+            if (Math.abs(this.sumaDebe - this.sumaHaber) > 0.99) {
                 return {
                     'background-color': 'red',
                     'color': 'white'
@@ -94212,7 +94217,13 @@ var render = function() {
                     _c("td", { staticClass: "bg-gray-light" }, [
                       _c("b", [_vm._v("Póliza Contpaq:")]),
                       _c("br"),
-                      _vm._v("#" + _vm._s(_vm.poliza.poliza_contpaq))
+                      _vm._v(
+                        _vm._s(
+                          _vm.poliza.poliza_contpaq
+                            ? "#" + _vm.poliza.poliza_contpaq
+                            : ""
+                        )
+                      )
                     ]),
                     _vm._v(" "),
                     _c("td", { staticClass: "bg-gray-light" }, [
@@ -94225,13 +94236,18 @@ var render = function() {
                       _c("b", [_vm._v("Transacción Antecedente:")]),
                       _c("br"),
                       _vm._v(" "),
-                      _vm.poliza.factura
+                      _vm.poliza.transaccionAntecedente
                         ? _c("span", [
                             _vm._v(
                               "\n                                [" +
-                                _vm._s(_vm.poliza.factura.tipo.descripcion) +
+                                _vm._s(
+                                  _vm.poliza.transaccionAntecedente.tipo
+                                    .descripcion
+                                ) +
                                 "]  #" +
-                                _vm._s(_vm.poliza.factura.numero_folio) +
+                                _vm._s(
+                                  _vm.poliza.transaccionAntecedente.numero_folio
+                                ) +
                                 "\n                            "
                             )
                           ])
@@ -94561,12 +94577,6 @@ var render = function() {
                               _c("input", {
                                 directives: [
                                   {
-                                    name: "validate",
-                                    rawName: "v-validate",
-                                    value: "required",
-                                    expression: "'required'"
-                                  },
-                                  {
                                     name: "model",
                                     rawName: "v-model",
                                     value: movimiento.referencia,
@@ -94674,7 +94684,31 @@ var render = function() {
                         ])
                       ])
                     ])
-                  : _vm._e()
+                  : _vm._e(),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "col-sm-12",
+                    staticStyle: { "text-align": "right" }
+                  },
+                  [
+                    _c("h4", [
+                      _c("b", [_vm._v("Total de la Prepóliza:")]),
+                      _vm._v(
+                        "\n                            $ " +
+                          _vm._s(
+                            parseFloat(_vm.poliza.total).formatMoney(
+                              2,
+                              ".",
+                              ","
+                            )
+                          ) +
+                          "\n                        "
+                      )
+                    ])
+                  ]
+                )
               ])
             ])
           ])

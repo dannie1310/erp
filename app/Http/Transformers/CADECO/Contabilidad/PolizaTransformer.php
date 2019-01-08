@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
 use App\Http\Transformers\CADECO\Tesoreria\TraspasoCuentasTransformer;
+use App\Http\Transformers\TransaccionTransformer;
 use App\Models\CADECO\Contabilidad\Poliza;
 use League\Fractal\TransformerAbstract;
 
@@ -25,7 +26,7 @@ class PolizaTransformer extends TransformerAbstract
         'transaccionInterfaz',
         'tipoPolizaContpaq',
         'movimientos',
-        'factura',
+        'transaccionAntecedente',
         'traspaso'
     ];
 
@@ -106,14 +107,14 @@ class PolizaTransformer extends TransformerAbstract
     }
 
     /**
-     * Include Factura
+     * Include Transaccion
      *
      * @param Poliza $model
      * @return \League\Fractal\Resource\Item
      */
-    public function includeFactura(Poliza $model) {
-        if ($factura = $model->factura) {
-            return $this->item($factura, new FacturaTransformer);
+    public function includeTransaccionAntecedente(Poliza $model) {
+        if ($transaccion = $model->transaccionAntecedente) {
+            return $this->item($transaccion, new TransaccionTransformer);
         }
         return null;
     }

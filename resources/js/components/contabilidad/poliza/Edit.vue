@@ -32,11 +32,11 @@
                         </tr>
                         <tr>
                             <td class="bg-gray-light"><b>Estatus:</b><br><estatus-label :value="poliza.estatusPrepoliza"></estatus-label></td>
-                            <td class="bg-gray-light"><b>Póliza Contpaq:</b><br>#{{ poliza.poliza_contpaq }}</td>
+                            <td class="bg-gray-light"><b>Póliza Contpaq:</b><br>{{ poliza.poliza_contpaq ? '#' + poliza.poliza_contpaq : '' }}</td>
                             <td class="bg-gray-light"><b>Tipo de Póliza:</b><br>{{ poliza.tipoPolizaContpaq.descripcion }}</td>
                             <td class="bg-gray-light"><b>Transacción Antecedente:</b><br>
-                                <span v-if="poliza.factura">
-                                    [{{ poliza.factura.tipo.descripcion }}]  #{{ poliza.factura.numero_folio }}
+                                <span v-if="poliza.transaccionAntecedente">
+                                    [{{ poliza.transaccionAntecedente.tipo.descripcion }}]  #{{ poliza.transaccionAntecedente.numero_folio }}
                                 </span>
                                 <span v-else-if="poliza.traspaso">
                                     [Traspaso] #{{ poliza.traspaso.numero_folio }}
@@ -135,7 +135,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <input v-validate="'required'" class="form-control" type="text" size="5" v-model="movimiento.referencia">
+                                    <input class="form-control" type="text" size="5" v-model="movimiento.referencia">
                                 </td>
                                 <td>
                                     <textarea class="form-control" rows="3" cols="40" wrap="soft" v-model="movimiento.concepto"></textarea>
@@ -160,6 +160,11 @@
                             </tr>
                             </tfoot>
                         </table>
+                        <div class="col-sm-12" style="text-align: right">
+                            <h4><b>Total de la Prepóliza:</b>
+                                $&nbsp;{{ (parseFloat(poliza.total)).formatMoney(2, '.', ',') }}
+                            </h4>
+                        </div>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -190,7 +195,7 @@
 
         methods: {
             find(id) {
-                return this.$store.dispatch('contabilidad/poliza/find', {id: id, params: {include: 'factura,movimientos,traspaso'}})
+                return this.$store.dispatch('contabilidad/poliza/find', {id: id, params: {include: 'transaccionAntecedente,movimientos,traspaso'}})
 
             }
         },
@@ -221,7 +226,7 @@
                 return result
             },
             color() {
-                if(this.sumaDebe - this.sumaHaber > 0.99){
+                if(Math.abs(this.sumaDebe - this.sumaHaber) > 0.99) {
                     return {
                         'background-color': 'red',
                         'color': 'white'
