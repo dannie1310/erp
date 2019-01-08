@@ -94023,6 +94023,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -94056,6 +94070,37 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         datosContables: function datosContables() {
             return this.$store.getters['auth/datosContables'];
+        },
+        sumaDebe: function sumaDebe() {
+            var result = 0;
+            this.poliza.movimientos.data.forEach(function (movimiento, i) {
+                if (movimiento.tipo.id == 1) {
+                    result += parseFloat(movimiento.importe);
+                }
+            });
+            return result;
+        },
+        sumaHaber: function sumaHaber() {
+            var result = 0;
+            this.poliza.movimientos.data.forEach(function (movimiento, i) {
+                if (movimiento.tipo.id == 2) {
+                    result += parseFloat(movimiento.importe);
+                }
+            });
+            return result;
+        },
+        color: function color() {
+            if (this.sumaDebe - this.sumaHaber > 0.99) {
+                return {
+                    'background-color': 'red',
+                    'color': 'white'
+                };
+            } else {
+                return {
+                    'background-color': 'gray',
+                    'color': 'white'
+                };
+            }
         }
     }
 });
@@ -94578,7 +94623,56 @@ var render = function() {
                           ])
                         }),
                         0
-                      )
+                      ),
+                      _vm._v(" "),
+                      _c("tfoot", [
+                        _c("tr", [
+                          _c(
+                            "th",
+                            {
+                              staticClass: "text-center",
+                              style: _vm.color,
+                              attrs: { colspan: "4" }
+                            },
+                            [_c("b", [_vm._v("Sumas Iguales")])]
+                          ),
+                          _vm._v(" "),
+                          _c("th", { style: _vm.color }, [
+                            _c("b", [
+                              _vm._v(
+                                "$ " +
+                                  _vm._s(
+                                    parseFloat(_vm.sumaDebe).formatMoney(
+                                      2,
+                                      ".",
+                                      ","
+                                    )
+                                  )
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("th", { style: _vm.color }, [
+                            _c("b", [
+                              _vm._v(
+                                "$ " +
+                                  _vm._s(
+                                    parseFloat(_vm.sumaHaber).formatMoney(
+                                      2,
+                                      ".",
+                                      ","
+                                    )
+                                  )
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("th", {
+                            style: _vm.color,
+                            attrs: { colspan: "3" }
+                          })
+                        ])
+                      ])
                     ])
                   : _vm._e()
               ])

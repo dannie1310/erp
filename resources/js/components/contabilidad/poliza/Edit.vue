@@ -145,6 +145,20 @@
                                 </td>
                             </tr>
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colspan="4" class="text-center" :style="color">
+                                    <b>Sumas Iguales</b>
+                                </th>
+                                <th :style="color">
+                                    <b>$&nbsp;{{(parseFloat(sumaDebe)).formatMoney(2,'.',',')}}</b>
+                                </th>
+                                <th :style="color">
+                                    <b>$&nbsp;{{(parseFloat(sumaHaber)).formatMoney(2,'.',',')}}</b>
+                                </th>
+                                <th :style="color" colspan="3"></th>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <!-- /.col -->
@@ -187,6 +201,38 @@
             },
             datosContables() {
                 return this.$store.getters['auth/datosContables']
+            },
+            sumaDebe() {
+                let result = 0;
+                this.poliza.movimientos.data.forEach(function (movimiento, i) {
+                    if (movimiento.tipo.id == 1) {
+                        result += parseFloat(movimiento.importe);
+                    }
+                })
+                return result
+            },
+            sumaHaber() {
+                let result = 0;
+                this.poliza.movimientos.data.forEach(function (movimiento, i) {
+                    if (movimiento.tipo.id == 2) {
+                        result += parseFloat(movimiento.importe);
+                    }
+                })
+                return result
+            },
+            color() {
+                if(this.sumaDebe - this.sumaHaber > 0.99){
+                    return {
+                        'background-color': 'red',
+                        'color': 'white'
+                    }
+                }
+                else{
+                    return {
+                        'background-color': 'gray',
+                        'color': 'white'
+                    }
+                }
             }
         }
     }
