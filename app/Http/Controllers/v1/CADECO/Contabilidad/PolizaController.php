@@ -12,12 +12,13 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Contabilidad\EstatusPrepolizaTransformer;
 use App\Http\Transformers\CADECO\Contabilidad\PolizaTransformer;
-use App\Http\Transformers\CADECO\Contabilidad\TipoPolizaContpaqTransformer;
 use App\Services\CADECO\Contabilidad\PolizaService;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
+use League\Fractal\Serializer\ArraySerializer;
 
 class PolizaController extends Controller
 {
@@ -45,9 +46,9 @@ class PolizaController extends Controller
         $this->fractal = $fractal;
     }
 
-    public function index(Request $request)
+    public function paginate(Request $request)
     {
-        $paginator = $this->service->index($request->all());
+        $paginator = $this->service->paginate($request->all());
 
         $data = $paginator->getCollection();
 
@@ -64,18 +65,16 @@ class PolizaController extends Controller
         return response()->json($response, 200);
     }
 
-    public function estatus_prepoliza()
-    {
-        $data = $this->service->getEstatus();
-        $resource = new Collection($data, new EstatusPrepolizaTransformer);
-        $response = $this->fractal->createData($resource)->toArray();
-        return response()->json($response, 200);
-    }
+    public function find(Request $request, $id) {
+        $data = $this->service->find($id);
+        $resource = new Item($data, new PolizaTransformer);
 
-    public function tipo_poliza_contpaq()
-    {
-        $data = $this->service->getTiposPolizaContpaq();
-        $resource = new Collection($data, new TipoPolizaContpaqTransformer);
+        if ($request->has('include')) {
+            $this->fractal->parseIncludes($request->get('include'));
+        }
+
+        $this->fractal->setSerializer(new ArraySerializer());
+
         $response = $this->fractal->createData($resource)->toArray();
         return response()->json($response, 200);
     }

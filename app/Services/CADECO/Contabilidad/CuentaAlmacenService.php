@@ -27,8 +27,8 @@ class CuentaAlmacenService
         $this->cuentaAlmacen = $cuentaAlmacen;
     }
 
-    public function index($data) {
-        return $this->cuentaAlmacen->all($data);
+    public function paginate($data) {
+        return $this->cuentaAlmacen->paginate($data);
     }
 
     public function find($id) {

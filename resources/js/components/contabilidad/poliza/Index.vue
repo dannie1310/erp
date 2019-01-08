@@ -16,7 +16,7 @@
                         <div class="col">
                             <select class="form-control" v-model="id_tipo_poliza_contpaq">
                                 <option value>-- Tipo de Póliza --</option>
-                                <option v-for="item in tiposPolizaInterfaz" v-bind:value="item.id">{{ item.descripcion }}</option>
+                                <option v-for="item in tiposPolizaContaq" v-bind:value="item.id">{{ item.descripcion }}</option>
                             </select>
                         </div>
                     </div>
@@ -68,18 +68,18 @@
         mounted() {
             this.fetch()
             this.getEstatus()
-            this.getTiposPolizaInterfaz()
+            this.getTiposPolizaContaq()
         },
 
         methods: {
             fetch(payload = {}) {
-                return this.$store.dispatch('contabilidad/poliza/fetch', payload)
+                return this.$store.dispatch('contabilidad/poliza/paginate', payload)
             },
             getEstatus() {
-                return this.$store.dispatch('contabilidad/poliza/getEstatus')
+                return this.$store.dispatch('contabilidad/estatus-prepoliza/fetch')
             },
-            getTiposPolizaInterfaz() {
-                return this.$store.dispatch('contabilidad/poliza/getTiposPolizaInterfaz')
+            getTiposPolizaContaq() {
+                return this.$store.dispatch('contabilidad/tipos-poliza-contpaq/fetch')
             }
         },
         computed: {
@@ -90,10 +90,10 @@
                 return this.$store.getters['contabilidad/poliza/meta'];
             },
             estatus() {
-                return this.$store.getters['contabilidad/poliza/estatus']
+                return this.$store.getters['contabilidad/estatus-prepoliza/estatus']
             },
-            tiposPolizaInterfaz() {
-                return this.$store.getters['contabilidad/poliza/tiposPolizaInterfaz']
+            tiposPolizaContaq() {
+                return this.$store.getters['contabilidad/tipos-poliza-contpaq/tipos']
             }
         },
         watch: {

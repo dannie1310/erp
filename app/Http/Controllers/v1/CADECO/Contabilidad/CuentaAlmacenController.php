@@ -46,9 +46,9 @@ class CuentaAlmacenController extends Controller
         $this->fractal = $manager;
     }
 
-    public function index(Request $request)
+    public function paginate(Request $request)
     {
-        $paginator = $this->service->index($request->all());
+        $paginator = $this->service->paginate($request->all());
         $data = $paginator->getCollection();
 
         $resource = new Collection($data, new CuentaAlmacenTransformer);

@@ -42,7 +42,7 @@
 
         methods: {
             fetch(payload = {}) {
-                return this.$store.dispatch('contabilidad/cuenta-almacen/fetch', payload)
+                return this.$store.dispatch('contabilidad/cuenta-almacen/paginate', payload)
             }
         },
         computed: {

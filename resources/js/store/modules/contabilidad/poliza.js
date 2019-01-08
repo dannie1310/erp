@@ -3,15 +3,15 @@ export default {
     namespaced: true,
     state: {
         polizas: [],
-        estatus: [],
-        tiposPolizaInterfaz: [],
-        meta: {}
+        meta: {},
+        cargando: true
     },
 
     mutations: {
         fetch(state, payload) {
             state.polizas = payload.data;
             state.meta = payload.meta
+            state.cargando = false;
         },
 
         update(state, payload) {
@@ -22,17 +22,16 @@ export default {
                 return poliza
             })
         },
-        setEstatus(state, payload) {
-            state.estatus = payload.data;
-        },
-        setTiposPolizaInterfaz(state, payload) {
-            state.tiposPolizaInterfaz = payload.data;
+
+        cargando(state, is) {
+            state.cargando = is
         }
     },
 
     actions: {
-        fetch (context, payload){
-            axios.get(URI, {params: payload})
+        paginate (context, payload){
+            context.commit('cargando', true);
+            axios.get(URI + 'paginate', {params: payload})
                 .then(res => {
                     context.commit('fetch', res.data)
                 })
@@ -41,44 +40,21 @@ export default {
                 });
         },
 
-        find(context, id) {
+        find(context, payload) {
+            context.commit('cargando', true);
             return new Promise((resolve, reject) => {
-                axios.get(URI + id)
+                axios.get(URI + payload.id, {params: payload.params})
                     .then(res => {
                         resolve(res.data)
                     })
                     .catch(err => {
                         reject(err)
                     })
-            })
-        },
+                    .then(() => {
+                        context.commit('cargando', false);
+                    })
+            });
 
-        getEstatus(context){
-            return new Promise((resolve, reject) => {
-                axios.get(URI + 'estatus_prepoliza')
-                    .then(res => {
-                        resolve(res.data)
-                    })
-                    .catch(err => {
-                        reject(err)
-                    })
-            }).then(res => {
-                context.commit('setEstatus', res)
-            })
-        },
-
-        getTiposPolizaInterfaz(context) {
-            return new Promise((resolve, reject) => {
-                axios.get(URI + 'tipo_poliza_contpaq')
-                    .then(res => {
-                        resolve(res.data)
-                    })
-                    .catch(err => {
-                        reject(err)
-                    })
-            }).then(res => {
-                context.commit('setTiposPolizaInterfaz', res)
-            })
         }
     },
 
@@ -90,11 +66,9 @@ export default {
         meta(state) {
             return state.meta
         },
-        estatus(state) {
-            return state.estatus
-        },
-        tiposPolizaInterfaz(state) {
-            return state.tiposPolizaInterfaz
+
+        cargando(state) {
+            return state.cargando
         }
     }
 }

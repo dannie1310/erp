@@ -1,4 +1,5 @@
 const URI = '/api/contabilidad/cuenta-almacen/';
+
 export default {
     namespaced: true,
     state: {
@@ -15,7 +16,7 @@ export default {
         update(state, payload) {
             state.cuentas = state.cuentas.map(cuenta => {
                 if (cuenta.id === payload.id) {
-                    return Object.assign({}, cuenta, payload.data)
+                    return Object.assign([], cuenta, payload.data)
                 }
                 return cuenta
             })
@@ -23,8 +24,8 @@ export default {
     },
 
     actions: {
-        fetch (context, payload){
-            axios.get(URI, {params: payload})
+        paginate (context, payload){
+            axios.get(URI + 'paginate', {params: payload})
                 .then(res => {
                     context.commit('fetch', res.data)
                 })

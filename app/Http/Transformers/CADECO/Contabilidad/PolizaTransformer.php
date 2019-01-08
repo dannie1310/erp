@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
+use App\Http\Transformers\CADECO\Tesoreria\TraspasoCuentasTransformer;
 use App\Models\CADECO\Contabilidad\Poliza;
 use League\Fractal\TransformerAbstract;
 
@@ -22,7 +23,10 @@ class PolizaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'estatusPrepoliza',
         'transaccionInterfaz',
-        'tipoPolizaContpaq'
+        'tipoPolizaContpaq',
+        'movimientos',
+        'factura',
+        'traspaso'
     ];
 
     /**
@@ -33,7 +37,7 @@ class PolizaTransformer extends TransformerAbstract
     protected $defaultIncludes = [
         'estatusPrepoliza',
         'transaccionInterfaz',
-        'tipoPolizaContpaq'
+        'tipoPolizaContpaq',
     ];
 
     public function transform(Poliza $model) {
@@ -43,7 +47,9 @@ class PolizaTransformer extends TransformerAbstract
             'fecha' => $model->fecha->format('Y-m-d'),
             'total' => $model->total,
             'cuadre' => $model->cuadre,
-            'tiene_historico' => $model->historicos()->count() > 0
+            'tiene_historico' => $model->historicos()->count() > 0,
+            'usuario_solicita' => $model->UsuarioSolicita,
+            'poliza_contpaq' => $model->poliza_contpaq
         ];
     }
 
@@ -84,5 +90,44 @@ class PolizaTransformer extends TransformerAbstract
         $tipoPolizaContpaq = $model->tipoPolizaContpaq;
 
         return $this->item($tipoPolizaContpaq, new TipoPolizaContpaqTransformer);
+    }
+
+    /**
+     * Include PolizaMovimiento
+     *
+     * @param Poliza $model
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeMovimientos(Poliza $model)
+    {
+        $movimientos = $model->movimientos;
+
+        return $this->collection($movimientos, new PolizaMovimientoTransformer);
+    }
+
+    /**
+     * Include Factura
+     *
+     * @param Poliza $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeFactura(Poliza $model) {
+        if ($factura = $model->factura) {
+            return $this->item($factura, new FacturaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include TraspasoCuentas
+     *
+     * @param Poliza $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeTraspaso(Poliza $model) {
+        if ($traspaso = $model->traspaso) {
+            return $this->item($traspaso, new TraspasoCuentasTransformer);
+        }
+        return null;
     }
 }

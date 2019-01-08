@@ -21,7 +21,7 @@ class PolizaService
         $this->poliza = $poliza;
     }
 
-    public function index($data)
+    public function paginate($data)
     {
         $poliza = $this->poliza;
 
@@ -44,16 +44,10 @@ class PolizaService
             $poliza = $poliza->where([['concepto', 'LIKE', '%'.$data['concepto'].'%']]);
         }
 
-        return $poliza->all($data);
+        return $poliza->paginate($data);
     }
 
-    public function getEstatus()
-    {
-        return $this->poliza->getEstatus();
-    }
-
-    public function getTiposPolizaContpaq()
-    {
-        return $this->poliza->getTiposPolizaContpaq();
+    public function find($id) {
+        return $this->poliza->find($id);
     }
 }

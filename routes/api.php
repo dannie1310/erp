@@ -29,16 +29,25 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
         //CUENTAS DE ALMACÉN
         $api->group(['prefix' => 'cuenta-almacen'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@index');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@find');
-            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@update');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@find')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@update')->where(['id' => '[0-9]+']);
         });
 
         //PÓLIZAS
         $api->group(['prefix' => 'poliza'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@index');
-            $api->get('estatus_prepoliza', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@estatus_prepoliza');
-            $api->get('tipo_poliza_contpaq', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@tipo_poliza_contpaq');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@find')->where(['id' => '[0-9]+']);
+        });
+
+        //ESTATUS PREPÓLIZA
+        $api->group(['prefix' => 'estatus-prepoliza'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\EstatusPrepolizaController@index');
+        });
+
+        //TIPOS PÓLIZA CONTPAQ
+        $api->group(['prefix' => 'tipo-poliza-contpaq'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoPolizaContpaqController@index');
         });
     });
 });

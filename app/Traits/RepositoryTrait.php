@@ -11,7 +11,11 @@ namespace App\Traits;
 
 trait RepositoryTrait
 {
-    public function all($data)
+    public function all() {
+        return $this->model->get();
+    }
+
+    public function paginate($data)
     {
         if (count($data)) {
             $query = $this->model;
@@ -52,6 +56,11 @@ trait RepositoryTrait
             $explode = explode(':', $s);
             $this->model = $this->model->$explode[0](isset($explode[1]) ? $explode[1] : null);
         }
+        return $this;
+    }
+
+    public function where($where) {
+        $this->model = $this->model->where($where);
         return $this;
     }
 }
