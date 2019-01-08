@@ -10,9 +10,12 @@ namespace App\Models\CADECO\Contabilidad;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PolizaMovimiento extends Model
 {
+    use SoftDeletes;
+
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.int_polizas_movimientos';
     protected $primaryKey = 'id_int_poliza_movimiento';

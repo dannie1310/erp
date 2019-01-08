@@ -18,7 +18,15 @@
                         <tbody>
                         <tr>
                             <td class="bg-gray-light"><b>Tipo Póliza SAO:</b><br>{{ poliza.transaccionInterfaz.descripcion }}</td>
-                            <td class="bg-gray-light"><b>Fecha de Prepóliza:</b><br><input type="date" class="form-control" v-model="poliza.fecha"/></td>
+                            <td class="bg-gray-light"><b>Fecha de Prepóliza:</b><br>
+                                <span v-if="$root.can('editar_fecha_prepoliza')">
+                                    <input type="date" class="form-control" v-model="poliza.fecha"/>
+                                </span>
+                                <span v-else>
+                                    {{ poliza.fecha}}
+                                </span>
+
+                            </td>
                             <td class="bg-gray-light"><b>Usuario Solicita:</b><br>{{ poliza.usuario_solicita }}</td>
                             <td class="bg-gray-light"><b>Cuadre:</b><br>$ {{ parseFloat(poliza.cuadre).formatMoney(2, '.', ',') }}</td>
                         </tr>
@@ -52,21 +60,89 @@
                         <table class="table table-striped" v-if="!cargando">
                             <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Cuenta Contable</th>
-                                <th>Tipo Cuenta Contable</th>
-                                <th>Tipo</th>
-                                <th>Subtotal</th>
+                                <th class="bg-gray-light">#</th>
+                                <th class="bg-gray-light">Cuenta Contable</th>
+                                <th class="bg-gray-light">Tipo Cuenta Contable</th>
+                                <th class="bg-gray-light">Tipo</th>
+                                <th class="bg-gray-light">Debe</th>
+                                <th class="bg-gray-light">Haber</th>
+                                <th class="bg-gray-light">Referencia</th>
+                                <th class="bg-gray-light">Concepto</th>
+                                <th class="bg-gray-light">
+                                    <button type="button" class="btn btn-sm btn-outline-success"><i class="fa fa-plus"></i></button>
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(partida, i) in poliza.movimientos.data">
+                            <tr v-for="(movimiento, i) in poliza.movimientos.data">
                                 <td>{{ i + 1 }}</td>
-                                <td>{{ partida.cuenta_contable }}</td>
-                                <td>{{ i + 1 }}</td>
-                                <td>{{ i + 1 }}</td>
-                                <td>{{ i + 1 }}</td>
-                                <td>{{ i + 1 }}</td>
+                                <td>
+                                    <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
+                                        <span v-if="movimiento.id_tipo_cuenta_contable == 1 && movimiento.cuenta_contable != null">
+                                            {{ movimiento.cuenta_contable }}
+                                        </span>
+                                        <span v-else>
+                                        <input
+                                               v-mask="{regex: datosContables}"
+                                               type="text"
+                                               class="form-control"
+                                               v-model="movimiento.cuenta_contable">
+                                        </span>
+                                    </span>
+                                    <span v-else>
+                                        <label v-if="movimiento.cuenta_contable">{{ movimiento.cuenta_contable }}</label>
+                                        <label v-else>{{ datosContables }}</label>
+                                    </span>
+                                </td>
+                                <td>{{ movimiento.tipoCuentaContable ? movimiento.tipoCuentaContable.descripcion : 'No registrada'}}</td>
+                                <td>
+                                    <span v-if="$root.can('editar_tipo_movimiento_prepoliza')">
+                                        <select class="form-control" v-model="movimiento.tipo.id">
+                                            <option value="1">Cargo</option>
+                                            <option value="2">Abono</option>
+                                        </select>
+                                    </span>
+                                    <span v-else>
+                                        {{ movimiento.tipo.descripcion }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span v-if="movimiento.tipo.id == 1">
+                                        <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
+                                            <input
+                                                    type="number"
+                                                    step="any"
+                                                    class="form-control"
+                                                    v-model="movimiento.importe"/>
+                                        </span>
+                                        <span v-else>
+                                            ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span v-if="movimiento.tipo.id == 2">
+                                        <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
+                                            <input
+                                                    type="number"
+                                                    step="any"
+                                                    class="form-control"
+                                                    v-model="movimiento.importe"/>
+                                        </span>
+                                        <span v-else>
+                                            ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <input v-validate="'required'" class="form-control" type="text" size="5" v-model="movimiento.referencia">
+                                </td>
+                                <td>
+                                    <textarea class="form-control" rows="3" cols="40" wrap="soft" v-model="movimiento.concepto"></textarea>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></button>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -74,19 +150,6 @@
                     <!-- /.col -->
                 </div>
                 <!-- /.row -->
-
-                <!-- this row will not appear when printing -->
-                <!--<div class="row no-print">
-                    <div class="col-12">
-                        <a href="invoice-print.html" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Print</a>
-                        <button type="button" class="btn btn-success float-right"><i class="fa fa-credit-card"></i> Submit
-                            Payment
-                        </button>
-                        <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
-                            <i class="fa fa-download"></i> Generate PDF
-                        </button>
-                    </div>
-                </div>-->
             </div>
             <!-- /.invoice -->
         </div><!-- /.col -->
@@ -121,6 +184,9 @@
         computed: {
             cargando() {
                 return this.$store.getters['contabilidad/poliza/cargando']
+            },
+            datosContables() {
+                return this.$store.getters['auth/datosContables']
             }
         }
     }

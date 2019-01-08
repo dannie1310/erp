@@ -40,7 +40,8 @@ class PolizaMovimientoTransformer extends TransformerAbstract
             'cuenta_contable' => $model->cuenta_contable,
             'referencia' => $model->referencia,
             'importe' => $model->importe,
-            'concepto' => $model->concepto
+            'concepto' => $model->concepto,
+            'id_tipo_cuenta_contable' => $model->id_tipo_cuenta_contable
         ];
     }
 
