@@ -12,103 +12,131 @@
                     </div>
                     <!-- /.col -->
                 </div>
-                <!-- info row -->
-                <div class="row">
-                    <div class="table-responsive col-md-12">
-                        <table class="table">
-                            <tbody>
-                            <tr>
-                                <td class="bg-gray-light"><b>Tipo Póliza SAO:</b><br>{{ poliza.transaccionInterfaz.descripcion }}</td>
-                                <td class="bg-gray-light"><b>Fecha de Prepóliza:</b><br>
-                                    <span v-if="$root.can('editar_fecha_prepoliza')">
-                                    <input type="date" class="form-control" v-model="poliza.fecha"/>
-                                </span>
-                                    <span v-else>
-                                    {{ poliza.fecha}}
-                                </span>
 
-                                </td>
-                                <td class="bg-gray-light"><b>Usuario Solicita:</b><br>{{ poliza.usuario_solicita }}</td>
-                                <td class="bg-gray-light"><b>Cuadre:</b><br>$ {{ parseFloat(poliza.cuadre).formatMoney(2, '.', ',') }}</td>
-                            </tr>
-                            <tr>
-                                <td class="bg-gray-light"><b>Estatus:</b><br><estatus-label :value="poliza.estatusPrepoliza"></estatus-label></td>
-                                <td class="bg-gray-light"><b>Póliza Contpaq:</b><br>{{ poliza.poliza_contpaq ? '#' + poliza.poliza_contpaq : '' }}</td>
-                                <td class="bg-gray-light"><b>Tipo de Póliza:</b><br>{{ poliza.tipoPolizaContpaq.descripcion }}</td>
-                                <td class="bg-gray-light"><b>Transacción Antecedente:</b><br>
-                                    <span v-if="poliza.transaccionAntecedente">
+                <form role="form" @submit.prevent="validate">
+                    <!-- info row -->
+                    <div class="row">
+                        <div class="table-responsive col-md-12">
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <td class="bg-gray-light"><b>Tipo Póliza SAO:</b><br>{{ poliza.transaccionInterfaz.descripcion }}</td>
+                                    <td class="bg-gray-light"><b>Fecha de Prepóliza:</b><br>
+                                        <span v-if="$root.can('editar_fecha_prepoliza')">
+                                            <input
+                                                type="date"
+                                                class="form-control"
+                                                name="fecha"
+                                                v-model="poliza.fecha"
+                                                v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
+                                                data-vv-as="Fecha de Prepóliza"
+                                                :class="{'is-invalid': errors.has('fecha')}"
+                                            />
+                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{ poliza.fecha}}
+                                        </span>
+                                    </td>
+                                    <td class="bg-gray-light"><b>Usuario Solicita:</b><br>{{ poliza.usuario_solicita }}</td>
+                                    <td class="bg-gray-light"><b>Cuadre:</b><br>$ {{ parseFloat(poliza.cuadre).formatMoney(2, '.', ',') }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-light"><b>Estatus:</b><br><estatus-label :value="poliza.estatusPrepoliza"></estatus-label></td>
+                                    <td class="bg-gray-light"><b>Póliza Contpaq:</b><br>{{ poliza.poliza_contpaq ? '#' + poliza.poliza_contpaq : '' }}</td>
+                                    <td class="bg-gray-light"><b>Tipo de Póliza:</b><br>{{ poliza.tipoPolizaContpaq.descripcion }}</td>
+                                    <td class="bg-gray-light"><b>Transacción Antecedente:</b><br>
+                                        <span v-if="poliza.transaccionAntecedente">
                                     [{{ poliza.transaccionAntecedente.tipo.descripcion }}]  #{{ poliza.transaccionAntecedente.numero_folio }}
                                 </span>
-                                    <span v-else-if="poliza.traspaso">
+                                        <span v-else-if="poliza.traspaso">
                                     [Traspaso] #{{ poliza.traspaso.numero_folio }}
                                 </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="bg-gray-light">
-                                    <b>Concepto:</b><br>
-                                    <textarea name="concepto" type="text" class="form-control" v-model="poliza.concepto"></textarea>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="bg-gray-light">
+                                        <b>Concepto:</b><br>
+                                        <textarea
+                                                name="concepto"
+                                                type="text"
+                                                class="form-control"
+                                                v-model="poliza.concepto"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Concepto"
+                                                :class="{'is-invalid': errors.has('concepto')}"
+                                        ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-                <!-- /.row -->
+                    <!-- /.row -->
 
-                <!-- Table row -->
-                <div class="row">
-                    <div class="col-12 table-responsive">
-                        <table class="table table-striped" v-if="!cargando">
-                            <thead>
-                            <tr>
-                                <th class="bg-gray-light">#</th>
-                                <th class="bg-gray-light">Cuenta Contable</th>
-                                <th class="bg-gray-light">Tipo Cuenta Contable</th>
-                                <th class="bg-gray-light">Tipo</th>
-                                <th class="bg-gray-light">Debe</th>
-                                <th class="bg-gray-light">Haber</th>
-                                <th class="bg-gray-light">Referencia</th>
-                                <th class="bg-gray-light">Concepto</th>
-                                <th class="bg-gray-light">
-                                    <add-movimiento v-on:add="add"></add-movimiento>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="(movimiento, i) in poliza.movimientos.data" :class="{'bg-success': ! movimiento.id}">
-                                <td>{{ i + 1 }}</td>
-                                <td>
+                    <!-- Table row -->
+                    <div class="row">
+                        <div class="col-12 table-responsive">
+                            <table class="table table-striped" v-if="!cargando">
+                                <thead>
+                                <tr>
+                                    <th class="bg-gray-light">#</th>
+                                    <th class="bg-gray-light">Cuenta Contable</th>
+                                    <th class="bg-gray-light">Tipo Cuenta Contable</th>
+                                    <th class="bg-gray-light">Tipo</th>
+                                    <th class="bg-gray-light">Debe</th>
+                                    <th class="bg-gray-light">Haber</th>
+                                    <th class="bg-gray-light">Referencia</th>
+                                    <th class="bg-gray-light">Concepto</th>
+                                    <th class="bg-gray-light">
+                                        <add-movimiento v-on:add="add"></add-movimiento>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(movimiento, i) in poliza.movimientos.data" :class="{'bg-success': ! movimiento.id}">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>
                                     <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
                                         <span v-if="movimiento.id_tipo_cuenta_contable == 1 && movimiento.cuenta_contable != null">
                                             {{ movimiento.cuenta_contable }}
                                         </span>
                                         <span v-else>
                                         <input
-                                               v-mask="{regex: datosContables}"
-                                               type="text"
-                                               class="form-control"
-                                               v-model="movimiento.cuenta_contable">
+                                                v-mask="{regex: datosContables}"
+                                                type="text"
+                                                class="form-control"
+                                                v-model="movimiento.cuenta_contable">
                                         </span>
                                     </span>
-                                    <span v-else>
+                                        <span v-else>
                                         <label v-if="movimiento.cuenta_contable">{{ movimiento.cuenta_contable }}</label>
                                         <label v-else>{{ datosContables }}</label>
                                     </span>
-                                </td>
-                                <td>{{ movimiento.tipoCuentaContable ? movimiento.tipoCuentaContable.descripcion : 'No registrada'}}</td>
-                                <td>
+                                    </td>
+                                    <td>{{ movimiento.tipoCuentaContable ? movimiento.tipoCuentaContable.descripcion : 'No registrada'}}</td>
+                                    <td>
                                     <span v-if="$root.can('editar_tipo_movimiento_prepoliza')">
-                                        <select class="form-control" v-model="movimiento.tipo.id">
+                                        <select
+                                                class="form-control"
+                                                name="id_tipo_movimiento_poliza[]"
+                                                v-model="movimiento.tipo.id"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Tipo"
+                                                :class="{'is-invalid': errors.has('id_tipo_movimiento_poliza')}"
+                                        >
                                             <option value="1">Cargo</option>
                                             <option value="2">Abono</option>
                                         </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_tipo_movimiento_poliza')">{{ errors.first('id_tipo_movimiento_poliza') }}</div>
+
                                     </span>
-                                    <span v-else>
+                                        <span v-else>
                                         {{ movimiento.tipo.descripcion }}
                                     </span>
-                                </td>
-                                <td>
+                                    </td>
+                                    <td>
                                     <span v-if="movimiento.tipo.id == 1">
                                         <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
                                             <input
@@ -121,8 +149,8 @@
                                             ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
                                         </span>
                                     </span>
-                                </td>
-                                <td>
+                                    </td>
+                                    <td>
                                     <span v-if="movimiento.tipo.id == 2">
                                         <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
                                             <input
@@ -135,56 +163,58 @@
                                             ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
                                         </span>
                                     </span>
-                                </td>
-                                <td>
-                                    <input class="form-control" type="text" size="5" v-model="movimiento.referencia">
-                                </td>
-                                <td>
-                                    <textarea class="form-control" rows="3" cols="40" wrap="soft" v-model="movimiento.concepto"></textarea>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <th colspan="4" class="text-center" :class="color">
-                                    <b>Sumas Iguales</b>
-                                </th>
-                                <th :class="color">
-                                    <b>$&nbsp;{{(parseFloat(sumaDebe)).formatMoney(2,'.',',')}}</b>
-                                </th>
-                                <th :class="color">
-                                    <b>$&nbsp;{{(parseFloat(sumaHaber)).formatMoney(2,'.',',')}}</b>
-                                </th>
-                                <th :class="color" colspan="3"></th>
-                            </tr>
-                            </tfoot>
-                        </table>
-                        <div class="col-sm-12" style="text-align: right">
-                            <h4><b>Total de la Prepóliza:</b>
-                                $&nbsp;{{ (parseFloat(poliza.total)).formatMoney(2, '.', ',') }}
-                            </h4>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="text" size="5" v-model="movimiento.referencia">
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control" rows="3" cols="40" wrap="soft" v-model="movimiento.concepto"></textarea>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="remove(movimiento)"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th colspan="4" class="text-center" :class="color">
+                                        <b>Sumas Iguales</b>
+                                    </th>
+                                    <th :class="color">
+                                        <b>$&nbsp;{{(parseFloat(sumaDebe)).formatMoney(2,'.',',')}}</b>
+                                    </th>
+                                    <th :class="color">
+                                        <b>$&nbsp;{{(parseFloat(sumaHaber)).formatMoney(2,'.',',')}}</b>
+                                    </th>
+                                    <th :class="color" colspan="3"></th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                            <div class="col-sm-12" style="text-align: right">
+                                <h4><b>Total de la Prepóliza:</b>
+                                    $&nbsp;{{ (parseFloat(poliza.total)).formatMoney(2, '.', ',') }}
+                                </h4>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+
+                    <!--Footer row -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-info pull-right" type="submit" :disabled="errors.count() > 0">
+                                Guardar Cambios
+                            </button>
                         </div>
                     </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+                    <!-- /.row -->
+                </form>
 
-                <!--Footer row -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <button class="btn btn-info pull-right" type="submit">
-                            Guardar Cambios
-                        </button>
-                    </div>
-                </div>
                 <!-- /.row -->
             </div>
             <!-- /.invoice -->
         </div><!-- /.col -->
-
     </div><!-- /.row -->
 </template>
 
@@ -215,6 +245,24 @@
 
             add(movimiento) {
                 this.poliza.movimientos.data.push(movimiento)
+            },
+
+            remove(movimiento) {
+                this.poliza.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
+                    return JSON.stringify(movimiento) != JSON.stringify(m)
+                })
+            },
+
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.save()
+                    }
+                });
+            },
+
+            save() {
+                alert('save')
             }
         },
 
