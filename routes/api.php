@@ -34,15 +34,20 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@update')->where(['id' => '[0-9]+']);
         });
 
+        //ESTATUS PREPÓLIZA
+        $api->group(['prefix' => 'estatus-prepoliza'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\EstatusPrepolizaController@index');
+        });
+
         //PÓLIZAS
         $api->group(['prefix' => 'poliza'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@find')->where(['id' => '[0-9]+']);
         });
 
-        //ESTATUS PREPÓLIZA
-        $api->group(['prefix' => 'estatus-prepoliza'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\EstatusPrepolizaController@index');
+        //TIPOS CUENTA CONTABLE
+        $api->group(['prefix' => 'tipo-cuenta-contable'], function($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@index');
         });
 
         //TIPOS PÓLIZA CONTPAQ

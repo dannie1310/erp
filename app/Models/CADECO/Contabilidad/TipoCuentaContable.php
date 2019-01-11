@@ -29,4 +29,8 @@ class TipoCuentaContable extends Model
             return $query->where('id_obra', '=', Context::getIdObra());
         });
     }
+
+    public function cuentaContable() {
+        return $this->hasOne(CuentaContable::class, 'id_int_tipo_cuenta_contable');
+    }
 }

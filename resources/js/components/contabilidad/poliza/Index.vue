@@ -79,7 +79,7 @@
                 return this.$store.dispatch('contabilidad/estatus-prepoliza/fetch')
             },
             getTiposPolizaContaq() {
-                return this.$store.dispatch('contabilidad/tipos-poliza-contpaq/fetch')
+                return this.$store.dispatch('contabilidad/tipo-poliza-contpaq/fetch')
             }
         },
         computed: {
@@ -93,7 +93,7 @@
                 return this.$store.getters['contabilidad/estatus-prepoliza/estatus']
             },
             tiposPolizaContaq() {
-                return this.$store.getters['contabilidad/tipos-poliza-contpaq/tipos']
+                return this.$store.getters['contabilidad/tipo-poliza-contpaq/tipos']
             }
         },
         watch: {

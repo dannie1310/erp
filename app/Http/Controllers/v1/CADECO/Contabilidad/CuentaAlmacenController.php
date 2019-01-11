@@ -12,16 +12,16 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaAlmacenTransformer;
 use App\Services\CADECO\Contabilidad\CuentaAlmacenService;
+use App\Traits\ControllerTrait;
+use App\Traits\NuevoTrait;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
-use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 
 class CuentaAlmacenController extends Controller
 {
-    use Helpers;
+    use Helpers, ControllerTrait;
 
     /**
      * @var CuentaAlmacenService
@@ -34,49 +34,24 @@ class CuentaAlmacenController extends Controller
     protected $fractal;
 
     /**
+     * @var CuentaAlmacenTransformer
+     */
+    protected $transformer;
+
+    /**
      * CuentaAlmacenController constructor.
      * @param CuentaAlmacenService $service
+     * @param Manager $fractal
+     * @param CuentaAlmacenTransformer $transformer
      */
-    public function __construct(CuentaAlmacenService $service, Manager $manager)
+    public function __construct(CuentaAlmacenService $service, Manager $fractal, CuentaAlmacenTransformer $transformer)
     {
         $this->middleware('auth');
         $this->middleware('context');
 
         $this->service = $service;
-        $this->fractal = $manager;
-    }
-
-    public function paginate(Request $request)
-    {
-        $paginator = $this->service->paginate($request->all());
-        $data = $paginator->getCollection();
-
-        $resource = new Collection($data, new CuentaAlmacenTransformer);
-        $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
-
-
-        if ($request->has('include')) {
-            $this->fractal->parseIncludes($request->get('include'));
-        }
-
-        $response = $this->fractal->createData($resource)->toArray();
-
-        return response()->json($response, 200);
-    }
-
-    public function find(Request $request, $id)
-    {
-        $item = $this->service->find($id);
-        $resource = new Item($item, new CuentaAlmacenTransformer);
-
-        if ($request->has('include')) {
-            $this->fractal->parseIncludes($request->get('include'));
-        }
-
-        $response = $this->fractal->createData($resource)->toArray();
-
-        return response()->json($response, 200);
-
+        $this->fractal = $fractal;
+        $this->transformer = $transformer;
     }
 
     public function update(Request $request, $id) {

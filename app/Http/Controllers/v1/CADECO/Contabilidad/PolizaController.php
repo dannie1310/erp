@@ -10,18 +10,15 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Contabilidad\EstatusPrepolizaTransformer;
 use App\Http\Transformers\CADECO\Contabilidad\PolizaTransformer;
 use App\Services\CADECO\Contabilidad\PolizaService;
-use Illuminate\Http\Request;
+use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
-use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use League\Fractal\Resource\Collection;
-use League\Fractal\Resource\Item;
-use League\Fractal\Serializer\ArraySerializer;
 
 class PolizaController extends Controller
 {
+    use ControllerTrait;
+
     /**
      * @var PolizaService
      */
@@ -33,49 +30,24 @@ class PolizaController extends Controller
     protected $fractal;
 
     /**
+     * @var PolizaTransformer
+     */
+    protected $transformer;
+
+    /**
      * PolizaController constructor.
      * @param PolizaService $service
      * @param Manager $fractal
+     * @param PolizaTransformer $transformer
      */
-    public function __construct(PolizaService $service, Manager $fractal)
+    public function __construct(PolizaService $service, Manager $fractal, PolizaTransformer $transformer)
     {
         $this->middleware('auth');
         $this->middleware('context');
 
         $this->service = $service;
         $this->fractal = $fractal;
+        $this->transformer = $transformer;
     }
 
-    public function paginate(Request $request)
-    {
-        $paginator = $this->service->paginate($request->all());
-
-        $data = $paginator->getCollection();
-
-        $resource = new Collection($data, new PolizaTransformer);
-        $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
-
-
-        if ($request->has('include')) {
-            $this->fractal->parseIncludes($request->get('include'));
-        }
-
-        $response = $this->fractal->createData($resource)->toArray();
-
-        return response()->json($response, 200);
-    }
-
-    public function find(Request $request, $id) {
-        $data = $this->service->find($id);
-        $resource = new Item($data, new PolizaTransformer);
-
-        if ($request->has('include')) {
-            $this->fractal->parseIncludes($request->get('include'));
-        }
-
-        $this->fractal->setSerializer(new ArraySerializer());
-
-        $response = $this->fractal->createData($resource)->toArray();
-        return response()->json($response, 200);
-    }
 }
