@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
+use League\Fractal\Serializer\ArraySerializer;
 
 trait ControllerTrait
 {
@@ -29,8 +30,8 @@ trait ControllerTrait
             $this->fractal->parseIncludes($request->get('include'));
         }
 
+        $this->fractal->setSerializer(new ArraySerializer);
         $response = $this->fractal->createData($resource)->toArray();
-
         return response()->json($response, 200);
     }
 
@@ -42,6 +43,19 @@ trait ControllerTrait
             $this->fractal->parseIncludes($request->get('include'));
         }
 
+        $this->fractal->setSerializer(new ArraySerializer);
+        $response = $this->fractal->createData($resource)->toArray();
+        return response()->json($response, 200);
+    }
+
+    private function respondItem($item) {
+        $resource = new Item($item, $this->transformer);
+
+        if (request()->has('include')) {
+            $this->fractal->parseIncludes(request()->get('include'));
+        }
+
+        $this->fractal->setSerializer(new ArraySerializer);
         $response = $this->fractal->createData($resource)->toArray();
         return response()->json($response, 200);
     }

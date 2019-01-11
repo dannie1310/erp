@@ -62,8 +62,8 @@
                         self.$data.data.push({
                             index: cuenta.id,
                             cuenta: cuenta.cuenta,
-                            id_almacen: cuenta.almacen.data.descripcion,
-                            tipo: cuenta.almacen.data.tipo,
+                            id_almacen: cuenta.almacen.descripcion,
+                            tipo: cuenta.almacen.tipo,
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cuenta_almacen') ? true : undefined,
                                 id: cuenta.id

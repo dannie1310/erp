@@ -50,7 +50,7 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.patch(URI + payload.id, payload)
                     .then(response => {
-                        context.commit('update', {id: payload.id, data: response.data.data});
+                        context.commit('update', {id: payload.id, data: response.data});
                         resolve(response.data);
                     })
                     .catch(error => {
