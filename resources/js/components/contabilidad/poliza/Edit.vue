@@ -203,7 +203,7 @@
                     <!--Footer row -->
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-info pull-right" type="submit" :disabled="errors.count() > 0">
+                            <button class="btn btn-info pull-right" type="submit" :disabled="errors.count() > 0 || !cuadrado">
                                 Guardar Cambios
                             </button>
                         </div>
@@ -290,8 +290,11 @@
                 })
                 return result
             },
+            cuadrado() {
+                return Math.abs(this.sumaDebe - this.sumaHaber) <= 0.99;
+            },
             color() {
-                if(Math.abs(this.sumaDebe - this.sumaHaber) > 0.99) {
+                if(!this.cuadrado) {
                     return 'bg-danger'
                 }
                 else{

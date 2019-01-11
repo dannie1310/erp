@@ -94182,8 +94182,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
             return result;
         },
+        cuadrado: function cuadrado() {
+            return Math.abs(this.sumaDebe - this.sumaHaber) <= 0.99;
+        },
         color: function color() {
-            if (Math.abs(this.sumaDebe - this.sumaHaber) > 0.99) {
+            if (!this.cuadrado) {
                 return 'bg-danger';
             } else {
                 return 'bg-gray';
@@ -95922,7 +95925,7 @@ var render = function() {
                         staticClass: "btn btn-info pull-right",
                         attrs: {
                           type: "submit",
-                          disabled: _vm.errors.count() > 0
+                          disabled: _vm.errors.count() > 0 || !_vm.cuadrado
                         }
                       },
                       [
