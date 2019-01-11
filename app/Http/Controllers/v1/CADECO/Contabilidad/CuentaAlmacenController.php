@@ -17,7 +17,6 @@ use App\Traits\NuevoTrait;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
-use League\Fractal\Resource\Item;
 
 class CuentaAlmacenController extends Controller
 {
@@ -56,15 +55,6 @@ class CuentaAlmacenController extends Controller
 
     public function update(Request $request, $id) {
         $item = $this->service->update($request->all(), $id);
-
-        $resource = new Item($item, new CuentaAlmacenTransformer);
-
-        if ($request->has('include')) {
-            $this->fractal->parseIncludes($request->get('include'));
-        }
-
-        $response = $this->fractal->createData($resource)->toArray();
-
-        return response()->json($response, 200);
+        return $this->respondItem($item);
     }
 }

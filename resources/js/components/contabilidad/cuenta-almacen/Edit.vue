@@ -38,7 +38,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="almacen">Almacen</label>
-                                        <input readonly type="text" class="form-control" id="almacen" v-model="cuenta.almacen.data.descripcion">
+                                        <input readonly type="text" class="form-control" id="almacen" v-model="cuenta.almacen.descripcion">
                                     </div>
                                 </div>
                             </div>
@@ -76,7 +76,7 @@
                 this.loading = true;
                 this.$store.dispatch('contabilidad/cuenta-almacen/find', id)
                     .then(data => {
-                        this.$data.cuenta = data.data;
+                        this.$data.cuenta = data;
                     })
                     .catch(error => {
                         alert(error);

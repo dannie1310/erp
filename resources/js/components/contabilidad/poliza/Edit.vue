@@ -240,7 +240,6 @@
         methods: {
             find(id) {
                 return this.$store.dispatch('contabilidad/poliza/find', {id: id, params: {include: 'transaccionAntecedente,movimientos,traspaso'}})
-
             },
 
             add(movimiento) {
