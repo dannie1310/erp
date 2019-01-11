@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\Contabilidad;
 
 
+use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -25,7 +26,8 @@ class CuentaContable extends Model
         parent::boot();
 
         static::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
+            return $query->where('id_obra', '=', Context::getIdObra())
+                ->where('estatus', '=', true);
         });
     }
 

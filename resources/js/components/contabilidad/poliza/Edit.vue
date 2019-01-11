@@ -13,44 +13,46 @@
                     <!-- /.col -->
                 </div>
                 <!-- info row -->
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                        <tr>
-                            <td class="bg-gray-light"><b>Tipo Póliza SAO:</b><br>{{ poliza.transaccionInterfaz.descripcion }}</td>
-                            <td class="bg-gray-light"><b>Fecha de Prepóliza:</b><br>
-                                <span v-if="$root.can('editar_fecha_prepoliza')">
+                <div class="row">
+                    <div class="table-responsive col-md-12">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td class="bg-gray-light"><b>Tipo Póliza SAO:</b><br>{{ poliza.transaccionInterfaz.descripcion }}</td>
+                                <td class="bg-gray-light"><b>Fecha de Prepóliza:</b><br>
+                                    <span v-if="$root.can('editar_fecha_prepoliza')">
                                     <input type="date" class="form-control" v-model="poliza.fecha"/>
                                 </span>
-                                <span v-else>
+                                    <span v-else>
                                     {{ poliza.fecha}}
                                 </span>
 
-                            </td>
-                            <td class="bg-gray-light"><b>Usuario Solicita:</b><br>{{ poliza.usuario_solicita }}</td>
-                            <td class="bg-gray-light"><b>Cuadre:</b><br>$ {{ parseFloat(poliza.cuadre).formatMoney(2, '.', ',') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="bg-gray-light"><b>Estatus:</b><br><estatus-label :value="poliza.estatusPrepoliza"></estatus-label></td>
-                            <td class="bg-gray-light"><b>Póliza Contpaq:</b><br>{{ poliza.poliza_contpaq ? '#' + poliza.poliza_contpaq : '' }}</td>
-                            <td class="bg-gray-light"><b>Tipo de Póliza:</b><br>{{ poliza.tipoPolizaContpaq.descripcion }}</td>
-                            <td class="bg-gray-light"><b>Transacción Antecedente:</b><br>
-                                <span v-if="poliza.transaccionAntecedente">
+                                </td>
+                                <td class="bg-gray-light"><b>Usuario Solicita:</b><br>{{ poliza.usuario_solicita }}</td>
+                                <td class="bg-gray-light"><b>Cuadre:</b><br>$ {{ parseFloat(poliza.cuadre).formatMoney(2, '.', ',') }}</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-gray-light"><b>Estatus:</b><br><estatus-label :value="poliza.estatusPrepoliza"></estatus-label></td>
+                                <td class="bg-gray-light"><b>Póliza Contpaq:</b><br>{{ poliza.poliza_contpaq ? '#' + poliza.poliza_contpaq : '' }}</td>
+                                <td class="bg-gray-light"><b>Tipo de Póliza:</b><br>{{ poliza.tipoPolizaContpaq.descripcion }}</td>
+                                <td class="bg-gray-light"><b>Transacción Antecedente:</b><br>
+                                    <span v-if="poliza.transaccionAntecedente">
                                     [{{ poliza.transaccionAntecedente.tipo.descripcion }}]  #{{ poliza.transaccionAntecedente.numero_folio }}
                                 </span>
-                                <span v-else-if="poliza.traspaso">
+                                    <span v-else-if="poliza.traspaso">
                                     [Traspaso] #{{ poliza.traspaso.numero_folio }}
                                 </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="4" class="bg-gray-light">
-                                <b>Concepto:</b><br>
-                                <textarea name="concepto" type="text" class="form-control" v-model="poliza.concepto"></textarea>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="bg-gray-light">
+                                    <b>Concepto:</b><br>
+                                    <textarea name="concepto" type="text" class="form-control" v-model="poliza.concepto"></textarea>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- /.row -->
 
@@ -69,12 +71,12 @@
                                 <th class="bg-gray-light">Referencia</th>
                                 <th class="bg-gray-light">Concepto</th>
                                 <th class="bg-gray-light">
-                                    <button type="button" class="btn btn-sm btn-outline-success"><i class="fa fa-plus"></i></button>
+                                    <add-movimiento v-on:add="add"></add-movimiento>
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(movimiento, i) in poliza.movimientos.data">
+                            <tr v-for="(movimiento, i) in poliza.movimientos.data" :class="{'bg-success': ! movimiento.id}">
                                 <td>{{ i + 1 }}</td>
                                 <td>
                                     <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
@@ -147,16 +149,16 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th colspan="4" class="text-center" :style="color">
+                                <th colspan="4" class="text-center" :class="color">
                                     <b>Sumas Iguales</b>
                                 </th>
-                                <th :style="color">
+                                <th :class="color">
                                     <b>$&nbsp;{{(parseFloat(sumaDebe)).formatMoney(2,'.',',')}}</b>
                                 </th>
-                                <th :style="color">
+                                <th :class="color">
                                     <b>$&nbsp;{{(parseFloat(sumaHaber)).formatMoney(2,'.',',')}}</b>
                                 </th>
-                                <th :style="color" colspan="3"></th>
+                                <th :class="color" colspan="3"></th>
                             </tr>
                             </tfoot>
                         </table>
@@ -169,18 +171,30 @@
                     <!-- /.col -->
                 </div>
                 <!-- /.row -->
+
+                <!--Footer row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-info pull-right" type="submit">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+                <!-- /.row -->
             </div>
             <!-- /.invoice -->
         </div><!-- /.col -->
+
     </div><!-- /.row -->
 </template>
 
 <script>
     import EstatusLabel from "./partials/EstatusLabel";
+    import AddMovimiento from "./partials/AddMovimiento";
 
     export default {
         name: "poliza-edit",
-        components: {EstatusLabel},
+        components: {AddMovimiento, EstatusLabel},
         props: ['id'],
         data() {
             return {
@@ -197,6 +211,10 @@
             find(id) {
                 return this.$store.dispatch('contabilidad/poliza/find', {id: id, params: {include: 'transaccionAntecedente,movimientos,traspaso'}})
 
+            },
+
+            add(movimiento) {
+                this.poliza.movimientos.data.push(movimiento)
             }
         },
 
@@ -227,16 +245,10 @@
             },
             color() {
                 if(Math.abs(this.sumaDebe - this.sumaHaber) > 0.99) {
-                    return {
-                        'background-color': 'red',
-                        'color': 'white'
-                    }
+                    return 'bg-danger'
                 }
                 else{
-                    return {
-                        'background-color': 'gray',
-                        'color': 'white'
-                    }
+                    return 'bg-gray'
                 }
             }
         }
