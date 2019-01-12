@@ -94109,6 +94109,68 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -94119,7 +94181,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     props: ['id'],
     data: function data() {
         return {
-            poliza: null
+            poliza: null,
+            original: null
         };
     },
     mounted: function mounted() {
@@ -94127,13 +94190,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         this.find(this.id).then(function (data) {
             _this.poliza = data;
+            _this.original = JSON.parse(JSON.stringify(data));
         });
     },
 
 
     methods: {
         find: function find(id) {
-            return this.$store.dispatch('contabilidad/poliza/find', { id: id, params: { include: 'transaccionAntecedente,movimientos,traspaso' } });
+            return this.$store.dispatch('contabilidad/poliza/find', {
+                id: id,
+                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+            });
         },
         add: function add(movimiento) {
             this.poliza.movimientos.data.push(movimiento);
@@ -94191,6 +94258,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             } else {
                 return 'bg-gray';
             }
+        },
+        cambio: function cambio() {
+            return JSON.stringify(this.poliza) != JSON.stringify(this.original);
         }
     }
 });
@@ -95137,7 +95207,9 @@ var render = function() {
                             _c("b", [_vm._v("Tipo Póliza SAO:")]),
                             _c("br"),
                             _vm._v(
-                              _vm._s(_vm.poliza.transaccionInterfaz.descripcion)
+                              _vm._s(
+                                _vm.poliza.transaccionInterfaz.descripcion
+                              ) + "\n                                "
                             )
                           ]),
                           _vm._v(" "),
@@ -95218,7 +95290,10 @@ var render = function() {
                           _c("td", { staticClass: "bg-gray-light" }, [
                             _c("b", [_vm._v("Usuario Solicita:")]),
                             _c("br"),
-                            _vm._v(_vm._s(_vm.poliza.usuario_solicita))
+                            _vm._v(
+                              _vm._s(_vm.poliza.usuario_solicita) +
+                                "\n                                "
+                            )
                           ]),
                           _vm._v(" "),
                           _c("td", { staticClass: "bg-gray-light" }, [
@@ -95232,7 +95307,8 @@ var render = function() {
                                     ".",
                                     ","
                                   )
-                                )
+                                ) +
+                                "\n                                "
                             )
                           ])
                         ]),
@@ -95244,6 +95320,7 @@ var render = function() {
                             [
                               _c("b", [_vm._v("Estatus:")]),
                               _c("br"),
+                              _vm._v(" "),
                               _c("estatus-label", {
                                 attrs: { value: _vm.poliza.estatusPrepoliza }
                               })
@@ -95259,7 +95336,7 @@ var render = function() {
                                 _vm.poliza.poliza_contpaq
                                   ? "#" + _vm.poliza.poliza_contpaq
                                   : ""
-                              )
+                              ) + "\n                                "
                             )
                           ]),
                           _vm._v(" "),
@@ -95267,7 +95344,8 @@ var render = function() {
                             _c("b", [_vm._v("Tipo de Póliza:")]),
                             _c("br"),
                             _vm._v(
-                              _vm._s(_vm.poliza.tipoPolizaContpaq.descripcion)
+                              _vm._s(_vm.poliza.tipoPolizaContpaq.descripcion) +
+                                "\n                                "
                             )
                           ]),
                           _vm._v(" "),
@@ -95366,7 +95444,12 @@ var render = function() {
                                   ],
                                   staticClass: "invalid-feedback"
                                 },
-                                [_vm._v(_vm._s(_vm.errors.first("concepto")))]
+                                [
+                                  _vm._v(
+                                    _vm._s(_vm.errors.first("concepto")) +
+                                      "\n                                    "
+                                  )
+                                ]
                               )
                             ]
                           )
@@ -95478,10 +95561,36 @@ var render = function() {
                                                         movimiento.cuenta_contable,
                                                       expression:
                                                         "movimiento.cuenta_contable"
+                                                    },
+                                                    {
+                                                      name: "validate",
+                                                      rawName: "v-validate",
+                                                      value: {
+                                                        required: true,
+                                                        regex:
+                                                          _vm.datosContables
+                                                      },
+                                                      expression:
+                                                        "{required: true, regex: datosContables}"
                                                     }
                                                   ],
                                                   staticClass: "form-control",
-                                                  attrs: { type: "text" },
+                                                  class: {
+                                                    "is-invalid": _vm.errors.has(
+                                                      "cuenta_contable[" +
+                                                        i +
+                                                        "]"
+                                                    )
+                                                  },
+                                                  attrs: {
+                                                    type: "text",
+                                                    name:
+                                                      "cuenta_contable[" +
+                                                      i +
+                                                      "]",
+                                                    "data-vv-as":
+                                                      "Cuenta Contable"
+                                                  },
                                                   domProps: {
                                                     value:
                                                       movimiento.cuenta_contable
@@ -95500,7 +95609,39 @@ var render = function() {
                                                       )
                                                     }
                                                   }
-                                                })
+                                                }),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    directives: [
+                                                      {
+                                                        name: "show",
+                                                        rawName: "v-show",
+                                                        value: _vm.errors.has(
+                                                          "cuenta_contable[" +
+                                                            i +
+                                                            "]"
+                                                        ),
+                                                        expression:
+                                                          "errors.has(`cuenta_contable[${i}]`)"
+                                                      }
+                                                    ],
+                                                    staticClass:
+                                                      "invalid-feedback"
+                                                  },
+                                                  [
+                                                    _vm._v(
+                                                      _vm._s(
+                                                        _vm.errors.first(
+                                                          "cuenta_contable[" +
+                                                            i +
+                                                            "]"
+                                                        )
+                                                      )
+                                                    )
+                                                  ]
+                                                )
                                               ])
                                         ])
                                       : _c("span", [
@@ -95527,7 +95668,7 @@ var render = function() {
                                           ? movimiento.tipoCuentaContable
                                               .descripcion
                                           : "No registrada"
-                                      )
+                                      ) + "\n                                "
                                     )
                                   ]),
                                   _vm._v(" "),
@@ -95557,12 +95698,16 @@ var render = function() {
                                               staticClass: "form-control",
                                               class: {
                                                 "is-invalid": _vm.errors.has(
-                                                  "id_tipo_movimiento_poliza"
+                                                  "id_tipo_movimiento_poliza[" +
+                                                    i +
+                                                    "]"
                                                 )
                                               },
                                               attrs: {
                                                 name:
-                                                  "id_tipo_movimiento_poliza[]",
+                                                  "id_tipo_movimiento_poliza[" +
+                                                  i +
+                                                  "]",
                                                 "data-vv-as": "Tipo"
                                               },
                                               on: {
@@ -95614,10 +95759,12 @@ var render = function() {
                                                   name: "show",
                                                   rawName: "v-show",
                                                   value: _vm.errors.has(
-                                                    "id_tipo_movimiento_poliza"
+                                                    "id_tipo_movimiento_poliza[" +
+                                                      i +
+                                                      "]"
                                                   ),
                                                   expression:
-                                                    "errors.has('id_tipo_movimiento_poliza')"
+                                                    "errors.has(`id_tipo_movimiento_poliza[${i}]`)"
                                                 }
                                               ],
                                               staticClass: "invalid-feedback"
@@ -95626,7 +95773,9 @@ var render = function() {
                                               _vm._v(
                                                 _vm._s(
                                                   _vm.errors.first(
-                                                    "id_tipo_movimiento_poliza"
+                                                    "id_tipo_movimiento_poliza[" +
+                                                      i +
+                                                      "]"
                                                   )
                                                 )
                                               )
@@ -95635,11 +95784,11 @@ var render = function() {
                                         ])
                                       : _c("span", [
                                           _vm._v(
-                                            "\n                                    " +
+                                            "\n                                        " +
                                               _vm._s(
                                                 movimiento.tipo.descripcion
                                               ) +
-                                              "\n                                "
+                                              "\n                                    "
                                           )
                                         ])
                                   ]),
@@ -95659,12 +95808,29 @@ var render = function() {
                                                       value: movimiento.importe,
                                                       expression:
                                                         "movimiento.importe"
+                                                    },
+                                                    {
+                                                      name: "validate",
+                                                      rawName: "v-validate",
+                                                      value: {
+                                                        required: true,
+                                                        decimal: true
+                                                      },
+                                                      expression:
+                                                        "{required: true, decimal: true}"
                                                     }
                                                   ],
                                                   staticClass: "form-control",
+                                                  class: {
+                                                    "is-invalid": _vm.errors.has(
+                                                      "importe[" + i + "]"
+                                                    )
+                                                  },
                                                   attrs: {
                                                     type: "number",
-                                                    step: "any"
+                                                    step: "any",
+                                                    name: "importe[" + i + "]",
+                                                    "data-vv-as": "Debe"
                                                   },
                                                   domProps: {
                                                     value: movimiento.importe
@@ -95683,7 +95849,35 @@ var render = function() {
                                                       )
                                                     }
                                                   }
-                                                })
+                                                }),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    directives: [
+                                                      {
+                                                        name: "show",
+                                                        rawName: "v-show",
+                                                        value: _vm.errors.has(
+                                                          "importe[" + i + "]"
+                                                        ),
+                                                        expression:
+                                                          "errors.has(`importe[${i}]`)"
+                                                      }
+                                                    ],
+                                                    staticClass:
+                                                      "invalid-feedback"
+                                                  },
+                                                  [
+                                                    _vm._v(
+                                                      _vm._s(
+                                                        _vm.errors.first(
+                                                          "importe[" + i + "]"
+                                                        )
+                                                      )
+                                                    )
+                                                  ]
+                                                )
                                               ])
                                             : _c("span", [
                                                 _vm._v(
@@ -95715,12 +95909,29 @@ var render = function() {
                                                       value: movimiento.importe,
                                                       expression:
                                                         "movimiento.importe"
+                                                    },
+                                                    {
+                                                      name: "validate",
+                                                      rawName: "v-validate",
+                                                      value: {
+                                                        required: true,
+                                                        decimal: true
+                                                      },
+                                                      expression:
+                                                        "{required: true, decimal: true}"
                                                     }
                                                   ],
                                                   staticClass: "form-control",
+                                                  class: {
+                                                    "is-invalid": _vm.errors.has(
+                                                      "importe[" + i + "]"
+                                                    )
+                                                  },
                                                   attrs: {
                                                     type: "number",
-                                                    step: "any"
+                                                    step: "any",
+                                                    name: "importe[" + i + "]",
+                                                    "data-vv-as": "Debe"
                                                   },
                                                   domProps: {
                                                     value: movimiento.importe
@@ -95739,7 +95950,35 @@ var render = function() {
                                                       )
                                                     }
                                                   }
-                                                })
+                                                }),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    directives: [
+                                                      {
+                                                        name: "show",
+                                                        rawName: "v-show",
+                                                        value: _vm.errors.has(
+                                                          "importe[" + i + "]"
+                                                        ),
+                                                        expression:
+                                                          "errors.has(`importe[${i}]`)"
+                                                      }
+                                                    ],
+                                                    staticClass:
+                                                      "invalid-feedback"
+                                                  },
+                                                  [
+                                                    _vm._v(
+                                                      _vm._s(
+                                                        _vm.errors.first(
+                                                          "importe[" + i + "]"
+                                                        )
+                                                      )
+                                                    )
+                                                  ]
+                                                )
                                               ])
                                             : _c("span", [
                                                 _vm._v(
@@ -95764,10 +96003,26 @@ var render = function() {
                                           rawName: "v-model",
                                           value: movimiento.referencia,
                                           expression: "movimiento.referencia"
+                                        },
+                                        {
+                                          name: "validate",
+                                          rawName: "v-validate",
+                                          value: { required: true },
+                                          expression: "{required: true}"
                                         }
                                       ],
                                       staticClass: "form-control",
-                                      attrs: { type: "text", size: "5" },
+                                      class: {
+                                        "is-invalid": _vm.errors.has(
+                                          "referencia[" + i + "]"
+                                        )
+                                      },
+                                      attrs: {
+                                        type: "text",
+                                        size: "5",
+                                        name: "referencia[" + i + "]",
+                                        "data-vv-as": "Referencia"
+                                      },
                                       domProps: {
                                         value: movimiento.referencia
                                       },
@@ -95783,7 +96038,35 @@ var render = function() {
                                           )
                                         }
                                       }
-                                    })
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "show",
+                                            rawName: "v-show",
+                                            value: _vm.errors.has(
+                                              "referencia[" + i + "]"
+                                            ),
+                                            expression:
+                                              "errors.has(`referencia[${i}]`)"
+                                          }
+                                        ],
+                                        staticClass: "invalid-feedback"
+                                      },
+                                      [
+                                        _vm._v(
+                                          _vm._s(
+                                            _vm.errors.first(
+                                              "referencia[" + i + "]"
+                                            )
+                                          ) +
+                                            "\n                                    "
+                                        )
+                                      ]
+                                    )
                                   ]),
                                   _vm._v(" "),
                                   _c("td", [
@@ -95794,13 +96077,26 @@ var render = function() {
                                           rawName: "v-model",
                                           value: movimiento.concepto,
                                           expression: "movimiento.concepto"
+                                        },
+                                        {
+                                          name: "validate",
+                                          rawName: "v-validate",
+                                          value: { required: true },
+                                          expression: "{required: true}"
                                         }
                                       ],
                                       staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.errors.has(
+                                          "concepto[" + i + "]"
+                                        )
+                                      },
                                       attrs: {
                                         rows: "3",
                                         cols: "40",
-                                        wrap: "soft"
+                                        wrap: "soft",
+                                        name: "concepto[" + i + "]",
+                                        "data-vv-as": "Concepto"
                                       },
                                       domProps: { value: movimiento.concepto },
                                       on: {
@@ -95815,7 +96111,35 @@ var render = function() {
                                           )
                                         }
                                       }
-                                    })
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "show",
+                                            rawName: "v-show",
+                                            value: _vm.errors.has(
+                                              "concepto[" + i + "]"
+                                            ),
+                                            expression:
+                                              "errors.has(`concepto[${i}]`)"
+                                          }
+                                        ],
+                                        staticClass: "invalid-feedback"
+                                      },
+                                      [
+                                        _vm._v(
+                                          _vm._s(
+                                            _vm.errors.first(
+                                              "concepto[" + i + "]"
+                                            )
+                                          ) +
+                                            "\n                                    "
+                                        )
+                                      ]
+                                    )
                                   ]),
                                   _vm._v(" "),
                                   _c("td", [
@@ -95925,7 +96249,10 @@ var render = function() {
                         staticClass: "btn btn-info pull-right",
                         attrs: {
                           type: "submit",
-                          disabled: _vm.errors.count() > 0 || !_vm.cuadrado
+                          disabled:
+                            _vm.errors.count() > 0 ||
+                            !_vm.cuadrado ||
+                            !_vm.cambio
                         }
                       },
                       [
@@ -95952,7 +96279,7 @@ var staticRenderFns = [
       _c("div", { staticClass: "col-12" }, [
         _c("h4", [
           _c("i", { staticClass: "fa fa-list" }),
-          _vm._v("  Información de Prepóliza\n                    ")
+          _vm._v(" Información de Prepóliza\n                    ")
         ])
       ])
     ])

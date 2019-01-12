@@ -7,7 +7,7 @@
                 <div class="row">
                     <div class="col-12">
                         <h4>
-                            <i class="fa fa-list"></i>  Información de Prepóliza
+                            <i class="fa fa-list"></i> Información de Prepóliza
                         </h4>
                     </div>
                     <!-- /.col -->
@@ -20,17 +20,19 @@
                             <table class="table">
                                 <tbody>
                                 <tr>
-                                    <td class="bg-gray-light"><b>Tipo Póliza SAO:</b><br>{{ poliza.transaccionInterfaz.descripcion }}</td>
+                                    <td class="bg-gray-light"><b>Tipo Póliza SAO:</b><br>{{
+                                        poliza.transaccionInterfaz.descripcion }}
+                                    </td>
                                     <td class="bg-gray-light"><b>Fecha de Prepóliza:</b><br>
                                         <span v-if="$root.can('editar_fecha_prepoliza')">
                                             <input
-                                                type="date"
-                                                class="form-control"
-                                                name="fecha"
-                                                v-model="poliza.fecha"
-                                                v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
-                                                data-vv-as="Fecha de Prepóliza"
-                                                :class="{'is-invalid': errors.has('fecha')}"
+                                                    type="date"
+                                                    class="form-control"
+                                                    name="fecha"
+                                                    v-model="poliza.fecha"
+                                                    v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
+                                                    data-vv-as="Fecha de Prepóliza"
+                                                    :class="{'is-invalid': errors.has('fecha')}"
                                             />
                                             <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                         </span>
@@ -38,13 +40,22 @@
                                             {{ poliza.fecha}}
                                         </span>
                                     </td>
-                                    <td class="bg-gray-light"><b>Usuario Solicita:</b><br>{{ poliza.usuario_solicita }}</td>
-                                    <td class="bg-gray-light"><b>Cuadre:</b><br>$ {{ parseFloat(poliza.cuadre).formatMoney(2, '.', ',') }}</td>
+                                    <td class="bg-gray-light"><b>Usuario Solicita:</b><br>{{ poliza.usuario_solicita }}
+                                    </td>
+                                    <td class="bg-gray-light"><b>Cuadre:</b><br>$ {{
+                                        parseFloat(poliza.cuadre).formatMoney(2, '.', ',') }}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="bg-gray-light"><b>Estatus:</b><br><estatus-label :value="poliza.estatusPrepoliza"></estatus-label></td>
-                                    <td class="bg-gray-light"><b>Póliza Contpaq:</b><br>{{ poliza.poliza_contpaq ? '#' + poliza.poliza_contpaq : '' }}</td>
-                                    <td class="bg-gray-light"><b>Tipo de Póliza:</b><br>{{ poliza.tipoPolizaContpaq.descripcion }}</td>
+                                    <td class="bg-gray-light"><b>Estatus:</b><br>
+                                        <estatus-label :value="poliza.estatusPrepoliza"></estatus-label>
+                                    </td>
+                                    <td class="bg-gray-light"><b>Póliza Contpaq:</b><br>{{ poliza.poliza_contpaq ? '#' +
+                                        poliza.poliza_contpaq : '' }}
+                                    </td>
+                                    <td class="bg-gray-light"><b>Tipo de Póliza:</b><br>{{
+                                        poliza.tipoPolizaContpaq.descripcion }}
+                                    </td>
                                     <td class="bg-gray-light"><b>Transacción Antecedente:</b><br>
                                         <span v-if="poliza.transaccionAntecedente">
                                     [{{ poliza.transaccionAntecedente.tipo.descripcion }}]  #{{ poliza.transaccionAntecedente.numero_folio }}
@@ -66,7 +77,9 @@
                                                 data-vv-as="Concepto"
                                                 :class="{'is-invalid': errors.has('concepto')}"
                                         ></textarea>
-                                        <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('concepto')">{{
+                                            errors.first('concepto') }}
+                                        </div>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -95,7 +108,8 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for="(movimiento, i) in poliza.movimientos.data" :class="{'bg-success': ! movimiento.id}">
+                                <tr v-for="(movimiento, i) in poliza.movimientos.data"
+                                    :class="{'bg-success': ! movimiento.id}">
                                     <td>{{ i + 1 }}</td>
                                     <td>
                                     <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
@@ -103,11 +117,17 @@
                                             {{ movimiento.cuenta_contable }}
                                         </span>
                                         <span v-else>
-                                        <input
-                                                v-mask="{regex: datosContables}"
-                                                type="text"
-                                                class="form-control"
-                                                v-model="movimiento.cuenta_contable">
+                                            <input
+                                                    v-mask="{regex: datosContables}"
+                                                    type="text"
+                                                    class="form-control"
+                                                    :name="`cuenta_contable[${i}]`"
+                                                    v-model="movimiento.cuenta_contable"
+                                                    v-validate="{required: true, regex: datosContables}"
+                                                    data-vv-as="Cuenta Contable"
+                                                    :class="{'is-invalid': errors.has(`cuenta_contable[${i}]`)}"
+                                            >
+                                            <div class="invalid-feedback" v-show="errors.has(`cuenta_contable[${i}]`)">{{ errors.first(`cuenta_contable[${i}]`) }}</div>
                                         </span>
                                     </span>
                                         <span v-else>
@@ -115,37 +135,45 @@
                                         <label v-else>{{ datosContables }}</label>
                                     </span>
                                     </td>
-                                    <td>{{ movimiento.tipoCuentaContable ? movimiento.tipoCuentaContable.descripcion : 'No registrada'}}</td>
-                                    <td>
-                                    <span v-if="$root.can('editar_tipo_movimiento_prepoliza')">
-                                        <select
-                                                class="form-control"
-                                                name="id_tipo_movimiento_poliza[]"
-                                                v-model="movimiento.tipo.id"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Tipo"
-                                                :class="{'is-invalid': errors.has('id_tipo_movimiento_poliza')}"
-                                        >
-                                            <option value="1">Cargo</option>
-                                            <option value="2">Abono</option>
-                                        </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_tipo_movimiento_poliza')">{{ errors.first('id_tipo_movimiento_poliza') }}</div>
-
-                                    </span>
-                                        <span v-else>
-                                        {{ movimiento.tipo.descripcion }}
-                                    </span>
+                                    <td>{{ movimiento.tipoCuentaContable ? movimiento.tipoCuentaContable.descripcion :
+                                        'No registrada'}}
                                     </td>
                                     <td>
-                                    <span v-if="movimiento.tipo.id == 1">
-                                        <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
-                                            <input
-                                                    type="number"
-                                                    step="any"
+                                        <span v-if="$root.can('editar_tipo_movimiento_prepoliza')">
+                                            <select
                                                     class="form-control"
-                                                    v-model="movimiento.importe"/>
+                                                    :name="`id_tipo_movimiento_poliza[${i}]`"
+                                                    v-model="movimiento.tipo.id"
+                                                    v-validate="{required: true}"
+                                                    data-vv-as="Tipo"
+                                                    :class="{'is-invalid': errors.has(`id_tipo_movimiento_poliza[${i}]`)}"
+                                            >
+                                                <option value="1">Cargo</option>
+                                                <option value="2">Abono</option>
+                                            </select>
+                                            <div class="invalid-feedback"
+                                                 v-show="errors.has(`id_tipo_movimiento_poliza[${i}]`)">{{ errors.first(`id_tipo_movimiento_poliza[${i}]`) }}</div>
                                         </span>
                                         <span v-else>
+                                            {{ movimiento.tipo.descripcion }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span v-if="movimiento.tipo.id == 1">
+                                            <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
+                                                <input
+                                                        type="number"
+                                                        step="any"
+                                                        class="form-control"
+                                                        :name="`importe[${i}]`"
+                                                        v-model="movimiento.importe"
+                                                        v-validate="{required: true, decimal: true}"
+                                                        data-vv-as="Debe"
+                                                        :class="{'is-invalid': errors.has(`importe[${i}]`)}"
+                                                />
+                                                <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
+                                            </span>
+                                            <span v-else>
                                             ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
                                         </span>
                                     </span>
@@ -157,7 +185,13 @@
                                                     type="number"
                                                     step="any"
                                                     class="form-control"
-                                                    v-model="movimiento.importe"/>
+                                                    :name="`importe[${i}]`"
+                                                    v-model="movimiento.importe"
+                                                    v-validate="{required: true, decimal: true}"
+                                                    data-vv-as="Debe"
+                                                    :class="{'is-invalid': errors.has(`importe[${i}]`)}"
+                                            />
+                                            <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                         </span>
                                         <span v-else>
                                             ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
@@ -165,13 +199,40 @@
                                     </span>
                                     </td>
                                     <td>
-                                        <input class="form-control" type="text" size="5" v-model="movimiento.referencia">
+                                        <input
+                                                class="form-control"
+                                                type="text"
+                                                size="5"
+                                                :name="`referencia[${i}]`"
+                                                v-model="movimiento.referencia"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Referencia"
+                                                :class="{'is-invalid': errors.has(`referencia[${i}]`)}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`referencia[${i}]`)">{{
+                                            errors.first(`referencia[${i}]`) }}
+                                        </div>
                                     </td>
                                     <td>
-                                        <textarea class="form-control" rows="3" cols="40" wrap="soft" v-model="movimiento.concepto"></textarea>
+                                        <textarea
+                                                class="form-control"
+                                                rows="3"
+                                                cols="40"
+                                                wrap="soft"
+                                                :name="`concepto[${i}]`"
+                                                v-model="movimiento.concepto"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Concepto"
+                                                :class="{'is-invalid': errors.has(`concepto[${i}]`)}"
+                                        ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has(`concepto[${i}]`)">{{
+                                            errors.first(`concepto[${i}]`) }}
+                                        </div>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="remove(movimiento)"><i class="fa fa-trash"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                @click="remove(movimiento)"><i class="fa fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -203,7 +264,8 @@
                     <!--Footer row -->
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-info pull-right" type="submit" :disabled="errors.count() > 0 || !cuadrado">
+                            <button class="btn btn-info pull-right" type="submit"
+                                    :disabled="errors.count() > 0 || !cuadrado || !cambio">
                                 Guardar Cambios
                             </button>
                         </div>
@@ -229,17 +291,22 @@
         data() {
             return {
                 poliza: null,
+                original: null
             }
         },
         mounted() {
             this.find(this.id).then(data => {
                 this.poliza = data;
+                this.original = JSON.parse(JSON.stringify(data));
             });
         },
 
         methods: {
             find(id) {
-                return this.$store.dispatch('contabilidad/poliza/find', {id: id, params: {include: 'transaccionAntecedente,movimientos,traspaso'}})
+                return this.$store.dispatch('contabilidad/poliza/find', {
+                    id: id,
+                    params: {include: 'transaccionAntecedente,movimientos,traspaso'}
+                })
             },
 
             add(movimiento) {
@@ -294,12 +361,14 @@
                 return Math.abs(this.sumaDebe - this.sumaHaber) <= 0.99;
             },
             color() {
-                if(!this.cuadrado) {
+                if (!this.cuadrado) {
                     return 'bg-danger'
-                }
-                else{
+                } else {
                     return 'bg-gray'
                 }
+            },
+            cambio() {
+                return JSON.stringify(this.poliza) != JSON.stringify(this.original)
             }
         }
     }
