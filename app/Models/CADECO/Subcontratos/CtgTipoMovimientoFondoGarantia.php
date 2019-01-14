@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class CtgTipoMovimientoFondoGarantia extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'Subcontratos.fg_ctg_tipos_mov_sol';
+    protected $table = 'Subcontratos.fg_ctg_tipos_mov';
     protected $fillable = ['descripcion'];
     public $timestamps = false;
 

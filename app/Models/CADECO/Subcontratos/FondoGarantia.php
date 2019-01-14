@@ -29,5 +29,15 @@ class FondoGarantia extends Model
         return $this->hasOne(Transaccion::class, "id_subcontrato");
     }
 
+    public function movimientos()
+    {
+        return $this->hasMany(MovimientoFondoGarantia::class,"id_fondo_garantia");
 
+    }
+
+    public function solicitudes()
+    {
+        return $this->hasMany(SolicitudMovimientoFondoGarantia::class,"id_fondo_garantia");
+
+    }
 }
