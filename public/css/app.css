@@ -18603,6 +18603,7 @@ fieldset[disabled] .datepicker table tr td span.active.disabled:hover.active {
 }
 
 body.swal2-toast-shown .swal2-container {
+  position: fixed;
   background-color: transparent;
 }
 
