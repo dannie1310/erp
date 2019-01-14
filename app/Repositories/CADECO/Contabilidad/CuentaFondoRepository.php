@@ -30,5 +30,8 @@ class CuentaFondoRepository
         $this->model = $model;
     }
 
-
+    public function create(array $data)
+    {
+        return $this->model->create($data);
+    }
 }

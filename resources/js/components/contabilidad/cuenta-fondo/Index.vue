@@ -27,7 +27,7 @@
                     { title: 'Cuenta', field: 'cuenta', sortable: true },
                     { title: 'Fondo', field: 'id_fondo', sortable: true },
                     { title: 'Saldo', field: 'saldo', sortable: false },
-                    { title: 'Editar', field: 'buttons'},
+                    { title: 'Editar', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
@@ -63,7 +63,7 @@
                             index: cuenta.id,
                             cuenta: cuenta.cuenta,
                             id_fondo: cuenta.fondo.descripcion,
-                            saldo: cuenta.fondo.saldo,
+                            saldo:  '$'+parseFloat(cuenta.fondo.saldo).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cuenta_fondo') ? true : undefined,
                                 id: cuenta.id

@@ -30,4 +30,12 @@ class CuentaFondoService
     public function paginate($data) {
         return $this->cuentaFondo->paginate($data);
     }
+
+    public function find($id) {
+        return $this->cuentaFondo->find($id);
+    }
+
+    public function update(array $data, int $id) {
+        return $this->cuentaFondo->update($data, $id);
+    }
 }

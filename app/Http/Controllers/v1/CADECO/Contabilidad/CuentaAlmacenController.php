@@ -13,7 +13,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaAlmacenTransformer;
 use App\Services\CADECO\Contabilidad\CuentaAlmacenService;
 use App\Traits\ControllerTrait;
-use App\Traits\NuevoTrait;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;

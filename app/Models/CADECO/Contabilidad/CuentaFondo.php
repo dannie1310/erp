@@ -19,6 +19,11 @@ class CuentaFondo extends Model
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cuentas_fondos';
 
+    protected $fillable = ['id_fondo',
+                            'cuenta',
+                            'registro',
+                            'estatus'];
+
     protected static function boot()
     {
         parent::boot();

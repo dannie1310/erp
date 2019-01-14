@@ -16,7 +16,8 @@ use League\Fractal\TransformerAbstract;
 class CuentaFondoTransformer extends TransformerAbstract
 {
 
-    public function transformer(CuentaFondo $model){
+    public function transform(CuentaFondo $model){
+
         return [
             'id' => $model->getKey(),
             'cuenta' => $model->cuenta
@@ -41,6 +42,10 @@ class CuentaFondoTransformer extends TransformerAbstract
         'fondo'
     ];
 
+    /**
+     * @param CuentaFondo $model
+     * @return \League\Fractal\Resource\Item
+     */
     public function includeFondo(CuentaFondo $model){
         if($fondo = $model->fondo){
             return $this->item($fondo, new FondoTransformer);
