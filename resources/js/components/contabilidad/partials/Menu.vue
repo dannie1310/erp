@@ -14,10 +14,16 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item">
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                         <router-link :to="{name: 'cuenta-almacen'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-almacen'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas de Almacén</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_fondo')">
+                        <router-link :to="{name: 'cuenta-fondo'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-fondo'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuentas de Fondo</p>
                         </router-link>
                     </li>
                 </ul>

@@ -63,6 +63,16 @@ export const routes = [
                 }
             },
             {
+                path: 'cuenta-fondo',
+                name: 'cuenta-fondo',
+                component: require('./components/contabilidad/cuenta-fondo/Index'),
+                meta: {
+                    title: 'Cuentas de Fondo',
+                    breadcrumb: {name: 'CUENTAS DE FONDO', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
                 path: 'poliza',
                 component: require('./components/contabilidad/poliza/Layout.vue'),
                 meta: {
