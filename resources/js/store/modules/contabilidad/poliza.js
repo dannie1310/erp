@@ -54,7 +54,23 @@ export default {
                         context.commit('cargando', false);
                     })
             });
+        },
 
+        update(context, payload) {
+            context.commit('cargando', true)
+            return new Promise((resolve, reject) => {
+                axios.patch(URI + payload.id, payload.data, {params: payload.params})
+                    .then(response => {
+                        context.commit('update', response.data)
+                        resolve(response.data)
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+                    .then(() => {
+                        context.commit('cargando', false)
+                    })
+            })
         }
     },
 

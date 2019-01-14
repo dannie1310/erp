@@ -96858,6 +96858,19 @@ var URI = '/api/contabilidad/poliza/';
                     context.commit('cargando', false);
                 });
             });
+        },
+        update: function update(context, payload) {
+            context.commit('cargando', true);
+            return new Promise(function (resolve, reject) {
+                axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (response) {
+                    context.commit('update', response.data);
+                    resolve(response.data);
+                }).catch(function (error) {
+                    reject(error);
+                }).then(function () {
+                    context.commit('cargando', false);
+                });
+            });
         }
     },
 
