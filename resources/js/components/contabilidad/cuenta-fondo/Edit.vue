@@ -1,16 +1,16 @@
 <template>
     <span>
         <!-- Button trigger modal -->
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" :data-target="'#cuenta-almacen-edit-modal' + id">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" :data-target="'#cuenta-fondo-edit-modal' + id">
             <i class="fa fa-pencil"></i>
         </button>
 
         <!-- Modal -->
-        <div class="modal fade" :id="'cuenta-almacen-edit-modal' + id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" :id="'cuenta-fondo-edit-modal' + id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">EDICIÓN DE CUENTA DE ALMACÉN</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">EDICIÓN DE CUENTA DE FONDO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -37,8 +37,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="almacen">Almacen</label>
-                                        <input readonly type="text" class="form-control" id="almacen" v-model="cuenta.almacen.descripcion">
+                                        <label for="fondo">Fondo</label>
+                                        <input readonly type="text" class="form-control" id="fondo" v-model="cuenta.fondo.descripcion">
                                     </div>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@
 
 <script>
     export default {
-        name: "cuenta-almacen-edit",
+        name: "cuenta-fondo-edit",
         props: ['id'],
         data() {
             return {
@@ -74,7 +74,7 @@
         methods: {
             find(id) {
                 this.loading = true;
-                this.$store.dispatch('contabilidad/cuenta-almacen/find', id)
+                this.$store.dispatch('contabilidad/cuenta-fondo/find', id)
                     .then(data => {
                         this.$data.cuenta = data;
                     })
@@ -89,7 +89,7 @@
             update() {
                 let self = this
                 Swal({
-                    title: 'Actualizar Cuenta de Almacén',
+                    title: 'Actualizar Cuenta de Fondo',
                     text: "¿Estás seguro?",
                     type: 'warning',
                     showCancelButton: true,
@@ -100,7 +100,7 @@
                 }).then((result) => {
                     if (result.value) {
                         this.loading = true;
-                        return self.$store.dispatch('contabilidad/cuenta-almacen/update', self.$data.cuenta)
+                        return self.$store.dispatch('contabilidad/cuenta-fondo/update', self.$data.cuenta)
                             .then(() => {
                                 $('.modal').modal('hide');
                                 Swal({

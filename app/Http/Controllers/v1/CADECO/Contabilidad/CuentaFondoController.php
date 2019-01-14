@@ -1,48 +1,49 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: jfesquivel
- * Date: 18/12/18
- * Time: 09:20 PM
+ * User: dbenitezc
+ * Date: 11/01/19
+ * Time: 05:03 PM
  */
 
 namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Contabilidad\CuentaAlmacenTransformer;
-use App\Services\CADECO\Contabilidad\CuentaAlmacenService;
+use App\Http\Transformers\CADECO\Contabilidad\CuentaFondoTransformer;
+use App\Services\CADECO\Contabilidad\CuentaFondoService;
 use App\Traits\ControllerTrait;
 use Dingo\Api\Routing\Helpers;
-use Illuminate\Http\Request;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
 
-class CuentaAlmacenController extends Controller
+class CuentaFondoController extends Controller
 {
+
     use Helpers, ControllerTrait;
 
     /**
-     * @var CuentaAlmacenService
+     * @var CuentaFondoService
      */
     private $service;
 
     /**
      * @var Manager
      */
-    protected $fractal;
+    private $fractal;
 
     /**
-     * @var CuentaAlmacenTransformer
+     * @var CuentaFondoTransformer
      */
-    protected $transformer;
+    private $transformer;
 
     /**
-     * CuentaAlmacenController constructor.
-     * @param CuentaAlmacenService $service
+     * CuentaFondoController constructor.
+     * @param CuentaFondoService $service
      * @param Manager $fractal
-     * @param CuentaAlmacenTransformer $transformer
+     * @param CuentaFondoTransformer $transformer
      */
-    public function __construct(CuentaAlmacenService $service, Manager $fractal, CuentaAlmacenTransformer $transformer)
+    public function __construct(CuentaFondoService $service, Manager $fractal, CuentaFondoTransformer $transformer)
     {
         $this->middleware('auth');
         $this->middleware('context');
@@ -52,7 +53,7 @@ class CuentaAlmacenController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id){
         $item = $this->service->update($request->all(), $id);
         return $this->respondItem($item);
     }

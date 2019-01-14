@@ -18,16 +18,16 @@
 
 <script>
     export default {
-        name: "cuenta-almacen-index",
+        name: "cuenta-fondo-index",
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Cuenta', field: 'cuenta', sortable: true },
-                    { title: 'Almacén', field: 'id_almacen', sortable: true },
-                    { title: 'Tipo de Almacén', field: 'tipo', sortable: false },
-                    { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Fondo', field: 'id_fondo', sortable: true },
+                    { title: 'Saldo', field: 'saldo', sortable: false },
+                    { title: 'Editar', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
@@ -42,15 +42,15 @@
 
         methods: {
             fetch(payload = {}) {
-                return this.$store.dispatch('contabilidad/cuenta-almacen/paginate', payload)
+                return this.$store.dispatch('contabilidad/cuenta-fondo/paginate', payload)
             }
         },
         computed: {
             cuentas(){
-                return this.$store.getters['contabilidad/cuenta-almacen/cuentas'];
+                return this.$store.getters['contabilidad/cuenta-fondo/cuentas'];
             },
             meta(){
-                return this.$store.getters['contabilidad/cuenta-almacen/meta'];
+                return this.$store.getters['contabilidad/cuenta-fondo/meta'];
             },
         },
         watch: {
@@ -62,10 +62,10 @@
                         self.$data.data.push({
                             index: cuenta.id,
                             cuenta: cuenta.cuenta,
-                            id_almacen: cuenta.almacen.descripcion,
-                            tipo: cuenta.almacen.tipo,
+                            id_fondo: cuenta.fondo.descripcion,
+                            saldo:  '$'+parseFloat(cuenta.fondo.saldo).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
-                                edit: self.$root.can('editar_cuenta_almacen') ? true : undefined,
+                                edit: self.$root.can('editar_cuenta_fondo') ? true : undefined,
                                 id: cuenta.id
                             })
                         })

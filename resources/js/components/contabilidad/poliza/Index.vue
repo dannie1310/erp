@@ -104,13 +104,13 @@
                     polizas.forEach(function (poliza, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            id_tipo_poliza_interfaz: poliza.transaccionInterfaz.data.descripcion,
-                            id_tipo_poliza_contpaq: poliza.tipoPolizaContpaq.data.descripcion,
+                            id_tipo_poliza_interfaz: poliza.transaccionInterfaz.descripcion,
+                            id_tipo_poliza_contpaq: poliza.tipoPolizaContpaq.descripcion,
                             concepto: poliza.concepto,
                             fecha: poliza.fecha,
                             total: '$'+parseFloat(poliza.total).formatMoney(2, '.', ','),
                             cuadre: '$'+parseFloat(poliza.cuadre).formatMoney(2, '.', ','),
-                            estatus: poliza.estatusPrepoliza.data,
+                            estatus: poliza.estatusPrepoliza,
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_prepolizas_generadas') ? true : undefined,
                                 show: true,
