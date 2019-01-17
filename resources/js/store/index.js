@@ -4,6 +4,7 @@ import auth from './modules/auth';
 import obras from './modules/cadeco/obras';
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
 import cuentaFondo from './modules/contabilidad/cuenta-fondo';
+import cuentaGeneral from './modules/contabilidad/cuenta-general'
 import estatusPrepoliza from './modules/contabilidad/estatus-prepoliza';
 import poliza from './modules/contabilidad/poliza';
 import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
@@ -18,6 +19,7 @@ export default new Vuex.Store({
         'cadeco/obras': obras,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-fondo' : cuentaFondo,
+        'contabilidad/cuenta-general': cuentaGeneral,
         'contabilidad/estatus-prepoliza': estatusPrepoliza,
         'contabilidad/poliza': poliza,
         'contabilidad/tipo-cuenta-contable': tipoCuentaContable,

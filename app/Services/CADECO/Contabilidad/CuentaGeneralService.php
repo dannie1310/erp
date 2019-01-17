@@ -30,4 +30,12 @@ class CuentaGeneralService
     public function paginate($data) {
         return $this->cuentaGeneral->paginate($data);
     }
+
+    public function find($id) {
+        return $this->cuentaGeneral->find($id);
+    }
+
+    public function update(array $data, int $id) {
+        return $this->cuentaGeneral->update($data, $id);
+    }
 }

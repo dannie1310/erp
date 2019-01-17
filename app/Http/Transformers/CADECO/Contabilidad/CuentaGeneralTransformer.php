@@ -17,7 +17,7 @@ class CuentaGeneralTransformer extends TransformerAbstract
     public function transform(CuentaGeneral $model){
         return [
             'id' => $model->getKey(),
-            'cuenta' => $model->cuenta
+            'cuenta' => $model->cuenta_contable
         ];
     }
 
