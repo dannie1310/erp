@@ -12,16 +12,22 @@ namespace App\Models\CADECO\Contabilidad;
 use App\Facades\Context;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
+use App\Traits\DateFormatTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Poliza extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, DateFormatTrait;
 
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.int_polizas';
     protected $primaryKey = 'id_int_poliza';
+
+    protected $fillable = [
+        'concepto',
+        'fecha',
+    ];
 
     protected $dates = ['fecha'];
 

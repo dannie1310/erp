@@ -112,28 +112,28 @@
                                     :class="{'bg-success': ! movimiento.id}">
                                     <td>{{ i + 1 }}</td>
                                     <td>
-                                    <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
-                                        <span v-if="movimiento.id_tipo_cuenta_contable == 1 && movimiento.cuenta_contable != null">
-                                            {{ movimiento.cuenta_contable }}
-                                        </span>
-                                        <span v-else>
-                                            <input
-                                                    v-mask="{regex: datosContables}"
-                                                    type="text"
-                                                    class="form-control"
-                                                    :name="`cuenta_contable[${i}]`"
-                                                    v-model="movimiento.cuenta_contable"
-                                                    v-validate="{required: true, regex: datosContables}"
-                                                    data-vv-as="Cuenta Contable"
-                                                    :class="{'is-invalid': errors.has(`cuenta_contable[${i}]`)}"
-                                            >
-                                            <div class="invalid-feedback" v-show="errors.has(`cuenta_contable[${i}]`)">{{ errors.first(`cuenta_contable[${i}]`) }}</div>
+                                        <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
+                                            <span v-if="movimiento.id_tipo_cuenta_contable == 1 && movimiento.cuenta_contable != null">
+                                                {{ movimiento.cuenta_contable }}
+                                            </span>
+                                            <span v-else>
+                                                <input
+                                                        v-mask="{regex: datosContables}"
+                                                        type="text"
+                                                        class="form-control"
+                                                        :name="`cuenta_contable[${i}]`"
+                                                        v-model="movimiento.cuenta_contable"
+                                                        v-validate="{required: true, regex: datosContables}"
+                                                        data-vv-as="Cuenta Contable"
+                                                        :class="{'is-invalid': errors.has(`cuenta_contable[${i}]`)}"
+                                                >
+                                                <div class="invalid-feedback" v-show="errors.has(`cuenta_contable[${i}]`)">{{ errors.first(`cuenta_contable[${i}]`) }}</div>
                                         </span>
                                     </span>
                                         <span v-else>
-                                        <label v-if="movimiento.cuenta_contable">{{ movimiento.cuenta_contable }}</label>
-                                        <label v-else>{{ datosContables }}</label>
-                                    </span>
+                                            <label v-if="movimiento.cuenta_contable">{{ movimiento.cuenta_contable }}</label>
+                                            <label v-else>{{ datosContables }}</label>
+                                        </span>
                                     </td>
                                     <td>{{ movimiento.tipoCuentaContable ? movimiento.tipoCuentaContable.descripcion :
                                         'No registrada'}}
@@ -143,7 +143,7 @@
                                             <select
                                                     class="form-control"
                                                     :name="`id_tipo_movimiento_poliza[${i}]`"
-                                                    v-model="movimiento.tipo.id"
+                                                    v-model="movimiento.id_tipo_movimiento_poliza"
                                                     v-validate="{required: true}"
                                                     data-vv-as="Tipo"
                                                     :class="{'is-invalid': errors.has(`id_tipo_movimiento_poliza[${i}]`)}"
@@ -159,7 +159,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span v-if="movimiento.tipo.id == 1">
+                                        <span v-if="movimiento.id_tipo_movimiento_poliza == 1">
                                             <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
                                                 <input
                                                         type="number"
@@ -179,7 +179,7 @@
                                     </span>
                                     </td>
                                     <td>
-                                    <span v-if="movimiento.tipo.id == 2">
+                                    <span v-if="movimiento.id_tipo_movimiento_poliza == 2">
                                         <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
                                             <input
                                                     type="number"
@@ -309,6 +309,14 @@
                 })
             },
 
+            update(id, payload) {
+                return this.$store.dispatch('contabilidad/poliza/update', {
+                    id: id,
+                    data: payload,
+                    params: {include: 'transaccionAntecedente,movimientos,traspaso'}
+                })
+            },
+
             add(movimiento) {
                 this.poliza.movimientos.data.push(movimiento)
             },
@@ -328,11 +336,36 @@
             },
 
             save() {
-                alert('save')
+                Swal({
+                    title: '¿Estás seguro?',
+                    text: "Guardar cambios de la Prepóliza",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, Guardar'
+                }).then((result) => {
+                    if (result.value) {
+                        this.update(this.poliza.id, this.poliza)
+                            .then(() => {
+                                Swal(
+                                    '',
+                                    'Your file has been deleted.',
+                                    'success'
+                                );
+                            })
+                            .catch(error => {
+
+                            });
+                    }
+                })
             }
         },
 
         computed: {
+            diff() {
+                return diff(this.poliza, this.original)
+            },
             cargando() {
                 return this.$store.getters['contabilidad/poliza/cargando']
             },
@@ -342,7 +375,7 @@
             sumaDebe() {
                 let result = 0;
                 this.poliza.movimientos.data.forEach(function (movimiento, i) {
-                    if (movimiento.tipo.id == 1) {
+                    if (movimiento.id_tipo_movimiento_poliza == 1) {
                         result += parseFloat(movimiento.importe);
                     }
                 })
@@ -351,7 +384,7 @@
             sumaHaber() {
                 let result = 0;
                 this.poliza.movimientos.data.forEach(function (movimiento, i) {
-                    if (movimiento.tipo.id == 2) {
+                    if (movimiento.id_tipo_movimiento_poliza == 2) {
                         result += parseFloat(movimiento.importe);
                     }
                 })

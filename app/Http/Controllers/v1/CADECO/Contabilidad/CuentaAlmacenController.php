@@ -14,7 +14,6 @@ use App\Http\Transformers\CADECO\Contabilidad\CuentaAlmacenTransformer;
 use App\Services\CADECO\Contabilidad\CuentaAlmacenService;
 use App\Traits\ControllerTrait;
 use Dingo\Api\Routing\Helpers;
-use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class CuentaAlmacenController extends Controller

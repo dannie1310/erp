@@ -6,13 +6,13 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">CATÁLOGOS</li>
             <li class="nav-item has-treeview">
-                <a href="" class="nav-link">
+                <router-link to="#" class="nav-link">
                     <i class="nav-icon fa fa-money"></i>
                     <p>
                         Cuentas Contables
                         <i class="right fa fa-angle-left"></i>
                     </p>
-                </a>
+                </router-link>
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                         <router-link :to="{name: 'cuenta-almacen'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-almacen'}">
