@@ -11,7 +11,6 @@ export default {
         fetch(state, payload) {
             state.polizas = payload.data;
             state.meta = payload.meta
-            state.cargando = false;
         },
 
         update(state, payload) {
@@ -37,7 +36,10 @@ export default {
                 })
                 .catch(err => {
                     alert(err);
-                });
+                })
+                .then(() => {
+                    context.commit('cargando', false);
+                })
         },
 
         find(context, payload) {

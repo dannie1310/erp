@@ -6,13 +6,13 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">CATÁLOGOS</li>
             <li class="nav-item has-treeview">
-                <router-link to="#" class="nav-link">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-money"></i>
                     <p>
                         Cuentas Contables
                         <i class="right fa fa-angle-left"></i>
                     </p>
-                </router-link>
+                </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                         <router-link :to="{name: 'cuenta-almacen'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-almacen'}">
@@ -43,7 +43,13 @@
 
 <script>
     export default {
-        name: "contabilidad-menu"
+        name: "contabilidad-menu",
+
+        methods: {
+            mostrarMenu(event) {
+                $(event.target).closest('li').toggleClass('menu-open');
+            }
+        }
     }
 </script>
 

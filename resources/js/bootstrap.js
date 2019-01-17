@@ -1,10 +1,9 @@
-
 window._ = require('lodash');
 
 try {
     window.$ = window.jQuery = require('jquery');
 
-    require('bootstrap');
+    require('admin-lte/plugins/bootstrap/js/bootstrap');
     require('admin-lte');
     window.Swal = require('sweetalert2');
     window.moment = require('moment');

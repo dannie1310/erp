@@ -9,7 +9,3 @@
         name: "contabilidad-layout"
     }
 </script>
-
-<style scoped>
-
-</style>

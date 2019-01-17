@@ -52,6 +52,6 @@ class PolizaController extends Controller
     }
 
     public function update(UpdatePolizaRequest $request, $id) {
-        $this->traitupdate($request, $id);
+        return $this->traitupdate($request, $id);
     }
 }

@@ -1,23 +1,18 @@
 <template>
-    <div class="row" v-if="!cargando">
+    <div class="row" v-if="poliza">
         <div class="col-12">
-            <!-- Main content -->
             <div class="invoice p-3 mb-3">
-                <!-- title row -->
                 <div class="row">
                     <div class="col-12">
                         <h4>
                             <i class="fa fa-list"></i> Información de Prepóliza
                         </h4>
                     </div>
-                    <!-- /.col -->
                 </div>
-
                 <form role="form" @submit.prevent="validate">
-                    <!-- info row -->
                     <div class="row">
                         <div class="table-responsive col-md-12">
-                            <table class="table">
+                            <table class="table table-striped">
                                 <tbody>
                                 <tr>
                                     <td class="bg-gray-light"><b>Tipo Póliza SAO:</b><br>{{
@@ -34,35 +29,40 @@
                                                     data-vv-as="Fecha de Prepóliza"
                                                     :class="{'is-invalid': errors.has('fecha')}"
                                             />
-                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                            <div class="invalid-feedback" v-show="errors.has('fecha')">
+                                                {{ errors.first('fecha') }}
+                                            </div>
                                         </span>
                                         <span v-else>
                                             {{ poliza.fecha}}
                                         </span>
                                     </td>
-                                    <td class="bg-gray-light"><b>Usuario Solicita:</b><br>{{ poliza.usuario_solicita }}
+                                    <td class="bg-gray-light"><b>Usuario Solicita:</b><br>
+                                        {{ poliza.usuario_solicita }}
                                     </td>
-                                    <td class="bg-gray-light"><b>Cuadre:</b><br>$ {{
-                                        parseFloat(poliza.cuadre).formatMoney(2, '.', ',') }}
+                                    <td class="bg-gray-light"><b>Cuadre:</b><br>$
+                                        {{ parseFloat(poliza.cuadre).formatMoney(2, '.', ',') }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="bg-gray-light"><b>Estatus:</b><br>
                                         <estatus-label :value="poliza.estatusPrepoliza"></estatus-label>
                                     </td>
-                                    <td class="bg-gray-light"><b>Póliza Contpaq:</b><br>{{ poliza.poliza_contpaq ? '#' +
-                                        poliza.poliza_contpaq : '' }}
+                                    <td class="bg-gray-light">
+                                        <b>Póliza Contpaq:</b>
+                                        <br>
+                                        {{ poliza.poliza_contpaq ? '#' + poliza.poliza_contpaq : '' }}
                                     </td>
-                                    <td class="bg-gray-light"><b>Tipo de Póliza:</b><br>{{
-                                        poliza.tipoPolizaContpaq.descripcion }}
+                                    <td class="bg-gray-light"><b>Tipo de Póliza:</b><br>
+                                        {{ poliza.tipoPolizaContpaq.descripcion }}
                                     </td>
                                     <td class="bg-gray-light"><b>Transacción Antecedente:</b><br>
                                         <span v-if="poliza.transaccionAntecedente">
-                                    [{{ poliza.transaccionAntecedente.tipo.descripcion }}]  #{{ poliza.transaccionAntecedente.numero_folio }}
-                                </span>
+                                            [{{ poliza.transaccionAntecedente.tipo.descripcion }}]  #{{ poliza.transaccionAntecedente.numero_folio }}
+                                        </span>
                                         <span v-else-if="poliza.traspaso">
-                                    [Traspaso] #{{ poliza.traspaso.numero_folio }}
-                                </span>
+                                            [Traspaso] #{{ poliza.traspaso.numero_folio }}
+                                        </span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -86,9 +86,7 @@
                             </table>
                         </div>
                     </div>
-                    <!-- /.row -->
 
-                    <!-- Table row -->
                     <div class="row">
                         <div class="col-12 table-responsive">
                             <table class="table table-striped" v-if="!cargando">
@@ -128,8 +126,8 @@
                                                         :class="{'is-invalid': errors.has(`cuenta_contable[${i}]`)}"
                                                 >
                                                 <div class="invalid-feedback" v-show="errors.has(`cuenta_contable[${i}]`)">{{ errors.first(`cuenta_contable[${i}]`) }}</div>
+                                            </span>
                                         </span>
-                                    </span>
                                         <span v-else>
                                             <label v-if="movimiento.cuenta_contable">{{ movimiento.cuenta_contable }}</label>
                                             <label v-else>{{ datosContables }}</label>
@@ -152,7 +150,8 @@
                                                 <option value="2">Abono</option>
                                             </select>
                                             <div class="invalid-feedback"
-                                                 v-show="errors.has(`id_tipo_movimiento_poliza[${i}]`)">{{ errors.first(`id_tipo_movimiento_poliza[${i}]`) }}</div>
+                                                 v-show="errors.has(`id_tipo_movimiento_poliza[${i}]`)">{{ errors.first(`id_tipo_movimiento_poliza[${i}]`) }}
+                                            </div>
                                         </span>
                                         <span v-else>
                                             {{ movimiento.tipo.descripcion }}
@@ -174,29 +173,29 @@
                                                 <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                             </span>
                                             <span v-else>
-                                            ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
+                                                ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
+                                            </span>
                                         </span>
-                                    </span>
                                     </td>
                                     <td>
-                                    <span v-if="movimiento.id_tipo_movimiento_poliza == 2">
-                                        <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
-                                            <input
-                                                    type="number"
-                                                    step="any"
-                                                    class="form-control"
-                                                    :name="`importe[${i}]`"
-                                                    v-model="movimiento.importe"
-                                                    v-validate="{required: true, decimal: true}"
-                                                    data-vv-as="Debe"
-                                                    :class="{'is-invalid': errors.has(`importe[${i}]`)}"
-                                            />
-                                            <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
+                                        <span v-if="movimiento.id_tipo_movimiento_poliza == 2">
+                                            <span v-if="$root.can('editar_importe_movimiento_prepoliza')">
+                                                <input
+                                                        type="number"
+                                                        step="any"
+                                                        class="form-control"
+                                                        :name="`importe[${i}]`"
+                                                        v-model="movimiento.importe"
+                                                        v-validate="{required: true, decimal: true}"
+                                                        data-vv-as="Debe"
+                                                        :class="{'is-invalid': errors.has(`importe[${i}]`)}"
+                                                />
+                                                <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
+                                            </span>
+                                            <span v-else>
+                                                ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
+                                            </span>
                                         </span>
-                                        <span v-else>
-                                            ${{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}
-                                        </span>
-                                    </span>
                                     </td>
                                     <td>
                                         <input
@@ -257,11 +256,8 @@
                                 </h4>
                             </div>
                         </div>
-                        <!-- /.col -->
                     </div>
-                    <!-- /.row -->
 
-                    <!--Footer row -->
                     <div class="row">
                         <div class="col-md-12">
                             <button class="btn btn-info pull-right" type="submit"
@@ -270,14 +266,10 @@
                             </button>
                         </div>
                     </div>
-                    <!-- /.row -->
                 </form>
-
-                <!-- /.row -->
             </div>
-            <!-- /.invoice -->
-        </div><!-- /.col -->
-    </div><!-- /.row -->
+        </div>
+    </div>
 </template>
 
 <script>
@@ -347,15 +339,18 @@
                 }).then((result) => {
                     if (result.value) {
                         this.update(this.poliza.id, this.poliza)
-                            .then(() => {
-                                Swal(
-                                    '',
-                                    'Your file has been deleted.',
-                                    'success'
-                                );
+                            .then((data) => {
+                                Swal({
+                                    type: 'success',
+                                    title: '¡Correcto!',
+                                    text: 'Prepóliza Actualizada correctamente',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                this.poliza = data;
                             })
                             .catch(error => {
-
+                                alert(error);
                             });
                     }
                 })
