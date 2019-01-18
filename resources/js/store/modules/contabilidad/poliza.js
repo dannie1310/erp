@@ -73,6 +73,23 @@ export default {
                         context.commit('cargando', false)
                     })
             })
+        },
+
+        validar(context, id) {
+            context.commit('cargando', true)
+            return new Promise((resolve, reject) => {
+                axios.patch(URI + id + '/validar')
+                    .then(response => {
+                        context.commit('update', response.data)
+                        resolve(response.data)
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+                    .then(() => {
+                        context.commit('cargando', false)
+                    })
+            })
         }
     },
 

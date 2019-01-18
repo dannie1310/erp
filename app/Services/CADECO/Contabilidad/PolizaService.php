@@ -118,4 +118,28 @@ class PolizaService
             throw $e;
         }
     }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function validar($id) {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+            $poliza = $this->poliza->find($id);
+            if (! in_array($poliza->estatus, [0, -2])) {
+                throw new \Exception("No se puede validar la prepóliza ya que su estatus es {$poliza->estatusPrepoliza->descripcion}", 400);
+            }
+            $data = ['estatus' => 1];
+            $poliza = $this->poliza->update($data, $id);
+            $poliza->valido()->create(['valido' => auth()->id()]);
+
+            DB::connection('cadeco')->commit();
+            return $poliza;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort($e->getCode(), $e->getMessage());
+        }
+    }
 }

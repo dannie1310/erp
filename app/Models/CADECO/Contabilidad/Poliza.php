@@ -27,6 +27,7 @@ class Poliza extends Model
     protected $fillable = [
         'concepto',
         'fecha',
+        'estatus'
     ];
 
     protected $dates = ['fecha'];
@@ -94,5 +95,9 @@ class Poliza extends Model
     public function traspaso()
     {
         return $this->belongsTo(TraspasoCuentas::class, 'id_traspaso');
+    }
+
+    public function valido() {
+        return $this->hasOne(PolizaValido::class, 'id_int_poliza');
     }
 }

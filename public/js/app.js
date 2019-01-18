@@ -95314,6 +95314,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento__ = __webpack_require__(454);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__partials_Validar__ = __webpack_require__(505);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__partials_Validar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__partials_Validar__);
 //
 //
 //
@@ -95588,13 +95590,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "poliza-edit",
-    components: { AddMovimiento: __WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento___default.a, EstatusLabel: __WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel___default.a },
+    components: { PolizaValidar: __WEBPACK_IMPORTED_MODULE_2__partials_Validar___default.a, AddMovimiento: __WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento___default.a, EstatusLabel: __WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel___default.a },
     props: ['id'],
     data: function data() {
         return {
@@ -95603,20 +95625,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     mounted: function mounted() {
-        var _this = this;
-
-        this.find(this.id).then(function (data) {
-            _this.poliza = data;
-            _this.original = JSON.parse(JSON.stringify(data));
-        });
+        this.find(this.id);
     },
 
 
     methods: {
         find: function find(id) {
+            var _this = this;
+
             return this.$store.dispatch('contabilidad/poliza/find', {
                 id: id,
                 params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+            }).then(function (data) {
+                _this.poliza = data;
+                _this.original = JSON.parse(JSON.stringify(data));
             });
         },
         update: function update(id, payload) {
@@ -96643,135 +96665,1151 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _vm.poliza
-    ? _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-12" }, [
-          _c("div", { staticClass: "invoice p-3 mb-3" }, [
-            _vm._m(0),
-            _vm._v(" "),
-            _c(
-              "form",
-              {
-                attrs: { role: "form" },
+    ? _c("span", [
+        _c("div", { staticClass: "row" }, [
+          _c(
+            "div",
+            { staticClass: "col-md-12" },
+            [
+              _c("poliza-validar", {
+                attrs: { poliza: _vm.poliza },
                 on: {
-                  submit: function($event) {
-                    $event.preventDefault()
-                    return _vm.validate($event)
+                  success: function($event) {
+                    _vm.find(_vm.id)
                   }
                 }
-              },
-              [
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "table-responsive col-md-12" }, [
-                    _c("table", { staticClass: "table table-striped" }, [
-                      _c("tbody", [
-                        _c("tr", [
-                          _c("td", { staticClass: "bg-gray-light" }, [
-                            _c("b", [_vm._v("Tipo Póliza SAO:")]),
-                            _c("br"),
-                            _vm._v(
-                              _vm._s(
-                                _vm.poliza.transaccionInterfaz.descripcion
-                              ) + "\n                                "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "bg-gray-light" }, [
-                            _c("b", [_vm._v("Fecha de Prepóliza:")]),
-                            _c("br"),
+              }),
+              _vm._v(" "),
+              _vm.$root.can("omitir_prepoliza_generada") &&
+              (_vm.poliza.estatus == -2 ||
+                _vm.poliza.estatus == -1 ||
+                _vm.poliza.estatus == 0)
+                ? _c(
+                    "button",
+                    { staticClass: "btn btn-app btn-info pull-right" },
+                    [
+                      _c("i", { staticClass: "fa fa-thumbs-o-down" }),
+                      _vm._v(" Omitir\n            ")
+                    ]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.$root.can("ingresar_folio_contpaq") &&
+              (_vm.poliza.estatus == -1 || _vm.poliza.estatus == 0)
+                ? _c(
+                    "button",
+                    { staticClass: "btn btn-app btn-info pull-right" },
+                    [
+                      _c("i", { staticClass: "fa fa-i-cursor" }),
+                      _vm._v(" Ingrear Folio Contpaq\n            ")
+                    ]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.$root.can("ingresar_cuenta_faltante_movimiento_prepoliza")
+                ? _c(
+                    "button",
+                    { staticClass: "btn btn-app btn-info pull-right" },
+                    [
+                      _c("i", { staticClass: "fa fa-dollar" }),
+                      _vm._v(" Ingresar cuentas faltantes\n            ")
+                    ]
+                  )
+                : _vm._e()
+            ],
+            1
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-12" }, [
+            _c("div", { staticClass: "invoice p-3 mb-3" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c(
+                "form",
+                {
+                  attrs: { role: "form" },
+                  on: {
+                    submit: function($event) {
+                      $event.preventDefault()
+                      return _vm.validate($event)
+                    }
+                  }
+                },
+                [
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "table-responsive col-md-12" }, [
+                      _c("table", { staticClass: "table table-striped" }, [
+                        _c("tbody", [
+                          _c("tr", [
+                            _c("td", { staticClass: "bg-gray-light" }, [
+                              _c("b", [_vm._v("Tipo Póliza SAO:")]),
+                              _c("br"),
+                              _vm._v(
+                                _vm._s(
+                                  _vm.poliza.transaccionInterfaz.descripcion
+                                ) + "\n                                    "
+                              )
+                            ]),
                             _vm._v(" "),
-                            _vm.$root.can("editar_fecha_prepoliza")
-                              ? _c("span", [
-                                  _c("input", {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model",
-                                        value: _vm.poliza.fecha,
-                                        expression: "poliza.fecha"
-                                      },
-                                      {
-                                        name: "validate",
-                                        rawName: "v-validate",
-                                        value: {
-                                          required: true,
-                                          date_format: "YYYY-MM-DD"
-                                        },
-                                        expression:
-                                          "{required: true, date_format: 'YYYY-MM-DD'}"
-                                      }
-                                    ],
-                                    staticClass: "form-control",
-                                    class: {
-                                      "is-invalid": _vm.errors.has("fecha")
-                                    },
-                                    attrs: {
-                                      type: "date",
-                                      name: "fecha",
-                                      "data-vv-as": "Fecha de Prepóliza"
-                                    },
-                                    domProps: { value: _vm.poliza.fecha },
-                                    on: {
-                                      input: function($event) {
-                                        if ($event.target.composing) {
-                                          return
-                                        }
-                                        _vm.$set(
-                                          _vm.poliza,
-                                          "fecha",
-                                          $event.target.value
-                                        )
-                                      }
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    {
+                            _c("td", { staticClass: "bg-gray-light" }, [
+                              _c("b", [_vm._v("Fecha de Prepóliza:")]),
+                              _c("br"),
+                              _vm._v(" "),
+                              _vm.$root.can("editar_fecha_prepoliza")
+                                ? _c("span", [
+                                    _c("input", {
                                       directives: [
                                         {
-                                          name: "show",
-                                          rawName: "v-show",
-                                          value: _vm.errors.has("fecha"),
-                                          expression: "errors.has('fecha')"
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.poliza.fecha,
+                                          expression: "poliza.fecha"
+                                        },
+                                        {
+                                          name: "validate",
+                                          rawName: "v-validate",
+                                          value: {
+                                            required: true,
+                                            date_format: "YYYY-MM-DD"
+                                          },
+                                          expression:
+                                            "{required: true, date_format: 'YYYY-MM-DD'}"
                                         }
                                       ],
-                                      staticClass: "invalid-feedback"
+                                      staticClass: "form-control",
+                                      class: {
+                                        "is-invalid": _vm.errors.has("fecha")
+                                      },
+                                      attrs: {
+                                        type: "date",
+                                        name: "fecha",
+                                        "data-vv-as": "Fecha de Prepóliza"
+                                      },
+                                      domProps: { value: _vm.poliza.fecha },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.poliza,
+                                            "fecha",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "show",
+                                            rawName: "v-show",
+                                            value: _vm.errors.has("fecha"),
+                                            expression: "errors.has('fecha')"
+                                          }
+                                        ],
+                                        staticClass: "invalid-feedback"
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                                " +
+                                            _vm._s(_vm.errors.first("fecha")) +
+                                            "\n                                            "
+                                        )
+                                      ]
+                                    )
+                                  ])
+                                : _c("span", [
+                                    _vm._v(
+                                      "\n                                            " +
+                                        _vm._s(_vm.poliza.fecha) +
+                                        "\n                                        "
+                                    )
+                                  ])
+                            ]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "bg-gray-light" }, [
+                              _c("b", [_vm._v("Usuario Solicita:")]),
+                              _c("br"),
+                              _vm._v(
+                                "\n                                        " +
+                                  _vm._s(_vm.poliza.usuario_solicita) +
+                                  "\n                                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "bg-gray-light" }, [
+                              _c("b", [_vm._v("Cuadre:")]),
+                              _c("br"),
+                              _vm._v(
+                                "$\n                                        " +
+                                  _vm._s(
+                                    parseFloat(_vm.poliza.cuadre).formatMoney(
+                                      2,
+                                      ".",
+                                      ","
+                                    )
+                                  ) +
+                                  "\n                                    "
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "td",
+                              { staticClass: "bg-gray-light" },
+                              [
+                                _c("b", [_vm._v("Estatus:")]),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("estatus-label", {
+                                  attrs: { value: _vm.poliza.estatusPrepoliza }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "bg-gray-light" }, [
+                              _c("b", [_vm._v("Póliza Contpaq:")]),
+                              _vm._v(" "),
+                              _c("br"),
+                              _vm._v(
+                                "\n                                        " +
+                                  _vm._s(
+                                    _vm.poliza.poliza_contpaq
+                                      ? "#" + _vm.poliza.poliza_contpaq
+                                      : ""
+                                  ) +
+                                  "\n                                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "bg-gray-light" }, [
+                              _c("b", [_vm._v("Tipo de Póliza:")]),
+                              _c("br"),
+                              _vm._v(
+                                "\n                                        " +
+                                  _vm._s(
+                                    _vm.poliza.tipoPolizaContpaq.descripcion
+                                  ) +
+                                  "\n                                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "bg-gray-light" }, [
+                              _c("b", [_vm._v("Transacción Antecedente:")]),
+                              _c("br"),
+                              _vm._v(" "),
+                              _vm.poliza.transaccionAntecedente
+                                ? _c("span", [
+                                    _vm._v(
+                                      "\n                                            [" +
+                                        _vm._s(
+                                          _vm.poliza.transaccionAntecedente.tipo
+                                            .descripcion
+                                        ) +
+                                        "]  #" +
+                                        _vm._s(
+                                          _vm.poliza.transaccionAntecedente
+                                            .numero_folio
+                                        ) +
+                                        "\n                                        "
+                                    )
+                                  ])
+                                : _vm.poliza.traspaso
+                                ? _c("span", [
+                                    _vm._v(
+                                      "\n                                            [Traspaso] #" +
+                                        _vm._s(
+                                          _vm.poliza.traspaso.numero_folio
+                                        ) +
+                                        "\n                                        "
+                                    )
+                                  ])
+                                : _vm._e()
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "td",
+                              {
+                                staticClass: "bg-gray-light",
+                                attrs: { colspan: "4" }
+                              },
+                              [
+                                _c("b", [_vm._v("Concepto:")]),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("textarea", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.poliza.concepto,
+                                      expression: "poliza.concepto"
                                     },
-                                    [
-                                      _vm._v(
-                                        "\n                                            " +
-                                          _vm._s(_vm.errors.first("fecha")) +
-                                          "\n                                        "
+                                    {
+                                      name: "validate",
+                                      rawName: "v-validate",
+                                      value: { required: true },
+                                      expression: "{required: true}"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  class: {
+                                    "is-invalid": _vm.errors.has("concepto")
+                                  },
+                                  attrs: {
+                                    name: "concepto",
+                                    type: "text",
+                                    "data-vv-as": "Concepto"
+                                  },
+                                  domProps: { value: _vm.poliza.concepto },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.poliza,
+                                        "concepto",
+                                        $event.target.value
                                       )
-                                    ]
-                                  )
-                                ])
-                              : _c("span", [
-                                  _vm._v(
-                                    "\n                                        " +
-                                      _vm._s(_vm.poliza.fecha) +
-                                      "\n                                    "
-                                  )
-                                ])
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "bg-gray-light" }, [
-                            _c("b", [_vm._v("Usuario Solicita:")]),
-                            _c("br"),
-                            _vm._v(
-                              "\n                                    " +
-                                _vm._s(_vm.poliza.usuario_solicita) +
-                                "\n                                "
+                                    }
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "show",
+                                        rawName: "v-show",
+                                        value: _vm.errors.has("concepto"),
+                                        expression: "errors.has('concepto')"
+                                      }
+                                    ],
+                                    staticClass: "invalid-feedback"
+                                  },
+                                  [
+                                    _vm._v(
+                                      _vm._s(_vm.errors.first("concepto")) +
+                                        "\n                                        "
+                                    )
+                                  ]
+                                )
+                              ]
                             )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "bg-gray-light" }, [
-                            _c("b", [_vm._v("Cuadre:")]),
-                            _c("br"),
+                          ])
+                        ])
+                      ])
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-12 table-responsive" }, [
+                      !_vm.cargando
+                        ? _c("table", { staticClass: "table table-striped" }, [
+                            _c("thead", [
+                              _c("tr", [
+                                _c("th", { staticClass: "bg-gray-light" }, [
+                                  _vm._v("#")
+                                ]),
+                                _vm._v(" "),
+                                _c("th", { staticClass: "bg-gray-light" }, [
+                                  _vm._v("Cuenta Contable")
+                                ]),
+                                _vm._v(" "),
+                                _c("th", { staticClass: "bg-gray-light" }, [
+                                  _vm._v("Tipo Cuenta Contable")
+                                ]),
+                                _vm._v(" "),
+                                _c("th", { staticClass: "bg-gray-light" }, [
+                                  _vm._v("Tipo")
+                                ]),
+                                _vm._v(" "),
+                                _c("th", { staticClass: "bg-gray-light" }, [
+                                  _vm._v("Debe")
+                                ]),
+                                _vm._v(" "),
+                                _c("th", { staticClass: "bg-gray-light" }, [
+                                  _vm._v("Haber")
+                                ]),
+                                _vm._v(" "),
+                                _c("th", { staticClass: "bg-gray-light" }, [
+                                  _vm._v("Referencia")
+                                ]),
+                                _vm._v(" "),
+                                _c("th", { staticClass: "bg-gray-light" }, [
+                                  _vm._v("Concepto")
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "th",
+                                  { staticClass: "bg-gray-light" },
+                                  [
+                                    _c("add-movimiento", {
+                                      on: { add: _vm.add }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "tbody",
+                              _vm._l(_vm.poliza.movimientos.data, function(
+                                movimiento,
+                                i
+                              ) {
+                                return _c(
+                                  "tr",
+                                  { class: { "bg-success": !movimiento.id } },
+                                  [
+                                    _c("td", [_vm._v(_vm._s(i + 1))]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      (movimiento.cuenta_contable &&
+                                        _vm.$root.can(
+                                          "editar_cuenta_contable_movimiento_prepoliza"
+                                        )) ||
+                                      _vm.$root.can(
+                                        "ingresar_cuenta_faltante_movimiento_prepoliza"
+                                      )
+                                        ? _c("span", [
+                                            movimiento.id_tipo_cuenta_contable ==
+                                              1 &&
+                                            movimiento.cuenta_contable != null
+                                              ? _c("span", [
+                                                  _vm._v(
+                                                    "\n                                                " +
+                                                      _vm._s(
+                                                        movimiento.cuenta_contable
+                                                      ) +
+                                                      "\n                                            "
+                                                  )
+                                                ])
+                                              : _c("span", [
+                                                  _c("input", {
+                                                    directives: [
+                                                      {
+                                                        name: "mask",
+                                                        rawName: "v-mask",
+                                                        value: {
+                                                          regex:
+                                                            _vm.datosContables
+                                                        },
+                                                        expression:
+                                                          "{regex: datosContables}"
+                                                      },
+                                                      {
+                                                        name: "model",
+                                                        rawName: "v-model",
+                                                        value:
+                                                          movimiento.cuenta_contable,
+                                                        expression:
+                                                          "movimiento.cuenta_contable"
+                                                      },
+                                                      {
+                                                        name: "validate",
+                                                        rawName: "v-validate",
+                                                        value: {
+                                                          required: true,
+                                                          regex:
+                                                            _vm.datosContables
+                                                        },
+                                                        expression:
+                                                          "{required: true, regex: datosContables}"
+                                                      }
+                                                    ],
+                                                    staticClass: "form-control",
+                                                    class: {
+                                                      "is-invalid": _vm.errors.has(
+                                                        "cuenta_contable[" +
+                                                          i +
+                                                          "]"
+                                                      )
+                                                    },
+                                                    attrs: {
+                                                      type: "text",
+                                                      name:
+                                                        "cuenta_contable[" +
+                                                        i +
+                                                        "]",
+                                                      "data-vv-as":
+                                                        "Cuenta Contable"
+                                                    },
+                                                    domProps: {
+                                                      value:
+                                                        movimiento.cuenta_contable
+                                                    },
+                                                    on: {
+                                                      input: function($event) {
+                                                        if (
+                                                          $event.target
+                                                            .composing
+                                                        ) {
+                                                          return
+                                                        }
+                                                        _vm.$set(
+                                                          movimiento,
+                                                          "cuenta_contable",
+                                                          $event.target.value
+                                                        )
+                                                      }
+                                                    }
+                                                  }),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      directives: [
+                                                        {
+                                                          name: "show",
+                                                          rawName: "v-show",
+                                                          value: _vm.errors.has(
+                                                            "cuenta_contable[" +
+                                                              i +
+                                                              "]"
+                                                          ),
+                                                          expression:
+                                                            "errors.has(`cuenta_contable[${i}]`)"
+                                                        }
+                                                      ],
+                                                      staticClass:
+                                                        "invalid-feedback"
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        _vm._s(
+                                                          _vm.errors.first(
+                                                            "cuenta_contable[" +
+                                                              i +
+                                                              "]"
+                                                          )
+                                                        )
+                                                      )
+                                                    ]
+                                                  )
+                                                ])
+                                          ])
+                                        : _c("span", [
+                                            movimiento.cuenta_contable
+                                              ? _c("label", [
+                                                  _vm._v(
+                                                    _vm._s(
+                                                      movimiento.cuenta_contable
+                                                    )
+                                                  )
+                                                ])
+                                              : _c("label", [
+                                                  _vm._v(
+                                                    _vm._s(_vm.datosContables)
+                                                  )
+                                                ])
+                                          ])
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _vm._v(
+                                        _vm._s(
+                                          movimiento.tipoCuentaContable
+                                            ? movimiento.tipoCuentaContable
+                                                .descripcion
+                                            : "No registrada"
+                                        ) +
+                                          "\n                                    "
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _vm.$root.can(
+                                        "editar_tipo_movimiento_prepoliza"
+                                      )
+                                        ? _c("span", [
+                                            _c(
+                                              "select",
+                                              {
+                                                directives: [
+                                                  {
+                                                    name: "model",
+                                                    rawName: "v-model",
+                                                    value:
+                                                      movimiento.id_tipo_movimiento_poliza,
+                                                    expression:
+                                                      "movimiento.id_tipo_movimiento_poliza"
+                                                  },
+                                                  {
+                                                    name: "validate",
+                                                    rawName: "v-validate",
+                                                    value: { required: true },
+                                                    expression:
+                                                      "{required: true}"
+                                                  }
+                                                ],
+                                                staticClass: "form-control",
+                                                class: {
+                                                  "is-invalid": _vm.errors.has(
+                                                    "id_tipo_movimiento_poliza[" +
+                                                      i +
+                                                      "]"
+                                                  )
+                                                },
+                                                attrs: {
+                                                  name:
+                                                    "id_tipo_movimiento_poliza[" +
+                                                    i +
+                                                    "]",
+                                                  "data-vv-as": "Tipo"
+                                                },
+                                                on: {
+                                                  change: function($event) {
+                                                    var $$selectedVal = Array.prototype.filter
+                                                      .call(
+                                                        $event.target.options,
+                                                        function(o) {
+                                                          return o.selected
+                                                        }
+                                                      )
+                                                      .map(function(o) {
+                                                        var val =
+                                                          "_value" in o
+                                                            ? o._value
+                                                            : o.value
+                                                        return val
+                                                      })
+                                                    _vm.$set(
+                                                      movimiento,
+                                                      "id_tipo_movimiento_poliza",
+                                                      $event.target.multiple
+                                                        ? $$selectedVal
+                                                        : $$selectedVal[0]
+                                                    )
+                                                  }
+                                                }
+                                              },
+                                              [
+                                                _c(
+                                                  "option",
+                                                  { attrs: { value: "1" } },
+                                                  [_vm._v("Cargo")]
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "option",
+                                                  { attrs: { value: "2" } },
+                                                  [_vm._v("Abono")]
+                                                )
+                                              ]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "div",
+                                              {
+                                                directives: [
+                                                  {
+                                                    name: "show",
+                                                    rawName: "v-show",
+                                                    value: _vm.errors.has(
+                                                      "id_tipo_movimiento_poliza[" +
+                                                        i +
+                                                        "]"
+                                                    ),
+                                                    expression:
+                                                      "errors.has(`id_tipo_movimiento_poliza[${i}]`)"
+                                                  }
+                                                ],
+                                                staticClass: "invalid-feedback"
+                                              },
+                                              [
+                                                _vm._v(
+                                                  _vm._s(
+                                                    _vm.errors.first(
+                                                      "id_tipo_movimiento_poliza[" +
+                                                        i +
+                                                        "]"
+                                                    )
+                                                  ) +
+                                                    "\n                                            "
+                                                )
+                                              ]
+                                            )
+                                          ])
+                                        : _c("span", [
+                                            _vm._v(
+                                              "\n                                            " +
+                                                _vm._s(
+                                                  movimiento.tipo.descripcion
+                                                ) +
+                                                "\n                                        "
+                                            )
+                                          ])
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      movimiento.id_tipo_movimiento_poliza == 1
+                                        ? _c("span", [
+                                            _vm.$root.can(
+                                              "editar_importe_movimiento_prepoliza"
+                                            )
+                                              ? _c("span", [
+                                                  _c("input", {
+                                                    directives: [
+                                                      {
+                                                        name: "model",
+                                                        rawName: "v-model",
+                                                        value:
+                                                          movimiento.importe,
+                                                        expression:
+                                                          "movimiento.importe"
+                                                      },
+                                                      {
+                                                        name: "validate",
+                                                        rawName: "v-validate",
+                                                        value: {
+                                                          required: true,
+                                                          decimal: true
+                                                        },
+                                                        expression:
+                                                          "{required: true, decimal: true}"
+                                                      }
+                                                    ],
+                                                    staticClass: "form-control",
+                                                    class: {
+                                                      "is-invalid": _vm.errors.has(
+                                                        "importe[" + i + "]"
+                                                      )
+                                                    },
+                                                    attrs: {
+                                                      type: "number",
+                                                      step: "any",
+                                                      name:
+                                                        "importe[" + i + "]",
+                                                      "data-vv-as": "Debe"
+                                                    },
+                                                    domProps: {
+                                                      value: movimiento.importe
+                                                    },
+                                                    on: {
+                                                      input: function($event) {
+                                                        if (
+                                                          $event.target
+                                                            .composing
+                                                        ) {
+                                                          return
+                                                        }
+                                                        _vm.$set(
+                                                          movimiento,
+                                                          "importe",
+                                                          $event.target.value
+                                                        )
+                                                      }
+                                                    }
+                                                  }),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      directives: [
+                                                        {
+                                                          name: "show",
+                                                          rawName: "v-show",
+                                                          value: _vm.errors.has(
+                                                            "importe[" + i + "]"
+                                                          ),
+                                                          expression:
+                                                            "errors.has(`importe[${i}]`)"
+                                                        }
+                                                      ],
+                                                      staticClass:
+                                                        "invalid-feedback"
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        _vm._s(
+                                                          _vm.errors.first(
+                                                            "importe[" + i + "]"
+                                                          )
+                                                        )
+                                                      )
+                                                    ]
+                                                  )
+                                                ])
+                                              : _c("span", [
+                                                  _vm._v(
+                                                    "\n                                                $" +
+                                                      _vm._s(
+                                                        parseFloat(
+                                                          movimiento.importe
+                                                        ).formatMoney(
+                                                          2,
+                                                          ".",
+                                                          ","
+                                                        )
+                                                      ) +
+                                                      "\n                                            "
+                                                  )
+                                                ])
+                                          ])
+                                        : _vm._e()
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      movimiento.id_tipo_movimiento_poliza == 2
+                                        ? _c("span", [
+                                            _vm.$root.can(
+                                              "editar_importe_movimiento_prepoliza"
+                                            )
+                                              ? _c("span", [
+                                                  _c("input", {
+                                                    directives: [
+                                                      {
+                                                        name: "model",
+                                                        rawName: "v-model",
+                                                        value:
+                                                          movimiento.importe,
+                                                        expression:
+                                                          "movimiento.importe"
+                                                      },
+                                                      {
+                                                        name: "validate",
+                                                        rawName: "v-validate",
+                                                        value: {
+                                                          required: true,
+                                                          decimal: true
+                                                        },
+                                                        expression:
+                                                          "{required: true, decimal: true}"
+                                                      }
+                                                    ],
+                                                    staticClass: "form-control",
+                                                    class: {
+                                                      "is-invalid": _vm.errors.has(
+                                                        "importe[" + i + "]"
+                                                      )
+                                                    },
+                                                    attrs: {
+                                                      type: "number",
+                                                      step: "any",
+                                                      name:
+                                                        "importe[" + i + "]",
+                                                      "data-vv-as": "Debe"
+                                                    },
+                                                    domProps: {
+                                                      value: movimiento.importe
+                                                    },
+                                                    on: {
+                                                      input: function($event) {
+                                                        if (
+                                                          $event.target
+                                                            .composing
+                                                        ) {
+                                                          return
+                                                        }
+                                                        _vm.$set(
+                                                          movimiento,
+                                                          "importe",
+                                                          $event.target.value
+                                                        )
+                                                      }
+                                                    }
+                                                  }),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      directives: [
+                                                        {
+                                                          name: "show",
+                                                          rawName: "v-show",
+                                                          value: _vm.errors.has(
+                                                            "importe[" + i + "]"
+                                                          ),
+                                                          expression:
+                                                            "errors.has(`importe[${i}]`)"
+                                                        }
+                                                      ],
+                                                      staticClass:
+                                                        "invalid-feedback"
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        _vm._s(
+                                                          _vm.errors.first(
+                                                            "importe[" + i + "]"
+                                                          )
+                                                        )
+                                                      )
+                                                    ]
+                                                  )
+                                                ])
+                                              : _c("span", [
+                                                  _vm._v(
+                                                    "\n                                                $" +
+                                                      _vm._s(
+                                                        parseFloat(
+                                                          movimiento.importe
+                                                        ).formatMoney(
+                                                          2,
+                                                          ".",
+                                                          ","
+                                                        )
+                                                      ) +
+                                                      "\n                                            "
+                                                  )
+                                                ])
+                                          ])
+                                        : _vm._e()
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: movimiento.referencia,
+                                            expression: "movimiento.referencia"
+                                          },
+                                          {
+                                            name: "validate",
+                                            rawName: "v-validate",
+                                            value: { required: true },
+                                            expression: "{required: true}"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.errors.has(
+                                            "referencia[" + i + "]"
+                                          )
+                                        },
+                                        attrs: {
+                                          type: "text",
+                                          size: "5",
+                                          name: "referencia[" + i + "]",
+                                          "data-vv-as": "Referencia"
+                                        },
+                                        domProps: {
+                                          value: movimiento.referencia
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              movimiento,
+                                              "referencia",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          directives: [
+                                            {
+                                              name: "show",
+                                              rawName: "v-show",
+                                              value: _vm.errors.has(
+                                                "referencia[" + i + "]"
+                                              ),
+                                              expression:
+                                                "errors.has(`referencia[${i}]`)"
+                                            }
+                                          ],
+                                          staticClass: "invalid-feedback"
+                                        },
+                                        [
+                                          _vm._v(
+                                            _vm._s(
+                                              _vm.errors.first(
+                                                "referencia[" + i + "]"
+                                              )
+                                            ) +
+                                              "\n                                        "
+                                          )
+                                        ]
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _c("textarea", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: movimiento.concepto,
+                                            expression: "movimiento.concepto"
+                                          },
+                                          {
+                                            name: "validate",
+                                            rawName: "v-validate",
+                                            value: { required: true },
+                                            expression: "{required: true}"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        class: {
+                                          "is-invalid": _vm.errors.has(
+                                            "concepto[" + i + "]"
+                                          )
+                                        },
+                                        attrs: {
+                                          rows: "3",
+                                          cols: "40",
+                                          wrap: "soft",
+                                          name: "concepto[" + i + "]",
+                                          "data-vv-as": "Concepto"
+                                        },
+                                        domProps: {
+                                          value: movimiento.concepto
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              movimiento,
+                                              "concepto",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          directives: [
+                                            {
+                                              name: "show",
+                                              rawName: "v-show",
+                                              value: _vm.errors.has(
+                                                "concepto[" + i + "]"
+                                              ),
+                                              expression:
+                                                "errors.has(`concepto[${i}]`)"
+                                            }
+                                          ],
+                                          staticClass: "invalid-feedback"
+                                        },
+                                        [
+                                          _vm._v(
+                                            _vm._s(
+                                              _vm.errors.first(
+                                                "concepto[" + i + "]"
+                                              )
+                                            ) +
+                                              "\n                                        "
+                                          )
+                                        ]
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass:
+                                            "btn btn-sm btn-outline-danger",
+                                          attrs: { type: "button" },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.remove(movimiento)
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _c("i", {
+                                            staticClass: "fa fa-trash"
+                                          })
+                                        ]
+                                      )
+                                    ])
+                                  ]
+                                )
+                              }),
+                              0
+                            ),
+                            _vm._v(" "),
+                            _c("tfoot", [
+                              _c("tr", [
+                                _c(
+                                  "th",
+                                  {
+                                    staticClass: "text-center",
+                                    class: _vm.color,
+                                    attrs: { colspan: "4" }
+                                  },
+                                  [_c("b", [_vm._v("Sumas Iguales")])]
+                                ),
+                                _vm._v(" "),
+                                _c("th", { class: _vm.color }, [
+                                  _c("b", [
+                                    _vm._v(
+                                      "$ " +
+                                        _vm._s(
+                                          parseFloat(_vm.sumaDebe).formatMoney(
+                                            2,
+                                            ".",
+                                            ","
+                                          )
+                                        )
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("th", { class: _vm.color }, [
+                                  _c("b", [
+                                    _vm._v(
+                                      "$ " +
+                                        _vm._s(
+                                          parseFloat(_vm.sumaHaber).formatMoney(
+                                            2,
+                                            ".",
+                                            ","
+                                          )
+                                        )
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c("th", {
+                                  class: _vm.color,
+                                  attrs: { colspan: "3" }
+                                })
+                              ])
+                            ])
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "col-sm-12",
+                          staticStyle: { "text-align": "right" }
+                        },
+                        [
+                          _c("h4", [
+                            _c("b", [_vm._v("Total de la Prepóliza:")]),
                             _vm._v(
-                              "$\n                                    " +
+                              "\n                                    $ " +
                                 _vm._s(
-                                  parseFloat(_vm.poliza.cuadre).formatMoney(
+                                  parseFloat(_vm.poliza.total).formatMoney(
                                     2,
                                     ".",
                                     ","
@@ -96780,968 +97818,36 @@ var render = function() {
                                 "\n                                "
                             )
                           ])
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c(
-                            "td",
-                            { staticClass: "bg-gray-light" },
-                            [
-                              _c("b", [_vm._v("Estatus:")]),
-                              _c("br"),
-                              _vm._v(" "),
-                              _c("estatus-label", {
-                                attrs: { value: _vm.poliza.estatusPrepoliza }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "bg-gray-light" }, [
-                            _c("b", [_vm._v("Póliza Contpaq:")]),
-                            _vm._v(" "),
-                            _c("br"),
-                            _vm._v(
-                              "\n                                    " +
-                                _vm._s(
-                                  _vm.poliza.poliza_contpaq
-                                    ? "#" + _vm.poliza.poliza_contpaq
-                                    : ""
-                                ) +
-                                "\n                                "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "bg-gray-light" }, [
-                            _c("b", [_vm._v("Tipo de Póliza:")]),
-                            _c("br"),
-                            _vm._v(
-                              "\n                                    " +
-                                _vm._s(
-                                  _vm.poliza.tipoPolizaContpaq.descripcion
-                                ) +
-                                "\n                                "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("td", { staticClass: "bg-gray-light" }, [
-                            _c("b", [_vm._v("Transacción Antecedente:")]),
-                            _c("br"),
-                            _vm._v(" "),
-                            _vm.poliza.transaccionAntecedente
-                              ? _c("span", [
-                                  _vm._v(
-                                    "\n                                        [" +
-                                      _vm._s(
-                                        _vm.poliza.transaccionAntecedente.tipo
-                                          .descripcion
-                                      ) +
-                                      "]  #" +
-                                      _vm._s(
-                                        _vm.poliza.transaccionAntecedente
-                                          .numero_folio
-                                      ) +
-                                      "\n                                    "
-                                  )
-                                ])
-                              : _vm.poliza.traspaso
-                              ? _c("span", [
-                                  _vm._v(
-                                    "\n                                        [Traspaso] #" +
-                                      _vm._s(_vm.poliza.traspaso.numero_folio) +
-                                      "\n                                    "
-                                  )
-                                ])
-                              : _vm._e()
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c(
-                            "td",
-                            {
-                              staticClass: "bg-gray-light",
-                              attrs: { colspan: "4" }
-                            },
-                            [
-                              _c("b", [_vm._v("Concepto:")]),
-                              _c("br"),
-                              _vm._v(" "),
-                              _c("textarea", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.poliza.concepto,
-                                    expression: "poliza.concepto"
-                                  },
-                                  {
-                                    name: "validate",
-                                    rawName: "v-validate",
-                                    value: { required: true },
-                                    expression: "{required: true}"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                class: {
-                                  "is-invalid": _vm.errors.has("concepto")
-                                },
-                                attrs: {
-                                  name: "concepto",
-                                  type: "text",
-                                  "data-vv-as": "Concepto"
-                                },
-                                domProps: { value: _vm.poliza.concepto },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.$set(
-                                      _vm.poliza,
-                                      "concepto",
-                                      $event.target.value
-                                    )
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  directives: [
-                                    {
-                                      name: "show",
-                                      rawName: "v-show",
-                                      value: _vm.errors.has("concepto"),
-                                      expression: "errors.has('concepto')"
-                                    }
-                                  ],
-                                  staticClass: "invalid-feedback"
-                                },
-                                [
-                                  _vm._v(
-                                    _vm._s(_vm.errors.first("concepto")) +
-                                      "\n                                    "
-                                  )
-                                ]
-                              )
-                            ]
+                        ]
+                      )
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-md-12" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-info pull-right",
+                          attrs: {
+                            type: "submit",
+                            disabled:
+                              _vm.errors.count() > 0 ||
+                              !_vm.cuadrado ||
+                              !_vm.cambio
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n                                Guardar Cambios\n                            "
                           )
-                        ])
-                      ])
+                        ]
+                      )
                     ])
                   ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-12 table-responsive" }, [
-                    !_vm.cargando
-                      ? _c("table", { staticClass: "table table-striped" }, [
-                          _c("thead", [
-                            _c("tr", [
-                              _c("th", { staticClass: "bg-gray-light" }, [
-                                _vm._v("#")
-                              ]),
-                              _vm._v(" "),
-                              _c("th", { staticClass: "bg-gray-light" }, [
-                                _vm._v("Cuenta Contable")
-                              ]),
-                              _vm._v(" "),
-                              _c("th", { staticClass: "bg-gray-light" }, [
-                                _vm._v("Tipo Cuenta Contable")
-                              ]),
-                              _vm._v(" "),
-                              _c("th", { staticClass: "bg-gray-light" }, [
-                                _vm._v("Tipo")
-                              ]),
-                              _vm._v(" "),
-                              _c("th", { staticClass: "bg-gray-light" }, [
-                                _vm._v("Debe")
-                              ]),
-                              _vm._v(" "),
-                              _c("th", { staticClass: "bg-gray-light" }, [
-                                _vm._v("Haber")
-                              ]),
-                              _vm._v(" "),
-                              _c("th", { staticClass: "bg-gray-light" }, [
-                                _vm._v("Referencia")
-                              ]),
-                              _vm._v(" "),
-                              _c("th", { staticClass: "bg-gray-light" }, [
-                                _vm._v("Concepto")
-                              ]),
-                              _vm._v(" "),
-                              _c(
-                                "th",
-                                { staticClass: "bg-gray-light" },
-                                [
-                                  _c("add-movimiento", { on: { add: _vm.add } })
-                                ],
-                                1
-                              )
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "tbody",
-                            _vm._l(_vm.poliza.movimientos.data, function(
-                              movimiento,
-                              i
-                            ) {
-                              return _c(
-                                "tr",
-                                { class: { "bg-success": !movimiento.id } },
-                                [
-                                  _c("td", [_vm._v(_vm._s(i + 1))]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    (movimiento.cuenta_contable &&
-                                      _vm.$root.can(
-                                        "editar_cuenta_contable_movimiento_prepoliza"
-                                      )) ||
-                                    _vm.$root.can(
-                                      "ingresar_cuenta_faltante_movimiento_prepoliza"
-                                    )
-                                      ? _c("span", [
-                                          movimiento.id_tipo_cuenta_contable ==
-                                            1 &&
-                                          movimiento.cuenta_contable != null
-                                            ? _c("span", [
-                                                _vm._v(
-                                                  "\n                                            " +
-                                                    _vm._s(
-                                                      movimiento.cuenta_contable
-                                                    ) +
-                                                    "\n                                        "
-                                                )
-                                              ])
-                                            : _c("span", [
-                                                _c("input", {
-                                                  directives: [
-                                                    {
-                                                      name: "mask",
-                                                      rawName: "v-mask",
-                                                      value: {
-                                                        regex:
-                                                          _vm.datosContables
-                                                      },
-                                                      expression:
-                                                        "{regex: datosContables}"
-                                                    },
-                                                    {
-                                                      name: "model",
-                                                      rawName: "v-model",
-                                                      value:
-                                                        movimiento.cuenta_contable,
-                                                      expression:
-                                                        "movimiento.cuenta_contable"
-                                                    },
-                                                    {
-                                                      name: "validate",
-                                                      rawName: "v-validate",
-                                                      value: {
-                                                        required: true,
-                                                        regex:
-                                                          _vm.datosContables
-                                                      },
-                                                      expression:
-                                                        "{required: true, regex: datosContables}"
-                                                    }
-                                                  ],
-                                                  staticClass: "form-control",
-                                                  class: {
-                                                    "is-invalid": _vm.errors.has(
-                                                      "cuenta_contable[" +
-                                                        i +
-                                                        "]"
-                                                    )
-                                                  },
-                                                  attrs: {
-                                                    type: "text",
-                                                    name:
-                                                      "cuenta_contable[" +
-                                                      i +
-                                                      "]",
-                                                    "data-vv-as":
-                                                      "Cuenta Contable"
-                                                  },
-                                                  domProps: {
-                                                    value:
-                                                      movimiento.cuenta_contable
-                                                  },
-                                                  on: {
-                                                    input: function($event) {
-                                                      if (
-                                                        $event.target.composing
-                                                      ) {
-                                                        return
-                                                      }
-                                                      _vm.$set(
-                                                        movimiento,
-                                                        "cuenta_contable",
-                                                        $event.target.value
-                                                      )
-                                                    }
-                                                  }
-                                                }),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "div",
-                                                  {
-                                                    directives: [
-                                                      {
-                                                        name: "show",
-                                                        rawName: "v-show",
-                                                        value: _vm.errors.has(
-                                                          "cuenta_contable[" +
-                                                            i +
-                                                            "]"
-                                                        ),
-                                                        expression:
-                                                          "errors.has(`cuenta_contable[${i}]`)"
-                                                      }
-                                                    ],
-                                                    staticClass:
-                                                      "invalid-feedback"
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      _vm._s(
-                                                        _vm.errors.first(
-                                                          "cuenta_contable[" +
-                                                            i +
-                                                            "]"
-                                                        )
-                                                      )
-                                                    )
-                                                  ]
-                                                )
-                                              ])
-                                        ])
-                                      : _c("span", [
-                                          movimiento.cuenta_contable
-                                            ? _c("label", [
-                                                _vm._v(
-                                                  _vm._s(
-                                                    movimiento.cuenta_contable
-                                                  )
-                                                )
-                                              ])
-                                            : _c("label", [
-                                                _vm._v(
-                                                  _vm._s(_vm.datosContables)
-                                                )
-                                              ])
-                                        ])
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    _vm._v(
-                                      _vm._s(
-                                        movimiento.tipoCuentaContable
-                                          ? movimiento.tipoCuentaContable
-                                              .descripcion
-                                          : "No registrada"
-                                      ) + "\n                                "
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    _vm.$root.can(
-                                      "editar_tipo_movimiento_prepoliza"
-                                    )
-                                      ? _c("span", [
-                                          _c(
-                                            "select",
-                                            {
-                                              directives: [
-                                                {
-                                                  name: "model",
-                                                  rawName: "v-model",
-                                                  value:
-                                                    movimiento.id_tipo_movimiento_poliza,
-                                                  expression:
-                                                    "movimiento.id_tipo_movimiento_poliza"
-                                                },
-                                                {
-                                                  name: "validate",
-                                                  rawName: "v-validate",
-                                                  value: { required: true },
-                                                  expression: "{required: true}"
-                                                }
-                                              ],
-                                              staticClass: "form-control",
-                                              class: {
-                                                "is-invalid": _vm.errors.has(
-                                                  "id_tipo_movimiento_poliza[" +
-                                                    i +
-                                                    "]"
-                                                )
-                                              },
-                                              attrs: {
-                                                name:
-                                                  "id_tipo_movimiento_poliza[" +
-                                                  i +
-                                                  "]",
-                                                "data-vv-as": "Tipo"
-                                              },
-                                              on: {
-                                                change: function($event) {
-                                                  var $$selectedVal = Array.prototype.filter
-                                                    .call(
-                                                      $event.target.options,
-                                                      function(o) {
-                                                        return o.selected
-                                                      }
-                                                    )
-                                                    .map(function(o) {
-                                                      var val =
-                                                        "_value" in o
-                                                          ? o._value
-                                                          : o.value
-                                                      return val
-                                                    })
-                                                  _vm.$set(
-                                                    movimiento,
-                                                    "id_tipo_movimiento_poliza",
-                                                    $event.target.multiple
-                                                      ? $$selectedVal
-                                                      : $$selectedVal[0]
-                                                  )
-                                                }
-                                              }
-                                            },
-                                            [
-                                              _c(
-                                                "option",
-                                                { attrs: { value: "1" } },
-                                                [_vm._v("Cargo")]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "option",
-                                                { attrs: { value: "2" } },
-                                                [_vm._v("Abono")]
-                                              )
-                                            ]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "div",
-                                            {
-                                              directives: [
-                                                {
-                                                  name: "show",
-                                                  rawName: "v-show",
-                                                  value: _vm.errors.has(
-                                                    "id_tipo_movimiento_poliza[" +
-                                                      i +
-                                                      "]"
-                                                  ),
-                                                  expression:
-                                                    "errors.has(`id_tipo_movimiento_poliza[${i}]`)"
-                                                }
-                                              ],
-                                              staticClass: "invalid-feedback"
-                                            },
-                                            [
-                                              _vm._v(
-                                                _vm._s(
-                                                  _vm.errors.first(
-                                                    "id_tipo_movimiento_poliza[" +
-                                                      i +
-                                                      "]"
-                                                  )
-                                                ) +
-                                                  "\n                                        "
-                                              )
-                                            ]
-                                          )
-                                        ])
-                                      : _c("span", [
-                                          _vm._v(
-                                            "\n                                        " +
-                                              _vm._s(
-                                                movimiento.tipo.descripcion
-                                              ) +
-                                              "\n                                    "
-                                          )
-                                        ])
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    movimiento.id_tipo_movimiento_poliza == 1
-                                      ? _c("span", [
-                                          _vm.$root.can(
-                                            "editar_importe_movimiento_prepoliza"
-                                          )
-                                            ? _c("span", [
-                                                _c("input", {
-                                                  directives: [
-                                                    {
-                                                      name: "model",
-                                                      rawName: "v-model",
-                                                      value: movimiento.importe,
-                                                      expression:
-                                                        "movimiento.importe"
-                                                    },
-                                                    {
-                                                      name: "validate",
-                                                      rawName: "v-validate",
-                                                      value: {
-                                                        required: true,
-                                                        decimal: true
-                                                      },
-                                                      expression:
-                                                        "{required: true, decimal: true}"
-                                                    }
-                                                  ],
-                                                  staticClass: "form-control",
-                                                  class: {
-                                                    "is-invalid": _vm.errors.has(
-                                                      "importe[" + i + "]"
-                                                    )
-                                                  },
-                                                  attrs: {
-                                                    type: "number",
-                                                    step: "any",
-                                                    name: "importe[" + i + "]",
-                                                    "data-vv-as": "Debe"
-                                                  },
-                                                  domProps: {
-                                                    value: movimiento.importe
-                                                  },
-                                                  on: {
-                                                    input: function($event) {
-                                                      if (
-                                                        $event.target.composing
-                                                      ) {
-                                                        return
-                                                      }
-                                                      _vm.$set(
-                                                        movimiento,
-                                                        "importe",
-                                                        $event.target.value
-                                                      )
-                                                    }
-                                                  }
-                                                }),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "div",
-                                                  {
-                                                    directives: [
-                                                      {
-                                                        name: "show",
-                                                        rawName: "v-show",
-                                                        value: _vm.errors.has(
-                                                          "importe[" + i + "]"
-                                                        ),
-                                                        expression:
-                                                          "errors.has(`importe[${i}]`)"
-                                                      }
-                                                    ],
-                                                    staticClass:
-                                                      "invalid-feedback"
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      _vm._s(
-                                                        _vm.errors.first(
-                                                          "importe[" + i + "]"
-                                                        )
-                                                      )
-                                                    )
-                                                  ]
-                                                )
-                                              ])
-                                            : _c("span", [
-                                                _vm._v(
-                                                  "\n                                            $" +
-                                                    _vm._s(
-                                                      parseFloat(
-                                                        movimiento.importe
-                                                      ).formatMoney(2, ".", ",")
-                                                    ) +
-                                                    "\n                                        "
-                                                )
-                                              ])
-                                        ])
-                                      : _vm._e()
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    movimiento.id_tipo_movimiento_poliza == 2
-                                      ? _c("span", [
-                                          _vm.$root.can(
-                                            "editar_importe_movimiento_prepoliza"
-                                          )
-                                            ? _c("span", [
-                                                _c("input", {
-                                                  directives: [
-                                                    {
-                                                      name: "model",
-                                                      rawName: "v-model",
-                                                      value: movimiento.importe,
-                                                      expression:
-                                                        "movimiento.importe"
-                                                    },
-                                                    {
-                                                      name: "validate",
-                                                      rawName: "v-validate",
-                                                      value: {
-                                                        required: true,
-                                                        decimal: true
-                                                      },
-                                                      expression:
-                                                        "{required: true, decimal: true}"
-                                                    }
-                                                  ],
-                                                  staticClass: "form-control",
-                                                  class: {
-                                                    "is-invalid": _vm.errors.has(
-                                                      "importe[" + i + "]"
-                                                    )
-                                                  },
-                                                  attrs: {
-                                                    type: "number",
-                                                    step: "any",
-                                                    name: "importe[" + i + "]",
-                                                    "data-vv-as": "Debe"
-                                                  },
-                                                  domProps: {
-                                                    value: movimiento.importe
-                                                  },
-                                                  on: {
-                                                    input: function($event) {
-                                                      if (
-                                                        $event.target.composing
-                                                      ) {
-                                                        return
-                                                      }
-                                                      _vm.$set(
-                                                        movimiento,
-                                                        "importe",
-                                                        $event.target.value
-                                                      )
-                                                    }
-                                                  }
-                                                }),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "div",
-                                                  {
-                                                    directives: [
-                                                      {
-                                                        name: "show",
-                                                        rawName: "v-show",
-                                                        value: _vm.errors.has(
-                                                          "importe[" + i + "]"
-                                                        ),
-                                                        expression:
-                                                          "errors.has(`importe[${i}]`)"
-                                                      }
-                                                    ],
-                                                    staticClass:
-                                                      "invalid-feedback"
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      _vm._s(
-                                                        _vm.errors.first(
-                                                          "importe[" + i + "]"
-                                                        )
-                                                      )
-                                                    )
-                                                  ]
-                                                )
-                                              ])
-                                            : _c("span", [
-                                                _vm._v(
-                                                  "\n                                            $" +
-                                                    _vm._s(
-                                                      parseFloat(
-                                                        movimiento.importe
-                                                      ).formatMoney(2, ".", ",")
-                                                    ) +
-                                                    "\n                                        "
-                                                )
-                                              ])
-                                        ])
-                                      : _vm._e()
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    _c("input", {
-                                      directives: [
-                                        {
-                                          name: "model",
-                                          rawName: "v-model",
-                                          value: movimiento.referencia,
-                                          expression: "movimiento.referencia"
-                                        },
-                                        {
-                                          name: "validate",
-                                          rawName: "v-validate",
-                                          value: { required: true },
-                                          expression: "{required: true}"
-                                        }
-                                      ],
-                                      staticClass: "form-control",
-                                      class: {
-                                        "is-invalid": _vm.errors.has(
-                                          "referencia[" + i + "]"
-                                        )
-                                      },
-                                      attrs: {
-                                        type: "text",
-                                        size: "5",
-                                        name: "referencia[" + i + "]",
-                                        "data-vv-as": "Referencia"
-                                      },
-                                      domProps: {
-                                        value: movimiento.referencia
-                                      },
-                                      on: {
-                                        input: function($event) {
-                                          if ($event.target.composing) {
-                                            return
-                                          }
-                                          _vm.$set(
-                                            movimiento,
-                                            "referencia",
-                                            $event.target.value
-                                          )
-                                        }
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c(
-                                      "div",
-                                      {
-                                        directives: [
-                                          {
-                                            name: "show",
-                                            rawName: "v-show",
-                                            value: _vm.errors.has(
-                                              "referencia[" + i + "]"
-                                            ),
-                                            expression:
-                                              "errors.has(`referencia[${i}]`)"
-                                          }
-                                        ],
-                                        staticClass: "invalid-feedback"
-                                      },
-                                      [
-                                        _vm._v(
-                                          _vm._s(
-                                            _vm.errors.first(
-                                              "referencia[" + i + "]"
-                                            )
-                                          ) +
-                                            "\n                                    "
-                                        )
-                                      ]
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    _c("textarea", {
-                                      directives: [
-                                        {
-                                          name: "model",
-                                          rawName: "v-model",
-                                          value: movimiento.concepto,
-                                          expression: "movimiento.concepto"
-                                        },
-                                        {
-                                          name: "validate",
-                                          rawName: "v-validate",
-                                          value: { required: true },
-                                          expression: "{required: true}"
-                                        }
-                                      ],
-                                      staticClass: "form-control",
-                                      class: {
-                                        "is-invalid": _vm.errors.has(
-                                          "concepto[" + i + "]"
-                                        )
-                                      },
-                                      attrs: {
-                                        rows: "3",
-                                        cols: "40",
-                                        wrap: "soft",
-                                        name: "concepto[" + i + "]",
-                                        "data-vv-as": "Concepto"
-                                      },
-                                      domProps: { value: movimiento.concepto },
-                                      on: {
-                                        input: function($event) {
-                                          if ($event.target.composing) {
-                                            return
-                                          }
-                                          _vm.$set(
-                                            movimiento,
-                                            "concepto",
-                                            $event.target.value
-                                          )
-                                        }
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c(
-                                      "div",
-                                      {
-                                        directives: [
-                                          {
-                                            name: "show",
-                                            rawName: "v-show",
-                                            value: _vm.errors.has(
-                                              "concepto[" + i + "]"
-                                            ),
-                                            expression:
-                                              "errors.has(`concepto[${i}]`)"
-                                          }
-                                        ],
-                                        staticClass: "invalid-feedback"
-                                      },
-                                      [
-                                        _vm._v(
-                                          _vm._s(
-                                            _vm.errors.first(
-                                              "concepto[" + i + "]"
-                                            )
-                                          ) +
-                                            "\n                                    "
-                                        )
-                                      ]
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    _c(
-                                      "button",
-                                      {
-                                        staticClass:
-                                          "btn btn-sm btn-outline-danger",
-                                        attrs: { type: "button" },
-                                        on: {
-                                          click: function($event) {
-                                            _vm.remove(movimiento)
-                                          }
-                                        }
-                                      },
-                                      [_c("i", { staticClass: "fa fa-trash" })]
-                                    )
-                                  ])
-                                ]
-                              )
-                            }),
-                            0
-                          ),
-                          _vm._v(" "),
-                          _c("tfoot", [
-                            _c("tr", [
-                              _c(
-                                "th",
-                                {
-                                  staticClass: "text-center",
-                                  class: _vm.color,
-                                  attrs: { colspan: "4" }
-                                },
-                                [_c("b", [_vm._v("Sumas Iguales")])]
-                              ),
-                              _vm._v(" "),
-                              _c("th", { class: _vm.color }, [
-                                _c("b", [
-                                  _vm._v(
-                                    "$ " +
-                                      _vm._s(
-                                        parseFloat(_vm.sumaDebe).formatMoney(
-                                          2,
-                                          ".",
-                                          ","
-                                        )
-                                      )
-                                  )
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("th", { class: _vm.color }, [
-                                _c("b", [
-                                  _vm._v(
-                                    "$ " +
-                                      _vm._s(
-                                        parseFloat(_vm.sumaHaber).formatMoney(
-                                          2,
-                                          ".",
-                                          ","
-                                        )
-                                      )
-                                  )
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("th", {
-                                class: _vm.color,
-                                attrs: { colspan: "3" }
-                              })
-                            ])
-                          ])
-                        ])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      {
-                        staticClass: "col-sm-12",
-                        staticStyle: { "text-align": "right" }
-                      },
-                      [
-                        _c("h4", [
-                          _c("b", [_vm._v("Total de la Prepóliza:")]),
-                          _vm._v(
-                            "\n                                $ " +
-                              _vm._s(
-                                parseFloat(_vm.poliza.total).formatMoney(
-                                  2,
-                                  ".",
-                                  ","
-                                )
-                              ) +
-                              "\n                            "
-                          )
-                        ])
-                      ]
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-md-12" }, [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-info pull-right",
-                        attrs: {
-                          type: "submit",
-                          disabled:
-                            _vm.errors.count() > 0 ||
-                            !_vm.cuadrado ||
-                            !_vm.cambio
-                        }
-                      },
-                      [
-                        _vm._v(
-                          "\n                            Guardar Cambios\n                        "
-                        )
-                      ]
-                    )
-                  ])
-                ])
-              ]
-            )
+                ]
+              )
+            ])
           ])
         ])
       ])
@@ -97756,7 +97862,7 @@ var staticRenderFns = [
       _c("div", { staticClass: "col-12" }, [
         _c("h4", [
           _c("i", { staticClass: "fa fa-list" }),
-          _vm._v(" Información de Prepóliza\n                    ")
+          _vm._v(" Información de Prepóliza\n                        ")
         ])
       ])
     ])
@@ -98370,6 +98476,19 @@ var URI = '/api/contabilidad/poliza/';
             context.commit('cargando', true);
             return new Promise(function (resolve, reject) {
                 axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (response) {
+                    context.commit('update', response.data);
+                    resolve(response.data);
+                }).catch(function (error) {
+                    reject(error);
+                }).then(function () {
+                    context.commit('cargando', false);
+                });
+            });
+        },
+        validar: function validar(context, id) {
+            context.commit('cargando', true);
+            return new Promise(function (resolve, reject) {
+                axios.patch(URI + id + '/validar').then(function (response) {
                     context.commit('update', response.data);
                     resolve(response.data);
                 }).catch(function (error) {
@@ -99649,6 +99768,143 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 493 */,
+/* 494 */,
+/* 495 */,
+/* 496 */,
+/* 497 */,
+/* 498 */,
+/* 499 */,
+/* 500 */,
+/* 501 */,
+/* 502 */,
+/* 503 */,
+/* 504 */,
+/* 505 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(508)
+/* template */
+var __vue_template__ = __webpack_require__(510)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/poliza/partials/Validar.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-03ab6fac", Component.options)
+  } else {
+    hotAPI.reload("data-v-03ab6fac", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 506 */,
+/* 507 */,
+/* 508 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "poliza-validar",
+    props: ['poliza'],
+    methods: {
+        validar: function validar() {
+            var self = this;
+            Swal({
+                title: "Validar Prepóliza",
+                text: "¿Esta seguro de que deseas validar la Prepóliza?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Si, Validar",
+                cancelButtonText: "No, Cancelar"
+            }).then(function (result) {
+                if (result.value) {
+                    self.$store.dispatch('contabilidad/poliza/validar', self.poliza.id).then(function () {
+                        Swal({
+                            type: "success",
+                            title: '¡Correcto!',
+                            text: 'Prepóliza validada con éxito',
+                            confirmButtonText: "Ok",
+                            closeOnConfirm: true
+                        }).then(function () {
+                            self.$emit('success');
+                        });
+                    });
+                }
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 509 */,
+/* 510 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.$root.can("validar_prepoliza") &&
+    (_vm.poliza.estatus == -2 || _vm.poliza.estatus == 0)
+    ? _c(
+        "button",
+        {
+          staticClass: "btn btn-app btn-info pull-right",
+          on: { click: _vm.validar }
+        },
+        [_c("i", { staticClass: "fa fa-check-square-o" }), _vm._v(" Validar\n")]
+      )
+    : _vm._e()
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-03ab6fac", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);
