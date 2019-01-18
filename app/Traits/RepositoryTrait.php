@@ -24,7 +24,7 @@ trait RepositoryTrait
             return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
         }
 
-        return $this->model->paginate();
+        return $this->model->paginate(10);
     }
 
     public function find($id)
