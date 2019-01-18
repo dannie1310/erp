@@ -6,14 +6,14 @@
  * Time: 09:09 AM
  */
 
-namespace App\Models\CADECO\Subcontratos;
+namespace App\Models\CADECO\SubcontratosFG;
 
 use Illuminate\Database\Eloquent\Model;
 
 class RetencionFondoGarantia extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'Subcontratos.fg_retenciones';
+    protected $table = 'SubcontratosFG.retenciones';
     protected $fillable = ['id_estimacion',
                             'importe',
                             'usuario_registra',

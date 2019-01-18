@@ -6,15 +6,15 @@
  * Time: 09:09 AM
  */
 
-namespace App\Models\CADECO\Subcontratos;
+namespace App\Models\CADECO\SubcontratosFG;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MovimientoSolicitudMovimientoFondoGarantia extends Model
+class MovimientoRetencionFondoGarantia extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'Subcontratos.fg_sol_movimientos';
-    protected $fillable = [ 'id_solicitud',
+    protected $table = 'SubcontratosFG.ret_movimientos';
+    protected $fillable = [ 'id_retencion',
                             'id_movimiento_antecedente',
                             'id_tipo_movimiento',
                             'usuario_registra',
@@ -28,14 +28,14 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
 
     }
 
-    public function solicitud_movimiento()
+    public function retencion()
     {
-        return $this->belongsTo(SolicitudMovimientoFondoGarantia::class,'id_solicitud');
+        return $this->belongsTo(RetencionFondoGarantia::class,'id_retencion');
     }
 
     public function tipo()
     {
-        return $this->belongsTo(CtgTipoMovimientoSolicitud::class,"id_tipo_movimiento")
+        return $this->belongsTo(CtgTipoMovimientoRetencion::class,"id_tipo_movimiento");
     }
 
 }

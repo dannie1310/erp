@@ -6,14 +6,14 @@
  * Time: 09:09 AM
  */
 
-namespace App\Models\CADECO\Subcontratos;
+namespace App\Models\CADECO\SubcontratosFG;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CtgTipoMovimientoFondoGarantia extends Model
+class CtgTipoMovimientoRetencion extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'Subcontratos.fg_ctg_tipos_mov';
+    protected $table = 'SubcontratosFG.ctg_tipos_mov_ret';
     protected $fillable = ['descripcion'];
     public $timestamps = false;
 

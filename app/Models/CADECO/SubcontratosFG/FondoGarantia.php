@@ -6,7 +6,7 @@
  * Time: 08:56 AM
  */
 
-namespace App\Models\CADECO\Subcontratos;
+namespace App\Models\CADECO\SubcontratosFG;
 
 use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class FondoGarantia extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'Subcontratos.fondos_garantia';
+    protected $table = 'SubcontratosFG.fondos_garantia';
     protected $primaryKey = 'id_subcontrato';
     public $timestamps = true;
 
