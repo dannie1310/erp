@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 class CuentaFondoController extends Controller
 {
 
-    use Helpers, ControllerTrait;
+    use Helpers, ControllerTrait { update as protected traitUpdate; }
 
     /**
      * @var CuentaFondoService
@@ -54,7 +54,6 @@ class CuentaFondoController extends Controller
     }
 
     public function update(Request $request, $id){
-        $item = $this->service->update($request->all(), $id);
-        return $this->respondItem($item);
+        return $this->traitUpdate($request, $id);
     }
 }

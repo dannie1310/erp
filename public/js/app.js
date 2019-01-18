@@ -92913,12 +92913,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     mounted: function mounted() {
-        this.fetch();
+        this.paginate();
     },
 
 
     methods: {
-        fetch: function fetch() {
+        paginate: function paginate() {
             var payload = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
             return this.$store.dispatch('contabilidad/cuenta-fondo/paginate', payload);
@@ -92963,7 +92963,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         query: {
             handler: function handler(query) {
-                this.fetch(query);
+                this.paginate(query);
             },
 
             deep: true
@@ -93216,24 +93216,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     computed: {
         datosContables: function datosContables() {
             return this.$store.getters['auth/datosContables'];
+        },
+        currentCuenta: function currentCuenta() {
+            return this.$store.getters['contabilidad/cuenta-fondo/currentCuenta'];
+        }
+    },
+
+    watch: {
+        currentCuenta: {
+            handler: function handler(currentCuenta) {
+                this.cuenta = JSON.parse(JSON.stringify(currentCuenta));
+            },
+
+            deep: true
         }
     },
 
     methods: {
         find: function find(id) {
-            var _this = this;
-
-            this.loading = true;
-            this.$store.dispatch('contabilidad/cuenta-fondo/find', id).then(function (data) {
-                _this.$data.cuenta = data;
-            }).catch(function (error) {
-                alert(error);
-            }).then(function () {
-                _this.loading = false;
-            });
+            this.$store.dispatch('contabilidad/cuenta-fondo/find', id);
         },
         update: function update() {
-            var _this2 = this;
+            var _this = this;
 
             var self = this;
             Swal({
@@ -93247,7 +93251,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 cancelButtonText: 'Cancelar'
             }).then(function (result) {
                 if (result.value) {
-                    _this2.loading = true;
+                    _this.loading = true;
                     return self.$store.dispatch('contabilidad/cuenta-fondo/update', self.$data.cuenta).then(function () {
                         $('.modal').modal('hide');
                         Swal({
@@ -93258,17 +93262,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                             timer: 1500
                         });
                     }).then(function () {
-                        _this2.loading = false;
+                        _this.loading = false;
                     });
                 }
             });
         },
         validate: function validate() {
-            var _this3 = this;
+            var _this2 = this;
 
             this.$validator.validate().then(function (result) {
                 if (result) {
-                    _this3.update();
+                    _this2.update();
                 }
             });
         }
@@ -98448,63 +98452,72 @@ var URI = '/api/contabilidad/cuenta-almacen/';
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var URL = '/api/contabilidad/cuenta-fondo/';
+var URI = '/api/contabilidad/cuenta-fondo/';
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     namespaced: true,
     state: {
         cuentas: [],
+        currentCuenta: {},
         meta: {}
     },
+
     mutations: {
-        fetch: function fetch(state, data) {
+        SET_CUENTAS: function SET_CUENTAS(state, data) {
             state.cuentas = data;
         },
-        setMeta: function setMeta(state, data) {
+        SET_META: function SET_META(state, data) {
             state.meta = data;
         },
-        update: function update(state, payload) {
+        SET_CUENTA: function SET_CUENTA(state, data) {
+            state.currentCuenta = data;
+        },
+        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
             state.cuentas = state.cuentas.map(function (cuenta) {
-                if (cuenta.id === payload.id) {
-                    return Object.assign([], cuenta, payload.data);
+                if (cuenta.id === data.id) {
+                    return Object.assign([], cuenta, data);
                 }
                 return cuenta;
             });
+            state.currentCuenta = data;
         }
     },
+
     actions: {
-        paginate: function paginate(context, params) {
-            axios.get(URL + "paginate", { params: params }).then(function (response) {
-                context.commit('fetch', response.data.data);
-                context.commit('setMeta', response.data.meta);
+        paginate: function paginate(context, payload) {
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTAS', data.data);
+                context.commit('SET_META', data.meta);
             });
         },
         find: function find(context, id) {
-            return new Promise(function (resolve, reject) {
-                axios.get(URL + id).then(function (res) {
-                    resolve(res.data);
-                }).catch(function (err) {
-                    reject(err);
-                });
+            context.commit('SET_CUENTA', null);
+            axios.get(URI + id).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTA', data);
             });
         },
         update: function update(context, payload) {
-            return new Promise(function (resolve, reject) {
-                axios.patch(URL + payload.id, payload).then(function (response) {
-                    context.commit('update', { id: payload.id, data: response.data });
-                    resolve(response.data);
-                }).catch(function (error) {
-                    reject(error);
-                });
+            axios.patch(URI + payload.id, payload).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('UPDATE_CUENTA', data);
             });
         }
     },
+
     getters: {
+        cuentas: function cuentas(state) {
+            return state.cuentas;
+        },
         meta: function meta(state) {
             return state.meta;
         },
-        cuentas: function cuentas(state) {
-            return state.cuentas;
+        currentCuenta: function currentCuenta(state) {
+            return state.currentCuenta;
         }
     }
 });
