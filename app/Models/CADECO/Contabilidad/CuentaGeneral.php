@@ -11,6 +11,8 @@ namespace App\Models\CADECO\Contabilidad;
 
 class CuentaGeneral extends CuentaContable
 {
+    protected $primaryKey = 'id_int_cuenta_contable';
+
     protected static function boot()
     {
         parent::boot();

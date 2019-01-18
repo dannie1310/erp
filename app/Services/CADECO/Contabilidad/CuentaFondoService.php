@@ -35,7 +35,7 @@ class CuentaFondoService
         return $this->cuentaFondo->find($id);
     }
 
-    public function update(array $data, int $id) {
+    public function update(array $data, $id) {
         return $this->cuentaFondo->update($data, $id);
     }
 }

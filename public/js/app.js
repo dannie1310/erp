@@ -99145,7 +99145,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             HeaderSettings: false,
-            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Tipo de Cuenta', field: 'descripcion', sortable: true }, { title: 'Cuenta', field: 'cuenta', sortable: true }, { title: 'Editar', field: 'buttons', tdComp: __webpack_require__(504) }],
+            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Tipo de Cuenta', field: 'general', sortable: true }, { title: 'Cuenta', field: 'cuenta', sortable: true }, { title: 'Editar', field: 'buttons', tdComp: __webpack_require__(504) }],
             data: [],
             total: 0,
             query: {}
@@ -99179,7 +99179,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 cuentas.forEach(function (cuenta, i) {
                     self.$data.data.push({
                         index: cuenta.id,
-                        descripcion: cuenta.tipo.descripcion,
+                        general: cuenta.tipo.descripcion,
                         cuenta: cuenta.cuenta,
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_cuenta_general') ? true : undefined,
@@ -99676,7 +99676,7 @@ var render = function() {
                                 attrs: {
                                   readonly: "",
                                   type: "text",
-                                  id: "fondo"
+                                  id: "tipo"
                                 },
                                 domProps: {
                                   value: _vm.cuenta.tipo.descripcion

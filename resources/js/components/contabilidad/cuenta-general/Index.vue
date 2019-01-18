@@ -24,7 +24,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Tipo de Cuenta', field: 'descripcion', sortable: true },
+                    { title: 'Tipo de Cuenta', field: 'general', sortable: true },
                     { title: 'Cuenta', field: 'cuenta', sortable: true },
                     { title: 'Editar', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
@@ -60,7 +60,7 @@
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
                             index: cuenta.id,
-                            descripcion: cuenta.tipo.descripcion,
+                            general: cuenta.tipo.descripcion,
                             cuenta: cuenta.cuenta,
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cuenta_general') ? true : undefined,

@@ -38,7 +38,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="tipo">Tipo</label>
-                                        <input readonly type="text" class="form-control" id="fondo" v-model="cuenta.tipo.descripcion">
+                                        <input readonly type="text" class="form-control" id="tipo" v-model="cuenta.tipo.descripcion">
                                     </div>
                                 </div>
                             </div>

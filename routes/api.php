@@ -44,6 +44,8 @@ $api->version('v1', function ($api) {
         //CUENTAS GENERALES
         $api->group(['prefix' => 'cuenta-general'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaGeneralController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaGeneralController@find')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaGeneralController@update')->where(['id' => '[0-9]+']);
         });
 
         //ESTATUS PREPÓLIZA

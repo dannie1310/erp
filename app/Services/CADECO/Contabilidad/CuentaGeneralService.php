@@ -35,7 +35,7 @@ class CuentaGeneralService
         return $this->cuentaGeneral->find($id);
     }
 
-    public function update(array $data, int $id) {
+    public function update(array $data, $id) {
         return $this->cuentaGeneral->update($data, $id);
     }
 }
