@@ -26,6 +26,12 @@
                             <p>Cuentas de Fondo</p>
                         </router-link>
                     </li>
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_general')">
+                        <router-link :to="{name: 'cuenta-general'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-general'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuentas Generales</p>
+                        </router-link>
+                    </li>
                 </ul>
             </li>
 
