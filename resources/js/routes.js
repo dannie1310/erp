@@ -73,6 +73,16 @@ export const routes = [
                 }
             },
             {
+                path: 'cuenta-general',
+                name: 'cuenta-general',
+                component: require('./components/contabilidad/cuenta-general/Index'),
+                meta: {
+                    title: 'Cuentas Generales',
+                    breadcrumb: {name: 'CUENTAS GENERALES', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
                 path: 'poliza',
                 component: require('./components/contabilidad/poliza/Layout.vue'),
                 meta: {

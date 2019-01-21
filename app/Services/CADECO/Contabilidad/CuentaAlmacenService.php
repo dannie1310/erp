@@ -35,7 +35,7 @@ class CuentaAlmacenService
         return $this->cuentaAlmacen->find($id);
     }
 
-    public function update(array $data, int $id) {
+    public function update(array $data, $id) {
         return $this->cuentaAlmacen->update($data, $id);
     }
 }

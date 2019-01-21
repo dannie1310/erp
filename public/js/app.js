@@ -28855,8 +28855,8 @@ module.exports = Cancel;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global, setImmediate) {/*!
- * Vue.js v2.5.21
- * (c) 2014-2018 Evan You
+ * Vue.js v2.5.22
+ * (c) 2014-2019 Evan You
  * Released under the MIT License.
  */
 
@@ -29485,7 +29485,7 @@ if (true) {
       ? vm.options
       : vm._isVue
         ? vm.$options || vm.constructor.options
-        : vm || {};
+        : vm;
     var name = options.name || options._componentTag;
     var file = options.__file;
     if (!name && file) {
@@ -29580,9 +29580,9 @@ Dep.prototype.notify = function notify () {
   }
 };
 
-// the current target watcher being evaluated.
-// this is globally unique because there could be only one
-// watcher being evaluated at any time.
+// The current target watcher being evaluated.
+// This is globally unique because only one watcher
+// can be evaluated at a time.
 Dep.target = null;
 var targetStack = [];
 
@@ -30110,13 +30110,26 @@ function mergeHook (
   parentVal,
   childVal
 ) {
-  return childVal
+  var res = childVal
     ? parentVal
       ? parentVal.concat(childVal)
       : Array.isArray(childVal)
         ? childVal
         : [childVal]
-    : parentVal
+    : parentVal;
+  return res
+    ? dedupeHooks(res)
+    : res
+}
+
+function dedupeHooks (hooks) {
+  var res = [];
+  for (var i = 0; i < hooks.length; i++) {
+    if (res.indexOf(hooks[i]) === -1) {
+      res.push(hooks[i]);
+    }
+  }
+  return res
 }
 
 LIFECYCLE_HOOKS.forEach(function (hook) {
@@ -30352,7 +30365,7 @@ function mergeOptions (
   normalizeProps(child, vm);
   normalizeInject(child, vm);
   normalizeDirectives(child);
-  
+
   // Apply extends and mixins on the child options,
   // but only if it is a raw options object that isn't
   // the result of another mergeOptions call.
@@ -31285,6 +31298,8 @@ function resolveAsyncComponent (
       // (async resolves are shimmed as synchronous during SSR)
       if (!sync) {
         forceRender(true);
+      } else {
+        contexts.length = 0;
       }
     });
 
@@ -31452,8 +31467,8 @@ function eventsMixin (Vue) {
     }
     // array of events
     if (Array.isArray(event)) {
-      for (var i = 0, l = event.length; i < l; i++) {
-        vm.$off(event[i], fn);
+      for (var i$1 = 0, l = event.length; i$1 < l; i$1++) {
+        vm.$off(event[i$1], fn);
       }
       return vm
     }
@@ -31466,16 +31481,14 @@ function eventsMixin (Vue) {
       vm._events[event] = null;
       return vm
     }
-    if (fn) {
-      // specific handler
-      var cb;
-      var i$1 = cbs.length;
-      while (i$1--) {
-        cb = cbs[i$1];
-        if (cb === fn || cb.fn === fn) {
-          cbs.splice(i$1, 1);
-          break
-        }
+    // specific handler
+    var cb;
+    var i = cbs.length;
+    while (i--) {
+      cb = cbs[i];
+      if (cb === fn || cb.fn === fn) {
+        cbs.splice(i, 1);
+        break
       }
     }
     return vm
@@ -33645,34 +33658,14 @@ function resolveConstructorOptions (Ctor) {
 function resolveModifiedOptions (Ctor) {
   var modified;
   var latest = Ctor.options;
-  var extended = Ctor.extendOptions;
   var sealed = Ctor.sealedOptions;
   for (var key in latest) {
     if (latest[key] !== sealed[key]) {
       if (!modified) { modified = {}; }
-      modified[key] = dedupe(latest[key], extended[key], sealed[key]);
+      modified[key] = latest[key];
     }
   }
   return modified
-}
-
-function dedupe (latest, extended, sealed) {
-  // compare latest and sealed to ensure lifecycle hooks won't be duplicated
-  // between merges
-  if (Array.isArray(latest)) {
-    var res = [];
-    sealed = Array.isArray(sealed) ? sealed : [sealed];
-    extended = Array.isArray(extended) ? extended : [extended];
-    for (var i = 0; i < latest.length; i++) {
-      // push original options and not sealed options to exclude duplicated options
-      if (extended.indexOf(latest[i]) >= 0 || sealed.indexOf(latest[i]) < 0) {
-        res.push(latest[i]);
-      }
-    }
-    return res
-  } else {
-    return latest
-  }
 }
 
 function Vue (options) {
@@ -34043,7 +34036,7 @@ Object.defineProperty(Vue, 'FunctionalRenderContext', {
   value: FunctionalRenderContext
 });
 
-Vue.version = '2.5.21';
+Vue.version = '2.5.22';
 
 /*  */
 
@@ -84736,7 +84729,7 @@ var content = __webpack_require__(222);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("52c48ab7", content, false, {});
+var update = __webpack_require__(3)("4cd5548a", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -84990,7 +84983,7 @@ var content = __webpack_require__(227);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("62c3db20", content, false, {});
+var update = __webpack_require__(3)("54362aa0", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -85230,7 +85223,7 @@ var content = __webpack_require__(231);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("7fc38c78", content, false, {});
+var update = __webpack_require__(3)("3671e204", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -88618,7 +88611,7 @@ var content = __webpack_require__(330);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("4a747008", content, false, {});
+var update = __webpack_require__(3)("58078a02", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -89663,7 +89656,7 @@ var content = __webpack_require__(348);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("3efaf8ad", content, false, {});
+var update = __webpack_require__(3)("846ec39a", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -90565,7 +90558,7 @@ var content = __webpack_require__(362);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("df334be4", content, false, {});
+var update = __webpack_require__(3)("2aa024ca", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -91003,6 +90996,15 @@ var routes = [{
             middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
         }
     }, {
+        path: 'cuenta-general',
+        name: 'cuenta-general',
+        component: __webpack_require__(502),
+        meta: {
+            title: 'Cuentas Generales',
+            breadcrumb: { name: 'CUENTAS GENERALES', parent: 'contabilidad' },
+            middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
+        }
+    }, {
         path: 'poliza',
         component: __webpack_require__(423),
         meta: {
@@ -91303,7 +91305,7 @@ var content = __webpack_require__(377);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("5c74edd7", content, false, {});
+var update = __webpack_require__(3)("7b408706", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -91644,7 +91646,7 @@ var content = __webpack_require__(383);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("7d3bdaf5", content, false, {});
+var update = __webpack_require__(3)("39b2acca", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -91872,7 +91874,7 @@ var content = __webpack_require__(388);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("e84e5be8", content, false, {});
+var update = __webpack_require__(3)("22228cd9", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -92000,7 +92002,7 @@ var content = __webpack_require__(393);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("648dc42c", content, false, {});
+var update = __webpack_require__(3)("c645b012", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -92035,6 +92037,12 @@ exports.push([module.i, "\n.sidebar-form[data-v-3ffde84c], .nav-sidebar > .nav-h
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -92153,6 +92161,29 @@ var render = function() {
                   ],
                   1
                 )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.$root.can("consultar_cuenta_general")
+              ? _c(
+                  "li",
+                  { staticClass: "nav-item" },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        class: { active: this.$route.name == "cuenta-general" },
+                        attrs: { to: { name: "cuenta-general" } }
+                      },
+                      [
+                        _c("i", { staticClass: "fa fa-circle-o nav-icon" }),
+                        _vm._v(" "),
+                        _c("p", [_vm._v("Cuentas Generales")])
+                      ]
+                    )
+                  ],
+                  1
+                )
               : _vm._e()
           ])
         ]),
@@ -92265,7 +92296,7 @@ var content = __webpack_require__(398);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("3c55662e", content, false, {});
+var update = __webpack_require__(3)("e75265e4", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -92532,7 +92563,7 @@ var content = __webpack_require__(405);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("511e34ce", content, false, {});
+var update = __webpack_require__(3)("0fb0cd0e", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -93318,7 +93349,7 @@ var content = __webpack_require__(416);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("badb1c3e", content, false, {});
+var update = __webpack_require__(3)("67314221", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -93962,7 +93993,7 @@ var content = __webpack_require__(425);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("792d880f", content, false, {});
+var update = __webpack_require__(3)("647d7adc", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -94414,7 +94445,7 @@ var content = __webpack_require__(435);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("9dbbcda4", content, false, {});
+var update = __webpack_require__(3)("1ddd4414", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -95040,7 +95071,7 @@ var content = __webpack_require__(449);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("c976e5fa", content, false, {});
+var update = __webpack_require__(3)("3b9ccf10", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -97219,7 +97250,7 @@ var content = __webpack_require__(457);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("6ec7c3de", content, false, {});
+var update = __webpack_require__(3)("b2e4a910", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -97342,11 +97373,13 @@ if (false) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__ = __webpack_require__(463);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_contabilidad_cuenta_almacen__ = __webpack_require__(464);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_fondo__ = __webpack_require__(465);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_estatus_prepoliza__ = __webpack_require__(466);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_poliza__ = __webpack_require__(467);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(468);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_movimiento__ = __webpack_require__(469);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(470);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_general__ = __webpack_require__(513);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_estatus_prepoliza__ = __webpack_require__(466);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_poliza__ = __webpack_require__(467);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(468);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_movimiento__ = __webpack_require__(469);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(470);
+
 
 
 
@@ -97367,11 +97400,12 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex
         'cadeco/obras': __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__["a" /* default */],
         'contabilidad/cuenta-almacen': __WEBPACK_IMPORTED_MODULE_4__modules_contabilidad_cuenta_almacen__["a" /* default */],
         'contabilidad/cuenta-fondo': __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_fondo__["a" /* default */],
-        'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_estatus_prepoliza__["a" /* default */],
-        'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_poliza__["a" /* default */],
-        'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
-        'contabilidad/tipo-movimiento': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_movimiento__["a" /* default */],
-        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */]
+        'contabilidad/cuenta-general': __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_general__["a" /* default */],
+        'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_estatus_prepoliza__["a" /* default */],
+        'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_poliza__["a" /* default */],
+        'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
+        'contabilidad/tipo-movimiento': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_movimiento__["a" /* default */],
+        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */]
     },
     strict: "development" !== 'production'
 }));
@@ -97938,7 +97972,7 @@ var content = __webpack_require__(473);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(3)("73b6116a", content, false, {});
+var update = __webpack_require__(3)("4292f4fe", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -99021,6 +99055,872 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 490 */,
+/* 491 */,
+/* 492 */,
+/* 493 */,
+/* 494 */,
+/* 495 */,
+/* 496 */,
+/* 497 */,
+/* 498 */,
+/* 499 */,
+/* 500 */,
+/* 501 */,
+/* 502 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(503)
+/* template */
+var __vue_template__ = __webpack_require__(512)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/cuenta-general/Index.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-246f0974", Component.options)
+  } else {
+    hotAPI.reload("data-v-246f0974", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 503 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "cuenta-general-index",
+    data: function data() {
+        return {
+            HeaderSettings: false,
+            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Tipo de Cuenta', field: 'general', sortable: true }, { title: 'Cuenta', field: 'cuenta', sortable: true }, { title: 'Editar', field: 'buttons', tdComp: __webpack_require__(504) }],
+            data: [],
+            total: 0,
+            query: {}
+        };
+    },
+    mounted: function mounted() {
+        this.fetch();
+    },
+
+
+    methods: {
+        fetch: function fetch() {
+            var payload = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return this.$store.dispatch('contabilidad/cuenta-general/paginate', payload);
+        }
+    },
+    computed: {
+        cuentas: function cuentas() {
+            return this.$store.getters['contabilidad/cuenta-general/cuentas'];
+        },
+        meta: function meta() {
+            return this.$store.getters['contabilidad/cuenta-general/meta'];
+        }
+    },
+    watch: {
+        cuentas: {
+            handler: function handler(cuentas) {
+                var self = this;
+                self.$data.data = [];
+                cuentas.forEach(function (cuenta, i) {
+                    self.$data.data.push({
+                        index: cuenta.id,
+                        general: cuenta.tipo.descripcion,
+                        cuenta: cuenta.cuenta,
+                        buttons: $.extend({}, {
+                            edit: self.$root.can('editar_cuenta_general') ? true : undefined,
+                            id: cuenta.id
+                        })
+                    });
+                });
+            },
+
+            deep: true
+        },
+        meta: {
+            handler: function handler(meta) {
+                var total = meta.pagination.total;
+                this.$data.total = total;
+            },
+
+            deep: true
+        },
+        query: {
+            handler: function handler(query) {
+                this.fetch(query);
+            },
+
+            deep: true
+        }
+    }
+});
+
+/***/ }),
+/* 504 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(505)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(507)
+/* template */
+var __vue_template__ = __webpack_require__(511)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-2e34be2a"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/cuenta-general/partials/ActionButtons.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2e34be2a", Component.options)
+  } else {
+    hotAPI.reload("data-v-2e34be2a", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 505 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(506);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("512d9536", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2e34be2a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ActionButtons.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2e34be2a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ActionButtons.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 506 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 507 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Edit__ = __webpack_require__(508);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Edit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Edit__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "action-buttons",
+    components: { CuentaGeneralEdit: __WEBPACK_IMPORTED_MODULE_0__Edit___default.a },
+    props: ['value'],
+    methods: {
+        destroy: function destroy() {},
+        show: function show() {}
+    },
+    mounted: function mounted() {}
+});
+
+/***/ }),
+/* 508 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(509)
+/* template */
+var __vue_template__ = __webpack_require__(510)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/cuenta-general/Edit.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-bb17b174", Component.options)
+  } else {
+    hotAPI.reload("data-v-bb17b174", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 509 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "cuenta-tipo-edit",
+    props: ['id'],
+    data: function data() {
+        return {
+            cuenta: null,
+            loading: false
+        };
+    },
+
+
+    computed: {
+        datosContables: function datosContables() {
+            return this.$store.getters['auth/datosContables'];
+        }
+    },
+
+    methods: {
+        find: function find(id) {
+            var _this = this;
+
+            this.loading = true;
+            this.$store.dispatch('contabilidad/cuenta-general/find', id).then(function (data) {
+                _this.$data.cuenta = data;
+            }).catch(function (error) {
+                alert(error);
+            }).then(function () {
+                _this.loading = false;
+            });
+        },
+        update: function update() {
+            var _this2 = this;
+
+            var self = this;
+            Swal({
+                title: 'Actualizar Cuenta General',
+                text: "¿Estás seguro?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, Actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then(function (result) {
+                if (result.value) {
+                    _this2.loading = true;
+                    return self.$store.dispatch('contabilidad/cuenta-general/update', self.$data.cuenta).then(function () {
+                        $('.modal').modal('hide');
+                        Swal({
+                            type: 'success',
+                            title: '¡Correcto!',
+                            text: 'Cuenta Actualizada correctamente',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }).then(function () {
+                        _this2.loading = false;
+                    });
+                }
+            });
+        },
+        validate: function validate() {
+            var _this3 = this;
+
+            this.$validator.validate().then(function (result) {
+                if (result) {
+                    _this3.update();
+                }
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 510 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("span", [
+    _c(
+      "button",
+      {
+        staticClass: "btn btn-sm btn-outline-info",
+        attrs: {
+          type: "button",
+          "data-toggle": "modal",
+          "data-target": "#cuenta-general-edit-modal" + _vm.id
+        },
+        on: {
+          click: function($event) {
+            _vm.find(_vm.id)
+          }
+        }
+      },
+      [_c("i", { staticClass: "fa fa-pencil" })]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "cuenta-general-edit-modal" + _vm.id,
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalCenterTitle",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-dialog-centered modal-lg",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _vm.cuenta
+                ? _c(
+                    "form",
+                    {
+                      attrs: { role: "form" },
+                      on: {
+                        submit: function($event) {
+                          $event.preventDefault()
+                          return _vm.validate($event)
+                        }
+                      }
+                    },
+                    [
+                      _c("div", { staticClass: "modal-body" }, [
+                        _c("div", { staticClass: "row" }, [
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c(
+                              "div",
+                              { staticClass: "form-group error-content" },
+                              [
+                                _c("label", { attrs: { for: "cuenta" } }, [
+                                  _vm._v("Cuenta")
+                                ]),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "validate",
+                                      rawName: "v-validate",
+                                      value: {
+                                        required: true,
+                                        regex: _vm.datosContables
+                                      },
+                                      expression:
+                                        "{required: true, regex: datosContables}"
+                                    },
+                                    {
+                                      name: "mask",
+                                      rawName: "v-mask",
+                                      value: { regex: _vm.datosContables },
+                                      expression: "{regex: datosContables}"
+                                    },
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.cuenta.cuenta,
+                                      expression: "cuenta.cuenta"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  class: {
+                                    "is-invalid": _vm.errors.has("cuenta")
+                                  },
+                                  attrs: {
+                                    type: "text",
+                                    name: "cuenta",
+                                    "data-vv-as": "Cuenta",
+                                    id: "cuenta",
+                                    placeholder: "Cuenta"
+                                  },
+                                  domProps: { value: _vm.cuenta.cuenta },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.cuenta,
+                                        "cuenta",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "show",
+                                        rawName: "v-show",
+                                        value: _vm.errors.has("cuenta"),
+                                        expression: "errors.has('cuenta')"
+                                      }
+                                    ],
+                                    staticClass: "invalid-feedback"
+                                  },
+                                  [_vm._v(_vm._s(_vm.errors.first("cuenta")))]
+                                )
+                              ]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c("div", { staticClass: "form-group" }, [
+                              _c("label", { attrs: { for: "tipo" } }, [
+                                _vm._v("Tipo")
+                              ]),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.cuenta.tipo.descripcion,
+                                    expression: "cuenta.tipo.descripcion"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  readonly: "",
+                                  type: "text",
+                                  id: "tipo"
+                                },
+                                domProps: {
+                                  value: _vm.cuenta.tipo.descripcion
+                                },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.cuenta.tipo,
+                                      "descripcion",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              })
+                            ])
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "modal-footer" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary",
+                            attrs: { type: "button", "data-dismiss": "modal" }
+                          },
+                          [_vm._v("Cerrar")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "submit", disabled: _vm.loading }
+                          },
+                          [_vm._v("Guardar Cambios")]
+                        )
+                      ])
+                    ]
+                  )
+                : _vm._e()
+            ])
+          ]
+        )
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "exampleModalLongTitle" } },
+        [_vm._v("EDICIÓN DE CUENTA GENERAL")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-bb17b174", module.exports)
+  }
+}
+
+/***/ }),
+/* 511 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "btn-group" },
+    [
+      _vm.value.show
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-sm btn-outline-secondary ",
+              attrs: { type: "button" },
+              on: { click: _vm.show }
+            },
+            [_c("i", { staticClass: "fa fa-eye" })]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.value.edit
+        ? _c("CuentaGeneralEdit", {
+            key: _vm.value.id,
+            attrs: { id: _vm.value.id }
+          })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.value.delete
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-sm btn-outline-danger ",
+              attrs: { type: "button" },
+              on: { click: _vm.destroy }
+            },
+            [_c("i", { staticClass: "fa fa-trash" })]
+          )
+        : _vm._e()
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-2e34be2a", module.exports)
+  }
+}
+
+/***/ }),
+/* 512 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col-12" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c(
+            "div",
+            { staticClass: "table-responsive" },
+            [_c("datatable", _vm._b({}, "datatable", _vm.$data, false))],
+            1
+          )
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-246f0974", module.exports)
+  }
+}
+
+/***/ }),
+/* 513 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/**
+ * Created by DBenitezc on 16/01/2019.
+ */
+var URL = '/api/contabilidad/cuenta-general/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        cuentas: [],
+        meta: {}
+    },
+    mutations: {
+        fetch: function fetch(state, data) {
+            state.cuentas = data;
+        },
+        setMeta: function setMeta(state, data) {
+            state.meta = data;
+        },
+        update: function update(state, payload) {
+            state.cuentas = state.cuentas.map(function (cuenta) {
+                if (cuenta.id === payload.id) {
+                    return Object.assign([], cuenta, payload.data);
+                }
+                return cuenta;
+            });
+        }
+    },
+    actions: {
+        paginate: function paginate(context, params) {
+            axios.get(URL + "paginate", { params: params }).then(function (response) {
+                context.commit('fetch', response.data.data);
+                context.commit('setMeta', response.data.meta);
+            });
+        },
+        find: function find(context, id) {
+            return new Promise(function (resolve, reject) {
+                axios.get(URL + id).then(function (res) {
+                    resolve(res.data);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            });
+        },
+        update: function update(context, payload) {
+            return new Promise(function (resolve, reject) {
+                axios.patch(URL + payload.id, payload).then(function (response) {
+                    context.commit('update', { id: payload.id, data: response.data });
+                    resolve(response.data);
+                }).catch(function (error) {
+                    reject(error);
+                });
+            });
+        }
+    },
+    getters: {
+        meta: function meta(state) {
+            return state.meta;
+        },
+        cuentas: function cuentas(state) {
+            return state.cuentas;
+        }
+    }
+});
 
 /***/ })
 /******/ ]);
