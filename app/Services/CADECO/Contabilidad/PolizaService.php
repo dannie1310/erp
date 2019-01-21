@@ -69,7 +69,7 @@ class PolizaService
             $poliza = $this->poliza->find($id);
 
             if(in_array($poliza->estatus,  [1, 2])) {
-                throw new \Exception("No se puede modificar la prepóliza ya que su estatus es {$poliza->estatusPrepoliza->descripcion}");
+                throw new \Exception("No se puede modificar la prepóliza ya que su estatus es {$poliza->estatusPrepoliza->descripcion}", 400);
             }
 
             if(isset($data['fecha'])) {

@@ -7,20 +7,18 @@ export default {
     },
 
     mutations: {
-        fetch(state, payload) {
-            state.tipos = payload.data
+        SET_TIPOS(state, data) {
+            state.tipos = data
         }
     },
 
     actions: {
         fetch(context) {
             axios.get(URI)
-                .then(res => {
-                    context.commit('fetch', res.data)
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('SET_TIPOS', data.data)
                 })
-                .catch(err => {
-                    alert(err);
-                });
         }
     },
 

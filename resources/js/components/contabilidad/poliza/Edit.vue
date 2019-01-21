@@ -129,7 +129,7 @@
                                         <td>{{ i + 1 }}</td>
                                         <td>
                                             <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
-                                                <span v-if="movimiento.id_tipo_cuenta_contable == 1 && movimiento.cuenta_contable != null">
+                                                <span v-if="movimiento.id_tipo_cuenta_contable == 1 && original.movimientos.data[i].cuenta_contable != null">
                                                     {{ movimiento.cuenta_contable }}
                                                 </span>
                                                 <span v-else>
@@ -147,6 +147,7 @@
                                                 </span>
                                             </span>
                                             <span v-else>
+                                                <p>ahere</p>
                                                 <label v-if="movimiento.cuenta_contable">{{ movimiento.cuenta_contable }}</label>
                                                 <label v-else>{{ datosContables }}</label>
                                             </span>
@@ -316,10 +317,6 @@
                     id: id,
                     params: {include: 'transaccionAntecedente,movimientos,traspaso'}
                 })
-                    .then(data => {
-                        this.poliza = data;
-                        this.original = JSON.parse(JSON.stringify(data));
-                });
             },
 
             update(id, payload) {
@@ -360,7 +357,7 @@
                 }).then((result) => {
                     if (result.value) {
                         this.update(this.poliza.id, this.poliza)
-                            .then((data) => {
+                            .then(() => {
                                 Swal({
                                     type: 'success',
                                     title: '¡Correcto!',
@@ -368,17 +365,26 @@
                                     showConfirmButton: false,
                                     timer: 1500
                                 });
-                                this.poliza = data;
                             })
-                            .catch(error => {
-                                alert(error);
-                            });
                     }
                 })
             }
         },
 
+        watch: {
+            currentPoliza: {
+                handler(poliza) {
+                    this.poliza = JSON.parse(JSON.stringify(poliza));
+                    this.original = JSON.parse(JSON.stringify(poliza));
+                },
+                deep: true
+            }
+        },
+
         computed: {
+            currentPoliza() {
+                return this.$store.getters['contabilidad/poliza/currentPoliza']
+            },
             diff() {
                 return diff(this.poliza, this.original)
             },

@@ -1,5 +1,5 @@
 <template>
-    <div class="row" v-if="poliza">
+    <div class="row" v-if="!cargando">
         <div class="col-12">
             <div class="invoice p-3 mb-3">
                 <div class="row">
@@ -126,15 +126,8 @@
         name: "poliza-show",
         components: {EstatusLabel},
         props: ['id'],
-        data() {
-            return {
-                poliza: null
-            }
-        },
         mounted() {
-            this.find(this.id).then(data => {
-                this.poliza = data
-            });
+            this.find(this.id);
         },
 
         methods: {
@@ -147,6 +140,9 @@
         },
 
         computed: {
+            poliza() {
+                return this.$store.getters['contabilidad/poliza/currentPoliza']
+            },
             cargando() {
                 return this.$store.getters['contabilidad/poliza/cargando']
             },

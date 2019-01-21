@@ -94797,17 +94797,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     name: "poliza-show",
     components: { EstatusLabel: __WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel___default.a },
     props: ['id'],
-    data: function data() {
-        return {
-            poliza: null
-        };
-    },
     mounted: function mounted() {
-        var _this = this;
-
-        this.find(this.id).then(function (data) {
-            _this.poliza = data;
-        });
+        this.find(this.id);
     },
 
 
@@ -94821,6 +94812,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     computed: {
+        poliza: function poliza() {
+            return this.$store.getters['contabilidad/poliza/currentPoliza'];
+        },
         cargando: function cargando() {
             return this.$store.getters['contabilidad/poliza/cargando'];
         },
@@ -94866,7 +94860,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.poliza
+  return !_vm.cargando
     ? _c("div", { staticClass: "row" }, [
         _c("div", { staticClass: "col-12" }, [
           _c("div", { staticClass: "invoice p-3 mb-3" }, [
@@ -95612,6 +95606,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
@@ -95634,14 +95629,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         find: function find(id) {
-            var _this = this;
-
             return this.$store.dispatch('contabilidad/poliza/find', {
                 id: id,
                 params: { include: 'transaccionAntecedente,movimientos,traspaso' }
-            }).then(function (data) {
-                _this.poliza = data;
-                _this.original = JSON.parse(JSON.stringify(data));
             });
         },
         update: function update(id, payload) {
@@ -95660,16 +95650,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         validate: function validate() {
-            var _this2 = this;
+            var _this = this;
 
             this.$validator.validate().then(function (result) {
                 if (result) {
-                    _this2.save();
+                    _this.save();
                 }
             });
         },
         save: function save() {
-            var _this3 = this;
+            var _this2 = this;
 
             Swal({
                 title: '¿Estás seguro?',
@@ -95681,7 +95671,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 confirmButtonText: 'Si, Guardar'
             }).then(function (result) {
                 if (result.value) {
-                    _this3.update(_this3.poliza.id, _this3.poliza).then(function (data) {
+                    _this2.update(_this2.poliza.id, _this2.poliza).then(function () {
                         Swal({
                             type: 'success',
                             title: '¡Correcto!',
@@ -95689,16 +95679,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                             showConfirmButton: false,
                             timer: 1500
                         });
-                        _this3.poliza = data;
-                    }).catch(function (error) {
-                        alert(error);
                     });
                 }
             });
         }
     },
 
+    watch: {
+        currentPoliza: {
+            handler: function handler(poliza) {
+                this.poliza = JSON.parse(JSON.stringify(poliza));
+                this.original = JSON.parse(JSON.stringify(poliza));
+            },
+
+            deep: true
+        }
+    },
+
     computed: {
+        currentPoliza: function currentPoliza() {
+            return this.$store.getters['contabilidad/poliza/currentPoliza'];
+        },
         diff: function (_diff) {
             function diff() {
                 return _diff.apply(this, arguments);
@@ -97213,7 +97214,8 @@ var render = function() {
                                         ? _c("span", [
                                             movimiento.id_tipo_cuenta_contable ==
                                               1 &&
-                                            movimiento.cuenta_contable != null
+                                            _vm.original.movimientos.data[i]
+                                              .cuenta_contable != null
                                               ? _c("span", [
                                                   _vm._v(
                                                     "\n                                                " +
@@ -97328,6 +97330,8 @@ var render = function() {
                                                 ])
                                           ])
                                         : _c("span", [
+                                            _c("p", [_vm._v("ahere")]),
+                                            _vm._v(" "),
                                             movimiento.cuenta_contable
                                               ? _c("label", [
                                                   _vm._v(
@@ -98190,9 +98194,7 @@ if (false) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_estatus_prepoliza__ = __webpack_require__(467);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_poliza__ = __webpack_require__(468);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(469);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_movimiento__ = __webpack_require__(470);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(471);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(471);
 
 
 
@@ -98215,8 +98217,7 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex
         'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_estatus_prepoliza__["a" /* default */],
         'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_poliza__["a" /* default */],
         'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
-        'contabilidad/tipo-movimiento': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_movimiento__["a" /* default */],
-        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */]
+        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */]
     },
     strict: "development" !== 'production'
 }));
@@ -98536,17 +98537,17 @@ var URI = '/api/contabilidad/estatus-prepoliza';
     },
 
     mutations: {
-        fetch: function fetch(state, payload) {
-            state.estatus = payload.data;
+        SET_ESTATUS: function SET_ESTATUS(state, data) {
+            state.estatus = data;
         }
     },
 
     actions: {
         fetch: function fetch(context) {
-            axios.get(URI).then(function (res) {
-                context.commit('fetch', res.data);
-            }).catch(function (err) {
-                alert(err);
+            axios.get(URI).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_ESTATUS', data.data);
             });
         }
     },
@@ -98568,75 +98569,71 @@ var URI = '/api/contabilidad/poliza/';
     namespaced: true,
     state: {
         polizas: [],
+        currentPoliza: {},
         meta: {},
         cargando: true
     },
 
     mutations: {
-        fetch: function fetch(state, payload) {
-            state.polizas = payload.data;
-            state.meta = payload.meta;
+        SET_POLIZAS: function SET_POLIZAS(state, data) {
+            state.polizas = data;
         },
-        update: function update(state, payload) {
+        SET_META: function SET_META(state, data) {
+            state.meta = data;
+        },
+        SET_CARGANDO: function SET_CARGANDO(state, data) {
+            state.cargando = data;
+        },
+        UPDATE_POLIZA: function UPDATE_POLIZA(state, data) {
             state.polizas = state.polizas.map(function (poliza) {
                 if (poliza.id === payload.id) {
-                    return Object.assign({}, poliza, payload.data);
+                    return Object.assign({}, poliza, data);
                 }
                 return poliza;
             });
+            state.currentPoliza = data;
         },
-        cargando: function cargando(state, is) {
-            state.cargando = is;
+        SET_POLIZA: function SET_POLIZA(state, data) {
+            state.currentPoliza = data;
         }
     },
 
     actions: {
         paginate: function paginate(context, payload) {
-            context.commit('cargando', true);
-            axios.get(URI + 'paginate', { params: payload }).then(function (res) {
-                context.commit('fetch', res.data);
-            }).catch(function (err) {
-                alert(err);
-            }).then(function () {
-                context.commit('cargando', false);
+            context.commit('SET_CARGANDO', true);
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_POLIZAS', data.data);
+                context.commit('SET_META', data.meta);
+                context.commit('SET_CARGANDO', false);
             });
         },
         find: function find(context, payload) {
-            context.commit('cargando', true);
-            return new Promise(function (resolve, reject) {
-                axios.get(URI + payload.id, { params: payload.params }).then(function (res) {
-                    resolve(res.data);
-                }).catch(function (err) {
-                    reject(err);
-                }).then(function () {
-                    context.commit('cargando', false);
-                });
+            context.commit('SET_CARGANDO', true);
+            axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_POLIZA', data);
+                context.commit('SET_CARGANDO', false);
             });
         },
         update: function update(context, payload) {
-            context.commit('cargando', true);
-            return new Promise(function (resolve, reject) {
-                axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (response) {
-                    context.commit('update', response.data);
-                    resolve(response.data);
-                }).catch(function (error) {
-                    reject(error);
-                }).then(function () {
-                    context.commit('cargando', false);
-                });
+            context.commit('SET_CARGANDO', true);
+            axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('UPDATE_POLIZA', data);
+                context.commit('SET_CARGANDO', false);
             });
         },
         validar: function validar(context, id) {
-            context.commit('cargando', true);
-            return new Promise(function (resolve, reject) {
-                axios.patch(URI + id + '/validar').then(function (response) {
-                    context.commit('update', response.data);
-                    resolve(response.data);
-                }).catch(function (error) {
-                    reject(error);
-                }).then(function () {
-                    context.commit('cargando', false);
-                });
+            context.commit('SET_CARGANDO', true);
+            axios.patch(URI + id + '/validar').then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('UPDATE_POLIZA', data.data);
+                context.commit('SET_CARGANDO', false);
             });
         }
     },
@@ -98650,6 +98647,9 @@ var URI = '/api/contabilidad/poliza/';
         },
         cargando: function cargando(state) {
             return state.cargando;
+        },
+        currentPoliza: function currentPoliza(state) {
+            return state.currentPoliza;
         }
     }
 });
@@ -98668,17 +98668,17 @@ var URI = '/api/contabilidad/tipo-cuenta-contable';
     },
 
     mutations: {
-        fetch: function fetch(state, payload) {
-            state.tipos = payload.data;
+        SET_TIPOS: function SET_TIPOS(state, data) {
+            state.tipos = data;
         }
     },
 
     actions: {
         fetch: function fetch(context, payload) {
-            axios.get(URI, { params: payload }).then(function (res) {
-                context.commit('fetch', res.data);
-            }).catch(function (err) {
-                alert(err);
+            axios.get(URI, { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_TIPOS', data.data);
             });
         }
     },
@@ -98691,44 +98691,7 @@ var URI = '/api/contabilidad/tipo-cuenta-contable';
 });
 
 /***/ }),
-/* 470 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/contabilidad/tipo-movimiento/';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        tipos: []
-    },
-
-    mutations: {
-        fetch: function fetch(state, payload) {
-            state.tipos = payload.data;
-        }
-    },
-
-    actions: {
-        find: function find(context, payload) {
-            return new Promise(function (resolve, reject) {
-                axios.get(URI + payload.id, { params: payload.params }).then(function (res) {
-                    resolve(res.data);
-                }).catch(function (err) {
-                    reject(err);
-                });
-            });
-        }
-    },
-
-    getters: {
-        tipos: function tipos(state) {
-            return state.tipos;
-        }
-    }
-});
-
-/***/ }),
+/* 470 */,
 /* 471 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -98742,17 +98705,17 @@ var URI = '/api/contabilidad/tipo-poliza-contpaq';
     },
 
     mutations: {
-        fetch: function fetch(state, payload) {
-            state.tipos = payload.data;
+        SET_TIPOS: function SET_TIPOS(state, data) {
+            state.tipos = data;
         }
     },
 
     actions: {
         fetch: function fetch(context) {
-            axios.get(URI).then(function (res) {
-                context.commit('fetch', res.data);
-            }).catch(function (err) {
-                alert(err);
+            axios.get(URI).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_TIPOS', data.data);
             });
         }
     },

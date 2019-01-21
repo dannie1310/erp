@@ -3,93 +3,79 @@ export default {
     namespaced: true,
     state: {
         polizas: [],
+        currentPoliza: {},
         meta: {},
         cargando: true
     },
 
     mutations: {
-        fetch(state, payload) {
-            state.polizas = payload.data;
-            state.meta = payload.meta
+        SET_POLIZAS(state, data) {
+            state.polizas = data;
         },
 
-        update(state, payload) {
+        SET_META(state, data) {
+            state.meta = data;
+        },
+
+        SET_CARGANDO(state, data) {
+            state.cargando = data
+        },
+
+        UPDATE_POLIZA(state, data) {
             state.polizas = state.polizas.map(poliza => {
                 if (poliza.id === payload.id) {
-                    return Object.assign({}, poliza, payload.data)
+                    return Object.assign({}, poliza, data)
                 }
                 return poliza
             })
+            state.currentPoliza = data;
         },
 
-        cargando(state, is) {
-            state.cargando = is
+        SET_POLIZA(state, data) {
+            state.currentPoliza = data;
         }
     },
 
     actions: {
-        paginate (context, payload){
-            context.commit('cargando', true);
+        paginate (context, payload) {
+            context.commit('SET_CARGANDO', true);
             axios.get(URI + 'paginate', {params: payload})
-                .then(res => {
-                    context.commit('fetch', res.data)
-                })
-                .catch(err => {
-                    alert(err);
-                })
-                .then(() => {
-                    context.commit('cargando', false);
+                .then(r => r.data)
+                .then((data) => {
+                    context.commit('SET_POLIZAS', data.data)
+                    context.commit('SET_META', data.meta)
+                    context.commit('SET_CARGANDO', false);
                 })
         },
 
         find(context, payload) {
-            context.commit('cargando', true);
-            return new Promise((resolve, reject) => {
-                axios.get(URI + payload.id, {params: payload.params})
-                    .then(res => {
-                        resolve(res.data)
-                    })
-                    .catch(err => {
-                        reject(err)
-                    })
-                    .then(() => {
-                        context.commit('cargando', false);
-                    })
-            });
+            context.commit('SET_CARGANDO', true);
+            axios.get(URI + payload.id, {params: payload.params})
+                .then(r => r.data)
+                .then((data) => {
+                    context.commit('SET_POLIZA', data)
+                    context.commit('SET_CARGANDO', false);
+                })
         },
 
         update(context, payload) {
-            context.commit('cargando', true)
-            return new Promise((resolve, reject) => {
-                axios.patch(URI + payload.id, payload.data, {params: payload.params})
-                    .then(response => {
-                        context.commit('update', response.data)
-                        resolve(response.data)
-                    })
-                    .catch(error => {
-                        reject(error)
-                    })
-                    .then(() => {
-                        context.commit('cargando', false)
-                    })
-            })
+            context.commit('SET_CARGANDO', true);
+            axios.patch(URI + payload.id, payload.data, {params: payload.params})
+                .then(r => r.data)
+                .then((data) => {
+                    context.commit('UPDATE_POLIZA', data);
+                    context.commit('SET_CARGANDO', false);
+                })
         },
 
         validar(context, id) {
-            context.commit('cargando', true)
-            return new Promise((resolve, reject) => {
-                axios.patch(URI + id + '/validar')
-                    .then(response => {
-                        context.commit('update', response.data)
-                        resolve(response.data)
-                    })
-                    .catch(error => {
-                        reject(error)
-                    })
-                    .then(() => {
-                        context.commit('cargando', false)
-                    })
-            })
+            context.commit('SET_CARGANDO', true);
+            axios.patch(URI + id + '/validar')
+                .then(r => r.data)
+                .then((data) => {
+                    context.commit('UPDATE_POLIZA', data.data)
+                    context.commit('SET_CARGANDO', false)
+                })
         }
     },
 
@@ -104,6 +90,10 @@ export default {
 
         cargando(state) {
             return state.cargando
+        },
+
+        currentPoliza(state) {
+            return state.currentPoliza
         }
     }
 }
