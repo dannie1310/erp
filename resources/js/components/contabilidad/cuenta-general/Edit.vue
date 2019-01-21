@@ -20,19 +20,19 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="cuenta">Cuenta</label>
+                                        <label for="cuenta">Cuenta Contable</label>
                                         <input
                                                 type="text"
-                                                name="cuenta"
-                                                data-vv-as="Cuenta"
+                                                name="cuenta_contable"
+                                                data-vv-as="Cuenta Contable"
                                                 v-validate="{required: true, regex: datosContables}"
                                                 class="form-control"
                                                 v-mask="{regex: datosContables}"
                                                 id="cuenta"
-                                                placeholder="Cuenta"
-                                                v-model="cuenta.cuenta"
-                                                :class="{'is-invalid': errors.has('cuenta')}">
-                                        <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
+                                                placeholder="Cuenta Contable"
+                                                v-model="cuenta.cuenta_contable"
+                                                :class="{'is-invalid': errors.has('cuenta_contable')}">
+                                        <div class="invalid-feedback" v-show="errors.has('cuenta_contable')">{{ errors.first('cuenta_contable') }}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -68,22 +68,26 @@
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
+            },
+
+            currentCuenta() {
+                return this.$store.getters['contabilidad/cuenta-general/currentCuenta']
+            }
+        },
+
+        watch: {
+            currentCuenta: {
+                handler(currentCuenta) {
+                    this.cuenta = JSON.parse(JSON.stringify(currentCuenta));
+                },
+                deep: true
             }
         },
 
         methods: {
             find(id) {
-                this.loading = true;
-                this.$store.dispatch('contabilidad/cuenta-general/find', id)
-                    .then(data => {
-                        this.$data.cuenta = data;
-                    })
-                    .catch(error => {
-                        alert(error);
-                    })
-                    .then(() => {
-                        this.loading = false;
-                    })
+                return this.$store.dispatch('contabilidad/cuenta-general/find', id)
+
             },
 
             update() {

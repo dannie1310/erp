@@ -90740,6 +90740,15 @@ var routes = [{
             middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
         }
     }, {
+        path: 'cuenta-general',
+        name: 'cuenta-general',
+        component: __webpack_require__(503),
+        meta: {
+            title: 'Cuentas Generales',
+            breadcrumb: { name: 'CUENTAS GENERALES', parent: 'contabilidad' },
+            middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
+        }
+    }, {
         path: 'poliza',
         component: __webpack_require__(421),
         meta: {
@@ -91771,6 +91780,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "contabilidad-menu",
@@ -91863,6 +91878,29 @@ var render = function() {
                         _c("i", { staticClass: "fa fa-circle-o nav-icon" }),
                         _vm._v(" "),
                         _c("p", [_vm._v("Cuentas de Fondo")])
+                      ]
+                    )
+                  ],
+                  1
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.$root.can("consultar_cuenta_general")
+              ? _c(
+                  "li",
+                  { staticClass: "nav-item" },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        class: { active: this.$route.name == "cuenta-general" },
+                        attrs: { to: { name: "cuenta-general" } }
+                      },
+                      [
+                        _c("i", { staticClass: "fa fa-circle-o nav-icon" }),
+                        _vm._v(" "),
+                        _c("p", [_vm._v("Cuentas Generales")])
                       ]
                     )
                   ],
@@ -98191,10 +98229,12 @@ if (false) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__ = __webpack_require__(464);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_contabilidad_cuenta_almacen__ = __webpack_require__(465);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_fondo__ = __webpack_require__(466);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_estatus_prepoliza__ = __webpack_require__(467);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_poliza__ = __webpack_require__(468);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(469);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(471);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_general__ = __webpack_require__(514);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_estatus_prepoliza__ = __webpack_require__(467);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_poliza__ = __webpack_require__(468);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(469);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(471);
+
 
 
 
@@ -98214,10 +98254,11 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex
         'cadeco/obras': __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__["a" /* default */],
         'contabilidad/cuenta-almacen': __WEBPACK_IMPORTED_MODULE_4__modules_contabilidad_cuenta_almacen__["a" /* default */],
         'contabilidad/cuenta-fondo': __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_fondo__["a" /* default */],
-        'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_estatus_prepoliza__["a" /* default */],
-        'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_poliza__["a" /* default */],
-        'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
-        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */]
+        'contabilidad/cuenta-general': __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_general__["a" /* default */],
+        'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_estatus_prepoliza__["a" /* default */],
+        'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_poliza__["a" /* default */],
+        'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
+        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */]
     },
     strict: "development" !== 'production'
 }));
@@ -99872,6 +99913,895 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 491 */,
+/* 492 */,
+/* 493 */,
+/* 494 */,
+/* 495 */,
+/* 496 */,
+/* 497 */,
+/* 498 */,
+/* 499 */,
+/* 500 */,
+/* 501 */,
+/* 502 */,
+/* 503 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(504)
+/* template */
+var __vue_template__ = __webpack_require__(513)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/cuenta-general/Index.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-246f0974", Component.options)
+  } else {
+    hotAPI.reload("data-v-246f0974", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 504 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "cuenta-general-index",
+    data: function data() {
+        return {
+            HeaderSettings: false,
+            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Tipo de Cuenta', field: 'general', sortable: true }, { title: 'Cuenta', field: 'cuenta_contable', sortable: true }, { title: 'Acciones', field: 'buttons', tdComp: __webpack_require__(505) }],
+            data: [],
+            total: 0,
+            query: {}
+        };
+    },
+    mounted: function mounted() {
+        this.paginate();
+    },
+
+
+    methods: {
+        paginate: function paginate() {
+            var payload = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return this.$store.dispatch('contabilidad/cuenta-general/paginate', payload);
+        }
+    },
+    computed: {
+        cuentas: function cuentas() {
+            return this.$store.getters['contabilidad/cuenta-general/cuentas'];
+        },
+        meta: function meta() {
+            return this.$store.getters['contabilidad/cuenta-general/meta'];
+        }
+    },
+    watch: {
+        cuentas: {
+            handler: function handler(cuentas) {
+                var self = this;
+                self.$data.data = [];
+                cuentas.forEach(function (cuenta, i) {
+                    self.$data.data.push({
+                        index: cuenta.id,
+                        general: cuenta.tipo.descripcion,
+                        cuenta_contable: cuenta.cuenta_contable,
+                        buttons: $.extend({}, {
+                            edit: self.$root.can('editar_cuenta_general') ? true : undefined,
+                            id: cuenta.id
+                        })
+                    });
+                });
+            },
+
+            deep: true
+        },
+        meta: {
+            handler: function handler(meta) {
+                var total = meta.pagination.total;
+                this.$data.total = total;
+            },
+
+            deep: true
+        },
+        query: {
+            handler: function handler(query) {
+                this.paginate(query);
+            },
+
+            deep: true
+        }
+    }
+});
+
+/***/ }),
+/* 505 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(506)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(508)
+/* template */
+var __vue_template__ = __webpack_require__(512)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-2e34be2a"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/cuenta-general/partials/ActionButtons.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2e34be2a", Component.options)
+  } else {
+    hotAPI.reload("data-v-2e34be2a", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 506 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(507);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("daca0614", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2e34be2a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ActionButtons.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-2e34be2a\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ActionButtons.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 507 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 508 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Edit__ = __webpack_require__(509);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Edit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Edit__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "action-buttons",
+    components: { CuentaGeneralEdit: __WEBPACK_IMPORTED_MODULE_0__Edit___default.a },
+    props: ['value'],
+    methods: {
+        destroy: function destroy() {},
+        show: function show() {}
+    },
+    mounted: function mounted() {}
+});
+
+/***/ }),
+/* 509 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(510)
+/* template */
+var __vue_template__ = __webpack_require__(511)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/cuenta-general/Edit.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-bb17b174", Component.options)
+  } else {
+    hotAPI.reload("data-v-bb17b174", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 510 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "cuenta-tipo-edit",
+    props: ['id'],
+    data: function data() {
+        return {
+            cuenta: null,
+            loading: false
+        };
+    },
+
+
+    computed: {
+        datosContables: function datosContables() {
+            return this.$store.getters['auth/datosContables'];
+        },
+        currentCuenta: function currentCuenta() {
+            return this.$store.getters['contabilidad/cuenta-general/currentCuenta'];
+        }
+    },
+
+    watch: {
+        currentCuenta: {
+            handler: function handler(currentCuenta) {
+                this.cuenta = JSON.parse(JSON.stringify(currentCuenta));
+            },
+
+            deep: true
+        }
+    },
+
+    methods: {
+        find: function find(id) {
+            return this.$store.dispatch('contabilidad/cuenta-general/find', id);
+        },
+        update: function update() {
+            var _this = this;
+
+            var self = this;
+            Swal({
+                title: 'Actualizar Cuenta General',
+                text: "¿Estás seguro?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, Actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then(function (result) {
+                if (result.value) {
+                    _this.loading = true;
+                    return self.$store.dispatch('contabilidad/cuenta-general/update', self.$data.cuenta).then(function () {
+                        $('.modal').modal('hide');
+                        Swal({
+                            type: 'success',
+                            title: '¡Correcto!',
+                            text: 'Cuenta Actualizada correctamente',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }).then(function () {
+                        _this.loading = false;
+                    });
+                }
+            });
+        },
+        validate: function validate() {
+            var _this2 = this;
+
+            this.$validator.validate().then(function (result) {
+                if (result) {
+                    _this2.update();
+                }
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 511 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("span", [
+    _c(
+      "button",
+      {
+        staticClass: "btn btn-sm btn-outline-info",
+        attrs: {
+          type: "button",
+          "data-toggle": "modal",
+          "data-target": "#cuenta-general-edit-modal" + _vm.id
+        },
+        on: {
+          click: function($event) {
+            _vm.find(_vm.id)
+          }
+        }
+      },
+      [_c("i", { staticClass: "fa fa-pencil" })]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "cuenta-general-edit-modal" + _vm.id,
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "exampleModalCenterTitle",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-dialog-centered modal-lg",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _vm.cuenta
+                ? _c(
+                    "form",
+                    {
+                      attrs: { role: "form" },
+                      on: {
+                        submit: function($event) {
+                          $event.preventDefault()
+                          return _vm.validate($event)
+                        }
+                      }
+                    },
+                    [
+                      _c("div", { staticClass: "modal-body" }, [
+                        _c("div", { staticClass: "row" }, [
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c(
+                              "div",
+                              { staticClass: "form-group error-content" },
+                              [
+                                _c("label", { attrs: { for: "cuenta" } }, [
+                                  _vm._v("Cuenta Contable")
+                                ]),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "validate",
+                                      rawName: "v-validate",
+                                      value: {
+                                        required: true,
+                                        regex: _vm.datosContables
+                                      },
+                                      expression:
+                                        "{required: true, regex: datosContables}"
+                                    },
+                                    {
+                                      name: "mask",
+                                      rawName: "v-mask",
+                                      value: { regex: _vm.datosContables },
+                                      expression: "{regex: datosContables}"
+                                    },
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.cuenta.cuenta_contable,
+                                      expression: "cuenta.cuenta_contable"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  class: {
+                                    "is-invalid": _vm.errors.has(
+                                      "cuenta_contable"
+                                    )
+                                  },
+                                  attrs: {
+                                    type: "text",
+                                    name: "cuenta_contable",
+                                    "data-vv-as": "Cuenta Contable",
+                                    id: "cuenta",
+                                    placeholder: "Cuenta Contable"
+                                  },
+                                  domProps: {
+                                    value: _vm.cuenta.cuenta_contable
+                                  },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.cuenta,
+                                        "cuenta_contable",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "show",
+                                        rawName: "v-show",
+                                        value: _vm.errors.has(
+                                          "cuenta_contable"
+                                        ),
+                                        expression:
+                                          "errors.has('cuenta_contable')"
+                                      }
+                                    ],
+                                    staticClass: "invalid-feedback"
+                                  },
+                                  [
+                                    _vm._v(
+                                      _vm._s(
+                                        _vm.errors.first("cuenta_contable")
+                                      )
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-md-6" }, [
+                            _c("div", { staticClass: "form-group" }, [
+                              _c("label", { attrs: { for: "tipo" } }, [
+                                _vm._v("Tipo")
+                              ]),
+                              _vm._v(" "),
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.cuenta.tipo.descripcion,
+                                    expression: "cuenta.tipo.descripcion"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  readonly: "",
+                                  type: "text",
+                                  id: "tipo"
+                                },
+                                domProps: {
+                                  value: _vm.cuenta.tipo.descripcion
+                                },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.cuenta.tipo,
+                                      "descripcion",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              })
+                            ])
+                          ])
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "modal-footer" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary",
+                            attrs: { type: "button", "data-dismiss": "modal" }
+                          },
+                          [_vm._v("Cerrar")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "submit", disabled: _vm.loading }
+                          },
+                          [_vm._v("Guardar Cambios")]
+                        )
+                      ])
+                    ]
+                  )
+                : _vm._e()
+            ])
+          ]
+        )
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "exampleModalLongTitle" } },
+        [_vm._v("EDICIÓN DE CUENTA GENERAL")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-bb17b174", module.exports)
+  }
+}
+
+/***/ }),
+/* 512 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "btn-group" },
+    [
+      _vm.value.show
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-sm btn-outline-secondary ",
+              attrs: { type: "button" },
+              on: { click: _vm.show }
+            },
+            [_c("i", { staticClass: "fa fa-eye" })]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.value.edit
+        ? _c("CuentaGeneralEdit", {
+            key: _vm.value.id,
+            attrs: { id: _vm.value.id }
+          })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.value.delete
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-sm btn-outline-danger ",
+              attrs: { type: "button" },
+              on: { click: _vm.destroy }
+            },
+            [_c("i", { staticClass: "fa fa-trash" })]
+          )
+        : _vm._e()
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-2e34be2a", module.exports)
+  }
+}
+
+/***/ }),
+/* 513 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col-12" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c(
+            "div",
+            { staticClass: "table-responsive" },
+            [_c("datatable", _vm._b({}, "datatable", _vm.$data, false))],
+            1
+          )
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-246f0974", module.exports)
+  }
+}
+
+/***/ }),
+/* 514 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/contabilidad/cuenta-general/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        cuentas: [],
+        currentCuenta: {},
+        meta: {}
+    },
+
+    mutations: {
+        SET_CUENTAS: function SET_CUENTAS(state, data) {
+            state.cuentas = data;
+        },
+        SET_META: function SET_META(state, data) {
+            state.meta = data;
+        },
+        SET_CUENTA: function SET_CUENTA(state, data) {
+            state.currentCuenta = data;
+        },
+        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
+            state.cuentas = state.cuentas.map(function (cuenta) {
+                if (cuenta.id === data.id) {
+                    return Object.assign([], cuenta, data);
+                }
+                return cuenta;
+            });
+            state.currentCuenta = data;
+        }
+    },
+
+    actions: {
+        paginate: function paginate(context, payload) {
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTAS', data.data);
+                context.commit('SET_META', data.meta);
+            });
+        },
+        find: function find(context, id) {
+            context.commit('SET_CUENTA', null);
+            axios.get(URI + id).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTA', data);
+            });
+        },
+        update: function update(context, payload) {
+            axios.patch(URI + payload.id, payload).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('UPDATE_CUENTA', data);
+            });
+        }
+    },
+
+    getters: {
+        cuentas: function cuentas(state) {
+            return state.cuentas;
+        },
+        meta: function meta(state) {
+            return state.meta;
+        },
+        currentCuenta: function currentCuenta(state) {
+            return state.currentCuenta;
+        }
+    }
+});
 
 /***/ })
 /******/ ]);

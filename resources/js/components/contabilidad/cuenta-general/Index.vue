@@ -25,8 +25,8 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Tipo de Cuenta', field: 'general', sortable: true },
-                    { title: 'Cuenta', field: 'cuenta', sortable: true },
-                    { title: 'Editar', field: 'buttons', tdComp: require('./partials/ActionButtons')},
+                    { title: 'Cuenta', field: 'cuenta_contable', sortable: true },
+                    { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
@@ -36,11 +36,11 @@
         },
 
         mounted() {
-            this.fetch()
+            this.paginate()
         },
 
         methods: {
-            fetch(payload = {}) {
+            paginate(payload = {}) {
                 return this.$store.dispatch('contabilidad/cuenta-general/paginate', payload)
             }
         },
@@ -61,7 +61,7 @@
                         self.$data.data.push({
                             index: cuenta.id,
                             general: cuenta.tipo.descripcion,
-                            cuenta: cuenta.cuenta,
+                            cuenta_contable: cuenta.cuenta_contable,
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cuenta_general') ? true : undefined,
                                 id: cuenta.id
@@ -80,7 +80,7 @@
             },
             query: {
                 handler (query) {
-                    this.fetch(query)
+                    this.paginate(query)
                 },
                 deep: true
             }
