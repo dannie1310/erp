@@ -60,4 +60,9 @@ class PolizaController extends Controller
         $item = $this->service->validar($id);
         return $this->respondWithItem($item);
     }
+
+    public function omitir(Request $request, $id) {
+        $item = $this->service->omitir($id);
+        return $this->respondWithItem($item);
+    }
 }

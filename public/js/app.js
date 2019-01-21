@@ -95351,6 +95351,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__partials_Validar__ = __webpack_require__(452);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__partials_Validar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__partials_Validar__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__partials_Omitir__ = __webpack_require__(515);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__partials_Omitir___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__partials_Omitir__);
 //
 //
 //
@@ -95642,9 +95644,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
+
 
 
 
@@ -95652,7 +95652,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "poliza-edit",
-    components: { PolizaValidar: __WEBPACK_IMPORTED_MODULE_2__partials_Validar___default.a, AddMovimiento: __WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento___default.a, EstatusLabel: __WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel___default.a },
+    components: { PolizaOmitir: __WEBPACK_IMPORTED_MODULE_3__partials_Omitir___default.a, PolizaValidar: __WEBPACK_IMPORTED_MODULE_2__partials_Validar___default.a, AddMovimiento: __WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento___default.a, EstatusLabel: __WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel___default.a },
     props: ['id'],
     data: function data() {
         return {
@@ -95726,8 +95726,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     watch: {
         currentPoliza: {
             handler: function handler(poliza) {
-                this.poliza = JSON.parse(JSON.stringify(poliza));
-                this.original = JSON.parse(JSON.stringify(poliza));
+                if (poliza) {
+                    this.poliza = JSON.parse(JSON.stringify(poliza));
+                    this.original = JSON.parse(JSON.stringify(poliza));
+                }
             },
 
             deep: true
@@ -96844,19 +96846,14 @@ var render = function() {
                 }
               }),
               _vm._v(" "),
-              _vm.$root.can("omitir_prepoliza_generada") &&
-              (_vm.poliza.estatus == -2 ||
-                _vm.poliza.estatus == -1 ||
-                _vm.poliza.estatus == 0)
-                ? _c(
-                    "button",
-                    { staticClass: "btn btn-app btn-info pull-right" },
-                    [
-                      _c("i", { staticClass: "fa fa-thumbs-o-down" }),
-                      _vm._v(" Omitir\n            ")
-                    ]
-                  )
-                : _vm._e(),
+              _c("poliza-omitir", {
+                attrs: { poliza: _vm.poliza },
+                on: {
+                  success: function($event) {
+                    _vm.find(_vm.id)
+                  }
+                }
+              }),
               _vm._v(" "),
               _vm.$root.can("ingresar_folio_contpaq") &&
               (_vm.poliza.estatus == -1 || _vm.poliza.estatus == 0)
@@ -98627,7 +98624,7 @@ var URI = '/api/contabilidad/poliza/';
         },
         UPDATE_POLIZA: function UPDATE_POLIZA(state, data) {
             state.polizas = state.polizas.map(function (poliza) {
-                if (poliza.id === payload.id) {
+                if (poliza.id === data.id) {
                     return Object.assign({}, poliza, data);
                 }
                 return poliza;
@@ -98671,6 +98668,15 @@ var URI = '/api/contabilidad/poliza/';
         validar: function validar(context, id) {
             context.commit('SET_CARGANDO', true);
             axios.patch(URI + id + '/validar').then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('UPDATE_POLIZA', data.data);
+                context.commit('SET_CARGANDO', false);
+            });
+        },
+        omitir: function omitir(context, id) {
+            context.commit('SET_CARGANDO', true);
+            axios.patch(URI + id + '/omitir').then(function (r) {
                 return r.data;
             }).then(function (data) {
                 context.commit('UPDATE_POLIZA', data.data);
@@ -100802,6 +100808,130 @@ var URI = '/api/contabilidad/cuenta-general/';
         }
     }
 });
+
+/***/ }),
+/* 515 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(516)
+/* template */
+var __vue_template__ = __webpack_require__(517)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/poliza/partials/Omitir.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3be41cc3", Component.options)
+  } else {
+    hotAPI.reload("data-v-3be41cc3", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 516 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "poliza-omitir",
+    props: ['poliza'],
+    methods: {
+        omitir: function omitir() {
+            var self = this;
+            Swal({
+                title: "Omitir Prepóliza",
+                text: "¿Esta seguro de que deseas omitir la Prepóliza?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Si, Omitir",
+                cancelButtonText: "No, Cancelar"
+            }).then(function (result) {
+                if (result.value) {
+                    self.$store.dispatch('contabilidad/poliza/omitir', self.poliza.id).then(function () {
+                        Swal({
+                            type: "success",
+                            title: '¡Correcto!',
+                            text: 'Prepóliza omitida con éxito',
+                            confirmButtonText: "Ok",
+                            closeOnConfirm: true
+                        }).then(function () {
+                            self.$emit('success');
+                        });
+                    });
+                }
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 517 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.$root.can("omitir_prepoliza_generada") &&
+    (_vm.poliza.estatus == -2 ||
+      _vm.poliza.estatus == -1 ||
+      _vm.poliza.estatus == 0)
+    ? _c(
+        "button",
+        {
+          staticClass: "btn btn-app btn-info pull-right",
+          on: { click: _vm.omitir }
+        },
+        [_c("i", { staticClass: "fa fa-thumbs-o-down" }), _vm._v(" Omitir\n")]
+      )
+    : _vm._e()
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-3be41cc3", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

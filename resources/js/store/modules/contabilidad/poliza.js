@@ -23,7 +23,7 @@ export default {
 
         UPDATE_POLIZA(state, data) {
             state.polizas = state.polizas.map(poliza => {
-                if (poliza.id === payload.id) {
+                if (poliza.id === data.id) {
                     return Object.assign({}, poliza, data)
                 }
                 return poliza
@@ -71,6 +71,16 @@ export default {
         validar(context, id) {
             context.commit('SET_CARGANDO', true);
             axios.patch(URI + id + '/validar')
+                .then(r => r.data)
+                .then((data) => {
+                    context.commit('UPDATE_POLIZA', data.data)
+                    context.commit('SET_CARGANDO', false)
+                })
+        },
+
+        omitir(context, id) {
+            context.commit('SET_CARGANDO', true);
+            axios.patch(URI + id + '/omitir')
                 .then(r => r.data)
                 .then((data) => {
                     context.commit('UPDATE_POLIZA', data.data)

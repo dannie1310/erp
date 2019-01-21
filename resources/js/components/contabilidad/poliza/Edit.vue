@@ -3,10 +3,7 @@
         <div class="row">
             <div class="col-md-12">
                 <poliza-validar :poliza="poliza" v-on:success="find(id)"></poliza-validar>
-
-                <button v-if="$root.can('omitir_prepoliza_generada') && (poliza.estatus == -2 || poliza.estatus == -1 || poliza.estatus == 0)" class="btn btn-app btn-info pull-right">
-                    <i class="fa fa-thumbs-o-down"></i> Omitir
-                </button>
+                <poliza-omitir :poliza="poliza" v-on:success="find(id)"></poliza-omitir>
 
                 <button v-if="$root.can('ingresar_folio_contpaq') && (poliza.estatus == -1 || poliza.estatus == 0)"  class="btn btn-app btn-info pull-right"    >
                     <i class="fa fa-i-cursor"></i> Ingrear Folio Contpaq
@@ -296,10 +293,11 @@
     import EstatusLabel from "./partials/EstatusLabel";
     import AddMovimiento from "./partials/AddMovimiento";
     import PolizaValidar from "./partials/Validar";
+    import PolizaOmitir from "./partials/Omitir";
 
     export default {
         name: "poliza-edit",
-        components: {PolizaValidar, AddMovimiento, EstatusLabel},
+        components: {PolizaOmitir, PolizaValidar, AddMovimiento, EstatusLabel},
         props: ['id'],
         data() {
             return {
@@ -374,8 +372,10 @@
         watch: {
             currentPoliza: {
                 handler(poliza) {
-                    this.poliza = JSON.parse(JSON.stringify(poliza));
-                    this.original = JSON.parse(JSON.stringify(poliza));
+                    if (poliza) {
+                        this.poliza = JSON.parse(JSON.stringify(poliza));
+                        this.original = JSON.parse(JSON.stringify(poliza));
+                    }
                 },
                 deep: true
             }

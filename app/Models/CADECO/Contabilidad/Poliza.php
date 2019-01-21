@@ -27,7 +27,8 @@ class Poliza extends Model
     protected $fillable = [
         'concepto',
         'fecha',
-        'estatus'
+        'estatus',
+        'lanzable'
     ];
 
     protected $dates = ['fecha'];

@@ -142,4 +142,24 @@ class PolizaService
             abort($e->getCode(), $e->getMessage());
         }
     }
+
+    public function omitir($id) {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+            $data = [
+                'estatus' => -3,
+                'lanzable' => true
+            ];
+
+            $poliza = $this->poliza->update($data, $id);
+
+            DB::connection('cadeco')->commit();
+            return $poliza;
+
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort($e->getCode(), $e->getMessage());
+        }
+    }
 }
