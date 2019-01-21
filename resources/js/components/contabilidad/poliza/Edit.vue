@@ -4,10 +4,7 @@
             <div class="col-md-12">
                 <poliza-validar :poliza="poliza" v-on:success="find(id)"></poliza-validar>
                 <poliza-omitir :poliza="poliza" v-on:success="find(id)"></poliza-omitir>
-
-                <button v-if="$root.can('ingresar_folio_contpaq') && (poliza.estatus == -1 || poliza.estatus == 0)"  class="btn btn-app btn-info pull-right"    >
-                    <i class="fa fa-i-cursor"></i> Ingrear Folio Contpaq
-                </button>
+                <poliza-ingresar-folio :poliza="poliza"></poliza-ingresar-folio>
 
                 <button v-if="$root.can('ingresar_cuenta_faltante_movimiento_prepoliza')" class="btn btn-app btn-info pull-right">
                     <i class="fa fa-dollar"></i> Ingresar cuentas faltantes
@@ -294,10 +291,11 @@
     import AddMovimiento from "./partials/AddMovimiento";
     import PolizaValidar from "./partials/Validar";
     import PolizaOmitir from "./partials/Omitir";
+    import PolizaIngresarFolio from "./partials/IngresarFolio";
 
     export default {
         name: "poliza-edit",
-        components: {PolizaOmitir, PolizaValidar, AddMovimiento, EstatusLabel},
+        components: {PolizaIngresarFolio, PolizaOmitir, PolizaValidar, AddMovimiento, EstatusLabel},
         props: ['id'],
         data() {
             return {

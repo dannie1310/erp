@@ -28,7 +28,8 @@ class Poliza extends Model
         'concepto',
         'fecha',
         'estatus',
-        'lanzable'
+        'lanzable',
+        'poliza_contpaq'
     ];
 
     protected $dates = ['fecha'];

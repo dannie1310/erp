@@ -78,38 +78,41 @@ class PolizaService
 
             $poliza = $this->poliza->update($data, $id);
 
-            $ids = [];
 
-            foreach ($data['movimientos']['data'] as $movimiento) {
-                $movimiento =  auth()->user()->can('editar_importe_movimiento_prepoliza') ? $movimiento : array_except($movimiento, 'importe');
+            if (isset($data['movimientos']['data'])) {
+                $ids = [];
 
-                $movimientoRepository = new PolizaMovimientoRepository(new PolizaMovimiento);
-                if (isset($movimiento['id'])) {
-                    $movimiento =  auth()->user()->can(['ingresar_cuenta_faltante_movimiento_prepoliza', 'editar_cuenta_contable_movimiento_prepoliza']) ? $movimiento : array_except($movimiento, 'cuenta_contable');
-                    $movimientoRepository->update($movimiento, $movimiento['id']);
+                foreach ($data['movimientos']['data'] as $movimiento) {
+                    $movimiento =  auth()->user()->can('editar_importe_movimiento_prepoliza') ? $movimiento : array_except($movimiento, 'importe');
 
-                    array_push($ids, $movimiento['id']);
-                } else {
-                    if (auth()->user()->can('agregar_movimiento_prepoliza')) {
-                        $movimiento = auth()->user()->can('ingresar_cuenta_faltante_movimiento_prepoliza') ? $movimiento : array_except($movimiento, 'cuenta_contable');
-                        $new_movimiento = $poliza->movimientos()->create($movimiento);
+                    $movimientoRepository = new PolizaMovimientoRepository(new PolizaMovimiento);
+                    if (isset($movimiento['id'])) {
+                        $movimiento =  auth()->user()->can(['ingresar_cuenta_faltante_movimiento_prepoliza', 'editar_cuenta_contable_movimiento_prepoliza']) ? $movimiento : array_except($movimiento, 'cuenta_contable');
+                        $movimientoRepository->update($movimiento, $movimiento['id']);
 
-                        array_push($ids, $new_movimiento->getKey());
+                        array_push($ids, $movimiento['id']);
+                    } else {
+                        if (auth()->user()->can('agregar_movimiento_prepoliza')) {
+                            $movimiento = auth()->user()->can('ingresar_cuenta_faltante_movimiento_prepoliza') ? $movimiento : array_except($movimiento, 'cuenta_contable');
+                            $new_movimiento = $poliza->movimientos()->create($movimiento);
+
+                            array_push($ids, $new_movimiento->getKey());
+                        }
                     }
                 }
+
+                if (auth()->user()->can('eliminar_movimiento_prepoliza')) {
+                    $poliza->movimientos()->whereNotIn('id_int_poliza_movimiento', $ids)->delete();
+                }
+
+                $suma_debe = $poliza->movimientos()->whereHas('tipo', function ($query) { return $query->where('id', '=', 1); })->sum('importe');
+                $suma_haber = $poliza->movimientos()->whereHas('tipo', function ($query) { return $query->where('id', '=', 2); })->sum('importe');
+
+                $poliza->estatus = 0;
+                $poliza->cuadre = $suma_debe - $suma_haber;
+                $poliza->total = $suma_debe > $suma_haber ? $suma_debe : $suma_haber;
+                $poliza->save();
             }
-
-            if (auth()->user()->can('eliminar_movimiento_prepoliza')) {
-                $poliza->movimientos()->whereNotIn('id_int_poliza_movimiento', $ids)->delete();
-            }
-
-            $suma_debe = $poliza->movimientos()->whereHas('tipo', function ($query) { return $query->where('id', '=', 1); })->sum('importe');
-            $suma_haber = $poliza->movimientos()->whereHas('tipo', function ($query) { return $query->where('id', '=', 2); })->sum('importe');
-
-            $poliza->estatus = 0;
-            $poliza->cuadre = $suma_debe - $suma_haber;
-            $poliza->total = $suma_debe > $suma_haber ? $suma_debe : $suma_haber;
-            $poliza->save();
 
             DB::connection('cadeco')->commit();
             return $poliza;
