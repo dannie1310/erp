@@ -5,10 +5,7 @@
                 <poliza-validar :poliza="poliza" v-on:success="find(id)"></poliza-validar>
                 <poliza-omitir :poliza="poliza" v-on:success="find(id)"></poliza-omitir>
                 <poliza-ingresar-folio :poliza="poliza"></poliza-ingresar-folio>
-
-                <button v-if="$root.can('ingresar_cuenta_faltante_movimiento_prepoliza')" class="btn btn-app btn-info pull-right">
-                    <i class="fa fa-dollar"></i> Ingresar cuentas faltantes
-                </button>
+                <poliza-ingresar-cuentas :poliza="poliza" :original="original"></poliza-ingresar-cuentas>
             </div>
         </div>
         <div class="row">
@@ -292,10 +289,13 @@
     import PolizaValidar from "./partials/Validar";
     import PolizaOmitir from "./partials/Omitir";
     import PolizaIngresarFolio from "./partials/IngresarFolio";
+    import PolizaIngresarCuentas from "./partials/IngresarCuentas";
 
     export default {
         name: "poliza-edit",
-        components: {PolizaIngresarFolio, PolizaOmitir, PolizaValidar, AddMovimiento, EstatusLabel},
+        components: {
+            PolizaIngresarCuentas,
+            PolizaIngresarFolio, PolizaOmitir, PolizaValidar, AddMovimiento, EstatusLabel},
         props: ['id'],
         data() {
             return {

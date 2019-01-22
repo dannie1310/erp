@@ -95355,6 +95355,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__partials_Omitir___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__partials_Omitir__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__partials_IngresarFolio__ = __webpack_require__(518);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__partials_IngresarFolio___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__partials_IngresarFolio__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__partials_IngresarCuentas__ = __webpack_require__(521);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__partials_IngresarCuentas___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__partials_IngresarCuentas__);
 //
 //
 //
@@ -95640,9 +95642,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
+
 
 
 
@@ -95652,7 +95652,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "poliza-edit",
-    components: { PolizaIngresarFolio: __WEBPACK_IMPORTED_MODULE_4__partials_IngresarFolio___default.a, PolizaOmitir: __WEBPACK_IMPORTED_MODULE_3__partials_Omitir___default.a, PolizaValidar: __WEBPACK_IMPORTED_MODULE_2__partials_Validar___default.a, AddMovimiento: __WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento___default.a, EstatusLabel: __WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel___default.a },
+    components: {
+        PolizaIngresarCuentas: __WEBPACK_IMPORTED_MODULE_5__partials_IngresarCuentas___default.a,
+        PolizaIngresarFolio: __WEBPACK_IMPORTED_MODULE_4__partials_IngresarFolio___default.a, PolizaOmitir: __WEBPACK_IMPORTED_MODULE_3__partials_Omitir___default.a, PolizaValidar: __WEBPACK_IMPORTED_MODULE_2__partials_Validar___default.a, AddMovimiento: __WEBPACK_IMPORTED_MODULE_1__partials_AddMovimiento___default.a, EstatusLabel: __WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel___default.a },
     props: ['id'],
     data: function data() {
         return {
@@ -96857,16 +96859,9 @@ var render = function() {
               _vm._v(" "),
               _c("poliza-ingresar-folio", { attrs: { poliza: _vm.poliza } }),
               _vm._v(" "),
-              _vm.$root.can("ingresar_cuenta_faltante_movimiento_prepoliza")
-                ? _c(
-                    "button",
-                    { staticClass: "btn btn-app btn-info pull-right" },
-                    [
-                      _c("i", { staticClass: "fa fa-dollar" }),
-                      _vm._v(" Ingresar cuentas faltantes\n            ")
-                    ]
-                  )
-                : _vm._e()
+              _c("poliza-ingresar-cuentas", {
+                attrs: { poliza: _vm.poliza, original: _vm.original }
+              })
             ],
             1
           )
@@ -98321,7 +98316,7 @@ var obra = Object(__WEBPACK_IMPORTED_MODULE_0__partials_auth__["b" /* getObra */
             return state.currentObra;
         },
         datosContables: function datosContables(state) {
-            return state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null;
+            return state.currentObra ? state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null : null;
         },
         authError: function authError(state) {
             return state.auth_error;
@@ -99020,94 +99015,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'app-header',
     methods: {
         logout: function logout() {
-            this.$store.commit('auth/logout');
-            this.$session.destroy();
-            this.$router.push('/login');
+            var _this = this;
+
+            Swal({
+                'type': 'warning',
+                'title': 'Cerrar Sesión',
+                'text': 'La sesión actual se cerrará, ¿Desea continuar?',
+                showCancelButton: true,
+                confirmButtonText: 'Si, Continuar',
+                cancelButtonText: 'Cancelar'
+            }).then(function (result) {
+                if (result.value) {
+                    _this.$store.commit('auth/logout');
+                    _this.$session.destroy();
+                    _this.$router.push({ name: 'login' });
+                }
+            });
         }
     },
     computed: {
@@ -99157,7 +99085,41 @@ var render = function() {
           : _vm._e()
       ]),
       _vm._v(" "),
-      _vm._m(1)
+      _vm.currentUser
+        ? _c("ul", { staticClass: "navbar-nav ml-auto" }, [
+            _c("li", { staticClass: "nav-item d-none d-sm-inline-block" }, [
+              _c("a", { staticClass: "nav-link", attrs: { href: "#" } }, [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(
+                      _vm.currentUser.nombre +
+                        "  " +
+                        _vm.currentUser.apaterno +
+                        "  " +
+                        _vm.currentUser.amaterno
+                    ) +
+                    "\n            "
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("li", { staticClass: "nav-item" }, [
+              _c(
+                "a",
+                {
+                  staticClass: "nav-link",
+                  attrs: {
+                    "data-slide": "true",
+                    href: "#",
+                    title: "Cerrar Sesión"
+                  },
+                  on: { click: _vm.logout }
+                },
+                [_c("i", { staticClass: "fa fa-sign-out" })]
+              )
+            ])
+          ])
+        : _vm._e()
     ]
   )
 }
@@ -99175,238 +99137,6 @@ var staticRenderFns = [
         },
         [_c("i", { staticClass: "fa fa-bars" })]
       )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("ul", { staticClass: "navbar-nav ml-auto" }, [
-      _c("li", { staticClass: "nav-item dropdown" }, [
-        _c(
-          "a",
-          {
-            staticClass: "nav-link",
-            attrs: { "data-toggle": "dropdown", href: "#" }
-          },
-          [
-            _c("i", { staticClass: "fa fa-comments-o" }),
-            _vm._v(" "),
-            _c("span", { staticClass: "badge badge-danger navbar-badge" }, [
-              _vm._v("3")
-            ])
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "dropdown-menu dropdown-menu-lg dropdown-menu-right" },
-          [
-            _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
-              _c("div", { staticClass: "media" }, [
-                _c("img", {
-                  staticClass: "img-size-50 mr-3 img-circle",
-                  attrs: {
-                    src:
-                      "https://adminlte.io/themes/dev/AdminLTE/dist/img/user1-128x128.jpg",
-                    alt: "User Avatar"
-                  }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "media-body" }, [
-                  _c("h3", { staticClass: "dropdown-item-title" }, [
-                    _vm._v(
-                      "\n                                Brad Diesel\n                                "
-                    ),
-                    _c(
-                      "span",
-                      { staticClass: "float-right text-sm text-danger" },
-                      [_c("i", { staticClass: "fa fa-star" })]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("p", { staticClass: "text-sm" }, [
-                    _vm._v("Call me whenever you can...")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", { staticClass: "text-sm text-muted" }, [
-                    _c("i", { staticClass: "fa fa-clock-o mr-1" }),
-                    _vm._v(" 4 Hours Ago")
-                  ])
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "dropdown-divider" }),
-            _vm._v(" "),
-            _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
-              _c("div", { staticClass: "media" }, [
-                _c("img", {
-                  staticClass: "img-size-50 img-circle mr-3",
-                  attrs: {
-                    src:
-                      "https://adminlte.io/themes/dev/AdminLTE/dist/img/user8-128x128.jpg",
-                    alt: "User Avatar"
-                  }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "media-body" }, [
-                  _c("h3", { staticClass: "dropdown-item-title" }, [
-                    _vm._v(
-                      "\n                                John Pierce\n                                "
-                    ),
-                    _c(
-                      "span",
-                      { staticClass: "float-right text-sm text-muted" },
-                      [_c("i", { staticClass: "fa fa-star" })]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("p", { staticClass: "text-sm" }, [
-                    _vm._v("I got your message bro")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", { staticClass: "text-sm text-muted" }, [
-                    _c("i", { staticClass: "fa fa-clock-o mr-1" }),
-                    _vm._v(" 4 Hours Ago")
-                  ])
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "dropdown-divider" }),
-            _vm._v(" "),
-            _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
-              _c("div", { staticClass: "media" }, [
-                _c("img", {
-                  staticClass: "img-size-50 img-circle mr-3",
-                  attrs: {
-                    src:
-                      "https://adminlte.io/themes/dev/AdminLTE/dist/img/user3-128x128.jpg",
-                    alt: "User Avatar"
-                  }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "media-body" }, [
-                  _c("h3", { staticClass: "dropdown-item-title" }, [
-                    _vm._v(
-                      "\n                                Nora Silvester\n                                "
-                    ),
-                    _c(
-                      "span",
-                      { staticClass: "float-right text-sm text-warning" },
-                      [_c("i", { staticClass: "fa fa-star" })]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("p", { staticClass: "text-sm" }, [
-                    _vm._v("The subject goes here")
-                  ]),
-                  _vm._v(" "),
-                  _c("p", { staticClass: "text-sm text-muted" }, [
-                    _c("i", { staticClass: "fa fa-clock-o mr-1" }),
-                    _vm._v(" 4 Hours Ago")
-                  ])
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "dropdown-divider" }),
-            _vm._v(" "),
-            _c(
-              "a",
-              {
-                staticClass: "dropdown-item dropdown-footer",
-                attrs: { href: "#" }
-              },
-              [_vm._v("See All Messages")]
-            )
-          ]
-        )
-      ]),
-      _vm._v(" "),
-      _c("li", { staticClass: "nav-item dropdown" }, [
-        _c(
-          "a",
-          {
-            staticClass: "nav-link",
-            attrs: { "data-toggle": "dropdown", href: "#" }
-          },
-          [
-            _c("i", { staticClass: "fa fa-bell-o" }),
-            _vm._v(" "),
-            _c("span", { staticClass: "badge badge-warning navbar-badge" }, [
-              _vm._v("15")
-            ])
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "dropdown-menu dropdown-menu-lg dropdown-menu-right" },
-          [
-            _c("span", { staticClass: "dropdown-item dropdown-header" }, [
-              _vm._v("15 Notifications")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "dropdown-divider" }),
-            _vm._v(" "),
-            _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
-              _c("i", { staticClass: "fa fa-envelope mr-2" }),
-              _vm._v(" 4 new messages\n                    "),
-              _c("span", { staticClass: "float-right text-muted text-sm" }, [
-                _vm._v("3 mins")
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "dropdown-divider" }),
-            _vm._v(" "),
-            _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
-              _c("i", { staticClass: "fa fa-users mr-2" }),
-              _vm._v(" 8 friend requests\n                    "),
-              _c("span", { staticClass: "float-right text-muted text-sm" }, [
-                _vm._v("12 hours")
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "dropdown-divider" }),
-            _vm._v(" "),
-            _c("a", { staticClass: "dropdown-item", attrs: { href: "#" } }, [
-              _c("i", { staticClass: "fa fa-file mr-2" }),
-              _vm._v(" 3 new reports\n                    "),
-              _c("span", { staticClass: "float-right text-muted text-sm" }, [
-                _vm._v("2 days")
-              ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "dropdown-divider" }),
-            _vm._v(" "),
-            _c(
-              "a",
-              {
-                staticClass: "dropdown-item dropdown-footer",
-                attrs: { href: "#" }
-              },
-              [_vm._v("See All Notifications")]
-            )
-          ]
-        )
-      ]),
-      _vm._v(" "),
-      _c("li", { staticClass: "nav-item" }, [
-        _c(
-          "a",
-          {
-            staticClass: "nav-link",
-            attrs: {
-              "data-widget": "control-sidebar",
-              "data-slide": "true",
-              href: "#"
-            }
-          },
-          [_c("i", { staticClass: "fa fa-th-large" })]
-        )
-      ])
     ])
   }
 ]
@@ -101381,6 +101111,150 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-ac0d5a0e", module.exports)
+  }
+}
+
+/***/ }),
+/* 521 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(522)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(524)
+/* template */
+var __vue_template__ = __webpack_require__(525)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-64bdeffb"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/poliza/partials/IngresarCuentas.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-64bdeffb", Component.options)
+  } else {
+    hotAPI.reload("data-v-64bdeffb", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 522 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(523);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("dc15df42", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-64bdeffb\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./IngresarCuentas.vue", function() {
+     var newContent = require("!!../../../../../../node_modules/css-loader/index.js!../../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-64bdeffb\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./IngresarCuentas.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 523 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 524 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "poliza-ingresar-cuentas",
+    props: ['original', 'poliza'],
+    methods: {
+        checkCuentas: function checkCuentas() {}
+    }
+});
+
+/***/ }),
+/* 525 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.$root.can("ingresar_cuenta_faltante_movimiento_prepoliza")
+    ? _c(
+        "button",
+        {
+          staticClass: "btn btn-app btn-info pull-right",
+          on: { click: _vm.checkCuentas }
+        },
+        [
+          _c("i", { staticClass: "fa fa-dollar" }),
+          _vm._v(" Ingresar cuentas faltantes\n")
+        ]
+      )
+    : _vm._e()
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-64bdeffb", module.exports)
   }
 }
 
