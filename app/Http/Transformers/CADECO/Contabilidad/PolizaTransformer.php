@@ -50,7 +50,8 @@ class PolizaTransformer extends TransformerAbstract
             'cuadre' => $model->cuadre,
             'tiene_historico' => $model->historicos()->count() > 0,
             'usuario_solicita' => $model->UsuarioSolicita,
-            'poliza_contpaq' => $model->poliza_contpaq
+            'poliza_contpaq' => $model->poliza_contpaq,
+            'estatus' => $model->estatus
         ];
     }
 

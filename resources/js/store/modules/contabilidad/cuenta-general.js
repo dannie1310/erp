@@ -1,71 +1,76 @@
-/**
- * Created by DBenitezc on 16/01/2019.
- */
-const URL = '/api/contabilidad/cuenta-general/'
+const URI = '/api/contabilidad/cuenta-general/';
 
 export default {
-    namespaced:true,
-    state:{
+    namespaced: true,
+    state: {
         cuentas: [],
+        currentCuenta: {},
         meta: {}
     },
-    mutations:{
-        fetch(state,data){
-            state.cuentas = data;
+
+    mutations: {
+        SET_CUENTAS(state, data) {
+            state.cuentas = data
         },
-        setMeta(state,data){
-            state.meta = data;
+
+        SET_META(state, data) {
+            state.meta = data
         },
-        update(state, payload) {
+
+        SET_CUENTA(state, data) {
+            state.currentCuenta = data
+        },
+
+        UPDATE_CUENTA(state, data) {
             state.cuentas = state.cuentas.map(cuenta => {
-                    if (cuenta.id === payload.id) {
-                return Object.assign([], cuenta, payload.data)
-            }
-            return cuenta
-        })
+                if (cuenta.id === data.id) {
+                    return Object.assign([], cuenta, data)
+                }
+                return cuenta
+            })
+            state.currentCuenta = data
         }
     },
-    actions:{
-        paginate(context, params){
-            axios.get(URL + "paginate",{params:params})
-                .then(response => {
-                context.commit('fetch',response.data.data);
-            context.commit('setMeta',response.data.meta);
-        })
+
+    actions: {
+        paginate (context, payload){
+            axios.get(URI + 'paginate', {params: payload})
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('SET_CUENTAS', data.data)
+                    context.commit('SET_META', data.meta)
+                })
         },
 
         find(context, id) {
-            return new Promise((resolve, reject) => {
-                    axios.get(URL + id)
-                    .then(res => {
-                    resolve(res.data)
-        })
-        .catch(err => {
-                reject(err)
-            })
-        })
+            context.commit('SET_CUENTA', null)
+            axios.get(URI + id)
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('SET_CUENTA', data)
+                })
         },
 
         update(context, payload) {
-            return new Promise((resolve, reject) => {
-                    axios.patch(URL + payload.id, payload)
-                    .then(response => {
-                    context.commit('update', {id: payload.id, data: response.data});
-            resolve(response.data);
-        })
-        .catch(error => {
-                reject(error);
-        })
-        })
+            axios.patch(URI + payload.id, payload)
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('UPDATE_CUENTA', data);
+                })
         }
-
     },
-    getters:{
-        meta(state){
-            return state.meta;
+
+    getters: {
+        cuentas(state) {
+            return state.cuentas
         },
-        cuentas(state){
-            return state.cuentas;
+
+        meta(state) {
+            return state.meta
+        },
+
+        currentCuenta(state) {
+            return state.currentCuenta
         }
     }
 }

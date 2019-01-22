@@ -7,20 +7,18 @@ export default {
     },
 
     mutations: {
-        fetch(state, payload) {
-            state.estatus = payload.data
+        SET_ESTATUS(state, data) {
+            state.estatus = data
         }
     },
 
     actions: {
         fetch(context) {
             axios.get(URI)
-                .then(res => {
-                    context.commit('fetch', res.data)
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('SET_ESTATUS', data.data)
                 })
-                .catch(err => {
-                    alert(err);
-                });
         }
     },
 

@@ -20,43 +20,47 @@ trait ControllerTrait
     public function paginate(Request $request)
     {
         $paginator = $this->service->paginate($request->all());
-        $data = $paginator->getCollection();
+        return $this->respondWithPaginator($paginator);
+    }
 
+    public function find(Request $request, $id)
+    {
+        $item = $this->service->find($id);
+        return $this->respondWithItem($item);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $item = $this->service->update($request->all(), $id);
+        return $this->respondWithItem($item);
+    }
+
+    private function respondWithItem($item)
+    {
+        $resource = new Item($item, $this->transformer);
+        $this->parseIncludes();
+        $this->fractal->setSerializer(new ArraySerializer);
+        $response = $this->fractal->createData($resource)->toArray();
+
+        return response()->json($response, 200);
+    }
+
+    private function respondWithPaginator($paginator)
+    {
+        $data = $paginator->getCollection();
         $resource = new Collection($data, $this->transformer);
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
-
-
-        if ($request->has('include')) {
-            $this->fractal->parseIncludes($request->get('include'));
-        }
-
+        $this->parseIncludes();
         $this->fractal->setSerializer(new ArraySerializer);
         $response = $this->fractal->createData($resource)->toArray();
+
         return response()->json($response, 200);
     }
 
-    public function find(Request $request, $id) {
-        $data = $this->service->find($id);
-        $resource = new Item($data, $this->transformer);
-
-        if ($request->has('include')) {
-            $this->fractal->parseIncludes($request->get('include'));
-        }
-
-        $this->fractal->setSerializer(new ArraySerializer);
-        $response = $this->fractal->createData($resource)->toArray();
-        return response()->json($response, 200);
-    }
-
-    private function respondItem($item) {
-        $resource = new Item($item, $this->transformer);
-
+    private function parseIncludes()
+    {
         if (request()->has('include')) {
             $this->fractal->parseIncludes(request()->get('include'));
         }
-
-        $this->fractal->setSerializer(new ArraySerializer);
-        $response = $this->fractal->createData($resource)->toArray();
-        return response()->json($response, 200);
     }
 }

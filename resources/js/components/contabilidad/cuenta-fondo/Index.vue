@@ -37,11 +37,11 @@
         },
 
         mounted() {
-            this.fetch()
+            this.paginate()
         },
 
         methods: {
-            fetch(payload = {}) {
+            paginate(payload = {}) {
                 return this.$store.dispatch('contabilidad/cuenta-fondo/paginate', payload)
             }
         },
@@ -82,7 +82,7 @@
             },
             query: {
                 handler (query) {
-                    this.fetch(query)
+                    this.paginate(query)
                 },
                 deep: true
             }

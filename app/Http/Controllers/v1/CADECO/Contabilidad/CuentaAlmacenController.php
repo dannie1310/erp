@@ -14,7 +14,6 @@ use App\Http\Transformers\CADECO\Contabilidad\CuentaAlmacenTransformer;
 use App\Services\CADECO\Contabilidad\CuentaAlmacenService;
 use App\Traits\ControllerTrait;
 use Dingo\Api\Routing\Helpers;
-use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class CuentaAlmacenController extends Controller
@@ -50,10 +49,5 @@ class CuentaAlmacenController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
-    }
-
-    public function update(Request $request, $id) {
-        $item = $this->service->update($request->all(), $id);
-        return $this->respondItem($item);
     }
 }

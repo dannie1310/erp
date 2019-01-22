@@ -68,22 +68,24 @@
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
+            },
+            currentCuenta() {
+                return this.$store.getters['contabilidad/cuenta-fondo/currentCuenta']
+            }
+        },
+
+        watch: {
+            currentCuenta: {
+                handler(currentCuenta) {
+                    this.cuenta = JSON.parse(JSON.stringify(currentCuenta));
+                },
+                deep: true
             }
         },
 
         methods: {
             find(id) {
-                this.loading = true;
                 this.$store.dispatch('contabilidad/cuenta-fondo/find', id)
-                    .then(data => {
-                        this.$data.cuenta = data;
-                    })
-                    .catch(error => {
-                        alert(error);
-                    })
-                    .then(() => {
-                        this.loading = false;
-                    })
             },
 
             update() {

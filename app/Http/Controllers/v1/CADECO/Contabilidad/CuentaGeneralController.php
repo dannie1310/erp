@@ -51,10 +51,4 @@ class CuentaGeneralController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
-
-    public function update(Request $request, $id){
-        $item = $this->service->update($request->all(), $id);
-        return $this->respondItem($item);
-    }
-
 }

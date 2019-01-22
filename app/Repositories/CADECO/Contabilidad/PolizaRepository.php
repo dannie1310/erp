@@ -23,4 +23,11 @@ class PolizaRepository
     {
         $this->model = $model;
     }
+
+    public function update($data, $id)
+    {
+        $poliza = $this->find($id);
+        $poliza->update(array_only($data, $this->model->getFillable()));
+        return $poliza;
+    }
 }

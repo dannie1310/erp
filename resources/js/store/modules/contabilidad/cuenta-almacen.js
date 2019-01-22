@@ -4,59 +4,59 @@ export default {
     namespaced: true,
     state: {
         cuentas: [],
+        currentCuenta: {},
         meta: {}
     },
 
     mutations: {
-        fetch(state, payload) {
-            state.cuentas = payload.data;
-            state.meta = payload.meta
+        SET_CUENTAS(state, data) {
+            state.cuentas = data
         },
 
-        update(state, payload) {
+        SET_META(state, data) {
+            state.meta = data
+        },
+
+        SET_CUENTA(state, data) {
+            state.currentCuenta = data
+        },
+
+        UPDATE_CUENTA(state, data) {
             state.cuentas = state.cuentas.map(cuenta => {
-                if (cuenta.id === payload.id) {
-                    return Object.assign([], cuenta, payload.data)
+                if (cuenta.id === data.id) {
+                    return Object.assign([], cuenta, data)
                 }
                 return cuenta
             })
+            state.currentCuenta = data
         }
     },
 
     actions: {
         paginate (context, payload){
             axios.get(URI + 'paginate', {params: payload})
-                .then(res => {
-                    context.commit('fetch', res.data)
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('SET_CUENTAS', data.data)
+                    context.commit('SET_META', data.meta)
                 })
-                .catch(err => {
-                    alert(err);
-                });
         },
 
         find(context, id) {
-            return new Promise((resolve, reject) => {
-                axios.get(URI + id)
-                    .then(res => {
-                        resolve(res.data)
-                    })
-                    .catch(err => {
-                        reject(err)
-                    })
-            })
+            context.commit('SET_CUENTA', null)
+            axios.get(URI + id)
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('SET_CUENTA', data)
+                })
         },
 
         update(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios.patch(URI + payload.id, payload)
-                    .then(response => {
-                        context.commit('update', {id: payload.id, data: response.data});
-                        resolve(response.data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            })
+            axios.patch(URI + payload.id, payload)
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('UPDATE_CUENTA', data);
+                })
         }
     },
 
@@ -67,6 +67,10 @@ export default {
 
         meta(state) {
             return state.meta
+        },
+
+        currentCuenta(state) {
+            return state.currentCuenta
         }
     }
 }

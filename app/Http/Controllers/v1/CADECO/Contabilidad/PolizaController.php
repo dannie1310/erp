@@ -10,14 +10,16 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdatePolizaRequest;
 use App\Http\Transformers\CADECO\Contabilidad\PolizaTransformer;
 use App\Services\CADECO\Contabilidad\PolizaService;
 use App\Traits\ControllerTrait;
+use Dingo\Api\Http\Request;
 use League\Fractal\Manager;
 
 class PolizaController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait { update as protected traitupdate; }
 
     /**
      * @var PolizaService
@@ -50,4 +52,17 @@ class PolizaController extends Controller
         $this->transformer = $transformer;
     }
 
+    public function update(UpdatePolizaRequest $request, $id) {
+        return $this->traitupdate($request, $id);
+    }
+
+    public function validar(Request $request, $id) {
+        $item = $this->service->validar($id);
+        return $this->respondWithItem($item);
+    }
+
+    public function omitir(Request $request, $id) {
+        $item = $this->service->omitir($id);
+        return $this->respondWithItem($item);
+    }
 }

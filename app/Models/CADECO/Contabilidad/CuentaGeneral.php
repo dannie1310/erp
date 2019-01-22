@@ -21,4 +21,8 @@ class CuentaGeneral extends CuentaContable
             });
         });
     }
+
+    protected $fillable = [
+        'cuenta_contable'
+    ];
 }

@@ -6,7 +6,7 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">CATÁLOGOS</li>
             <li class="nav-item has-treeview">
-                <a href="" class="nav-link">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-money"></i>
                     <p>
                         Cuentas Contables
@@ -49,7 +49,13 @@
 
 <script>
     export default {
-        name: "contabilidad-menu"
+        name: "contabilidad-menu",
+
+        methods: {
+            mostrarMenu(event) {
+                $(event.target).closest('li').toggleClass('menu-open');
+            }
+        }
     }
 </script>
 
