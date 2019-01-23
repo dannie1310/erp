@@ -90801,15 +90801,13 @@ function auth(_ref) {
     var next = _ref.next,
         router = _ref.router;
 
-    axios.post('/api/auth/refresh', null, { headers: { Authorization: 'Bearer ' + router.app.$session.get('jwt') } }).then(function (res) {
-        router.app.$session.set('jwt', res.data.access_token);
-        window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.access_token;
-        return next();
-    }).catch(function (err) {
+    if (!router.app.$session.exists()) {
         router.app.$store.commit('auth/logout');
         router.app.$session.destroy();
         return router.push({ name: 'login' });
-    });
+    }
+    window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + router.app.$session.get('jwt');
+    return next();
 }
 
 /***/ }),
@@ -91797,6 +91795,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         mostrarMenu: function mostrarMenu(event) {
+            event.stopPropagation();
             $(event.target).closest('li').toggleClass('menu-open');
         }
     }
@@ -91824,7 +91823,7 @@ var render = function() {
       [
         _c("li", { staticClass: "nav-header" }, [_vm._v("CATÁLOGOS")]),
         _vm._v(" "),
-        _c("li", { staticClass: "nav-item has-treeview" }, [
+        _c("li", { staticClass: "nav-item" }, [
           _c(
             "a",
             {
