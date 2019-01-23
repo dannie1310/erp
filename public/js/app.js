@@ -93825,7 +93825,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -93846,7 +93846,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -93856,8 +93855,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     methods: {
         destroy: function destroy() {},
         show: function show() {}
-    },
-    mounted: function mounted() {}
+    }
 });
 
 /***/ }),
@@ -93969,14 +93967,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "cuenta-tipo-edit",
     props: ['id'],
     data: function data() {
         return {
-            cuenta: null,
-            loading: false
+            loading: true
         };
     },
 
@@ -93985,27 +93983,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         datosContables: function datosContables() {
             return this.$store.getters['auth/datosContables'];
         },
-        currentCuenta: function currentCuenta() {
+        cuenta: function cuenta() {
             return this.$store.getters['contabilidad/cuenta-general/currentCuenta'];
-        }
-    },
-
-    watch: {
-        currentCuenta: {
-            handler: function handler(currentCuenta) {
-                this.cuenta = JSON.parse(JSON.stringify(currentCuenta));
-            },
-
-            deep: true
         }
     },
 
     methods: {
         find: function find(id) {
-            return this.$store.dispatch('contabilidad/cuenta-general/find', id);
+            var _this = this;
+
+            return this.$store.dispatch('contabilidad/cuenta-general/find', id).then(function () {
+                _this.loading = false;
+            });
         },
         update: function update() {
-            var _this = this;
+            var _this2 = this;
 
             var self = this;
             Swal({
@@ -94019,8 +94011,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 cancelButtonText: 'Cancelar'
             }).then(function (result) {
                 if (result.value) {
-                    _this.loading = true;
-                    return self.$store.dispatch('contabilidad/cuenta-general/update', self.$data.cuenta).then(function () {
+                    _this2.loading = true;
+                    return self.$store.dispatch('contabilidad/cuenta-general/update', self.cuenta).then(function () {
                         $('.modal').modal('hide');
                         Swal({
                             type: 'success',
@@ -94030,19 +94022,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                             timer: 1500
                         });
                     }).then(function () {
-                        _this.loading = false;
+                        _this2.loading = false;
                     });
                 }
             });
         },
         validate: function validate() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.$validator.validate().then(function (result) {
                 if (result) {
-                    _this2.update();
+                    _this3.update();
                 }
             });
+        },
+        updateAttribute: function updateAttribute(e) {
+            this.$store.commit('contabilidad/cuenta-general/UPDATE_ATTRIBUTE', { attribute: $(e.target).attr('name'), value: e.target.value });
         }
     }
 });
@@ -94138,12 +94133,6 @@ var render = function() {
                                       rawName: "v-mask",
                                       value: { regex: _vm.datosContables },
                                       expression: "{regex: datosContables}"
-                                    },
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.cuenta.cuenta_contable,
-                                      expression: "cuenta.cuenta_contable"
                                     }
                                   ],
                                   staticClass: "form-control",
@@ -94162,18 +94151,7 @@ var render = function() {
                                   domProps: {
                                     value: _vm.cuenta.cuenta_contable
                                   },
-                                  on: {
-                                    input: function($event) {
-                                      if ($event.target.composing) {
-                                        return
-                                      }
-                                      _vm.$set(
-                                        _vm.cuenta,
-                                        "cuenta_contable",
-                                        $event.target.value
-                                      )
-                                    }
-                                  }
+                                  on: { input: _vm.updateAttribute }
                                 }),
                                 _vm._v(" "),
                                 _c(
@@ -99989,7 +99967,7 @@ var URI = '/api/contabilidad/cuenta-general/';
     namespaced: true,
     state: {
         cuentas: [],
-        currentCuenta: {},
+        currentCuenta: null,
         meta: {}
     },
 
@@ -100011,6 +99989,9 @@ var URI = '/api/contabilidad/cuenta-general/';
                 return cuenta;
             });
             state.currentCuenta = data;
+        },
+        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value;
         }
     },
 
