@@ -1,6 +1,5 @@
 <template>
     <span>
-        <!-- Button trigger modal -->
         <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" :data-target="'#cuenta-almacen-edit-modal' + id">
             <i class="fa fa-pencil"></i>
         </button>
@@ -30,7 +29,8 @@
                                                 v-mask="{regex: datosContables}"
                                                 id="cuenta"
                                                 placeholder="Cuenta"
-                                                v-model="cuenta.cuenta"
+                                                :value="cuenta.cuenta"
+                                                @input="updateAttribute"
                                                 :class="{'is-invalid': errors.has('cuenta')}">
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>
@@ -38,7 +38,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="almacen">Almacen</label>
-                                        <input readonly type="text" class="form-control" id="almacen" v-model="cuenta.almacen.descripcion">
+                                        <input readonly type="text" class="form-control" id="almacen" :value="cuenta.almacen.descripcion">
                                     </div>
                                 </div>
                             </div>
@@ -60,8 +60,7 @@
         props: ['id'],
         data() {
             return {
-                cuenta: null,
-                loading: false
+                loading: true
             }
         },
 
@@ -70,23 +69,17 @@
                 return this.$store.getters['auth/datosContables']
             },
 
-            currentCuenta() {
+            cuenta() {
                 return this.$store.getters['contabilidad/cuenta-almacen/currentCuenta']
-            }
-        },
-
-        watch: {
-            currentCuenta: {
-                handler(currentCuenta) {
-                    this.cuenta = JSON.parse(JSON.stringify(currentCuenta));
-                },
-                deep: true
             }
         },
 
         methods: {
             find(id) {
                 this.$store.dispatch('contabilidad/cuenta-almacen/find', id)
+                    .then(() => {
+                        this.loading = false;
+                    })
             },
 
             update() {
@@ -103,7 +96,7 @@
                 }).then((result) => {
                     if (result.value) {
                         this.loading = true;
-                        return self.$store.dispatch('contabilidad/cuenta-almacen/update', self.$data.cuenta)
+                        return self.$store.dispatch('contabilidad/cuenta-almacen/update', self.cuenta)
                             .then(() => {
                                 $('.modal').modal('hide');
                                 Swal({
@@ -126,6 +119,10 @@
                         this.update()
                     }
                 });
+            },
+
+            updateAttribute(e) {
+                this.$store.commit('contabilidad/cuenta-almacen/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
             }
         }
     }

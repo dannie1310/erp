@@ -7,7 +7,3 @@
         name: "Layout"
     }
 </script>
-
-<style scoped>
-
-</style>

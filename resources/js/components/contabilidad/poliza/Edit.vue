@@ -5,7 +5,7 @@
                 <poliza-validar :poliza="poliza" v-on:success="find(id)"></poliza-validar>
                 <poliza-omitir :poliza="poliza" v-on:success="find(id)"></poliza-omitir>
                 <poliza-ingresar-folio :poliza="poliza"></poliza-ingresar-folio>
-                <poliza-ingresar-cuentas :poliza="poliza" :original="original"></poliza-ingresar-cuentas>
+                <poliza-ingresar-cuentas :movimientos="movimientosSinCuenta"></poliza-ingresar-cuentas>
             </div>
         </div>
         <div class="row">
@@ -380,6 +380,19 @@
         },
 
         computed: {
+            movimientosSinCuenta() {
+                let array = this.original.movimientos.data.filter((mov) => {
+                    return mov.cuenta_contable == null
+                })
+
+                return Array.from(new Set(array.map(s => s.id_tipo_cuenta_contable)))
+                    .map(id => {
+                        return {
+                            id_tipo_cuenta_contable: id,
+                            descripcion: array.find(s => s.id_tipo_cuenta_contable === id).tipoCuentaContable.descripcion
+                        }
+                    })
+            },
             currentPoliza() {
                 return this.$store.getters['contabilidad/poliza/currentPoliza']
             },

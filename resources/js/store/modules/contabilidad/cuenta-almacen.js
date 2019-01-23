@@ -4,7 +4,7 @@ export default {
     namespaced: true,
     state: {
         cuentas: [],
-        currentCuenta: {},
+        currentCuenta: null,
         meta: {}
     },
 
@@ -29,6 +29,10 @@ export default {
                 return cuenta
             })
             state.currentCuenta = data
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value
         }
     },
 
@@ -52,7 +56,7 @@ export default {
         },
 
         update(context, payload) {
-            axios.patch(URI + payload.id, payload)
+            axios.patch(URI + payload.id, context.state.currentCuenta)
                 .then(r => r.data)
                 .then(data => {
                     context.commit('UPDATE_CUENTA', data);

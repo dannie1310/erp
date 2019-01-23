@@ -42,7 +42,8 @@ class PolizaMovimientoTransformer extends TransformerAbstract
             'importe' => $model->importe,
             'concepto' => $model->concepto,
             'id_tipo_cuenta_contable' => $model->id_tipo_cuenta_contable,
-            'id_tipo_movimiento_poliza' => $model->id_tipo_movimiento_poliza
+            'id_tipo_movimiento_poliza' => $model->id_tipo_movimiento_poliza,
+            'id_empresa_cadeco' => $model->id_empresa_cadeco
         ];
     }
 
@@ -54,9 +55,10 @@ class PolizaMovimientoTransformer extends TransformerAbstract
      */
     public function IncludeTipo(PolizaMovimiento $model)
     {
-        $tipo = $model->tipo;
-
-        return $this->item($tipo, new TipoMovimientoTransformer);
+        if ($tipo = $model->tipo) {
+            return $this->item($tipo, new TipoMovimientoTransformer);
+        }
+        return null;
     }
 
     /**
@@ -67,9 +69,10 @@ class PolizaMovimientoTransformer extends TransformerAbstract
      */
     public function IncludeTipoCuentaContable(PolizaMovimiento $model)
     {
-        $tipo = $model->tipoCuentaContable;
-
-        return $this->item($tipo, new TipoCuentaContableTransformer);
+        if($tipo = $model->tipoCuentaContable) {
+            return $this->item($tipo, new TipoCuentaContableTransformer);
+        }
+        return null;
     }
 }
 
