@@ -56,7 +56,7 @@ export default {
         },
 
         update(context, payload) {
-            axios.patch(URI + payload.id, context.state.currentCuenta)
+            axios.patch(URI + payload.id, payload)
                 .then(r => r.data)
                 .then(data => {
                     context.commit('UPDATE_CUENTA', data);

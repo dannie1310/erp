@@ -30,7 +30,8 @@
                                                 v-mask="{regex: datosContables}"
                                                 id="cuenta"
                                                 placeholder="Cuenta"
-                                                v-model="cuenta.cuenta"
+                                                :value="cuenta.cuenta"
+                                                @input="updateAttribute"
                                                 :class="{'is-invalid': errors.has('cuenta')}">
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>
@@ -60,8 +61,7 @@
         props: ['id'],
         data() {
             return {
-                cuenta: null,
-                loading: false
+                loading: true
             }
         },
 
@@ -69,23 +69,17 @@
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             },
-            currentCuenta() {
+            cuenta() {
                 return this.$store.getters['contabilidad/cuenta-fondo/currentCuenta']
-            }
-        },
-
-        watch: {
-            currentCuenta: {
-                handler(currentCuenta) {
-                    this.cuenta = JSON.parse(JSON.stringify(currentCuenta));
-                },
-                deep: true
             }
         },
 
         methods: {
             find(id) {
                 this.$store.dispatch('contabilidad/cuenta-fondo/find', id)
+                    .then(() => {
+                        this.loading = false;
+                    })
             },
 
             update() {
@@ -102,7 +96,7 @@
                 }).then((result) => {
                     if (result.value) {
                         this.loading = true;
-                        return self.$store.dispatch('contabilidad/cuenta-fondo/update', self.$data.cuenta)
+                        return self.$store.dispatch('contabilidad/cuenta-fondo/update', self.cuenta)
                             .then(() => {
                                 $('.modal').modal('hide');
                                 Swal({
@@ -125,6 +119,10 @@
                         this.update()
                     }
                 });
+            },
+
+            updateAttribute(e) {
+                this.$store.commit('contabilidad/cuenta-fondo/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
             }
         }
     }
