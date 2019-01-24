@@ -35,7 +35,18 @@
 
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
+            <div class="p-3">
+                <h5>Acceso Rápido</h5>
+                <hr class="mb-2">
+                <div class="d-block">
+                    <router-link :to="{name: 'contabilidad'}" class="d-flex flex-wrap mb-3">
+                        <div class="bg-info elevation-2 text-center" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
+                            <i class="fa fa-calculator"></i>
+                        </div>
+                        Contabilidad
+                    </router-link>
+                </div>
+            </div>
         </aside>
         <!-- /.control-sidebar -->
     </div>

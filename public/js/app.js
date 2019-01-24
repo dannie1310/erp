@@ -88252,7 +88252,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("span", { staticClass: "info-box-icon bg-info elevation-1" }, [
-      _c("i", { staticClass: "fa fa-gear" })
+      _c("i", { staticClass: "fa fa-calculator" })
     ])
   }
 ]
@@ -97909,6 +97909,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -97981,6 +97992,9 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
 //
 //
 //
@@ -98112,7 +98126,9 @@ var render = function() {
                 },
                 [_c("i", { staticClass: "fa fa-sign-out" })]
               )
-            ])
+            ]),
+            _vm._v(" "),
+            _vm._m(1)
           ])
         : _vm._e()
     ]
@@ -98131,6 +98147,25 @@ var staticRenderFns = [
           attrs: { "data-widget": "pushmenu", href: "#" }
         },
         [_c("i", { staticClass: "fa fa-bars" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", { staticClass: "nav-item" }, [
+      _c(
+        "a",
+        {
+          staticClass: "nav-link",
+          attrs: {
+            "data-widget": "control-sidebar",
+            "data-slide": "true",
+            href: "#"
+          }
+        },
+        [_c("i", { staticClass: "fa fa-th-large" })]
       )
     ])
   }
@@ -98612,7 +98647,53 @@ var render = function() {
             _vm._v(" "),
             _c("AppFooter"),
             _vm._v(" "),
-            _c("aside", { staticClass: "control-sidebar control-sidebar-dark" })
+            _c(
+              "aside",
+              { staticClass: "control-sidebar control-sidebar-dark" },
+              [
+                _c("div", { staticClass: "p-3" }, [
+                  _c("h5", [_vm._v("Acceso Rápido")]),
+                  _vm._v(" "),
+                  _c("hr", { staticClass: "mb-2" }),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "d-block" },
+                    [
+                      _c(
+                        "router-link",
+                        {
+                          staticClass: "d-flex flex-wrap mb-3",
+                          attrs: { to: { name: "contabilidad" } }
+                        },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticClass: "bg-info elevation-2 text-center",
+                              staticStyle: {
+                                width: "40px",
+                                height: "20px",
+                                "border-radius": "25px",
+                                "margin-right": "10px",
+                                "margin-bottom": "10px",
+                                opacity: "0.8",
+                                cursor: "pointer"
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-calculator" })]
+                          ),
+                          _vm._v(
+                            "\n                    Contabilidad\n                "
+                          )
+                        ]
+                      )
+                    ],
+                    1
+                  )
+                ])
+              ]
+            )
           ],
           1
         )
