@@ -33,20 +33,20 @@
         name: 'app-header',
         methods:{
             logout(){
-                Swal({
-                    'type': 'warning',
-                    'title': 'Cerrar Sesión',
-                    'text': 'La sesión actual se cerrará, ¿Desea continuar?',
-                    showCancelButton: true,
-                    confirmButtonText: 'Si, Continuar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.value) {
-                        this.$store.commit('auth/logout');
-                        this.$session.destroy();
-                        this.$router.push({name: 'login'});
-                    }
+                swal({
+                    icon: 'warning',
+                    title: 'Cerrar Sesión',
+                    text: 'La sesión actual se cerrará, ¿Desea continuar?',
+                    buttons: ['Cancelar', 'Si, Cerrar Sesión'],
+                    dangerMode: true,
                 })
+                    .then((success) => {
+                        if (success) {
+                            this.$store.dispatch('auth/logout');
+                            this.$session.destroy();
+                            this.$router.push({ name: 'login' });
+                        }
+                    });
             }
         },
         computed:{

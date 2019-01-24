@@ -342,28 +342,24 @@
             },
 
             save() {
-                Swal({
-                    title: '¿Estás seguro?',
+                swal({
+                    title: "¿Estás seguro?",
                     text: "Guardar cambios de la Prepóliza",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, Guardar'
-                }).then((result) => {
-                    if (result.value) {
-                        this.update(this.poliza.id, this.poliza)
-                            .then(() => {
-                                Swal({
-                                    type: 'success',
-                                    title: '¡Correcto!',
-                                    text: 'Prepóliza Actualizada correctamente',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                            })
-                    }
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Guardar']
                 })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            this.update(this.poliza.id, this.poliza)
+                                .then(() => {
+                                    swal("Prepóliza Actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    });
+                                })
+                        }
+                    });
             }
         },
 

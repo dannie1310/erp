@@ -28,7 +28,7 @@ class AuthController extends Controller
     public function __construct(AuthService $auth)
     {
         $this->middleware('auth:api', ['except' => ['login']]);
-        $this->middleware('context', ['except' => ['login', 'setContext', 'refresh', 'obras']]);
+        $this->middleware('context', ['except' => ['login', 'logout', 'setContext', 'refresh', 'obras']]);
 
         $this->auth = $auth;
     }

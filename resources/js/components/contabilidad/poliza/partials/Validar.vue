@@ -11,29 +11,28 @@
         methods: {
             validar(){
                 let self = this
-                Swal({
+
+                swal({
                     title: "Validar Prepóliza",
                     text: "¿Esta seguro de que deseas validar la Prepóliza?",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Si, Validar",
-                    cancelButtonText: "No, Cancelar",
-                }).then((result) => {
-                    if(result.value) {
-                        self.$store.dispatch('contabilidad/poliza/validar', self.poliza.id)
-                            .then(() => {
-                                Swal({
-                                    type: "success",
-                                    title: '¡Correcto!',
-                                    text: 'Prepóliza validada con éxito',
-                                    confirmButtonText: "Ok",
-                                    closeOnConfirm: true
-                                }).then(() => {
-                                    self.$emit('success')
+                    icon: "warning",
+                    buttons: ["Cancelar", "Si, Validar"]
+                })
+                    .then((success) => {
+                        if (success) {
+                            self.$store.dispatch('contabilidad/poliza/validar', self.poliza.id)
+                                .then(() => {
+                                    swal("Prepóliza Validada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        self.$emit('success')
+                                    })
                                 })
-                            })
-                    }
-                });
+                        }
+                    });
+
             },
         }
     }

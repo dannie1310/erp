@@ -11,29 +11,27 @@
         methods: {
             omitir(){
                 let self = this
-                Swal({
+
+                swal({
                     title: "Omitir Prepóliza",
                     text: "¿Esta seguro de que deseas omitir la Prepóliza?",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Si, Omitir",
-                    cancelButtonText: "No, Cancelar",
-                }).then((result) => {
-                    if(result.value) {
-                        self.$store.dispatch('contabilidad/poliza/omitir', self.poliza.id)
-                            .then(() => {
-                                Swal({
-                                    type: "success",
-                                    title: '¡Correcto!',
-                                    text: 'Prepóliza omitida con éxito',
-                                    confirmButtonText: "Ok",
-                                    closeOnConfirm: true
-                                }).then(() => {
-                                    self.$emit('success')
+                    icon: "warning",
+                    buttons: ["Cancelar", "Si, Omitir"]
+                })
+                    .then((success) => {
+                        if (success) {
+                            self.$store.dispatch('contabilidad/poliza/omitir', self.poliza.id)
+                                .then(() => {
+                                    swal("Prepóliza omitida correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        self.$emit('success')
+                                    })
                                 })
-                            })
-                    }
-                });
+                        }
+                    });
             },
         }
     }

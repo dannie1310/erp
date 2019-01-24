@@ -74,6 +74,14 @@ export default {
     actions: {
         login(context){
             context.commit("login");
+        },
+
+        logout(context, payload) {
+            axios.post('/api/auth/logout')
+                .then(r => r.data)
+                .then(() => {
+                    context.commit('logout', payload)
+                })
         }
     },
 }

@@ -91,14 +91,35 @@ const app = new Vue({
         MainApp
     },
     mounted() {
-        axios.interceptors.response.use(null, function(error) {
-            switch (error.response.status) {
-                case 401:
-                    app.$store.commit('auth/logout', {error:  error.response.data.status});
-                    app.$session.destroy();
-                    return app.$router.push({ name: 'login' });
+        axios.interceptors.response.use(response => {
+            return response;
+        }, error => {
+            let code = error.response.status
+            switch (true) {
+                case (code === 401):
+
                 default:
                     return Promise.reject(error);
+            }
+        });
+
+        axios.interceptors.response.use((response) => {
+            return response;
+        }, (error) => {
+            if (!error.response) {
+                alert('NETWORK ERROR')
+            } else {
+                const code = error.response.status
+                const response = error.response.data
+                const originalRequest = error.config;
+
+                if (code === 401 && !originalRequest._retry) {
+                    originalRequest._retry = true
+                    app.$session.destroy();
+                    window.location.href = "/login";
+                }
+
+                return Promise.reject(error)
             }
         });
     },

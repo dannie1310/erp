@@ -5,7 +5,7 @@ try {
 
     require('admin-lte/plugins/bootstrap/js/bootstrap');
     require('admin-lte');
-    window.Swal = require('sweetalert2');
+    window.swal = require('sweetalert');
     window.moment = require('moment');
     require('moment/locale/es');
     moment.locale('es');

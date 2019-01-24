@@ -84,33 +84,29 @@
 
             update() {
                 let self = this
-                Swal({
-                    title: 'Actualizar Cuenta de Fondo',
-                    text: "¿Estás seguro?",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, Actualizar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.value) {
-                        this.loading = true;
-                        return self.$store.dispatch('contabilidad/cuenta-fondo/update', self.cuenta)
-                            .then(() => {
-                                $('.modal').modal('hide');
-                                Swal({
-                                    type: 'success',
-                                    title: '¡Correcto!',
-                                    text: 'Cuenta Actualizada correctamente',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                            }).then(() => {
-                                this.loading = false;
-                            })
-                    }
+
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta de Fondo",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Actualizar']
                 })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            this.loading = true;
+                            return self.$store.dispatch('contabilidad/cuenta-fondo/update', self.cuenta)
+                                .then(() => {
+                                    $('.modal').modal('hide');
+                                    swal("Cuenta actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    });
+                                }).then(() => {
+                                    this.loading = false;
+                                })
+                        }
+                    });
             },
 
             validate() {
