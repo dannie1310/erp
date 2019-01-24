@@ -16,6 +16,7 @@ use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AuthService
 {
@@ -40,7 +41,7 @@ class AuthService
     public function login(array $credentials) {
         try {
             if(! $token = auth()->attempt($credentials)) {
-                throw new UnauthorizedHttpException('Bearer', 'Unauthorized');
+                throw new UnprocessableEntityHttpException('Unauthorized');
             }
             return $token;
         } catch (\Exception $e) {

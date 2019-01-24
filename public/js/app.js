@@ -41991,11 +41991,16 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                 var originalRequest = error.config;
 
                 if (code === 401 && !originalRequest._retry) {
-                    originalRequest._retry = true;
-                    app.$session.destroy();
-                    window.location.href = "/login";
+                    swal({
+                        title: "La sesión ha expirado",
+                        text: "Volviendo a la página de Inicio de Sesión",
+                        icon: "error"
+                    }).then(function (value) {
+                        app.$store.commit('auth/logout');
+                        app.$session.destroy();
+                        return app.$router.push({ name: 'login' });
+                    });
                 }
-
                 return Promise.reject(error);
             }
         });
@@ -88092,7 +88097,7 @@ function guest(_ref) {
         return next();
     }
 
-    router.push({ name: 'home' });
+    return router.push({ name: 'home' });
 }
 
 /***/ }),
@@ -88105,16 +88110,13 @@ function guest(_ref) {
     var next = _ref.next,
         router = _ref.router;
 
-    axios.post('/api/auth/getContext').then(function (res) {
-        console.log('success: ', res.data);
+    return axios.post('/api/auth/getContext').then(function (res) {
         router.app.$session.set('permisos', res.data.permisos);
         router.app.$store.commit("auth/setPermisos", res.data);
         return next();
     }).catch(function (err) {
         console.log('error: ', err.response);
         router.push({ name: 'obras' });
-    }).then(function () {
-        console.log('always');
     });
 }
 
@@ -97293,8 +97295,6 @@ function getObra() {
         fetch: function fetch(context) {
             axios.get('/api/auth/obras').then(function (res) {
                 context.commit('fetch', res.data);
-            }).catch(function (err) {
-                alert(err);
             });
         }
     },

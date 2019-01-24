@@ -114,11 +114,16 @@ const app = new Vue({
                 const originalRequest = error.config;
 
                 if (code === 401 && !originalRequest._retry) {
-                    originalRequest._retry = true
-                    app.$session.destroy();
-                    window.location.href = "/login";
+                    swal({
+                        title: "La sesión ha expirado",
+                        text: "Volviendo a la página de Inicio de Sesión",
+                        icon: "error",
+                    }).then((value) => {
+                        app.$store.commit('auth/logout');
+                        app.$session.destroy();
+                        return app.$router.push({ name: 'login' });
+                    })
                 }
-
                 return Promise.reject(error)
             }
         });

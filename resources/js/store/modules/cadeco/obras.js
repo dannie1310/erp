@@ -17,9 +17,6 @@ export default {
                 .then(res => {
                     context.commit('fetch', res.data)
                 })
-                .catch(err => {
-                    alert(err);
-                });
         }
     },
 
