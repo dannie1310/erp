@@ -9,7 +9,6 @@
 namespace App\Traits;
 
 
-use App\Models\CADECO\Contabilidad\Poliza;
 use Illuminate\Http\Request;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;
