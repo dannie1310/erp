@@ -91,18 +91,6 @@ const app = new Vue({
         MainApp
     },
     mounted() {
-        axios.interceptors.response.use(response => {
-            return response;
-        }, error => {
-            let code = error.response.status
-            switch (true) {
-                case (code === 401):
-
-                default:
-                    return Promise.reject(error);
-            }
-        });
-
         axios.interceptors.response.use((response) => {
             return response;
         }, (error) => {
@@ -110,21 +98,34 @@ const app = new Vue({
                 alert('NETWORK ERROR')
             } else {
                 const code = error.response.status
-                const response = error.response.data
+                const message = error.response.data.message
                 const originalRequest = error.config;
-
-                if (code === 401 && !originalRequest._retry) {
-                    swal({
-                        title: "La sesión ha expirado",
-                        text: "Volviendo a la página de Inicio de Sesión",
-                        icon: "error",
-                    }).then((value) => {
-                        app.$store.commit('auth/logout');
-                        app.$session.destroy();
-                        return app.$router.push({ name: 'login' });
-                    })
+                switch (true) {
+                    case (code === 401 && !originalRequest._retry):
+                        swal({
+                            title: "La sesión ha expirado",
+                            text: "Volviendo a la página de Inicio de Sesión",
+                            icon: "error",
+                        }).then((value) => {
+                            app.$store.commit('auth/logout');
+                            app.$session.destroy();
+                            return app.$router.push({name: 'login'});
+                        })
+                        break;
+                    case (code === 500):
+                        swal({
+                            title: "¡Error!",
+                            text: message,
+                            icon: "error"
+                        });
+                        break;
+                    default:
+                        swal({
+                            title: "¡Error!",
+                            text: message,
+                            icon: "error"
+                        });
                 }
-                return Promise.reject(error)
             }
         });
     },

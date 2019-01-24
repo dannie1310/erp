@@ -1,11 +1,11 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" :data-target="'#cuenta-almacen-edit-modal' + id">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info">
             <i class="fa fa-pencil"></i>
         </button>
 
         <!-- Modal -->
-        <div class="modal fade" :id="'cuenta-almacen-edit-modal' + id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" ref="modal" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -78,6 +78,7 @@
             find(id) {
                 this.$store.dispatch('contabilidad/cuenta-almacen/find', id)
                     .then(() => {
+                        $(this.$refs.modal).modal('show')
                         this.loading = false;
                     })
             },
@@ -96,7 +97,7 @@
                             this.loading = true;
                             return self.$store.dispatch('contabilidad/cuenta-almacen/update', self.cuenta)
                                 .then(() => {
-                                    $('.modal').modal('hide');
+                                    $(this.$refs.modal).modal('hide');
                                     swal("Cuenta actualizada correctamente", {
                                         icon: "success",
                                         timer: 1500,
