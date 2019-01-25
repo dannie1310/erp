@@ -1,12 +1,12 @@
 <template>
-    <poliza-grap></poliza-grap>
+    <poliza-grap-semanal></poliza-grap-semanal>
 </template>
 
 <script>
-    import PolizaGrap from "./poliza/partials/Graph";
+    import PolizaGrapSemanal from "./poliza/partials/GraphSemanal";
     export default {
         name: "contabilidad-index",
-        components: {PolizaGrap}
+        components: {PolizaGrapSemanal}
     }
 </script>
 

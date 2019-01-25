@@ -18,7 +18,7 @@
 
 <script>
     export default {
-        name: "poliza-grap",
+        name: "poliza-grap-semanal",
 
         mounted() {
             let self = this
@@ -26,7 +26,7 @@
                 .then(r => r.data)
                 .then(data => {
                     let prepolizas = document.getElementById("psg").getContext("2d");
-                    let myLine = new Chart(prepolizas, {
+                    new Chart(prepolizas, {
                         type: 'line',
                         data: data,
                         options: {
