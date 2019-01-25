@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "admin-lte": "^3.0.0-alpha",
+    "chart.js": "^2.7.3",
     "fontawesome": "^5.6.3",
     "sweetalert": "^2.1.2",
     "vee-validate": "^2.1.5",

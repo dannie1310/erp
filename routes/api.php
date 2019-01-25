@@ -55,6 +55,7 @@ $api->version('v1', function ($api) {
 
         //PÓLIZAS
         $api->group(['prefix' => 'poliza'], function ($api) {
+            $api->get('chartjs/semanal', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@chartjssemanal');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@find')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@update')->where(['id' => '[0-9]+']);

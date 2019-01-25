@@ -3,9 +3,11 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
+use App\Models\CADECO\Contabilidad\EstatusPrepoliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use App\Repositories\CADECO\Contabilidad\PolizaMovimientoRepository;
 use App\Repositories\CADECO\Contabilidad\PolizaRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class PolizaService
@@ -164,5 +166,62 @@ class PolizaService
             DB::connection('cadeco')->rollBack();
             abort($e->getCode(), $e->getMessage());
         }
+    }
+
+    public function getChartJsSemanal() {
+        $fechas = $this->getDates();
+
+        $config = [
+            'labels' => $fechas,
+            'datasets' => []
+        ];
+
+        foreach (EstatusPrepoliza::all() as $estatus) {
+            $d = [];
+            $resp = collect( DB::connection('cadeco')->table(DB::raw('Contabilidad.int_polizas WITH (NOLOCK)'))->select(DB::raw("FORMAT(fecha, 'yyyy/MM/dd') as fecha_"), DB::raw(" COUNT(1) AS count"))
+                //$resp = collect( DB::connection('cadeco')->table('Contabilidad.int_polizas')->select(DB::raw("FORMAT(fecha, 'yyyy/MM/dd') as fecha_"), DB::raw(" COUNT(1) AS count"))
+                ->whereBetween('Contabilidad.int_polizas.fecha', [$fechas[0], $fechas[count($fechas)-1]])
+                ->where('Contabilidad.int_polizas.estatus', '=', $estatus->estatus)
+                ->groupBy('Contabilidad.int_polizas.fecha')->get());
+
+            if(count($resp) > 0) {
+                for ($i = 0; $i < count($fechas); $i++) {
+                    foreach ($resp as $r){
+                        if ($fechas[$i] == $r->fecha_){
+                            $d[$i] = $r->count;
+                            break;
+                        }
+                        $d[$i] = 0;
+                    }
+                }
+            } else {
+                for ($j = 0; $j < count($fechas); $j++) {
+                    $d[$j] = 0;
+                }
+            }
+
+            array_push($config['datasets'], [
+                'label' => $estatus->descripcion,
+                'backgroundColor' => $estatus->label,
+                'borderColor' => $estatus->label,
+                'data' => $d,
+                'fill' => false
+            ]);
+        }
+        return $config;
+    }
+
+    private function getDates()
+    {
+        $fechas = [];
+        $hoy = Carbon::now();
+        $pasado = Carbon::now()->subDays(7);
+
+
+        for($date = $pasado; $date->lte($hoy); $date->addDay()) {
+            $fechas[] = $date->format('Y/m/d');
+        }
+
+        return $fechas;
     }
 }

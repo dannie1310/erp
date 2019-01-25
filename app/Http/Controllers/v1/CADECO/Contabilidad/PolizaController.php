@@ -12,9 +12,12 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePolizaRequest;
 use App\Http\Transformers\CADECO\Contabilidad\PolizaTransformer;
+use App\Models\CADECO\Contabilidad\EstatusPrepoliza;
 use App\Services\CADECO\Contabilidad\PolizaService;
 use App\Traits\ControllerTrait;
+use Carbon\Carbon;
 use Dingo\Api\Http\Request;
+use Illuminate\Support\Facades\DB;
 use League\Fractal\Manager;
 
 class PolizaController extends Controller
@@ -64,5 +67,10 @@ class PolizaController extends Controller
     public function omitir(Request $request, $id) {
         $item = $this->service->omitir($id);
         return $this->respondWithItem($item);
+    }
+
+    public function chartjssemanal(Request $request) {
+        $data = $this->service->getChartJsSemanal();
+        return response()->json($data, 200);
     }
 }

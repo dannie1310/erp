@@ -12,6 +12,7 @@ try {
     require('admin-lte/plugins/daterangepicker/daterangepicker')
     require('admin-lte/plugins/datepicker/bootstrap-datepicker')
     require('admin-lte/plugins/datepicker/locales/bootstrap-datepicker.es')
+    window.Chart = require('chart.js')
 } catch (e) {}
 
 window.axios = require('axios');
