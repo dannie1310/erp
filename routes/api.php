@@ -55,7 +55,6 @@ $api->version('v1', function ($api) {
 
         //PÓLIZAS
         $api->group(['prefix' => 'poliza'], function ($api) {
-            $api->get('chartjs/semanal', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@chartjssemanal');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@find')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@update')->where(['id' => '[0-9]+']);
@@ -72,5 +71,13 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'tipo-poliza-contpaq'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoPolizaContpaqController@index');
         });
+    });
+
+    /**
+     * CHARTS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'chart'], function ($api) {
+        $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
+        $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
     });
 });

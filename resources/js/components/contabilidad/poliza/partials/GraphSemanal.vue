@@ -18,11 +18,10 @@
 
 <script>
     export default {
-        name: "poliza-grap-semanal",
+        name: "poliza-graph-semanal",
 
         mounted() {
-            let self = this
-            axios.get('/api/contabilidad/poliza/chartjs/semanal')
+            axios.get('/api/chart/prepolizas-semanal')
                 .then(r => r.data)
                 .then(data => {
                     let prepolizas = document.getElementById("psg").getContext("2d");
@@ -65,7 +64,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

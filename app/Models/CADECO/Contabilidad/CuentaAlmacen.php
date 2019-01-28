@@ -31,7 +31,8 @@ class CuentaAlmacen extends Model
         });
     }
 
-    public function almacen() {
+    public function almacen()
+    {
         return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
     }
 }

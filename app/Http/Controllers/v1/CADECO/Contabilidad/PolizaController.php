@@ -68,9 +68,4 @@ class PolizaController extends Controller
         $item = $this->service->omitir($id);
         return $this->respondWithItem($item);
     }
-
-    public function chartjssemanal(Request $request) {
-        $data = $this->service->getChartJsSemanal();
-        return response()->json($data, 200);
-    }
 }
