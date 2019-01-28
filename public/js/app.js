@@ -104348,6 +104348,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__poliza_partials_GraphSemanal___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__poliza_partials_GraphSemanal__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__partials_CuentasGraphProgress__ = __webpack_require__(460);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__partials_CuentasGraphProgress___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__partials_CuentasGraphProgress__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__poliza_partials_GraphAcum__ = __webpack_require__(586);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__poliza_partials_GraphAcum___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__poliza_partials_GraphAcum__);
 //
 //
 //
@@ -104355,12 +104357,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "contabilidad-index",
-    components: { CuentasGraphProgress: __WEBPACK_IMPORTED_MODULE_1__partials_CuentasGraphProgress___default.a, PolizaGraphSemanal: __WEBPACK_IMPORTED_MODULE_0__poliza_partials_GraphSemanal___default.a }
+    components: { PolizaGraphAcum: __WEBPACK_IMPORTED_MODULE_2__poliza_partials_GraphAcum___default.a, CuentasGraphProgress: __WEBPACK_IMPORTED_MODULE_1__partials_CuentasGraphProgress___default.a, PolizaGraphSemanal: __WEBPACK_IMPORTED_MODULE_0__poliza_partials_GraphSemanal___default.a }
 });
 
 /***/ }),
@@ -104789,11 +104803,17 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "span",
-    [_c("poliza-graph-semanal"), _vm._v(" "), _c("cuentas-graph-progress")],
-    1
-  )
+  return _c("span", [
+    _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-12" }, [_c("poliza-graph-semanal")], 1)
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-7" }, [_c("cuentas-graph-progress")], 1),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-5" }, [_c("poliza-graph-acum")], 1)
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -107278,6 +107298,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.fetch();
         this.getEstatus();
         this.getTiposPolizaContaq();
+
+        this.id_estatus = this.$router.currentRoute.query.estatus;
     },
 
 
@@ -114159,6 +114181,179 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 574 */,
+/* 575 */,
+/* 576 */,
+/* 577 */,
+/* 578 */,
+/* 579 */,
+/* 580 */,
+/* 581 */,
+/* 582 */,
+/* 583 */,
+/* 584 */,
+/* 585 */,
+/* 586 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(587)
+/* template */
+var __vue_template__ = __webpack_require__(588)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/contabilidad/poliza/partials/GraphAcum.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4bd327e7", Component.options)
+  } else {
+    hotAPI.reload("data-v-4bd327e7", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 587 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "poliza-graph-acum",
+    mounted: function mounted() {
+        var self = this;
+        axios.get('/api/chart/prepolizas-acumulado').then(function (r) {
+            return r.data;
+        }).then(function (data) {
+            var acum = $("#acumulado")[0].getContext("2d");
+            var dona = new Chart(acum, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: false
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+            $("#acumulado").on('click', function (e) {
+                var activePoints = dona.getElementAtEvent(e);
+                if (activePoints[0]) {
+                    var estatu = activePoints[0]._chart.config.data.estatus;
+                    console.log(activePoints[0], estatu);
+                    var url = '/contabilidad/poliza?estatus=' + estatu[activePoints[0]._index];
+                    self.$router.push(url);
+                }
+            });
+        });
+    }
+});
+
+/***/ }),
+/* 588 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm._m(0)
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card" }, [
+      _c("div", { staticClass: "card-header" }, [
+        _c("h3", { staticClass: "card-title" }, [
+          _vm._v("Acumulados de Prepólizas")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-tools" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-tool",
+              attrs: { type: "button", "data-widget": "collapse" }
+            },
+            [_c("i", { staticClass: "fa fa-minus" })]
+          )
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-body" }, [
+        _c("div", { staticClass: "chart" }, [
+          _c("canvas", {
+            attrs: { id: "acumulado", width: "762", height: "500" }
+          })
+        ])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-4bd327e7", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

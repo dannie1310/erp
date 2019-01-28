@@ -12,6 +12,7 @@ namespace App\Http\Controllers\v1;
 use App\Models\CADECO\Almacen;
 use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contabilidad\EstatusPrepoliza;
+use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Material;
 use Carbon\Carbon;
@@ -103,5 +104,35 @@ class ChartController extends Controller
         }
 
         return $fechas;
+    }
+
+    public function polizasDoughnut() {
+        $labels=[];
+        $data = [];
+        $backgroundColor = [];
+        $estatus=[];
+
+        $acumulado = Poliza::query()->select(DB::raw("COUNT(1) AS count"), 'estatus')->groupBy('estatus')->get();
+        foreach (EstatusPrePoliza::all() as $status) {
+            for($i = 0; $i < count($acumulado); $i++){
+                if($acumulado[$i]->estatus == $status->estatus){
+                    $labels[] = $status->descripcion;
+                    $data[] = $acumulado[$i]->count;
+                    $backgroundColor[] = $status->label;
+                    $estatus[] = $status->estatus;
+                    break;
+                }
+            }
+        }
+
+        $acum = [
+            'labels' => $labels,
+            'estatus'=> $estatus,
+            'datasets' => [[
+                'data'=> $data,
+                'backgroundColor'=> $backgroundColor
+            ]]
+        ];
+        return response()->json($acum);
     }
 }
