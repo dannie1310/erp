@@ -34,6 +34,11 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@update')->where(['id' => '[0-9]+']);
         });
 
+        //CUENTAS DE EMPRESA
+        $api->group(['prefix' => 'cuenta-empresa'], function ($api){
+           $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@paginate');
+        });
+
         //CUENTAS DE FONDO
         $api->group(['prefix' => 'cuenta-fondo'], function ($api){
             $api->get('paginate','App\Http\Controllers\v1\CADECO\Contabilidad\CuentaFondoController@paginate');
