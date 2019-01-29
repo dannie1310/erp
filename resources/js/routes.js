@@ -126,6 +126,35 @@ export const routes = [
         ]
     },
     {
+        path: '/tesoreria',
+        components: {
+            default: require('./components/tesoreria/partials/Layout.vue'),
+            menu: require('./components/tesoreria/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'tesoreria',
+                component: require('./components/tesoreria/Index'),
+                meta: {
+                    title: 'Tesorería',
+                    breadcrumb: { parent: 'home', name: 'TESORERIA'},
+                    middleware: [auth, context]
+                }
+            },
+            {
+                path: 'movimiento-bancario',
+                name: 'movimiento-bancario',
+                component: require('./components/tesoreria/movimiento-bancario/Index'),
+                meta: {
+                    title: 'Movimientos Bancarios',
+                    breadcrumb: {name: 'MOVIMIENOS BANCARIOS', parent: 'tesoreria'},
+                    middleware: [auth, context]
+                }
+            }
+        ]
+    },
+    {
         path: '*',
         name: 'notFound',
         component: require('./components/pages/NotFound.vue'),

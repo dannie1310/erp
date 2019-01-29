@@ -103120,6 +103120,31 @@ var routes = [{
         }]
     }]
 }, {
+    path: '/tesoreria',
+    components: {
+        default: __webpack_require__(589),
+        menu: __webpack_require__(592)
+    },
+    children: [{
+        path: '',
+        name: 'tesoreria',
+        component: __webpack_require__(597),
+        meta: {
+            title: 'Tesorería',
+            breadcrumb: { parent: 'home', name: 'TESORERIA' },
+            middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
+        }
+    }, {
+        path: 'movimiento-bancario',
+        name: 'movimiento-bancario',
+        component: __webpack_require__(600),
+        meta: {
+            title: 'Movimientos Bancarios',
+            breadcrumb: { name: 'MOVIMIENOS BANCARIOS', parent: 'tesoreria' },
+            middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
+        }
+    }]
+}, {
     path: '*',
     name: 'notFound',
     component: __webpack_require__(539)
@@ -103254,6 +103279,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "home",
@@ -103298,6 +103337,30 @@ var render = function() {
           1
         )
       ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-12 col-sm-6 col-md-3" }, [
+      _c("div", { staticClass: "info-box" }, [
+        _vm._m(1),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "info-box-content" },
+          [
+            _c("span", { staticClass: "info-box-number" }, [
+              _vm._v("TESORERÍA")
+            ]),
+            _vm._v(" "),
+            _c("router-link", { attrs: { to: { name: "tesoreria" } } }, [
+              _c("span", { staticClass: "info-box-text" }, [
+                _vm._v("Ingresar "),
+                _c("i", { staticClass: "fa fa-arrow-circle-o-right" })
+              ])
+            ])
+          ],
+          1
+        )
+      ])
     ])
   ])
 }
@@ -103308,6 +103371,14 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("span", { staticClass: "info-box-icon bg-info elevation-1" }, [
       _c("i", { staticClass: "fa fa-calculator" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "info-box-icon bg-primary elevation-1" }, [
+      _c("i", { staticClass: "fa fa-usd" })
     ])
   }
 ]
@@ -112590,6 +112661,13 @@ if (false) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_poliza__ = __webpack_require__(552);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(553);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(554);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__modules_tesoreria_movimiento_bancario__ = __webpack_require__(606);
+
+
+
+
+
+//CONTABILIDAD
 
 
 
@@ -112598,8 +112676,7 @@ if (false) {
 
 
 
-
-
+//TESORERIA
 
 
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
@@ -112614,7 +112691,9 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex
         'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_estatus_prepoliza__["a" /* default */],
         'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_poliza__["a" /* default */],
         'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
-        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */]
+        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */],
+
+        'tesoreria/movimiento-bancario': __WEBPACK_IMPORTED_MODULE_11__modules_tesoreria_movimiento_bancario__["a" /* default */]
     },
     strict: "development" !== 'production'
 }));
@@ -113326,6 +113405,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer__ = __webpack_require__(569);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer__);
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -114156,6 +114243,42 @@ var render = function() {
                       )
                     ],
                     1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "d-block" },
+                    [
+                      _c(
+                        "router-link",
+                        {
+                          staticClass: "d-flex flex-wrap mb-3",
+                          attrs: { to: { name: "tesoreria" } }
+                        },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticClass: "bg-primary elevation-2 text-center",
+                              staticStyle: {
+                                width: "40px",
+                                height: "20px",
+                                "border-radius": "25px",
+                                "margin-right": "10px",
+                                "margin-bottom": "10px",
+                                opacity: "0.8",
+                                cursor: "pointer"
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-usd" })]
+                          ),
+                          _vm._v(
+                            "\n                    Tesorería\n                "
+                          )
+                        ]
+                      )
+                    ],
+                    1
                   )
                 ])
               ]
@@ -114354,6 +114477,707 @@ if (false) {
     require("vue-hot-reload-api")      .rerender("data-v-4bd327e7", module.exports)
   }
 }
+
+/***/ }),
+/* 589 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(590)
+/* template */
+var __vue_template__ = __webpack_require__(591)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/tesoreria/partials/Layout.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-734994b2", Component.options)
+  } else {
+    hotAPI.reload("data-v-734994b2", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 590 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "tesoreria-layout"
+});
+
+/***/ }),
+/* 591 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("span", [_c("router-view")], 1)
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-734994b2", module.exports)
+  }
+}
+
+/***/ }),
+/* 592 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(593)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(595)
+/* template */
+var __vue_template__ = __webpack_require__(596)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-b57dbac8"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/tesoreria/partials/Menu.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-b57dbac8", Component.options)
+  } else {
+    hotAPI.reload("data-v-b57dbac8", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 593 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(594);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("417e44df", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-b57dbac8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Menu.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-b57dbac8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Menu.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 594 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.sidebar-form[data-v-b57dbac8], .nav-sidebar > .nav-header[data-v-b57dbac8] {\n    padding: 1rem 0.5rem 0.5rem 1rem;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 595 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "tesoreria-menu"
+});
+
+/***/ }),
+/* 596 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("nav", { staticClass: "mt-2" }, [
+    _c(
+      "ul",
+      {
+        staticClass: "nav nav-pills nav-sidebar flex-column",
+        attrs: {
+          "data-widget": "treeview",
+          role: "menu",
+          "data-accordion": "false"
+        }
+      },
+      [
+        _c("li", { staticClass: "nav-header" }, [_vm._v("MÓDULOS")]),
+        _vm._v(" "),
+        _c(
+          "li",
+          { staticClass: "nav-item" },
+          [
+            _c(
+              "router-link",
+              {
+                staticClass: "nav-link",
+                attrs: { to: { name: "movimiento-bancario" } }
+              },
+              [
+                _c("i", { staticClass: "fa fa-file-text nav-icon" }),
+                _vm._v(" "),
+                _c("p", [_vm._v("Movimientos Bancarios")])
+              ]
+            )
+          ],
+          1
+        )
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-b57dbac8", module.exports)
+  }
+}
+
+/***/ }),
+/* 597 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(598)
+/* template */
+var __vue_template__ = __webpack_require__(599)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/tesoreria/Index.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-37f059f2", Component.options)
+  } else {
+    hotAPI.reload("data-v-37f059f2", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 598 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "tesoreria-index"
+});
+
+/***/ }),
+/* 599 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("span")
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-37f059f2", module.exports)
+  }
+}
+
+/***/ }),
+/* 600 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(601)
+/* template */
+var __vue_template__ = __webpack_require__(605)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/tesoreria/movimiento-bancario/Index.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-03532e66", Component.options)
+  } else {
+    hotAPI.reload("data-v-03532e66", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 601 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "movimiento-bancario-index",
+    data: function data() {
+        return {
+            HeaderSettings: false,
+            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Número de Folio', field: 'numero_folio', sortable: true }, { title: 'Fecha', field: 'fecha', sortable: true }, { title: 'Tipo', field: 'tipo', sortable: false }, { title: 'Cuenta', field: 'cuenta', sortable: false }, { title: 'Referencia', field: 'referencia' }, { title: 'Total', field: 'total' }, { title: 'Acciones', field: 'buttons', tdComp: __webpack_require__(602) }],
+            data: [],
+            total: 0,
+            query: {}
+        };
+    },
+    mounted: function mounted() {
+        this.paginate({
+            'include': 'cuenta.empresa,transaccion'
+        });
+    },
+
+
+    methods: {
+        paginate: function paginate() {
+            var payload = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return this.$store.dispatch('tesoreria/movimiento-bancario/paginate', payload);
+        }
+    },
+    computed: {
+        movimientos: function movimientos() {
+            return this.$store.getters['tesoreria/movimiento-bancario/movimientos'];
+        },
+        meta: function meta() {
+            return this.$store.getters['tesoreria/movimiento-bancario/meta'];
+        }
+    },
+    watch: {
+        movimientos: {
+            handler: function handler(movimientos) {
+                var self = this;
+                self.$data.data = [];
+                movimientos.forEach(function (movimiento, i) {
+                    self.$data.data.push({
+                        index: movimiento.id,
+                        numero_folio: movimiento.numero_folio,
+                        fecha: movimiento.fecha,
+                        tipo: movimiento.tipo.descripcion,
+                        cuenta: movimiento.cuenta ? movimiento.cuenta.numero + ' ' + movimiento.cuenta.abreviatura + ' (' + movimiento.cuenta.empresa.razon_social + ')' : '',
+                        referencia: movimiento.transaccion ? movimiento.transaccion.referencia : '',
+                        total: '$ ' + (parseFloat(movimiento.importe) + parseFloat(movimiento.impuesto)).formatMoney(2, '.', ','),
+                        buttons: $.extend({}, {
+                            show: true,
+                            edit: self.$root.can('editar_movimiento_bancario') ? true : undefined,
+                            delete: self.$root.can('eliminar_movimiento_bancario') ? true : undefined,
+                            id: movimiento.id
+                        })
+                    });
+                });
+            },
+
+            deep: true
+        },
+        meta: {
+            handler: function handler(meta) {
+                var total = meta.pagination.total;
+                this.$data.total = total;
+            },
+
+            deep: true
+        },
+        query: {
+            handler: function handler(query) {
+                this.paginate(_extends({}, query, { include: 'cuenta.empresa,transaccion' }));
+            },
+
+            deep: true
+        }
+    }
+});
+
+/***/ }),
+/* 602 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(603)
+/* template */
+var __vue_template__ = __webpack_require__(604)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/tesoreria/movimiento-bancario/partials/ActionButtons.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3142af0a", Component.options)
+  } else {
+    hotAPI.reload("data-v-3142af0a", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 603 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "action-buttons",
+    props: ['value'],
+    methods: {
+        destroy: function destroy() {},
+        show: function show() {
+            this.$router.push({ name: 'movimiento-bancario-show', params: { id: this.value.id } });
+        },
+        edit: function edit() {
+            this.$router.push({ name: 'movimiento-bancario-edit', params: { id: this.value.id } });
+        }
+    }
+});
+
+/***/ }),
+/* 604 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "btn-group" }, [
+    _vm.value.show
+      ? _c(
+          "button",
+          {
+            staticClass: "btn btn-sm btn-outline-secondary",
+            attrs: { type: "button", title: "Ver" },
+            on: { click: _vm.show }
+          },
+          [_c("i", { staticClass: "fa fa-eye" })]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.value.edit
+      ? _c(
+          "button",
+          {
+            staticClass: "btn btn-sm btn-outline-info",
+            attrs: { type: "button", title: "Editar" },
+            on: { click: _vm.edit }
+          },
+          [_c("i", { staticClass: "fa fa-pencil" })]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.value.delete
+      ? _c(
+          "button",
+          {
+            staticClass: "btn btn-sm btn-outline-danger",
+            attrs: { type: "button", title: "Eliminar" },
+            on: { click: _vm.destroy }
+          },
+          [_c("i", { staticClass: "fa fa-trash" })]
+        )
+      : _vm._e()
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-3142af0a", module.exports)
+  }
+}
+
+/***/ }),
+/* 605 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col-12" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c(
+            "div",
+            { staticClass: "table-responsive" },
+            [_c("datatable", _vm._b({}, "datatable", _vm.$data, false))],
+            1
+          )
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-03532e66", module.exports)
+  }
+}
+
+/***/ }),
+/* 606 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/tesoreria/movimiento-bancario/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        movimientos: [],
+        meta: {}
+    },
+
+    mutations: {
+        SET_MOVIMIENTOS: function SET_MOVIMIENTOS(state, data) {
+            state.movimientos = data;
+        },
+        SET_META: function SET_META(state, data) {
+            state.meta = data;
+        }
+    },
+
+    actions: {
+        paginate: function paginate(context, payload) {
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_MOVIMIENTOS', data.data);
+                context.commit('SET_META', data.meta);
+            });
+        }
+    },
+
+    getters: {
+        movimientos: function movimientos(state) {
+            return state.movimientos;
+        },
+        meta: function meta(state) {
+            return state.meta;
+        }
+    }
+});
 
 /***/ })
 /******/ ]);

@@ -74,6 +74,16 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * TESORERIA
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'tesoreria'], function ($api) {
+        //MOVIMIENTOS BANCARIOS
+        $api->group(['prefix' => 'movimiento-bancario'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@paginate');
+        });
+    });
+
+    /**
      * CHARTS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'chart'], function ($api) {
