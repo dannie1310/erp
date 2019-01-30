@@ -1,12 +1,12 @@
 <template>
     <span>
         <!-- Button trigger modal -->
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" :data-target="'#cuenta-fondo-edit-modal' + id">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info">
             <i class="fa fa-pencil"></i>
         </button>
 
         <!-- Modal -->
-        <div class="modal fade" :id="'cuenta-fondo-edit-modal' + id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">

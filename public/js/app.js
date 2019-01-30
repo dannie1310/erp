@@ -105506,11 +105506,7 @@ var render = function() {
       {
         ref: "modal",
         staticClass: "modal fade",
-        attrs: {
-          role: "dialog",
-          "aria-labelledby": "exampleModalCenterTitle",
-          "aria-hidden": "true"
-        }
+        attrs: { role: "dialog", "aria-hidden": "true" }
       },
       [
         _c(
@@ -106206,11 +106202,7 @@ var render = function() {
       "button",
       {
         staticClass: "btn btn-sm btn-outline-info",
-        attrs: {
-          type: "button",
-          "data-toggle": "modal",
-          "data-target": "#cuenta-fondo-edit-modal" + _vm.id
-        },
+        attrs: { type: "button" },
         on: {
           click: function($event) {
             _vm.find(_vm.id)
@@ -106223,14 +106215,9 @@ var render = function() {
     _c(
       "div",
       {
+        ref: "modal",
         staticClass: "modal fade",
-        attrs: {
-          id: "cuenta-fondo-edit-modal" + _vm.id,
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "exampleModalCenterTitle",
-          "aria-hidden": "true"
-        }
+        attrs: { role: "dialog", "aria-hidden": "true" }
       },
       [
         _c(
@@ -106945,11 +106932,7 @@ var render = function() {
       "button",
       {
         staticClass: "btn btn-sm btn-outline-info",
-        attrs: {
-          type: "button",
-          "data-toggle": "modal",
-          "data-target": "#cuenta-general-edit-modal" + _vm.id
-        },
+        attrs: { type: "button" },
         on: {
           click: function($event) {
             _vm.find(_vm.id)
@@ -106962,14 +106945,9 @@ var render = function() {
     _c(
       "div",
       {
+        ref: "modal",
         staticClass: "modal fade",
-        attrs: {
-          id: "cuenta-general-edit-modal" + _vm.id,
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "exampleModalCenterTitle",
-          "aria-hidden": "true"
-        }
+        attrs: { role: "dialog", "aria-hidden": "true" }
       },
       [
         _c(
