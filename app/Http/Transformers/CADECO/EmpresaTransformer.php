@@ -11,7 +11,7 @@ class EmpresaTransformer extends TransformerAbstract
     public function transform(Empresa $model) {
         return  [
             'id' => $model->getKey(),
-            'razon_social' => $model->razon_social
+            'descripcion' => $model->razon_social
         ];
     }
 }
