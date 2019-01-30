@@ -45,7 +45,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="loading">Guardar Cambios</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </div>
                     </form>
                 </div>
@@ -58,12 +58,6 @@
     export default {
         name: "cuenta-almacen-edit",
         props: ['id'],
-        data() {
-            return {
-                loading: true
-            }
-        },
-
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
@@ -76,38 +70,17 @@
 
         methods: {
             find(id) {
-                this.$store.dispatch('contabilidad/cuenta-almacen/find', id)
+                return this.$store.dispatch('contabilidad/cuenta-almacen/find', id)
                     .then(() => {
-                        $(this.$refs.modal).modal('show')
-                        this.loading = false;
+                        $(this.$refs.modal).modal('show');
                     })
             },
 
             update() {
-                let self = this
-
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Actualizar Cuenta de Almacén",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
-                })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            this.loading = true;
-                            return self.$store.dispatch('contabilidad/cuenta-almacen/update', self.cuenta)
-                                .then(() => {
-                                    $(this.$refs.modal).modal('hide');
-                                    swal("Cuenta actualizada correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    });
-                                }).then(() => {
-                                    this.loading = false;
-                                })
-                        }
-                    });
+                return this.$store.dispatch('contabilidad/cuenta-almacen/update', this.cuenta)
+                    .then(() => {
+                        $(this.$refs.modal).modal('hide');
+                    })
             },
 
             validate() {
@@ -119,7 +92,7 @@
             },
 
             updateAttribute(e) {
-                this.$store.commit('contabilidad/cuenta-almacen/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
+                return this.$store.commit('contabilidad/cuenta-almacen/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
             }
         }
     }
