@@ -144,13 +144,22 @@ export const routes = [
             },
             {
                 path: 'movimiento-bancario',
-                name: 'movimiento-bancario',
-                component: require('./components/tesoreria/movimiento-bancario/Index'),
+                component: require('./components/tesoreria/movimiento-bancario/Layout.vue'),
                 meta: {
-                    title: 'Movimientos Bancarios',
-                    breadcrumb: {name: 'MOVIMIENOS BANCARIOS', parent: 'tesoreria'},
                     middleware: [auth, context]
-                }
+                },
+                children: [
+                    {
+                        path: '/',
+                        name: 'movimiento-bancario',
+                        component: require('./components/tesoreria/movimiento-bancario/Index'),
+                        meta: {
+                            title: 'Movimientos Bancarios',
+                            breadcrumb: {parent: 'tesoreria', name: 'MOVIMIENTOS BANCARIOS'},
+                            middleware: [auth, context]
+                        }
+                    }
+                ]
             }
         ]
     },

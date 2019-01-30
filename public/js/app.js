@@ -103136,13 +103136,20 @@ var routes = [{
         }
     }, {
         path: 'movimiento-bancario',
-        name: 'movimiento-bancario',
-        component: __webpack_require__(600),
+        component: __webpack_require__(607),
         meta: {
-            title: 'Movimientos Bancarios',
-            breadcrumb: { name: 'MOVIMIENOS BANCARIOS', parent: 'tesoreria' },
             middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
-        }
+        },
+        children: [{
+            path: '/',
+            name: 'movimiento-bancario',
+            component: __webpack_require__(600),
+            meta: {
+                title: 'Movimientos Bancarios',
+                breadcrumb: { parent: 'tesoreria', name: 'MOVIMIENTOS BANCARIOS' },
+                middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
+            }
+        }]
     }]
 }, {
     path: '*',
@@ -115023,6 +115030,8 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Show__ = __webpack_require__(613);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Show___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Show__);
 //
 //
 //
@@ -115032,8 +115041,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "action-buttons",
+    components: { MovimientoBancarioShow: __WEBPACK_IMPORTED_MODULE_0__Show___default.a },
     props: ['value'],
     methods: {
         destroy: function destroy() {},
@@ -115054,43 +115065,40 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "btn-group" }, [
-    _vm.value.show
-      ? _c(
-          "button",
-          {
-            staticClass: "btn btn-sm btn-outline-secondary",
-            attrs: { type: "button", title: "Ver" },
-            on: { click: _vm.show }
-          },
-          [_c("i", { staticClass: "fa fa-eye" })]
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.value.edit
-      ? _c(
-          "button",
-          {
-            staticClass: "btn btn-sm btn-outline-info",
-            attrs: { type: "button", title: "Editar" },
-            on: { click: _vm.edit }
-          },
-          [_c("i", { staticClass: "fa fa-pencil" })]
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.value.delete
-      ? _c(
-          "button",
-          {
-            staticClass: "btn btn-sm btn-outline-danger",
-            attrs: { type: "button", title: "Eliminar" },
-            on: { click: _vm.destroy }
-          },
-          [_c("i", { staticClass: "fa fa-trash" })]
-        )
-      : _vm._e()
-  ])
+  return _c(
+    "div",
+    { staticClass: "btn-group" },
+    [
+      _vm.value.show
+        ? _c("movimiento-bancario-show", { attrs: { id: _vm.value.id } })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.value.edit
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-sm btn-outline-info",
+              attrs: { type: "button", title: "Editar" },
+              on: { click: _vm.edit }
+            },
+            [_c("i", { staticClass: "fa fa-pencil" })]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.value.delete
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-sm btn-outline-danger",
+              attrs: { type: "button", title: "Eliminar" },
+              on: { click: _vm.destroy }
+            },
+            [_c("i", { staticClass: "fa fa-trash" })]
+          )
+        : _vm._e()
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -115146,15 +115154,23 @@ var URI = '/api/tesoreria/movimiento-bancario/';
     namespaced: true,
     state: {
         movimientos: [],
-        meta: {}
+        currentMovimiento: null,
+        meta: {},
+        cargando: true
     },
 
     mutations: {
         SET_MOVIMIENTOS: function SET_MOVIMIENTOS(state, data) {
             state.movimientos = data;
         },
+        SET_MOVIMIENTO: function SET_MOVIMIENTO(state, data) {
+            state.currentMovimiento = data;
+        },
         SET_META: function SET_META(state, data) {
             state.meta = data;
+        },
+        SET_CARGANDO: function SET_CARGANDO(state, data) {
+            state.cargando = data;
         }
     },
 
@@ -115166,6 +115182,15 @@ var URI = '/api/tesoreria/movimiento-bancario/';
                 context.commit('SET_MOVIMIENTOS', data.data);
                 context.commit('SET_META', data.meta);
             });
+        },
+        find: function find(context, payload) {
+            context.commit('SET_CARGANDO', true);
+            axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_MOVIMIENTO', data);
+                context.commit('SET_CARGANDO', false);
+            });
         }
     },
 
@@ -115175,9 +115200,514 @@ var URI = '/api/tesoreria/movimiento-bancario/';
         },
         meta: function meta(state) {
             return state.meta;
+        },
+        currentMovimiento: function currentMovimiento(state) {
+            return state.currentMovimiento;
         }
     }
 });
+
+/***/ }),
+/* 607 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(610)
+/* template */
+var __vue_template__ = __webpack_require__(612)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/tesoreria/movimiento-bancario/Layout.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-51877c46", Component.options)
+  } else {
+    hotAPI.reload("data-v-51877c46", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 608 */,
+/* 609 */,
+/* 610 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "Layout"
+});
+
+/***/ }),
+/* 611 */,
+/* 612 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("router-view")
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-51877c46", module.exports)
+  }
+}
+
+/***/ }),
+/* 613 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(616)
+/* template */
+var __vue_template__ = __webpack_require__(618)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/tesoreria/movimiento-bancario/Show.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-71874b99", Component.options)
+  } else {
+    hotAPI.reload("data-v-71874b99", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 614 */,
+/* 615 */,
+/* 616 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "movimiento-bancario-show",
+    props: ['id'],
+    methods: {
+        find: function find(id) {
+            var _this = this;
+
+            this.$store.dispatch('tesoreria/movimiento-bancario/find', {
+                id: id,
+                params: {
+                    include: 'cuenta.empresa,transaccion'
+                }
+            }).then(function () {
+                $(_this.$refs.modal).modal('show');
+            });
+        }
+    },
+
+    computed: {
+        movimiento: function movimiento() {
+            return this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'];
+        }
+    }
+});
+
+/***/ }),
+/* 617 */,
+/* 618 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("span", [
+    _c(
+      "button",
+      {
+        staticClass: "btn btn-sm btn-outline-secondary",
+        attrs: { type: "button", title: "Ver" },
+        on: {
+          click: function($event) {
+            _vm.find(_vm.id)
+          }
+        }
+      },
+      [_c("i", { staticClass: "fa fa-eye" })]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        ref: "modal",
+        staticClass: "modal fade",
+        attrs: { tabindex: "-1", role: "dialog", "aria-hidden": "true" }
+      },
+      [
+        _c(
+          "div",
+          { staticClass: "modal-dialog", attrs: { role: "document" } },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "table-responsive" }, [
+                  _vm.movimiento
+                    ? _c("table", { staticClass: "table" }, [
+                        _c("tbody", [
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Número de Folio")]
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(_vm._s(_vm.movimiento.numero_folio))
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Tipo de Movimiento")]
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(_vm._s(_vm.movimiento.tipo.descripcion))
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Cuenta")]
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                _vm._s(
+                                  _vm.movimiento.cuenta
+                                    ? _vm.movimiento.cuenta.numero
+                                    : ""
+                                )
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Referencia")]
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                _vm._s(
+                                  _vm.movimiento.transaccion
+                                    ? _vm.movimiento.transaccion.referencia
+                                    : ""
+                                )
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Fecha")]
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                _vm._s(
+                                  new Date(
+                                    _vm.movimiento.fecha
+                                  ).toLocaleDateString("es")
+                                )
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Cumplimiento")]
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                _vm._s(
+                                  _vm.movimiento.transaccion
+                                    ? new Date(
+                                        _vm.movimiento.transaccion.cumplimiento
+                                      ).toLocaleDateString("es")
+                                    : ""
+                                )
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Vencimiento")]
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                _vm._s(
+                                  _vm.movimiento.transaccion
+                                    ? new Date(
+                                        _vm.movimiento.transaccion.vencimiento
+                                      ).toLocaleDateString("es")
+                                    : ""
+                                )
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Importe")]
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "$ " +
+                                  _vm._s(
+                                    parseFloat(
+                                      _vm.movimiento.importe
+                                    ).formatMoney(2, ".", ",")
+                                  )
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Impuesto")]
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "$ " +
+                                  _vm._s(
+                                    parseFloat(
+                                      _vm.movimiento.impuesto
+                                    ).formatMoney(2, ".", ",")
+                                  )
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "th",
+                              { staticStyle: { "text-align": "right" } },
+                              [_vm._v("Total")]
+                            ),
+                            _vm._v(" "),
+                            _c("th", [
+                              _vm._v(
+                                "$ " +
+                                  _vm._s(
+                                    (
+                                      parseFloat(_vm.movimiento.importe) +
+                                      parseFloat(_vm.movimiento.impuesto)
+                                    ).formatMoney(2, ".", ",")
+                                  )
+                              )
+                            ])
+                          ])
+                        ])
+                      ])
+                    : _vm._e()
+                ])
+              ])
+            ])
+          ]
+        )
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "exampleModalLabel" } },
+        [_vm._v("Detalles del Movimiento")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-71874b99", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

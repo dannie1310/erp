@@ -44,7 +44,6 @@ class MovimientoBancarioTransformer extends TransformerAbstract
             'importe' => $model->importe,
             'impuesto' => $model->impuesto,
             'numero_folio' => $model->numero_folio,
-
         ];
     }
 

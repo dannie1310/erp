@@ -31,4 +31,9 @@ class MovimientoBancarioService
     {
         return $this->repository->paginate($data);
     }
+
+    public function find($id)
+    {
+        return $this->repository->find($id);
+    }
 }
