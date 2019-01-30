@@ -70,7 +70,7 @@
             this.getEstatus()
             this.getTiposPolizaContaq()
 
-            this.id_estatus = this.$router.currentRoute.query.estatus;
+            this.id_estatus = this.$router.currentRoute.query.estatus ? this.$router.currentRoute.query.estatus : '';
         },
 
         methods: {

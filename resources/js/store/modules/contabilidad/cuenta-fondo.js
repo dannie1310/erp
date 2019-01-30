@@ -38,6 +38,7 @@ export default {
 
     actions: {
         paginate (context, payload){
+            context.commit('SET_CUENTAS', [])
             axios
                 .get(URI + 'paginate', {params: payload})
                 .then(r => r.data)

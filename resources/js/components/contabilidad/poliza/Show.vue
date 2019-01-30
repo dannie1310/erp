@@ -1,5 +1,5 @@
 <template>
-    <div class="row" v-if="!cargando">
+    <div class="row">
         <div class="col-12">
             <div class="invoice p-3 mb-3">
                 <div class="row">
@@ -9,7 +9,7 @@
                         </h4>
                     </div>
                 </div>
-                <div class="row">
+                <div v-if="poliza" class="row">
                     <div class="table-responsive col-md-12">
                         <table class="table table-striped">
                             <tbody>
@@ -59,9 +59,9 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div v-if="poliza" class="row">
                     <div class="col-12 table-responsive">
-                        <table class="table table-striped" v-if="!cargando">
+                        <table class="table table-striped">
                             <thead>
                             <tr>
                                 <th class="bg-gray-light">#</th>
@@ -126,16 +126,17 @@
         name: "poliza-show",
         components: {EstatusLabel},
         props: ['id'],
+
         mounted() {
-            this.find(this.id);
+            this.find({
+                id: this.id,
+                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+            })
         },
 
         methods: {
-            find(id) {
-                return this.$store.dispatch('contabilidad/poliza/find', {
-                    id: id,
-                    params: {include: 'transaccionAntecedente,movimientos,traspaso'}
-                })
+            find(payload) {
+                return this.$store.dispatch('contabilidad/poliza/find', payload);
             }
         },
 
@@ -143,12 +144,11 @@
             poliza() {
                 return this.$store.getters['contabilidad/poliza/currentPoliza']
             },
-            cargando() {
-                return this.$store.getters['contabilidad/poliza/cargando']
-            },
+
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             },
+
             sumaDebe() {
                 let result = 0;
                 this.poliza.movimientos.data.forEach(function (movimiento, i) {
@@ -158,6 +158,7 @@
                 })
                 return result
             },
+
             sumaHaber() {
                 let result = 0;
                 this.poliza.movimientos.data.forEach(function (movimiento, i) {
@@ -167,9 +168,11 @@
                 })
                 return result
             },
+
             cuadrado() {
                 return Math.abs(this.sumaDebe - this.sumaHaber) <= 0.99;
             },
+
             color() {
                 if (!this.cuadrado) {
                     return 'bg-danger'

@@ -10,29 +10,14 @@
         props: ['poliza'],
         methods: {
             omitir(){
-                let self = this
-
-                swal({
-                    title: "Omitir Prepóliza",
-                    text: "¿Esta seguro de que deseas omitir la Prepóliza?",
-                    icon: "warning",
-                    buttons: ["Cancelar", "Si, Omitir"]
+                return this.$store.dispatch('contabilidad/poliza/omitir', {
+                    id: this.poliza.id,
+                    params: { include: 'transaccionAntecedente,movimientos,traspaso' }
                 })
-                    .then((success) => {
-                        if (success) {
-                            self.$store.dispatch('contabilidad/poliza/omitir', self.poliza.id)
-                                .then(() => {
-                                    swal("Prepóliza omitida correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    }).then(() => {
-                                        self.$emit('success')
-                                    })
-                                })
-                        }
-                    });
-            },
+                    .then(() => {
+                        this.$emit('success')
+                    })
+            }
         }
     }
 </script>

@@ -73,11 +73,9 @@
         props: ['id'],
         methods: {
             find(id) {
-                this.$store.dispatch('tesoreria/movimiento-bancario/find', {
+                return this.$store.dispatch('tesoreria/movimiento-bancario/find', {
                     id: id,
-                    params: {
-                        include: 'cuenta.empresa,transaccion'
-                    }
+                    params: { include: 'cuenta.empresa,transaccion' }
                 }).then(() => {
                     $(this.$refs.modal).modal('show')
                 })

@@ -107446,7 +107446,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.getEstatus();
         this.getTiposPolizaContaq();
 
-        this.id_estatus = this.$router.currentRoute.query.estatus;
+        this.id_estatus = this.$router.currentRoute.query.estatus ? this.$router.currentRoute.query.estatus : '';
     },
 
 
@@ -108385,26 +108385,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     name: "poliza-show",
     components: { EstatusLabel: __WEBPACK_IMPORTED_MODULE_0__partials_EstatusLabel___default.a },
     props: ['id'],
+
     mounted: function mounted() {
-        this.find(this.id);
+        this.find({
+            id: this.id,
+            params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+        });
     },
 
 
     methods: {
-        find: function find(id) {
-            return this.$store.dispatch('contabilidad/poliza/find', {
-                id: id,
-                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
-            });
+        find: function find(payload) {
+            return this.$store.dispatch('contabilidad/poliza/find', payload);
         }
     },
 
     computed: {
         poliza: function poliza() {
             return this.$store.getters['contabilidad/poliza/currentPoliza'];
-        },
-        cargando: function cargando() {
-            return this.$store.getters['contabilidad/poliza/cargando'];
         },
         datosContables: function datosContables() {
             return this.$store.getters['auth/datosContables'];
@@ -108448,13 +108446,13 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return !_vm.cargando
-    ? _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-12" }, [
-          _c("div", { staticClass: "invoice p-3 mb-3" }, [
-            _vm._m(0),
-            _vm._v(" "),
-            _c("div", { staticClass: "row" }, [
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col-12" }, [
+      _c("div", { staticClass: "invoice p-3 mb-3" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _vm.poliza
+          ? _c("div", { staticClass: "row" }, [
               _c("div", { staticClass: "table-responsive col-md-12" }, [
                 _c("table", { staticClass: "table table-striped" }, [
                   _c("tbody", [
@@ -108598,127 +108596,122 @@ var render = function() {
                   ])
                 ])
               ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "row" }, [
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.poliza
+          ? _c("div", { staticClass: "row" }, [
               _c("div", { staticClass: "col-12 table-responsive" }, [
-                !_vm.cargando
-                  ? _c("table", { staticClass: "table table-striped" }, [
-                      _vm._m(1),
-                      _vm._v(" "),
-                      _c(
-                        "tbody",
-                        _vm._l(_vm.poliza.movimientos.data, function(
-                          movimiento,
-                          i
-                        ) {
-                          return _c("tr", [
-                            _c("td", [_vm._v(_vm._s(i + 1))]),
-                            _vm._v(" "),
-                            _c("td", [
-                              _vm._v(_vm._s(movimiento.cuenta_contable))
-                            ]),
-                            _vm._v(" "),
-                            _c("td", [
-                              _vm._v(
-                                _vm._s(
-                                  movimiento.tipoCuentaContable
-                                    ? movimiento.tipoCuentaContable.descripcion
-                                    : "No registrada"
+                _c("table", { staticClass: "table table-striped" }, [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.poliza.movimientos.data, function(
+                      movimiento,
+                      i
+                    ) {
+                      return _c("tr", [
+                        _c("td", [_vm._v(_vm._s(i + 1))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(movimiento.cuenta_contable))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            _vm._s(
+                              movimiento.tipoCuentaContable
+                                ? movimiento.tipoCuentaContable.descripcion
+                                : "No registrada"
+                            )
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          movimiento.id_tipo_movimiento_poliza == 1
+                            ? _c("span", [
+                                _vm._v(
+                                  "\n                                    $" +
+                                    _vm._s(
+                                      parseFloat(
+                                        movimiento.importe
+                                      ).formatMoney(2, ".", ",")
+                                    ) +
+                                    "\n                                "
                                 )
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("td", [
-                              movimiento.id_tipo_movimiento_poliza == 1
-                                ? _c("span", [
-                                    _vm._v(
-                                      "\n                                    $" +
-                                        _vm._s(
-                                          parseFloat(
-                                            movimiento.importe
-                                          ).formatMoney(2, ".", ",")
-                                        ) +
-                                        "\n                                "
-                                    )
-                                  ])
-                                : _vm._e()
-                            ]),
-                            _vm._v(" "),
-                            _c("td", [
-                              movimiento.id_tipo_movimiento_poliza == 2
-                                ? _c("span", [
-                                    _vm._v(
-                                      "\n                                    $" +
-                                        _vm._s(
-                                          parseFloat(
-                                            movimiento.importe
-                                          ).formatMoney(2, ".", ",")
-                                        ) +
-                                        "\n                                "
-                                    )
-                                  ])
-                                : _vm._e()
-                            ]),
-                            _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(movimiento.referencia))]),
-                            _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(movimiento.concepto))])
-                          ])
-                        }),
-                        0
+                              ])
+                            : _vm._e()
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          movimiento.id_tipo_movimiento_poliza == 2
+                            ? _c("span", [
+                                _vm._v(
+                                  "\n                                    $" +
+                                    _vm._s(
+                                      parseFloat(
+                                        movimiento.importe
+                                      ).formatMoney(2, ".", ",")
+                                    ) +
+                                    "\n                                "
+                                )
+                              ])
+                            : _vm._e()
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(movimiento.referencia))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(movimiento.concepto))])
+                      ])
+                    }),
+                    0
+                  ),
+                  _vm._v(" "),
+                  _c("tfoot", [
+                    _c("tr", [
+                      _c(
+                        "th",
+                        {
+                          staticClass: "text-center",
+                          class: _vm.color,
+                          attrs: { colspan: "3" }
+                        },
+                        [_c("b", [_vm._v("Sumas Iguales")])]
                       ),
                       _vm._v(" "),
-                      _c("tfoot", [
-                        _c("tr", [
-                          _c(
-                            "th",
-                            {
-                              staticClass: "text-center",
-                              class: _vm.color,
-                              attrs: { colspan: "3" }
-                            },
-                            [_c("b", [_vm._v("Sumas Iguales")])]
-                          ),
-                          _vm._v(" "),
-                          _c("th", { class: _vm.color }, [
-                            _c("b", [
-                              _vm._v(
-                                "$ " +
-                                  _vm._s(
-                                    parseFloat(_vm.sumaDebe).formatMoney(
-                                      2,
-                                      ".",
-                                      ","
-                                    )
-                                  )
+                      _c("th", { class: _vm.color }, [
+                        _c("b", [
+                          _vm._v(
+                            "$ " +
+                              _vm._s(
+                                parseFloat(_vm.sumaDebe).formatMoney(
+                                  2,
+                                  ".",
+                                  ","
+                                )
                               )
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("th", { class: _vm.color }, [
-                            _c("b", [
-                              _vm._v(
-                                "$ " +
-                                  _vm._s(
-                                    parseFloat(_vm.sumaHaber).formatMoney(
-                                      2,
-                                      ".",
-                                      ","
-                                    )
-                                  )
-                              )
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("th", {
-                            class: _vm.color,
-                            attrs: { colspan: "2" }
-                          })
+                          )
                         ])
-                      ])
+                      ]),
+                      _vm._v(" "),
+                      _c("th", { class: _vm.color }, [
+                        _c("b", [
+                          _vm._v(
+                            "$ " +
+                              _vm._s(
+                                parseFloat(_vm.sumaHaber).formatMoney(
+                                  2,
+                                  ".",
+                                  ","
+                                )
+                              )
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("th", { class: _vm.color, attrs: { colspan: "2" } })
                     ])
-                  : _vm._e(),
+                  ])
+                ]),
                 _vm._v(" "),
                 _c(
                   "div",
@@ -108745,10 +108738,10 @@ var render = function() {
                 )
               ])
             ])
-          ])
-        ])
+          : _vm._e()
       ])
-    : _vm._e()
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
@@ -109213,23 +109206,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     mounted: function mounted() {
-        this.find(this.id);
+        this.find({
+            id: this.id,
+            params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+        });
     },
 
 
     methods: {
-        find: function find(id) {
-            return this.$store.dispatch('contabilidad/poliza/find', {
-                id: id,
-                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
-            });
+        find: function find(payload) {
+            return this.$store.dispatch('contabilidad/poliza/find', payload);
         },
-        update: function update(id, payload) {
-            return this.$store.dispatch('contabilidad/poliza/update', {
-                id: id,
-                data: payload,
-                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
-            });
+        update: function update(payload) {
+            return this.$store.dispatch('contabilidad/poliza/update', payload);
         },
         add: function add(movimiento) {
             this.poliza.movimientos.data.push(movimiento);
@@ -109244,26 +109233,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.$validator.validate().then(function (result) {
                 if (result) {
-                    _this.save();
-                }
-            });
-        },
-        save: function save() {
-            var _this2 = this;
-
-            swal({
-                title: "¿Estás seguro?",
-                text: "Guardar cambios de la Prepóliza",
-                icon: "warning",
-                buttons: ['Cancelar', 'Si, Guardar']
-            }).then(function (willDelete) {
-                if (willDelete) {
-                    _this2.update(_this2.poliza.id, _this2.poliza).then(function () {
-                        swal("Prepóliza Actualizada correctamente", {
-                            icon: "success",
-                            timer: 1500,
-                            buttons: false
-                        });
+                    _this.update({
+                        id: _this.id,
+                        data: _this.poliza,
+                        params: { include: 'transaccionAntecedente,movimientos,traspaso' }
                     });
                 }
             });
@@ -110328,25 +110301,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     props: ['poliza'],
     methods: {
         validar: function validar() {
-            var self = this;
+            var _this = this;
 
-            swal({
-                title: "Validar Prepóliza",
-                text: "¿Esta seguro de que deseas validar la Prepóliza?",
-                icon: "warning",
-                buttons: ["Cancelar", "Si, Validar"]
-            }).then(function (success) {
-                if (success) {
-                    self.$store.dispatch('contabilidad/poliza/validar', self.poliza.id).then(function () {
-                        swal("Prepóliza Validada correctamente", {
-                            icon: "success",
-                            timer: 1500,
-                            buttons: false
-                        }).then(function () {
-                            self.$emit('success');
-                        });
-                    });
-                }
+            return this.$store.dispatch('contabilidad/poliza/validar', {
+                id: this.poliza.id,
+                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+            }).then(function () {
+                _this.$emit('success');
             });
         }
     }
@@ -110447,25 +110408,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     props: ['poliza'],
     methods: {
         omitir: function omitir() {
-            var self = this;
+            var _this = this;
 
-            swal({
-                title: "Omitir Prepóliza",
-                text: "¿Esta seguro de que deseas omitir la Prepóliza?",
-                icon: "warning",
-                buttons: ["Cancelar", "Si, Omitir"]
-            }).then(function (success) {
-                if (success) {
-                    self.$store.dispatch('contabilidad/poliza/omitir', self.poliza.id).then(function () {
-                        swal("Prepóliza omitida correctamente", {
-                            icon: "success",
-                            timer: 1500,
-                            buttons: false
-                        }).then(function () {
-                            self.$emit('success');
-                        });
-                    });
-                }
+            return this.$store.dispatch('contabilidad/poliza/omitir', {
+                id: this.poliza.id,
+                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+            }).then(function () {
+                _this.$emit('success');
             });
         }
     }
@@ -110633,13 +110582,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             estatus: 3
         };
     },
+    mounted: function mounted() {
+        this.init();
+    },
 
 
     methods: {
+        openModal: function openModal() {
+            $(this.$refs.modal).modal('show');
+        },
         init: function init() {
-            this.fecha = '';
-            this.poliza_contpaq = '';
-
+            this.fecha = this.poliza.fecha;
+            this.poliza_contpaq = this.poliza.poliza_contpaq;
             this.$validator.reset();
         },
         validate: function validate() {
@@ -110647,36 +110601,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.$validator.validate().then(function (result) {
                 if (result) {
-                    _this.save();
-                }
-            });
-        },
-        save: function save() {
-            var self = this;
-            $('#folioContpaqModal' + self.poliza.id).modal('hide');
-
-            swal({
-                title: "Ingresar Folio",
-                text: "¿Estás seguro de que la información es correcta?",
-                icon: "warning",
-                buttons: ["Cancelar", "Si, Continuar"]
-            }).then(function (result) {
-                if (result) {
-                    self.$store.dispatch('contabilidad/poliza/update', {
-                        id: self.poliza.id,
-                        data: self.$data,
+                    _this.save({
+                        id: _this.poliza.id,
+                        data: _this.$data,
                         params: { include: 'transaccionAntecedente,movimientos,traspaso' }
                     }).then(function () {
-                        swal("Folio Contpaq ingresado correctamente", {
-                            icon: "success",
-                            timer: 1500,
-                            buttons: false
-                        }).then(function () {
-                            self.init();
-                        });
+                        $(_this.$refs.modal).modal('hide');
                     });
                 }
             });
+        },
+        save: function save(payload) {
+            return this.$store.dispatch('contabilidad/poliza/update', payload);
         }
     }
 });
@@ -110696,10 +110632,7 @@ var render = function() {
           "button",
           {
             staticClass: "btn btn-app btn-info pull-right",
-            attrs: {
-              "data-toggle": "modal",
-              "data-target": "#folioContpaqModal" + _vm.poliza.id
-            }
+            on: { click: _vm.openModal }
           },
           [
             _c("i", { staticClass: "fa fa-i-cursor" }),
@@ -110711,14 +110644,9 @@ var render = function() {
     _c(
       "div",
       {
+        ref: "modal",
         staticClass: "modal fade",
-        attrs: {
-          id: "folioContpaqModal" + _vm.poliza.id,
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "exampleModalCenterTitle",
-          "aria-hidden": "true"
-        }
+        attrs: { role: "dialog", "aria-hidden": "true" }
       },
       [
         _c(
@@ -110915,11 +110843,9 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "modal-header" }, [
-      _c(
-        "h5",
-        { staticClass: "modal-title", attrs: { id: "exampleModalLongTitle" } },
-        [_vm._v("INGRESAR FOLIO CONTPAQ")]
-      ),
+      _c("h5", { staticClass: "modal-title" }, [
+        _vm._v("INGRESAR FOLIO CONTPAQ")
+      ]),
       _vm._v(" "),
       _c(
         "button",
@@ -111360,23 +111286,9 @@ var render = function() {
             "div",
             { staticClass: "col-md-12" },
             [
-              _c("poliza-validar", {
-                attrs: { poliza: _vm.poliza },
-                on: {
-                  success: function($event) {
-                    _vm.find(_vm.id)
-                  }
-                }
-              }),
+              _c("poliza-validar", { attrs: { poliza: _vm.poliza } }),
               _vm._v(" "),
-              _c("poliza-omitir", {
-                attrs: { poliza: _vm.poliza },
-                on: {
-                  success: function($event) {
-                    _vm.find(_vm.id)
-                  }
-                }
-              }),
+              _c("poliza-omitir", { attrs: { poliza: _vm.poliza } }),
               _vm._v(" "),
               _c("poliza-ingresar-folio", { attrs: { poliza: _vm.poliza } }),
               _vm._v(" "),
@@ -113192,7 +113104,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     props: ['value'],
     methods: {
         destroy: function destroy() {
-            this.$store.dispatch('tesoreria/movimiento-bancario/delete', this.value.id);
+            return this.$store.dispatch('tesoreria/movimiento-bancario/delete', this.value.id);
         },
         show: function show() {
             this.$router.push({ name: 'movimiento-bancario-show', params: { id: this.value.id } });
@@ -113331,11 +113243,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         find: function find(id) {
             var _this = this;
 
-            this.$store.dispatch('tesoreria/movimiento-bancario/find', {
+            return this.$store.dispatch('tesoreria/movimiento-bancario/find', {
                 id: id,
-                params: {
-                    include: 'cuenta.empresa,transaccion'
-                }
+                params: { include: 'cuenta.empresa,transaccion' }
             }).then(function () {
                 $(_this.$refs.modal).modal('show');
             });
@@ -114125,6 +114035,7 @@ var URI = '/api/contabilidad/cuenta-almacen/';
 
     actions: {
         paginate: function paginate(context, payload) {
+            context.commit('SET_CUENTAS', []);
             axios.get(URI + 'paginate', { params: payload }).then(function (r) {
                 return r.data;
             }).then(function (data) {
@@ -114228,6 +114139,7 @@ var URI = '/api/contabilidad/cuenta-fondo/';
 
     actions: {
         paginate: function paginate(context, payload) {
+            context.commit('SET_CUENTAS', []);
             axios.get(URI + 'paginate', { params: payload }).then(function (r) {
                 return r.data;
             }).then(function (data) {
@@ -114331,6 +114243,7 @@ var URI = '/api/contabilidad/cuenta-general/';
 
     actions: {
         paginate: function paginate(context, payload) {
+            context.commit('SET_CUENTAS', []);
             axios.get(URI + 'paginate', { params: payload }).then(function (r) {
                 return r.data;
             }).then(function (data) {
@@ -114439,9 +114352,8 @@ var URI = '/api/contabilidad/poliza/';
     namespaced: true,
     state: {
         polizas: [],
-        currentPoliza: {},
-        meta: {},
-        cargando: true
+        currentPoliza: null,
+        meta: {}
     },
 
     mutations: {
@@ -114450,9 +114362,6 @@ var URI = '/api/contabilidad/poliza/';
         },
         SET_META: function SET_META(state, data) {
             state.meta = data;
-        },
-        SET_CARGANDO: function SET_CARGANDO(state, data) {
-            state.cargando = data;
         },
         UPDATE_POLIZA: function UPDATE_POLIZA(state, data) {
             state.polizas = state.polizas.map(function (poliza) {
@@ -114470,49 +114379,106 @@ var URI = '/api/contabilidad/poliza/';
 
     actions: {
         paginate: function paginate(context, payload) {
-            context.commit('SET_CARGANDO', true);
+            context.commit('SET_POLIZAS', []);
             axios.get(URI + 'paginate', { params: payload }).then(function (r) {
                 return r.data;
             }).then(function (data) {
                 context.commit('SET_POLIZAS', data.data);
                 context.commit('SET_META', data.meta);
-                context.commit('SET_CARGANDO', false);
             });
         },
         find: function find(context, payload) {
-            context.commit('SET_CARGANDO', true);
-            axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_POLIZA', data);
-                context.commit('SET_CARGANDO', false);
+            return new Promise(function (resolve, reject) {
+                context.commit('SET_POLIZA', null);
+                axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_POLIZA', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
             });
         },
         update: function update(context, payload) {
-            context.commit('SET_CARGANDO', true);
-            axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('UPDATE_POLIZA', data);
-                context.commit('SET_CARGANDO', false);
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Guardar cambios de la Prepóliza",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Guardar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Prepóliza Actualizada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_POLIZA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject();
+                        });
+                    }
+                });
             });
         },
-        validar: function validar(context, id) {
-            context.commit('SET_CARGANDO', true);
-            axios.patch(URI + id + '/validar').then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('UPDATE_POLIZA', data.data);
-                context.commit('SET_CARGANDO', false);
+        validar: function validar(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "Validar Prepóliza",
+                    text: "¿Esta seguro de que deseas validar la Prepóliza?",
+                    icon: "warning",
+                    buttons: ["Cancelar", "Si, Validar"]
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id + '/validar', payload.data, { params: payload.params }).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Prepóliza Validada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_POLIZA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
             });
         },
-        omitir: function omitir(context, id) {
-            context.commit('SET_CARGANDO', true);
-            axios.patch(URI + id + '/omitir').then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('UPDATE_POLIZA', data.data);
-                context.commit('SET_CARGANDO', false);
+        omitir: function omitir(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "Omitir Prepóliza",
+                    text: "¿Esta seguro de que deseas omitir la Prepóliza?",
+                    icon: "warning",
+                    buttons: ["Cancelar", "Si, Omitir"]
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id + '/omitir', payload.data, { params: payload.params }).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Prepóliza omitida correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_POLIZA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
             });
         }
     },
@@ -114523,9 +114489,6 @@ var URI = '/api/contabilidad/poliza/';
         },
         meta: function meta(state) {
             return state.meta;
-        },
-        cargando: function cargando(state) {
-            return state.cargando;
         },
         currentPoliza: function currentPoliza(state) {
             return state.currentPoliza;
@@ -114617,8 +114580,7 @@ var URI = '/api/tesoreria/movimiento-bancario/';
     state: {
         movimientos: [],
         currentMovimiento: null,
-        meta: {},
-        cargando: true
+        meta: {}
     },
 
     mutations: {
@@ -114630,9 +114592,6 @@ var URI = '/api/tesoreria/movimiento-bancario/';
         },
         SET_META: function SET_META(state, data) {
             state.meta = data;
-        },
-        SET_CARGANDO: function SET_CARGANDO(state, data) {
-            state.cargando = data;
         },
         DELETE_MOVIMIENTO: function DELETE_MOVIMIENTO(state, id) {
             state.movimientos = state.movimientos.filter(function (mov) {
@@ -114646,6 +114605,7 @@ var URI = '/api/tesoreria/movimiento-bancario/';
 
     actions: {
         paginate: function paginate(context, payload) {
+            context.commit('SET_MOVIMIENTOS', []);
             axios.get(URI + 'paginate', { params: payload }).then(function (r) {
                 return r.data;
             }).then(function (data) {
@@ -114654,35 +114614,43 @@ var URI = '/api/tesoreria/movimiento-bancario/';
             });
         },
         find: function find(context, payload) {
-            context.commit('SET_CARGANDO', true);
-            axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_MOVIMIENTO', data);
-                context.commit('SET_CARGANDO', false);
+            return new Promise(function (resolve, reject) {
+                axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_MOVIMIENTO', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
             });
         },
         delete: function _delete(context, id) {
-            context.commit('SET_CARGANDO', true);
-            swal({
-                title: "Eliminar movimiento",
-                text: "¿Estás seguro/a de que deseas eliminar este movimiento?",
-                icon: "warning",
-                buttons: ['Cancelar', 'Si, Eliminar'],
-                dangerMode: true
-            }).then(function (willDelete) {
-                if (willDelete) {
-                    axios.delete(URI + id).then(function (r) {
-                        return r.data;
-                    }).then(function (data) {
-                        swal("Movimiento eliminado correctamente", {
-                            icon: "success"
-                        }).then(function () {
-                            context.commit('DELETE_MOVIMIENTO', id);
-                            context.commit('SET_CARGANDO', false);
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "Eliminar movimiento",
+                    text: "¿Estás seguro/a de que deseas eliminar este movimiento?",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Eliminar'],
+                    dangerMode: true
+                }).then(function (value) {
+                    if (value) {
+                        axios.delete(URI + id).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Movimiento eliminado correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('DELETE_MOVIMIENTO', id);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
                         });
-                    });
-                }
+                    }
+                });
             });
         }
     },

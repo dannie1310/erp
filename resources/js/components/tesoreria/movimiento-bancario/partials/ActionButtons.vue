@@ -14,7 +14,7 @@
         props: ['value'],
         methods: {
             destroy() {
-                this.$store.dispatch('tesoreria/movimiento-bancario/delete', this.value.id);
+                return this.$store.dispatch('tesoreria/movimiento-bancario/delete', this.value.id);
             },
             show() {
                 this.$router.push({name: 'movimiento-bancario-show', params: {id: this.value.id}});
