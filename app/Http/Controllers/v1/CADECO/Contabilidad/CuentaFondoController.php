@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 class CuentaFondoController extends Controller
 {
 
-    use Helpers, ControllerTrait { update as protected traitUpdate; }
+    use Helpers, ControllerTrait;
 
     /**
      * @var CuentaFondoService

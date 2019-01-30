@@ -10,6 +10,7 @@ export default {
 
     mutations: {
         SET_CUENTAS(state, data) {
+            console.log($data);
             state.cuentas = data
         },
 
@@ -23,6 +24,7 @@ export default {
 
         UPDATE_CUENTA(state, data) {
             state.cuentas = state.cuentas.map(cuenta => {
+
                 if (cuenta.id === data.id) {
                     return Object.assign([], cuenta, data)
                 }

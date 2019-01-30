@@ -20,6 +20,12 @@
                             <p>Cuentas de Almacén</p>
                         </router-link>
                     </li>
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'cuenta-empresa'}" class="nav-link" >
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuentas de Empresa</p>
+                        </router-link>
+                    </li>
                     <li class="nav-item" v-if="$root.can('consultar_cuenta_fondo')">
                         <router-link :to="{name: 'cuenta-fondo'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-fondo'}">
                             <i class="fa fa-circle-o nav-icon"></i>

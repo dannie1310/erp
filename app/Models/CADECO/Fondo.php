@@ -18,14 +18,13 @@ class Fondo extends Model
     protected $connection = 'cadeco';
     protected $table = 'fondos';
     protected $primaryKey = 'id_fondo';
-    public $timestamps = false;
+    public $timestamps =false;
 
     protected static function boot()
     {
         parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
+        self::addGlobalScope(function ($query){
+            return $query->where('id_obra','=',Context::getIdObra());
         });
     }
 
