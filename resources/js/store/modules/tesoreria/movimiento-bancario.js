@@ -25,6 +25,15 @@ export default {
         SET_CARGANDO(state, data) {
             state.cargando = data
         },
+
+        DELETE_MOVIMIENTO(state, id) {
+            state.movimientos = state.movimientos.filter((mov) => {
+                return mov.id !== id;
+            })
+            if (state.currentMovimiento && state.currentMovimiento.id === id) {
+                state.currentMovimiento = null;
+            }
+        },
     },
 
     actions: {
@@ -45,6 +54,33 @@ export default {
                     context.commit('SET_MOVIMIENTO', data)
                     context.commit('SET_CARGANDO', false);
                 })
+        },
+
+        delete(context, id) {
+            context.commit('SET_CARGANDO', true);
+            swal({
+                title: "Eliminar movimiento",
+                text: "¿Estás seguro/a de que deseas eliminar este movimiento?",
+                icon: "warning",
+                buttons: ['Cancelar', 'Si, Eliminar'],
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        axios.delete(URI + id)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Movimiento eliminado correctamente", {
+                                    icon: "success",
+                                }).then(() => {
+                                    context.commit('DELETE_MOVIMIENTO', id)
+                                    context.commit('SET_CARGANDO', false);
+                                });
+                            });
+                    }
+                });
+
+
         }
     },
 
