@@ -63,6 +63,16 @@ export const routes = [
                 }
             },
             {
+                path: 'cuenta-empresa',
+                name: 'cuenta-empresa',
+                component: require('./components/contabilidad/cuenta-empresa/Index'),
+                meta: {
+                    title: 'Cuentas de Empresas',
+                    breadcrumb: {name: 'CUENTAS DE EMPRESAS', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
                 path: 'cuenta-fondo',
                 name: 'cuenta-fondo',
                 component: require('./components/contabilidad/cuenta-fondo/Index'),
