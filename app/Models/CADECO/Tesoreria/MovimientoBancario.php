@@ -30,6 +30,10 @@ class MovimientoBancario extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
+
+        self::deleting(function ($model) {
+            $model->transacciones()->update(['estado' => '-2']);
+        });
     }
 
     public function tipo()
@@ -42,7 +46,8 @@ class MovimientoBancario extends Model
         return $this->belongsTo(Cuenta::class, 'id_cuenta');
     }
 
-    public function transacciones() {
+    public function transacciones()
+    {
         return $this->belongsToMany(Transaccion::class, 'Tesoreria.movimiento_transacciones', 'id_movimiento_bancario', 'id_transaccion')
             ->whereNull('Tesoreria.movimiento_transacciones.deleted_at')
             ->withTimestamps();

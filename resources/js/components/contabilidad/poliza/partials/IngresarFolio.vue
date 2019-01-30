@@ -1,15 +1,15 @@
 <template>
     <span>
-        <button v-if="$root.can('ingresar_folio_contpaq') && (poliza.estatus == -1 || poliza.estatus == 0)" class="btn btn-app btn-info pull-right" data-toggle="modal" :data-target="`#folioContpaqModal${poliza.id}`">
+        <button v-if="$root.can('ingresar_folio_contpaq') && (poliza.estatus == -1 || poliza.estatus == 0)" class="btn btn-app btn-info pull-right" @click="openModal">
             <i class="fa fa-i-cursor"></i> Ingrear Folio Contpaq
         </button>
 
          <!-- Modal Folio Contpaq-->
-        <div class="modal fade" :id="`folioContpaqModal${poliza.id}`" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">INGRESAR FOLIO CONTPAQ</h5>
+                        <h5 class="modal-title">INGRESAR FOLIO CONTPAQ</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -76,52 +76,38 @@
             }
         },
 
-        methods: {
-            init() {
-                this.fecha = '';
-                this.poliza_contpaq = '';
+        mounted() {
+            this.init();
+        },
 
+        methods: {
+            openModal() {
+                $(this.$refs.modal).modal('show');
+            },
+
+            init() {
+                this.fecha = this.poliza.fecha;
+                this.poliza_contpaq = this.poliza.poliza_contpaq;
                 this.$validator.reset()
             },
 
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.save()
+                        this.save({
+                            id: this.poliza.id,
+                            data: this.$data,
+                            params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+                        })
+                            .then(() => {
+                                $(this.$refs.modal).modal('hide');
+                            });
                     }
                 });
             },
 
-            save() {
-                let self = this
-                $(`#folioContpaqModal${self.poliza.id}`).modal('hide');
-
-                swal({
-                    title: "Ingresar Folio",
-                    text: "¿Estás seguro de que la información es correcta?",
-                    icon: "warning",
-                    buttons: ["Cancelar", "Si, Continuar"]
-                })
-                    .then((result) => {
-                        if (result) {
-                            self.$store.dispatch('contabilidad/poliza/update', {
-                                id: self.poliza.id,
-                                data: self.$data,
-                                params: {include: 'transaccionAntecedente,movimientos,traspaso'}
-                            })
-                                .then(() => {
-                                    swal("Folio Contpaq ingresado correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    })
-                                        .then(function () {
-                                            self.init();
-                                        });
-                                })
-                        }
-                    });
-
+            save(payload) {
+                return this.$store.dispatch('contabilidad/poliza/update', payload);
             }
         }
     }

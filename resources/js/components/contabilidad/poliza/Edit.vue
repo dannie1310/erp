@@ -2,8 +2,8 @@
     <span v-if="poliza">
         <div class="row">
             <div class="col-md-12">
-                <poliza-validar :poliza="poliza" v-on:success="find(id)"></poliza-validar>
-                <poliza-omitir :poliza="poliza" v-on:success="find(id)"></poliza-omitir>
+                <poliza-validar :poliza="poliza"></poliza-validar>
+                <poliza-omitir :poliza="poliza"></poliza-omitir>
                 <poliza-ingresar-folio :poliza="poliza"></poliza-ingresar-folio>
                 <poliza-ingresar-cuentas :movimientos="movimientosSinCuenta"></poliza-ingresar-cuentas>
             </div>
@@ -304,23 +304,19 @@
             }
         },
         mounted() {
-            this.find(this.id)
+            this.find({
+                id: this.id,
+                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+            })
         },
 
         methods: {
-            find(id) {
-                return this.$store.dispatch('contabilidad/poliza/find', {
-                    id: id,
-                    params: {include: 'transaccionAntecedente,movimientos,traspaso'}
-                })
+            find(payload) {
+                return this.$store.dispatch('contabilidad/poliza/find', payload)
             },
 
-            update(id, payload) {
-                return this.$store.dispatch('contabilidad/poliza/update', {
-                    id: id,
-                    data: payload,
-                    params: {include: 'transaccionAntecedente,movimientos,traspaso'}
-                })
+            update(payload) {
+                return this.$store.dispatch('contabilidad/poliza/update', payload)
             },
 
             add(movimiento) {
@@ -336,30 +332,13 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.save()
+                        this.update({
+                            id: this.id,
+                            data: this.poliza,
+                            params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+                        });
                     }
                 });
-            },
-
-            save() {
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Guardar cambios de la Prepóliza",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Guardar']
-                })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            this.update(this.poliza.id, this.poliza)
-                                .then(() => {
-                                    swal("Prepóliza Actualizada correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    });
-                                })
-                        }
-                    });
             }
         },
 

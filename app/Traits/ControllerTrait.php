@@ -35,6 +35,12 @@ trait ControllerTrait
         return $this->respondWithItem($item);
     }
 
+    public function destroy(Request $request, $id)
+    {
+        $this->service->destroy($request->all(), $id);
+        return response()->json("{}", 200);
+    }
+
     private function respondWithItem($item)
     {
         $resource = new Item($item, $this->transformer);

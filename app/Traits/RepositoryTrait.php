@@ -63,4 +63,10 @@ trait RepositoryTrait
         $this->model = $this->model->where($where);
         return $this;
     }
+
+    public function destroy($data = [], $id)
+    {
+        $item = $this->find($id);
+        $item->delete();
+    }
 }
