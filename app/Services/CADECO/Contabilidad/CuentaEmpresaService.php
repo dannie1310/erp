@@ -28,14 +28,14 @@ class CuentaEmpresaService
     }
 
     public function paginate($data) {
-        return $this->cuentaAlmacen->paginate($data);
+        return $this->cuentaEmpresa->paginate($data);
     }
 
     public function find($id) {
-        return $this->cuentaAlmacen->find($id);
+        return $this->cuentaEmpresa->find($id);
     }
 
     public function update(array $data, $id) {
-        return $this->cuentaAlmacen->update($data, $id);
+        return $this->cuentaEmpresa->update($data, $id);
     }
 }

@@ -1,4 +1,4 @@
-const URI = '/api/contabilidad/cuenta-fondo/';
+const URI = '/api/contabilidad/cuenta-empresa/';
 
 export default {
     namespaced: true,
@@ -10,7 +10,6 @@ export default {
 
     mutations: {
         SET_CUENTAS(state, data) {
-            console.log($data);
             state.cuentas = data
         },
 
@@ -24,12 +23,11 @@ export default {
 
         UPDATE_CUENTA(state, data) {
             state.cuentas = state.cuentas.map(cuenta => {
-
                 if (cuenta.id === data.id) {
-                    return Object.assign([], cuenta, data)
-                }
-                return cuenta
-            })
+                return Object.assign([], cuenta, data)
+            }
+            return cuenta
+        })
             state.currentCuenta = data
         }
     },
@@ -38,27 +36,27 @@ export default {
         paginate (context, payload){
             axios.get(URI + 'paginate', {params: payload})
                 .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_CUENTAS', data.data)
-                    context.commit('SET_META', data.meta)
-                })
+        .then(data => {
+                context.commit('SET_CUENTAS', data.data)
+            context.commit('SET_META', data.meta)
+        })
         },
 
         find(context, id) {
             context.commit('SET_CUENTA', null)
             axios.get(URI + id)
                 .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_CUENTA', data)
-                })
+        .then(data => {
+                context.commit('SET_CUENTA', data)
+        })
         },
 
         update(context, payload) {
             axios.patch(URI + payload.id, payload)
                 .then(r => r.data)
-                .then(data => {
-                    context.commit('UPDATE_CUENTA', data);
-                })
+        .then(data => {
+                context.commit('UPDATE_CUENTA', data);
+        })
         }
     },
 

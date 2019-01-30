@@ -38,10 +38,10 @@ class CuentaEmpresa extends Model
     }
 
     public function empresa(){
-        $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
     public function tipoCuentaEmpresa(){
-        $this->belongsTo(TipoCuentaEmpresa::class, 'id_tipo_cuenta_empresa', 'id');
+        return $this->belongsTo(TipoCuentaEmpresa::class, 'id_tipo_cuenta_empresa', 'id');
     }
 }

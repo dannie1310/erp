@@ -51,7 +51,6 @@ class CuentaEmpresaTransformer extends TransformerAbstract
     public function includeEmpresa(CuentaEmpresa $model)
     {
         $empresa = $model->empresa;
-
         return $this->item($empresa, new EmpresaTransformer);
     }
 
