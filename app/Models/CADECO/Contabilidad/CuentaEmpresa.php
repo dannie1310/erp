@@ -1,15 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: DBenitezc
- * Date: 29/01/2019
- * Time: 11:45 AM
- */
 
 namespace App\Models\CADECO\Contabilidad;
 
 
-use App\Models\Empresa;
+use App\Facades\Context;
+use App\Models\CADECO\Empresa;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -30,10 +25,15 @@ class CuentaEmpresa extends Model
     protected static function boot()
     {
         parent::boot();
-        self::creating(function($model){
-            $model->registro = auth()->id();
+
+        self::addGlobalScope(function($query) {
+            return $query->where('id_obra', '=', Context::getIdObra());
+        });
+
+        self::creating(function ($model) {
             $model->estatus = 1;
-            $model->obra = Context::getIdObra();
+            $model->registro = auth()->id();
+            $model->id_obra = Context::getIdObra();
         });
     }
 

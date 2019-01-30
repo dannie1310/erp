@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Contabilidad\CuentaFondo;
 use Illuminate\Database\Eloquent\Model;
 
 class Fondo extends Model
@@ -27,4 +28,9 @@ class Fondo extends Model
         });
     }
 
+    public function cuentaFondo()
+    {
+        return $this->hasOne(CuentaFondo::class, 'id_fondo', 'id_fondo')
+            ->where('Contabilidad.cuentas_fondos.estatus', '=', 1);
+    }
 }

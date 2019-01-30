@@ -5,7 +5,7 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">CATÁLOGOS</li>
-            <li class="nav-item has-treeview">
+            <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-money"></i>
                     <p>
@@ -59,6 +59,7 @@
 
         methods: {
             mostrarMenu(event) {
+                event.stopPropagation();
                 $(event.target).closest('li').toggleClass('menu-open');
             }
         }

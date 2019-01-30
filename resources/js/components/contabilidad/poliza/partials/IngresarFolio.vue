@@ -95,33 +95,32 @@
             save() {
                 let self = this
                 $(`#folioContpaqModal${self.poliza.id}`).modal('hide');
-                Swal({
+
+                swal({
                     title: "Ingresar Folio",
                     text: "¿Estás seguro de que la información es correcta?",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Si, Continuar",
-                    cancelButtonText: "No, Cancelar",
-                }).then(function (result) {
-                    if(result.value) {
-                        self.$store.dispatch('contabilidad/poliza/update', {
-                            id: self.poliza.id,
-                            data: self.$data,
-                            params: {include: 'transaccionAntecedente,movimientos,traspaso'}
-                        })
-                            .then(() => {
-                                Swal({
-                                    type: "success",
-                                    title: '¡Correcto!',
-                                    text: 'Folio Contpaq ingresado correctamente',
-                                    confirmButtonText: "Ok",
-                                    closeOnConfirm: false
-                                }).then(function () {
-                                    self.init();
-                                });
+                    icon: "warning",
+                    buttons: ["Cancelar", "Si, Continuar"]
+                })
+                    .then((result) => {
+                        if (result) {
+                            self.$store.dispatch('contabilidad/poliza/update', {
+                                id: self.poliza.id,
+                                data: self.$data,
+                                params: {include: 'transaccionAntecedente,movimientos,traspaso'}
                             })
-                    }
-                });
+                                .then(() => {
+                                    swal("Folio Contpaq ingresado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(function () {
+                                            self.init();
+                                        });
+                                })
+                        }
+                    });
 
             }
         }

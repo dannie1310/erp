@@ -4,7 +4,7 @@ export default {
     namespaced: true,
     state: {
         cuentas: [],
-        currentCuenta: {},
+        currentCuenta: null,
         meta: {}
     },
 
@@ -29,6 +29,10 @@ export default {
                 return cuenta
             })
             state.currentCuenta = data
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value
         }
     },
 

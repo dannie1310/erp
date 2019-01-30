@@ -1,22 +1,21 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: DBenitezc
- * Date: 29/01/2019
- * Time: 12:07 PM
+ * User: jfesquivel
+ * Date: 28/01/19
+ * Time: 03:35 PM
  */
 
-namespace App\Models;
-
+namespace App\Models\CADECO;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
 {
-
     protected $connection = 'cadeco';
-    protected $table = 'empresas';
+    protected $table = 'dbo.empresas';
     protected $primaryKey = 'id_empresa';
 
     public $timestamps = false;
+
 }

@@ -61,7 +61,7 @@ export default {
             return state.currentObra;
         },
         datosContables(state){
-            return state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null
+            return state.currentObra ? (state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null) : null
         },
         authError(state){
             return state.auth_error;
@@ -74,6 +74,14 @@ export default {
     actions: {
         login(context){
             context.commit("login");
+        },
+
+        logout(context, payload) {
+            axios.post('/api/auth/logout')
+                .then(r => r.data)
+                .then(() => {
+                    context.commit('logout', payload)
+                })
         }
     },
 }

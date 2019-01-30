@@ -30,7 +30,8 @@
                                                 v-mask="{regex: datosContables}"
                                                 id="cuenta"
                                                 placeholder="Cuenta"
-                                                v-model="cuenta.cuenta"
+                                                :value="cuenta.cuenta"
+                                                @input="updateAttribute"
                                                 :class="{'is-invalid': errors.has('cuenta')}">
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>
@@ -60,8 +61,7 @@
         props: ['id'],
         data() {
             return {
-                cuenta: null,
-                loading: false
+                loading: true
             }
         },
 
@@ -69,54 +69,44 @@
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             },
-            currentCuenta() {
+            cuenta() {
                 return this.$store.getters['contabilidad/cuenta-fondo/currentCuenta']
-            }
-        },
-
-        watch: {
-            currentCuenta: {
-                handler(currentCuenta) {
-                    this.cuenta = JSON.parse(JSON.stringify(currentCuenta));
-                },
-                deep: true
             }
         },
 
         methods: {
             find(id) {
                 this.$store.dispatch('contabilidad/cuenta-fondo/find', id)
+                    .then(() => {
+                        this.loading = false;
+                    })
             },
 
             update() {
                 let self = this
-                Swal({
-                    title: 'Actualizar Cuenta de Fondo',
-                    text: "¿Estás seguro?",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, Actualizar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.value) {
-                        this.loading = true;
-                        return self.$store.dispatch('contabilidad/cuenta-fondo/update', self.$data.cuenta)
-                            .then(() => {
-                                $('.modal').modal('hide');
-                                Swal({
-                                    type: 'success',
-                                    title: '¡Correcto!',
-                                    text: 'Cuenta Actualizada correctamente',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                            }).then(() => {
-                                this.loading = false;
-                            })
-                    }
+
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta de Fondo",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Actualizar']
                 })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            this.loading = true;
+                            return self.$store.dispatch('contabilidad/cuenta-fondo/update', self.cuenta)
+                                .then(() => {
+                                    $('.modal').modal('hide');
+                                    swal("Cuenta actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    });
+                                }).then(() => {
+                                    this.loading = false;
+                                })
+                        }
+                    });
             },
 
             validate() {
@@ -125,6 +115,10 @@
                         this.update()
                     }
                 });
+            },
+
+            updateAttribute(e) {
+                this.$store.commit('contabilidad/cuenta-fondo/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
             }
         }
     }
