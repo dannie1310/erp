@@ -106154,13 +106154,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "cuenta-fondo-edit",
     props: ['id'],
-    data: function data() {
-        return {
-            loading: true
-        };
-    },
-
-
     computed: {
         datosContables: function datosContables() {
             return this.$store.getters['auth/datosContables'];
@@ -106174,34 +106167,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         find: function find(id) {
             var _this = this;
 
-            this.$store.dispatch('contabilidad/cuenta-fondo/find', id).then(function () {
-                _this.loading = false;
+            return this.$store.dispatch('contabilidad/cuenta-fondo/find', id).then(function () {
+                $(_this.$refs.modal).modal('show');
             });
         },
         update: function update() {
             var _this2 = this;
 
-            var self = this;
-
-            swal({
-                title: "¿Estás seguro?",
-                text: "Actualizar Cuenta de Fondo",
-                icon: "warning",
-                buttons: ['Cancelar', 'Si, Actualizar']
-            }).then(function (willDelete) {
-                if (willDelete) {
-                    _this2.loading = true;
-                    return self.$store.dispatch('contabilidad/cuenta-fondo/update', self.cuenta).then(function () {
-                        $('.modal').modal('hide');
-                        swal("Cuenta actualizada correctamente", {
-                            icon: "success",
-                            timer: 1500,
-                            buttons: false
-                        });
-                    }).then(function () {
-                        _this2.loading = false;
-                    });
-                }
+            return this.$store.dispatch('contabilidad/cuenta-fondo/update', this.cuenta).then(function () {
+                $(_this2.$refs.modal).modal('hide');
             });
         },
         validate: function validate() {
@@ -106214,7 +106188,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         updateAttribute: function updateAttribute(e) {
-            this.$store.commit('contabilidad/cuenta-fondo/UPDATE_ATTRIBUTE', { attribute: $(e.target).attr('name'), value: e.target.value });
+            return this.$store.commit('contabilidad/cuenta-fondo/UPDATE_ATTRIBUTE', { attribute: $(e.target).attr('name'), value: e.target.value });
         }
     }
 });
@@ -106388,25 +106362,7 @@ var render = function() {
                         ])
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "modal-footer" }, [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-secondary",
-                            attrs: { type: "button", "data-dismiss": "modal" }
-                          },
-                          [_vm._v("Cerrar")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            attrs: { type: "submit", disabled: _vm.loading }
-                          },
-                          [_vm._v("Guardar Cambios")]
-                        )
-                      ])
+                      _vm._m(1)
                     ]
                   )
                 : _vm._e()
@@ -106440,6 +106396,27 @@ var staticRenderFns = [
           }
         },
         [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Cerrar")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        [_vm._v("Guardar Cambios")]
       )
     ])
   }
@@ -106916,13 +106893,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "cuenta-tipo-edit",
     props: ['id'],
-    data: function data() {
-        return {
-            loading: true
-        };
-    },
-
-
     computed: {
         datosContables: function datosContables() {
             return this.$store.getters['auth/datosContables'];
@@ -106937,33 +106907,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             return this.$store.dispatch('contabilidad/cuenta-general/find', id).then(function () {
-                _this.loading = false;
+                $(_this.$refs.modal).modal('show');
             });
         },
         update: function update() {
             var _this2 = this;
 
-            var self = this;
-            swal({
-                title: "¿Estás seguro?",
-                text: "Actualizar Cuenta General",
-                icon: "warning",
-                buttons: ['Cancelar', 'Si, Actualizar']
-            }).then(function (willDelete) {
-                if (willDelete) {
-                    _this2.loading = true;
-                    return self.$store.dispatch('contabilidad/cuenta-general/update', self.cuenta).then(function () {
-                        $('.modal').modal('hide');
-                        swal("Cuenta actualizada correctamente", {
-                            icon: "success",
-                            timer: 1500,
-                            buttons: false
-                        });
-                    }).then(function () {
-
-                        _this2.loading = false;
-                    });
-                }
+            return this.$store.dispatch('contabilidad/cuenta-general/update', this.cuenta).then(function () {
+                $(_this2.$refs.modal).modal('hide');
             });
         },
         validate: function validate() {
@@ -106976,7 +106927,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         updateAttribute: function updateAttribute(e) {
-            this.$store.commit('contabilidad/cuenta-general/UPDATE_ATTRIBUTE', { attribute: $(e.target).attr('name'), value: e.target.value });
+            return this.$store.commit('contabilidad/cuenta-general/UPDATE_ATTRIBUTE', { attribute: $(e.target).attr('name'), value: e.target.value });
         }
     }
 });
@@ -107163,25 +107114,7 @@ var render = function() {
                         ])
                       ]),
                       _vm._v(" "),
-                      _c("div", { staticClass: "modal-footer" }, [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-secondary",
-                            attrs: { type: "button", "data-dismiss": "modal" }
-                          },
-                          [_vm._v("Cerrar")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            attrs: { type: "submit", disabled: _vm.loading }
-                          },
-                          [_vm._v("Guardar Cambios")]
-                        )
-                      ])
+                      _vm._m(1)
                     ]
                   )
                 : _vm._e()
@@ -107215,6 +107148,27 @@ var staticRenderFns = [
           }
         },
         [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Cerrar")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        [_vm._v("Guardar Cambios")]
       )
     ])
   }
@@ -114304,18 +114258,43 @@ var URI = '/api/contabilidad/cuenta-fondo/';
             });
         },
         find: function find(context, id) {
-            context.commit('SET_CUENTA', null);
-            axios.get(URI + id).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_CUENTA', data);
+            return new Promise(function (resolve, reject) {
+                context.commit('SET_CUENTA', null);
+                axios.get(URI + id).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_CUENTA', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
             });
         },
         update: function update(context, payload) {
-            axios.patch(URI + payload.id, payload).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('UPDATE_CUENTA', data);
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta de Fondo",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Actualizar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id, payload).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Cuenta actualizada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_CUENTA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
             });
         }
     },
@@ -114382,18 +114361,43 @@ var URI = '/api/contabilidad/cuenta-general/';
             });
         },
         find: function find(context, id) {
-            context.commit('SET_CUENTA', null);
-            axios.get(URI + id).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_CUENTA', data);
+            return new Promise(function (resolve, reject) {
+                context.commit('SET_CUENTA', null);
+                axios.get(URI + id).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_CUENTA', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
             });
         },
         update: function update(context, payload) {
-            axios.patch(URI + payload.id, payload).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('UPDATE_CUENTA', data);
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta General",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Actualizar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id, payload).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Cuenta actualizada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_CUENTA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
             });
         }
     },
