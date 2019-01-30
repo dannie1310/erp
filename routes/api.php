@@ -72,4 +72,24 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoPolizaContpaqController@index');
         });
     });
+
+    /**
+     * TESORERIA
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'tesoreria'], function ($api) {
+        //MOVIMIENTOS BANCARIOS
+        $api->group(['prefix' => 'movimiento-bancario'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@find');
+        });
+    });
+
+    /**
+     * CHARTS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'chart'], function ($api) {
+        $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
+        $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
+        $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
+    });
 });

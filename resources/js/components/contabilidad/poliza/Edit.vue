@@ -5,10 +5,7 @@
                 <poliza-validar :poliza="poliza" v-on:success="find(id)"></poliza-validar>
                 <poliza-omitir :poliza="poliza" v-on:success="find(id)"></poliza-omitir>
                 <poliza-ingresar-folio :poliza="poliza"></poliza-ingresar-folio>
-
-                <button v-if="$root.can('ingresar_cuenta_faltante_movimiento_prepoliza')" class="btn btn-app btn-info pull-right">
-                    <i class="fa fa-dollar"></i> Ingresar cuentas faltantes
-                </button>
+                <poliza-ingresar-cuentas :movimientos="movimientosSinCuenta"></poliza-ingresar-cuentas>
             </div>
         </div>
         <div class="row">
@@ -292,10 +289,13 @@
     import PolizaValidar from "./partials/Validar";
     import PolizaOmitir from "./partials/Omitir";
     import PolizaIngresarFolio from "./partials/IngresarFolio";
+    import PolizaIngresarCuentas from "./partials/IngresarCuentas";
 
     export default {
         name: "poliza-edit",
-        components: {PolizaIngresarFolio, PolizaOmitir, PolizaValidar, AddMovimiento, EstatusLabel},
+        components: {
+            PolizaIngresarCuentas,
+            PolizaIngresarFolio, PolizaOmitir, PolizaValidar, AddMovimiento, EstatusLabel},
         props: ['id'],
         data() {
             return {
@@ -342,28 +342,24 @@
             },
 
             save() {
-                Swal({
-                    title: '¿Estás seguro?',
+                swal({
+                    title: "¿Estás seguro?",
                     text: "Guardar cambios de la Prepóliza",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, Guardar'
-                }).then((result) => {
-                    if (result.value) {
-                        this.update(this.poliza.id, this.poliza)
-                            .then(() => {
-                                Swal({
-                                    type: 'success',
-                                    title: '¡Correcto!',
-                                    text: 'Prepóliza Actualizada correctamente',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                            })
-                    }
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Guardar']
                 })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            this.update(this.poliza.id, this.poliza)
+                                .then(() => {
+                                    swal("Prepóliza Actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    });
+                                })
+                        }
+                    });
             }
         },
 
@@ -380,6 +376,19 @@
         },
 
         computed: {
+            movimientosSinCuenta() {
+                let array = this.original.movimientos.data.filter((mov) => {
+                    return mov.cuenta_contable == null
+                })
+
+                return Array.from(new Set(array.map(s => s.id_tipo_cuenta_contable)))
+                    .map(id => {
+                        return {
+                            id_tipo_cuenta_contable: id,
+                            descripcion: array.find(s => s.id_tipo_cuenta_contable === id).tipoCuentaContable.descripcion
+                        }
+                    })
+            },
             currentPoliza() {
                 return this.$store.getters['contabilidad/poliza/currentPoliza']
             },

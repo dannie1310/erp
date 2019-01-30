@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Contabilidad\CuentaAlmacen;
 use Illuminate\Database\Eloquent\Model;
 
 class Almacen extends Model
@@ -49,5 +50,11 @@ class Almacen extends Model
                 return 'Almacén Herramientas';
                 break;
         }
+    }
+
+    public function cuentaAlmacen()
+    {
+        return $this->hasOne(CuentaAlmacen::class, "id_almacen")
+            ->where('Contabilidad.cuentas_almacenes.estatus', '=', 1);
     }
 }

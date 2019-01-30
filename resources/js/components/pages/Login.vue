@@ -16,7 +16,7 @@
 
                     <form @submit.prevent="authenticate">
                         <div class="input-group mb-3">
-                            <input required type="text" name="usuario" class="form-control" placeholder="Usuario" v-model="formLogin.usuario">
+                            <input required type="text" ref="usuario" name="usuario" class="form-control" placeholder="Usuario" v-model="formLogin.usuario">
                             <div class="input-group-append">
                                 <span class="fa fa-user input-group-text"></span>
                             </div>
@@ -50,6 +50,11 @@
                 error: null
             }
         },
+
+        mounted() {
+            this.$refs.usuario.focus()
+        },
+
         methods:{
             authenticate(){
                 this.$store.dispatch('auth/login');

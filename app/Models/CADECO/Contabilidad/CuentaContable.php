@@ -26,8 +26,7 @@ class CuentaContable extends Model
         parent::boot();
 
         static::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra())
-                ->where('estatus', '=', true);
+            return $query->where('id_obra', '=', Context::getIdObra());
         });
     }
 

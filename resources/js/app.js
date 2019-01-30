@@ -91,14 +91,41 @@ const app = new Vue({
         MainApp
     },
     mounted() {
-        axios.interceptors.response.use(null, function(error) {
-            switch (error.response.status) {
-                case 401:
-                    app.$store.commit('auth/logout', {error:  error.response.data.status});
-                    app.$session.destroy();
-                    return app.$router.push({ name: 'login' });
-                default:
-                    return Promise.reject(error);
+        axios.interceptors.response.use((response) => {
+            return response;
+        }, (error) => {
+            if (!error.response) {
+                alert('NETWORK ERROR')
+            } else {
+                const code = error.response.status
+                const message = error.response.data.message
+                const originalRequest = error.config;
+                switch (true) {
+                    case (code === 401 && !originalRequest._retry):
+                        swal({
+                            title: "La sesión ha expirado",
+                            text: "Volviendo a la página de Inicio de Sesión",
+                            icon: "error",
+                        }).then((value) => {
+                            app.$store.commit('auth/logout');
+                            app.$session.destroy();
+                            return app.$router.push({name: 'login'});
+                        })
+                        break;
+                    case (code === 500):
+                        swal({
+                            title: "¡Error!",
+                            text: message,
+                            icon: "error"
+                        });
+                        break;
+                    default:
+                        swal({
+                            title: "¡Error!",
+                            text: message,
+                            icon: "error"
+                        });
+                }
             }
         });
     },
