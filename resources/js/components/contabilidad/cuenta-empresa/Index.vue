@@ -26,7 +26,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Cuenta', field: 'cuenta', sortable: true },
                     { title: 'Empresa', field: 'empresa', sortable: true },
-                    { title: 'Tipo de Cuenta Empresa', field: 'tipo', sortable: true },
+                    { title: 'Tipo de Cuenta', field: 'tipo', sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
