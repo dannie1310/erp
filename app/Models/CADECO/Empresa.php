@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
@@ -18,4 +19,8 @@ class Empresa extends Model
 
     public $timestamps = false;
 
+    public function cuentaEmpresa()
+    {
+        return $this->hasOne(CuentaEmpresa::class, 'id_empresa');
+    }
 }

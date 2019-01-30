@@ -1,12 +1,12 @@
 <template>
     <span>
         <!-- Button trigger modal -->
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" :data-target="'#cuenta-empresa-edit-modal' + id">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info">
             <i class="fa fa-pencil"></i>
         </button>
 
         <!-- Modal -->
-        <div class="modal fade" :id="'cuenta-empresa-edit-modal' + id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -30,7 +30,8 @@
                                                 v-mask="{regex: datosContables}"
                                                 id="cuenta"
                                                 placeholder="Cuenta"
-                                                v-model="cuenta.cuenta"
+                                                :value="cuenta.cuenta"
+                                                @input="updateAttribute"
                                                 :class="{'is-invalid': errors.has('cuenta')}">
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>
@@ -45,7 +46,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="loading">Guardar Cambios</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </div>
                     </form>
                 </div>
@@ -58,66 +59,29 @@
     export default {
         name: "cuenta-empresa-edit",
         props: ['id'],
-        data() {
-            return {
-                cuenta: null,
-                loading: false
-            }
-        },
-
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             },
 
-            currentCuenta() {
+            cuenta() {
                 return this.$store.getters['contabilidad/cuenta-empresa/currentCuenta']
-            }
-        },
-
-        watch: {
-            currentCuenta: {
-                handler(currentCuenta) {
-                    this.cuenta = JSON.parse(JSON.stringify(currentCuenta));
-                },
-                deep: true
             }
         },
 
         methods: {
             find(id) {
-                this.$store.dispatch('contabilidad/cuenta-empresa/find', id)
+                return this.$store.dispatch('contabilidad/cuenta-empresa/find', id)
+                    .then(() => {
+                        $(this.$refs.modal).modal('show');
+                    })
             },
 
             update() {
-                let self = this
-                Swal({
-                    title: 'Actualizar Cuenta de Empresa',
-                    text: "¿Estás seguro?",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, Actualizar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.value) {
-                    this.loading = true;
-                    return self.$store.dispatch('contabilidad/cuenta-empresa/update', self.$data.cuenta)
-                        .then(() => {
-                        $('.modal').modal('hide');
-                    Swal({
-                        type: 'success',
-                        title: '¡Correcto!',
-                        text: 'Cuenta Actualizada correctamente',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }).then(() => {
-                        this.loading = false;
-                })
-                }
-            })
+                return this.$store.dispatch('contabilidad/cuenta-empresa/update', this.cuenta)
+                    .then(() => {
+                        $(this.$refs.modal).modal('hide');
+                    })
             },
 
             validate() {
@@ -126,6 +90,10 @@
                         this.update()
                     }
                 });
+            },
+
+            updateAttribute(e) {
+                return this.$store.commit('contabilidad/cuenta-empresa/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
             }
         }
     }
