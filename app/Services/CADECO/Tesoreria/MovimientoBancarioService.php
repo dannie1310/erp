@@ -36,4 +36,15 @@ class MovimientoBancarioService
     {
         return $this->repository->find($id);
     }
+
+    public function destroy($data, $id)
+    {
+        try {
+
+            $this->repository->destroy($data, $id);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }

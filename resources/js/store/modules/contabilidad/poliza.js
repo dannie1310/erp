@@ -3,9 +3,8 @@ export default {
     namespaced: true,
     state: {
         polizas: [],
-        currentPoliza: {},
+        currentPoliza: null,
         meta: {},
-        cargando: true
     },
 
     mutations: {
@@ -15,10 +14,6 @@ export default {
 
         SET_META(state, data) {
             state.meta = data;
-        },
-
-        SET_CARGANDO(state, data) {
-            state.cargando = data
         },
 
         UPDATE_POLIZA(state, data) {
@@ -38,54 +33,122 @@ export default {
 
     actions: {
         paginate (context, payload) {
-            context.commit('SET_CARGANDO', true);
-            axios.get(URI + 'paginate', {params: payload})
+            context.commit('SET_POLIZAS', [])
+            axios
+                .get(URI + 'paginate', {params: payload})
                 .then(r => r.data)
                 .then((data) => {
                     context.commit('SET_POLIZAS', data.data)
                     context.commit('SET_META', data.meta)
-                    context.commit('SET_CARGANDO', false);
                 })
         },
 
         find(context, payload) {
-            context.commit('SET_CARGANDO', true);
-            axios.get(URI + payload.id, {params: payload.params})
-                .then(r => r.data)
-                .then((data) => {
-                    context.commit('SET_POLIZA', data)
-                    context.commit('SET_CARGANDO', false);
-                })
+            return new Promise((resolve, reject) => {
+                context.commit('SET_POLIZA', null)
+                axios.get(URI + payload.id, {params: payload.params})
+                    .then(r => r.data)
+                    .then((data) => {
+                        context.commit('SET_POLIZA', data)
+                        resolve();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+
         },
 
         update(context, payload) {
-            context.commit('SET_CARGANDO', true);
-            axios.patch(URI + payload.id, payload.data, {params: payload.params})
-                .then(r => r.data)
-                .then((data) => {
-                    context.commit('UPDATE_POLIZA', data);
-                    context.commit('SET_CARGANDO', false);
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Guardar cambios de la Prepóliza",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Guardar']
                 })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data, { params: payload.params })
+                                .then(r => r.data)
+                                .then((data) => {
+                                    swal("Prepóliza Actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            context.commit('UPDATE_POLIZA', data);
+                                            resolve();
+                                        })
+                                })
+                                .catch(error => {
+                                    reject();
+                                })
+                        }
+                    });
+            });
         },
 
-        validar(context, id) {
-            context.commit('SET_CARGANDO', true);
-            axios.patch(URI + id + '/validar')
-                .then(r => r.data)
-                .then((data) => {
-                    context.commit('UPDATE_POLIZA', data.data)
-                    context.commit('SET_CARGANDO', false)
+        validar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Validar Prepóliza",
+                    text: "¿Esta seguro de que deseas validar la Prepóliza?",
+                    icon: "warning",
+                    buttons: ["Cancelar", "Si, Validar"]
                 })
+                    .then((value) => {
+                        if (value) {
+                            axios.patch(URI + payload.id + '/validar', payload.data, { params: payload.params })
+                                .then(r => r.data)
+                                .then((data) => {
+                                    swal("Prepóliza Validada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_POLIZA', data)
+                                        resolve();
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
         },
 
-        omitir(context, id) {
-            context.commit('SET_CARGANDO', true);
-            axios.patch(URI + id + '/omitir')
-                .then(r => r.data)
-                .then((data) => {
-                    context.commit('UPDATE_POLIZA', data.data)
-                    context.commit('SET_CARGANDO', false)
+        omitir(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Omitir Prepóliza",
+                    text: "¿Esta seguro de que deseas omitir la Prepóliza?",
+                    icon: "warning",
+                    buttons: ["Cancelar", "Si, Omitir"]
                 })
+                    .then((value) => {
+                        if (value) {
+                            axios.patch(URI + payload.id + '/omitir', payload.data,  { params: payload.params })
+                                .then(r => r.data)
+                                .then((data) => {
+                                    swal("Prepóliza omitida correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_POLIZA', data);
+                                        resolve();
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
         }
     },
 
@@ -96,10 +159,6 @@ export default {
 
         meta(state) {
             return state.meta
-        },
-
-        cargando(state) {
-            return state.cargando
         },
 
         currentPoliza(state) {

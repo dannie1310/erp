@@ -14,13 +14,13 @@
         props: ['value'],
         methods: {
             destroy() {
-
-                },
+                return this.$store.dispatch('tesoreria/movimiento-bancario/delete', this.value.id);
+            },
             show() {
                 this.$router.push({name: 'movimiento-bancario-show', params: {id: this.value.id}});
             },
             edit() {
-                this.$router.push({name: 'movimiento-bancario-edit', params: {id: this.value.id}});
+
             }
         }
     }
