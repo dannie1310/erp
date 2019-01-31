@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\Contabilidad;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Material;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

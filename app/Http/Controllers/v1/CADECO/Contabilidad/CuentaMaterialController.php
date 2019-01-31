@@ -43,10 +43,11 @@ class CuentaMaterialController extends Controller
      */
     public function __construct(CuentaMaterialService $service, Manager $fractal, CuentaMaterialTransformer $transformer)
     {
+        $this->middleware('auth');
+        $this->middleware('context');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
-
-
 }

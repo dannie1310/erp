@@ -14,7 +14,6 @@ use League\Fractal\TransformerAbstract;
 
 class TipoCuentaMaterialTransformer extends TransformerAbstract
 {
-
     public function transform(TipoCuentaMaterial $model)
     {
         return [
