@@ -24,6 +24,16 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * DBO
+     */
+    $api->group(['middleware' => 'api'], function ($api) {
+        // CUENTAS
+        $api->group(['prefix' => 'cuenta'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\CuentaController@index');
+        });
+    });
+
+    /**
      * CONTABILIDAD
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
@@ -89,7 +99,11 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@find');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@destroy');
+        });
 
+        //TIPOS MOVIMIENTO
+        $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\TipoMovimientoController@index');
         });
     });
 

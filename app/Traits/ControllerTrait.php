@@ -17,6 +17,12 @@ use League\Fractal\Serializer\ArraySerializer;
 
 trait ControllerTrait
 {
+    public function index(Request $request)
+    {
+        $collection = $this->service->index($request->all());
+        return $this->respondWithCollection($collection);
+    }
+
     public function paginate(Request $request)
     {
         $paginator = $this->service->paginate($request->except('include'));
@@ -39,6 +45,17 @@ trait ControllerTrait
     {
         $this->service->destroy($request->all(), $id);
         return response()->json("{}", 200);
+    }
+
+    private function respondWithCollection($collection)
+    {
+        $resource = new Collection($collection, $this->transformer);
+
+        $this->parseIncludes();
+        $this->fractal->setSerializer(new ArraySerializer);
+        $response = $this->fractal->createData($resource)->toArray();
+
+        return response()->json($response, 200);
     }
 
     private function respondWithItem($item)

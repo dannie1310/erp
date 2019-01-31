@@ -113703,6 +113703,8 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Create__ = __webpack_require__(626);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Create___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Create__);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 //
@@ -113723,9 +113725,15 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "movimiento-bancario-index",
+    components: { MovimientoBancarioCreate: __WEBPACK_IMPORTED_MODULE_0__Create___default.a },
     data: function data() {
         return {
             HeaderSettings: false,
@@ -114355,6 +114363,13 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row" }, [
+    _c(
+      "div",
+      { staticClass: "col-md-12" },
+      [_c("movimiento-bancario-create")],
+      1
+    ),
+    _vm._v(" "),
     _c("div", { staticClass: "col-12" }, [
       _c("div", { staticClass: "card" }, [
         _c("div", { staticClass: "card-body" }, [
@@ -114562,17 +114577,22 @@ if (false) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(201);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_auth__ = __webpack_require__(582);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__ = __webpack_require__(584);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_contabilidad_cuenta_almacen__ = __webpack_require__(585);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_empresa__ = __webpack_require__(586);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_fondo__ = __webpack_require__(587);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_cuenta_general__ = __webpack_require__(588);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_estatus_prepoliza__ = __webpack_require__(589);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_poliza__ = __webpack_require__(590);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(591);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(592);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__modules_tesoreria_movimiento_bancario__ = __webpack_require__(593);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_cadeco_cuenta__ = __webpack_require__(631);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_almacen__ = __webpack_require__(585);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_empresa__ = __webpack_require__(586);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_cuenta_fondo__ = __webpack_require__(587);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_cuenta_general__ = __webpack_require__(588);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_estatus_prepoliza__ = __webpack_require__(589);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_poliza__ = __webpack_require__(590);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(591);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(592);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__modules_tesoreria_movimiento_bancario__ = __webpack_require__(593);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__modules_tesoreria_tipo_movimiento__ = __webpack_require__(625);
 
 
+
+
+//CADECO
 
 
 
@@ -114589,22 +114609,25 @@ if (false) {
 //TESORERIA
 
 
+
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
 
 /* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
     modules: {
         auth: __WEBPACK_IMPORTED_MODULE_2__modules_auth__["a" /* default */],
         'cadeco/obras': __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__["a" /* default */],
-        'contabilidad/cuenta-almacen': __WEBPACK_IMPORTED_MODULE_4__modules_contabilidad_cuenta_almacen__["a" /* default */],
-        'contabilidad/cuenta-empresa': __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_empresa__["a" /* default */],
-        'contabilidad/cuenta-fondo': __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_fondo__["a" /* default */],
-        'contabilidad/cuenta-general': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_cuenta_general__["a" /* default */],
-        'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_estatus_prepoliza__["a" /* default */],
-        'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_poliza__["a" /* default */],
-        'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
-        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */],
+        'cadeco/cuenta': __WEBPACK_IMPORTED_MODULE_4__modules_cadeco_cuenta__["a" /* default */],
+        'contabilidad/cuenta-almacen': __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_almacen__["a" /* default */],
+        'contabilidad/cuenta-empresa': __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_empresa__["a" /* default */],
+        'contabilidad/cuenta-fondo': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_cuenta_fondo__["a" /* default */],
+        'contabilidad/cuenta-general': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_cuenta_general__["a" /* default */],
+        'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_estatus_prepoliza__["a" /* default */],
+        'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_poliza__["a" /* default */],
+        'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
+        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_12__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */],
 
-        'tesoreria/movimiento-bancario': __WEBPACK_IMPORTED_MODULE_12__modules_tesoreria_movimiento_bancario__["a" /* default */]
+        'tesoreria/movimiento-bancario': __WEBPACK_IMPORTED_MODULE_13__modules_tesoreria_movimiento_bancario__["a" /* default */],
+        'tesoreria/tipo-movimiento': __WEBPACK_IMPORTED_MODULE_14__modules_tesoreria_tipo_movimiento__["a" /* default */]
     },
     strict: "development" !== 'production'
 }));
@@ -116549,6 +116572,254 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 613 */,
+/* 614 */,
+/* 615 */,
+/* 616 */,
+/* 617 */,
+/* 618 */,
+/* 619 */,
+/* 620 */,
+/* 621 */,
+/* 622 */,
+/* 623 */,
+/* 624 */,
+/* 625 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/tesoreria/tipo-movimiento/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        tipos: []
+    },
+
+    mutations: {
+        SET_TIPOS: function SET_TIPOS(state, data) {
+            state.tipos = data;
+        }
+    },
+
+    actions: {
+        fetch: function fetch(context, payload) {
+            axios.get(URI, { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_TIPOS', data.data);
+            });
+        }
+    },
+
+    getters: {
+        tipos: function tipos(state) {
+            return state.tipos;
+        }
+    }
+});
+
+/***/ }),
+/* 626 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(627)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(629)
+/* template */
+var __vue_template__ = __webpack_require__(630)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-e2722dd0"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/tesoreria/movimiento-bancario/Create.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e2722dd0", Component.options)
+  } else {
+    hotAPI.reload("data-v-e2722dd0", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 627 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(628);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("09724f86", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-e2722dd0\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Create.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-e2722dd0\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Create.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 628 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 629 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "movimiento-bancario-create",
+
+    mounted: function mounted() {
+        this.getTiposMovimiento();
+        this.getCuentas();
+    },
+
+    methods: {
+        getTiposMovimiento: function getTiposMovimiento() {
+            return this.$store.dispatch('tesoreria/tipo-movimiento/fetch');
+        },
+        getCuentas: function getCuentas() {
+            return this.$store.dispatch('cadeco/cuenta/fetch', {
+                scope: 'paraTraspaso'
+            });
+        }
+    },
+
+    computed: {
+        tiposMovimiento: function tiposMovimiento() {
+            return this.$store.getters['tesoreria/tipo-movimiento/tipos'];
+        },
+        cuentas: function cuentas() {
+            return this.$store.getters['cadeco/cuenta/cuentas'];
+        }
+    }
+});
+
+/***/ }),
+/* 630 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm._m(0)
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("a", { staticClass: "btn btn-app" }, [
+      _c("i", { staticClass: "fa fa-plus" }),
+      _vm._v(" Registrar Movimiento\n")
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-e2722dd0", module.exports)
+  }
+}
+
+/***/ }),
+/* 631 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/cuenta/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        cuentas: [],
+        currentCuenta: null
+    },
+
+    mutations: {
+        SET_CUENTAS: function SET_CUENTAS(state, data) {
+            state.cuentas = data;
+        }
+    },
+
+    actions: {
+        fetch: function fetch(context, payload) {
+            axios.get(URI, { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTAS', data.data);
+            });
+        }
+    },
+
+    getters: {
+        cuentas: function cuentas(state) {
+            return state.cuentas;
+        }
+    }
+});
 
 /***/ })
 /******/ ]);

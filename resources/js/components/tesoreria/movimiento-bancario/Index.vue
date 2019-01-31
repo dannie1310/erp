@@ -1,5 +1,9 @@
 <template>
     <div class="row">
+        <div class="col-md-12">
+            <movimiento-bancario-create></movimiento-bancario-create>
+        </div>
+
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -17,8 +21,10 @@
 </template>
 
 <script>
+    import MovimientoBancarioCreate from "./Create";
     export default {
         name: "movimiento-bancario-index",
+        components: {MovimientoBancarioCreate},
         data() {
             return {
                 HeaderSettings: false,

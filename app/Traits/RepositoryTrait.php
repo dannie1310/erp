@@ -11,7 +11,10 @@ namespace App\Traits;
 
 trait RepositoryTrait
 {
-    public function all() {
+    public function all($data = null) {
+        if (isset($data['scope'])) {
+            $this->scope($data['scope']);
+        }
         return $this->model->get();
     }
 
@@ -54,7 +57,9 @@ trait RepositoryTrait
 
         foreach ($scope as $s) {
             $explode = explode(':', $s);
-            $this->model = $this->model->$explode[0](isset($explode[1]) ? $explode[1] : null);
+            $fn = $explode[0];
+            $params = isset($explode[1]) ? $explode[1] : null;
+            $this->model = $this->model->$fn($params);
         }
         return $this;
     }
