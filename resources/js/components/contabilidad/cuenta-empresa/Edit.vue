@@ -39,7 +39,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="empresa">Empresa</label>
-                                        <input readonly type="text" class="form-control" id="empresa" v-model="cuenta.empresa.descripcion">
+                                        <input readonly type="text" class="form-control" id="empresa" v-model="cuenta.empresa.razon_social">
                                     </div>
                                 </div>
                             </div>

@@ -47,4 +47,9 @@ class MovimientoBancarioService
             throw $e;
         }
     }
+
+    public function store($data)
+    {
+
+    }
 }

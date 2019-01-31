@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Tesoreria;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreMovimientoBancarioRequest;
 use App\Http\Transformers\CADECO\Tesoreria\MovimientoBancarioTransformer;
 use App\Services\CADECO\Tesoreria\MovimientoBancarioService;
 use App\Traits\ControllerTrait;
@@ -17,7 +18,7 @@ use League\Fractal\Manager;
 
 class MovimientoBancarioController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait { store as protected traitStore; }
 
     /**
      * @var Manager
@@ -48,5 +49,10 @@ class MovimientoBancarioController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function store(StoreMovimientoBancarioRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

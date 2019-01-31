@@ -30,7 +30,8 @@ class CuentaTransformer extends TransformerAbstract
      */
     protected $defaultIncludes = [];
 
-    public function transform(Cuenta $model) {
+    public function transform(Cuenta $model)
+    {
         return [
             'id' => $model->getKey(),
             'numero' => $model->numero,
@@ -44,7 +45,8 @@ class CuentaTransformer extends TransformerAbstract
      * @param Cuenta $model
      * @return \League\Fractal\Resource\Item
      */
-    public function includeEmpresa(Cuenta $model) {
+    public function includeEmpresa(Cuenta $model)
+    {
         if ($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
         }

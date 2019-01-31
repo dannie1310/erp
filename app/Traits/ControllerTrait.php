@@ -86,4 +86,10 @@ trait ControllerTrait
             $this->fractal->parseIncludes(request()->get('include'));
         }
     }
+
+    public function store(Request $request)
+    {
+        $item = $this->service->store($request->all());
+        return $this->respondWithItem($item);
+    }
 }

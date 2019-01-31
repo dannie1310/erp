@@ -71,7 +71,7 @@
                     self.$data.data = []
                     movimientos.forEach(function (movimiento, i) {
                         self.$data.data.push({
-                            index: movimiento.id,
+                            index: (i + 1) + self.query.offset,
                             numero_folio: movimiento.numero_folio,
                             fecha: movimiento.fecha,
                             tipo: movimiento.tipo.descripcion,
