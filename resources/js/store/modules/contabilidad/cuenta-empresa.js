@@ -4,7 +4,7 @@ export default {
     namespaced: true,
     state: {
         cuentas: [],
-        currentCuenta: {},
+        currentCuenta: null,
         meta: {}
     },
 
@@ -29,34 +29,71 @@ export default {
             return cuenta
         })
             state.currentCuenta = data
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value
         }
     },
 
     actions: {
-        paginate (context, payload){
-            axios.get(URI + 'paginate', {params: payload})
+        paginate(context, payload) {
+            context.commit('SET_CUENTAS', [])
+            axios
+                .get(URI + 'paginate', {params: payload})
                 .then(r => r.data)
-        .then(data => {
-                context.commit('SET_CUENTAS', data.data)
-            context.commit('SET_META', data.meta)
-        })
+                .then(data => {
+                    context.commit('SET_CUENTAS', data.data)
+                    context.commit('SET_META', data.meta)
+                })
         },
 
         find(context, id) {
-            context.commit('SET_CUENTA', null)
-            axios.get(URI + id)
-                .then(r => r.data)
-        .then(data => {
-                context.commit('SET_CUENTA', data)
-        })
+            return new Promise((resolve, reject) => {
+                context.commit('SET_CUENTA', null)
+                axios
+                    .get(URI + id)
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit('SET_CUENTA', data)
+                        resolve();
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
         },
 
         update(context, payload) {
-            axios.patch(URI + payload.id, payload)
-                .then(r => r.data)
-        .then(data => {
-                context.commit('UPDATE_CUENTA', data);
-        })
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta de Empresa",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Actualizar']
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cuenta actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            context.commit('UPDATE_CUENTA', data);
+                                            resolve();
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
         }
     },
 
