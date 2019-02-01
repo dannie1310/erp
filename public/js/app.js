@@ -107765,7 +107765,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 self.$data.data = [];
                 cuentas.forEach(function (cuenta, i) {
                     self.$data.data.push({
-                        index: cuenta.id,
+                        index: i + 1 + self.query.offset,
                         cuenta: cuenta.cuenta,
                         empresa: cuenta.material.descripcion,
                         tipo: cuenta.tipo.descripcion,
