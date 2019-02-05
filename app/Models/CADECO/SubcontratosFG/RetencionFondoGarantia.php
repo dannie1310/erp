@@ -17,10 +17,8 @@ class RetencionFondoGarantia extends Model
     protected $fillable = ['id_estimacion',
                             'importe',
                             'usuario_registra',
-                            'created_at',
                             'estado'
                             ];
-    public $timestamps = true;
 
     protected static function boot()
     {

@@ -1,31 +1,31 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: jfesquivel
- * Date: 19/12/18
- * Time: 12:06 PM
+ * User: emartinez
+ * Date: 05/02/19
+ * Time: 12:53 PM
  */
 
-namespace App\Repositories\CADECO\Contabilidad;
+namespace App\Repositories\CADECO\SubcontratosFG;
 
 
-use App\Models\CADECO\Contabilidad\CuentaAlmacen;
+use App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia;
 use App\Traits\RepositoryTrait;
 
-class CuentaAlmacenRepository
+class SolicitudMovimientoRepository
 {
     use RepositoryTrait;
 
     /**
-     * @var CuentaAlmacen
+     * @var SolicitudMovimientoFondoGarantia
      */
     private $model;
 
     /**
-     * CuentaAlmacenRepository constructor.
-     * @param CuentaAlmacen $model
+     * SolicitudMovimientoFondoGarantiaRepository constructor.
+     * @param SolicitudMovimientoFondoGarantia $model
      */
-    public function __construct(CuentaAlmacen $model)
+    public function __construct(SolicitudMovimientoFondoGarantia $model)
     {
         $this->model = $model;
     }

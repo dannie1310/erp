@@ -20,10 +20,8 @@ class MovimientoFondoGarantia extends Model
                             'id_movimiento_retencion',
                             'id_transaccion_generada',
                             'importe',
-                            'usuario_registra',
-                            'created_at'
+                            'usuario_registra'
                             ];
-    public $timestamps = true;
 
     protected static function boot()
     {

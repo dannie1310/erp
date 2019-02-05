@@ -18,7 +18,6 @@ class MovimientoRetencionFondoGarantia extends Model
                             'id_movimiento_antecedente',
                             'id_tipo_movimiento',
                             'usuario_registra',
-
                             ];
     public $timestamps = false;
 

@@ -20,10 +20,8 @@ class SolicitudMovimientoFondoGarantia extends Model
                             'referencia',
                             'importe',
                             'observaciones',
-                            'usuario_registra',
-                            'created_at'
+                            'usuario_registra'
                             ];
-    public $timestamps = false;
 
     protected static function boot()
     {
