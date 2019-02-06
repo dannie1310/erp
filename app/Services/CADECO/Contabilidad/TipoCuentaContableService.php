@@ -9,25 +9,27 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
-use App\Repositories\CADECO\Contabilidad\TipoCuentaContableRepository;
+use App\Models\CADECO\Contabilidad\TipoCuentaContable;
+use App\Repositories\Repository;
 
 class TipoCuentaContableService
 {
     /**
-     * @var TipoCuentaContableRepository
+     * @var Repository
      */
-    protected $tipoCuentaContable;
+    protected $repository;
 
     /**
      * TipoCuentaContableService constructor.
-     * @param TipoCuentaContableRepository $tipoCuentaContable
+     * @param TipoCuentaContable $model
      */
-    public function __construct(TipoCuentaContableRepository $tipoCuentaContable)
+    public function __construct(TipoCuentaContable $model)
     {
-        $this->tipoCuentaContable = $tipoCuentaContable;
+        $this->repository = new Repository($model);
     }
 
-    public function index() {
-        return $this->tipoCuentaContable->all();
+    public function index()
+    {
+        return $this->repository->all();
     }
 }

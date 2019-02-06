@@ -60,7 +60,7 @@
                     self.$data.data = []
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
-                            index: cuenta.id,
+                            index: (i + 1) + self.query.offset,
                             cuenta: cuenta.cuenta,
                             id_almacen: cuenta.almacen.descripcion,
                             tipo: cuenta.almacen.tipo,
