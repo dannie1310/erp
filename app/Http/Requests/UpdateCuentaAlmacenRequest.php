@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Facades\Context;
+use App\Models\CADECO\Obra;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCuentaAlmacenRequest extends FormRequest
@@ -13,7 +15,7 @@ class UpdateCuentaAlmacenRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('permiso');
+        return auth()->user()->can('editar_cuenta_almacen');
     }
 
     /**
@@ -23,15 +25,19 @@ class UpdateCuentaAlmacenRequest extends FormRequest
      */
     public function rules()
     {
+        try {
+            $regex = Obra::query()->find(Context::getIdObra())->datosContables->FormatoCuentaRegexp;
+        } catch (\Exception $e) {
+            $regex = "";
+        }
+
         return [
-            'campo1' => ['']
+            'cuenta' => ['filled', "regex:'{$regex}'"],
         ];
     }
 
-    public function messages()
+    protected function failedAuthorization()
     {
-        return [
-            'campo1.required' => 'El campo1 es requ'
-        ];
+        abort(403, 'Permisos insuficientes');
     }
 }

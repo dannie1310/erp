@@ -17,15 +17,21 @@ use League\Fractal\Serializer\ArraySerializer;
 
 trait ControllerTrait
 {
+    public function index(Request $request)
+    {
+        $collection = $this->service->index($request->all());
+        return $this->respondWithCollection($collection);
+    }
+
     public function paginate(Request $request)
     {
         $paginator = $this->service->paginate($request->except('include'));
         return $this->respondWithPaginator($paginator);
     }
 
-    public function find(Request $request, $id)
+    public function show(Request $request, $id)
     {
-        $item = $this->service->find($id);
+        $item = $this->service->show($id);
         return $this->respondWithItem($item);
     }
 
@@ -37,8 +43,19 @@ trait ControllerTrait
 
     public function destroy(Request $request, $id)
     {
-        $this->service->destroy($request->all(), $id);
+        $this->service->delete($request->all(), $id);
         return response()->json("{}", 200);
+    }
+
+    private function respondWithCollection($collection)
+    {
+        $resource = new Collection($collection, $this->transformer);
+
+        $this->parseIncludes();
+        $this->fractal->setSerializer(new ArraySerializer);
+        $response = $this->fractal->createData($resource)->toArray();
+
+        return response()->json($response, 200);
     }
 
     private function respondWithItem($item)
@@ -68,5 +85,11 @@ trait ControllerTrait
         if (request()->has('include')) {
             $this->fractal->parseIncludes(request()->get('include'));
         }
+    }
+
+    public function store(Request $request)
+    {
+        $item = $this->service->store($request->all());
+        return $this->respondWithItem($item);
     }
 }
