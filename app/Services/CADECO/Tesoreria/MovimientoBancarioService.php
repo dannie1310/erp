@@ -9,8 +9,11 @@
 namespace App\Services\CADECO\Tesoreria;
 
 
+use App\Models\CADECO\Credito;
+use App\Models\CADECO\Debito;
 use App\Models\CADECO\Tesoreria\MovimientoBancario;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\DB;
 
 class MovimientoBancarioService
 {
@@ -46,5 +49,36 @@ class MovimientoBancarioService
     public function create($data)
     {
         return $this->repository->create($data);
+    }
+
+    /**
+     * @param $data
+     * @return mixed
+     * @throws \Exception
+     */
+    public function store($data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+            $data['impuesto'] = isset($data['impuesto']) ? : 0;
+            $movimiento = $this->repository->create($data);
+
+            $transaccionRepository = new Repository($movimiento->tipo->naturaleza == 1 ? new Credito : new Debito);
+
+            $transaccion = $transaccionRepository->create($data);
+            $transaccion->monto = $movimiento->importe + $movimiento->impuesto;
+            $transaccion->impuesto = $movimiento->impuesto;
+            $transaccion->save();
+
+            $movimiento->transacciones()->attach($transaccion);
+
+            DB::connection('cadeco')->commit();
+
+            return $movimiento;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
     }
 }
