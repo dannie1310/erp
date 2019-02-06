@@ -81,9 +81,6 @@
                     .then(() => {
                         $(this.$refs.modal).modal('hide');
                     })
-                    .catsh(() => {
-                        $(this.$refs.modal).modal('hide');
-                    })
             },
 
             validate() {

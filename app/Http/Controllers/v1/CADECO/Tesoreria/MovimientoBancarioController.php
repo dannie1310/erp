@@ -18,7 +18,9 @@ use League\Fractal\Manager;
 
 class MovimientoBancarioController extends Controller
 {
-    use ControllerTrait { store as protected traitStore; }
+    use ControllerTrait {
+        store as protected traitStore;
+    }
 
     /**
      * @var Manager

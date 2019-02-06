@@ -9,22 +9,23 @@
 namespace App\Services\CADECO;
 
 
-use App\Repositories\CADECO\CuentaRepository;
+use App\Models\CADECO\Cuenta;
+use App\Repositories\Repository;
 
 class CuentaService
 {
     /**
-     * @var CuentaRepository
+     * @var Repository
      */
     protected $repository;
 
     /**
      * CuentaService constructor.
-     * @param CuentaRepository $repository
+     * @param Cuenta $model
      */
-    public function __construct(CuentaRepository $repository)
+    public function __construct(Cuenta $model)
     {
-        $this->repository = $repository;
+        $this->repository = new Repository($model);
     }
 
     public function index($data)

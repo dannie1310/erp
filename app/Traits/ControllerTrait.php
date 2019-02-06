@@ -29,9 +29,9 @@ trait ControllerTrait
         return $this->respondWithPaginator($paginator);
     }
 
-    public function find(Request $request, $id)
+    public function show(Request $request, $id)
     {
-        $item = $this->service->find($id);
+        $item = $this->service->show($id);
         return $this->respondWithItem($item);
     }
 
@@ -43,7 +43,7 @@ trait ControllerTrait
 
     public function destroy(Request $request, $id)
     {
-        $this->service->destroy($request->all(), $id);
+        $this->service->delete($request->all(), $id);
         return response()->json("{}", 200);
     }
 

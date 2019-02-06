@@ -9,22 +9,23 @@
 namespace App\Services\CADECO\Tesoreria;
 
 
-use App\Repositories\CADECO\Tesoreria\TipoMovimientoRepository;
+use App\Models\CADECO\Tesoreria\TipoMovimiento;
+use App\Repositories\Repository;
 
 class TipoMovimientoService
 {
     /**
-     * @var TipoMovimientoRepository
+     * @var Repository
      */
     protected $repository;
 
     /**
      * TipoMovimientoService constructor.
-     * @param TipoMovimientoRepository $repository
+     * @param TipoMovimiento $model
      */
-    public function __construct(TipoMovimientoRepository $repository)
+    public function __construct(TipoMovimiento $model)
     {
-        $this->repository = $repository;
+        $this->repository = new Repository($model);
     }
 
     public function index()

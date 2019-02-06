@@ -9,33 +9,37 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
-use App\Repositories\CADECO\Contabilidad\CuentaFondoRepository;
+use App\Models\CADECO\Contabilidad\CuentaFondo;
+use App\Repositories\Repository;
 
 class CuentaFondoService
 {
     /**
-     * @var CuentaFondoRepository
+     * @var Repository
      */
-    protected $cuentaFondo;
+    protected $repository;
 
     /**
      * CuentaFondoService constructor.
-     * @param CuentaFondoRepository $cuentaFondo
+     * @param CuentaFondo $model
      */
-    public function __construct(CuentaFondoRepository $cuentaFondo)
+    public function __construct(CuentaFondo $model)
     {
-        $this->cuentaFondo = $cuentaFondo;
+        $this->repository = new Repository($model);
     }
 
-    public function paginate($data) {
-        return $this->cuentaFondo->paginate($data);
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
     }
 
-    public function find($id) {
-        return $this->cuentaFondo->find($id);
+    public function show($id)
+    {
+        return $this->repository->show($id);
     }
 
-    public function update(array $data, $id) {
-        return $this->cuentaFondo->update($data, $id);
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
     }
 }

@@ -254,9 +254,9 @@
             },
 
             store() {
-                return this.$store.dispatch('tesoreria/movimiento-bancario/store')
+                return this.$store.dispatch('tesoreria/movimiento-bancario/store', this.$data)
                     .then((data) => {
-                        this.$router.push({name: 'movimiento-bancario'})
+                        $(this.$refs.modal).modal('hide');
                     })
             }
         },

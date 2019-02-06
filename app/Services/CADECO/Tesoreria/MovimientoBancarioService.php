@@ -9,22 +9,23 @@
 namespace App\Services\CADECO\Tesoreria;
 
 
-use App\Repositories\CADECO\Tesoreria\MovimientoBancarioRepository;
+use App\Models\CADECO\Tesoreria\MovimientoBancario;
+use App\Repositories\Repository;
 
 class MovimientoBancarioService
 {
     /**
-     * @var MovimientoBancarioRepository
+     * @var Repository
      */
     protected $repository;
 
     /**
      * MovimientoBancarioService constructor.
-     * @param MovimientoBancarioRepository $repository
+     * @param MovimientoBancario $model
      */
-    public function __construct(MovimientoBancarioRepository $repository)
+    public function __construct(MovimientoBancario $model)
     {
-        $this->repository = $repository;
+        $this->repository = new Repository($model);
     }
 
     public function paginate($data)
@@ -32,24 +33,18 @@ class MovimientoBancarioService
         return $this->repository->paginate($data);
     }
 
-    public function find($id)
+    public function show($id)
     {
-        return $this->repository->find($id);
+        return $this->repository->show($id);
     }
 
-    public function destroy($data, $id)
+    public function delete($data, $id)
     {
-        try {
-
-            $this->repository->destroy($data, $id);
-
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->repository->delete($data, $id);
     }
 
-    public function store($data)
+    public function create($data)
     {
-
+        return $this->repository->create($data);
     }
 }

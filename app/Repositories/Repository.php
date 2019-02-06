@@ -2,15 +2,31 @@
 /**
  * Created by PhpStorm.
  * User: jfesquivel
- * Date: 19/12/18
- * Time: 12:27 PM
+ * Date: 5/02/19
+ * Time: 05:21 PM
  */
 
-namespace App\Traits;
+namespace App\Repositories;
 
 
-trait RepositoryTrait
+use Illuminate\Database\Eloquent\Model;
+
+class Repository implements RepositoryInterface
 {
+    /**
+     * @var Model
+     */
+    protected $model;
+
+    /**
+     * Repository constructor.
+     * @param Model $model
+     */
+    public function __construct(Model $model)
+    {
+        $this->model = $model;
+    }
+
     public function all($data = null) {
         if (isset($data['scope'])) {
             $this->scope($data['scope']);
@@ -23,21 +39,15 @@ trait RepositoryTrait
         if (count($data)) {
             $query = $this->model;
             if ($data['sort'])
-            $query = $query->orderBy($data['sort'], $data['order']);
+                $query = $query->orderBy($data['sort'], $data['order']);
             return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
         }
 
         return $this->model->paginate(10);
     }
 
-    public function find($id)
-    {
-        return $this->model->find($id);
-    }
-
-    public function update($data, $id) {
-        $item = $this->find($id);
-
+    public function update(array $data, $id) {
+        $item = $this->show($id);
         $item->update($data);
 
         return $item;
@@ -68,10 +78,18 @@ trait RepositoryTrait
         $this->model = $this->model->where($where);
         return $this;
     }
-
-    public function destroy($data = [], $id)
+    public function create(array $data)
     {
-        $item = $this->find($id);
-        $item->delete();
+        return $this->model->create($data);
+    }
+
+    public function delete(array $data, $id)
+    {
+        $this->model->destroy($id);
+    }
+
+    public function show($id)
+    {
+        return $this->model->find($id);
     }
 }
