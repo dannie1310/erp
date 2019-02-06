@@ -64,4 +64,9 @@ class UpdatePolizaRequest extends FormRequest
             'movimientos.data.*.referencia' => ['string', 'max:100', 'filled'],
         ];
     }
+
+    protected function failedAuthorization()
+    {
+        abort(403, 'Permisos insuficientes');
+    }
 }

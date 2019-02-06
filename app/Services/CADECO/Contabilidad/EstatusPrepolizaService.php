@@ -9,25 +9,27 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
-use App\Repositories\CADECO\Contabilidad\EstatusPrepolizaRepository;
+use App\Models\CADECO\Contabilidad\EstatusPrepoliza;
+use App\Repositories\Repository;
 
 class EstatusPrepolizaService
 {
     /**
-     * @var EstatusPrepolizaRepository
+     * @var Repository
      */
     protected $repository;
 
     /**
      * EstatusPrepolizaService constructor.
-     * @param EstatusPrepolizaRepository $repository
+     * @param EstatusPrepoliza $model
      */
-    public function __construct(EstatusPrepolizaRepository $repository)
+    public function __construct(EstatusPrepoliza $model)
     {
-        $this->repository = $repository;
+        $this->repository = new Repository($model);
     }
 
-    public function index() {
+    public function index()
+    {
         return $this->repository->all();
     }
 }

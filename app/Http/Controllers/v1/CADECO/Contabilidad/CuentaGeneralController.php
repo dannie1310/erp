@@ -12,14 +12,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaGeneralTransformer;
 use App\Services\CADECO\Contabilidad\CuentaGeneralService;
 use App\Traits\ControllerTrait;
-use Dingo\Api\Routing\Helpers;
-use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 
 class CuentaGeneralController extends Controller
 {
-    use Helpers, ControllerTrait;
+    use ControllerTrait;
 
     /**
      * @var CuentaGeneralService

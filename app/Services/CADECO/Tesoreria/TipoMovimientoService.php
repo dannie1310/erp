@@ -2,17 +2,17 @@
 /**
  * Created by PhpStorm.
  * User: jfesquivel
- * Date: 3/01/19
- * Time: 06:23 PM
+ * Date: 30/01/19
+ * Time: 07:23 PM
  */
 
-namespace App\Services\CADECO\Contabilidad;
+namespace App\Services\CADECO\Tesoreria;
 
 
-use App\Models\CADECO\Contabilidad\TipoPolizaContpaq;
+use App\Models\CADECO\Tesoreria\TipoMovimiento;
 use App\Repositories\Repository;
 
-class TipoPolizaContpaqService
+class TipoMovimientoService
 {
     /**
      * @var Repository
@@ -20,10 +20,10 @@ class TipoPolizaContpaqService
     protected $repository;
 
     /**
-     * TipoPolizaContpaqService constructor.
-     * @param TipoPolizaContpaq $model
+     * TipoMovimientoService constructor.
+     * @param TipoMovimiento $model
      */
-    public function __construct(TipoPolizaContpaq $model)
+    public function __construct(TipoMovimiento $model)
     {
         $this->repository = new Repository($model);
     }

@@ -59,7 +59,7 @@
                     self.$data.data = []
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
-                            index: cuenta.id,
+                            index: (i + 1) + self.query.offset,
                             general: cuenta.tipo.descripcion,
                             cuenta_contable: cuenta.cuenta_contable,
                             buttons: $.extend({}, {
