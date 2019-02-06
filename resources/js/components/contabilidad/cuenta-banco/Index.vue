@@ -60,10 +60,10 @@
                     self.$data.data = []
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
-                            index: cuenta.id,
+                            index: (i + 1) + self.query.offset,
                             cuenta: cuenta.cuenta,
                             tipo: cuenta.tipo.descripcion,
-                            cuenta_contable: cuenta.cuenta.numero,
+                            cuenta_contable: cuenta.cuentaContable.abreviatura,
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cuenta_banco') ? true : undefined,
                                 id: cuenta.id

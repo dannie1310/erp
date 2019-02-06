@@ -21,7 +21,7 @@ class CuentaBanco extends Model
     protected $table = 'Contabilidad.cuentas_contables_bancarias';
     protected $primaryKey = 'id_cuenta_contable_bancaria';
 
-    public function cuenta(){
+    public function cuentaContable(){
         return $this->belongsTo(Cuenta::class, 'id_cuenta', 'id_cuenta');
     }
 
