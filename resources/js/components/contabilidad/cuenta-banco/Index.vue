@@ -18,15 +18,15 @@
 
 <script>
     export default {
-        name: "cuenta-almacen-index",
+        name: "cuenta-banco-index",
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Cuenta', field: 'cuenta', sortable: true },
-                    { title: 'Almacén', field: 'id_almacen', sortable: true },
-                    { title: 'Tipo de Almacén', field: 'tipo', sortable: false },
+                    { title: 'Tipo Cuenta Contable', field: 'tipo', sortable: true },
+                    { title: 'Tipo Cuenta', field: 'cuenta_contable', sortable: false },
                     { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -42,15 +42,15 @@
 
         methods: {
             paginate(payload = {}) {
-                return this.$store.dispatch('contabilidad/cuenta-almacen/paginate', payload)
+                return this.$store.dispatch('contabilidad/cuenta-banco/paginate', payload)
             }
         },
         computed: {
             cuentas(){
-                return this.$store.getters['contabilidad/cuenta-almacen/cuentas'];
+                return this.$store.getters['contabilidad/cuenta-banco/cuentas'];
             },
             meta(){
-                return this.$store.getters['contabilidad/cuenta-almacen/meta'];
+                return this.$store.getters['contabilidad/cuenta-banco/meta'];
             },
         },
         watch: {
@@ -60,12 +60,12 @@
                     self.$data.data = []
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
-                            index: (i + 1) + self.query.offset,
+                            index: cuenta.id,
                             cuenta: cuenta.cuenta,
-                            id_almacen: cuenta.almacen.descripcion,
-                            tipo: cuenta.almacen.tipo,
+                            tipo: cuenta.tipo.descripcion,
+                            cuenta_contable: cuenta.cuenta.numero,
                             buttons: $.extend({}, {
-                                edit: self.$root.can('editar_cuenta_almacen') ? true : undefined,
+                                edit: self.$root.can('editar_cuenta_banco') ? true : undefined,
                                 id: cuenta.id
                             })
                         })
