@@ -38,5 +38,9 @@ class Debito extends Transaccion
             $model->tipo_transaccion = 84;
             $model->vencimiento = $model->cumplimiento;
         });
+
+        self::updating(function ($model) {
+            $model->vencimiento = $model->cumplimiento;
+        });
     }
 }

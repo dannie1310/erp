@@ -110,8 +110,8 @@
                             id_tipo_poliza_contpaq: poliza.tipoPolizaContpaq.descripcion,
                             concepto: poliza.concepto,
                             fecha: poliza.fecha,
-                            total: '$'+parseFloat(poliza.total).formatMoney(2, '.', ','),
-                            cuadre: '$'+parseFloat(poliza.cuadre).formatMoney(2, '.', ','),
+                            total: '$' + parseFloat(poliza.total).formatMoney(2, '.', ','),
+                            cuadre: '$' + parseFloat(poliza.cuadre).formatMoney(2, '.', ','),
                             estatus: poliza.estatusPrepoliza,
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_prepolizas_generadas') ? true : undefined,

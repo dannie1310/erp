@@ -38,5 +38,9 @@ class Credito extends Transaccion
             $model->tipo_transaccion = 83;
             $model->vencimiento = $model->cumplimiento;
         });
+
+        self::updating(function ($model) {
+            $model->vencimiento = $model->cumplimiento;
+        });
     }
 }

@@ -81,4 +81,28 @@ class MovimientoBancarioService
             throw $e;
         }
     }
+
+    public function update($data, $id)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+            $movimiento = $this->repository->update($data,  $id);
+
+
+            $transaccionRepository = new Repository($movimiento->tipo->naturaleza == 1 ? new Credito : new Debito);
+
+            $data['monto'] = $movimiento->importe + $movimiento->impuesto;
+            $data['impuesto'] = $movimiento->impuesto;
+
+            $transaccionRepository->update($data, $movimiento->transacciones()->first()->getKey());
+
+            DB::connection('cadeco')->commit();
+
+            return $movimiento;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
+    }
 }
