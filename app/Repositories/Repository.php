@@ -27,7 +27,8 @@ class Repository implements RepositoryInterface
         $this->model = $model;
     }
 
-    public function all($data = null) {
+    public function all($data = null)
+    {
         if (isset($data['scope'])) {
             $this->scope($data['scope']);
         }
@@ -46,7 +47,8 @@ class Repository implements RepositoryInterface
         return $this->model->paginate(10);
     }
 
-    public function update(array $data, $id) {
+    public function update(array $data, $id)
+    {
         $item = $this->show($id);
         $item->update($data);
 
@@ -74,10 +76,12 @@ class Repository implements RepositoryInterface
         return $this;
     }
 
-    public function where($where) {
+    public function where($where)
+    {
         $this->model = $this->model->where($where);
         return $this;
     }
+
     public function create(array $data)
     {
         return $this->model->create($data);
