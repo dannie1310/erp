@@ -30,7 +30,6 @@ class FondoGarantia extends Model
             }
             $fondo->created_at = date('Y-m-d h:i:s');
         });
-
     }
 
     public function subcontrato()

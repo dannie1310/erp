@@ -9,6 +9,19 @@ use Tests\TestCase;
 class SubcontratoFGTest extends TestCase
 {
     /**
+     * Registro de Subcontrato con antecedente que no es del tipo esperado
+     *
+     * @dataProvider registraSubcontratoConFGYAntecedenteNoValidoProvider
+     */
+    public function testRegistraSubcontratoConAntecedenteNoValido($datos)
+    {
+        $this->expectExceptionMessage('La transacción antecedente no es válida');
+        $subcontrato = Subcontrato::create($datos);
+
+    }
+
+
+    /**
      * Registro de Subcontrato con retención de fondo de garantía, que DEBE detonar el registro de un fondo de garantía
      *
      * @dataProvider registraSubcontratoConFGProvider
@@ -58,13 +71,39 @@ class SubcontratoFGTest extends TestCase
         $fondo_garantia->save();
     }
 
-    public function registraSubcontratoConFGProvider()
+     public function registraSubcontratoConFGYAntecedenteNoValidoProvider()
     {
 
         return array(
             array(
                 array(
                     'id_antecedente' => 2,
+                    'fecha' => '2018-01-01',
+                    'id_empresa' => 2,
+                    'id_moneda' => 1,
+                    'anticipo' => 1,
+                    'anticipo_monto' => 100,
+                    'anticipo_saldo' => 100,
+                    'monto' => 100,
+                    'PorcentajeDescuento' => 1,
+                    'impuesto' => 16,
+                    'impuesto_retenido' => 16,
+                    'id_costo' => 1,
+                    'retencion' => 10,
+                    'referencia' => 1,
+                    'id_obra' => 1,
+                )
+            )
+        );
+    }
+
+    public function registraSubcontratoConFGProvider()
+    {
+
+        return array(
+            array(
+                array(
+                    'id_antecedente' => 208188,
                     'fecha' => '2018-01-01',
                     'id_empresa' => 2,
                     'id_moneda' => 1,
@@ -90,7 +129,7 @@ class SubcontratoFGTest extends TestCase
         return array(
             array(
                 array(
-                    'id_antecedente' => 2,
+                    'id_antecedente' => 208188,
                     'fecha' => '2018-01-01',
                     'id_empresa' => 2,
                     'id_moneda' => 1,
