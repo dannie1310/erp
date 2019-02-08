@@ -75,7 +75,7 @@
                             numero_folio: movimiento.numero_folio,
                             fecha: movimiento.fecha,
                             tipo: movimiento.tipo.descripcion,
-                            cuenta: movimiento.cuenta ? movimiento.cuenta.numero + ' ' + movimiento.cuenta.abreviatura + ' (' + movimiento.cuenta.empresa.razon_social + ')' : '',
+                            cuenta: movimiento.cuenta ? movimiento.cuenta.numero + ' ' + (movimiento.cuenta.abreviatura ? movimiento.cuenta.abreviatura : '') + ' (' + movimiento.cuenta.empresa.razon_social + ')' : '',
                             referencia: movimiento.transaccion ? movimiento.transaccion.referencia : '',
                             total: '$ ' +  (parseFloat(movimiento.importe) + parseFloat(movimiento.impuesto)).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
