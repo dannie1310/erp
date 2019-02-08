@@ -6,11 +6,25 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
             <li class="nav-item">
-                <router-link :to="{name: 'movimiento-bancario'}" class="nav-link">
-                    <i class="fa fa-file-text nav-icon"></i>
-                    <p>Movimientos Bancarios</p>
-                </router-link>
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-money"></i>
+                    <p>
+                        Fondo de Garantía
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
+                        <router-link :to="{name: 'solicitud-movimiento-fg'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-movimiento-fg'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Solicitar Movimiento</p>
+                        </router-link>
+                    </li>
+
+                </ul>
             </li>
+
+
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
@@ -18,7 +32,15 @@
 
 <script>
     export default {
-        name: "tesoreria-menu",
+        name: "subcontratos-menu",
+
+        methods: {
+            mostrarMenu(event) {
+                event.stopPropagation();
+                $(event.target).closest('li').toggleClass('menu-open');
+            }
+        }
+
     }
 </script>
 

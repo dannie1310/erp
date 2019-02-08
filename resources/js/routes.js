@@ -173,6 +173,46 @@ export const routes = [
             }
         ]
     },
+
+    {
+        path: '/subcontratos',
+        components: {
+            default: require('./components/subcontratos/partials/Layout.vue'),
+            menu: require('./components/subcontratos/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'subcontratos',
+                component: require('./components/subcontratos/Index'),
+                meta: {
+                    title: 'Subcontratos',
+                    breadcrumb: { parent: 'home', name: 'SUBCONTRATOS'},
+                    middleware: [auth, context]
+                }
+            },
+            {
+                path: 'solicitud-movimiento-fg',
+                component: require('./components/subcontratos/solicitud-movimiento-fg/Layout.vue'),
+                meta: {
+                    middleware: [auth, context]
+                },
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-movimiento-fg',
+                        component: require('./components/subcontratos/solicitud-movimiento-fg/Index'),
+                        meta: {
+                            title: 'Solicitud de Movimiento a Fondo de Garantía',
+                            breadcrumb: {parent: 'subcontratos', name: 'SOLICITUD DE MOVIMIENTO A FONDO DE GARANTÍA'},
+                            middleware: [auth, context]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+
     {
         path: '*',
         name: 'notFound',

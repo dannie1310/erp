@@ -117,4 +117,23 @@ $api->version('v1', function ($api) {
         $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
         $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
     });
+
+    /**
+     * SUBCONTRATOS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'subcontratos'], function ($api) {
+        //SOLICITUD DE MOVIMIENTO
+        $api->group(['prefix' => 'solicitud-movimiento-fg'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaController@show');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaController@destroy');
+        });
+
+        //TIPOS MOVIMIENTO
+        $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\TipoMovimientoController@index');
+        });
+    });
+
 });

@@ -9,7 +9,7 @@
 namespace App\Models\CADECO;
 
 
-class Subcontrato
+class Subcontrato extends Transaccion
 {
 
 }
