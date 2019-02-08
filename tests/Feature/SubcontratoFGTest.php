@@ -51,7 +51,7 @@ class SubcontratoFGTest extends TestCase
      */
     public function testRegistraSubcontratoSinRetencionDeFondoDeGarantiaYPosteriormenteSeLePideRegistroDeFondoDeGarantia($datos)
     {
-        $this->expectExceptionMessage('El subcontrato no tiene retención de fondo de garantía');
+        $this->expectExceptionMessage('El subcontrato no tiene establecido un porcentaje de retención de fondo de garantía, el fondo de garantía no puede generarse');
         $subcontrato = Subcontrato::create($datos);
         $subcontrato->generaFondoGarantia();
     }
@@ -70,7 +70,10 @@ class SubcontratoFGTest extends TestCase
         $fondo_garantia->id_subcontrato = $subcontrato->id_transaccion;
         $fondo_garantia->save();
     }
-
+    /**
+     * Data provider con id_antecedente de tipo no válido
+     *
+     */
      public function registraSubcontratoConFGYAntecedenteNoValidoProvider()
     {
 
@@ -96,7 +99,10 @@ class SubcontratoFGTest extends TestCase
             )
         );
     }
-
+    /**
+     * Data provider con id_antecedente de tipo válido y con porcentaje de retención de fondo de garantía mayor a 0
+     *
+     */
     public function registraSubcontratoConFGProvider()
     {
 
@@ -122,7 +128,10 @@ class SubcontratoFGTest extends TestCase
                 )
             );
     }
-
+    /**
+     * Data provider con id_antecedente de tipo válido y con porcentaje de retención de fondo de garantía igual a 0
+     *
+     */
     public function registraSubcontratoSinFGProvider()
     {
 
