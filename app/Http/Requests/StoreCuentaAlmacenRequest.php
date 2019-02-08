@@ -3,10 +3,12 @@
 namespace App\Http\Requests;
 
 use App\Facades\Context;
+use App\Models\CADECO\Contabilidad\CuentaAlmacen;
 use App\Models\CADECO\Obra;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator;
 
-class UpdateCuentaAlmacenRequest extends FormRequest
+class StoreCuentaAlmacenRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +17,7 @@ class UpdateCuentaAlmacenRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('editar_cuenta_almacen');
+        return auth()->user()->can('registrar_cuenta_almacen');
     }
 
     /**
@@ -31,8 +33,13 @@ class UpdateCuentaAlmacenRequest extends FormRequest
             $regex = "";
         }
 
+        Validator::extend('sin_cuenta', function ($attribute, $value, $parameters, $validator) {
+            return ! CuentaAlmacen::query()->where('id_almacen', '=', $value)->first();
+        });
+
         return [
-            'cuenta' => ['filled', "regex:'{$regex}'"],
+            'id_almacen' => ['required', 'integer', 'exists:cadeco.almacenes,id_almacen,id_obra,' . Context::getIdObra(), 'sin_cuenta'],
+            'cuenta' => ['required', "regex:'{$regex}'"]
         ];
     }
 
