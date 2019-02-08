@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\SubcontratosFG;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\SubcontratosFG\MovimientoSolicitudMovimientoFondoGarantia;
 
 class SolicitudMovimientoFondoGarantia extends Model
 {
@@ -22,11 +23,20 @@ class SolicitudMovimientoFondoGarantia extends Model
                             'observaciones',
                             'usuario_registra'
                             ];
-
+    public $timestamps = false;
     protected static function boot()
     {
         parent::boot();
 
+        self::creating(function ($solicitud_movimiento_fg) {
+            $solicitud_movimiento_fg->created_at = date('Y-m-d h:i:s');
+            if (!$solicitud_movimiento_fg->validaNoSolicitudesPendientes()) {
+                throw New \Exception('Hay una solicitud de movimiento a fondo de garantía pendiente de autorizar, la solicitud actual no puede registrarse');
+            }
+        });
+        self::created(function($solicitud_movimiento_fg){
+            $solicitud_movimiento_fg->generaMovimientoRegistro();
+        });
     }
 
     public function movimientos()
@@ -45,4 +55,25 @@ class SolicitudMovimientoFondoGarantia extends Model
         return $this->belongsTo(CtgTipoSolicitud::class,"id_tipo_solicitud");
     }
 
+    protected function validaNoSolicitudesPendientes()
+    {
+       $solicitudes = SolicitudMovimientoFondoGarantia::where("id_fondo_garantia",$this->id_fondo_garantia)->where("estado",0)->get();
+       if(count($solicitudes)>0)
+       {
+           return false;
+       }
+       return true;
+    }
+
+    protected function generaMovimientoRegistro()
+    {
+         MovimientoSolicitudMovimientoFondoGarantia::create([
+            'id_solicitud'=>$this->id,
+             'id_tipo_movimiento'=>1,
+             'usuario_registra'=>$this->usuario_registra
+             ]
+        );
+
+        $this->refresh();
+    }
 }

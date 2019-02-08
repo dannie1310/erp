@@ -19,10 +19,17 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
                             'id_tipo_movimiento',
                             'usuario_registra',
                             ];
-
+    public $timestamps = false;
     protected static function boot()
     {
         parent::boot();
+        self::creating(function ($movimiento_solicitud) {
+            $movimiento_solicitud->created_at = date('Y-m-d h:i:s');
+            if(!$movimiento_solicitud->validaNoExistenciaDeMovimientoPrevio())
+            {
+                throw New \Exception('Ya existe un movimiento del mismo tipo, el movimiento no puede registrarse');
+            }
+        });
 
     }
 
@@ -36,4 +43,13 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
         return $this->belongsTo(CtgTipoMovimientoSolicitud::class,"id_tipo_movimiento");
     }
 
+    private function validaNoExistenciaDeMovimientoPrevio()
+    {
+        $movimientos = MovimientoSolicitudMovimientoFondoGarantia::where("id_solicitud",$this->id_solicitud)->where("id_tipo_movimiento",$this->id_tipo_movimiento)->get();
+        if(count($movimientos)>0)
+        {
+           return false;
+        }
+        return true;
+    }
 }

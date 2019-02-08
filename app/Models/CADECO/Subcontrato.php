@@ -51,12 +51,16 @@ class Subcontrato extends Transaccion
 
     public function generaFondoGarantia()
     {
-        if ($this->retencion > 0) {
-            $fondo_garantia = new FondoGarantia();
-            $fondo_garantia->id_subcontrato = $this->id_transaccion;
-            $fondo_garantia->save();
-        } else {
-            throw New \Exception('El subcontrato no tiene establecido un porcentaje de retención de fondo de garantía, el fondo de garantía no puede generarse');
+        if(is_null($this->fondo_garantia))
+        {
+            if ($this->retencion > 0) {
+                $fondo_garantia = new FondoGarantia();
+                $fondo_garantia->id_subcontrato = $this->id_transaccion;
+                $fondo_garantia->save();
+                $this->refresh();
+            } else {
+                throw New \Exception('El subcontrato no tiene establecido un porcentaje de retención de fondo de garantía, el fondo de garantía no puede generarse');
+            }
         }
-    }
+   }
 }
