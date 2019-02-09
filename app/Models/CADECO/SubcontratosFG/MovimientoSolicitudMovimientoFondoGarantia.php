@@ -20,6 +20,7 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
                             'usuario_registra',
                             ];
     public $timestamps = false;
+
     protected static function boot()
     {
         parent::boot();

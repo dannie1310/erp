@@ -29,7 +29,7 @@ class EstimacionTest extends TestCase
      *
      * @dataProvider registraEstimacionConAntecedenteNoValidoProvider
      */
-    public function testRegistraEstimacionConAntecedenteNoValido($datos)
+    public function testExceptioAntecedenteNoValido($datos)
     {
         $this->expectExceptionMessage('La transacción antecedente no es válida');
         $estimacion = Estimacion::create($datos);

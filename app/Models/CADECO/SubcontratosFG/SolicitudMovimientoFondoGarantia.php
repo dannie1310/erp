@@ -56,9 +56,12 @@ class SolicitudMovimientoFondoGarantia extends Model
     {
         return $this->belongsTo(CtgTipoSolicitud::class,"id_tipo_solicitud");
     }
+
+
     /**
      * No puede haber más de una solicitud de movimiento a fondo de garantía con estado 0 (Generada)
-    */
+     * @return bool
+     */
 
     private function validaNoSolicitudesPendientes()
     {
@@ -70,6 +73,10 @@ class SolicitudMovimientoFondoGarantia extends Model
        return true;
     }
 
+    /**
+     * El  monto de la solicitud no puede ser mayor al monto disponible del fondo de garantía
+     * @return bool
+     */
     private function validaMontoSolicitud()
     {
 
@@ -92,4 +99,50 @@ class SolicitudMovimientoFondoGarantia extends Model
 
         $this->refresh();
     }
+
+    /**
+     * Mètodo para cancelar solicitud de movimiento
+     */
+    public function cancelar()
+    {
+
+    }
+
+    public function autorizar()
+    {
+        #se genera movimiento de solicitud
+        MovimientoSolicitudMovimientoFondoGarantia::create([
+                'id_solicitud'=>$this->id,
+                'id_tipo_movimiento'=>2,
+                'usuario_registra'=>$this->usuario_registra
+            ]
+        );
+        #se actualiza estado de solicitud
+        $this->actualizarEstado();
+
+        #se genera movimiento de fondo de garantia
+
+        #se genera transacción de movimiento a fondo de garantia
+    }
+
+    /**
+     * Se actualiza el estado de la solicitud de acuerdo a su último movimiento registrado
+     */
+    private function actualizarEstado()
+    {
+        $ultimo_movimiento = $this->movimientos()->latest()->first();
+        $this->estado = $ultimo_movimiento->tipo->estado_resultante;
+        $this->save();
+    }
+
+    public function rechazar()
+    {
+
+    }
+
+    public function revertirAutorizacion()
+    {
+
+    }
+
 }
