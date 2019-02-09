@@ -32,6 +32,10 @@ class MovimientoFondoGarantia extends Model
         {
             $movimiento_fg->created_at = date('Y-m-d h:i:s');
         });
+        self::created(function($movimiento_fg)
+        {
+            $movimiento_fg->fondo_garantia->actualizaSaldo();
+        });
 
     }
 
@@ -44,4 +48,5 @@ class MovimientoFondoGarantia extends Model
     {
         return $this->belongsTo(CtgTipoMovimientoFondoGarantia::class,"id_tipo_movimiento");
     }
+
 }

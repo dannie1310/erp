@@ -21,6 +21,7 @@ class FondoGarantia extends Model
     public $timestamps = false;
     public $usuario_registra = 0;
     public $incrementing = false;
+    protected $with = array('movimientos');
     protected static function boot()
     {
         parent::boot();
@@ -72,6 +73,25 @@ class FondoGarantia extends Model
 
         $this->refresh();
     }
+    public function generaMovimientoRetencion(MovimientoRetencionFondoGarantia $movimiento_retencion)
+    {
 
+        MovimientoFondoGarantia::create(
+            [
+                'id_fondo_garantia'=>$this->id_subcontrato,
+                'id_tipo_movimiento'=>2,
+                'importe'=>$movimiento_retencion->retencion->importe,
+                'usuario_registra'=>$movimiento_retencion->usuario_registra,
+            ]
+        );
+
+    }
+
+    public function actualizaSaldo()
+    {
+        $this->saldo = $this->movimientos()->sum('importe');
+        $this->save();
+
+    }
 
 }

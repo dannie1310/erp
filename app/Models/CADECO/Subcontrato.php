@@ -31,7 +31,8 @@ class Subcontrato extends Transaccion
         'referencia',
         'observaciones',
     ];
-    public $usuario_registra = 666;
+    protected $with = array('fondo_garantia', 'estimacion');
+    public $usuario_registra = 777;
     protected static function boot()
     {
         parent::boot();
@@ -46,9 +47,13 @@ class Subcontrato extends Transaccion
         });
     }
 
+    public function estimacion(){
+        return $this->hasMany(Estimacion::class,'id_antecedente','id_transaccion');
+    }
+
     public function fondo_garantia()
     {
-        return $this->hasOne(FondoGarantia::class, 'id_subcontrato');
+        return $this->hasOne(FondoGarantia::class, 'id_subcontrato', 'id_transaccion');
     }
 
     public function generaFondoGarantia()

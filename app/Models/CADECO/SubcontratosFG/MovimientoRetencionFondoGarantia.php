@@ -25,6 +25,18 @@ class MovimientoRetencionFondoGarantia extends Model
     {
         parent::boot();
 
+        self::creating(function($movimiento_retencion)
+        {
+            $movimiento_retencion->created_at = date('Y-m-d h:i:s');
+        });
+
+        self::created(function($movimiento_retencion)
+        {
+
+            $movimiento_retencion->retencion->estimacion->subcontrato->fondo_garantia->generaMovimientoRetencion($movimiento_retencion);
+
+        });
+
     }
 
     public function retencion()

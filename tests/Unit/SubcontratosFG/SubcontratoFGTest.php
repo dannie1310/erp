@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit\SubcontratosFG;
 
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
@@ -82,21 +82,21 @@ class SubcontratoFGTest extends TestCase
         return array(
             array(
                 array(
-                    'id_antecedente' => 2,
-                    'fecha' => '2018-01-01',
-                    'id_empresa' => 2,
-                    'id_moneda' => 1,
-                    'anticipo' => 1,
-                    'anticipo_monto' => 100,
-                    'anticipo_saldo' => 100,
-                    'monto' => 100,
-                    'PorcentajeDescuento' => 1,
-                    'impuesto' => 16,
-                    'impuesto_retenido' => 16,
-                    'id_costo' => 1,
-                    'retencion' => 10,
-                    'referencia' => 1,
-                    'id_obra' => 1,
+                    'id_antecedente'=>2,
+                    'fecha'=>'2019-02-08',
+                    'id_obra'=>1,
+                    'id_empresa'=>12,
+                    'id_moneda'=>1,
+                    'cumplimiento'=>'2019-02-09',
+                    'vencimiento'=>'2019-02-28',
+                    'monto'=>50,
+                    'saldo'=>50,
+                    'autorizado'=>50,
+                    'impuesto'=>16,
+                    'anticipo'=>0,
+                    'retencion'=>10,
+                    'referencia'=>'esfas',
+                    'observaciones'=>'observaciones',
                 )
             )
         );
