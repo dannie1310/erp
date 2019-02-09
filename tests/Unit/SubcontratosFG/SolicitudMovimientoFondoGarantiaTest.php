@@ -70,6 +70,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_nuevo->id_subcontrato]);
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
+
         $this->assertTrue($solicitud->id > 0 && count($solicitud->movimientos->where('id_tipo_movimiento',1))==1);
 
     }
@@ -111,6 +112,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
             'retencion' => 10,
             'referencia' => 1,
             'id_obra' => 1,]);
+
 
         $this->fondo_nuevo = $subcontrato_nuevo->fondo_garantia;
     }

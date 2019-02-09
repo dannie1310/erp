@@ -21,6 +21,7 @@ class Transaccion extends Model
     public $timestamps = false;
     public const CREATED_AT = 'FechaHoraRegistro';
     public const TIPO_ANTECEDENTE = 0;
+    public const OPCION_ANTECEDENTE = 0;
     protected static function boot()
     {
         parent::boot();
@@ -52,7 +53,7 @@ class Transaccion extends Model
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
             $antecedente = Transaccion::find($this->id_antecedente);
-            if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE)
+            if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opcion != $this::OPCION_ANTECEDENTE)
             {
                 return false;
             }

@@ -17,8 +17,10 @@ class FondoGarantia extends Model
     protected $connection = 'cadeco';
     protected $table = 'SubcontratosFG.fondos_garantia';
     protected $primaryKey = 'id_subcontrato';
+    protected $guarded = 'saldo';
     public $timestamps = false;
-
+    public $usuario_registra = 0;
+    public $incrementing = false;
     protected static function boot()
     {
         parent::boot();
@@ -29,12 +31,18 @@ class FondoGarantia extends Model
                 throw New \Exception('La retención de fondo de garantía establecida en el subcontrato no es mayor a 0, el fondo de garantía no puede generarse');
             }
             $fondo->created_at = date('Y-m-d h:i:s');
+            $fondo->usuario_registra = $subcontrato->usuario_registra;
+        });
+
+        self::created(function($fondo)
+        {
+            $fondo->generaMovimientoRegistro();
         });
     }
 
     public function subcontrato()
     {
-        return $this->hasOne(Transaccion::class, "id_subcontrato");
+        return $this->hasOne(Transaccion::class, "id_transaccion");
     }
 
     public function movimientos()
@@ -48,5 +56,22 @@ class FondoGarantia extends Model
         return $this->hasMany(SolicitudMovimientoFondoGarantia::class,"id_fondo_garantia");
 
     }
+
+
+    private function generaMovimientoRegistro()
+    {
+
+        MovimientoFondoGarantia::create(
+            [
+                'id_fondo_garantia'=>$this->id_subcontrato,
+                'id_tipo_movimiento'=>1,
+                'importe'=>0,
+                'usuario_registra'=>$this->usuario_registra,
+            ]
+        );
+
+        $this->refresh();
+    }
+
 
 }

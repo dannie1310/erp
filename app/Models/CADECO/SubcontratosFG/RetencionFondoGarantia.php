@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO\SubcontratosFG;
 
+use App\Models\CADECO\Estimacion;
 use Illuminate\Database\Eloquent\Model;
 
 class RetencionFondoGarantia extends Model
@@ -19,22 +20,42 @@ class RetencionFondoGarantia extends Model
                             'usuario_registra',
                             'estado'
                             ];
-
+    public $timestamps = false;
     protected static function boot()
     {
         parent::boot();
+        self::creating(function ($retencion) {
+
+            $estimacion = Estimacion::find($retencion->id_estimacion);
+            if(!(float) $estimacion->retencion>0){
+                throw New \Exception('La retención de fondo de garantía establecida en la estimacion no es mayor a 0, la retención no puede generarse');
+            }
+
+        });
 
     }
 
     public function estimacion()
     {
-        return $this->hasOne(Transaccion::class, "id_estimacion");
+        return $this->hasOne(Transaccion::class, "id_transaccion");
     }
 
     public function movimientos()
     {
         return $this->hasMany(MovimientoRetencionFondoGarantia::class,"id_retencion");
 
+    }
+
+    private function generaMovimientoRegistro()
+    {
+        MovimientoRetencionFondoGarantia::create(
+            [ 'id_retencion'=>$this->id,
+               'id_tipo_movimiento'=>1,
+               'usuario_registra'=>$this->usuario_registra,
+            ]
+        );
+
+        $this->refresh();
     }
 
 }

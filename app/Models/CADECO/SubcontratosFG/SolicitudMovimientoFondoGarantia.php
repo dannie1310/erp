@@ -9,7 +9,6 @@
 namespace App\Models\CADECO\SubcontratosFG;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\CADECO\SubcontratosFG\MovimientoSolicitudMovimientoFondoGarantia;
 
 class SolicitudMovimientoFondoGarantia extends Model
 {
@@ -33,6 +32,9 @@ class SolicitudMovimientoFondoGarantia extends Model
             if (!$solicitud_movimiento_fg->validaNoSolicitudesPendientes()) {
                 throw New \Exception('Hay una solicitud de movimiento a fondo de garantía pendiente de autorizar, la solicitud actual no puede registrarse');
             }
+            if (!$solicitud_movimiento_fg->validaMontoSolicitud()) {
+                throw New \Exception('El monto de la solicitud sobrepasa el monto disponible del fondo de garantía.');
+            }
         });
         self::created(function($solicitud_movimiento_fg){
             $solicitud_movimiento_fg->generaMovimientoRegistro();
@@ -54,8 +56,11 @@ class SolicitudMovimientoFondoGarantia extends Model
     {
         return $this->belongsTo(CtgTipoSolicitud::class,"id_tipo_solicitud");
     }
+    /**
+     * No puede haber más de una solicitud de movimiento a fondo de garantía con estado 0 (Generada)
+    */
 
-    protected function validaNoSolicitudesPendientes()
+    private function validaNoSolicitudesPendientes()
     {
        $solicitudes = SolicitudMovimientoFondoGarantia::where("id_fondo_garantia",$this->id_fondo_garantia)->where("estado",0)->get();
        if(count($solicitudes)>0)
@@ -63,6 +68,17 @@ class SolicitudMovimientoFondoGarantia extends Model
            return false;
        }
        return true;
+    }
+
+    private function validaMontoSolicitud()
+    {
+
+        $this->refresh();
+        $monto_disponible = $this->fondo_garantia->saldo;
+        if($monto_disponible < $this->importe){
+            return false;
+        }
+        return true;
     }
 
     protected function generaMovimientoRegistro()

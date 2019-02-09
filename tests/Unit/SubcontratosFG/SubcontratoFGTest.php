@@ -26,10 +26,11 @@ class SubcontratoFGTest extends TestCase
      *
      * @dataProvider registraSubcontratoConFGProvider
      */
-    public function testRegistraSubcontratoConFondoDeGarantia($datos)
+    public function testRegistraSubcontratoConFondoDeGarantiaYMovimientoDeRegistroDeFondoDeGarantia($datos)
     {
         $subcontrato = Subcontrato::create($datos);
-        $this->assertTrue($subcontrato->id_transaccion > 0 and $subcontrato->fondo_garantia->id_subcontrato == $subcontrato->id_transaccion);
+        $this->assertTrue($subcontrato->id_transaccion > 0 and $subcontrato->fondo_garantia->id_subcontrato == $subcontrato->id_transaccion
+             && count($subcontrato->fondo_garantia->movimientos->where('id_tipo_movimiento',1))==1);
     }
 
     /**
@@ -49,7 +50,7 @@ class SubcontratoFGTest extends TestCase
      *
      * @dataProvider registraSubcontratoSinFGProvider
      */
-    public function testRegistraSubcontratoSinRetencionDeFondoDeGarantiaYPosteriormenteSeLePideRegistroDeFondoDeGarantia($datos)
+    public function testExceptionRegistraSubcontratoSinRetencionDeFondoDeGarantiaYPosteriormenteSeLePideRegistroDeFondoDeGarantia($datos)
     {
         $this->expectExceptionMessage('El subcontrato no tiene establecido un porcentaje de retención de fondo de garantía, el fondo de garantía no puede generarse');
         $subcontrato = Subcontrato::create($datos);
@@ -62,12 +63,13 @@ class SubcontratoFGTest extends TestCase
      *
      * @dataProvider registraSubcontratoSinFGProvider
      */
-    public function testRegistraSubcontratoSinRetencionDeFondoDeGarantiaYSeIntentaGenerarUnFondoDeGarantia($datos)
+    public function testExceptionRegistraSubcontratoSinRetencionDeFondoDeGarantiaYSeIntentaGenerarUnFondoDeGarantia($datos)
     {
         $this->expectExceptionMessage('La retención de fondo de garantía establecida en el subcontrato no es mayor a 0, el fondo de garantía no puede generarse');
         $subcontrato = Subcontrato::create($datos);
         $fondo_garantia = new FondoGarantia();
         $fondo_garantia->id_subcontrato = $subcontrato->id_transaccion;
+        $fondo_garantia->usuario_registra = 180;
         $fondo_garantia->save();
     }
     /**

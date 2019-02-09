@@ -22,10 +22,16 @@ class MovimientoFondoGarantia extends Model
                             'importe',
                             'usuario_registra'
                             ];
+    public $timestamps = false;
 
     protected static function boot()
     {
         parent::boot();
+
+        self::creating(function($movimiento_fg)
+        {
+            $movimiento_fg->created_at = date('Y-m-d h:i:s');
+        });
 
     }
 

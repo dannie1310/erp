@@ -12,9 +12,11 @@ use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 class Subcontrato extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 49;
+
     protected $fillable = [
         'id_antecedente',
         'fecha',
+        'id_obra',
         'id_empresa',
         'id_moneda',
         'anticipo',
@@ -27,9 +29,9 @@ class Subcontrato extends Transaccion
         'id_costo',
         'retencion',
         'referencia',
-        'id_obra'
+        'observaciones',
     ];
-
+    public $usuario_registra = 666;
     protected static function boot()
     {
         parent::boot();
@@ -56,6 +58,7 @@ class Subcontrato extends Transaccion
             if ($this->retencion > 0) {
                 $fondo_garantia = new FondoGarantia();
                 $fondo_garantia->id_subcontrato = $this->id_transaccion;
+                $fondo_garantia->usuario_registra = $this->usuario_registra;
                 $fondo_garantia->save();
                 $this->refresh();
             } else {
@@ -63,4 +66,6 @@ class Subcontrato extends Transaccion
             }
         }
    }
+
+
 }
