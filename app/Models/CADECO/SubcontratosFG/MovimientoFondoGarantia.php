@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO\SubcontratosFG;
 
+use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
 
 class MovimientoFondoGarantia extends Model
@@ -20,7 +21,8 @@ class MovimientoFondoGarantia extends Model
                             'id_movimiento_retencion',
                             'id_transaccion_generada',
                             'importe',
-                            'usuario_registra'
+                            'usuario_registra',
+                            'observaciones',
                             ];
     public $timestamps = false;
 
@@ -31,6 +33,7 @@ class MovimientoFondoGarantia extends Model
         self::creating(function($movimiento_fg)
         {
             $movimiento_fg->created_at = date('Y-m-d h:i:s');
+            $movimiento_fg->importe = ($movimiento_fg->tipo->naturaleza == 2)? $movimiento_fg->importe * -1 : $movimiento_fg->importe;
         });
         self::created(function($movimiento_fg)
         {
@@ -47,6 +50,11 @@ class MovimientoFondoGarantia extends Model
     public function tipo()
     {
         return $this->belongsTo(CtgTipoMovimientoFondoGarantia::class,"id_tipo_movimiento");
+    }
+
+    public function transaccion_generada()
+    {
+        return $this->hasOne(Transaccion::class,'id_transaccion', 'id_transaccion_generada');
     }
 
 }

@@ -25,7 +25,7 @@ class Estimacion extends Transaccion
         'referencia',
         'observaciones',
     ];
-    #protected $with = array('subcontrato');
+
     public $usuario_registra = 666;
     protected static function boot()
     {
@@ -37,7 +37,6 @@ class Estimacion extends Transaccion
             $estimacion->id_moneda = $subcontrato->id_moneda;
             $estimacion->opciones = 0;
             $estimacion->saldo = $estimacion->monto;
-
             $estimacion->retencion = $subcontrato->retencion;
         });
         self::created(function ($estimacion) {

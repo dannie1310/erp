@@ -8,7 +8,10 @@
 
 namespace App\Models\CADECO\SubcontratosFG;
 
+use App\Models\CADECO\DescuentoFondoGarantia;
+use App\Models\CADECO\LiberacionFondoGarantia;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudMovimientoFondoGarantia extends Model
 {
@@ -23,6 +26,7 @@ class SolicitudMovimientoFondoGarantia extends Model
                             'usuario_registra'
                             ];
     public $timestamps = false;
+    protected $with = array('movimientos');
     protected static function boot()
     {
         parent::boot();
@@ -105,24 +109,65 @@ class SolicitudMovimientoFondoGarantia extends Model
      */
     public function cancelar()
     {
-
+        DB::connection('cadeco')->transaction(function(){
+            #1) Se genera movimiento de solicitud
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(3);
+            #2) Se actualiza estado de solicitud
+            $this->actualizarEstado();
+        });
     }
 
     public function autorizar()
     {
-        #se genera movimiento de solicitud
-        MovimientoSolicitudMovimientoFondoGarantia::create([
+        DB::connection('cadeco')->transaction(function(){
+            #1) Se genera movimiento de solicitud
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(2);
+            #2) Se actualiza estado de solicitud
+            $this->actualizarEstado();
+            #3) Se genera transacción de movimiento a fondo de garantía
+            $transaccion_movimiento_fg = $this->generaTransaccionMovimientoFG();
+            #4) Se genera movimiento de fondo de garantia
+            $this->generaMovimientoFondoDeGarantia($movimiento_solicitud, $transaccion_movimiento_fg);
+        });
+    }
+
+
+    public function rechazar()
+    {
+        DB::connection('cadeco')->transaction(function(){
+            #1) Se genera movimiento de solicitud
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(4);
+            #2) Se actualiza estado de solicitud
+            $this->actualizarEstado();
+        });
+    }
+
+    public function revertirAutorizacion()
+    {
+        DB::connection('cadeco')->transaction(function(){
+            #1) Se genera movimiento de solicitud
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(5);
+            #2) Se actualiza estado de solicitud
+            $this->actualizarEstado();
+            #3) Se cancela transacción de movimiento a fondo de garantía
+            $transaccion_movimiento_fg = $this->cancelaTransaccionMovimientoFG();
+            #4) Se genera movimiento de fondo de garantia
+            $this->generaMovimientoFondoDeGarantia($movimiento_solicitud, $transaccion_movimiento_fg);
+        });
+    }
+
+    private function generaMovimientoSolicitud($tipo_movimiento)
+    {
+        $movimiento_solicitud = MovimientoSolicitudMovimientoFondoGarantia::create([
                 'id_solicitud'=>$this->id,
-                'id_tipo_movimiento'=>2,
+                'id_tipo_movimiento'=>$tipo_movimiento,
+                'id_movimiento_antecedente'=>($this->movimiento_autorizacion)?$this->movimiento_autorizacion->id:NULL,
                 'usuario_registra'=>$this->usuario_registra
             ]
         );
-        #se actualiza estado de solicitud
-        $this->actualizarEstado();
-
-        #se genera movimiento de fondo de garantia
-
-        #se genera transacción de movimiento a fondo de garantia
+        $this->fresh();
+        $this->refresh();
+        return $movimiento_solicitud;
     }
 
     /**
@@ -130,19 +175,99 @@ class SolicitudMovimientoFondoGarantia extends Model
      */
     private function actualizarEstado()
     {
-        $ultimo_movimiento = $this->movimientos()->latest()->first();
+        $ultimo_movimiento = $this->movimientos()->orderBy('id','desc')->first();
         $this->estado = $ultimo_movimiento->tipo->estado_resultante;
         $this->save();
     }
 
-    public function rechazar()
+    /**
+     * @return mixed
+     * Se genera la transacción de movimiento a fondo de garantía tomando los datos de la solicitud autorizada
+     */
+    private function generaTransaccionMovimientoFG()
     {
+        if($this->id_tipo_solicitud == 1)
+        {
+            $transaccion_movimiento_fg = LiberacionFondoGarantia::create([
+                'id_antecedente'=>$this->fondo_garantia->id_subcontrato,
+                'fecha'=>date('Y-m-d'),
+                'id_obra'=>$this->fondo_garantia->subcontrato->id_obra,
+                'monto'=>$this->importe,
+                'referencia'=>$this->referencia,
+                'observaciones'=>$this->observaciones,
+            ]);
+
+        }
+        else if($this->id_tipo_solicitud == 2)
+        {
+            $transaccion_movimiento_fg= DescuentoFondoGarantia::create([
+                'id_antecedente'=>$this->fondo_garantia->id_subcontrato,
+                'fecha'=>date('Y-m-d'),
+                'id_obra'=>$this->fondo_garantia->subcontrato->id_obra,
+                'monto'=>$this->importe,
+                'referencia'=>$this->referencia,
+                'observaciones'=>$this->observaciones,
+            ]);
+        }
+
+        return $transaccion_movimiento_fg;
+    }
+
+    /**
+     * @return mixed
+     * se busca la transacción generada por la autorización de la solicitud y se cambia el estatus a -2 y se pone el saldo en 0
+     */
+    private function cancelaTransaccionMovimientoFG()
+    {
+        $transaccion_movimiento_fg = $this->movimiento_autorizacion->movimiento_fondo_garantia->transaccion_generada;
+        $transaccion_movimiento_fg->estado = -2;
+        $transaccion_movimiento_fg->saldo= 0;
+        $transaccion_movimiento_fg->save();
+        return $transaccion_movimiento_fg;
+    }
+
+    private function generaMovimientoFondoDeGarantia(MovimientoSolicitudMovimientoFondoGarantia $movimiento_solicitud, $transaccion_movimiento_fg)
+    {
+        MovimientoFondoGarantia::create([
+            'id_fondo_garantia'=>$this->id_fondo_garantia,
+            'id_tipo_movimiento'=>$this->obtieneTipoMovimientoFondoGarantia($movimiento_solicitud),
+            'id_movimiento_solicitud'=>$movimiento_solicitud->id,
+            'id_transaccion_generada'=>$transaccion_movimiento_fg->id_transaccion,
+            'importe'=>$this->importe,
+            'usuario_registra'=>$this->usuario_registra
+        ]);
 
     }
 
-    public function revertirAutorizacion()
+    /**
+     * @param MovimientoSolicitudMovimientoFondoGarantia $movimiento_solicitud
+     * @return int
+     */
+    private function obtieneTipoMovimientoFondoGarantia(MovimientoSolicitudMovimientoFondoGarantia $movimiento_solicitud)
     {
-
+        $tipo_movimiento_solicitud = $movimiento_solicitud->tipo->id;
+        if($this->id_tipo_solicitud == 1 && $tipo_movimiento_solicitud == 2)
+        {
+            #Movimiento de liberación de fondo de garantía
+            return 6;
+        } else if($this->id_tipo_solicitud == 1 && $tipo_movimiento_solicitud == 5)
+        {
+            #Movimiento de cancelación de liberación de fondo de garantía
+            return 7;
+        } else if($this->id_tipo_solicitud == 2 && $tipo_movimiento_solicitud == 2)
+        {
+            #Movimiento de descuento a fondo de garantía
+            return 4;
+        }else if($this->id_tipo_solicitud == 2 && $tipo_movimiento_solicitud == 5)
+        {
+            #Movimiento de cancelación de descuento a fondo de garantía
+            return 5;
+        }
     }
 
+    public function getMovimientoAutorizacionAttribute()
+    {
+        $movimiento_autorizacion = $this->movimientos()->where('id_tipo_movimiento',2)->first();
+        return $movimiento_autorizacion;
+    }
 }

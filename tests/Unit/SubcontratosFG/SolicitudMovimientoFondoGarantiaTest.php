@@ -33,11 +33,64 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
 
     }
     /**
+     * @dataProvider datosSolicitudMovimientoLiberacionFG
+     */
+    public function testRevierteAutorizacionSolicitudLiberacion($datos)
+    {
+        $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
+        $datos['observaciones'] = 'observaciones test revertir autorización';
+        $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
+        $solicitud->autorizar();
+        $movimientos_autorizacion = $solicitud->movimientos->where('id_tipo_movimiento',2);
+        $movimiento_autorizacion = $movimientos_autorizacion[1];
+        $solicitud->revertirAutorizacion();
+        $movimientos_revertir_autorizacion = $solicitud->movimientos->where('id_tipo_movimiento',5);
+        $movimiento_revertir_autorizacion = $movimientos_revertir_autorizacion[2];
+
+        $this->assertTrue(
+            $solicitud->estado == -3  &&
+            count($solicitud->movimientos->where('id_tipo_movimiento',5))==1 &&
+            $movimiento_autorizacion->movimiento_fondo_garantia->transaccion_generada->tipo_transaccion == 53 &&
+            $movimiento_autorizacion->movimiento_fondo_garantia->transaccion_generada->estado == -2 &&
+            $movimiento_autorizacion->movimiento_fondo_garantia->transaccion_generada->saldo == 0 &&
+            $movimiento_autorizacion->movimiento_fondo_garantia->fondo_garantia->saldo == 100 &&
+            $movimiento_revertir_autorizacion->movimiento_antecedente->id == $movimiento_autorizacion->id
+        );
+    }
+
+    /**
+     * @dataProvider datosSolicitudMovimientoDescuentoFG
+     */
+    public function testRevierteAutorizacionSolicitudDescuento($datos)
+    {
+        $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
+        $datos['observaciones'] = 'observaciones test revertir descuento';
+        $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
+        $solicitud->autorizar();
+        $movimientos_autorizacion = $solicitud->movimientos->where('id_tipo_movimiento',2);
+        $movimiento_autorizacion = $movimientos_autorizacion[1];
+        $solicitud->revertirAutorizacion();
+        $movimientos_revertir_autorizacion = $solicitud->movimientos->where('id_tipo_movimiento',5);
+        $movimiento_revertir_autorizacion = $movimientos_revertir_autorizacion[2];
+
+        $this->assertTrue(
+            $solicitud->estado == -3  &&
+            count($solicitud->movimientos->where('id_tipo_movimiento',5))==1 &&
+            $movimiento_autorizacion->movimiento_fondo_garantia->transaccion_generada->tipo_transaccion == 53 &&
+            $movimiento_autorizacion->movimiento_fondo_garantia->transaccion_generada->estado == -2 &&
+            $movimiento_autorizacion->movimiento_fondo_garantia->transaccion_generada->saldo == 0 &&
+            $movimiento_autorizacion->movimiento_fondo_garantia->fondo_garantia->saldo == 100 &&
+            $movimiento_revertir_autorizacion->movimiento_antecedente->id == $movimiento_autorizacion->id
+        );
+    }
+
+
+    /**
      * Validar excepción por solicitudes pendientes de autorizar
-     * @dataProvider datosSolicitudMovimientoFG
+     * @dataProvider datosSolicitudMovimientoLiberacionFG
      */
 
-    public function testExcepcionGeneraSolicitudCuandoHaySolicitudesPendientes($datos)
+   /* public function testExcepcionGeneraSolicitudCuandoHaySolicitudesPendientes($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $this->expectExceptionMessage('Hay una solicitud de movimiento a fondo de garantía pendiente de autorizar, la solicitud actual no puede registrarse');
@@ -47,10 +100,10 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
 
     /**
      * Validar excepción por intentar registrar movimiento de registro de solicitud más de una vez
-     * @dataProvider datosSolicitudMovimientoFG
+     * @dataProvider datosSolicitudMovimientoLiberacionFG
      */
 
-    public function testExcepcionGenerarSolicitudConDosMovimientosDeRegistro($datos)
+    /*public function testExcepcionGenerarSolicitudConDosMovimientosDeRegistro($datos)
     {
         $this->generaNuevoFondo();
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
@@ -67,10 +120,10 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
 
     /**
      * Registro de solicitud de movimiento de fondo de garantía y su movimiento de registro
-     * @dataProvider datosSolicitudMovimientoFG
-*/
+     * @dataProvider datosSolicitudMovimientoLiberacionFG
+     */
 
-    public function testGeneraSolicitudMovimientoDeFondoDeGarantiaYSuMovimientoDeRegistro($datos)
+    /*public function testGeneraSolicitudMovimientoDeFondoDeGarantiaYSuMovimientoDeRegistro($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
@@ -80,27 +133,113 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
     }
 
     /**
-     * @dataProvider datosSolicitudMovimientoFG
+     * @dataProvider datosSolicitudMovimientoLiberacionFG
      */
-    public function testAutorizarSolicitud($datos)
+   /* public function testAutorizarSolicitudLiberacion($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
+        $datos['observaciones'] = 'observaciones test autorización';
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
-
-
-
-
         $solicitud->autorizar();
+        $movimientos = $solicitud->movimientos->where('id_tipo_movimiento',2);
 
-        $this->assertTrue($solicitud->estado == 1  && count($solicitud->movimientos->where('id_tipo_movimiento',2))==1);
+        $this->assertTrue(
+            $solicitud->estado == 1  &&
+            count($solicitud->movimientos->where('id_tipo_movimiento',2))==1 &&
+            $movimientos[1]->movimiento_fondo_garantia->transaccion_generada->tipo_transaccion == 53 &&
+            $movimientos[1]->movimiento_fondo_garantia->fondo_garantia->saldo == 50
+        );
+    }
+    /**
+     * @dataProvider datosSolicitudMovimientoDescuentoFG
+     */
+   /* public function testAutorizarSolicitudDescuento($datos)
+    {
+        $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
+        $datos['observaciones'] = 'observaciones test autorización';
+        $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
+        $solicitud->autorizar();
+        $movimientos = $solicitud->movimientos->where('id_tipo_movimiento',2);
+
+        $this->assertTrue(
+            $solicitud->estado == 1  &&
+            count($solicitud->movimientos->where('id_tipo_movimiento',2))==1 &&
+            $movimientos[1]->movimiento_fondo_garantia->transaccion_generada->tipo_transaccion == 53 &&
+            $movimientos[1]->movimiento_fondo_garantia->fondo_garantia->saldo == 70
+        );
+    }
+
+    /**
+     * @dataProvider datosSolicitudMovimientoLiberacionFG
+     */
+  /*  public function testCancelarSolicitudLiberacion($datos)
+    {
+        $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
+        $datos['observaciones'] = 'observaciones test cancelacion';
+        $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
+        $solicitud->cancelar();
+        $movimientos = $solicitud->movimientos->where('id_tipo_movimiento',3);
+
+        $this->assertTrue(
+            $solicitud->estado == -1  &&
+            count($solicitud->movimientos->where('id_tipo_movimiento',3))==1
+        );
+    }
+    /**
+     * @dataProvider datosSolicitudMovimientoDescuentoFG
+     */
+   /* public function testCancelarSolicitudDescuento($datos)
+    {
+        $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
+        $datos['observaciones'] = 'observaciones test autorización';
+        $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
+        $solicitud->cancelar();
+        $movimientos = $solicitud->movimientos->where('id_tipo_movimiento',3);
+
+        $this->assertTrue(
+            $solicitud->estado == -1  &&
+            count($solicitud->movimientos->where('id_tipo_movimiento',3))==1
+        );
+    }
+
+    /**
+     * @dataProvider datosSolicitudMovimientoLiberacionFG
+     */
+  /*  public function testRechazarSolicitudLiberacion($datos)
+    {
+        $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
+        $datos['observaciones'] = 'observaciones test rechazar solictud de liberación';
+        $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
+        $solicitud->rechazar();
+
+        $this->assertTrue(
+            $solicitud->estado == -2  &&
+            count($solicitud->movimientos->where('id_tipo_movimiento',4))==1
+        );
+    }
+
+    /**
+     * @dataProvider datosSolicitudMovimientoDescuentoFG
+     */
+   /* public function testRechazarSolicitudDescuento($datos)
+    {
+        $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
+        $datos['observaciones'] = 'observaciones test rechazar solicitud de descuento';
+        $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
+        $solicitud->rechazar();
+
+        $this->assertTrue(
+            $solicitud->estado == -2  &&
+            count($solicitud->movimientos->where('id_tipo_movimiento',4))==1
+        );
     }
 
 
     /**
-     * Data provider para registro de solicitud
+     * Data provider para registro de solicitud de liberación
      *
      */
-    public function datosSolicitudMovimientoFG()
+    public function datosSolicitudMovimientoLiberacionFG()
     {
 
         return array(
@@ -116,6 +255,27 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
             )
         );
     }
+    /**
+     * Data provider para registro de solicitud de descuento
+     *
+     */
+    public function datosSolicitudMovimientoDescuentoFG()
+    {
+
+        return array(
+            array(
+                array(
+                    'id_tipo_solicitud'=>2,
+                    'fecha'=>'2019-02-08',
+                    'referencia'=>'Test',
+                    'importe'=>30,
+                    'observaciones'=>'observaciones de prueba',
+                    'usuario_registra'=>180
+                )
+            )
+        );
+    }
+
     public function generaNuevoFondo(){
         $subcontrato_nuevo = Subcontrato::create([
             'id_antecedente' => 208188,

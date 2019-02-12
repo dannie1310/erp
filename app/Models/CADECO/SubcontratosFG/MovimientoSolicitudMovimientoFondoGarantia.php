@@ -20,7 +20,7 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
                             'usuario_registra',
                             ];
     public $timestamps = false;
-
+    protected $with = array('movimiento_antecedente');
     protected static function boot()
     {
         parent::boot();
@@ -34,9 +34,23 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
 
     }
 
+    public function movimiento_antecedente()
+    {
+        return $this->belongsTo(MovimientoSolicitudMovimientoFondoGarantia::class,'id_movimiento_antecedente', 'id');
+        #return $this->hasOne(SolicitudMovimientoFondoGarantia::class,'id', 'id_solicitud');
+    }
+
     public function solicitud_movimiento()
     {
-        return $this->belongsTo(SolicitudMovimientoFondoGarantia::class,'id_solicitud');
+        return $this->belongsTo(SolicitudMovimientoFondoGarantia::class,'id_solicitud', 'id');
+        #return $this->hasOne(SolicitudMovimientoFondoGarantia::class,'id', 'id_solicitud');
+    }
+
+    public function movimiento_fondo_garantia()
+    {
+        #return $this->belongsTo(SolicitudMovimientoFondoGarantia::class,'id_solicitud', 'id');
+        #return $this->hasOne(SolicitudMovimientoFondoGarantia::class,'id', 'id_solicitud');
+        return $this->hasOne(MovimientoFondoGarantia::class,'id_movimiento_solicitud','id');
     }
 
     public function tipo()
