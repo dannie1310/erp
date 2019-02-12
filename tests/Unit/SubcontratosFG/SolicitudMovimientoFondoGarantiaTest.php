@@ -90,7 +90,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
      * @dataProvider datosSolicitudMovimientoLiberacionFG
      */
 
-   /* public function testExcepcionGeneraSolicitudCuandoHaySolicitudesPendientes($datos)
+    public function testExcepcionGeneraSolicitudCuandoHaySolicitudesPendientes($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $this->expectExceptionMessage('Hay una solicitud de movimiento a fondo de garantía pendiente de autorizar, la solicitud actual no puede registrarse');
@@ -103,7 +103,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
      * @dataProvider datosSolicitudMovimientoLiberacionFG
      */
 
-    /*public function testExcepcionGenerarSolicitudConDosMovimientosDeRegistro($datos)
+    public function testExcepcionGenerarSolicitudConDosMovimientosDeRegistro($datos)
     {
         $this->generaNuevoFondo();
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
@@ -123,7 +123,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
      * @dataProvider datosSolicitudMovimientoLiberacionFG
      */
 
-    /*public function testGeneraSolicitudMovimientoDeFondoDeGarantiaYSuMovimientoDeRegistro($datos)
+    public function testGeneraSolicitudMovimientoDeFondoDeGarantiaYSuMovimientoDeRegistro($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
@@ -135,7 +135,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
     /**
      * @dataProvider datosSolicitudMovimientoLiberacionFG
      */
-   /* public function testAutorizarSolicitudLiberacion($datos)
+    public function testAutorizarSolicitudLiberacion($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test autorización';
@@ -153,7 +153,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
     /**
      * @dataProvider datosSolicitudMovimientoDescuentoFG
      */
-   /* public function testAutorizarSolicitudDescuento($datos)
+    public function testAutorizarSolicitudDescuento($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test autorización';
@@ -172,7 +172,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
     /**
      * @dataProvider datosSolicitudMovimientoLiberacionFG
      */
-  /*  public function testCancelarSolicitudLiberacion($datos)
+    public function testCancelarSolicitudLiberacion($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test cancelacion';
@@ -188,7 +188,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
     /**
      * @dataProvider datosSolicitudMovimientoDescuentoFG
      */
-   /* public function testCancelarSolicitudDescuento($datos)
+    public function testCancelarSolicitudDescuento($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test autorización';
@@ -205,7 +205,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
     /**
      * @dataProvider datosSolicitudMovimientoLiberacionFG
      */
-  /*  public function testRechazarSolicitudLiberacion($datos)
+    public function testRechazarSolicitudLiberacion($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test rechazar solictud de liberación';
@@ -221,7 +221,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
     /**
      * @dataProvider datosSolicitudMovimientoDescuentoFG
      */
-   /* public function testRechazarSolicitudDescuento($datos)
+    public function testRechazarSolicitudDescuento($datos)
     {
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test rechazar solicitud de descuento';

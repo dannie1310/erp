@@ -41,7 +41,7 @@ class SolicitudMovimientoFondoGarantia extends Model
             }
         });
         self::created(function($solicitud_movimiento_fg){
-            $solicitud_movimiento_fg->generaMovimientoRegistro();
+            $solicitud_movimiento_fg->generaMovimientoSolicitud(1);
         });
     }
 
@@ -62,50 +62,16 @@ class SolicitudMovimientoFondoGarantia extends Model
     }
 
 
-    /**
-     * No puede haber más de una solicitud de movimiento a fondo de garantía con estado 0 (Generada)
-     * @return bool
-     */
-
-    private function validaNoSolicitudesPendientes()
+    public function getMovimientoAutorizacionAttribute()
     {
-       $solicitudes = SolicitudMovimientoFondoGarantia::where("id_fondo_garantia",$this->id_fondo_garantia)->where("estado",0)->get();
-       if(count($solicitudes)>0)
-       {
-           return false;
-       }
-       return true;
+        $movimiento_autorizacion = $this->movimientos()->where('id_tipo_movimiento',2)->first();
+        return $movimiento_autorizacion;
     }
 
-    /**
-     * El  monto de la solicitud no puede ser mayor al monto disponible del fondo de garantía
-     * @return bool
-     */
-    private function validaMontoSolicitud()
-    {
-
-        $this->refresh();
-        $monto_disponible = $this->fondo_garantia->saldo;
-        if($monto_disponible < $this->importe){
-            return false;
-        }
-        return true;
-    }
-
-    protected function generaMovimientoRegistro()
-    {
-         MovimientoSolicitudMovimientoFondoGarantia::create([
-            'id_solicitud'=>$this->id,
-             'id_tipo_movimiento'=>1,
-             'usuario_registra'=>$this->usuario_registra
-             ]
-        );
-
-        $this->refresh();
-    }
 
     /**
-     * Mètodo para cancelar solicitud de movimiento
+     * @throws \Throwable
+     * Mètodo para cancelar solicitud de movimiento a fondo de garantía
      */
     public function cancelar()
     {
@@ -117,6 +83,10 @@ class SolicitudMovimientoFondoGarantia extends Model
         });
     }
 
+    /**
+     * @throws \Throwable
+     * Método para autorizar solicitud de movimiento a fondo de garantía
+     */
     public function autorizar()
     {
         DB::connection('cadeco')->transaction(function(){
@@ -131,7 +101,10 @@ class SolicitudMovimientoFondoGarantia extends Model
         });
     }
 
-
+    /**
+     * @throws \Throwable
+     * Mètodo para rechazar solicitud de movimiento a fondo de garantía
+     */
     public function rechazar()
     {
         DB::connection('cadeco')->transaction(function(){
@@ -142,6 +115,10 @@ class SolicitudMovimientoFondoGarantia extends Model
         });
     }
 
+    /**
+     * @throws \Throwable
+     * Método para revertir autorización de solicitud de movimiento a fondo de garantía
+     */
     public function revertirAutorizacion()
     {
         DB::connection('cadeco')->transaction(function(){
@@ -156,6 +133,10 @@ class SolicitudMovimientoFondoGarantia extends Model
         });
     }
 
+    /**
+     * @param $tipo_movimiento
+     * @return mixed
+     */
     private function generaMovimientoSolicitud($tipo_movimiento)
     {
         $movimiento_solicitud = MovimientoSolicitudMovimientoFondoGarantia::create([
@@ -226,6 +207,11 @@ class SolicitudMovimientoFondoGarantia extends Model
         return $transaccion_movimiento_fg;
     }
 
+    /**
+     * @param MovimientoSolicitudMovimientoFondoGarantia $movimiento_solicitud
+     * @param $transaccion_movimiento_fg
+     * Generación de movimiento a fondo de garantía
+     */
     private function generaMovimientoFondoDeGarantia(MovimientoSolicitudMovimientoFondoGarantia $movimiento_solicitud, $transaccion_movimiento_fg)
     {
         MovimientoFondoGarantia::create([
@@ -242,6 +228,8 @@ class SolicitudMovimientoFondoGarantia extends Model
     /**
      * @param MovimientoSolicitudMovimientoFondoGarantia $movimiento_solicitud
      * @return int
+     * Obtiene el tipo de movimiento a fondo de garantía que corresponde de acuerdo al tipo de solicitud y tipo de
+     * movimiento registrado
      */
     private function obtieneTipoMovimientoFondoGarantia(MovimientoSolicitudMovimientoFondoGarantia $movimiento_solicitud)
     {
@@ -265,9 +253,35 @@ class SolicitudMovimientoFondoGarantia extends Model
         }
     }
 
-    public function getMovimientoAutorizacionAttribute()
+
+    /**
+     * No puede haber más de una solicitud de movimiento a fondo de garantía con estado 0 (Generada)
+     * @return bool
+     */
+
+    private function validaNoSolicitudesPendientes()
     {
-        $movimiento_autorizacion = $this->movimientos()->where('id_tipo_movimiento',2)->first();
-        return $movimiento_autorizacion;
+        $solicitudes = SolicitudMovimientoFondoGarantia::where("id_fondo_garantia",$this->id_fondo_garantia)->where("estado",0)->get();
+        if(count($solicitudes)>0)
+        {
+            return false;
+        }
+        return true;
     }
+
+    /**
+     * El  monto de la solicitud no puede ser mayor al monto disponible del fondo de garantía
+     * @return bool
+     */
+    private function validaMontoSolicitud()
+    {
+
+        $this->refresh();
+        $monto_disponible = $this->fondo_garantia->saldo;
+        if($monto_disponible < $this->importe){
+            return false;
+        }
+        return true;
+    }
+
 }
