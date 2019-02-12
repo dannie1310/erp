@@ -30,6 +30,11 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
             {
                 throw New \Exception('Ya existe un movimiento del mismo tipo, el movimiento no puede registrarse');
             }
+            if(!$movimiento_solicitud->validaTipoMovimiento())
+            {
+                throw New \Exception('El tipo de movimiento: '. $movimiento_solicitud->tipo->descripcion .' no puede registrarse si es precedido por el tipo de movimiento: '. $movimiento_solicitud->solicitud_movimiento->
+                ultimo_movimiento->tipo->descripcion);
+            }
         });
 
     }
@@ -66,5 +71,31 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
            return false;
         }
         return true;
+    }
+
+    private function validaTipoMovimiento()
+    {
+        $tipo_ultimo_movimiento = ($this->solicitud_movimiento->ultimo_movimiento)?$this->solicitud_movimiento->ultimo_movimiento->id_tipo_movimiento:NULL;
+        $tipo_movimiento_actual = $this->id_tipo_movimiento;
+
+        if($tipo_ultimo_movimiento == NULL && $tipo_movimiento_actual == 1)
+        {
+            return true;
+        } else if($tipo_ultimo_movimiento == 1 && $tipo_movimiento_actual == 2)
+        {
+            return true;
+        } else if($tipo_ultimo_movimiento == 1 && $tipo_movimiento_actual == 3)
+        {
+            return true;
+        } else if($tipo_ultimo_movimiento == 1 && $tipo_movimiento_actual == 4)
+        {
+            return true;
+        }else if($tipo_ultimo_movimiento == 2 && $tipo_movimiento_actual == 5)
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
     }
 }

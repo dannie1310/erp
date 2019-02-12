@@ -27,6 +27,7 @@ class SolicitudMovimientoFondoGarantia extends Model
                             ];
     public $timestamps = false;
     protected $with = array('movimientos');
+    protected $appends = array('ultimo_movimiento', 'movimiento_autorizacion');
     protected static function boot()
     {
         parent::boot();
@@ -43,6 +44,7 @@ class SolicitudMovimientoFondoGarantia extends Model
         self::created(function($solicitud_movimiento_fg){
             $solicitud_movimiento_fg->generaMovimientoSolicitud(1);
         });
+
     }
 
     public function movimientos()
@@ -66,6 +68,11 @@ class SolicitudMovimientoFondoGarantia extends Model
     {
         $movimiento_autorizacion = $this->movimientos()->where('id_tipo_movimiento',2)->first();
         return $movimiento_autorizacion;
+    }
+
+    public function getUltimoMovimientoAttribute()
+    {
+        return $this->movimientos()->orderBy('id','desc')->first();
     }
 
 
@@ -156,10 +163,11 @@ class SolicitudMovimientoFondoGarantia extends Model
      */
     private function actualizarEstado()
     {
-        $ultimo_movimiento = $this->movimientos()->orderBy('id','desc')->first();
-        $this->estado = $ultimo_movimiento->tipo->estado_resultante;
+
+        $this->estado = $this->ultimo_movimiento->tipo->estado_resultante;
         $this->save();
     }
+
 
     /**
      * @return mixed
