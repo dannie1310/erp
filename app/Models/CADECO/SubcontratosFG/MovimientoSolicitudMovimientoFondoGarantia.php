@@ -27,6 +27,7 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
         parent::boot();
         self::creating(function ($movimiento_solicitud) {
             $movimiento_solicitud->created_at = date('Y-m-d h:i:s');
+            $movimiento_solicitud->id_movimiento_antecedente = ($movimiento_solicitud->solicitud_movimiento->movimiento_autorizacion)?$movimiento_solicitud->solicitud_movimiento->movimiento_autorizacion->id:NULL;
             if(!$movimiento_solicitud->validaNoExistenciaDeMovimientoPrevio())
             {
                 throw New \Exception('Ya existe un movimiento del mismo tipo, el movimiento no puede registrarse');

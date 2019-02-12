@@ -149,7 +149,6 @@ class SolicitudMovimientoFondoGarantia extends Model
         $movimiento_solicitud = MovimientoSolicitudMovimientoFondoGarantia::create([
                 'id_solicitud'=>$this->id,
                 'id_tipo_movimiento'=>$tipo_movimiento,
-                'id_movimiento_antecedente'=>($this->movimiento_autorizacion)?$this->movimiento_autorizacion->id:NULL,
                 'usuario_registra'=>$usuario,
                 'observaciones'=>$observaciones
             ]
@@ -164,7 +163,6 @@ class SolicitudMovimientoFondoGarantia extends Model
      */
     private function actualizarEstado()
     {
-
         $this->estado = $this->ultimo_movimiento->tipo->estado_resultante;
         $this->save();
     }
