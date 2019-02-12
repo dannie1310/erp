@@ -18,6 +18,7 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
                             'id_movimiento_antecedente',
                             'id_tipo_movimiento',
                             'usuario_registra',
+                            'observaciones'
                             ];
     public $timestamps = false;
     protected $with = array('movimiento_antecedente');

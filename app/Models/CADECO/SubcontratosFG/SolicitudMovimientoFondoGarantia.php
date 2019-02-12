@@ -42,7 +42,7 @@ class SolicitudMovimientoFondoGarantia extends Model
             }
         });
         self::created(function($solicitud_movimiento_fg){
-            $solicitud_movimiento_fg->generaMovimientoSolicitud(1);
+            $solicitud_movimiento_fg->generaMovimientoSolicitud(1, $solicitud_movimiento_fg->usuario_registra);
         });
 
     }
@@ -80,11 +80,11 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @throws \Throwable
      * Mètodo para cancelar solicitud de movimiento a fondo de garantía
      */
-    public function cancelar()
+    public function cancelar($usuario, $observaciones)
     {
-        DB::connection('cadeco')->transaction(function(){
+        DB::connection('cadeco')->transaction(function() use($usuario, $observaciones){
             #1) Se genera movimiento de solicitud
-            $movimiento_solicitud = $this->generaMovimientoSolicitud(3);
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(3, $usuario, $observaciones);
             #2) Se actualiza estado de solicitud
             $this->actualizarEstado();
         });
@@ -94,11 +94,11 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @throws \Throwable
      * Método para autorizar solicitud de movimiento a fondo de garantía
      */
-    public function autorizar()
+    public function autorizar($usuario)
     {
-        DB::connection('cadeco')->transaction(function(){
+        DB::connection('cadeco')->transaction(function() use($usuario){
             #1) Se genera movimiento de solicitud
-            $movimiento_solicitud = $this->generaMovimientoSolicitud(2);
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(2, $usuario);
             #2) Se actualiza estado de solicitud
             $this->actualizarEstado();
             #3) Se genera transacción de movimiento a fondo de garantía
@@ -112,11 +112,11 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @throws \Throwable
      * Mètodo para rechazar solicitud de movimiento a fondo de garantía
      */
-    public function rechazar()
+    public function rechazar($usuario, $observaciones)
     {
-        DB::connection('cadeco')->transaction(function(){
+        DB::connection('cadeco')->transaction(function() use($usuario, $observaciones){
             #1) Se genera movimiento de solicitud
-            $movimiento_solicitud = $this->generaMovimientoSolicitud(4);
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(4, $usuario, $observaciones);
             #2) Se actualiza estado de solicitud
             $this->actualizarEstado();
         });
@@ -126,11 +126,11 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @throws \Throwable
      * Método para revertir autorización de solicitud de movimiento a fondo de garantía
      */
-    public function revertirAutorizacion()
+    public function revertirAutorizacion($usuario, $observaciones)
     {
-        DB::connection('cadeco')->transaction(function(){
+        DB::connection('cadeco')->transaction(function() use($usuario, $observaciones){
             #1) Se genera movimiento de solicitud
-            $movimiento_solicitud = $this->generaMovimientoSolicitud(5);
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(5, $usuario, $observaciones);
             #2) Se actualiza estado de solicitud
             $this->actualizarEstado();
             #3) Se cancela transacción de movimiento a fondo de garantía
@@ -144,13 +144,14 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @param $tipo_movimiento
      * @return mixed
      */
-    private function generaMovimientoSolicitud($tipo_movimiento)
+    private function generaMovimientoSolicitud($tipo_movimiento, $usuario, $observaciones = null)
     {
         $movimiento_solicitud = MovimientoSolicitudMovimientoFondoGarantia::create([
                 'id_solicitud'=>$this->id,
                 'id_tipo_movimiento'=>$tipo_movimiento,
                 'id_movimiento_antecedente'=>($this->movimiento_autorizacion)?$this->movimiento_autorizacion->id:NULL,
-                'usuario_registra'=>$this->usuario_registra
+                'usuario_registra'=>$usuario,
+                'observaciones'=>$observaciones
             ]
         );
         $this->fresh();
