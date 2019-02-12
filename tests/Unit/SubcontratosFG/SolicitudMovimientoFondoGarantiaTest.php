@@ -277,7 +277,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
     }
 
     public function generaNuevoFondo(){
-        $subcontrato_nuevo = Subcontrato::create([
+        /*$subcontrato_nuevo = Subcontrato::create([
             'id_antecedente' => 208188,
             'fecha' => '2018-01-01',
             'id_empresa' => 2,
@@ -292,15 +292,36 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
             'id_costo' => 1,
             'retencion' => 10,
             'referencia' => 1,
-            'id_obra' => 1,]);
+            'id_obra' => 1,
+            'observaciones'=>'OBSERVACIONES SUBCONTRATO 182',
+            'id_usuario'=>182]);*/
 
+        $subcontrato_nuevo = New Subcontrato();
+        $subcontrato_nuevo->id_antecedente =208188;
+        $subcontrato_nuevo->fecha = '2018-01-01';
+        $subcontrato_nuevo->id_empresa = 2;
+        $subcontrato_nuevo->id_moneda = 1;
+        $subcontrato_nuevo->anticipo = 1;
+        $subcontrato_nuevo->anticipo_monto = 100;
+        $subcontrato_nuevo->anticipo_saldo = 100;
+        $subcontrato_nuevo->monto = 100;
+        $subcontrato_nuevo->PorcentajeDescuento = 1;
+        $subcontrato_nuevo->impuesto = 16;
+        $subcontrato_nuevo->impuesto_retenido = 16;
+        $subcontrato_nuevo->id_costo = 1;
+        $subcontrato_nuevo->retencion = 10;
+        $subcontrato_nuevo->referencia = 1;
+        $subcontrato_nuevo->id_obra = 1;
+        $subcontrato_nuevo->observaciones='OBSERVACIONES SUBCONTRATO 182';
+        $subcontrato_nuevo->usuario_registra=182;
+        $subcontrato_nuevo->save();
 
         $this->fondo_nuevo = $subcontrato_nuevo->fondo_garantia;
     }
 
     private function generaNuevoFondoAfectable()
     {
-        $subcontrato_nuevo = Subcontrato::create([
+        /*$subcontrato_nuevo = Subcontrato::create([
             'id_antecedente' => 208188,
             'fecha' => '2018-01-01',
             'id_empresa' => 2,
@@ -315,7 +336,29 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
             'id_costo' => 1,
             'retencion' => 10,
             'referencia' => 1,
-            'id_obra' => 1,]);
+            'id_obra' => 1,
+            'observaciones'=>'OBSERVACIONES SUBCONTRATO 181',
+            'id_usuario'=>181]);*/
+
+        $subcontrato_nuevo = New Subcontrato();
+        $subcontrato_nuevo->id_antecedente =208188;
+        $subcontrato_nuevo->fecha = '2018-01-01';
+        $subcontrato_nuevo->id_empresa = 2;
+        $subcontrato_nuevo->id_moneda = 1;
+        $subcontrato_nuevo->anticipo = 1;
+        $subcontrato_nuevo->anticipo_monto = 100;
+        $subcontrato_nuevo->anticipo_saldo = 100;
+        $subcontrato_nuevo->monto = 100;
+        $subcontrato_nuevo->PorcentajeDescuento = 1;
+        $subcontrato_nuevo->impuesto = 16;
+        $subcontrato_nuevo->impuesto_retenido = 16;
+        $subcontrato_nuevo->id_costo = 1;
+        $subcontrato_nuevo->retencion = 10;
+        $subcontrato_nuevo->referencia = 1;
+        $subcontrato_nuevo->id_obra = 1;
+        $subcontrato_nuevo->observaciones='OBSERVACIONES SUBCONTRATO 181';
+        $subcontrato_nuevo->usuario_registra=181;
+        $subcontrato_nuevo->save();
 
         $estimacion_nueva = Estimacion::create(
             [

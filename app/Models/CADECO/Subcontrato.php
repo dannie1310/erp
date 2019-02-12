@@ -32,13 +32,15 @@ class Subcontrato extends Transaccion
         'observaciones',
     ];
     protected $with = array('fondo_garantia', 'estimacion');
-    public $usuario_registra = 777;
+    public $usuario_registra = 1;
     protected static function boot()
     {
         parent::boot();
         self::creating(function ($subcontrato) {
+
             $subcontrato->tipo_transaccion = 51;
             $subcontrato->opciones = 2;
+
         });
         self::created(function ($subcontrato) {
             if ($subcontrato->retencion > 0) {
