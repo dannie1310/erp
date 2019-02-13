@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find" class="btn btn-sm btn-outline-secondary">
+        <button @click="find" class="btn btn-sm btn-outline-info">
             <i class="fa fa-pencil"></i>
         </button>
 

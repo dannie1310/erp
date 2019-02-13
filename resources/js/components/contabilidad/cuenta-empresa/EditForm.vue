@@ -87,9 +87,6 @@
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.update()
-                            .then(() => {
-                                this.$emit('updated');
-                            })
                     }
                 });
             }
