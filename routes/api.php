@@ -44,6 +44,8 @@ $api->version('v1', function ($api) {
         // EMPRESAS
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\EmpresaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\EmpresaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EmpresaController@show');
         });
     });
 
@@ -97,6 +99,11 @@ $api->version('v1', function ($api) {
         //TIPOS CUENTA CONTABLE
         $api->group(['prefix' => 'tipo-cuenta-contable'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@index');
+        });
+
+        //TIPOS CUENTA EMPRESA
+        $api->group(['prefix' => 'tipo-cuenta-empresa'], function($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaEmpresaController@index');
         });
 
         //TIPOS PÓLIZA CONTPAQ

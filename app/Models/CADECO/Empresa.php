@@ -19,8 +19,14 @@ class Empresa extends Model
 
     public $timestamps = false;
 
-    public function cuentaEmpresa()
+    public function cuentasEmpresa()
     {
-        return $this->hasOne(CuentaEmpresa::class, 'id_empresa');
+        return $this->hasMany(CuentaEmpresa::class, 'id_empresa')
+            ->where('Contabilidad.cuentas_empresas.estatus', '=', 1);
+    }
+
+    public function scopeConCuentas($query)
+    {
+        return $query->has('cuentasEmpresa');
     }
 }

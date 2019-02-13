@@ -25,7 +25,7 @@ trait ControllerTrait
 
     public function paginate(Request $request)
     {
-        $paginator = $this->service->paginate($request->except('include'));
+        $paginator = $this->service->paginate($request->all());
         return $this->respondWithPaginator($paginator);
     }
 

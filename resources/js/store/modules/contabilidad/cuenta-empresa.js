@@ -56,7 +56,7 @@ export default {
                     .then(r => r.data)
                     .then(data => {
                         context.commit('SET_CUENTA', data)
-                        resolve();
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error)
@@ -75,7 +75,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id, payload)
+                                .patch(URI + payload.id, payload.data)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Cuenta actualizada correctamente", {

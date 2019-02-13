@@ -14,19 +14,17 @@ class CuentaEmpresa extends Model
 
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cuentas_empresas';
-    protected $fillable = ['id_obra',
-                            'id_empresa',
-                            'id_tipo_cuenta_empresa',
-                            'cuenta',
-                            'registro',
-                            'estatus'
-                            ];
+    protected $fillable = [
+        'id_empresa',
+        'id_tipo_cuenta_empresa',
+        'cuenta',
+    ];
 
     protected static function boot()
     {
         parent::boot();
 
-        self::addGlobalScope(function($query) {
+        self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
 
@@ -37,11 +35,13 @@ class CuentaEmpresa extends Model
         });
     }
 
-    public function empresa(){
+    public function empresa()
+    {
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
-    public function tipoCuentaEmpresa(){
+    public function tipoCuentaEmpresa()
+    {
         return $this->belongsTo(TipoCuentaEmpresa::class, 'id_tipo_cuenta_empresa', 'id');
     }
 }

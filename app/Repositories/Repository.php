@@ -37,11 +37,17 @@ class Repository implements RepositoryInterface
 
     public function paginate($data)
     {
+        if (isset($data['scope'])) {
+            $this->scope($data['scope']);
+        }
+
         if (count($data)) {
             $query = $this->model;
-            if ($data['sort'])
+            if (isset($data['sort']))
                 $query = $query->orderBy($data['sort'], $data['order']);
-            return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
+
+            if (isset($data['limit']) && isset($data['offset']))
+                return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
         }
 
         return $this->model->paginate(10);
@@ -94,6 +100,10 @@ class Repository implements RepositoryInterface
 
     public function show($id)
     {
+        if (request()->has('scope')) {
+            $this->scope(request('scope'));
+        }
+        
         return $this->model->find($id);
     }
 }
