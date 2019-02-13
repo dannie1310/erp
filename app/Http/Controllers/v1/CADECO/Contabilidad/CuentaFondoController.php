@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateCuentaFondoRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaFondoTransformer;
 use App\Services\CADECO\Contabilidad\CuentaFondoService;
 use App\Traits\ControllerTrait;
@@ -53,7 +54,7 @@ class CuentaFondoController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateCuentaFondoRequest $request, $id)
     {
         return $this->traitUpdate($request, $id);
     }
