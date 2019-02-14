@@ -13,7 +13,8 @@ import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
 import cuentaBanco from './modules/contabilidad/cuenta-banco';
 import cuentaEmpresa from './modules/contabilidad/cuenta-empresa';
 import cuentaFondo from './modules/contabilidad/cuenta-fondo';
-import cuentaGeneral from './modules/contabilidad/cuenta-general'
+import cuentaGeneral from './modules/contabilidad/cuenta-general';
+import cuentaMaterial from './modules/contabilidad/cuenta-material';
 import estatusPrepoliza from './modules/contabilidad/estatus-prepoliza';
 import poliza from './modules/contabilidad/poliza';
 import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
@@ -38,6 +39,7 @@ export default new Vuex.Store({
         'contabilidad/cuenta-empresa' : cuentaEmpresa,
         'contabilidad/cuenta-fondo' : cuentaFondo,
         'contabilidad/cuenta-general': cuentaGeneral,
+        'contabilidad/cuenta-material' : cuentaMaterial,
         'contabilidad/estatus-prepoliza': estatusPrepoliza,
         'contabilidad/poliza': poliza,
         'contabilidad/tipo-cuenta-contable': tipoCuentaContable,

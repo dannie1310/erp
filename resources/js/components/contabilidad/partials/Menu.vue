@@ -44,6 +44,12 @@
                             <p>Cuentas Generales</p>
                         </router-link>
                     </li>
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_material')">
+                        <router-link :to="{name: 'cuenta-material'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-material'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuentas de Materiales</p>
+                        </router-link>
+                    </li>
                 </ul>
             </li>
 
