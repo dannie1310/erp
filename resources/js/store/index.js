@@ -4,7 +4,9 @@ import auth from './modules/auth';
 
 //CADECO
 import obras from './modules/cadeco/obras';
+import almacen from './modules/cadeco/almacen';
 import cuenta from './modules/cadeco/cuenta';
+import empresa from './modules/cadeco/empresa';
 
 //CONTABILIDAD
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
@@ -15,6 +17,7 @@ import cuentaGeneral from './modules/contabilidad/cuenta-general'
 import estatusPrepoliza from './modules/contabilidad/estatus-prepoliza';
 import poliza from './modules/contabilidad/poliza';
 import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
+import tipoCuentaEmpresa from './modules/contabilidad/tipo-cuenta-empresa';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 
 //TESORERIA
@@ -27,7 +30,9 @@ export default new Vuex.Store({
     modules: {
         auth,
         'cadeco/obras': obras,
+        'cadeco/almacen': almacen,
         'cadeco/cuenta': cuenta,
+        'cadeco/empresa': empresa,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
         'contabilidad/cuenta-empresa' : cuentaEmpresa,
@@ -36,6 +41,7 @@ export default new Vuex.Store({
         'contabilidad/estatus-prepoliza': estatusPrepoliza,
         'contabilidad/poliza': poliza,
         'contabilidad/tipo-cuenta-contable': tipoCuentaContable,
+        'contabilidad/tipo-cuenta-empresa': tipoCuentaEmpresa,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
 
         'tesoreria/movimiento-bancario': movimientoBancario,

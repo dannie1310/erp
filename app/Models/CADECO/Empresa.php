@@ -18,9 +18,19 @@ class Empresa extends Model
     protected $primaryKey = 'id_empresa';
 
     public $timestamps = false;
+    public $searchable = [
+        'razon_social',
+        'rfc'
+    ];
 
-    public function cuentaEmpresa()
+    public function cuentasEmpresa()
     {
-        return $this->hasOne(CuentaEmpresa::class, 'id_empresa');
+        return $this->hasMany(CuentaEmpresa::class, 'id_empresa')
+            ->where('Contabilidad.cuentas_empresas.estatus', '=', 1);
+    }
+
+    public function scopeConCuentas($query)
+    {
+        return $query->has('cuentasEmpresa');
     }
 }

@@ -10,15 +10,19 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCuentaEmpresaRequest;
+use App\Http\Requests\UpdateCuentaEmpresaRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaEmpresaTransformer;
 use App\Services\CADECO\Contabilidad\CuentaEmpresaService;
 use App\Traits\ControllerTrait;
-use Dingo\Api\Routing\Helpers;
 use League\Fractal\Manager;
 
 class CuentaEmpresaController extends Controller
 {
-    use Helpers, ControllerTrait;
+    use ControllerTrait {
+        update as protected traitUpdate;
+        store as protected traitStore;
+    }
 
     /**
      * @var CuentaEmpresaService
@@ -49,5 +53,15 @@ class CuentaEmpresaController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function update(UpdateCuentaEmpresaRequest $request, $id)
+    {
+        return $this->traitUpdate($request, $id);
+    }
+
+    public function store(StoreCuentaEmpresaRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

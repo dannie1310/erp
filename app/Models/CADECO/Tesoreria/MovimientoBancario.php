@@ -23,12 +23,45 @@ class MovimientoBancario extends Model
     protected $table = 'Tesoreria.movimientos_bancarios';
     protected $primaryKey = 'id_movimiento_bancario';
 
+    protected $fillable = [
+        'fecha',
+        'id_cuenta',
+        'id_tipo_movimiento',
+        'importe',
+        'impuesto',
+        'observaciones'
+    ];
+
     protected static function boot()
     {
         parent::boot();
 
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
+        });
+
+        self::creating(function ($model) {
+            $mov = self::orderBy('numero_folio', 'DESC')->first();
+            $folio = $mov ? $mov->numero_folio + 1 : 1;
+
+            $model->estatus = 1;
+            $model->registro = auth()->id();
+            $model->id_obra = Context::getIdObra();
+            $model->numero_folio = $folio;
+        });
+
+        self::created(function ($model) {
+            if ($model->tipo->naturaleza == 2) {
+                $model->importe = -1 * abs($model->importe);
+                $model->impuesto = -1 * abs($model->impuesto);
+            }
+        });
+
+        self::updated(function ($model) {
+            if ($model->tipo->naturaleza == 2) {
+                $model->importe = -1 * abs($model->importe);
+                $model->impuesto = -1 * abs($model->impuesto);
+            }
         });
 
         self::deleting(function ($model) {

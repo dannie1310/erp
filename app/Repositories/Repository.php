@@ -27,26 +27,32 @@ class Repository implements RepositoryInterface
         $this->model = $model;
     }
 
-    public function all($data = null) {
-        if (isset($data['scope'])) {
-            $this->scope($data['scope']);
-        }
+    public function all()
+    {
+        $this->search();
+        $this->scope();
+        $this->limit();
+
         return $this->model->get();
     }
 
-    public function paginate($data)
+    public function paginate()
     {
-        if (count($data)) {
-            $query = $this->model;
-            if ($data['sort'])
-                $query = $query->orderBy($data['sort'], $data['order']);
-            return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
+        $this->scope();
+        $query = $this->model;
+        if (request('sort')) {
+            $query = $query->orderBy(request('sort'), request('order'));
         }
 
-        return $this->model->paginate(10);
+        if (request('limit') && request('offset')) {
+            return $query->paginate(request('limit'), ['*'], 'page', (request('offset') / request('limit')) + 1);
+        }
+
+        return $query->paginate(10);
     }
 
-    public function update(array $data, $id) {
+    public function update(array $data, $id)
+    {
         $item = $this->show($id);
         $item->update($data);
 
@@ -56,28 +62,31 @@ class Repository implements RepositoryInterface
     public function with($relations)
     {
         $this->model = $this->model->with($relations);
-        return $this;
     }
 
-    public function scope($scope)
+    public function scope()
     {
-        if (is_string($scope)) {
-            $scope = func_get_args();
-        }
+        if (request('scope')) {
+            $scope = request('scope');
 
-        foreach ($scope as $s) {
-            $explode = explode(':', $s);
-            $fn = $explode[0];
-            $params = isset($explode[1]) ? $explode[1] : null;
-            $this->model = $this->model->$fn($params);
+            if (is_string($scope)) {
+                $scope = [$scope];
+            }
+
+            foreach ($scope as $s) {
+                $explode = explode(':', $s);
+                $fn = $explode[0];
+                $params = isset($explode[1]) ? $explode[1] : null;
+                $this->model = $this->model->$fn($params);
+            }
         }
-        return $this;
     }
 
-    public function where($where) {
+    public function where($where)
+    {
         $this->model = $this->model->where($where);
-        return $this;
     }
+
     public function create(array $data)
     {
         return $this->model->create($data);
@@ -90,6 +99,27 @@ class Repository implements RepositoryInterface
 
     public function show($id)
     {
+        $this->scope();
         return $this->model->find($id);
+    }
+
+    private function search()
+    {
+        if (request()->has('search'))
+        {
+            $this->model = $this->model->where(function($query) {
+                foreach ($this->model->searchable as $col)
+                {
+                    $query->orWhere($col, 'LIKE', '%' . request('search') . '%');
+                }
+            });
+        }
+    }
+
+    private function limit()
+    {
+        if (request()->has('limit')) {
+            $this->model = $this->model->limit(request('limit'));
+        }
     }
 }

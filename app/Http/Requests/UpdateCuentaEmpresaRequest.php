@@ -6,7 +6,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCuentaAlmacenRequest extends FormRequest
+class UpdateCuentaEmpresaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,7 @@ class UpdateCuentaAlmacenRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('editar_cuenta_almacen');
+        return auth()->user()->can('editar_cuenta_empresa');
     }
 
     /**
@@ -33,6 +33,7 @@ class UpdateCuentaAlmacenRequest extends FormRequest
 
         return [
             'cuenta' => ['filled', "regex:'{$regex}'"],
+            'id_tipo_cuenta_empresa' => ['filled', 'numeric', 'exists:cadeco.Contabilidad.tipos_cuentas_empresas,id']
         ];
     }
 

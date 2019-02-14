@@ -28,7 +28,7 @@ class UpdatePolizaRequest extends FormRequest
     public function rules()
     {
         try {
-            $regex = Obra::query()->find(Context::getIdObra())->datosContables->FormatoCuentaRegexp;
+            $regex = Obra::query()->find(Context::getIdObra())->datosContables->FormatoCuentaRegExp;
         } catch (\Exception $e) {
             $regex = "";
         }

@@ -27,9 +27,25 @@ $api->version('v1', function ($api) {
      * DBO
      */
     $api->group(['middleware' => 'api'], function ($api) {
+        // ALMACENES
+        $api->group(['prefix' => 'almacen'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
+        });
+    });
+
+    $api->group(['middleware' => 'api'], function ($api) {
         // CUENTAS
         $api->group(['prefix' => 'cuenta'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\CuentaController@index');
+        });
+    });
+
+    $api->group(['middleware' => 'api'], function ($api) {
+        // EMPRESAS
+        $api->group(['prefix' => 'empresa'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\EmpresaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\EmpresaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EmpresaController@show');
         });
     });
 
@@ -39,6 +55,7 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
         //CUENTAS DE ALMACÉN
         $api->group(['prefix' => 'cuenta-almacen'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@update')->where(['id' => '[0-9]+']);
@@ -53,9 +70,10 @@ $api->version('v1', function ($api) {
 
         //CUENTAS DE EMPRESA
         $api->group(['prefix' => 'cuenta-empresa'], function ($api){
-           $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@paginate');
-           $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@show')->where(['id' => '[0-9]+']);
-           $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@update')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@update')->where(['id' => '[0-9]+']);
         });
 
         //CUENTAS DE FONDO
@@ -91,6 +109,11 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@index');
         });
 
+        //TIPOS CUENTA EMPRESA
+        $api->group(['prefix' => 'tipo-cuenta-empresa'], function($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaEmpresaController@index');
+        });
+
         //TIPOS PÓLIZA CONTPAQ
         $api->group(['prefix' => 'tipo-poliza-contpaq'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoPolizaContpaqController@index');
@@ -106,6 +129,7 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@show');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@update');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@destroy');
         });
 

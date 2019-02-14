@@ -28,6 +28,12 @@ class Transaccion extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
+
+        self::creating(function ($model) {
+            $model->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
+            $model->FechaHoraRegistro = date('Y-m-d h:i:s');
+            $model->id_obra = Context::getIdObra();
+        });
     }
 
     public function tipo()
