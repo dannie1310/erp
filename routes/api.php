@@ -47,6 +47,11 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\EmpresaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EmpresaController@show');
         });
+
+        //FONDOS
+        $api->group(['prefix' =>  'fondo'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\FondoController@index');
+        });
     });
 
     /**
@@ -78,6 +83,7 @@ $api->version('v1', function ($api) {
 
         //CUENTAS DE FONDO
         $api->group(['prefix' => 'cuenta-fondo'], function ($api){
+            $api->post('/','App\Http\Controllers\v1\CADECO\Contabilidad\CuentaFondoController@store');
             $api->get('paginate','App\Http\Controllers\v1\CADECO\Contabilidad\CuentaFondoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaFondoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaFondoController@update')->where(['id' => '[0-9]+']);

@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCuentaFondoRequest;
 use App\Http\Requests\UpdateCuentaFondoRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaFondoTransformer;
 use App\Services\CADECO\Contabilidad\CuentaFondoService;
@@ -21,6 +22,7 @@ class CuentaFondoController extends Controller
 {
     use ControllerTrait {
         update as protected traitUpdate;
+        store as protected traitStore;
     }
 
     /**
@@ -57,5 +59,10 @@ class CuentaFondoController extends Controller
     public function update(UpdateCuentaFondoRequest $request, $id)
     {
         return $this->traitUpdate($request, $id);
+    }
+
+    public function store(StoreCuentaFondoRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

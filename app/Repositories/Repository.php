@@ -44,7 +44,7 @@ class Repository implements RepositoryInterface
             $query = $query->orderBy(request('sort'), request('order'));
         }
 
-        if (request('limit') && request('offset')) {
+        if (request('limit') && request('offset') != '') {
             return $query->paginate(request('limit'), ['*'], 'page', (request('offset') / request('limit')) + 1);
         }
 
