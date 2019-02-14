@@ -45,9 +45,15 @@
                 })
                     .then((success) => {
                         if (success) {
-                            this.$store.dispatch('auth/logout');
-                            this.$session.destroy();
-                            this.$router.push({ name: 'login' });
+                            this.$store.dispatch('auth/logout')
+                                .then(() => {
+                                    this.$session.destroy();
+                                    this.$router.push({ name: 'login' });
+                                })
+                                .catch(error => {
+                                    this.$session.destroy();
+                                    this.$router.push({ name: 'login' });
+                                })
                         }
                     });
             }

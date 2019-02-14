@@ -1,6 +1,9 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <cuenta-empresa-create @created="paginate(query)"></cuenta-empresa-create>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -17,8 +20,10 @@
 </template>
 
 <script>
+    import CuentaEmpresaCreate from "./Create";
     export default {
         name: "cuenta-empresa-index",
+        components: {CuentaEmpresaCreate},
         data() {
             return {
                 HeaderSettings: false,

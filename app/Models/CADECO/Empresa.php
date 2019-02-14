@@ -18,6 +18,10 @@ class Empresa extends Model
     protected $primaryKey = 'id_empresa';
 
     public $timestamps = false;
+    public $searchable = [
+        'razon_social',
+        'rfc'
+    ];
 
     public function cuentasEmpresa()
     {
