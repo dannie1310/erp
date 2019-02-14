@@ -28,7 +28,7 @@ class UpdatePolizaRequest extends FormRequest
     public function rules()
     {
         try {
-            $regex = Obra::query()->find(Context::getIdObra())->datosContables->FormatoCuentaRegexp;
+            $regex = Obra::query()->find(Context::getIdObra())->datosContables->FormatoCuentaRegExp;
         } catch (\Exception $e) {
             $regex = "";
         }
@@ -63,5 +63,10 @@ class UpdatePolizaRequest extends FormRequest
             'movimientos.data.*.importe' => ['numeric', 'sumas_iguales'],
             'movimientos.data.*.referencia' => ['string', 'max:100', 'filled'],
         ];
+    }
+
+    protected function failedAuthorization()
+    {
+        abort(403, 'Permisos insuficientes');
     }
 }

@@ -12,13 +12,12 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Contabilidad\TipoCuentaContableTransformer;
 use App\Services\CADECO\Contabilidad\TipoCuentaContableService;
-use Illuminate\Http\Request;
+use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
-use League\Fractal\Resource\Collection;
-use League\Fractal\Serializer\ArraySerializer;
 
 class TipoCuentaContableController extends Controller
 {
+    use ControllerTrait;
 
     /**
      * @var TipoCuentaContableService
@@ -31,29 +30,23 @@ class TipoCuentaContableController extends Controller
     protected $fractal;
 
     /**
+     * @var TipoCuentaContableTransformer
+     */
+    protected $transformer;
+
+    /**
      * TipoCuentaContableController constructor.
      * @param TipoCuentaContableService $service
      * @param Manager $fractal
+     * @param TipoCuentaContableTransformer $transformer
      */
-    public function __construct(TipoCuentaContableService $service, Manager $fractal)
+    public function __construct(TipoCuentaContableService $service, Manager $fractal, TipoCuentaContableTransformer $transformer)
     {
         $this->middleware('auth');
         $this->middleware('context');
 
         $this->service = $service;
         $this->fractal = $fractal;
-    }
-
-    public function index(Request $request) {
-        $data = $this->service->index();
-        $resource = new Collection($data, new TipoCuentaContableTransformer);
-
-        if ($request->has('include')) {
-            $this->fractal->parseIncludes($request->get('include'));
-        }
-
-        $this->fractal->setSerializer(new ArraySerializer);
-        $response = $this->fractal->createData($resource)->toArray();
-        return response()->json($response, 200);
+        $this->transformer = $transformer;
     }
 }

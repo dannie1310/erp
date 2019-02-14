@@ -10,7 +10,6 @@ export default {
 
     mutations: {
         SET_CUENTAS(state, data) {
-            console.log($data);
             state.cuentas = data
         },
 

@@ -39,7 +39,8 @@ class CuentaEmpresaTransformer extends TransformerAbstract
     public function transform(CuentaEmpresa $model) {
         return [
             'id' => (int) $model->getKey(),
-            'cuenta' => (string) $model->cuenta
+            'cuenta' => (string) $model->cuenta,
+            'id_tipo_cuenta_empresa' => (int) $model->id_tipo_cuenta_empresa
         ];
     }
 

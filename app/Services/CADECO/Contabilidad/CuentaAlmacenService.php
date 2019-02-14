@@ -9,33 +9,42 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
-use App\Repositories\CADECO\Contabilidad\CuentaAlmacenRepository;
+use App\Models\CADECO\Contabilidad\CuentaAlmacen;
+use App\Repositories\Repository;
 
 class CuentaAlmacenService
 {
     /**
-     * @var CuentaAlmacenRepository
+     * @var Repository
      */
-    protected $cuentaAlmacen;
+    protected $repository;
 
     /**
      * CuentaAlmacenService constructor.
-     * @param CuentaAlmacenRepository $cuentaAlmacen
+     * @param CuentaAlmacen $model
      */
-    public function __construct(CuentaAlmacenRepository $cuentaAlmacen)
+    public function __construct(CuentaAlmacen $model)
     {
-        $this->cuentaAlmacen = $cuentaAlmacen;
+        $this->repository = new Repository($model);
     }
 
-    public function paginate($data) {
-        return $this->cuentaAlmacen->paginate($data);
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
     }
 
-    public function find($id) {
-        return $this->cuentaAlmacen->find($id);
+    public function show($id)
+    {
+        return $this->repository->show($id);
     }
 
-    public function update(array $data, $id) {
-        return $this->cuentaAlmacen->update($data, $id);
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
+    }
+
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
     }
 }

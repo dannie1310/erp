@@ -39,11 +39,14 @@ class MovimientoBancarioTransformer extends TransformerAbstract
 
     public function transform(MovimientoBancario $model) {
         return [
-            'id' => $model->getKey(),
             'fecha' => $model->fecha,
+            'id' => $model->getKey(),
+            'id_cuenta' => $model->id_cuenta,
+            'id_tipo_movimiento' => $model->id_tipo_movimiento,
             'importe' => $model->importe,
             'impuesto' => $model->impuesto,
             'numero_folio' => $model->numero_folio,
+            'observaciones' => $model->observaciones
         ];
     }
 

@@ -1,54 +1,38 @@
 <template>
     <span>
-        <!-- Button trigger modal -->
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info">
+        <button @click="find" class="btn btn-sm btn-outline-info">
             <i class="fa fa-pencil"></i>
         </button>
 
-        <!-- Modal -->
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
+                <div class="modal-content" v-if="empresa">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">EDICIÓN DE CUENTA DE EMPRESA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{ empresa.razon_social }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form role="form" v-if="cuenta" @submit.prevent="validate">
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="cuenta">Cuenta</label>
-                                        <input
-                                                type="text"
-                                                name="cuenta"
-                                                data-vv-as="Cuenta"
-                                                v-validate="{required: true, regex: datosContables}"
-                                                class="form-control"
-                                                v-mask="{regex: datosContables}"
-                                                id="cuenta"
-                                                placeholder="Cuenta"
-                                                :value="cuenta.cuenta"
-                                                @input="updateAttribute"
-                                                :class="{'is-invalid': errors.has('cuenta')}">
-                                        <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="empresa">Empresa</label>
-                                        <input readonly type="text" class="form-control" id="empresa" v-model="cuenta.empresa.descripcion">
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cuenta Contable</th>
+                                    <th>Tipo de Cuenta</th>
+                                    <th>Guardar</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <cuenta-empresa-edit-form v-for="(cuenta, i) in empresa.cuentasEmpresa.data" :cuenta="cuenta" :key="i"/>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                        </div>
-                    </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -56,44 +40,33 @@
 </template>
 
 <script>
+    import CuentaEmpresaEditForm from "./EditForm";
     export default {
         name: "cuenta-empresa-edit",
+        components: {CuentaEmpresaEditForm},
         props: ['id'],
+        data() {
+            return {
+                empresa: null
+            }
+        },
+
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
-            },
-
-            cuenta() {
-                return this.$store.getters['contabilidad/cuenta-empresa/currentCuenta']
             }
         },
 
         methods: {
-            find(id) {
-                return this.$store.dispatch('contabilidad/cuenta-empresa/find', id)
-                    .then(() => {
-                        $(this.$refs.modal).modal('show');
+            find() {
+                return this.$store.dispatch('cadeco/empresa/find', {
+                    id: this.id,
+                    params: { include: 'cuentasEmpresa' }
+                })
+                    .then((data) => {
+                        this.empresa = data
+                        $(this.$refs.modal).modal('show')
                     })
-            },
-
-            update() {
-                return this.$store.dispatch('contabilidad/cuenta-empresa/update', this.cuenta)
-                    .then(() => {
-                        $(this.$refs.modal).modal('hide');
-                    })
-            },
-
-            validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        this.update()
-                    }
-                });
-            },
-
-            updateAttribute(e) {
-                return this.$store.commit('contabilidad/cuenta-empresa/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
             }
         }
     }

@@ -9,33 +9,42 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
-use App\Repositories\CADECO\Contabilidad\CuentaEmpresaRepository;
+use App\Models\CADECO\Contabilidad\CuentaEmpresa;
+use App\Repositories\Repository;
 
 class CuentaEmpresaService
 {
     /**
-     * @var CuentaEmpresaRepository
+     * @var Repository
      */
-    protected $cuentaEmpresa;
+    protected $repository;
 
     /**
      * CuentaEmpresaService constructor.
-     * @param CuentaEmpresaRepository $cuentaEmpresa
+     * @param CuentaEmpresa $model
      */
-    public function __construct(CuentaEmpresaRepository $cuentaEmpresa)
+    public function __construct(CuentaEmpresa $model)
     {
-        $this->cuentaEmpresa = $cuentaEmpresa;
+        $this->repository = new Repository($model);
     }
 
-    public function paginate($data) {
-        return $this->cuentaEmpresa->paginate($data);
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
     }
 
-    public function find($id) {
-        return $this->cuentaEmpresa->find($id);
+    public function show($id)
+    {
+        return $this->repository->show($id);
     }
 
-    public function update(array $data, $id) {
-        return $this->cuentaEmpresa->update($data, $id);
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
     }
 }

@@ -39,7 +39,7 @@ class ChartController extends Controller
             ],
             'empresa' => [
                 'total' => Empresa::query()->count(),
-                'con_cuenta' => Empresa::query()->has('cuentaEmpresa')->count()
+                'con_cuenta' => Empresa::query()->has('cuentasEmpresa')->count()
             ],
             'material' => [
                 'total' => Material::query()->count(),

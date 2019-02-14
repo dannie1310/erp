@@ -10,15 +10,19 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCuentaAlmacenRequest;
+use App\Http\Requests\UpdateCuentaAlmacenRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaAlmacenTransformer;
 use App\Services\CADECO\Contabilidad\CuentaAlmacenService;
 use App\Traits\ControllerTrait;
-use Dingo\Api\Routing\Helpers;
 use League\Fractal\Manager;
 
 class CuentaAlmacenController extends Controller
 {
-    use Helpers, ControllerTrait;
+    use ControllerTrait {
+        update as protected traitUpdate;
+        store as protected traitStore;
+    }
 
     /**
      * @var CuentaAlmacenService
@@ -49,5 +53,15 @@ class CuentaAlmacenController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function update(UpdateCuentaAlmacenRequest $request, $id)
+    {
+        return $this->traitUpdate($request, $id);
+    }
+
+    public function store(StoreCuentaAlmacenRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

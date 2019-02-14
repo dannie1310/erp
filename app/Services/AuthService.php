@@ -15,7 +15,6 @@ use App\Models\CADECO\Usuario;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AuthService

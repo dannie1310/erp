@@ -1,5 +1,9 @@
 <template>
     <div class="row">
+        <div class="col-md-12">
+            <movimiento-bancario-create></movimiento-bancario-create>
+        </div>
+
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -17,8 +21,10 @@
 </template>
 
 <script>
+    import MovimientoBancarioCreate from "./Create";
     export default {
         name: "movimiento-bancario-index",
+        components: {MovimientoBancarioCreate},
         data() {
             return {
                 HeaderSettings: false,
@@ -65,11 +71,11 @@
                     self.$data.data = []
                     movimientos.forEach(function (movimiento, i) {
                         self.$data.data.push({
-                            index: movimiento.id,
+                            index: (i + 1) + self.query.offset,
                             numero_folio: movimiento.numero_folio,
                             fecha: movimiento.fecha,
                             tipo: movimiento.tipo.descripcion,
-                            cuenta: movimiento.cuenta ? movimiento.cuenta.numero + ' ' + movimiento.cuenta.abreviatura + ' (' + movimiento.cuenta.empresa.razon_social + ')' : '',
+                            cuenta: movimiento.cuenta ? movimiento.cuenta.numero + ' ' + (movimiento.cuenta.abreviatura ? movimiento.cuenta.abreviatura : '') + ' (' + movimiento.cuenta.empresa.razon_social + ')' : '',
                             referencia: movimiento.transaccion ? movimiento.transaccion.referencia : '',
                             total: '$ ' +  (parseFloat(movimiento.importe) + parseFloat(movimiento.impuesto)).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {

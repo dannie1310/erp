@@ -10,17 +10,18 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateCuentaFondoRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaFondoTransformer;
 use App\Services\CADECO\Contabilidad\CuentaFondoService;
 use App\Traits\ControllerTrait;
-use Dingo\Api\Routing\Helpers;
 use League\Fractal\Manager;
 use Illuminate\Http\Request;
 
 class CuentaFondoController extends Controller
 {
-
-    use Helpers, ControllerTrait;
+    use ControllerTrait {
+        update as protected traitUpdate;
+    }
 
     /**
      * @var CuentaFondoService
@@ -53,7 +54,8 @@ class CuentaFondoController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function update(Request $request, $id){
+    public function update(UpdateCuentaFondoRequest $request, $id)
+    {
         return $this->traitUpdate($request, $id);
     }
 }

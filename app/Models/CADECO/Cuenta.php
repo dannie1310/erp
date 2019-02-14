@@ -23,4 +23,12 @@ class Cuenta extends Model
     {
         return $this->belongsTo(Empresa::class, 'id_empresa');
     }
+
+    public function scopeParaTraspaso($query)
+    {
+        return $query->whereHas('empresa', function ($q) {
+            $q->where('tipo_empresa', '=', 8);
+        })
+            ->whereRaw('ISNUMERIC(numero) = 1');
+    }
 }

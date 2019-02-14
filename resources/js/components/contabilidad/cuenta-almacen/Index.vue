@@ -1,6 +1,9 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <cuenta-almacen-create></cuenta-almacen-create>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -17,8 +20,10 @@
 </template>
 
 <script>
+    import CuentaAlmacenCreate from "./Create";
     export default {
         name: "cuenta-almacen-index",
+        components: {CuentaAlmacenCreate},
         data() {
             return {
                 HeaderSettings: false,
@@ -60,7 +65,7 @@
                     self.$data.data = []
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
-                            index: cuenta.id,
+                            index: (i + 1) + self.query.offset,
                             cuenta: cuenta.cuenta,
                             id_almacen: cuenta.almacen.descripcion,
                             tipo: cuenta.almacen.tipo,

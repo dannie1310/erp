@@ -9,33 +9,37 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
-use App\Repositories\CADECO\Contabilidad\CuentaGeneralRepository;
+use App\Models\CADECO\Contabilidad\CuentaGeneral;
+use App\Repositories\Repository;
 
 class CuentaGeneralService
 {
     /**
-     * @var CuentaGeneralRepository
+     * @var Repository
      */
-    protected $cuentaGeneral;
+    protected $repository;
 
     /**
      * CuentaGeneralService constructor.
-     * @param CuentaGeneralRepository $cuentaGeneral
+     * @param CuentaGeneral $model
      */
-    public function __construct(CuentaGeneralRepository $cuentaGeneral)
+    public function __construct(CuentaGeneral $model)
     {
-        $this->cuentaGeneral = $cuentaGeneral;
+        $this->repository = new Repository($model);
     }
 
-    public function paginate($data) {
-        return $this->cuentaGeneral->paginate($data);
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
     }
 
-    public function find($id) {
-        return $this->cuentaGeneral->find($id);
+    public function show($id)
+    {
+        return $this->repository->show($id);
     }
 
-    public function update(array $data, $id) {
-        return $this->cuentaGeneral->update($data, $id);
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
     }
 }

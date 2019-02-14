@@ -9,25 +9,27 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
-use App\Repositories\CADECO\Contabilidad\TipoPolizaContpaqRepository;
+use App\Models\CADECO\Contabilidad\TipoPolizaContpaq;
+use App\Repositories\Repository;
 
 class TipoPolizaContpaqService
 {
     /**
-     * @var TipoPolizaContpaqRepository
+     * @var Repository
      */
     protected $repository;
 
     /**
      * TipoPolizaContpaqService constructor.
-     * @param TipoPolizaContpaqRepository $repository
+     * @param TipoPolizaContpaq $model
      */
-    public function __construct(TipoPolizaContpaqRepository $repository)
+    public function __construct(TipoPolizaContpaq $model)
     {
-        $this->repository = $repository;
+        $this->repository = new Repository($model);
     }
 
-    public function index() {
+    public function index()
+    {
         return $this->repository->all();
     }
 }
