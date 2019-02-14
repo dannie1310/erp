@@ -33,4 +33,14 @@ class EmpresaService
     {
         return $this->repository->all($data);
     }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

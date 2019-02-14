@@ -77,11 +77,17 @@ export default {
         },
 
         logout(context, payload) {
-            axios.post('/api/auth/logout')
-                .then(r => r.data)
-                .then(() => {
-                    context.commit('logout', payload)
-                })
+            return new Promise((resolve, reject) => {
+                axios.post('/api/auth/logout')
+                    .then(r => r.data)
+                    .then(() => {
+                        context.commit('logout', payload)
+                        resolve();
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
+            })
         }
     },
 }

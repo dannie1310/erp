@@ -38,6 +38,11 @@ class CuentaEmpresaService
         return $this->repository->show($id);
     }
 
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
+
     public function update(array $data, $id)
     {
         return $this->repository->update($data, $id);
