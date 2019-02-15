@@ -20,8 +20,24 @@ class Material extends Model
 
     public $timestamps = false;
 
+    public function getTieneHijosAttribute()
+    {
+        return $this->hijos()->count() ? true : false;
+    }
+
     public function cuentaMaterial()
     {
         return $this->hasOne(CuentaMaterial::class, 'id_material');
+    }
+
+    public function hijos()
+    {
+        return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
+            ->where('nivel', 'LIKE', $this->nivel . '___.');
+    }
+
+    public function scopeRoots($query)
+    {
+        return $query->whereRaw('LEN(nivel) = 4');
     }
 }

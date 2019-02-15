@@ -7,6 +7,7 @@ import obras from './modules/cadeco/obras';
 import almacen from './modules/cadeco/almacen';
 import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
+import material from './modules/cadeco/material';
 
 //CONTABILIDAD
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
@@ -34,6 +35,7 @@ export default new Vuex.Store({
         'cadeco/almacen': almacen,
         'cadeco/cuenta': cuenta,
         'cadeco/empresa': empresa,
+        'cadeco/material': material,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
         'contabilidad/cuenta-empresa' : cuentaEmpresa,

@@ -18,6 +18,7 @@ import MainApp from './components/MainApp.vue';
 Vue.use(VueRouter);
 Vue.use(VueSession, {persist: true});
 Vue.use(VeeValidate);
+Vue.component('treeselect', VueTreeselect.Treeselect);
 Validator.localize('es', es);
 
 Vue.use(Datatable, {
