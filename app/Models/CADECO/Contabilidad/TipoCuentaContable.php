@@ -25,12 +25,23 @@ class TipoCuentaContable extends Model
     {
         parent::boot();
 
-        self::addGlobalScope(function($query) {
+        self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
     }
 
-    public function cuentaContable() {
+    public function cuentaContable()
+    {
         return $this->hasOne(CuentaContable::class, 'id_int_tipo_cuenta_contable');
+    }
+
+    public function scopeGenerales($query)
+    {
+        return $query->where('tipo', '=', 1);
+    }
+
+    public function scopeSinCuenta($query)
+    {
+        return $query->doesntHave('cuentaContable');
     }
 }

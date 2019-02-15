@@ -9,6 +9,8 @@
 namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCuentaGeneralRequest;
+use App\Http\Requests\UpdateCuentaGeneralRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaGeneralTransformer;
 use App\Services\CADECO\Contabilidad\CuentaGeneralService;
 use App\Traits\ControllerTrait;
@@ -17,7 +19,10 @@ use League\Fractal\Manager;
 
 class CuentaGeneralController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait {
+        update as protected traitUpdate;
+        store as protected traitStore;
+    }
 
     /**
      * @var CuentaGeneralService
@@ -48,5 +53,15 @@ class CuentaGeneralController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function store(StoreCuentaGeneralRequest $request)
+    {
+        return $this->traitStore($request);
+    }
+
+    public function update(UpdateCuentaGeneralRequest $request, $id)
+    {
+        return $this->traitUpdate($request, $id);
     }
 }

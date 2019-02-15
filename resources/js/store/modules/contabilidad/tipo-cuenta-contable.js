@@ -13,7 +13,7 @@ export default {
     },
 
     actions: {
-        fetch(context, payload) {
+        index(context, payload) {
             axios.get(URI, {params: payload})
                 .then(r => r.data)
                 .then((data) => {

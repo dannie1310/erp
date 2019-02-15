@@ -165,7 +165,7 @@
 
         methods: {
             getTiposCuentaContable() {
-                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/fetch', {include: 'cuentaContable'})
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {include: 'cuentaContable'})
             },
 
             setTipoMovimiento(e) {

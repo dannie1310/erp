@@ -1,6 +1,9 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <cuenta-general-create></cuenta-general-create>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -17,8 +20,10 @@
 </template>
 
 <script>
+    import CuentaGeneralCreate from "./Create";
     export default {
         name: "cuenta-general-index",
+        components: {CuentaGeneralCreate},
         data() {
             return {
                 HeaderSettings: false,
