@@ -10,6 +10,7 @@ namespace App\Models\CADECO\SubcontratosFG;
 
 use App\Models\CADECO\DescuentoFondoGarantia;
 use App\Models\CADECO\LiberacionFondoGarantia;
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -73,6 +74,19 @@ class SolicitudMovimientoFondoGarantia extends Model
     public function getUltimoMovimientoAttribute()
     {
         return $this->movimientos()->orderBy('id','desc')->first();
+    }
+
+    public function getEstadoDescAttribute()
+    {
+        $tipo_movimiento = CtgTipoMovimientoSolicitud::where('estado_resultante',$this->estado)->first();
+        dd($tipo_movimiento->estado_resultante_desc);
+        return $tipo_movimiento->estado_resultante_desc;
+    }
+
+    public function getUsuarioRegistraDescAttribute()
+    {
+        $usuario = Usuario::where('idusuario',$this->usuario_registra)->first();
+        return $usuario->usuario;
     }
 
 
