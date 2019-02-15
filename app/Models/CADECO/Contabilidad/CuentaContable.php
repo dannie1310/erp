@@ -26,11 +26,17 @@ class CuentaContable extends Model
         parent::boot();
 
         static::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
+            return $query->where('id_obra', '=', Context::getIdObra())
+                ->where('estatus', '=', 1);
+        });
+
+        self::creating(function ($model) {
+            $model->id_obra = Context::getIdObra();
         });
     }
 
-    public function tipo() {
+    public function tipo()
+    {
         return $this->belongsTo(TipoCuentaContable::class, 'id_int_tipo_cuenta_contable');
     }
 }
