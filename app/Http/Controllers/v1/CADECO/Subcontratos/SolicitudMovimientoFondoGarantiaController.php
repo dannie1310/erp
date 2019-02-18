@@ -10,6 +10,11 @@ namespace App\Http\Controllers\v1\CADECO\Subcontratos;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Subcontratos\AutorizarSolicitudMovimientoFondoGarantiaRequest;
+use App\Http\Requests\Subcontratos\CancelarSolicitudMovimientoFondoGarantiaRequest;
+use App\Http\Requests\Subcontratos\RechazarSolicitudMovimientoFondoGarantiaRequest;
+use App\Http\Requests\Subcontratos\RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest;
+use App\Http\Requests\Subcontratos\StoreSolicitudMovimientoFondoGarantiaRequest;
 use App\Http\Transformers\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantiaTransformer;
 use App\Services\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaService;
 use App\Traits\ControllerTrait;
@@ -55,9 +60,27 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
         return $this->traitStore($request);
     }
 
-    public function aprobar(AprobarSolicitudMovimientoFondoGarantiaRequest $request, $id)
+    public function cancelar(CancelarSolicitudMovimientoFondoGarantiaRequest $request, $id)
     {
-        return $this->traitUpdate($request, $id);
+        $item = $this->service->cancelar($request, $id);
+        return $this->respondWithItem($item);
     }
 
+    public function autorizar(AutorizarSolicitudMovimientoFondoGarantiaRequest $request, $id)
+    {
+        $item = $this->service->autorizar($request, $id);
+        return $this->respondWithItem($item);
+    }
+
+    public function rechazar(RechazarSolicitudMovimientoFondoGarantiaRequest $request, $id)
+    {
+        $item = $this->service->rechazar($request, $id);
+        return $this->respondWithItem($item);
+    }
+
+    public function revertirAutorizacion(RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest $request, $id)
+    {
+        $item = $this->service->revertirAutorizacion($request, $id);
+        return $this->respondWithItem($item);
+    }
 }

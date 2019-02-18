@@ -18,6 +18,9 @@ class SolicitudMovimientoFondoGarantiaService
      * @var Repository
      */
     protected $repository;
+    private $id_usuario;
+    private $usuario;
+    private $id_obra;
 
     /**
      * SolicitudMovimientoFondoGarantiaService constructor.
@@ -26,6 +29,9 @@ class SolicitudMovimientoFondoGarantiaService
     public function __construct(SolicitudMovimientoFondoGarantia $model)
     {
         $this->repository = new Repository($model);
+        $this->id_usuario = auth()->id();
+        $this->usuario = auth()->user()->usuario;
+        $this->id_obra = Context::getIdObra();
     }
 
     public function all()
@@ -40,6 +46,9 @@ class SolicitudMovimientoFondoGarantiaService
 
     public function create($data)
     {
+        $data['id_usuario'] = $this->id_usuario;
+        $data['usuario'] = $this->usuario;
+        $data['id_obra'] = $this->id_obra;
         return $this->repository->create($data);
     }
 
@@ -50,21 +59,33 @@ class SolicitudMovimientoFondoGarantiaService
 
     public function cancelar(array $data, $id)
     {
+        $data['id_usuario'] = $this->id_usuario;
+        $data['usuario'] = $this->usuario;
+        $data['id_obra'] = $this->id_obra;
         return $this->repository->cancelar($data, $id);
     }
 
     public function rechazar(array $data, $id)
     {
+        $data['id_usuario'] = $this->id_usuario;
+        $data['usuario'] = $this->usuario;
+        $data['id_obra'] = $this->id_obra;
         return $this->repository->rechazar($data, $id);
     }
 
     public function autorizar(array $data, $id)
     {
+        $data['id_usuario'] = $this->id_usuario;
+        $data['usuario'] = $this->usuario;
+        $data['id_obra'] = $this->id_obra;
         return $this->repository->autorizar($data, $id);
     }
 
     public function revertirAutorizacion(array $data, $id)
     {
+        $data['id_usuario'] = $this->id_usuario;
+        $data['usuario'] = $this->usuario;
+        $data['id_obra'] = $this->id_obra;
         return $this->repository->revertirAutorizacion($data, $id);
     }
 
