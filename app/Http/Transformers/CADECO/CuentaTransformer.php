@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO;
 
 
+use App\Http\Transformers\CADECO\Contabilidad\CuentaBancoTransformer;
 use App\Models\CADECO\Cuenta;
 use League\Fractal\TransformerAbstract;
 
@@ -20,7 +21,8 @@ class CuentaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'empresa'
+        'empresa',
+        'cuentasBanco'
     ];
 
     /**
@@ -49,6 +51,14 @@ class CuentaTransformer extends TransformerAbstract
     {
         if ($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    public function includeCuentasBanco(Cuenta $model)
+    {
+        if($cuentasBanco = $model->cuentaBanco){
+            return $this->item($cuentasBanco, new CuentaBancoTransformer);
         }
         return null;
     }

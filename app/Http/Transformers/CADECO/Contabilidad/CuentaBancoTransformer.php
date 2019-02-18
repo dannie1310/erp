@@ -20,8 +20,7 @@ class CuentaBancoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'tipo',
-        'cuentaContable'
+        'tipo'
     ];
 
     /**
@@ -30,8 +29,7 @@ class CuentaBancoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'tipo',
-        'cuentaContable'
+        'tipo'
     ];
 
     public function transform(CuentaBanco $model) {
@@ -51,16 +49,5 @@ class CuentaBancoTransformer extends TransformerAbstract
         $tipo = $model->tipoCuentaContable;
         return $this->item($tipo, new TipoCuentaContableTransformer);
     }
-
-    /**
-     * Include Cuenta
-     * @return \League\Fractal\Resource\Item
-     */
-    public function includeCuentaContable(CuentaBanco $model)
-    {
-        $cuenta = $model->cuentaContable;
-        return $this->item($cuenta, new CuentaTransformer);
-    }
-
 
 }

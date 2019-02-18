@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Contabilidad\CuentaBanco;
 use Illuminate\Database\Eloquent\Model;
 
 class Cuenta extends Model
@@ -30,5 +31,10 @@ class Cuenta extends Model
             $q->where('tipo_empresa', '=', 8);
         })
             ->whereRaw('ISNUMERIC(numero) = 1');
+    }
+
+    public function cuentaBanco(){
+        dd("AQ");
+        return $this->hasOne(CuentaBanco::class, 'id_cuenta', 'id_cuenta');
     }
 }

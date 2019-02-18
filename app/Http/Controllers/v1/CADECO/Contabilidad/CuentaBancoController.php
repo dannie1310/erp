@@ -50,4 +50,5 @@ class CuentaBancoController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
+
 }

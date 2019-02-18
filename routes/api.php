@@ -41,6 +41,13 @@ $api->version('v1', function ($api) {
     });
 
     $api->group(['middleware' => 'api'], function ($api) {
+        // BANCOS
+        $api->group(['prefix' => 'banco'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\BancoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\BancoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@show');
+        });
+
         // EMPRESAS
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\EmpresaController@index');
