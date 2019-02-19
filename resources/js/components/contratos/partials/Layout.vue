@@ -6,6 +6,6 @@
 
 <script>
     export default {
-        name: "subcontratos-layout"
+        name: "contratos-layout"
     }
 </script>

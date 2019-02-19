@@ -175,25 +175,25 @@ export const routes = [
     },
 
     {
-        path: '/subcontratos',
+        path: '/contratos',
         components: {
-            default: require('./components/subcontratos/partials/Layout.vue'),
-            menu: require('./components/subcontratos/partials/Menu.vue')
+            default: require('./components/contratos/partials/Layout.vue'),
+            menu: require('./components/contratos/partials/Menu.vue')
         },
         children: [
             {
                 path: '',
-                name: 'subcontratos',
-                component: require('./components/subcontratos/Index'),
+                name: 'contratos',
+                component: require('./components/contratos/Index'),
                 meta: {
-                    title: 'Subcontratos',
-                    breadcrumb: { parent: 'home', name: 'SUBCONTRATOS'},
+                    title: 'Contratos',
+                    breadcrumb: { parent: 'home', name: 'CONTRATOS'},
                     middleware: [auth, context]
                 }
             },
             {
                 path: 'solicitud-movimiento-fg',
-                component: require('./components/subcontratos/solicitud-movimiento-fg/Layout.vue'),
+                component: require('./components/contratos/solicitud-movimiento-fg/Layout.vue'),
                 meta: {
                     middleware: [auth, context]
                 },
@@ -201,10 +201,10 @@ export const routes = [
                     {
                         path: '/',
                         name: 'solicitud-movimiento-fg',
-                        component: require('./components/subcontratos/solicitud-movimiento-fg/Index'),
+                        component: require('./components/contratos/solicitud-movimiento-fg/Index'),
                         meta: {
                             title: 'Solicitud de Movimiento a Fondo de Garantía',
-                            breadcrumb: {parent: 'subcontratos', name: 'SOLICITUD DE MOVIMIENTO A FONDO DE GARANTÍA'},
+                            breadcrumb: {parent: 'contratos', name: 'SOLICITUD DE MOVIMIENTO A FONDO DE GARANTÍA'},
                             middleware: [auth, context]
                         }
                     }

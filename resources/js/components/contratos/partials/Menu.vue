@@ -45,7 +45,7 @@
 
 <script>
     export default {
-        name: "subcontratos-menu",
+        name: "contratos-menu",
 
         methods: {
             mostrarMenu(event) {

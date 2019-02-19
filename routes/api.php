@@ -121,7 +121,7 @@ $api->version('v1', function ($api) {
     /**
      * SUBCONTRATOS
      */
-    $api->group(['middleware' => 'api', 'prefix' => 'subcontratos'], function ($api) {
+    $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
         //SOLICITUD DE MOVIMIENTO
         $api->group(['prefix' => 'solicitud-movimiento-fg'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaController@store');
