@@ -21,6 +21,19 @@
                         </router-link>
                     </li>
 
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
+                        <router-link :to="{name: 'ajuste-saldo-fg'}" class="nav-link" :class="{active: this.$route.name == 'ajuste-saldo-fg'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Ajuste de Saldo</p>
+                        </router-link>
+                    </li>
+
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
+                        <router-link :to="{name: 'consultar-fg'}" class="nav-link" :class="{active: this.$route.name == 'consultar-fg'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Consultar</p>
+                        </router-link>
+                    </li>
                 </ul>
             </li>
 

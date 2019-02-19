@@ -6,6 +6,6 @@
 
 <script>
     export default {
-        name: "tesoreria-layout"
+        name: "subcontratos-layout"
     }
 </script>

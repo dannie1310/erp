@@ -4,6 +4,6 @@
 
 <script>
     export default {
-        name: "tesoreria-index",
+        name: "contratos-index",
     }
 </script>

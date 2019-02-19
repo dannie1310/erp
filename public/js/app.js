@@ -35641,7 +35641,7 @@ var index_esm = {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(203);
-module.exports = __webpack_require__(635);
+module.exports = __webpack_require__(640);
 
 
 /***/ }),
@@ -35662,8 +35662,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils__ = __webpack_require__(428);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__utils__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__routes__ = __webpack_require__(430);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__store__ = __webpack_require__(601);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_MainApp_vue__ = __webpack_require__(617);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__store__ = __webpack_require__(607);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_MainApp_vue__ = __webpack_require__(622);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_MainApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9__components_MainApp_vue__);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -103960,13 +103960,13 @@ var routes = [{
 }, {
     path: '/subcontratos',
     components: {
-        default: __webpack_require__(582),
-        menu: __webpack_require__(585)
+        default: __webpack_require__(585),
+        menu: __webpack_require__(588)
     },
     children: [{
         path: '',
         name: 'subcontratos',
-        component: __webpack_require__(590),
+        component: __webpack_require__(593),
         meta: {
             title: 'Subcontratos',
             breadcrumb: { parent: 'home', name: 'SUBCONTRATOS' },
@@ -103974,14 +103974,14 @@ var routes = [{
         }
     }, {
         path: 'solicitud-movimiento-fg',
-        component: __webpack_require__(651),
+        component: __webpack_require__(596),
         meta: {
             middleware: [__WEBPACK_IMPORTED_MODULE_0__middleware_auth__["a" /* default */], __WEBPACK_IMPORTED_MODULE_2__middleware_context__["a" /* default */]]
         },
         children: [{
             path: '/',
             name: 'solicitud-movimiento-fg',
-            component: __webpack_require__(593),
+            component: __webpack_require__(599),
             meta: {
                 title: 'Solicitud de Movimiento a Fondo de Garantía',
                 breadcrumb: { parent: 'subcontratos', name: 'SOLICITUD DE MOVIMIENTO A FONDO DE GARANTÍA' },
@@ -103992,7 +103992,7 @@ var routes = [{
 }, {
     path: '*',
     name: 'notFound',
-    component: __webpack_require__(596)
+    component: __webpack_require__(602)
 }];
 
 /***/ }),
@@ -104231,10 +104231,10 @@ var render = function() {
           { staticClass: "info-box-content" },
           [
             _c("span", { staticClass: "info-box-number" }, [
-              _vm._v("SUBCONTRATOS")
+              _vm._v("CONTRATOS")
             ]),
             _vm._v(" "),
-            _c("router-link", { attrs: { to: { name: "subcontratos" } } }, [
+            _c("router-link", { attrs: { to: { name: "contratos" } } }, [
               _c("span", { staticClass: "info-box-text" }, [
                 _vm._v("Ingresar "),
                 _c("i", { staticClass: "fa fa-arrow-circle-o-right" })
@@ -114548,7 +114548,7 @@ var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(569)
 /* template */
-var __vue_template__ = __webpack_require__(581)
+var __vue_template__ = __webpack_require__(584)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -115795,7 +115795,7 @@ var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(576)
 /* template */
-var __vue_template__ = __webpack_require__(580)
+var __vue_template__ = __webpack_require__(583)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -115841,7 +115841,7 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Show__ = __webpack_require__(577);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Show___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Show__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Edit__ = __webpack_require__(648);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Edit__ = __webpack_require__(580);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Edit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__Edit__);
 //
 //
@@ -116284,2956 +116284,12 @@ if (false) {
 /* 580 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "btn-group" },
-    [
-      _vm.value.show
-        ? _c("movimiento-bancario-show", { attrs: { id: _vm.value.id } })
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.value.edit
-        ? _c("movimiento-bancario-edit", { attrs: { id: _vm.value.id } })
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.value.delete
-        ? _c(
-            "button",
-            {
-              staticClass: "btn btn-sm btn-outline-danger",
-              attrs: { type: "button", title: "Eliminar" },
-              on: { click: _vm.destroy }
-            },
-            [_c("i", { staticClass: "fa fa-trash" })]
-          )
-        : _vm._e()
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-3142af0a", module.exports)
-  }
-}
-
-/***/ }),
-/* 581 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c(
-      "div",
-      { staticClass: "col-md-12" },
-      [_c("movimiento-bancario-create")],
-      1
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-12" }, [
-      _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-body" }, [
-          _c(
-            "div",
-            { staticClass: "table-responsive" },
-            [_c("datatable", _vm._b({}, "datatable", _vm.$data, false))],
-            1
-          )
-        ])
-      ])
-    ])
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-03532e66", module.exports)
-  }
-}
-
-/***/ }),
-/* 582 */
-/***/ (function(module, exports, __webpack_require__) {
-
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(583)
+var __vue_script__ = __webpack_require__(581)
 /* template */
-var __vue_template__ = __webpack_require__(584)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/subcontratos/partials/Layout.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-79d1e88c", Component.options)
-  } else {
-    hotAPI.reload("data-v-79d1e88c", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 583 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    name: "tesoreria-layout"
-});
-
-/***/ }),
-/* 584 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("span", [_c("router-view")], 1)
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-79d1e88c", module.exports)
-  }
-}
-
-/***/ }),
-/* 585 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(586)
-}
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(588)
-/* template */
-var __vue_template__ = __webpack_require__(589)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = injectStyle
-/* scopeId */
-var __vue_scopeId__ = "data-v-5511616f"
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/subcontratos/partials/Menu.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-5511616f", Component.options)
-  } else {
-    hotAPI.reload("data-v-5511616f", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 586 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(587);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("0596d23c", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5511616f\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Menu.vue", function() {
-     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5511616f\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Menu.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 587 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.sidebar-form[data-v-5511616f], .nav-sidebar > .nav-header[data-v-5511616f] {\n    padding: 1rem 0.5rem 0.5rem 1rem;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 588 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    name: "subcontratos-menu",
-
-    methods: {
-        mostrarMenu: function mostrarMenu(event) {
-            event.stopPropagation();
-            $(event.target).closest('li').toggleClass('menu-open');
-        }
-    }
-
-});
-
-/***/ }),
-/* 589 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("nav", { staticClass: "mt-2" }, [
-    _c(
-      "ul",
-      {
-        staticClass: "nav nav-pills nav-sidebar flex-column",
-        attrs: {
-          "data-widget": "treeview",
-          role: "menu",
-          "data-accordion": "false"
-        }
-      },
-      [
-        _c("li", { staticClass: "nav-header" }, [_vm._v("MÓDULOS")]),
-        _vm._v(" "),
-        _c("li", { staticClass: "nav-item" }, [
-          _c(
-            "a",
-            {
-              staticClass: "nav-link",
-              attrs: { href: "#" },
-              on: {
-                click: function($event) {
-                  return _vm.mostrarMenu($event)
-                }
-              }
-            },
-            [
-              _c("i", { staticClass: "nav-icon fa fa-money" }),
-              _vm._v(" "),
-              _vm._m(0)
-            ]
-          ),
-          _vm._v(" "),
-          _c("ul", { staticClass: "nav nav-treeview" }, [
-            _vm.$root.can("consultar_cuenta_almacen")
-              ? _c(
-                  "li",
-                  { staticClass: "nav-item" },
-                  [
-                    _c(
-                      "router-link",
-                      {
-                        staticClass: "nav-link",
-                        class: {
-                          active: this.$route.name == "solicitud-movimiento-fg"
-                        },
-                        attrs: { to: { name: "solicitud-movimiento-fg" } }
-                      },
-                      [
-                        _c("i", { staticClass: "fa fa-circle-o nav-icon" }),
-                        _vm._v(" "),
-                        _c("p", [_vm._v("Solicitar Movimiento")])
-                      ]
-                    )
-                  ],
-                  1
-                )
-              : _vm._e()
-          ])
-        ])
-      ]
-    )
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("p", [
-      _vm._v("\n                    Fondo de Garantía\n                    "),
-      _c("i", { staticClass: "right fa fa-angle-left" })
-    ])
-  }
-]
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-5511616f", module.exports)
-  }
-}
-
-/***/ }),
-/* 590 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(591)
-/* template */
-var __vue_template__ = __webpack_require__(592)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/subcontratos/Index.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-36abc876", Component.options)
-  } else {
-    hotAPI.reload("data-v-36abc876", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 591 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    name: "tesoreria-index"
-});
-
-/***/ }),
-/* 592 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("span")
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-36abc876", module.exports)
-  }
-}
-
-/***/ }),
-/* 593 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(594)
-/* template */
-var __vue_template__ = __webpack_require__(595)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/subcontratos/solicitud-movimiento-fg/Index/index.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-8bc169ee", Component.options)
-  } else {
-    hotAPI.reload("data-v-8bc169ee", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 594 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    props: {}
-});
-
-/***/ }),
-/* 595 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "Index" }, [
-    _c("pre", { domProps: { textContent: _vm._s(_vm.$attrs) } })
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-8bc169ee", module.exports)
-  }
-}
-
-/***/ }),
-/* 596 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(597)
-}
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(599)
-/* template */
-var __vue_template__ = __webpack_require__(600)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = injectStyle
-/* scopeId */
-var __vue_scopeId__ = "data-v-490206f6"
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/pages/NotFound.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-490206f6", Component.options)
-  } else {
-    hotAPI.reload("data-v-490206f6", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 597 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(598);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("b2e4a910", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-490206f6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./NotFound.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-490206f6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./NotFound.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 598 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 599 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    name: "NotFound"
-});
-
-/***/ }),
-/* 600 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("section", { staticClass: "content" }, [
-    _c("div", { staticClass: "error-page" }, [
-      _c("h2", { staticClass: "headline text-warning" }, [_vm._v(" 404")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "error-content" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _c(
-          "p",
-          [
-            _vm._v(
-              "\n                No pudimos encontrar la página que buscabas "
-            ),
-            _c("br"),
-            _vm._v(" "),
-            _c("router-link", { attrs: { to: "/" } }, [
-              _vm._v("Regresar a la página de inicio")
-            ])
-          ],
-          1
-        )
-      ])
-    ])
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("h3", [
-      _c("i", { staticClass: "fa fa-warning text-warning" }),
-      _vm._v(" Oops! Pagina no encontrada.")
-    ])
-  }
-]
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-490206f6", module.exports)
-  }
-}
-
-/***/ }),
-/* 601 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(180);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(201);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_auth__ = __webpack_require__(602);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__ = __webpack_require__(604);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_cadeco_cuenta__ = __webpack_require__(605);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_almacen__ = __webpack_require__(606);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_empresa__ = __webpack_require__(607);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_cuenta_fondo__ = __webpack_require__(608);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_cuenta_general__ = __webpack_require__(609);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_estatus_prepoliza__ = __webpack_require__(610);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_poliza__ = __webpack_require__(611);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(612);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(613);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__modules_tesoreria_movimiento_bancario__ = __webpack_require__(614);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__modules_tesoreria_tipo_movimiento__ = __webpack_require__(615);
-
-
-
-
-//CADECO
-
-
-
-//CONTABILIDAD
-
-
-
-
-
-
-
-
-
-//TESORERIA
-
-
-
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
-
-/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
-    modules: {
-        auth: __WEBPACK_IMPORTED_MODULE_2__modules_auth__["a" /* default */],
-        'cadeco/obras': __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__["a" /* default */],
-        'cadeco/cuenta': __WEBPACK_IMPORTED_MODULE_4__modules_cadeco_cuenta__["a" /* default */],
-        'contabilidad/cuenta-almacen': __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_almacen__["a" /* default */],
-        'contabilidad/cuenta-empresa': __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_empresa__["a" /* default */],
-        'contabilidad/cuenta-fondo': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_cuenta_fondo__["a" /* default */],
-        'contabilidad/cuenta-general': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_cuenta_general__["a" /* default */],
-        'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_estatus_prepoliza__["a" /* default */],
-        'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_poliza__["a" /* default */],
-        'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
-        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_12__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */],
-
-        'tesoreria/movimiento-bancario': __WEBPACK_IMPORTED_MODULE_13__modules_tesoreria_movimiento_bancario__["a" /* default */],
-        'tesoreria/tipo-movimiento': __WEBPACK_IMPORTED_MODULE_14__modules_tesoreria_tipo_movimiento__["a" /* default */]
-    },
-    strict: "development" !== 'production'
-}));
-
-/***/ }),
-/* 602 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__partials_auth__ = __webpack_require__(603);
-
-
-var user = Object(__WEBPACK_IMPORTED_MODULE_0__partials_auth__["a" /* getLoggedinUser */])();
-var obra = Object(__WEBPACK_IMPORTED_MODULE_0__partials_auth__["b" /* getObra */])();
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-
-    state: {
-        currentUser: user,
-        currentObra: obra,
-        permisos: [],
-        jwt: null,
-        isLoggedIn: false,
-        loading: false,
-        auth_error: null
-    },
-    mutations: {
-        login: function login(state) {
-            state.loading = true;
-            state.auth_error = null;
-        },
-        loginSuccess: function loginSuccess(state, payload) {
-            state.auth_error = null;
-            state.isLoggedin = true;
-            state.loading = false;
-            state.currentUser = Object.assign({}, payload.user);
-            state.jwt = payload.access_token;
-
-            window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + payload.access_token;
-        },
-        loginFailed: function loginFailed(state, payload) {
-            state.loading = false;
-            state.auth_error = payload.error;
-        },
-        logout: function logout(state) {
-            var payload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            state.isLoggedin = false;
-            state.currentUser = null;
-            state.currentObra = null;
-            state.auth_error = payload.error;
-        },
-        setObra: function setObra(state, payload) {
-            state.currentObra = Object.assign({}, payload.obra);
-        },
-        setPermisos: function setPermisos(state, payload) {
-            state.permisos = Object.assign({}, payload.permisos);
-        }
-    },
-
-    getters: {
-        isLoading: function isLoading(state) {
-            return state.loading;
-        },
-        isLoggedin: function isLoggedin(state) {
-            return state.isLoggedin;
-        },
-        currentUser: function currentUser(state) {
-            return state.currentUser;
-        },
-        currentObra: function currentObra(state) {
-            return state.currentObra;
-        },
-        datosContables: function datosContables(state) {
-            return state.currentObra ? state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null : null;
-        },
-        authError: function authError(state) {
-            return state.auth_error;
-        },
-        permisos: function permisos(state) {
-            return state.permisos;
-        }
-    },
-
-    actions: {
-        login: function login(context) {
-            context.commit("login");
-        },
-        logout: function logout(context, payload) {
-            axios.post('/api/auth/logout').then(function (r) {
-                return r.data;
-            }).then(function () {
-                context.commit('logout', payload);
-            });
-        }
-    }
-});
-
-/***/ }),
-/* 603 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getLoggedinUser;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getObra;
-function getLoggedinUser() {
-
-    var session = localStorage.getItem('vue-session-key');
-
-    if (!session) {
-        return null;
-    }
-
-    return JSON.parse(session).user;
-}
-
-function getObra() {
-    var session = localStorage.getItem('vue-session-key');
-
-    if (!session) {
-        return null;
-    }
-
-    return JSON.parse(session).obra;
-}
-
-/***/ }),
-/* 604 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-
-    state: {
-        obras: []
-    },
-
-    mutations: {
-        fetch: function fetch(state, obras) {
-            state.obras = obras;
-        }
-    },
-
-    actions: {
-        fetch: function fetch(context) {
-            axios.get('/api/auth/obras').then(function (res) {
-                context.commit('fetch', res.data);
-            });
-        }
-    },
-
-    getters: {
-        obrasAgrupadas: function obrasAgrupadas(state) {
-            return _.groupBy(state.obras, 'base_datos');
-        }
-    }
-});
-
-/***/ }),
-/* 605 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/cuenta/';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        cuentas: [],
-        currentCuenta: null
-    },
-
-    mutations: {
-        SET_CUENTAS: function SET_CUENTAS(state, data) {
-            state.cuentas = data;
-        }
-    },
-
-    actions: {
-        fetch: function fetch(context, payload) {
-            axios.get(URI, { params: payload }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_CUENTAS', data.data);
-            });
-        }
-    },
-
-    getters: {
-        cuentas: function cuentas(state) {
-            return state.cuentas;
-        }
-    }
-});
-
-/***/ }),
-/* 606 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/contabilidad/cuenta-almacen/';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        cuentas: [],
-        currentCuenta: null,
-        meta: {}
-    },
-
-    mutations: {
-        SET_CUENTAS: function SET_CUENTAS(state, data) {
-            state.cuentas = data;
-        },
-        SET_META: function SET_META(state, data) {
-            state.meta = data;
-        },
-        SET_CUENTA: function SET_CUENTA(state, data) {
-            state.currentCuenta = data;
-        },
-        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
-            state.cuentas = state.cuentas.map(function (cuenta) {
-                if (cuenta.id === data.id) {
-                    return Object.assign([], cuenta, data);
-                }
-                return cuenta;
-            });
-            state.currentCuenta = data;
-        },
-        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
-            state.currentCuenta[data.attribute] = data.value;
-        }
-    },
-
-    actions: {
-        paginate: function paginate(context, payload) {
-            context.commit('SET_CUENTAS', []);
-            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_CUENTAS', data.data);
-                context.commit('SET_META', data.meta);
-            });
-        },
-        find: function find(context, id) {
-            return new Promise(function (resolve, reject) {
-                context.commit('SET_CUENTA', null);
-                axios.get(URI + id).then(function (r) {
-                    return r.data;
-                }).then(function (data) {
-                    context.commit('SET_CUENTA', data);
-                    resolve();
-                }).catch(function (error) {
-                    reject(error);
-                });
-            });
-        },
-        update: function update(context, payload) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Actualizar Cuenta de Almacén",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
-                }).then(function (value) {
-                    if (value) {
-                        axios.patch(URI + payload.id, payload).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Cuenta actualizada correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                context.commit('UPDATE_CUENTA', data);
-                                resolve();
-                            });
-                        }).catch(function (error) {
-                            reject(error);
-                        });
-                    }
-                });
-            });
-        }
-    },
-
-    getters: {
-        cuentas: function cuentas(state) {
-            return state.cuentas;
-        },
-        meta: function meta(state) {
-            return state.meta;
-        },
-        currentCuenta: function currentCuenta(state) {
-            return state.currentCuenta;
-        }
-    }
-});
-
-/***/ }),
-/* 607 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/contabilidad/cuenta-empresa/';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        cuentas: [],
-        currentCuenta: null,
-        meta: {}
-    },
-
-    mutations: {
-        SET_CUENTAS: function SET_CUENTAS(state, data) {
-            state.cuentas = data;
-        },
-        SET_META: function SET_META(state, data) {
-            state.meta = data;
-        },
-        SET_CUENTA: function SET_CUENTA(state, data) {
-            state.currentCuenta = data;
-        },
-        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
-            state.cuentas = state.cuentas.map(function (cuenta) {
-                if (cuenta.id === data.id) {
-                    return Object.assign([], cuenta, data);
-                }
-                return cuenta;
-            });
-            state.currentCuenta = data;
-        },
-        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
-            state.currentCuenta[data.attribute] = data.value;
-        }
-    },
-
-    actions: {
-        paginate: function paginate(context, payload) {
-            context.commit('SET_CUENTAS', []);
-            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_CUENTAS', data.data);
-                context.commit('SET_META', data.meta);
-            });
-        },
-        find: function find(context, id) {
-            return new Promise(function (resolve, reject) {
-                context.commit('SET_CUENTA', null);
-                axios.get(URI + id).then(function (r) {
-                    return r.data;
-                }).then(function (data) {
-                    context.commit('SET_CUENTA', data);
-                    resolve();
-                }).catch(function (error) {
-                    reject(error);
-                });
-            });
-        },
-        update: function update(context, payload) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Actualizar Cuenta de Empresa",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
-                }).then(function (value) {
-                    if (value) {
-                        axios.patch(URI + payload.id, payload).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Cuenta actualizada correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                context.commit('UPDATE_CUENTA', data);
-                                resolve();
-                            });
-                        }).catch(function (error) {
-                            reject(error);
-                        });
-                    }
-                });
-            });
-        }
-    },
-
-    getters: {
-        cuentas: function cuentas(state) {
-            return state.cuentas;
-        },
-        meta: function meta(state) {
-            return state.meta;
-        },
-        currentCuenta: function currentCuenta(state) {
-            return state.currentCuenta;
-        }
-    }
-});
-
-/***/ }),
-/* 608 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/contabilidad/cuenta-fondo/';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        cuentas: [],
-        currentCuenta: null,
-        meta: {}
-    },
-
-    mutations: {
-        SET_CUENTAS: function SET_CUENTAS(state, data) {
-            state.cuentas = data;
-        },
-        SET_META: function SET_META(state, data) {
-            state.meta = data;
-        },
-        SET_CUENTA: function SET_CUENTA(state, data) {
-            state.currentCuenta = data;
-        },
-        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
-            state.cuentas = state.cuentas.map(function (cuenta) {
-
-                if (cuenta.id === data.id) {
-                    return Object.assign([], cuenta, data);
-                }
-                return cuenta;
-            });
-            state.currentCuenta = data;
-        },
-        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
-            state.currentCuenta[data.attribute] = data.value;
-        }
-    },
-
-    actions: {
-        paginate: function paginate(context, payload) {
-            context.commit('SET_CUENTAS', []);
-            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_CUENTAS', data.data);
-                context.commit('SET_META', data.meta);
-            });
-        },
-        find: function find(context, id) {
-            return new Promise(function (resolve, reject) {
-                context.commit('SET_CUENTA', null);
-                axios.get(URI + id).then(function (r) {
-                    return r.data;
-                }).then(function (data) {
-                    context.commit('SET_CUENTA', data);
-                    resolve();
-                }).catch(function (error) {
-                    reject(error);
-                });
-            });
-        },
-        update: function update(context, payload) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Actualizar Cuenta de Fondo",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
-                }).then(function (value) {
-                    if (value) {
-                        axios.patch(URI + payload.id, payload).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Cuenta actualizada correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                context.commit('UPDATE_CUENTA', data);
-                                resolve();
-                            });
-                        }).catch(function (error) {
-                            reject(error);
-                        });
-                    }
-                });
-            });
-        }
-    },
-
-    getters: {
-        cuentas: function cuentas(state) {
-            return state.cuentas;
-        },
-        meta: function meta(state) {
-            return state.meta;
-        },
-        currentCuenta: function currentCuenta(state) {
-            return state.currentCuenta;
-        }
-    }
-});
-
-/***/ }),
-/* 609 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/contabilidad/cuenta-general/';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        cuentas: [],
-        currentCuenta: null,
-        meta: {}
-    },
-
-    mutations: {
-        SET_CUENTAS: function SET_CUENTAS(state, data) {
-            state.cuentas = data;
-        },
-        SET_META: function SET_META(state, data) {
-            state.meta = data;
-        },
-        SET_CUENTA: function SET_CUENTA(state, data) {
-            state.currentCuenta = data;
-        },
-        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
-            state.cuentas = state.cuentas.map(function (cuenta) {
-                if (cuenta.id === data.id) {
-                    return Object.assign([], cuenta, data);
-                }
-                return cuenta;
-            });
-            state.currentCuenta = data;
-        },
-        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
-            state.currentCuenta[data.attribute] = data.value;
-        }
-    },
-
-    actions: {
-        paginate: function paginate(context, payload) {
-            context.commit('SET_CUENTAS', []);
-            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_CUENTAS', data.data);
-                context.commit('SET_META', data.meta);
-            });
-        },
-        find: function find(context, id) {
-            return new Promise(function (resolve, reject) {
-                context.commit('SET_CUENTA', null);
-                axios.get(URI + id).then(function (r) {
-                    return r.data;
-                }).then(function (data) {
-                    context.commit('SET_CUENTA', data);
-                    resolve();
-                }).catch(function (error) {
-                    reject(error);
-                });
-            });
-        },
-        update: function update(context, payload) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Actualizar Cuenta General",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
-                }).then(function (value) {
-                    if (value) {
-                        axios.patch(URI + payload.id, payload).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Cuenta actualizada correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                context.commit('UPDATE_CUENTA', data);
-                                resolve();
-                            });
-                        }).catch(function (error) {
-                            reject(error);
-                        });
-                    }
-                });
-            });
-        }
-    },
-
-    getters: {
-        cuentas: function cuentas(state) {
-            return state.cuentas;
-        },
-        meta: function meta(state) {
-            return state.meta;
-        },
-        currentCuenta: function currentCuenta(state) {
-            return state.currentCuenta;
-        }
-    }
-});
-
-/***/ }),
-/* 610 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/contabilidad/estatus-prepoliza';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        estatus: []
-    },
-
-    mutations: {
-        SET_ESTATUS: function SET_ESTATUS(state, data) {
-            state.estatus = data;
-        }
-    },
-
-    actions: {
-        fetch: function fetch(context) {
-            axios.get(URI).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_ESTATUS', data.data);
-            });
-        }
-    },
-
-    getters: {
-        estatus: function estatus(state) {
-            return state.estatus;
-        }
-    }
-});
-
-/***/ }),
-/* 611 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/contabilidad/poliza/';
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        polizas: [],
-        currentPoliza: null,
-        meta: {}
-    },
-
-    mutations: {
-        SET_POLIZAS: function SET_POLIZAS(state, data) {
-            state.polizas = data;
-        },
-        SET_META: function SET_META(state, data) {
-            state.meta = data;
-        },
-        UPDATE_POLIZA: function UPDATE_POLIZA(state, data) {
-            state.polizas = state.polizas.map(function (poliza) {
-                if (poliza.id === data.id) {
-                    return Object.assign({}, poliza, data);
-                }
-                return poliza;
-            });
-            state.currentPoliza = data;
-        },
-        SET_POLIZA: function SET_POLIZA(state, data) {
-            state.currentPoliza = data;
-        }
-    },
-
-    actions: {
-        paginate: function paginate(context, payload) {
-            context.commit('SET_POLIZAS', []);
-            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_POLIZAS', data.data);
-                context.commit('SET_META', data.meta);
-            });
-        },
-        find: function find(context, payload) {
-            return new Promise(function (resolve, reject) {
-                context.commit('SET_POLIZA', null);
-                axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
-                    return r.data;
-                }).then(function (data) {
-                    context.commit('SET_POLIZA', data);
-                    resolve();
-                }).catch(function (error) {
-                    reject(error);
-                });
-            });
-        },
-        update: function update(context, payload) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Guardar cambios de la Prepóliza",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Guardar']
-                }).then(function (value) {
-                    if (value) {
-                        axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Prepóliza Actualizada correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                context.commit('UPDATE_POLIZA', data);
-                                resolve();
-                            });
-                        }).catch(function (error) {
-                            reject();
-                        });
-                    }
-                });
-            });
-        },
-        validar: function validar(context, payload) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "Validar Prepóliza",
-                    text: "¿Esta seguro de que deseas validar la Prepóliza?",
-                    icon: "warning",
-                    buttons: ["Cancelar", "Si, Validar"]
-                }).then(function (value) {
-                    if (value) {
-                        axios.patch(URI + payload.id + '/validar', payload.data, { params: payload.params }).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Prepóliza Validada correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                context.commit('UPDATE_POLIZA', data);
-                                resolve();
-                            });
-                        }).catch(function (error) {
-                            reject(error);
-                        });
-                    }
-                });
-            });
-        },
-        omitir: function omitir(context, payload) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "Omitir Prepóliza",
-                    text: "¿Esta seguro de que deseas omitir la Prepóliza?",
-                    icon: "warning",
-                    buttons: ["Cancelar", "Si, Omitir"]
-                }).then(function (value) {
-                    if (value) {
-                        axios.patch(URI + payload.id + '/omitir', payload.data, { params: payload.params }).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Prepóliza omitida correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                context.commit('UPDATE_POLIZA', data);
-                                resolve();
-                            });
-                        }).catch(function (error) {
-                            reject(error);
-                        });
-                    }
-                });
-            });
-        }
-    },
-
-    getters: {
-        polizas: function polizas(state) {
-            return state.polizas;
-        },
-        meta: function meta(state) {
-            return state.meta;
-        },
-        currentPoliza: function currentPoliza(state) {
-            return state.currentPoliza;
-        }
-    }
-});
-
-/***/ }),
-/* 612 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/contabilidad/tipo-cuenta-contable';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        tipos: []
-    },
-
-    mutations: {
-        SET_TIPOS: function SET_TIPOS(state, data) {
-            state.tipos = data;
-        }
-    },
-
-    actions: {
-        fetch: function fetch(context, payload) {
-            axios.get(URI, { params: payload }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_TIPOS', data.data);
-            });
-        }
-    },
-
-    getters: {
-        tipos: function tipos(state) {
-            return state.tipos;
-        }
-    }
-});
-
-/***/ }),
-/* 613 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/contabilidad/tipo-poliza-contpaq';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        tipos: []
-    },
-
-    mutations: {
-        SET_TIPOS: function SET_TIPOS(state, data) {
-            state.tipos = data;
-        }
-    },
-
-    actions: {
-        fetch: function fetch(context) {
-            axios.get(URI).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_TIPOS', data.data);
-            });
-        }
-    },
-
-    getters: {
-        tipos: function tipos(state) {
-            return state.tipos;
-        }
-    }
-});
-
-/***/ }),
-/* 614 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/tesoreria/movimiento-bancario/';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        movimientos: [],
-        currentMovimiento: null,
-        meta: {}
-    },
-
-    mutations: {
-        SET_MOVIMIENTOS: function SET_MOVIMIENTOS(state, data) {
-            state.movimientos = data;
-        },
-        SET_MOVIMIENTO: function SET_MOVIMIENTO(state, data) {
-            state.currentMovimiento = data;
-        },
-        SET_META: function SET_META(state, data) {
-            state.meta = data;
-        },
-        DELETE_MOVIMIENTO: function DELETE_MOVIMIENTO(state, id) {
-            state.movimientos = state.movimientos.filter(function (mov) {
-                return mov.id !== id;
-            });
-            if (state.currentMovimiento && state.currentMovimiento.id === id) {
-                state.currentMovimiento = null;
-            }
-        },
-        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
-            _.set(state.currentMovimiento, data.attribute, data.value);
-        },
-        UPDATE_MOVIMIENTO: function UPDATE_MOVIMIENTO(state, data) {
-            state.movimientos = state.movimientos.map(function (movimiento) {
-                if (movimiento.id === data.id) {
-                    return Object.assign({}, movimiento, data);
-                }
-                return movimiento;
-            });
-            state.currentMovimiento = data;
-        }
-    },
-
-    actions: {
-        paginate: function paginate(context, payload) {
-            context.commit('SET_MOVIMIENTOS', []);
-            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_MOVIMIENTOS', data.data);
-                context.commit('SET_META', data.meta);
-            });
-        },
-        find: function find(context, payload) {
-            return new Promise(function (resolve, reject) {
-                axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
-                    return r.data;
-                }).then(function (data) {
-                    context.commit('SET_MOVIMIENTO', data);
-                    resolve();
-                }).catch(function (error) {
-                    reject(error);
-                });
-            });
-        },
-        delete: function _delete(context, id) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "Eliminar movimiento",
-                    text: "¿Estás seguro/a de que deseas eliminar este movimiento?",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Eliminar'],
-                    dangerMode: true
-                }).then(function (value) {
-                    if (value) {
-                        axios.delete(URI + id).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Movimiento eliminado correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                context.commit('DELETE_MOVIMIENTO', id);
-                                resolve();
-                            });
-                        }).catch(function (error) {
-                            reject(error);
-                        });
-                    }
-                });
-            });
-        },
-        store: function store(context, payload) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "Registrar movimiento",
-                    text: "¿Estás seguro/a de que la información es correcta?",
-                    icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
-                }).then(function (value) {
-                    if (value) {
-                        axios.post(URI, payload).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Movimiento registrado correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                resolve(data);
-                            });
-                        }).catch(function (error) {
-                            reject(error);
-                        });
-                    }
-                });
-            });
-        },
-        update: function update(context, payload) {
-            return new Promise(function (resolve, reject) {
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Guardar cambios del Movimiento",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Guardar']
-                }).then(function (value) {
-                    if (value) {
-                        axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (r) {
-                            return r.data;
-                        }).then(function (data) {
-                            swal("Movimiento Actualizado correctamente", {
-                                icon: "success",
-                                timer: 1500,
-                                buttons: false
-                            }).then(function () {
-                                context.commit('UPDATE_MOVIMIENTO', data);
-                                resolve();
-                            });
-                        }).catch(function (error) {
-                            reject(error);
-                        });
-                    }
-                });
-            });
-        }
-    },
-
-    getters: {
-        movimientos: function movimientos(state) {
-            return state.movimientos;
-        },
-        meta: function meta(state) {
-            return state.meta;
-        },
-        currentMovimiento: function currentMovimiento(state) {
-            return state.currentMovimiento;
-        }
-    }
-});
-
-/***/ }),
-/* 615 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var URI = '/api/tesoreria/tipo-movimiento/';
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-    namespaced: true,
-    state: {
-        tipos: []
-    },
-
-    mutations: {
-        SET_TIPOS: function SET_TIPOS(state, data) {
-            state.tipos = data;
-        }
-    },
-
-    actions: {
-        fetch: function fetch(context, payload) {
-            axios.get(URI, { params: payload }).then(function (r) {
-                return r.data;
-            }).then(function (data) {
-                context.commit('SET_TIPOS', data.data);
-            });
-        }
-    },
-
-    getters: {
-        tipos: function tipos(state) {
-            return state.tipos;
-        }
-    }
-});
-
-/***/ }),
-/* 616 */,
-/* 617 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(618)
-}
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(620)
-/* template */
-var __vue_template__ = __webpack_require__(634)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = injectStyle
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/MainApp.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-736a0b0d", Component.options)
-  } else {
-    hotAPI.reload("data-v-736a0b0d", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 618 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(619);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("4292f4fe", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-736a0b0d\",\"scoped\":false,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./MainApp.vue", function() {
-     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-736a0b0d\",\"scoped\":false,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./MainApp.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 619 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\na {\n    color: #68a34d;\n}\n.sidebar .nav-sidebar > .nav-item > .nav-link.active {\n     color: #ffffff;\n     background-color: #68a34d;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 620 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__pages_partials_Header__ = __webpack_require__(621);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__pages_partials_Header___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__pages_partials_Header__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pages_partials_Sidebar__ = __webpack_require__(624);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pages_partials_Sidebar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__pages_partials_Sidebar__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb__ = __webpack_require__(628);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer__ = __webpack_require__(631);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    name: 'main-app',
-    components: { AppBreadcrumb: __WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb___default.a, AppSidebar: __WEBPACK_IMPORTED_MODULE_1__pages_partials_Sidebar___default.a, AppHeader: __WEBPACK_IMPORTED_MODULE_0__pages_partials_Header___default.a, AppFooter: __WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer___default.a },
-    computed: {
-        currentUser: function currentUser() {
-            return this.$store.getters['auth/currentUser'];
-        },
-        currentObra: function currentObra() {
-            return this.$store.getters['auth/currentObra'];
-        }
-    }
-});
-
-/***/ }),
-/* 621 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(622)
-/* template */
-var __vue_template__ = __webpack_require__(623)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/pages/partials/Header.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1e2d0978", Component.options)
-  } else {
-    hotAPI.reload("data-v-1e2d0978", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 622 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    name: 'app-header',
-    methods: {
-        logout: function logout() {
-            var _this = this;
-
-            swal({
-                icon: 'warning',
-                title: 'Cerrar Sesión',
-                text: 'La sesión actual se cerrará, ¿Desea continuar?',
-                buttons: ['Cancelar', 'Si, Cerrar Sesión'],
-                dangerMode: true
-            }).then(function (success) {
-                if (success) {
-                    _this.$store.dispatch('auth/logout');
-                    _this.$session.destroy();
-                    _this.$router.push({ name: 'login' });
-                }
-            });
-        }
-    },
-    computed: {
-        currentUser: function currentUser() {
-            return this.$store.getters['auth/currentUser'];
-        },
-        currentObra: function currentObra() {
-            return this.$store.getters['auth/currentObra'];
-        }
-    }
-});
-
-/***/ }),
-/* 623 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "nav",
-    {
-      staticClass:
-        "main-header navbar navbar-expand bg-white navbar-light border-bottom"
-    },
-    [
-      _c("ul", { staticClass: "navbar-nav" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _vm.currentObra
-          ? _c(
-              "li",
-              { staticClass: "nav-item d-none d-sm-inline-block" },
-              [
-                _c(
-                  "router-link",
-                  {
-                    staticClass: "nav-link",
-                    attrs: { to: { name: "obras" }, title: "Cambiar Obra" }
-                  },
-                  [_vm._v(_vm._s(_vm.currentObra.nombre))]
-                )
-              ],
-              1
-            )
-          : _vm._e()
-      ]),
-      _vm._v(" "),
-      _vm.currentUser
-        ? _c("ul", { staticClass: "navbar-nav ml-auto" }, [
-            _c("li", { staticClass: "nav-item d-none d-sm-inline-block" }, [
-              _c("a", { staticClass: "nav-link", attrs: { href: "#" } }, [
-                _vm._v(
-                  "\n                " +
-                    _vm._s(
-                      _vm.currentUser.nombre +
-                        "  " +
-                        _vm.currentUser.apaterno +
-                        "  " +
-                        _vm.currentUser.amaterno
-                    ) +
-                    "\n            "
-                )
-              ])
-            ]),
-            _vm._v(" "),
-            _c("li", { staticClass: "nav-item" }, [
-              _c(
-                "a",
-                {
-                  staticClass: "nav-link",
-                  attrs: {
-                    "data-slide": "true",
-                    href: "#",
-                    title: "Cerrar Sesión"
-                  },
-                  on: { click: _vm.logout }
-                },
-                [_c("i", { staticClass: "fa fa-sign-out" })]
-              )
-            ]),
-            _vm._v(" "),
-            _vm._m(1)
-          ])
-        : _vm._e()
-    ]
-  )
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("li", { staticClass: "nav-item" }, [
-      _c(
-        "a",
-        {
-          staticClass: "nav-link",
-          attrs: { "data-widget": "pushmenu", href: "#" }
-        },
-        [_c("i", { staticClass: "fa fa-bars" })]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("li", { staticClass: "nav-item" }, [
-      _c(
-        "a",
-        {
-          staticClass: "nav-link",
-          attrs: {
-            "data-widget": "control-sidebar",
-            "data-slide": "true",
-            href: "#"
-          }
-        },
-        [_c("i", { staticClass: "fa fa-th-large" })]
-      )
-    ])
-  }
-]
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-1e2d0978", module.exports)
-  }
-}
-
-/***/ }),
-/* 624 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(625)
-/* template */
-var __vue_template__ = __webpack_require__(626)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/pages/partials/Sidebar.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-60536196", Component.options)
-  } else {
-    hotAPI.reload("data-v-60536196", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 625 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    name: "app-sidebar",
-    computed: {
-        currentUser: function currentUser() {
-            return this.$store.getters['auth/currentUser'];
-        },
-        currentObra: function currentObra() {
-            return this.$store.getters['auth/currentObra'];
-        }
-    }
-});
-
-/***/ }),
-/* 626 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "aside",
-    { staticClass: "main-sidebar sidebar-dark-primary elevation-4" },
-    [
-      _c(
-        "router-link",
-        { staticClass: "brand-link", attrs: { to: { name: "home" } } },
-        [
-          _c("img", {
-            staticClass: "brand-image img-circle elevation-3",
-            staticStyle: { opacity: ".8" },
-            attrs: {
-              src: __webpack_require__(627),
-              alt: "Sao Logo"
-            }
-          }),
-          _vm._v(" "),
-          _c("span", { staticClass: "brand-text font-weight-light" }, [
-            _vm._v("SAO ERP")
-          ])
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "sidebar" },
-        [_c("router-view", { attrs: { name: "menu" } })],
-        1
-      )
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-60536196", module.exports)
-  }
-}
-
-/***/ }),
-/* 627 */
-/***/ (function(module, exports) {
-
-module.exports = "/images/company-icon.png?c5027ac4ed252ee41aaf3adc68bc058c";
-
-/***/ }),
-/* 628 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(629)
-/* template */
-var __vue_template__ = __webpack_require__(630)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/pages/partials/Breadcrumb.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-003a938c", Component.options)
-  } else {
-    hotAPI.reload("data-v-003a938c", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 629 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    name: 'app-breadcrumb',
-    data: function data() {
-        return {
-            breadcrumbList: []
-        };
-    },
-    mounted: function mounted() {
-        this.updateList();
-    },
-
-    watch: {
-        '$route': function $route() {
-            this.updateList();
-        }
-    },
-    methods: {
-        updateList: function updateList() {
-            this.breadcrumbList = [];
-            if (this.$route.name != null) {
-                this.push(this.$route);
-            }
-        },
-        push: function push(route) {
-            if (route.meta.breadcrumb && route.meta.breadcrumb.parent) {
-                this.push(this.$router.resolve({ name: route.meta.breadcrumb.parent, params: route.params }).resolved);
-                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : { name: route.name, params: route.params } }));
-            } else {
-                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : { name: route.name, params: route.params } }));
-            }
-        }
-    }
-});
-
-/***/ }),
-/* 630 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "ol",
-    { staticClass: "breadcrumb float-sm-right" },
-    _vm._l(_vm.breadcrumbList, function(breadcrumb, idx) {
-      return _c(
-        "li",
-        {
-          key: idx,
-          staticClass: "breadcrumb-item",
-          class: { active: !!breadcrumb.link }
-        },
-        [
-          breadcrumb.link
-            ? _c("router-link", { attrs: { to: breadcrumb.link } }, [
-                !breadcrumb.parent
-                  ? _c("span", [_c("i", { staticClass: "fa fa-home" })])
-                  : _c("span", [
-                      _vm._v(
-                        "\n                " +
-                          _vm._s(breadcrumb.name) +
-                          "\n            "
-                      )
-                    ])
-              ])
-            : _c("span", [
-                !breadcrumb.parent
-                  ? _c("span", [_c("i", { staticClass: "fa fa-home" })])
-                  : _c("span", [
-                      _vm._v(
-                        "\n                " +
-                          _vm._s(breadcrumb.name) +
-                          "\n            "
-                      )
-                    ])
-              ])
-        ],
-        1
-      )
-    }),
-    0
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-003a938c", module.exports)
-  }
-}
-
-/***/ }),
-/* 631 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(632)
-/* template */
-var __vue_template__ = __webpack_require__(633)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/pages/partials/Footer.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6091d15c", Component.options)
-  } else {
-    hotAPI.reload("data-v-6091d15c", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 632 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    name: "app-footer",
-    computed: {
-        currentObra: function currentObra() {
-            return this.$store.getters['auth/currentObra'];
-        }
-    }
-});
-
-/***/ }),
-/* 633 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("footer", { staticClass: "main-footer" }, [
-    _c("div", { staticClass: "float-right d-none d-sm-block" }, [
-      _c("small", [
-        _vm._v(_vm._s(_vm.currentObra ? _vm.currentObra.direccion : ""))
-      ])
-    ]),
-    _vm._v(
-      "\n    " + _vm._s(_vm.currentObra ? _vm.currentObra.facturar : "") + "\n"
-    )
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-6091d15c", module.exports)
-  }
-}
-
-/***/ }),
-/* 634 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("body", { staticClass: "hold-transition sidebar-mini" }, [
-    _vm.currentUser
-      ? _c(
-          "div",
-          { staticClass: "wrapper" },
-          [
-            _c("AppHeader"),
-            _vm._v(" "),
-            _c("AppSidebar"),
-            _vm._v(" "),
-            _c("div", { staticClass: "content-wrapper" }, [
-              _c("section", { staticClass: "content-header" }, [
-                _c("div", { staticClass: "container-fluid" }, [
-                  _c("div", { staticClass: "row mb-2" }, [
-                    _c("div", { staticClass: "col-sm-6" }, [
-                      _c("h1", [_vm._v(_vm._s(this.$route.meta.title))])
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "col-sm-6" },
-                      [_c("AppBreadcrumb")],
-                      1
-                    )
-                  ])
-                ])
-              ]),
-              _vm._v(" "),
-              _c("section", { staticClass: "content" }, [
-                _c(
-                  "div",
-                  { staticClass: "container-fluid" },
-                  [_c("router-view")],
-                  1
-                )
-              ])
-            ]),
-            _vm._v(" "),
-            _c("AppFooter"),
-            _vm._v(" "),
-            _c(
-              "aside",
-              { staticClass: "control-sidebar control-sidebar-dark" },
-              [
-                _c("div", { staticClass: "p-3" }, [
-                  _c("h5", [_vm._v("Acceso Rápido")]),
-                  _vm._v(" "),
-                  _c("hr", { staticClass: "mb-2" }),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "d-block" },
-                    [
-                      _c(
-                        "router-link",
-                        {
-                          staticClass: "d-flex flex-wrap mb-3",
-                          attrs: { to: { name: "contabilidad" } }
-                        },
-                        [
-                          _c(
-                            "div",
-                            {
-                              staticClass: "bg-info elevation-2 text-center",
-                              staticStyle: {
-                                width: "40px",
-                                height: "20px",
-                                "border-radius": "25px",
-                                "margin-right": "10px",
-                                "margin-bottom": "10px",
-                                opacity: "0.8",
-                                cursor: "pointer"
-                              }
-                            },
-                            [_c("i", { staticClass: "fa fa-calculator" })]
-                          ),
-                          _vm._v(
-                            "\n                    Contabilidad\n                "
-                          )
-                        ]
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "d-block" },
-                    [
-                      _c(
-                        "router-link",
-                        {
-                          staticClass: "d-flex flex-wrap mb-3",
-                          attrs: { to: { name: "tesoreria" } }
-                        },
-                        [
-                          _c(
-                            "div",
-                            {
-                              staticClass: "bg-primary elevation-2 text-center",
-                              staticStyle: {
-                                width: "40px",
-                                height: "20px",
-                                "border-radius": "25px",
-                                "margin-right": "10px",
-                                "margin-bottom": "10px",
-                                opacity: "0.8",
-                                cursor: "pointer"
-                              }
-                            },
-                            [_c("i", { staticClass: "fa fa-usd" })]
-                          ),
-                          _vm._v(
-                            "\n                    Tesorería\n                "
-                          )
-                        ]
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "d-block" },
-                    [
-                      _c(
-                        "router-link",
-                        {
-                          staticClass: "d-flex flex-wrap mb-3",
-                          attrs: { to: { name: "subcontratos" } }
-                        },
-                        [
-                          _c(
-                            "div",
-                            {
-                              staticClass: "bg-success elevation-2 text-center",
-                              staticStyle: {
-                                width: "40px",
-                                height: "20px",
-                                "border-radius": "25px",
-                                "margin-right": "10px",
-                                "margin-bottom": "10px",
-                                opacity: "0.8",
-                                cursor: "pointer"
-                              }
-                            },
-                            [_c("i", { staticClass: "fa fa-drivers-license" })]
-                          ),
-                          _vm._v(
-                            "\n                    Subcontratos\n                "
-                          )
-                        ]
-                      )
-                    ],
-                    1
-                  )
-                ])
-              ]
-            )
-          ],
-          1
-        )
-      : _c("div", [_c("router-view")], 1)
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-736a0b0d", module.exports)
-  }
-}
-
-/***/ }),
-/* 635 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 636 */,
-/* 637 */,
-/* 638 */,
-/* 639 */,
-/* 640 */,
-/* 641 */,
-/* 642 */,
-/* 643 */,
-/* 644 */,
-/* 645 */,
-/* 646 */,
-/* 647 */,
-/* 648 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(649)
-/* template */
-var __vue_template__ = __webpack_require__(650)
+var __vue_template__ = __webpack_require__(582)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -119272,7 +116328,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 649 */
+/* 581 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -119563,7 +116619,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 650 */
+/* 582 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -120241,15 +117297,561 @@ if (false) {
 }
 
 /***/ }),
-/* 651 */
+/* 583 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "btn-group" },
+    [
+      _vm.value.show
+        ? _c("movimiento-bancario-show", { attrs: { id: _vm.value.id } })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.value.edit
+        ? _c("movimiento-bancario-edit", { attrs: { id: _vm.value.id } })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.value.delete
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-sm btn-outline-danger",
+              attrs: { type: "button", title: "Eliminar" },
+              on: { click: _vm.destroy }
+            },
+            [_c("i", { staticClass: "fa fa-trash" })]
+          )
+        : _vm._e()
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-3142af0a", module.exports)
+  }
+}
+
+/***/ }),
+/* 584 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c(
+      "div",
+      { staticClass: "col-md-12" },
+      [_c("movimiento-bancario-create")],
+      1
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-12" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c(
+            "div",
+            { staticClass: "table-responsive" },
+            [_c("datatable", _vm._b({}, "datatable", _vm.$data, false))],
+            1
+          )
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-03532e66", module.exports)
+  }
+}
+
+/***/ }),
+/* 585 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(652)
+var __vue_script__ = __webpack_require__(586)
 /* template */
-var __vue_template__ = __webpack_require__(653)
+var __vue_template__ = __webpack_require__(587)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/subcontratos/partials/Layout.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-79d1e88c", Component.options)
+  } else {
+    hotAPI.reload("data-v-79d1e88c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 586 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "subcontratos-layout"
+});
+
+/***/ }),
+/* 587 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("span", [_c("router-view")], 1)
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-79d1e88c", module.exports)
+  }
+}
+
+/***/ }),
+/* 588 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(589)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(591)
+/* template */
+var __vue_template__ = __webpack_require__(592)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-5511616f"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/subcontratos/partials/Menu.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5511616f", Component.options)
+  } else {
+    hotAPI.reload("data-v-5511616f", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 589 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(590);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("0596d23c", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5511616f\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Menu.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-5511616f\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Menu.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 590 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.sidebar-form[data-v-5511616f], .nav-sidebar > .nav-header[data-v-5511616f] {\n    padding: 1rem 0.5rem 0.5rem 1rem;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 591 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "subcontratos-menu",
+
+    methods: {
+        mostrarMenu: function mostrarMenu(event) {
+            event.stopPropagation();
+            $(event.target).closest('li').toggleClass('menu-open');
+        }
+    }
+
+});
+
+/***/ }),
+/* 592 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("nav", { staticClass: "mt-2" }, [
+    _c(
+      "ul",
+      {
+        staticClass: "nav nav-pills nav-sidebar flex-column",
+        attrs: {
+          "data-widget": "treeview",
+          role: "menu",
+          "data-accordion": "false"
+        }
+      },
+      [
+        _c("li", { staticClass: "nav-header" }, [_vm._v("MÓDULOS")]),
+        _vm._v(" "),
+        _c("li", { staticClass: "nav-item" }, [
+          _c(
+            "a",
+            {
+              staticClass: "nav-link",
+              attrs: { href: "#" },
+              on: {
+                click: function($event) {
+                  return _vm.mostrarMenu($event)
+                }
+              }
+            },
+            [
+              _c("i", { staticClass: "nav-icon fa fa-money" }),
+              _vm._v(" "),
+              _vm._m(0)
+            ]
+          ),
+          _vm._v(" "),
+          _c("ul", { staticClass: "nav nav-treeview" }, [
+            _vm.$root.can("consultar_cuenta_almacen")
+              ? _c(
+                  "li",
+                  { staticClass: "nav-item" },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        class: {
+                          active: this.$route.name == "solicitud-movimiento-fg"
+                        },
+                        attrs: { to: { name: "solicitud-movimiento-fg" } }
+                      },
+                      [
+                        _c("i", { staticClass: "fa fa-circle-o nav-icon" }),
+                        _vm._v(" "),
+                        _c("p", [_vm._v("Solicitar Movimiento")])
+                      ]
+                    )
+                  ],
+                  1
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.$root.can("consultar_cuenta_almacen")
+              ? _c(
+                  "li",
+                  { staticClass: "nav-item" },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        class: {
+                          active: this.$route.name == "ajuste-saldo-fg"
+                        },
+                        attrs: { to: { name: "ajuste-saldo-fg" } }
+                      },
+                      [
+                        _c("i", { staticClass: "fa fa-circle-o nav-icon" }),
+                        _vm._v(" "),
+                        _c("p", [_vm._v("Ajuste de Saldo")])
+                      ]
+                    )
+                  ],
+                  1
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.$root.can("consultar_cuenta_almacen")
+              ? _c(
+                  "li",
+                  { staticClass: "nav-item" },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        class: { active: this.$route.name == "consultar-fg" },
+                        attrs: { to: { name: "consultar-fg" } }
+                      },
+                      [
+                        _c("i", { staticClass: "fa fa-circle-o nav-icon" }),
+                        _vm._v(" "),
+                        _c("p", [_vm._v("Consultar")])
+                      ]
+                    )
+                  ],
+                  1
+                )
+              : _vm._e()
+          ])
+        ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("p", [
+      _vm._v("\n                    Fondo de Garantía\n                    "),
+      _c("i", { staticClass: "right fa fa-angle-left" })
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-5511616f", module.exports)
+  }
+}
+
+/***/ }),
+/* 593 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(594)
+/* template */
+var __vue_template__ = __webpack_require__(595)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/subcontratos/Index.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-36abc876", Component.options)
+  } else {
+    hotAPI.reload("data-v-36abc876", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 594 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "contratos-index"
+});
+
+/***/ }),
+/* 595 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("span")
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-36abc876", module.exports)
+  }
+}
+
+/***/ }),
+/* 596 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(597)
+/* template */
+var __vue_template__ = __webpack_require__(598)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -120288,7 +117890,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 652 */
+/* 597 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -120303,7 +117905,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 653 */
+/* 598 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -120321,6 +117923,2480 @@ if (false) {
     require("vue-hot-reload-api")      .rerender("data-v-6e2244b4", module.exports)
   }
 }
+
+/***/ }),
+/* 599 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(600)
+/* template */
+var __vue_template__ = __webpack_require__(601)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/subcontratos/solicitud-movimiento-fg/Index.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-7aca2106", Component.options)
+  } else {
+    hotAPI.reload("data-v-7aca2106", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 600 */
+/***/ (function(module, exports) {
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/***/ }),
+/* 601 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c(
+      "div",
+      { staticClass: "col-md-12" },
+      [_c("solicitud-movimiento-fondo-garantia-create")],
+      1
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-12" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c(
+            "div",
+            { staticClass: "table-responsive" },
+            [_c("datatable", _vm._b({}, "datatable", _vm.$data, false))],
+            1
+          )
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-7aca2106", module.exports)
+  }
+}
+
+/***/ }),
+/* 602 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(603)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(605)
+/* template */
+var __vue_template__ = __webpack_require__(606)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-490206f6"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/pages/NotFound.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-490206f6", Component.options)
+  } else {
+    hotAPI.reload("data-v-490206f6", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 603 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(604);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("b2e4a910", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-490206f6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./NotFound.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-490206f6\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./NotFound.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 604 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 605 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "NotFound"
+});
+
+/***/ }),
+/* 606 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("section", { staticClass: "content" }, [
+    _c("div", { staticClass: "error-page" }, [
+      _c("h2", { staticClass: "headline text-warning" }, [_vm._v(" 404")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "error-content" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c(
+          "p",
+          [
+            _vm._v(
+              "\n                No pudimos encontrar la página que buscabas "
+            ),
+            _c("br"),
+            _vm._v(" "),
+            _c("router-link", { attrs: { to: "/" } }, [
+              _vm._v("Regresar a la página de inicio")
+            ])
+          ],
+          1
+        )
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("h3", [
+      _c("i", { staticClass: "fa fa-warning text-warning" }),
+      _vm._v(" Oops! Pagina no encontrada.")
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-490206f6", module.exports)
+  }
+}
+
+/***/ }),
+/* 607 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(180);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(201);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_auth__ = __webpack_require__(608);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__ = __webpack_require__(610);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_cadeco_cuenta__ = __webpack_require__(611);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_almacen__ = __webpack_require__(612);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_empresa__ = __webpack_require__(613);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_cuenta_fondo__ = __webpack_require__(614);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_cuenta_general__ = __webpack_require__(615);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_estatus_prepoliza__ = __webpack_require__(616);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_poliza__ = __webpack_require__(617);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_cuenta_contable__ = __webpack_require__(618);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__modules_contabilidad_tipo_poliza_contpaq__ = __webpack_require__(619);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__modules_tesoreria_movimiento_bancario__ = __webpack_require__(620);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__modules_tesoreria_tipo_movimiento__ = __webpack_require__(621);
+
+
+
+
+//CADECO
+
+
+
+//CONTABILIDAD
+
+
+
+
+
+
+
+
+
+//TESORERIA
+
+
+
+__WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
+
+/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
+    modules: {
+        auth: __WEBPACK_IMPORTED_MODULE_2__modules_auth__["a" /* default */],
+        'cadeco/obras': __WEBPACK_IMPORTED_MODULE_3__modules_cadeco_obras__["a" /* default */],
+        'cadeco/cuenta': __WEBPACK_IMPORTED_MODULE_4__modules_cadeco_cuenta__["a" /* default */],
+        'contabilidad/cuenta-almacen': __WEBPACK_IMPORTED_MODULE_5__modules_contabilidad_cuenta_almacen__["a" /* default */],
+        'contabilidad/cuenta-empresa': __WEBPACK_IMPORTED_MODULE_6__modules_contabilidad_cuenta_empresa__["a" /* default */],
+        'contabilidad/cuenta-fondo': __WEBPACK_IMPORTED_MODULE_7__modules_contabilidad_cuenta_fondo__["a" /* default */],
+        'contabilidad/cuenta-general': __WEBPACK_IMPORTED_MODULE_8__modules_contabilidad_cuenta_general__["a" /* default */],
+        'contabilidad/estatus-prepoliza': __WEBPACK_IMPORTED_MODULE_9__modules_contabilidad_estatus_prepoliza__["a" /* default */],
+        'contabilidad/poliza': __WEBPACK_IMPORTED_MODULE_10__modules_contabilidad_poliza__["a" /* default */],
+        'contabilidad/tipo-cuenta-contable': __WEBPACK_IMPORTED_MODULE_11__modules_contabilidad_tipo_cuenta_contable__["a" /* default */],
+        'contabilidad/tipo-poliza-contpaq': __WEBPACK_IMPORTED_MODULE_12__modules_contabilidad_tipo_poliza_contpaq__["a" /* default */],
+
+        'tesoreria/movimiento-bancario': __WEBPACK_IMPORTED_MODULE_13__modules_tesoreria_movimiento_bancario__["a" /* default */],
+        'tesoreria/tipo-movimiento': __WEBPACK_IMPORTED_MODULE_14__modules_tesoreria_tipo_movimiento__["a" /* default */]
+    },
+    strict: "development" !== 'production'
+}));
+
+/***/ }),
+/* 608 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__partials_auth__ = __webpack_require__(609);
+
+
+var user = Object(__WEBPACK_IMPORTED_MODULE_0__partials_auth__["a" /* getLoggedinUser */])();
+var obra = Object(__WEBPACK_IMPORTED_MODULE_0__partials_auth__["b" /* getObra */])();
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+
+    state: {
+        currentUser: user,
+        currentObra: obra,
+        permisos: [],
+        jwt: null,
+        isLoggedIn: false,
+        loading: false,
+        auth_error: null
+    },
+    mutations: {
+        login: function login(state) {
+            state.loading = true;
+            state.auth_error = null;
+        },
+        loginSuccess: function loginSuccess(state, payload) {
+            state.auth_error = null;
+            state.isLoggedin = true;
+            state.loading = false;
+            state.currentUser = Object.assign({}, payload.user);
+            state.jwt = payload.access_token;
+
+            window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + payload.access_token;
+        },
+        loginFailed: function loginFailed(state, payload) {
+            state.loading = false;
+            state.auth_error = payload.error;
+        },
+        logout: function logout(state) {
+            var payload = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            state.isLoggedin = false;
+            state.currentUser = null;
+            state.currentObra = null;
+            state.auth_error = payload.error;
+        },
+        setObra: function setObra(state, payload) {
+            state.currentObra = Object.assign({}, payload.obra);
+        },
+        setPermisos: function setPermisos(state, payload) {
+            state.permisos = Object.assign({}, payload.permisos);
+        }
+    },
+
+    getters: {
+        isLoading: function isLoading(state) {
+            return state.loading;
+        },
+        isLoggedin: function isLoggedin(state) {
+            return state.isLoggedin;
+        },
+        currentUser: function currentUser(state) {
+            return state.currentUser;
+        },
+        currentObra: function currentObra(state) {
+            return state.currentObra;
+        },
+        datosContables: function datosContables(state) {
+            return state.currentObra ? state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null : null;
+        },
+        authError: function authError(state) {
+            return state.auth_error;
+        },
+        permisos: function permisos(state) {
+            return state.permisos;
+        }
+    },
+
+    actions: {
+        login: function login(context) {
+            context.commit("login");
+        },
+        logout: function logout(context, payload) {
+            axios.post('/api/auth/logout').then(function (r) {
+                return r.data;
+            }).then(function () {
+                context.commit('logout', payload);
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 609 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getLoggedinUser;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getObra;
+function getLoggedinUser() {
+
+    var session = localStorage.getItem('vue-session-key');
+
+    if (!session) {
+        return null;
+    }
+
+    return JSON.parse(session).user;
+}
+
+function getObra() {
+    var session = localStorage.getItem('vue-session-key');
+
+    if (!session) {
+        return null;
+    }
+
+    return JSON.parse(session).obra;
+}
+
+/***/ }),
+/* 610 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+
+    state: {
+        obras: []
+    },
+
+    mutations: {
+        fetch: function fetch(state, obras) {
+            state.obras = obras;
+        }
+    },
+
+    actions: {
+        fetch: function fetch(context) {
+            axios.get('/api/auth/obras').then(function (res) {
+                context.commit('fetch', res.data);
+            });
+        }
+    },
+
+    getters: {
+        obrasAgrupadas: function obrasAgrupadas(state) {
+            return _.groupBy(state.obras, 'base_datos');
+        }
+    }
+});
+
+/***/ }),
+/* 611 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/cuenta/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        cuentas: [],
+        currentCuenta: null
+    },
+
+    mutations: {
+        SET_CUENTAS: function SET_CUENTAS(state, data) {
+            state.cuentas = data;
+        }
+    },
+
+    actions: {
+        fetch: function fetch(context, payload) {
+            axios.get(URI, { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTAS', data.data);
+            });
+        }
+    },
+
+    getters: {
+        cuentas: function cuentas(state) {
+            return state.cuentas;
+        }
+    }
+});
+
+/***/ }),
+/* 612 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/contabilidad/cuenta-almacen/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        cuentas: [],
+        currentCuenta: null,
+        meta: {}
+    },
+
+    mutations: {
+        SET_CUENTAS: function SET_CUENTAS(state, data) {
+            state.cuentas = data;
+        },
+        SET_META: function SET_META(state, data) {
+            state.meta = data;
+        },
+        SET_CUENTA: function SET_CUENTA(state, data) {
+            state.currentCuenta = data;
+        },
+        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
+            state.cuentas = state.cuentas.map(function (cuenta) {
+                if (cuenta.id === data.id) {
+                    return Object.assign([], cuenta, data);
+                }
+                return cuenta;
+            });
+            state.currentCuenta = data;
+        },
+        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value;
+        }
+    },
+
+    actions: {
+        paginate: function paginate(context, payload) {
+            context.commit('SET_CUENTAS', []);
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTAS', data.data);
+                context.commit('SET_META', data.meta);
+            });
+        },
+        find: function find(context, id) {
+            return new Promise(function (resolve, reject) {
+                context.commit('SET_CUENTA', null);
+                axios.get(URI + id).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_CUENTA', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
+            });
+        },
+        update: function update(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta de Almacén",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Actualizar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id, payload).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Cuenta actualizada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_CUENTA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            });
+        }
+    },
+
+    getters: {
+        cuentas: function cuentas(state) {
+            return state.cuentas;
+        },
+        meta: function meta(state) {
+            return state.meta;
+        },
+        currentCuenta: function currentCuenta(state) {
+            return state.currentCuenta;
+        }
+    }
+});
+
+/***/ }),
+/* 613 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/contabilidad/cuenta-empresa/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        cuentas: [],
+        currentCuenta: null,
+        meta: {}
+    },
+
+    mutations: {
+        SET_CUENTAS: function SET_CUENTAS(state, data) {
+            state.cuentas = data;
+        },
+        SET_META: function SET_META(state, data) {
+            state.meta = data;
+        },
+        SET_CUENTA: function SET_CUENTA(state, data) {
+            state.currentCuenta = data;
+        },
+        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
+            state.cuentas = state.cuentas.map(function (cuenta) {
+                if (cuenta.id === data.id) {
+                    return Object.assign([], cuenta, data);
+                }
+                return cuenta;
+            });
+            state.currentCuenta = data;
+        },
+        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value;
+        }
+    },
+
+    actions: {
+        paginate: function paginate(context, payload) {
+            context.commit('SET_CUENTAS', []);
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTAS', data.data);
+                context.commit('SET_META', data.meta);
+            });
+        },
+        find: function find(context, id) {
+            return new Promise(function (resolve, reject) {
+                context.commit('SET_CUENTA', null);
+                axios.get(URI + id).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_CUENTA', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
+            });
+        },
+        update: function update(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta de Empresa",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Actualizar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id, payload).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Cuenta actualizada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_CUENTA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            });
+        }
+    },
+
+    getters: {
+        cuentas: function cuentas(state) {
+            return state.cuentas;
+        },
+        meta: function meta(state) {
+            return state.meta;
+        },
+        currentCuenta: function currentCuenta(state) {
+            return state.currentCuenta;
+        }
+    }
+});
+
+/***/ }),
+/* 614 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/contabilidad/cuenta-fondo/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        cuentas: [],
+        currentCuenta: null,
+        meta: {}
+    },
+
+    mutations: {
+        SET_CUENTAS: function SET_CUENTAS(state, data) {
+            state.cuentas = data;
+        },
+        SET_META: function SET_META(state, data) {
+            state.meta = data;
+        },
+        SET_CUENTA: function SET_CUENTA(state, data) {
+            state.currentCuenta = data;
+        },
+        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
+            state.cuentas = state.cuentas.map(function (cuenta) {
+
+                if (cuenta.id === data.id) {
+                    return Object.assign([], cuenta, data);
+                }
+                return cuenta;
+            });
+            state.currentCuenta = data;
+        },
+        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value;
+        }
+    },
+
+    actions: {
+        paginate: function paginate(context, payload) {
+            context.commit('SET_CUENTAS', []);
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTAS', data.data);
+                context.commit('SET_META', data.meta);
+            });
+        },
+        find: function find(context, id) {
+            return new Promise(function (resolve, reject) {
+                context.commit('SET_CUENTA', null);
+                axios.get(URI + id).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_CUENTA', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
+            });
+        },
+        update: function update(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta de Fondo",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Actualizar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id, payload).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Cuenta actualizada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_CUENTA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            });
+        }
+    },
+
+    getters: {
+        cuentas: function cuentas(state) {
+            return state.cuentas;
+        },
+        meta: function meta(state) {
+            return state.meta;
+        },
+        currentCuenta: function currentCuenta(state) {
+            return state.currentCuenta;
+        }
+    }
+});
+
+/***/ }),
+/* 615 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/contabilidad/cuenta-general/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        cuentas: [],
+        currentCuenta: null,
+        meta: {}
+    },
+
+    mutations: {
+        SET_CUENTAS: function SET_CUENTAS(state, data) {
+            state.cuentas = data;
+        },
+        SET_META: function SET_META(state, data) {
+            state.meta = data;
+        },
+        SET_CUENTA: function SET_CUENTA(state, data) {
+            state.currentCuenta = data;
+        },
+        UPDATE_CUENTA: function UPDATE_CUENTA(state, data) {
+            state.cuentas = state.cuentas.map(function (cuenta) {
+                if (cuenta.id === data.id) {
+                    return Object.assign([], cuenta, data);
+                }
+                return cuenta;
+            });
+            state.currentCuenta = data;
+        },
+        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value;
+        }
+    },
+
+    actions: {
+        paginate: function paginate(context, payload) {
+            context.commit('SET_CUENTAS', []);
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_CUENTAS', data.data);
+                context.commit('SET_META', data.meta);
+            });
+        },
+        find: function find(context, id) {
+            return new Promise(function (resolve, reject) {
+                context.commit('SET_CUENTA', null);
+                axios.get(URI + id).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_CUENTA', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
+            });
+        },
+        update: function update(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta General",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Actualizar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id, payload).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Cuenta actualizada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_CUENTA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            });
+        }
+    },
+
+    getters: {
+        cuentas: function cuentas(state) {
+            return state.cuentas;
+        },
+        meta: function meta(state) {
+            return state.meta;
+        },
+        currentCuenta: function currentCuenta(state) {
+            return state.currentCuenta;
+        }
+    }
+});
+
+/***/ }),
+/* 616 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/contabilidad/estatus-prepoliza';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        estatus: []
+    },
+
+    mutations: {
+        SET_ESTATUS: function SET_ESTATUS(state, data) {
+            state.estatus = data;
+        }
+    },
+
+    actions: {
+        fetch: function fetch(context) {
+            axios.get(URI).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_ESTATUS', data.data);
+            });
+        }
+    },
+
+    getters: {
+        estatus: function estatus(state) {
+            return state.estatus;
+        }
+    }
+});
+
+/***/ }),
+/* 617 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/contabilidad/poliza/';
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        polizas: [],
+        currentPoliza: null,
+        meta: {}
+    },
+
+    mutations: {
+        SET_POLIZAS: function SET_POLIZAS(state, data) {
+            state.polizas = data;
+        },
+        SET_META: function SET_META(state, data) {
+            state.meta = data;
+        },
+        UPDATE_POLIZA: function UPDATE_POLIZA(state, data) {
+            state.polizas = state.polizas.map(function (poliza) {
+                if (poliza.id === data.id) {
+                    return Object.assign({}, poliza, data);
+                }
+                return poliza;
+            });
+            state.currentPoliza = data;
+        },
+        SET_POLIZA: function SET_POLIZA(state, data) {
+            state.currentPoliza = data;
+        }
+    },
+
+    actions: {
+        paginate: function paginate(context, payload) {
+            context.commit('SET_POLIZAS', []);
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_POLIZAS', data.data);
+                context.commit('SET_META', data.meta);
+            });
+        },
+        find: function find(context, payload) {
+            return new Promise(function (resolve, reject) {
+                context.commit('SET_POLIZA', null);
+                axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_POLIZA', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
+            });
+        },
+        update: function update(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Guardar cambios de la Prepóliza",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Guardar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Prepóliza Actualizada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_POLIZA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject();
+                        });
+                    }
+                });
+            });
+        },
+        validar: function validar(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "Validar Prepóliza",
+                    text: "¿Esta seguro de que deseas validar la Prepóliza?",
+                    icon: "warning",
+                    buttons: ["Cancelar", "Si, Validar"]
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id + '/validar', payload.data, { params: payload.params }).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Prepóliza Validada correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_POLIZA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            });
+        },
+        omitir: function omitir(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "Omitir Prepóliza",
+                    text: "¿Esta seguro de que deseas omitir la Prepóliza?",
+                    icon: "warning",
+                    buttons: ["Cancelar", "Si, Omitir"]
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id + '/omitir', payload.data, { params: payload.params }).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Prepóliza omitida correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_POLIZA', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            });
+        }
+    },
+
+    getters: {
+        polizas: function polizas(state) {
+            return state.polizas;
+        },
+        meta: function meta(state) {
+            return state.meta;
+        },
+        currentPoliza: function currentPoliza(state) {
+            return state.currentPoliza;
+        }
+    }
+});
+
+/***/ }),
+/* 618 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/contabilidad/tipo-cuenta-contable';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        tipos: []
+    },
+
+    mutations: {
+        SET_TIPOS: function SET_TIPOS(state, data) {
+            state.tipos = data;
+        }
+    },
+
+    actions: {
+        fetch: function fetch(context, payload) {
+            axios.get(URI, { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_TIPOS', data.data);
+            });
+        }
+    },
+
+    getters: {
+        tipos: function tipos(state) {
+            return state.tipos;
+        }
+    }
+});
+
+/***/ }),
+/* 619 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/contabilidad/tipo-poliza-contpaq';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        tipos: []
+    },
+
+    mutations: {
+        SET_TIPOS: function SET_TIPOS(state, data) {
+            state.tipos = data;
+        }
+    },
+
+    actions: {
+        fetch: function fetch(context) {
+            axios.get(URI).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_TIPOS', data.data);
+            });
+        }
+    },
+
+    getters: {
+        tipos: function tipos(state) {
+            return state.tipos;
+        }
+    }
+});
+
+/***/ }),
+/* 620 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/tesoreria/movimiento-bancario/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        movimientos: [],
+        currentMovimiento: null,
+        meta: {}
+    },
+
+    mutations: {
+        SET_MOVIMIENTOS: function SET_MOVIMIENTOS(state, data) {
+            state.movimientos = data;
+        },
+        SET_MOVIMIENTO: function SET_MOVIMIENTO(state, data) {
+            state.currentMovimiento = data;
+        },
+        SET_META: function SET_META(state, data) {
+            state.meta = data;
+        },
+        DELETE_MOVIMIENTO: function DELETE_MOVIMIENTO(state, id) {
+            state.movimientos = state.movimientos.filter(function (mov) {
+                return mov.id !== id;
+            });
+            if (state.currentMovimiento && state.currentMovimiento.id === id) {
+                state.currentMovimiento = null;
+            }
+        },
+        UPDATE_ATTRIBUTE: function UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentMovimiento, data.attribute, data.value);
+        },
+        UPDATE_MOVIMIENTO: function UPDATE_MOVIMIENTO(state, data) {
+            state.movimientos = state.movimientos.map(function (movimiento) {
+                if (movimiento.id === data.id) {
+                    return Object.assign({}, movimiento, data);
+                }
+                return movimiento;
+            });
+            state.currentMovimiento = data;
+        }
+    },
+
+    actions: {
+        paginate: function paginate(context, payload) {
+            context.commit('SET_MOVIMIENTOS', []);
+            axios.get(URI + 'paginate', { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_MOVIMIENTOS', data.data);
+                context.commit('SET_META', data.meta);
+            });
+        },
+        find: function find(context, payload) {
+            return new Promise(function (resolve, reject) {
+                axios.get(URI + payload.id, { params: payload.params }).then(function (r) {
+                    return r.data;
+                }).then(function (data) {
+                    context.commit('SET_MOVIMIENTO', data);
+                    resolve();
+                }).catch(function (error) {
+                    reject(error);
+                });
+            });
+        },
+        delete: function _delete(context, id) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "Eliminar movimiento",
+                    text: "¿Estás seguro/a de que deseas eliminar este movimiento?",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Eliminar'],
+                    dangerMode: true
+                }).then(function (value) {
+                    if (value) {
+                        axios.delete(URI + id).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Movimiento eliminado correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('DELETE_MOVIMIENTO', id);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            });
+        },
+        store: function store(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "Registrar movimiento",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: ['Cancelar', 'Si, Registrar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.post(URI, payload).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Movimiento registrado correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                resolve(data);
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            });
+        },
+        update: function update(context, payload) {
+            return new Promise(function (resolve, reject) {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Guardar cambios del Movimiento",
+                    icon: "warning",
+                    buttons: ['Cancelar', 'Si, Guardar']
+                }).then(function (value) {
+                    if (value) {
+                        axios.patch(URI + payload.id, payload.data, { params: payload.params }).then(function (r) {
+                            return r.data;
+                        }).then(function (data) {
+                            swal("Movimiento Actualizado correctamente", {
+                                icon: "success",
+                                timer: 1500,
+                                buttons: false
+                            }).then(function () {
+                                context.commit('UPDATE_MOVIMIENTO', data);
+                                resolve();
+                            });
+                        }).catch(function (error) {
+                            reject(error);
+                        });
+                    }
+                });
+            });
+        }
+    },
+
+    getters: {
+        movimientos: function movimientos(state) {
+            return state.movimientos;
+        },
+        meta: function meta(state) {
+            return state.meta;
+        },
+        currentMovimiento: function currentMovimiento(state) {
+            return state.currentMovimiento;
+        }
+    }
+});
+
+/***/ }),
+/* 621 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var URI = '/api/tesoreria/tipo-movimiento/';
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    namespaced: true,
+    state: {
+        tipos: []
+    },
+
+    mutations: {
+        SET_TIPOS: function SET_TIPOS(state, data) {
+            state.tipos = data;
+        }
+    },
+
+    actions: {
+        fetch: function fetch(context, payload) {
+            axios.get(URI, { params: payload }).then(function (r) {
+                return r.data;
+            }).then(function (data) {
+                context.commit('SET_TIPOS', data.data);
+            });
+        }
+    },
+
+    getters: {
+        tipos: function tipos(state) {
+            return state.tipos;
+        }
+    }
+});
+
+/***/ }),
+/* 622 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(623)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(625)
+/* template */
+var __vue_template__ = __webpack_require__(639)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/MainApp.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-736a0b0d", Component.options)
+  } else {
+    hotAPI.reload("data-v-736a0b0d", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 623 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(624);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("4292f4fe", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-736a0b0d\",\"scoped\":false,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./MainApp.vue", function() {
+     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-736a0b0d\",\"scoped\":false,\"hasInlineConfig\":true}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./MainApp.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 624 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\na {\n    color: #68a34d;\n}\n.sidebar .nav-sidebar > .nav-item > .nav-link.active {\n     color: #ffffff;\n     background-color: #68a34d;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 625 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__pages_partials_Header__ = __webpack_require__(626);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__pages_partials_Header___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__pages_partials_Header__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pages_partials_Sidebar__ = __webpack_require__(629);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pages_partials_Sidebar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__pages_partials_Sidebar__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb__ = __webpack_require__(633);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer__ = __webpack_require__(636);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'main-app',
+    components: { AppBreadcrumb: __WEBPACK_IMPORTED_MODULE_2__pages_partials_Breadcrumb___default.a, AppSidebar: __WEBPACK_IMPORTED_MODULE_1__pages_partials_Sidebar___default.a, AppHeader: __WEBPACK_IMPORTED_MODULE_0__pages_partials_Header___default.a, AppFooter: __WEBPACK_IMPORTED_MODULE_3__pages_partials_Footer___default.a },
+    computed: {
+        currentUser: function currentUser() {
+            return this.$store.getters['auth/currentUser'];
+        },
+        currentObra: function currentObra() {
+            return this.$store.getters['auth/currentObra'];
+        }
+    }
+});
+
+/***/ }),
+/* 626 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(627)
+/* template */
+var __vue_template__ = __webpack_require__(628)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/pages/partials/Header.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-1e2d0978", Component.options)
+  } else {
+    hotAPI.reload("data-v-1e2d0978", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 627 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'app-header',
+    methods: {
+        logout: function logout() {
+            var _this = this;
+
+            swal({
+                icon: 'warning',
+                title: 'Cerrar Sesión',
+                text: 'La sesión actual se cerrará, ¿Desea continuar?',
+                buttons: ['Cancelar', 'Si, Cerrar Sesión'],
+                dangerMode: true
+            }).then(function (success) {
+                if (success) {
+                    _this.$store.dispatch('auth/logout');
+                    _this.$session.destroy();
+                    _this.$router.push({ name: 'login' });
+                }
+            });
+        }
+    },
+    computed: {
+        currentUser: function currentUser() {
+            return this.$store.getters['auth/currentUser'];
+        },
+        currentObra: function currentObra() {
+            return this.$store.getters['auth/currentObra'];
+        }
+    }
+});
+
+/***/ }),
+/* 628 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "nav",
+    {
+      staticClass:
+        "main-header navbar navbar-expand bg-white navbar-light border-bottom"
+    },
+    [
+      _c("ul", { staticClass: "navbar-nav" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _vm.currentObra
+          ? _c(
+              "li",
+              { staticClass: "nav-item d-none d-sm-inline-block" },
+              [
+                _c(
+                  "router-link",
+                  {
+                    staticClass: "nav-link",
+                    attrs: { to: { name: "obras" }, title: "Cambiar Obra" }
+                  },
+                  [_vm._v(_vm._s(_vm.currentObra.nombre))]
+                )
+              ],
+              1
+            )
+          : _vm._e()
+      ]),
+      _vm._v(" "),
+      _vm.currentUser
+        ? _c("ul", { staticClass: "navbar-nav ml-auto" }, [
+            _c("li", { staticClass: "nav-item d-none d-sm-inline-block" }, [
+              _c("a", { staticClass: "nav-link", attrs: { href: "#" } }, [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(
+                      _vm.currentUser.nombre +
+                        "  " +
+                        _vm.currentUser.apaterno +
+                        "  " +
+                        _vm.currentUser.amaterno
+                    ) +
+                    "\n            "
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("li", { staticClass: "nav-item" }, [
+              _c(
+                "a",
+                {
+                  staticClass: "nav-link",
+                  attrs: {
+                    "data-slide": "true",
+                    href: "#",
+                    title: "Cerrar Sesión"
+                  },
+                  on: { click: _vm.logout }
+                },
+                [_c("i", { staticClass: "fa fa-sign-out" })]
+              )
+            ]),
+            _vm._v(" "),
+            _vm._m(1)
+          ])
+        : _vm._e()
+    ]
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", { staticClass: "nav-item" }, [
+      _c(
+        "a",
+        {
+          staticClass: "nav-link",
+          attrs: { "data-widget": "pushmenu", href: "#" }
+        },
+        [_c("i", { staticClass: "fa fa-bars" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", { staticClass: "nav-item" }, [
+      _c(
+        "a",
+        {
+          staticClass: "nav-link",
+          attrs: {
+            "data-widget": "control-sidebar",
+            "data-slide": "true",
+            href: "#"
+          }
+        },
+        [_c("i", { staticClass: "fa fa-th-large" })]
+      )
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-1e2d0978", module.exports)
+  }
+}
+
+/***/ }),
+/* 629 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(630)
+/* template */
+var __vue_template__ = __webpack_require__(631)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/pages/partials/Sidebar.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-60536196", Component.options)
+  } else {
+    hotAPI.reload("data-v-60536196", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 630 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "app-sidebar",
+    computed: {
+        currentUser: function currentUser() {
+            return this.$store.getters['auth/currentUser'];
+        },
+        currentObra: function currentObra() {
+            return this.$store.getters['auth/currentObra'];
+        }
+    }
+});
+
+/***/ }),
+/* 631 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "aside",
+    { staticClass: "main-sidebar sidebar-dark-primary elevation-4" },
+    [
+      _c(
+        "router-link",
+        { staticClass: "brand-link", attrs: { to: { name: "home" } } },
+        [
+          _c("img", {
+            staticClass: "brand-image img-circle elevation-3",
+            staticStyle: { opacity: ".8" },
+            attrs: {
+              src: __webpack_require__(632),
+              alt: "Sao Logo"
+            }
+          }),
+          _vm._v(" "),
+          _c("span", { staticClass: "brand-text font-weight-light" }, [
+            _vm._v("SAO ERP")
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "sidebar" },
+        [_c("router-view", { attrs: { name: "menu" } })],
+        1
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-60536196", module.exports)
+  }
+}
+
+/***/ }),
+/* 632 */
+/***/ (function(module, exports) {
+
+module.exports = "/images/company-icon.png?c5027ac4ed252ee41aaf3adc68bc058c";
+
+/***/ }),
+/* 633 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(634)
+/* template */
+var __vue_template__ = __webpack_require__(635)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/pages/partials/Breadcrumb.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-003a938c", Component.options)
+  } else {
+    hotAPI.reload("data-v-003a938c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 634 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'app-breadcrumb',
+    data: function data() {
+        return {
+            breadcrumbList: []
+        };
+    },
+    mounted: function mounted() {
+        this.updateList();
+    },
+
+    watch: {
+        '$route': function $route() {
+            this.updateList();
+        }
+    },
+    methods: {
+        updateList: function updateList() {
+            this.breadcrumbList = [];
+            if (this.$route.name != null) {
+                this.push(this.$route);
+            }
+        },
+        push: function push(route) {
+            if (route.meta.breadcrumb && route.meta.breadcrumb.parent) {
+                this.push(this.$router.resolve({ name: route.meta.breadcrumb.parent, params: route.params }).resolved);
+                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : { name: route.name, params: route.params } }));
+            } else {
+                this.breadcrumbList.push(_extends({}, route.meta.breadcrumb, { link: route == this.$route ? null : { name: route.name, params: route.params } }));
+            }
+        }
+    }
+});
+
+/***/ }),
+/* 635 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "ol",
+    { staticClass: "breadcrumb float-sm-right" },
+    _vm._l(_vm.breadcrumbList, function(breadcrumb, idx) {
+      return _c(
+        "li",
+        {
+          key: idx,
+          staticClass: "breadcrumb-item",
+          class: { active: !!breadcrumb.link }
+        },
+        [
+          breadcrumb.link
+            ? _c("router-link", { attrs: { to: breadcrumb.link } }, [
+                !breadcrumb.parent
+                  ? _c("span", [_c("i", { staticClass: "fa fa-home" })])
+                  : _c("span", [
+                      _vm._v(
+                        "\n                " +
+                          _vm._s(breadcrumb.name) +
+                          "\n            "
+                      )
+                    ])
+              ])
+            : _c("span", [
+                !breadcrumb.parent
+                  ? _c("span", [_c("i", { staticClass: "fa fa-home" })])
+                  : _c("span", [
+                      _vm._v(
+                        "\n                " +
+                          _vm._s(breadcrumb.name) +
+                          "\n            "
+                      )
+                    ])
+              ])
+        ],
+        1
+      )
+    }),
+    0
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-003a938c", module.exports)
+  }
+}
+
+/***/ }),
+/* 636 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(637)
+/* template */
+var __vue_template__ = __webpack_require__(638)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/pages/partials/Footer.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-6091d15c", Component.options)
+  } else {
+    hotAPI.reload("data-v-6091d15c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 637 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "app-footer",
+    computed: {
+        currentObra: function currentObra() {
+            return this.$store.getters['auth/currentObra'];
+        }
+    }
+});
+
+/***/ }),
+/* 638 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("footer", { staticClass: "main-footer" }, [
+    _c("div", { staticClass: "float-right d-none d-sm-block" }, [
+      _c("small", [
+        _vm._v(_vm._s(_vm.currentObra ? _vm.currentObra.direccion : ""))
+      ])
+    ]),
+    _vm._v(
+      "\n    " + _vm._s(_vm.currentObra ? _vm.currentObra.facturar : "") + "\n"
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-6091d15c", module.exports)
+  }
+}
+
+/***/ }),
+/* 639 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("body", { staticClass: "hold-transition sidebar-mini" }, [
+    _vm.currentUser
+      ? _c(
+          "div",
+          { staticClass: "wrapper" },
+          [
+            _c("AppHeader"),
+            _vm._v(" "),
+            _c("AppSidebar"),
+            _vm._v(" "),
+            _c("div", { staticClass: "content-wrapper" }, [
+              _c("section", { staticClass: "content-header" }, [
+                _c("div", { staticClass: "container-fluid" }, [
+                  _c("div", { staticClass: "row mb-2" }, [
+                    _c("div", { staticClass: "col-sm-6" }, [
+                      _c("h1", [_vm._v(_vm._s(this.$route.meta.title))])
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "col-sm-6" },
+                      [_c("AppBreadcrumb")],
+                      1
+                    )
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("section", { staticClass: "content" }, [
+                _c(
+                  "div",
+                  { staticClass: "container-fluid" },
+                  [_c("router-view")],
+                  1
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("AppFooter"),
+            _vm._v(" "),
+            _c(
+              "aside",
+              { staticClass: "control-sidebar control-sidebar-dark" },
+              [
+                _c("div", { staticClass: "p-3" }, [
+                  _c("h5", [_vm._v("Acceso Rápido")]),
+                  _vm._v(" "),
+                  _c("hr", { staticClass: "mb-2" }),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "d-block" },
+                    [
+                      _c(
+                        "router-link",
+                        {
+                          staticClass: "d-flex flex-wrap mb-3",
+                          attrs: { to: { name: "contabilidad" } }
+                        },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticClass: "bg-info elevation-2 text-center",
+                              staticStyle: {
+                                width: "40px",
+                                height: "20px",
+                                "border-radius": "25px",
+                                "margin-right": "10px",
+                                "margin-bottom": "10px",
+                                opacity: "0.8",
+                                cursor: "pointer"
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-calculator" })]
+                          ),
+                          _vm._v(
+                            "\n                    Contabilidad\n                "
+                          )
+                        ]
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "d-block" },
+                    [
+                      _c(
+                        "router-link",
+                        {
+                          staticClass: "d-flex flex-wrap mb-3",
+                          attrs: { to: { name: "tesoreria" } }
+                        },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticClass: "bg-primary elevation-2 text-center",
+                              staticStyle: {
+                                width: "40px",
+                                height: "20px",
+                                "border-radius": "25px",
+                                "margin-right": "10px",
+                                "margin-bottom": "10px",
+                                opacity: "0.8",
+                                cursor: "pointer"
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-usd" })]
+                          ),
+                          _vm._v(
+                            "\n                    Tesorería\n                "
+                          )
+                        ]
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "d-block" },
+                    [
+                      _c(
+                        "router-link",
+                        {
+                          staticClass: "d-flex flex-wrap mb-3",
+                          attrs: { to: { name: "contratos" } }
+                        },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticClass: "bg-success elevation-2 text-center",
+                              staticStyle: {
+                                width: "40px",
+                                height: "20px",
+                                "border-radius": "25px",
+                                "margin-right": "10px",
+                                "margin-bottom": "10px",
+                                opacity: "0.8",
+                                cursor: "pointer"
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-drivers-license" })]
+                          ),
+                          _vm._v(
+                            "\n                    Contratos\n                "
+                          )
+                        ]
+                      )
+                    ],
+                    1
+                  )
+                ])
+              ]
+            )
+          ],
+          1
+        )
+      : _c("div", [_c("router-view")], 1)
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-736a0b0d", module.exports)
+  }
+}
+
+/***/ }),
+/* 640 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

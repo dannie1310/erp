@@ -33,8 +33,8 @@
                 <span class="info-box-icon bg-success elevation-1"><i class="fa fa-drivers-license"></i></span>
 
                 <div class="info-box-content">
-                    <span class="info-box-number">SUBCONTRATOS</span>
-                    <router-link :to="{name: 'subcontratos'}">
+                    <span class="info-box-number">CONTRATOS</span>
+                    <router-link :to="{name: 'contratos'}">
                         <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
                     </router-link>
                 </div>
