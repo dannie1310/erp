@@ -1,19 +1,21 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_movimiento_bancario')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Movimiento
+        <!-- Button trigger modal -->
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info">
+            <i class="fa fa-pencil"></i>
         </button>
 
+        <!-- Modal -->
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR MOVIMIENTO BANCARIO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">EDITAR MOVIMIENTO BANCARIO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form role="form" @submit.prevent="validate">
+                    <form role="form" v-if="movimiento" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
                                 <!-- Tipo de Movimiento -->
@@ -25,7 +27,8 @@
                                                 name="id_tipo_movimiento"
                                                 data-vv-as="Tipo"
                                                 id="id_tipo_movimiento"
-                                                v-model="id_tipo_movimiento"
+                                                :value="movimiento.id_tipo_movimiento"
+                                                @input="updateAttribute"
                                                 v-validate="{required: true}"
                                                 :class="{'is-invalid': errors.has('id_tipo_movimiento')}"
                                         >
@@ -47,7 +50,8 @@
                                                 name="id_cuenta"
                                                 data-vv-as="Cuenta"
                                                 id="id_cuenta"
-                                                v-model="id_cuenta"
+                                                :value="movimiento.id_cuenta"
+                                                @input="updateAttribute"
                                                 v-validate="{required: true}"
                                                 :class="{'is-invalid': errors.has('id_cuenta')}"
                                         >
@@ -70,7 +74,8 @@
                                                 class="form-control"
                                                 id="importe"
                                                 name="importe"
-                                                v-model="importe"
+                                                :value="movimiento.importe"
+                                                @input="updateAttribute"
                                                 v-validate="{required: true, decimal: true}"
                                                 data-vv-as="Importe"
                                                 :class="{'is-invalid': errors.has('importe')}"
@@ -80,7 +85,7 @@
                                 </div>
 
                                 <!-- Impuesto -->
-                                <div class="col-md-4" v-if="id_tipo_movimiento == 4">
+                                <div class="col-md-4" v-if="movimiento.id_tipo_movimiento == 4">
                                     <div class="form-group error-content">
                                         <label for="impuesto">Impuesto</label>
                                         <input
@@ -89,7 +94,8 @@
                                                 name="impuesto"
                                                 id="impuesto"
                                                 class="form-control"
-                                                v-model="impuesto"
+                                                :value="movimiento.impuesto"
+                                                @input="updateAttribute"
                                                 v-validate="{decimal: true}"
                                                 data-vv-as="Impuesto"
                                                 :class="{'is-invalid': errors.has('impuesto')}"
@@ -99,9 +105,9 @@
                                 </div>
 
                                 <!-- Total -->
-                                <div class="col-md-4" v-if="id_tipo_movimiento == 4">
+                                <div class="col-md-4" v-if="movimiento.id_tipo_movimiento == 4">
                                     <div class="form-group">
-                                        <label for="total">Total</label>
+                                        <label for="total">Total Ed</label>
                                         <input
                                                 type="number"
                                                 step="any"
@@ -120,10 +126,11 @@
                                         <label for="referencia">Referencia</label>
                                         <input
                                                 type="text"
-                                                name="referencia"
+                                                name="transaccion.referencia"
                                                 id="referencia"
                                                 class="form-control"
-                                                v-model="referencia"
+                                                :value="movimiento.transaccion.referencia"
+                                                @input="updateAttribute"
                                                 v-validate="{required: true}"
                                                 data-vv-as="Referecia"
                                                 :class="{'is-invalid': errors.has('referencia')}"
@@ -141,7 +148,8 @@
                                                 name="fecha"
                                                 id="fecha"
                                                 class="form-control"
-                                                v-model="fecha"
+                                                :value="movimiento.fecha"
+                                                @input="updateAttribute"
                                                 v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                 data-vv-as="Fecha"
                                                 :class="{'is-invalid': errors.has('fecha')}"
@@ -156,10 +164,11 @@
                                         <label for="cumplimiento">Cumplimiento</label>
                                         <input
                                                 type="date"
-                                                name="cumplimiento"
+                                                name="transaccion.cumplimiento"
                                                 id="cumplimiento"
                                                 class="form-control"
-                                                v-model="cumplimiento"
+                                                :value="new Date(movimiento.transaccion.cumplimiento).toDate()"
+                                                @input="updateAttribute"
                                                 v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                 data-vv-as="Cumplimiento"
                                                 :class="{'is-invalid': errors.has('cumplimiento')}"
@@ -176,7 +185,8 @@
                                                 name="observaciones"
                                                 id="observaciones"
                                                 class="form-control"
-                                                v-model="observaciones"
+                                                :value="movimiento.observaciones"
+                                                @input="updateAttribute"
                                                 v-validate="{required: true}"
                                                 data-vv-as="Observaciones"
                                                 :class="{'is-invalid': errors.has('observaciones')}"
@@ -191,49 +201,37 @@
                             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </div>
                     </form>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
+                </div>
+            </div>
         </div>
     </span>
 </template>
 
 <script>
     export default {
-        name: "movimiento-bancario-create",
-        data() {
-            return {
-                id_tipo_movimiento: '',
-                id_cuenta: '',
-                importe: '',
-                impuesto: '',
-                referencia: '',
-                observaciones: '',
-                cumplimiento: '',
-                fecha: ''
+        name: "movimiento-bancario-edit",
+        props: ['id'],
+        computed: {
+            movimiento() {
+                return (this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] != null && this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'].id == this.id) ?  this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] : null
+            },
+
+            tiposMovimiento() {
+                return this.$store.getters['tesoreria/tipo-movimiento/tipos']
+            },
+
+            cuentas() {
+                return this.$store.getters['cadeco/cuenta/cuentas']
+            },
+
+            total() {
+                let impuesto = this.movimiento.impuesto ? parseFloat(this.movimiento.impuesto) : 0;
+                let importe = this.movimiento.importe ? parseFloat(this.movimiento.importe) : 0;
+                return importe + impuesto;
             }
         },
 
-        mounted() {
-            this.getTiposMovimiento()
-            this.getCuentas()
-        },
-
         methods: {
-            init() {
-                $(this.$refs.modal).modal('show');
-
-                    this.id_tipo_movimiento = '';
-                    this.id_cuenta = '';
-                    this.importe = '';
-                    this.impuesto = '';
-                    this.referencia = '';
-                    this.observaciones = '';
-                    this.cumplimiento = '';
-                    this.fecha = '';
-
-                this.$validator.reset()
-            },
-
             getTiposMovimiento() {
                 return this.$store.dispatch('tesoreria/tipo-movimiento/fetch');
             },
@@ -245,39 +243,47 @@
                 })
             },
 
+            find(id) {
+                return this.$store.dispatch('tesoreria/movimiento-bancario/find', {
+                    id: id,
+                    params: { include: 'transaccion' }
+                })
+                    .then(() => {
+                        $(this.$refs.modal).modal('show');
+                    })
+            },
+
+            update() {
+                return this.$store.dispatch('tesoreria/movimiento-bancario/update', {
+                    id: this.id,
+                    data: {
+                        id_tipo_movimiento: this.movimiento.id_tipo_movimiento,
+                        id_cuenta: this.movimiento.id_cuenta,
+                        importe: this.movimiento.importe,
+                        impuesto: this.movimiento.impuesto,
+                        referencia: this.movimiento.transaccion.referencia,
+                        observaciones: this.movimiento.observaciones,
+                        cumplimiento: new Date(this.movimiento.transaccion.cumplimiento).toDate(),
+                        fecha: this.movimiento.fecha
+                    },
+                    params: { include: 'cuenta.empresa,transaccion' }
+                })
+                    .then(() => {
+                        $(this.$refs.modal).modal('hide');
+                    })
+            },
+
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        this.update()
                     }
                 });
             },
 
-            store() {
-                return this.$store.dispatch('tesoreria/movimiento-bancario/store', this.$data)
-                    .then((data) => {
-                        $(this.$refs.modal).modal('hide');
-                    })
-            }
-        },
-
-        computed: {
-            tiposMovimiento() {
-                return this.$store.getters['tesoreria/tipo-movimiento/tipos']
-            },
-
-            cuentas() {
-                return this.$store.getters['cadeco/cuenta/cuentas']
-            },
-            total() {
-                let impuesto = this.impuesto ? parseFloat(this.impuesto) : 0;
-                let importe = this.importe ? parseFloat(this.importe) : 0;
-                return importe + impuesto;
+            updateAttribute(e) {
+                return this.$store.commit('tesoreria/movimiento-bancario/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
             }
         }
     }
 </script>
-
-<style scoped>
-
-</style>

@@ -123,17 +123,14 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
         //SOLICITUD DE MOVIMIENTO
-        $api->group(['prefix' => 'solicitud-movimiento-fg'], function ($api) {
-            $api->post('/', 'App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaController@store');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaController@paginate');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaController@show');
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaController@destroy');
+        $api->group(['prefix' => 'fondo-garantia'], function ($api) {
+            #$api->group(['prefix'=>'{id}'])
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@show');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@destroy');
         });
 
-        //TIPOS MOVIMIENTO
-        $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\TipoMovimientoController@index');
-        });
     });
 
 });

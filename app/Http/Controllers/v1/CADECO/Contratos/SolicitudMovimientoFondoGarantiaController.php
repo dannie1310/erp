@@ -6,7 +6,7 @@
  * Time: 06:03 PM
  */
 
-namespace App\Http\Controllers\v1\CADECO\Subcontratos;
+namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 
 use App\Http\Controllers\Controller;
@@ -18,11 +18,11 @@ use App\Http\Requests\Subcontratos\StoreSolicitudMovimientoFondoGarantiaRequest;
 use App\Http\Transformers\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantiaTransformer;
 use App\Services\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaService;
 use App\Traits\ControllerTrait;
-use Dingo\Api\Routing\Helpers;
+use League\Fractal\Manager;
 
 class SolicitudMovimientoFondoGarantiaController extends Controller
 {
-    use Helpers, ControllerTrait {update as protected traitUpdate; store as protected traitStore; }
+    use ControllerTrait {update as protected traitUpdate; store as protected traitStore; }
 
     /**
      * @var SolicitudMovimientoFondoGarantiaService

@@ -54,7 +54,7 @@
                                     <td>$ {{ parseFloat(movimiento.impuesto).formatMoney(2, '.', ',') }}</td>
                                 </tr>
                                 <tr>
-                                    <th style="text-align: right">Total</th>
+                                    <th style="text-align: right">Total Sh</th>
                                     <th>$ {{ (parseFloat(movimiento.importe) + parseFloat(movimiento.impuesto)).formatMoney(2, '.', ',') }}</th>
                                 </tr>
                                 </tbody>

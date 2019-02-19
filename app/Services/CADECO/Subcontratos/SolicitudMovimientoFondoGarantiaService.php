@@ -29,9 +29,9 @@ class SolicitudMovimientoFondoGarantiaService
     public function __construct(SolicitudMovimientoFondoGarantia $model)
     {
         $this->repository = new Repository($model);
-        $this->id_usuario = auth()->id();
+        /*$this->id_usuario = auth()->id();
         $this->usuario = auth()->user()->usuario;
-        $this->id_obra = Context::getIdObra();
+        $this->id_obra = Context::getIdObra();*/
     }
 
     public function all()

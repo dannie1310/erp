@@ -20,6 +20,10 @@ import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 
+//CONTRATOS
+import fondoGarantia from './modules/contratos/fondo-garantia';
+import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -38,6 +42,9 @@ export default new Vuex.Store({
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
+
+        'contratos/fondo-garantia': fondoGarantia,
+        'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
     },
     strict: process.env.NODE_ENV !== 'production'
 })

@@ -8,6 +8,8 @@
 
 namespace App\Repositories\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia;
 
+use App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia as Model;
+
 
 class Repository implements RepositoryInterface
 {

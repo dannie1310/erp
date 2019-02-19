@@ -6,38 +6,75 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
             <li class="nav-item">
-                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                <a href="#" class="nav-link">
+                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
+                        <i class="nav-icon fa fa-sitemap"></i>
+                        <p>
+                            Contratos Proyectados
+
+                        </p>
+                    </router-link>
+                </a>
+
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" >
+                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
+                        <i class="nav-icon fa fa-copy"></i>
+                        <p>
+                            Presupuestos
+
+                        </p>
+                    </router-link>
+                </a>
+
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" >
+                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>
+                            Asignación de Contratistas
+
+                        </p>
+                    </router-link>
+                </a>
+
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
+                        <i class="nav-icon fa fa-file-text"></i>
+                        <p>
+                            Subcontratos
+
+                        </p>
+                    </router-link>
+                </a>
+
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" >
+                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
+                    <i class="nav-icon fa fa-signal"></i>
+                    <p>
+                        Estimaciones
+
+                    </p>
+                    </router-link>
+                </a>
+
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" >
+                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'fondo-garantia'}">
                     <i class="nav-icon fa fa-money"></i>
                     <p>
-                        Fondo de Garantía
-                        <i class="right fa fa-angle-left"></i>
+                        Fondos de Garantía
                     </p>
+                    </router-link>
                 </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
-                        <router-link :to="{name: 'solicitud-movimiento-fg'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-movimiento-fg'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Solicitar Movimiento</p>
-                        </router-link>
-                    </li>
-
-                    <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
-                        <router-link :to="{name: 'ajuste-saldo-fg'}" class="nav-link" :class="{active: this.$route.name == 'ajuste-saldo-fg'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Ajuste de Saldo</p>
-                        </router-link>
-                    </li>
-
-                    <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
-                        <router-link :to="{name: 'consultar-fg'}" class="nav-link" :class="{active: this.$route.name == 'consultar-fg'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Consultar</p>
-                        </router-link>
-                    </li>
-                </ul>
             </li>
-
-
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
