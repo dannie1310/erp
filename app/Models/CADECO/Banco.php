@@ -21,7 +21,7 @@ class Banco extends Empresa
         });
     }
 
- /*   public function cuenta(){
-        return $this->hasOne(Cuenta::class, 'id_empresa', 'id_empresa');
-    }*/
+    public function cuentaBancaria(){
+        return $this->hasMany(Cuenta::class, 'id_empresa', 'id_empresa');
+    }
 }

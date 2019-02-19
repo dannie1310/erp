@@ -46,7 +46,7 @@
             paginate(payload = {}) {
                 return this.$store.dispatch('cadeco/banco/paginate', {
                     ...payload,
-                    include: 'cuentasBanco'
+                    include: 'cuentaBancaria'
                 })
             }
         },
@@ -66,8 +66,8 @@
                     bancos.forEach(function (banco, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            razon_social: banco.empresa.razon_social,
-                            cuentas_count: banco.cuentasBanco.data.length,
+                            razon_social: banco.razon_social,
+                            cuentas_count: banco.cuentaBancaria.data.length,
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: self.$root.can('editar_cuenta_banco') ? true : undefined,

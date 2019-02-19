@@ -9,7 +9,7 @@
 namespace App\Services\CADECO;
 
 
-use App\Models\CADECO\Cuenta;
+use App\Models\CADECO\Banco;
 use App\Repositories\Repository;
 
 class BancoService
@@ -22,9 +22,9 @@ class BancoService
     /**
      * BancoService constructor.
      *
-     * @param Cuenta $model
+     * @param Banco $model
      */
-    public function __construct(Cuenta $model)
+    public function __construct(Banco $model)
     {
         $this->repository = new Repository($model);
     }

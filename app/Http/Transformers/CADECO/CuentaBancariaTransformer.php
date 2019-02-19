@@ -2,15 +2,15 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 18/02/2019
- * Time: 07:18 PM
+ * Date: 19/02/2019
+ * Time: 01:52 PM
  */
 
-namespace App\Http\Transformers;
+namespace App\Http\Transformers\CADECO;
 
 
-use App\Http\Transformers\CADECO\BancoTransformer;
 use App\Models\CADECO\Cuenta;
+use App\Http\Transformers\CADECO\Contabilidad\CuentaBancoTransformer;
 use League\Fractal\TransformerAbstract;
 
 class CuentaBancariaTransformer extends TransformerAbstract
@@ -21,7 +21,7 @@ class CuentaBancariaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'banco'
+        'cuentas'
     ];
 
     /**
@@ -29,7 +29,9 @@ class CuentaBancariaTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $defaultIncludes = [];
+    protected $defaultIncludes = [
+        'cuentas'
+    ];
 
     public function transform(Cuenta $model)
     {
@@ -41,14 +43,13 @@ class CuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * Include Banco
-     * @param Cuenta
-     * @return \League\Fractal\Resource\Item
+     * Include CuentaBanco
+     * @param Cuenta $model
+     * @return \League\Fractal\Resource\Collection|null
      */
-    public function includeBanco(Cuenta $model)
-    {
-        if($banco = $model->banco){
-            return $this->item($banco, new BancoTransformer);
+    public function includeCuentas(Cuenta $model){
+        if ($cuentas = $model->cuentaBanco) {
+            return $this->collection($cuentas, new CuentaBancoTransformer);
         }
         return null;
     }

@@ -34,7 +34,7 @@ class Cuenta extends Model
     }
 
     public function cuentaBanco(){
-        return $this->hasOne(CuentaBanco::class, 'id_cuenta', 'id_cuenta');
+        return $this->hasMany(CuentaBanco::class, 'id_cuenta', 'id_cuenta');
     }
 
     public function banco(){

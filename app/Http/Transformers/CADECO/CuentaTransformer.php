@@ -9,8 +9,6 @@
 namespace App\Http\Transformers\CADECO;
 
 
-use App\Http\Transformers\CADECO\Contabilidad\CuentaBancoTransformer;
-use App\Models\CADECO\Banco;
 use App\Models\CADECO\Cuenta;
 use League\Fractal\TransformerAbstract;
 
