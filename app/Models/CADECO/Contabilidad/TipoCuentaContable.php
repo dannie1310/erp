@@ -44,4 +44,9 @@ class TipoCuentaContable extends Model
     {
         return $query->doesntHave('cuentaContable');
     }
+
+    public function scopeBancos($query)
+    {
+        return $query->where('tipo', '=', 5);
+    }
 }

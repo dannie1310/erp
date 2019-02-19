@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-          <!--   <cuenta-banco-create @created="paginate(query)"></cuenta-banco-create> -->
+          <cuenta-banco-create @created="paginate(query)"></cuenta-banco-create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -20,10 +20,10 @@
 </template>
 
 <script>
-   // import CuentaBancoCreate from "./Create";
+    import CuentaBancoCreate from "./Create";
     export default {
         name: "cuenta-banco-index",
-       // components: {CuentaBancoCreate},
+        components: {CuentaBancoCreate},
         data() {
             return {
                 HeaderSettings: false,
@@ -40,7 +40,7 @@
         },
         mounted() {
             this.paginate()
-            this.$store.dispatch('contabilidad/tipo-cuenta-banco/index')
+            this.$store.dispatch('contabilidad/tipo-cuenta-contable/index')
         },
         methods: {
             paginate(payload = {}) {

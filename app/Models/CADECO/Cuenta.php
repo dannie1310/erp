@@ -34,7 +34,10 @@ class Cuenta extends Model
     }
 
     public function cuentaBanco(){
-        dd("AQ");
         return $this->hasOne(CuentaBanco::class, 'id_cuenta', 'id_cuenta');
+    }
+
+    public function banco(){
+        return $this->belongsTo(Banco::class, 'id_empresa', 'id_empresa');
     }
 }

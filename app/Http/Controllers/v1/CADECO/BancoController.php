@@ -10,7 +10,7 @@ namespace App\Http\Controllers\v1\CADECO;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\CuentaTransformer;
+use App\Http\Transformers\CADECO\BancoTransformer;
 use App\Services\CADECO\BancoService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
@@ -30,7 +30,7 @@ class BancoController extends Controller
     protected $service;
 
     /**
-     * @var CuentaTransformer
+     * @var BancoTransformer
      */
     protected $transformer;
 
@@ -38,9 +38,9 @@ class BancoController extends Controller
      * BancoController constructor.
      * @param Manager $fractal
      * @param BancoService $service
-     * @param CuentaTransformer $transformer
+     * @param BancoTransformer $transformer
      */
-    public function __construct(Manager $fractal, BancoService $service, CuentaTransformer $transformer)
+    public function __construct(Manager $fractal, BancoService $service, BancoTransformer $transformer)
     {
         $this->middleware('auth');
         $this->middleware('context');
