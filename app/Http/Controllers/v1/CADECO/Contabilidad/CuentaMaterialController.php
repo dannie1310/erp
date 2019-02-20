@@ -10,15 +10,19 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCuentaMaterialRequest;
+use App\Http\Requests\UpdateCuentaMaterialRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaMaterialTransformer;
 use App\Services\CADECO\Contabilidad\CuentaMaterialService;
 use App\Traits\ControllerTrait;
-use Dingo\Api\Routing\Helpers;
 use League\Fractal\Manager;
 
 class CuentaMaterialController extends Controller
 {
-    use Helpers, ControllerTrait;
+    use ControllerTrait {
+        store as protected traitStore;
+        update as protected traitUpdate;
+    }
 
     /**
      * @var CuentaMaterialService
@@ -49,5 +53,15 @@ class CuentaMaterialController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function store(StoreCuentaMaterialRequest $request)
+    {
+        return $this->traitStore($request);
+    }
+
+    public function update(UpdateCuentaMaterialRequest $request, $id)
+    {
+        return $this->traitUpdate($request, $id);
     }
 }

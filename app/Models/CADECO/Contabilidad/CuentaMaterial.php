@@ -21,6 +21,12 @@ class CuentaMaterial extends Model
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cuentas_materiales';
 
+    protected $fillable = [
+        'cuenta',
+        'id_material',
+        'id_tipo_cuenta_material'
+    ];
+
     protected static function boot()
     {
         parent::boot();

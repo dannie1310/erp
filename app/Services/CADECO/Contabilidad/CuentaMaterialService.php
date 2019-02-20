@@ -9,33 +9,44 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
-use App\Repositories\CADECO\Contabilidad\CuentaMaterialRepository;
+
+use App\Models\CADECO\Contabilidad\CuentaMaterial;
+use App\Repositories\Repository;
 
 class CuentaMaterialService
 {
     /**
-     * @var CuentaMaterialRepository
+     * @var Repository
      */
-    protected $cuentaMaterial;
+    protected $repository;
 
     /**
      * CuentaMaterialService constructor.
-     * @param CuentaMaterialRepository $cuentaMaterial
+     *
+     * @param CuentaMaterial $model
      */
-    public function __construct(CuentaMaterialRepository $cuentaMaterial)
+    public function __construct(CuentaMaterial $model)
     {
-        $this->cuentaMaterial = $cuentaMaterial;
+        $this->repository = new Repository($model);
     }
 
-    public function paginate($data) {
-    return $this->cuentaMaterial->paginate($data);
-}
-
-    public function find($id) {
-        return $this->cuentaMaterial->find($id);
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
     }
 
-    public function update(array $data, $id) {
-        return $this->cuentaMaterial->update($data, $id);
+    public function find($id)
+    {
+        return $this->repository->find($id);
+    }
+
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
     }
 }

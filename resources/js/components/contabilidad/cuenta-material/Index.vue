@@ -10,6 +10,10 @@
     import CuentaMaterialCreate from "./Create";
     export default {
         name: "cuenta-material-index",
-        components: {CuentaMaterialCreate}
+        components: {CuentaMaterialCreate},
+
+        mounted() {
+            this.$store.dispatch('contabilidad/tipo-cuenta-material/index');
+        }
     }
 </script>

@@ -105,6 +105,7 @@ $api->version('v1', function ($api) {
 
         //CUENTAS DE MATERIALES
         $api->group(['prefix' => 'cuenta-material'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@find')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@update')->where(['id' => '[0-9]+']);
@@ -132,6 +133,11 @@ $api->version('v1', function ($api) {
         //TIPOS CUENTA EMPRESA
         $api->group(['prefix' => 'tipo-cuenta-empresa'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaEmpresaController@index');
+        });
+
+        //TIPOS CUENTA MATERIAL
+        $api->group(['prefix' => 'tipo-cuenta-material'], function($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaMaterialController@index');
         });
 
         //TIPOS PÓLIZA CONTPAQ

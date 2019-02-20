@@ -1,27 +1,33 @@
 <template>
-    <treeselect
-            :instanceId="id"
-            :disabled="disabled"
-            :multiple="multiple"
-            loadingText="Cargando..."
-            noOptionsText="No hay opciones disponibles"
-            :options="rootNodes"
-            :load-options="loadOptions"
-            placeholder="[--SELECCIONE--]"
-            :disableBranchNodes="true"
-            v-model="val"
-    />
+    <span>
+        <div v-if="disabled" class="form-control loading">
+            <i class="fa fa-spin fa-spinner"></i>
+        </div>
 
+        <treeselect v-else
+                :class="{error: error}"
+                :instanceId="id"
+                :multiple="multiple"
+                loadingText="Cargando..."
+                noOptionsText="No hay opciones disponibles"
+                :options="rootNodes"
+                :load-options="loadOptions"
+                placeholder="-- Material --"
+                :disableBranchNodes="true"
+                v-model="val"
+        />
+    </span>
 </template>
 
 <script>
     export default {
-        props: ['value','id', 'multiple', 'disabled'],
+        props: ['value','id', 'multiple', 'error'],
         name: "material-select",
         data() {
             return {
                 val: null,
-                rootNodes: []
+                rootNodes: [],
+                disabled: true
             }
         },
 
@@ -52,6 +58,7 @@
                             children: material.tiene_hijos != 0 ? null : undefined,
                             label: material.descripcion,
                         }));
+                        self.disabled = false;
                     })
             },
 
@@ -61,7 +68,6 @@
                     params: { include: 'hijos' }
                 })
                     .then(data => {
-                        console.log(data)
                         parentNode.children = data.hijos.data.map(material => ({
                             id: material.id,
                             children: material.tiene_hijos != 0 ? null : undefined,
@@ -74,7 +80,16 @@
                     .catch(error => {
                         callback(new Error('Failed to load options: network error.'))
                     });
-            },
+            }
         }
     }
 </script>
+<style>
+    .error > .vue-treeselect__control{
+        border-color: #dc3545
+    }
+
+    .loading {
+        text-align: center
+    }
+</style>
