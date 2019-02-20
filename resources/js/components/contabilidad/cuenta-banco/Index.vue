@@ -29,9 +29,8 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Cuenta Contable', field: 'cuenta_bancaria', sortable: true },
-                    { title: 'Banco', field: 'razon_social', sortable: true },
-                    { title: 'Cuentas Registradas', field: 'cuentas_count', sortable: false },
+                    { title: 'Cuenta', field: 'razon_social', sortable: true },
+                    { title: 'Número de Cuentas Registradas', field: 'cuentas_count', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -41,22 +40,22 @@
         },
         mounted() {
             this.paginate()
-            this.$store.dispatch('contabilidad/tipo-cuenta-contable/index')
         },
         methods: {
             paginate(payload = {}) {
-                return this.$store.dispatch('cadeco/banco/paginate', {
+                return this.$store.dispatch('cadeco/cuenta/paginate', {
                     ...payload,
-                    include: 'cuentaBancaria'
+                    include: ['empresa','cuentasBanco'],
+                    scope: 'paraTraspaso'
                 })
             }
         },
         computed: {
             cuentas(){
-                return this.$store.getters['cadeco/banco/cuentas'];
+                return this.$store.getters['cadeco/cuenta/cuentas'];
             },
             meta(){
-                return this.$store.getters['cadeco/banco/meta'];
+                return this.$store.getters['cadeco/cuenta/meta'];
             },
         },
         watch: {
@@ -67,12 +66,13 @@
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            razon_social: cuenta.razon_social,
-                            cuentas_count: cuenta.cuentaBancaria.data.length,
+                            razon_social: cuenta.numero+" ("+cuenta.abreviatura+" "+cuenta.empresa.razon_social+")",
+                            cuentas_count: cuenta.cuentasBanco.data.length,
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: self.$root.can('editar_cuenta_banco') ? true : undefined,
-                                id: cuenta.id
+                                id: cuenta.id,
+                                datos: cuenta.cuentasBanco
                             })
                         })
                     });

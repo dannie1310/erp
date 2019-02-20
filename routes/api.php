@@ -31,21 +31,11 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'almacen'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
         });
-    });
 
-    $api->group(['middleware' => 'api'], function ($api) {
         // CUENTAS
         $api->group(['prefix' => 'cuenta'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\CuentaController@index');
-        });
-    });
-
-    $api->group(['middleware' => 'api'], function ($api) {
-        // BANCOS
-        $api->group(['prefix' => 'banco'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\BancoController@index');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\BancoController@paginate');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@show');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\CuentaController@paginate');
         });
 
         // EMPRESAS

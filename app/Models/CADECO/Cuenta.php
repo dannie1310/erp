@@ -36,8 +36,4 @@ class Cuenta extends Model
     public function cuentaBanco(){
         return $this->hasMany(CuentaBanco::class, 'id_cuenta', 'id_cuenta');
     }
-
-    public function banco(){
-        return $this->belongsTo(Banco::class, 'id_empresa', 'id_empresa');
-    }
 }

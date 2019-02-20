@@ -32,4 +32,9 @@ class CuentaService
     {
         return $this->repository->all($data);
     }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
 }
