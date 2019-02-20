@@ -8,7 +8,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content" v-if="banco">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">{{ banco.empresa.razon_social }}</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{ titulo }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -19,13 +19,13 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Cuenta Contable</th>
                                     <th>Tipo de Cuenta</th>
+                                    <th>Cuenta Contable</th>
                                     <th>Guardar</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <cuenta-empresa-edit-form v-for="(cuenta, i) in banco.cuentasBanco.data" :cuenta="cuenta" :key="i"/>
+                                <cuenta-banco-edit-form v-for="(cuenta, i) in banco.cuentasBanco.data" :cuenta="cuenta" :key="i"/>
                                 </tbody>
                             </table>
                         </div>
@@ -44,7 +44,7 @@
     export default {
         name: "cuenta-banco-edit",
         components: {CuentaBancoEditForm},
-        props: ['id'],
+        props: ['id','titulo'],
         data() {
             return {
                 banco: null
@@ -59,7 +59,7 @@
 
         methods: {
             find() {
-                return this.$store.dispatch('cadeco/banco/find', {
+                return this.$store.dispatch('cadeco/cuenta/find', {
                     id: this.id,
                     params: { include: 'cuentasBanco' }
                 })

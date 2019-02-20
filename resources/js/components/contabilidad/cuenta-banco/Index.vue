@@ -39,7 +39,10 @@
             }
         },
         mounted() {
-            this.paginate()
+                this.paginate(),
+                this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {
+                    scope: 'paraBancos'
+                })
         },
         methods: {
             paginate(payload = {}) {
@@ -70,7 +73,7 @@
                             cuentas_count: cuenta.cuentasBanco.data.length,
                             buttons: $.extend({}, {
                                 show: true,
-                                edit: self.$root.can('editar_cuenta_banco') ? true : undefined,
+                                edit: self.$root.can('editar_cuenta_contable_bancaria') ? true : undefined,
                                 razon_social: cuenta.numero+" ("+cuenta.abreviatura+" "+cuenta.empresa.razon_social+")",
                                 id: cuenta.id
                             })
