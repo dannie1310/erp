@@ -21,6 +21,20 @@ export default {
     },
 
     actions: {
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+                        context.commit('SET_CUENTA', data)
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         index(context, payload) {
             return new Promise((resolve, reject) => {
                 context.commit('SET_CUENTAS', null)

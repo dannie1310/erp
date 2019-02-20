@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="find(dataCuenta)" type="button" class="btn btn-sm btn-outline-secondary"><i class="fa fa-eye"></i></button>
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary"><i class="fa fa-eye"></i></button>
 
         <!-- Modal -->
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div v-if="cuenta" class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                       <h5 class="modal-title" id="exampleModalLongTitle">{{ dataCuenta }}</h5> -->
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{ titulo }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -19,13 +19,17 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Banco</th>
-                                    <th>dataCuenta</th>
+                                    <th>Cuenta Contable</th>
+                                    <th>Tipo de Cuenta</th>
                                 </tr>
                                 </thead>
                                 <tbody>
+                                <tr v-for="(cuenta_bancaria, i) in cuenta.cuentasBanco.data">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ cuenta_bancaria.cuenta }}</td>
+                                    <td>{{ cuenta_bancaria.tipo.descripcion }}</td>
+                                </tr>
 
-                                    <td>{{ dataCuenta }}</td>
 
                                 </tbody>
                             </table>
@@ -43,16 +47,23 @@
 <script>
     export default {
         name: "cuenta-banco-show",
-        props: ['dataCuenta'],
+        props: ['id','titulo'],
         methods: {
-            find(dataCuenta) {
-                return
+            find(id) {
+                return this.$store.dispatch('cadeco/cuenta/find', {
+                    id: id,
+                    params: { include: 'cuentasBanco' }
+                })
+                    .then(() => {
                         $(this.$refs.modal).modal('show');
+                    })
             }
         },
 
         computed: {
-
+            cuenta() {
+                return this.$store.getters['cadeco/cuenta/currentCuenta']
+            }
         }
     }
 </script>

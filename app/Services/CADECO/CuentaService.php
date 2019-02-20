@@ -37,4 +37,9 @@ class CuentaService
     {
         return $this->repository->paginate($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

@@ -71,8 +71,8 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: self.$root.can('editar_cuenta_banco') ? true : undefined,
-                                id: cuenta.id,
-                                datos: cuenta.cuentasBanco
+                                razon_social: cuenta.numero+" ("+cuenta.abreviatura+" "+cuenta.empresa.razon_social+")",
+                                id: cuenta.id
                             })
                         })
                     });
