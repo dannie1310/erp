@@ -118402,13 +118402,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "fondos-garantia-index",
     data: function data() {
         return {
             HeaderSettings: false,
-            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Contratista', field: 'empresa__razon_social', thComp: __webpack_require__(521), sortable: true }, { title: 'Referencia', field: 'subcontrato__referencia', thComp: __webpack_require__(521), sortable: true }, { title: 'Folio Subcontrato', field: 'subcontrato__numero_folio', thComp: __webpack_require__(521), sortable: true }, { title: 'Fecha Subcontrato', field: 'subcontrato__fecha', sortable: true }, { title: 'Monto Subcontrato', field: 'subcontrato__monto', tdClass: 'money' }, { title: 'Saldo Fondo de Garantia', field: 'saldo', sortable: true, tdClass: 'money' }, { title: 'Acciones', field: 'buttons', tdComp: __webpack_require__(609) }],
+            columns: [{ title: '#', field: 'index', thClass: 'th_index', sortable: false }, { title: 'Contratista', field: 'empresa__razon_social', thComp: __webpack_require__(521), sortable: true }, { title: 'Referencia', field: 'subcontrato__referencia', thComp: __webpack_require__(521), sortable: true }, { title: 'Folio Subcontrato', field: 'subcontrato__numero_folio', thClass: 'th_folio', thComp: __webpack_require__(521), sortable: true }, { title: 'Fecha Subcontrato', field: 'subcontrato__fecha', thClass: 'th_fecha', sortable: true }, { title: 'Monto Subcontrato', field: 'subcontrato__monto', tdClass: 'money', thClass: 'th_money' }, { title: 'Saldo Fondo de Garantia', field: 'saldo', sortable: true, tdClass: 'money', thClass: 'th_money' }, { title: 'Acciones', field: 'buttons', tdComp: __webpack_require__(609) }],
             data: [],
             total: 0,
             query: {}
@@ -118940,10 +118955,61 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "col-12" }, [
       _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-header" }, [
+          _c("div", { staticClass: "form-row" }, [
+            _c("div", { staticClass: "col" }, [
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.id_estatus,
+                      expression: "id_estatus"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  staticStyle: { width: "25%" },
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.id_estatus = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    }
+                  }
+                },
+                [
+                  _c("option", { attrs: { value: "" } }, [
+                    _vm._v("-- Contratista --")
+                  ]),
+                  _vm._v(" "),
+                  _vm._l(_vm.estatus, function(item) {
+                    return _c("option", { domProps: { value: item.estatus } }, [
+                      _vm._v(_vm._s(item.descripcion))
+                    ])
+                  })
+                ],
+                2
+              )
+            ]),
+            _vm._v(" "),
+            _vm._m(0)
+          ])
+        ]),
+        _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c(
             "div",
-            { staticClass: "table-responsive" },
+            { staticClass: "table-responsive table-bordered" },
             [_c("datatable", _vm._b({}, "datatable", _vm.$data, false))],
             1
           )
@@ -118952,7 +119018,22 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      { staticClass: "col", staticStyle: { "text-align": "right" } },
+      [
+        _c("label", [_vm._v("Saldo de Fondo de Garantía:")]),
+        _vm._v(" "),
+        _c("label", [_vm._v("$ 10,000.00")])
+      ]
+    )
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -121487,7 +121568,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.money\n{\n    text-align: right;\n}\n", ""]);
+exports.push([module.i, "\n.money\n{\n   text-align: right;\n}\n.th_money\n{\n    width: 150px;\n    max-width: 150px;\n    min-width: 100px;\n}\n.th_fecha, .th_folio\n{\n    width: 110px;\n    max-width: 110px;\n    min-width: 110px;\n}\n.th_index\n{\n    width: 15px;\n    max-width: 20px;\n    min-width: 10px;\n}\nth\n{\n    text-align: center;\n}\n", ""]);
 
 // exports
 
