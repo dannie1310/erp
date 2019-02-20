@@ -21,21 +21,19 @@
 </template>
 
 <script>
-
     export default {
         name: "fondos-garantia-index",
-
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-
-                    { title: 'Contratista', field: 'contratista', sortable: true },
-                    { title: 'Folio Subcontrato', field: 'numero_folio_subcontrato', sortable: true },
-                    { title: 'Fecha Subcontrato', field: 'fecha_subcontrato', sortable: true },
-                    { title: 'Monto Subcontrato', field: 'monto_subcontrato', align: 'right'},
-                    { title: 'Saldo Fondo de Garantia', field: 'saldo', sortable: true, align: 'right'},
+                    { title: 'Contratista', field: 'empresa__razon_social', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Referencia', field: 'subcontrato__referencia', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Folio Subcontrato', field: 'subcontrato__numero_folio', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Fecha Subcontrato', field: 'subcontrato__fecha', sortable: true },
+                    { title: 'Monto Subcontrato', field: 'subcontrato__monto', tdClass: 'money'},
+                    { title: 'Saldo Fondo de Garantia', field: 'saldo', sortable: true, tdClass: 'money'},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -66,16 +64,15 @@
                     let self = this
                     self.$data.data = []
                     fondosGarantia.forEach(function (fondoGarantia, i) {
+
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-
                             saldo: fondoGarantia.saldo,
-                            contratista: fondoGarantia.contratista,
-                            numero_folio_subcontrato: fondoGarantia.numero_folio_subcontrato,
-                            fecha_subcontrato: fondoGarantia.fecha_subcontrato,
-                            monto_subcontrato: fondoGarantia.monto_subcontrato,
-
-
+                            empresa__razon_social: fondoGarantia.subcontrato.empresa.razon_social,
+                            subcontrato__referencia: fondoGarantia.subcontrato.referencia,
+                            subcontrato__numero_folio: fondoGarantia.subcontrato.numero_folio_format,
+                            subcontrato__fecha: fondoGarantia.subcontrato.fecha_format,
+                            subcontrato__monto: fondoGarantia.subcontrato.monto_format,
                         })
                     });
                 },
@@ -90,10 +87,16 @@
             },
             query: {
                 handler (query) {
-                    this.paginate()
+                    this.paginate(query)
                 },
                 deep: true
             }
         },
     }
 </script>
+<style>
+    .money
+    {
+        text-align: right;
+    }
+</style>

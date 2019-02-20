@@ -37,7 +37,19 @@ class FondoGarantiaService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $fondo_garantia = $this->repository;
+        if (isset($data['subcontrato__numero_folio'])) {
+            $fondo_garantia = $fondo_garantia->where([['transacciones.numero_folio', 'LIKE', '%' . $data['subcontrato__numero_folio'] . '%']]);
+        }
+
+        if (isset($data['subcontrato__referencia'])) {
+            $fondo_garantia = $fondo_garantia->where([['transacciones.referencia', 'LIKE', '%' . $data['subcontrato__referencia'] . '%']]);
+        }
+
+        if (isset($data['empresa__razon_social'])) {
+            $fondo_garantia = $fondo_garantia->where([['empresas.razon_social', 'LIKE', '%' . $data['empresa__razon_social'] . '%']]);
+        }
+        return $fondo_garantia->paginate($data);
     }
 
     public function create($data)

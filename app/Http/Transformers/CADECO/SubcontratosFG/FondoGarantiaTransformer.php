@@ -9,22 +9,55 @@
 namespace App\Http\Transformers\CADECO\SubcontratosFG;
 
 
+use App\Http\Transformers\CADECO\Subcontratos\SubcontratoTransformer;
+use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use League\Fractal\TransformerAbstract;
 
 class FondoGarantiaTransformer extends TransformerAbstract
 {
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'subcontrato'
+    ];
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'subcontrato'
+    ];
+
+    /**
+     * @param FondoGarantia $model
+     * @return array
+     */
     public function transform(FondoGarantia $model)
     {
         return [
             'id' => (int)$model->getKey(),
             'fecha' => (string)$model->fecha,
             'saldo' => (string)$model->saldo_format,
-            'contratista' => (string)$model->subcontrato->empresa->razon_social,
             'created_at'=>(string)$model->created_at,
-            'numero_folio_subcontrato'=>(string)$model->subcontrato->numero_folio_format,
-            'fecha_subcontrato'=>(string)$model->subcontrato->fecha_format,
-            'monto_subcontrato'=>(string)$model->subcontrato->monto_format,
         ];
+    }
+
+    /**
+     * Include Subcontrato
+     *
+     * @param FondoGarantia $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeSubcontrato(FondoGarantia $model) {
+        if ($subcontrato = $model->subcontrato) {
+            return $this->item($subcontrato, new SubcontratoTransformer);
+        }
+        return null;
     }
 }

@@ -31,7 +31,7 @@ class Subcontrato extends Transaccion
         'referencia',
         'observaciones',
     ];
-    protected $with = array('fondo_garantia', 'estimacion');
+    protected $with = array( 'estimacion');
     public $usuario_registra = 1;
     protected static function boot()
     {
@@ -73,6 +73,4 @@ class Subcontrato extends Transaccion
             }
         }
    }
-
-
 }

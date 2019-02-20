@@ -118201,13 +118201,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "fondos-garantia-menu",
@@ -118218,7 +118211,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             $(event.target).closest('li').toggleClass('menu-open');
         }
     }
-
 });
 
 /***/ }),
@@ -118259,7 +118251,7 @@ var render = function() {
                     [
                       _c("i", { staticClass: "fa fa-circle-o nav-icon" }),
                       _vm._v(" "),
-                      _c("p", [_vm._v("Solicitar Movimiento")])
+                      _c("p", [_vm._v("Solicitudes de Movimiento")])
                     ]
                   )
                 ],
@@ -118284,7 +118276,7 @@ var render = function() {
                     [
                       _c("i", { staticClass: "fa fa-circle-o nav-icon" }),
                       _vm._v(" "),
-                      _c("p", [_vm._v("Ajuste de Saldo")])
+                      _c("p", [_vm._v("Ajustes de Saldo")])
                     ]
                   )
                 ],
@@ -118336,6 +118328,10 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(666)
+}
 var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(606)
@@ -118344,7 +118340,7 @@ var __vue_template__ = __webpack_require__(612)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
-var __vue_styles__ = null
+var __vue_styles__ = injectStyle
 /* scopeId */
 var __vue_scopeId__ = null
 /* moduleIdentifier (server only) */
@@ -118407,14 +118403,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
-
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "fondos-garantia-index",
-
     data: function data() {
         return {
             HeaderSettings: false,
-            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Contratista', field: 'contratista', sortable: true }, { title: 'Folio Subcontrato', field: 'numero_folio_subcontrato', sortable: true }, { title: 'Fecha Subcontrato', field: 'fecha_subcontrato', sortable: true }, { title: 'Monto Subcontrato', field: 'monto_subcontrato', align: 'right' }, { title: 'Saldo Fondo de Garantia', field: 'saldo', sortable: true, align: 'right' }, { title: 'Acciones', field: 'buttons', tdComp: __webpack_require__(609) }],
+            columns: [{ title: '#', field: 'index', sortable: false }, { title: 'Contratista', field: 'empresa__razon_social', thComp: __webpack_require__(521), sortable: true }, { title: 'Referencia', field: 'subcontrato__referencia', thComp: __webpack_require__(521), sortable: true }, { title: 'Folio Subcontrato', field: 'subcontrato__numero_folio', thComp: __webpack_require__(521), sortable: true }, { title: 'Fecha Subcontrato', field: 'subcontrato__fecha', sortable: true }, { title: 'Monto Subcontrato', field: 'subcontrato__monto', tdClass: 'money' }, { title: 'Saldo Fondo de Garantia', field: 'saldo', sortable: true, tdClass: 'money' }, { title: 'Acciones', field: 'buttons', tdComp: __webpack_require__(609) }],
             data: [],
             total: 0,
             query: {}
@@ -118445,15 +118439,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 var self = this;
                 self.$data.data = [];
                 fondosGarantia.forEach(function (fondoGarantia, i) {
+
                     self.$data.data.push({
                         index: i + 1 + self.query.offset,
-
                         saldo: fondoGarantia.saldo,
-                        contratista: fondoGarantia.contratista,
-                        numero_folio_subcontrato: fondoGarantia.numero_folio_subcontrato,
-                        fecha_subcontrato: fondoGarantia.fecha_subcontrato,
-                        monto_subcontrato: fondoGarantia.monto_subcontrato
-
+                        empresa__razon_social: fondoGarantia.subcontrato.empresa.razon_social,
+                        subcontrato__referencia: fondoGarantia.subcontrato.referencia,
+                        subcontrato__numero_folio: fondoGarantia.subcontrato.numero_folio_format,
+                        subcontrato__fecha: fondoGarantia.subcontrato.fecha_format,
+                        subcontrato__monto: fondoGarantia.subcontrato.monto_format
                     });
                 });
             },
@@ -118470,7 +118464,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         query: {
             handler: function handler(query) {
-                this.paginate();
+                this.paginate(query);
             },
 
             deep: true
@@ -121445,6 +121439,58 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 654 */,
+/* 655 */,
+/* 656 */,
+/* 657 */,
+/* 658 */,
+/* 659 */,
+/* 660 */,
+/* 661 */,
+/* 662 */,
+/* 663 */,
+/* 664 */,
+/* 665 */,
+/* 666 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(667);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("07195440", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-704775ac\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Index.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-704775ac\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Index.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 667 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.money\n{\n    text-align: right;\n}\n", ""]);
+
+// exports
+
 
 /***/ })
 /******/ ]);

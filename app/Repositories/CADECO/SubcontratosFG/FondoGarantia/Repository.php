@@ -16,13 +16,23 @@ class Repository implements RepositoryInterface
      */
     protected $model;
 
+
     /**
      * RepositoryInterface constructor.
      * @param Model $model
      */
     public function __construct(Model $model)
     {
-        $this->model = $model;
+        $this->model = $model::select([
+            'fondos_garantia.id_subcontrato',
+            'fondos_garantia.saldo',
+            'transacciones.numero_folio',
+            'transacciones.monto',
+            'empresas.razon_social',
+            'transacciones.referencia'
+        ])
+        ->join('transacciones','transacciones.id_transaccion', 'fondos_garantia.id_subcontrato')
+        ->join('empresas','transacciones.id_empresa', 'empresas.id_empresa');
     }
 
     public function create(array $data)
@@ -46,12 +56,35 @@ class Repository implements RepositoryInterface
     public function paginate($data)
     {
         if (count($data)) {
-            $query = $this->model;
-            if ($data['sort'])
-                $query = $query->orderBy($data['sort'], $data['order']);
-            return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
-        }
+            #validar si $data['sort'] viene con doble guión __
+            $doble_guion = strpos($data['sort'], '__');
+            if ($doble_guion !== false) {
+                $data['sort'] = explode("__", $data['sort']);
+                $query = $this->model;
+                if ($data['sort']) {
+                    $query = $query
+                        ->orderBy($data['sort'][1], $data['order']);
+                    /*
+                     * @todo Implementarlo con eloquent
+                     * */
+                    /*$query = $query->with(['subcontrato'=> function($query) use ($sorteable, $data) {
+                        if($sorteable[1] == 'numero_folio')
+                        {
+                            $query->orderBy('numero_folio',$data['order']);
+                        }
+                    }
+                    ]);*/
 
+                }
+                return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
+            } else {
+                $query = $this->model;
+                if ($data['sort']) {
+                    $query = $query->orderBy('fondos_garantia.' . $data['sort'], $data['order']);
+                }
+                return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
+            }
+        }
         return $this->model->paginate(10);
     }
 

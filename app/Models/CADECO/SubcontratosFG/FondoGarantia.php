@@ -21,7 +21,7 @@ class FondoGarantia extends Model
     public $timestamps = false;
     public $usuario_registra = 0;
     public $incrementing = false;
-    protected $with = array('movimientos');
+    protected $with = array('movimientos', 'subcontrato');
     protected static function boot()
     {
         parent::boot();
@@ -48,7 +48,7 @@ class FondoGarantia extends Model
 
     public function subcontrato()
     {
-        return $this->hasOne(Transaccion::class, "id_transaccion");
+        return $this->hasOne(Subcontrato::class, "id_transaccion","id_subcontrato");
     }
 
     public function movimientos()

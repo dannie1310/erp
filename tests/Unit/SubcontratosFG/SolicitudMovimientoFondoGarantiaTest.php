@@ -299,7 +299,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $subcontrato_nuevo = New Subcontrato();
         $subcontrato_nuevo->id_antecedente =208188;
         $subcontrato_nuevo->fecha = '2018-01-01';
-        $subcontrato_nuevo->id_empresa = 2;
+        $subcontrato_nuevo->id_empresa = 100;
         $subcontrato_nuevo->id_moneda = 1;
         $subcontrato_nuevo->anticipo = 1;
         $subcontrato_nuevo->anticipo_monto = 100;
@@ -312,7 +312,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $subcontrato_nuevo->retencion = 10;
         $subcontrato_nuevo->referencia = 1;
         $subcontrato_nuevo->id_obra = 1;
-        $subcontrato_nuevo->observaciones='OBSERVACIONES SUBCONTRATO 182';
+        $subcontrato_nuevo->observaciones='OBSERVACIONES SUBCONTRATO 666';
         $subcontrato_nuevo->usuario_registra=182;
         $subcontrato_nuevo->save();
 
@@ -343,7 +343,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $subcontrato_nuevo = New Subcontrato();
         $subcontrato_nuevo->id_antecedente =208188;
         $subcontrato_nuevo->fecha = '2018-01-01';
-        $subcontrato_nuevo->id_empresa = 2;
+        $subcontrato_nuevo->id_empresa = 100;
         $subcontrato_nuevo->id_moneda = 1;
         $subcontrato_nuevo->anticipo = 1;
         $subcontrato_nuevo->anticipo_monto = 100;

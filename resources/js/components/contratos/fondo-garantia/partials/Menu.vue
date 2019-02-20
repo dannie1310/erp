@@ -5,25 +5,22 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">FONDO DE GARANTÍA</li>
-
             <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                 <a href="#" class="nav-link" >
                 <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
                     <i class="fa fa-circle-o nav-icon"></i>
-                    <p>Solicitar Movimiento</p>
+                    <p>Solicitudes de Movimiento</p>
                 </router-link>
                 </a>
             </li>
-
             <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                 <a href="#" class="nav-link" >
                 <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
                     <i class="fa fa-circle-o nav-icon"></i>
-                    <p>Ajuste de Saldo</p>
+                    <p>Ajustes de Saldo</p>
                 </router-link>
                 </a>
             </li>
-
             <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                 <a href="#" class="nav-link" >
                 <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
@@ -32,10 +29,6 @@
                 </router-link>
                 </a>
             </li>
-
-
-
-
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
@@ -51,7 +44,6 @@
                 $(event.target).closest('li').toggleClass('menu-open');
             }
         }
-
     }
 </script>
 
