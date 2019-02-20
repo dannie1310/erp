@@ -3,18 +3,18 @@ const URI = '/api/banco/';
 export default {
     namespaced: true,
     state: {
-        bancos: [],
-        currentBancos: null,
+        cuentas: [],
+        currentBanco: null,
         meta: {}
     },
 
     mutations: {
         SET_BANCOS(state, data) {
-            state.bancos = data
+            state.cuentas = data
         },
 
         SET_BANCO(state, data) {
-            state.currentBancos = data
+            state.currentBanco = data
         },
 
         SET_META(state, data) {
@@ -81,8 +81,8 @@ export default {
             return state.meta
         },
 
-        currentBancos(state) {
-            return state.currentBancos
+        currentBanco(state) {
+            return state.currentBanco
         }
     }
 }

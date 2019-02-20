@@ -29,6 +29,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
+                    { title: 'Cuenta Contable', field: 'cuenta_bancaria', sortable: true },
                     { title: 'Banco', field: 'razon_social', sortable: true },
                     { title: 'Cuentas Registradas', field: 'cuentas_count', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
@@ -51,27 +52,27 @@
             }
         },
         computed: {
-            bancos(){
-                return this.$store.getters['cadeco/banco/bancos'];
+            cuentas(){
+                return this.$store.getters['cadeco/banco/cuentas'];
             },
             meta(){
                 return this.$store.getters['cadeco/banco/meta'];
             },
         },
         watch: {
-            bancos: {
-                handler(bancos) {
+            cuentas: {
+                handler(cuentas) {
                     let self = this
                     self.$data.data = []
-                    bancos.forEach(function (banco, i) {
+                    cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            razon_social: banco.razon_social,
-                            cuentas_count: banco.cuentaBancaria.data.length,
+                            razon_social: cuenta.razon_social,
+                            cuentas_count: cuenta.cuentaBancaria.data.length,
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: self.$root.can('editar_cuenta_banco') ? true : undefined,
-                                id: banco.empresa.id
+                                id: cuenta.id
                             })
                         })
                     });
