@@ -65,7 +65,7 @@
 #24 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #25 {main}
 "} 
-[2019-02-07 01:49:47] local.ERROR: Class App\Http\Controllers\v1\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaService does not exist {"exception":"[object] (ReflectionException(code: 0): Class App\\Http\\Controllers\\v1\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService does not exist at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:838)
+[2019-02-07 01:49:47] local.ERROR: Class App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaService does not exist {"exception":"[object] (ReflectionException(code: 0): Class App\\Http\\Controllers\\v1\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService does not exist at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php:838)
 [stacktrace]
 #0 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(838): ReflectionParameter->getClass()
 #1 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(807): Illuminate\\Container\\Container->resolveDependencies(Array)
@@ -95,9 +95,9 @@
 #25 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #26 {main}
 "} 
-[2019-02-07 01:51:34] local.ERROR: Class 'App\Services\CADECO\Subcontratos\Repository' not found {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Class 'App\\Services\\CADECO\\Subcontratos\\Repository' not found at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService.php:20)
+[2019-02-07 01:51:34] local.ERROR: Class 'App\Services\CADECO\Contratos\Repository' not found {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Class 'App\\Services\\CADECO\\Contratos\\Repository' not found at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService.php:20)
 [stacktrace]
-#0 [internal function]: App\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
+#0 [internal function]: App\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
 #1 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(812): ReflectionClass->newInstanceArgs(Array)
 #2 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(658): Illuminate\\Container\\Container->build('App\\\\Services\\\\CA...')
 #3 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(609): Illuminate\\Container\\Container->resolve('App\\\\Services\\\\CA...', Array)
@@ -131,9 +131,9 @@
 #31 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #32 {main}
 "} 
-[2019-02-07 01:51:41] local.ERROR: Class 'App\Services\CADECO\Subcontratos\Repository' not found {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Class 'App\\Services\\CADECO\\Subcontratos\\Repository' not found at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService.php:20)
+[2019-02-07 01:51:41] local.ERROR: Class 'App\Services\CADECO\Contratos\Repository' not found {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Class 'App\\Services\\CADECO\\Contratos\\Repository' not found at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService.php:20)
 [stacktrace]
-#0 [internal function]: App\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
+#0 [internal function]: App\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
 #1 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(812): ReflectionClass->newInstanceArgs(Array)
 #2 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(658): Illuminate\\Container\\Container->build('App\\\\Services\\\\CA...')
 #3 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(609): Illuminate\\Container\\Container->resolve('App\\\\Services\\\\CA...', Array)
@@ -167,9 +167,9 @@
 #31 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #32 {main}
 "} 
-[2019-02-07 01:51:58] local.ERROR: Class 'App\Services\CADECO\Subcontratos\Repository' not found {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Class 'App\\Services\\CADECO\\Subcontratos\\Repository' not found at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService.php:20)
+[2019-02-07 01:51:58] local.ERROR: Class 'App\Services\CADECO\Contratos\Repository' not found {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Class 'App\\Services\\CADECO\\Contratos\\Repository' not found at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService.php:20)
 [stacktrace]
-#0 [internal function]: App\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
+#0 [internal function]: App\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
 #1 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(812): ReflectionClass->newInstanceArgs(Array)
 #2 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(658): Illuminate\\Container\\Container->build('App\\\\Services\\\\CA...')
 #3 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(609): Illuminate\\Container\\Container->resolve('App\\\\Services\\\\CA...', Array)

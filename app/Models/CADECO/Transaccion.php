@@ -43,6 +43,25 @@ class Transaccion extends Model
 
     }
 
+    public function getNumeroFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->numero_folio);
+
+    }
+
+    public function getMontoFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto,2);
+
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
+
+    }
+
     public function tipo()
     {
         return $this->belongsTo(TipoTransaccion::class, 'tipo_transaccion', 'tipo_transaccion')
@@ -59,6 +78,12 @@ class Transaccion extends Model
             }
         }
         return true;
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa')
+            ;
     }
 
 }

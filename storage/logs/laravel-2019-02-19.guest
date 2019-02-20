@@ -17,10 +17,10 @@
 #14 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #15 {main}
 "} 
-[2019-02-19 01:40:56] local.ERROR: Argument 1 passed to App\Repositories\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia\Repository::__construct() must be an instance of App\Repositories\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia\Model, instance of App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia given, called in C:\Users\EMartinez\PhpstormProjects\erp-hi\app\Services\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaService.php on line 31 {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Argument 1 passed to App\\Repositories\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia\\Repository::__construct() must be an instance of App\\Repositories\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia\\Model, instance of App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia given, called in C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService.php on line 31 at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Repositories\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia\\Repository.php:23)
+[2019-02-19 01:40:56] local.ERROR: Argument 1 passed to App\Repositories\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia\Repository::__construct() must be an instance of App\Repositories\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia\Model, instance of App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia given, called in C:\Users\EMartinez\PhpstormProjects\erp-hi\app\Services\CADECO\Contratos\SolicitudMovimientoFondoGarantiaService.php on line 31 {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalThrowableError(code: 0): Argument 1 passed to App\\Repositories\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia\\Repository::__construct() must be an instance of App\\Repositories\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia\\Model, instance of App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia given, called in C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService.php on line 31 at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Repositories\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia\\Repository.php:23)
 [stacktrace]
-#0 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService.php(31): App\\Repositories\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia\\Repository->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
-#1 [internal function]: App\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
+#0 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService.php(31): App\\Repositories\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia\\Repository->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
+#1 [internal function]: App\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
 #2 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(812): ReflectionClass->newInstanceArgs(Array)
 #3 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(658): Illuminate\\Container\\Container->build('App\\\\Services\\\\CA...')
 #4 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(609): Illuminate\\Container\\Container->resolve('App\\\\Services\\\\CA...', Array)
@@ -54,10 +54,10 @@
 #32 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #33 {main}
 "} 
-[2019-02-19 01:50:16] local.ERROR: Trying to get property 'usuario' of non-object {"exception":"[object] (ErrorException(code: 0): Trying to get property 'usuario' of non-object at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService.php:33)
+[2019-02-19 01:50:16] local.ERROR: Trying to get property 'usuario' of non-object {"exception":"[object] (ErrorException(code: 0): Trying to get property 'usuario' of non-object at C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService.php:33)
 [stacktrace]
-#0 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService.php(33): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8, 'Trying to get p...', 'C:\\\\Users\\\\EMarti...', 33, Array)
-#1 [internal function]: App\\Services\\CADECO\\Subcontratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
+#0 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\app\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService.php(33): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8, 'Trying to get p...', 'C:\\\\Users\\\\EMarti...', 33, Array)
+#1 [internal function]: App\\Services\\CADECO\\Contratos\\SolicitudMovimientoFondoGarantiaService->__construct(Object(App\\Models\\CADECO\\SubcontratosFG\\SolicitudMovimientoFondoGarantia))
 #2 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(812): ReflectionClass->newInstanceArgs(Array)
 #3 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(658): Illuminate\\Container\\Container->build('App\\\\Services\\\\CA...')
 #4 C:\\Users\\EMartinez\\PhpstormProjects\\erp-hi\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(609): Illuminate\\Container\\Container->resolve('App\\\\Services\\\\CA...', Array)
@@ -396,7 +396,7 @@
 #14 /home/vagrant/code/erp-hi/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #15 {main}
 "} 
-[2019-02-19 02:06:51] local.ERROR: Class App\Http\Controllers\v1\CADECO\Subcontratos\Manager does not exist {"exception":"[object] (ReflectionException(code: 0): Class App\\Http\\Controllers\\v1\\CADECO\\Subcontratos\\Manager does not exist at /home/vagrant/code/erp-hi/vendor/laravel/framework/src/Illuminate/Container/Container.php:838)
+[2019-02-19 02:06:51] local.ERROR: Class App\Http\Controllers\v1\CADECO\Contratos\Manager does not exist {"exception":"[object] (ReflectionException(code: 0): Class App\\Http\\Controllers\\v1\\CADECO\\Contratos\\Manager does not exist at /home/vagrant/code/erp-hi/vendor/laravel/framework/src/Illuminate/Container/Container.php:838)
 [stacktrace]
 #0 /home/vagrant/code/erp-hi/vendor/laravel/framework/src/Illuminate/Container/Container.php(838): ReflectionParameter->getClass()
 #1 /home/vagrant/code/erp-hi/vendor/laravel/framework/src/Illuminate/Container/Container.php(807): Illuminate\\Container\\Container->resolveDependencies(Array)
@@ -426,7 +426,7 @@
 #25 /home/vagrant/code/erp-hi/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
 #26 {main}
 "} 
-[2019-02-19 02:07:26] local.ERROR: Class App\Http\Controllers\v1\CADECO\Subcontratos\Manager does not exist {"exception":"[object] (ReflectionException(code: 0): Class App\\Http\\Controllers\\v1\\CADECO\\Subcontratos\\Manager does not exist at /home/vagrant/code/erp-hi/vendor/laravel/framework/src/Illuminate/Container/Container.php:838)
+[2019-02-19 02:07:26] local.ERROR: Class App\Http\Controllers\v1\CADECO\Contratos\Manager does not exist {"exception":"[object] (ReflectionException(code: 0): Class App\\Http\\Controllers\\v1\\CADECO\\Contratos\\Manager does not exist at /home/vagrant/code/erp-hi/vendor/laravel/framework/src/Illuminate/Container/Container.php:838)
 [stacktrace]
 #0 /home/vagrant/code/erp-hi/vendor/laravel/framework/src/Illuminate/Container/Container.php(838): ReflectionParameter->getClass()
 #1 /home/vagrant/code/erp-hi/vendor/laravel/framework/src/Illuminate/Container/Container.php(807): Illuminate\\Container\\Container->resolveDependencies(Array)

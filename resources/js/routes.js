@@ -195,58 +195,6 @@ export const routes = [
 
         ]
     },
-    {
-        path: '/contratos',
-        components: {
-            default: require('./components/contratos/partials/Layout.vue'),
-            menu: require('./components/contratos/partials/Menu.vue')
-        },
-        children: [
-            {
-                path: '',
-                name: 'contratos',
-                component: require('./components/contratos/Index'),
-                meta: {
-                    title: 'Contratos',
-                    breadcrumb: { parent: 'home', name: 'CONTRATOS'},
-                    middleware: [auth, context]
-                }
-            },
-            /*{
-                path: 'fondo-garantia',
-                components: {
-                    default: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
-                    menu: require('./components/contratos/fondo-garantia/partials/Menu.vue')
-                },
-                meta: {
-                    middleware: [auth, context]
-                },
-                children: [
-                    {
-                        path: '/',
-                        name: 'fondo-garantia',
-                        component: require('./components/contratos/fondo-garantia/Index'),
-                        meta: {
-                            title: 'Fondos de Garantía',
-                            breadcrumb: {parent: 'contratos', name: 'FONDOS DE GARANTÍA'},
-                            middleware: [auth, context]
-                        }
-                    },
-                    {
-                        path: '/',
-                        name: 'solicitud-movimiento',
-                        component: require('./components/contratos/fondo-garantia/solicitud-movimiento/Index'),
-                        meta: {
-                            title: 'Solicitud de Movimiento a Fondo de Garantía',
-                            breadcrumb: {parent: 'fondo-garantia', name: 'SOLICITUD DE MOVIMIENTO'},
-                            middleware: [auth, context]
-                        }
-
-                ]
-            }*/
-
-        ]
-    },
 
     {
         path: '/contratos/fondo-garantia',

@@ -6,7 +6,7 @@
  * Time: 06:16 PM
  */
 
-namespace App\Services\CADECO\Subcontratos;
+namespace App\Services\CADECO\Contratos;
 
 
 use App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia;

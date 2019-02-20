@@ -2,14 +2,12 @@
 /**
  * Created by PhpStorm.
  * User: EMartinez
- * Date: 15/02/2019
- * Time: 01:07 PM
+ * Date: 19/02/2019
+ * Time: 08:36 PM
  */
 
-namespace App\Repositories\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia;
-
-use App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia as Model;
-
+namespace App\Repositories\CADECO\SubcontratosFG\FondoGarantia;
+use App\Models\CADECO\SubcontratosFG\FondoGarantia as Model;
 
 class Repository implements RepositoryInterface
 {
@@ -25,6 +23,16 @@ class Repository implements RepositoryInterface
     public function __construct(Model $model)
     {
         $this->model = $model;
+    }
+
+    public function create(array $data)
+    {
+        return $this->model->create($data);
+    }
+
+    public function show($id)
+    {
+        return $this->model->find($id);
     }
 
     public function all($data = null)
@@ -45,38 +53,6 @@ class Repository implements RepositoryInterface
         }
 
         return $this->model->paginate(10);
-    }
-
-    public function cancelar(array $data, $id)
-    {
-        $item = $this->show($id);
-        $item->cancelar($data);
-
-        return $item;
-    }
-
-    public function autorizar(array $data, $id)
-    {
-        $item = $this->show($id);
-        $item->autorizar($data);
-
-        return $item;
-    }
-
-    public function rechazar(array $data, $id)
-    {
-        $item = $this->show($id);
-        $item->rechazar($data);
-
-        return $item;
-    }
-
-    public function revertirAutorizacion(array $data, $id)
-    {
-        $item = $this->show($id);
-        $item->revertirAutorizacion($data);
-
-        return $item;
     }
 
     public function with($relations)
@@ -105,16 +81,4 @@ class Repository implements RepositoryInterface
         $this->model = $this->model->where($where);
         return $this;
     }
-
-    public function create(array $data)
-    {
-        return $this->model->create($data);
-    }
-
-
-    public function show($id)
-    {
-        return $this->model->find($id);
-    }
-
 }

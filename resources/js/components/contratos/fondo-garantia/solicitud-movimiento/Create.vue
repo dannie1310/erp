@@ -199,7 +199,7 @@
 
 <script>
     export default {
-        name: "movimiento-bancario-create",
+        name: "solicitud-movimiento-fg-create",
         data() {
             return {
                 id_tipo_movimiento: '',

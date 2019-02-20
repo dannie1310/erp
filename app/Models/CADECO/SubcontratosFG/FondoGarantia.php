@@ -41,6 +41,11 @@ class FondoGarantia extends Model
         });
     }
 
+    public function getSaldoFormatAttribute()
+    {
+        return '$ ' . number_format($this->saldo,2);
+    }
+
     public function subcontrato()
     {
         return $this->hasOne(Transaccion::class, "id_transaccion");

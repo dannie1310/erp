@@ -8,7 +8,7 @@
 
             <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                 <a href="#" class="nav-link" >
-                <router-link :to="{name: 'solicitud-movimiento'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-movimiento'}">
+                <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Solicitar Movimiento</p>
                 </router-link>
@@ -17,7 +17,7 @@
 
             <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                 <a href="#" class="nav-link" >
-                <router-link :to="{name: 'ajuste-saldo-fg'}" class="nav-link" :class="{active: this.$route.name == 'ajuste-saldo-fg'}">
+                <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Ajuste de Saldo</p>
                 </router-link>
@@ -26,7 +26,7 @@
 
             <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                 <a href="#" class="nav-link" >
-                <router-link :to="{name: 'consultar-fg'}" class="nav-link" :class="{active: this.$route.name == 'consultar-fg'}">
+                <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Consultar</p>
                 </router-link>

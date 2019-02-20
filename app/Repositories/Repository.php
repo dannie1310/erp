@@ -19,7 +19,7 @@ class Repository implements RepositoryInterface
     protected $model;
 
     /**
-     * Repository constructor.
+     * RepositoryInterface constructor.
      * @param Model $model
      */
     public function __construct(Model $model)

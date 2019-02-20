@@ -16,7 +16,7 @@ use App\Http\Requests\Subcontratos\RechazarSolicitudMovimientoFondoGarantiaReque
 use App\Http\Requests\Subcontratos\RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest;
 use App\Http\Requests\Subcontratos\StoreSolicitudMovimientoFondoGarantiaRequest;
 use App\Http\Transformers\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantiaTransformer;
-use App\Services\CADECO\Subcontratos\SolicitudMovimientoFondoGarantiaService;
+use App\Services\CADECO\Contratos\SolicitudMovimientoFondoGarantiaService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
 
