@@ -6,7 +6,7 @@
 
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header" style="display: none">
                     <div class="form-row">
                         <div class="col">
                             <select class="form-control" v-model="id_estatus" style="width: 25%">

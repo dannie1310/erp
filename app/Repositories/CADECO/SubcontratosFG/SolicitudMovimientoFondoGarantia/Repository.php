@@ -24,7 +24,19 @@ class Repository implements RepositoryInterface
      */
     public function __construct(Model $model)
     {
-        $this->model = $model;
+        /*
+         * NO PUEDE HABER DOS CAMPOS CON EL MISMO NOMBRE PORQUE NO PERMITE CAMBIAR DE PÁGINA
+         * @todo
+         * */
+        $this->model = $model::select([
+            'solicitudes.*',
+            'transacciones.numero_folio',
+            'ctg_tipos_mov_sol.estado_resultante_desc'
+        ])
+            ->join('transacciones','transacciones.id_transaccion', 'solicitudes.id_fondo_garantia')
+            ->join('SubcontratosFG.ctg_tipos_mov_sol','ctg_tipos_mov_sol.estado_resultante', 'solicitudes.estado')
+            ;
+
     }
 
     public function all($data = null)
@@ -37,11 +49,28 @@ class Repository implements RepositoryInterface
 
     public function paginate($data)
     {
+
         if (count($data)) {
-            $query = $this->model;
-            if ($data['sort'])
-                $query = $query->orderBy($data['sort'], $data['order']);
-            return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
+            #validar si $data['sort'] viene con doble guión __
+            $doble_guion = strpos($data['sort'], '__');
+            if ($doble_guion !== false) {
+                $data['sort'] = explode("__", $data['sort']);
+                $query = $this->model;
+                if ($data['sort']) {
+                    $query = $query
+                        ->orderBy($data['sort'][1], $data['order']);
+                    /*
+                     * @todo Implementarlo con eloquent with
+                     * */
+                }
+                return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
+            } else {
+                $query = $this->model;
+                if ($data['sort']) {
+                    $query = $query->orderBy('solicitudes.' . $data['sort'], $data['order']);
+                }
+                return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
+            }
         }
 
         return $this->model->paginate(10);

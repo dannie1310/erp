@@ -28,6 +28,7 @@ class SolicitudMovimientoFondoGarantiaService
      */
     public function __construct(SolicitudMovimientoFondoGarantia $model)
     {
+
         $this->repository = new Repository($model);
         /*$this->id_usuario = auth()->id();
         $this->usuario = auth()->user()->usuario;
@@ -41,7 +42,20 @@ class SolicitudMovimientoFondoGarantiaService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $fondo_garantia = $this->repository;
+        if (isset($data['id'])) {
+            $fondo_garantia = $fondo_garantia->where([['solicitudes.id', 'LIKE', '%' . $data['id'] . '%']]);
+        }
+        if (isset($data['ctg_tipos_mov_sol__estado_resultante_desc'])) {
+            $fondo_garantia = $fondo_garantia->where([['ctg_tipos_mov_sol.estado_resultante_desc', 'LIKE', '%' . $data['ctg_tipos_mov_sol__estado_resultante_desc'] . '%']]);
+        }
+        if (isset($data['subcontrato__numero_folio'])) {
+            $fondo_garantia = $fondo_garantia->where([['transacciones.numero_folio', 'LIKE', '%' . $data['subcontrato__numero_folio'] . '%']]);
+        }
+        if (isset($data['referencia'])) {
+            $fondo_garantia = $fondo_garantia->where([['solicitudes.referencia', 'LIKE', '%' . $data['referencia'] . '%']]);
+        }
+        return $fondo_garantia->paginate($data);
     }
 
     public function create($data)

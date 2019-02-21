@@ -48,6 +48,25 @@ class SolicitudMovimientoFondoGarantia extends Model
 
     }
 
+    public function getNumeroFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->id);
+
+    }
+
+    public function getImporteFormatAttribute()
+    {
+        return '$ ' . number_format($this->importe,2);
+
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
+
+    }
+
     public function movimientos()
     {
         return $this->hasMany(MovimientoSolicitudMovimientoFondoGarantia::class,"id_solicitud");
@@ -79,7 +98,6 @@ class SolicitudMovimientoFondoGarantia extends Model
     public function getEstadoDescAttribute()
     {
         $tipo_movimiento = CtgTipoMovimientoSolicitud::where('estado_resultante',$this->estado)->first();
-        dd($tipo_movimiento->estado_resultante_desc);
         return $tipo_movimiento->estado_resultante_desc;
     }
 

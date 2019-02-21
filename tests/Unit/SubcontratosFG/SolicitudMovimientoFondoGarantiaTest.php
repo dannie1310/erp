@@ -246,8 +246,8 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
             array(
                 array(
                     'id_tipo_solicitud'=>1,
-                    'fecha'=>'2019-02-08',
-                    'referencia'=>'Test',
+                    'fecha'=>'2019-02-21',
+                    'referencia'=>'Referencia Liberación 21',
                     'importe'=>50,
                     'observaciones'=>'observaciones de prueba',
                     'usuario_registra'=>180
@@ -266,8 +266,8 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
             array(
                 array(
                     'id_tipo_solicitud'=>2,
-                    'fecha'=>'2019-02-08',
-                    'referencia'=>'Test',
+                    'fecha'=>'2019-02-21',
+                    'referencia'=>'Referencia Descuento del 21',
                     'importe'=>30,
                     'observaciones'=>'observaciones de prueba',
                     'usuario_registra'=>180

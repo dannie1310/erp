@@ -66,7 +66,6 @@ class FondoGarantia extends Model
 
     private function generaMovimientoRegistro()
     {
-
         MovimientoFondoGarantia::create(
             [
                 'id_fondo_garantia'=>$this->id_subcontrato,
@@ -75,7 +74,6 @@ class FondoGarantia extends Model
                 'usuario_registra'=>$this->usuario_registra,
             ]
         );
-
         $this->refresh();
     }
     public function generaMovimientoRetencion(MovimientoRetencionFondoGarantia $movimiento_retencion)

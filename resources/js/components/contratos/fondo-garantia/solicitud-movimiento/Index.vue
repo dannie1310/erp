@@ -21,5 +21,84 @@
 </template>
 
 <script>
+    import SolicitudMovimientoFondoGarantiaCreate from "./Create";
+    export default {
+        name: "solicitud-movimiento-fondo-garantia-index",
+        /*components: {SolicitudMovimientoFondoGarantiaCreate},*/
+        data() {
+            return {
+                HeaderSettings: false,
+                columns: [
+                    { title: '#', field: 'index', thClass: 'th_index', sortable: false },
+                    { title: 'Folio', field: 'id', thComp: require('../../../globals/th-Filter'), sortable: true },
+                    { title: 'Fecha', field: 'fecha', thClass: 'th_fecha', sortable: true },
+                    { title: 'Referencia', field: 'referencia', thComp: require('../../../globals/th-Filter')},
 
+                    { title: 'Folio Subcontrato', field: 'subcontrato__numero_folio', thClass: 'th_folio', thComp: require('../../../globals/th-Filter'), sortable: true },
+                    { title: 'Importe', field: 'importe', tdClass: 'money', thClass: 'th_money'},
+                    { title: 'Observaciones', field: 'observaciones'},
+                    { title: 'Estatus', field: 'ctg_tipos_mov_sol__estado_resultante_desc', thComp: require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                ],
+                data: [],
+                total: 0,
+                query: {
+                }
+            }
+        },
+        mounted() {
+
+        },
+        methods: {
+            paginate(payload = {}) {
+                return this.$store.dispatch('contratos/solicitud-movimiento-fg/paginate', payload)
+            }
+        },
+        computed: {
+            solicitudes(){
+                return this.$store.getters['contratos/solicitud-movimiento-fg/solicitudes'];
+            },
+            meta(){
+                return this.$store.getters['contratos/solicitud-movimiento-fg/meta'];
+            },
+        },
+        watch: {
+            solicitudes: {
+                handler(solicitudes) {
+                    let self = this
+                    self.$data.data = []
+                    solicitudes.forEach(function (solicitud, i) {
+
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            id: solicitud.numero_folio_format,
+                            importe: solicitud.importe,
+                            referencia: solicitud.referencia,
+                            fecha: solicitud.fecha_format,
+                            observaciones: solicitud.observaciones,
+                            ctg_tipos_mov_sol__estado_resultante_desc: solicitud.estado_desc,
+
+
+                            subcontrato__numero_folio: solicitud.fondo_garantia.subcontrato.numero_folio_format,
+
+                        })
+                    });
+                },
+                deep: true
+            },
+            meta: {
+                handler (meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler (query) {
+                    this.paginate(query)
+                },
+                deep: true
+            }
+        },
+    }
 </script>

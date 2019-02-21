@@ -22,7 +22,8 @@ use League\Fractal\Manager;
 
 class SolicitudMovimientoFondoGarantiaController extends Controller
 {
-    use ControllerTrait {update as protected traitUpdate; store as protected traitStore; }
+    use ControllerTrait;
+    /*use ControllerTrait {update as protected traitUpdate; store as protected traitStore; }*/
 
     /**
      * @var SolicitudMovimientoFondoGarantiaService
@@ -40,7 +41,7 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
     protected $transformer;
 
     /**
-     * CuentaAlmacenController constructor.
+     * SolicitudMovimientoFondoGarantiaController constructor.
      * @param SolicitudMovimientoFondoGarantiaService $service
      * @param Manager $fractal
      * @param SolicitudMovimientoFondoGarantiaTransformer $transformer
@@ -55,7 +56,7 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function store(StoreSolicitudMovimientoFondoGarantiaRequest $request)
+    /*public function store(StoreSolicitudMovimientoFondoGarantiaRequest $request)
     {
         return $this->traitStore($request);
     }
@@ -82,5 +83,5 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
     {
         $item = $this->service->revertirAutorizacion($request, $id);
         return $this->respondWithItem($item);
-    }
+    }*/
 }

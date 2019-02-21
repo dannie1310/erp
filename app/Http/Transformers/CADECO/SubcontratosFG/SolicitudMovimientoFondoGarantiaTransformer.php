@@ -19,20 +19,18 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
      *
      * @var array
      */
-    /*protected $availableIncludes = [
-        'fondo_garantia',
-        'movimientos',
-        'tipo'
-    ];*/
+    protected $availableIncludes = [
+        'fondo_garantia'
+    ];
 
     /**
      * List of resources to automatically include
      *
      * @var array
      */
-    /*protected $defaultIncludes = [
-        'almacen'
-    ];*/
+    protected $defaultIncludes = [
+        'fondo_garantia'
+    ];
 
     /**
      * @param SolicitudMovimientoFondoGarantia $model
@@ -42,9 +40,10 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
     {
         return [
             'id' => (int)$model->getKey(),
-            'fecha' => (string)$model->fecha,
+            'numero_folio_format' => (string)$model->numero_folio_format,
+            'fecha_format' => (string)$model->fecha_format,
             'referencia' => (string)$model->referencia,
-            'importe' => (string)$model->importe,
+            'importe' => (string)$model->importe_format,
             'observaciones' => (string)$model->observaciones,
             'usuario_registra'=>(string)$model->usuario_registra,
             'usuario_registra_desc'=>(string)$model->usuario_registra_desc,
@@ -54,14 +53,15 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
     }
 
     /**
-     * Include Almacen
+     * Include Fondo de Garantia
      *
+     * @param SolicitudMovimientoFondoGarantia $model
      * @return \League\Fractal\Resource\Item
      */
-    /*public function includeAlmacen(CuentaAlmacen $model)
-    {
-        $almacen = $model->almacen;
-
-        return $this->item($almacen, new AlmacenTransformer);
-    }*/
+    public function includeFondoGarantia(SolicitudMovimientoFondoGarantia $model) {
+        if ($fondo_garantia = $model->fondo_garantia) {
+            return $this->item($fondo_garantia, new FondoGarantiaTransformer);
+        }
+        return null;
+    }
 }

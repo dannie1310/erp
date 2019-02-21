@@ -85,6 +85,7 @@ class Repository implements RepositoryInterface
                 return $query->paginate($data['limit'], ['*'], 'page', ($data['offset'] / $data['limit']) + 1);
             }
         }
+
         return $this->model->paginate(10);
     }
 

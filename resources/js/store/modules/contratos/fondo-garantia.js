@@ -30,7 +30,7 @@ export default {
                 if (fondoGarantia.id === data.id) {
                     return Object.assign({}, fondoGarantia, data)
                 }
-                return movimiento
+                return fondoGarantia
             })
             state.currentFondoGarantia = data;
         }
@@ -105,7 +105,7 @@ export default {
             return state.meta
         },
 
-        currentMovimiento(state) {
+        currentFondoGarantia(state) {
             return state.currentFondoGarantia
         }
     }
