@@ -19,6 +19,11 @@ class Material extends Model
     protected $primaryKey = 'id_material';
 
     public $timestamps = false;
+    public $searchable = [
+        'descripcion',
+        'numero_parte',
+        'unidad'
+    ];
 
     public function getTieneHijosAttribute()
     {
@@ -39,5 +44,15 @@ class Material extends Model
     public function scopeRoots($query)
     {
         return $query->whereRaw('LEN(nivel) = 4');
+    }
+
+    public function scopeConCuenta($query)
+    {
+        return $query->has('cuentaMaterial');
+    }
+
+    public function scopeTipo($query, $tipo)
+    {
+        return $query->where('tipo_material', '=', $tipo);
     }
 }

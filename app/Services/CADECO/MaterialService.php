@@ -38,4 +38,9 @@ class MaterialService
     {
         return $this->repository->show($id);
     }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
 }

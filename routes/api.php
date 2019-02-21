@@ -56,6 +56,7 @@ $api->version('v1', function ($api) {
         //MATERIALES
         $api->group(['prefix' => 'material'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MaterialController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
         });
     });
@@ -107,7 +108,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'cuenta-material'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@paginate');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@find')->where(['id' => '[0-9]+']);
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@update')->where(['id' => '[0-9]+']);
         });
 

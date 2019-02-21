@@ -38,6 +38,7 @@ class Repository implements RepositoryInterface
 
     public function paginate()
     {
+        $this->search();
         $this->scope();
         $query = $this->model;
         if (request('sort')) {

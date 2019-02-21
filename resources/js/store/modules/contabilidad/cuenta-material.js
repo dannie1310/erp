@@ -28,7 +28,9 @@ export default {
                 }
                 return cuenta
             })
-            state.currentCuenta = data
+            if (state.currentCuenta) {
+                state.currentCuenta = data
+            }
         },
 
         UPDATE_ATTRIBUTE(state, data) {
@@ -37,26 +39,13 @@ export default {
     },
 
     actions: {
-        paginate(context, payload) {
-            context.commit('SET_CUENTAS', [])
-            axios
-                .get(URI + 'paginate', {params: payload})
-                .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_CUENTAS', data.data)
-                    context.commit('SET_META', data.meta)
-                })
-        },
-
         find(context, id) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_CUENTA', null)
                 axios
                     .get(URI + id)
                     .then(r => r.data)
                     .then(data => {
-                        context.commit('SET_CUENTA', data)
-                        resolve();
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error)
@@ -114,8 +103,7 @@ export default {
                                         buttons: false
                                     })
                                         .then(() => {
-                                            context.commit('UPDATE_CUENTA', data);
-                                            resolve();
+                                            resolve(data);
                                         })
                                 })
                                 .catch(error => {

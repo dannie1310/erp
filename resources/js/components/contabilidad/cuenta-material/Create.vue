@@ -97,7 +97,7 @@
             init() {
                 $(this.$refs.modal).modal('show');
 
-                this.material = '';
+                this.id_material = '';
                 this.id_tipo_cuenta_material = '';
                 this.cuenta = '';
 

@@ -20,6 +20,25 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
+                                        <label for="cuenta">Tipo de Cuenta</label>
+                                        <select
+                                                class="form-control"
+                                                name="id_tipo_cuenta_material"
+                                                id="id_tipo_cuenta_material"
+                                                :value="cuenta.id_tipo_cuenta_material"
+                                                @input="updateAttribute"
+                                                data-vv-as="Tipo de Cuenta"
+                                                v-validate="{required: true}"
+                                                :class="{'is-invalid': errors.has('id_tipo_cuenta_material')}">
+                                        >
+                                            <option value>-- Tipo de Cuenta --</option>
+                                            <option v-for="tipo in tipos" :value="tipo.id">{{ tipo.descripcion }}</option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_tipo_cuenta_material')">{{ errors.first('id_tipo_cuenta_material') }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group error-content">
                                         <label for="cuenta">Cuenta</label>
                                         <input
                                                 type="text"
@@ -34,12 +53,6 @@
                                                 @input="updateAttribute"
                                                 :class="{'is-invalid': errors.has('cuenta')}">
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="empresa">Empresa</label>
-                                        <input readonly type="text" class="form-control" id="empresa" v-model="cuenta.empresa.descripcion">
                                     </div>
                                 </div>
                             </div>
@@ -64,24 +77,37 @@
                 return this.$store.getters['auth/datosContables']
             },
 
+            tipos() {
+                return this.$store.getters['contabilidad/tipo-cuenta-material/tipos']
+            },
+
             cuenta() {
-                return this.$store.getters['contabilidad/cuenta-empresa/currentCuenta']
+                return this.$store.getters['contabilidad/cuenta-material/currentCuenta']
             }
         },
 
         methods: {
             find(id) {
+                this.$store.commit('contabilidad/cuenta-material/SET_CUENTA', null)
                 return this.$store.dispatch('contabilidad/cuenta-material/find', id)
-                    .then(() => {
-                    $(this.$refs.modal).modal('show');
-            })
+                    .then(data => {
+                        this.$store.commit('contabilidad/cuenta-material/SET_CUENTA', data)
+                        $(this.$refs.modal).modal('show');
+                    })
             },
 
             update() {
                 return this.$store.dispatch('contabilidad/cuenta-material/update', this.cuenta)
-                    .then(() => {
-                    $(this.$refs.modal).modal('hide');
-            })
+                    .then(data => {
+                        this.$store.dispatch('cadeco/material/find', {
+                            id: data.material.id,
+                            params: { include: 'cuentaMaterial' }
+                        })
+                            .then(data => {
+                                $(this.$refs.modal).modal('hide');
+                                this.$store.commit('cadeco/material/UPDATE_MATERIAL', data);
+                            });
+                    })
             },
 
             validate() {

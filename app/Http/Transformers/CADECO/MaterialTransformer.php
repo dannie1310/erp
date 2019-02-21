@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO;
 
 
+use App\Http\Transformers\CADECO\Contabilidad\CuentaMaterialTransformer;
 use App\Models\CADECO\Material;
 use League\Fractal\TransformerAbstract;
 
@@ -21,6 +22,7 @@ class MaterialTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'hijos',
+        'cuentaMaterial'
     ];
 
     public function transform(Material $model)
@@ -42,6 +44,19 @@ class MaterialTransformer extends TransformerAbstract
     {
         if ($hijos = $model->hijos) {
             return $this->collection($hijos, new MaterialTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Cuenta Material
+     *
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeCuentaMaterial(Material $model)
+    {
+        if ($cuenta = $model->cuentaMaterial) {
+            return $this->item($cuenta, new CuentaMaterialTransformer);
         }
         return null;
     }

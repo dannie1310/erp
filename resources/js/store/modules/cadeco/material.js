@@ -5,6 +5,7 @@ export default {
     state: {
         materiales: [],
         currentMaterial: null,
+        meta: {}
     },
 
     mutations: {
@@ -14,18 +15,30 @@ export default {
 
         SET_MATERIAL(state, data) {
             state.currentMaterial = data;
-        }
+        },
+
+        SET_META(state, data) {
+            state.meta = data
+        },
+
+        UPDATE_MATERIAL(state, data) {
+            state.materiales = state.materiales.map(material => {
+                if (material.id === data.id) {
+                    return Object.assign({}, material, data)
+                }
+                return material
+            })
+            state.currentMaterial = data;
+        },
     },
 
     actions: {
         find(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_MATERIAL', null)
                 axios
                     .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
-                        context.commit('SET_MATERIAL', data)
                         resolve(data);
                     })
                     .catch(error => {
@@ -36,24 +49,39 @@ export default {
 
         index(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_MATERIALES', null)
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
                     .then((data) => {
-                        context.commit('SET_MATERIALES', data.data)
                         resolve(data.data);
                     })
                     .catch(error => {
                         reject(error)
                     })
             });
+        },
+
+        paginate(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            })
         }
     },
 
     getters: {
         materiales(state) {
             return state.materiales
+        },
+        meta(state) {
+            return state.meta
         }
     }
 }

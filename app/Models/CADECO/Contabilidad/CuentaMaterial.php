@@ -46,7 +46,7 @@ class CuentaMaterial extends Model
         return $this->belongsTo(Material::class,'id_material', 'id_material');
     }
 
-    public function tipoCuentaMaterial(){
+    public function tipo(){
         return $this->belongsTo(TipoCuentaMaterial::class, 'id_tipo_cuenta_material', 'id');
     }
 }
