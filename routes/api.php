@@ -41,6 +41,13 @@ $api->version('v1', function ($api) {
     });
 
     $api->group(['middleware' => 'api'], function ($api) {
+        // COSTOS
+        $api->group(['prefix' => 'costo'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\CostoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\CostoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\CostoController@show')->where(['id' => '[0-9]+']);
+        });
+
         // EMPRESAS
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\EmpresaController@index');
@@ -48,12 +55,12 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EmpresaController@show')->where(['id' => '[0-9]+']);
         });
 
-        //FONDOS
+        // FONDOS
         $api->group(['prefix' =>  'fondo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\FondoController@index');
         });
 
-        //MATERIALES
+        // MATERIALES
         $api->group(['prefix' => 'material'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MaterialController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
