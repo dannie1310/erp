@@ -11,8 +11,9 @@ namespace App\Http\Requests;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
+use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCuentaBancoRequest
+class StoreCuentaBancoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -40,7 +41,7 @@ class StoreCuentaBancoRequest
         return [
             'cuenta' => ['required', "regex:'{$regex}'"],
             'id_cuenta' => ['required', 'integer', 'exists:cadeco.cuenta,id_cuenta'],
-            'id_tipo_cuenta_contable' => ['required', 'numeric', 'exists:cadeco.Contabilidad.int_tipos_cuentas_contables,id_tipo_cuenta_contable']
+            'id_tipo_cuenta_contable' => ['required', 'integer', 'exists:cadeco.Contabilidad.int_tipos_cuentas_contables,id_tipo_cuenta_contable']
         ];
     }
 

@@ -47,7 +47,7 @@
         props: ['id','titulo'],
         data() {
             return {
-                banco: null
+                banco: null,
             }
         },
 

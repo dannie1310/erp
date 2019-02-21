@@ -17,7 +17,6 @@ import cuentaGeneral from './modules/contabilidad/cuenta-general';
 import cuentaMaterial from './modules/contabilidad/cuenta-material';
 import estatusPrepoliza from './modules/contabilidad/estatus-prepoliza';
 import poliza from './modules/contabilidad/poliza';
-import tipoCuentaBanco from './modules/contabilidad/tipo-cuenta-banco';
 import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
 import tipoCuentaEmpresa from './modules/contabilidad/tipo-cuenta-empresa';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
@@ -43,7 +42,6 @@ export default new Vuex.Store({
         'contabilidad/cuenta-material' : cuentaMaterial,
         'contabilidad/estatus-prepoliza': estatusPrepoliza,
         'contabilidad/poliza': poliza,
-        'contabilidad/tipo-cuenta-banco': tipoCuentaBanco,
         'contabilidad/tipo-cuenta-contable': tipoCuentaContable,
         'contabilidad/tipo-cuenta-empresa': tipoCuentaEmpresa,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,

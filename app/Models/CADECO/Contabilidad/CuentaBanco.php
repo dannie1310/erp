@@ -26,6 +26,17 @@ class CuentaBanco extends Model
         'cuenta'
     ];
 
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->estatus = 1;
+            $model->registro = auth()->id();
+        });
+    }
+
     public function cuentaContable(){
         return $this->belongsTo(Cuenta::class, 'id_cuenta', 'id_cuenta');
     }
