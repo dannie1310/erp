@@ -40,7 +40,7 @@ class StoreCuentaBancoRequest extends FormRequest
 
         return [
             'cuenta' => ['required', "regex:'{$regex}'"],
-            'id_cuenta' => ['required', 'integer', 'exists:cadeco.cuenta,id_cuenta'],
+            'id_cuenta' => ['required', 'integer', 'exists:cadeco.dbo.cuentas,id_cuenta'],
             'id_tipo_cuenta_contable' => ['required', 'integer', 'exists:cadeco.Contabilidad.int_tipos_cuentas_contables,id_tipo_cuenta_contable']
         ];
     }
