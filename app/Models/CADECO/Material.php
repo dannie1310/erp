@@ -19,9 +19,40 @@ class Material extends Model
     protected $primaryKey = 'id_material';
 
     public $timestamps = false;
+    public $searchable = [
+        'descripcion',
+        'numero_parte',
+        'unidad'
+    ];
+
+    public function getTieneHijosAttribute()
+    {
+        return $this->hijos()->count() ? true : false;
+    }
 
     public function cuentaMaterial()
     {
         return $this->hasOne(CuentaMaterial::class, 'id_material');
+    }
+
+    public function hijos()
+    {
+        return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
+            ->where('nivel', 'LIKE', $this->nivel . '___.');
+    }
+
+    public function scopeRoots($query)
+    {
+        return $query->whereRaw('LEN(nivel) = 4');
+    }
+
+    public function scopeConCuenta($query)
+    {
+        return $query->has('cuentaMaterial');
+    }
+
+    public function scopeTipo($query, $tipo)
+    {
+        return $query->where('tipo_material', '=', $tipo);
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_fondo')" class="btn btn-app btn-info pull-right">
+        <button @click="init" v-if="$root.can('registrar_cuenta_material')" class="btn btn-app btn-info pull-right">
             <i class="fa fa-plus"></i> Registrar Cuenta
         </button>
 
@@ -8,7 +8,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR CUENTA DE FONDO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR CUENTA DE MATERIAL</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -16,19 +16,37 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group error-content">
+                                        <label for="id_material">Material</label>
+                                        <material-select
+                                                name="id_material"
+                                                data-vv-as="Material"
+                                                v-validate="{required: true}"
+                                                id="id_material"
+                                                v-model="id_material"
+                                                :error="errors.has('id_material')">
+                                        ></material-select>
+                                        <div class="error-label" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="id_fondo">Fondo</label>
-                                        <fondo-select
-                                                scope="sinCuenta"
-                                                name="id_fondo"
-                                                id="id_fondo"
-                                                data-vv-as="Fondo"
+                                        <label for="cuenta">Tipo de Cuenta</label>
+                                        <select
+                                                class="form-control"
+                                                name="id_tipo_cuenta_material"
+                                                id="id_tipo_cuenta_material"
+                                                v-model="id_tipo_cuenta_material"
+                                                data-vv-as="Tipo de Cuenta"
                                                 v-validate="{required: true}"
-                                                v-model="id_fondo"
-                                                :error="errors.has('id_fondo')">
-                                        ></fondo-select>
-                                        <div class="error-label" v-show="errors.has('id_fondo')">{{ errors.first('id_fondo') }}</div>
+                                                :class="{'is-invalid': errors.has('id_tipo_cuenta_material')}">
+                                        >
+                                            <option value>-- Tipo de Cuenta --</option>
+                                            <option v-for="tipo in tipos" :value="tipo.id">{{ tipo.descripcion }}</option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_tipo_cuenta_material')">{{ errors.first('id_tipo_cuenta_material') }}</div>
                                     </div>
                                 </div>
 
@@ -46,7 +64,7 @@
                                                 placeholder="Cuenta"
                                                 v-model="cuenta"
                                                 :class="{'is-invalid': errors.has('cuenta')}">
-                                        <div class="error-label" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -63,20 +81,15 @@
 </template>
 
 <script>
-    import FondoSelect from "../../cadeco/fondo/Select";
+    import MaterialSelect from "../../cadeco/material/Select";
     export default {
-        name: "cuenta-fondo-create",
-        components: {FondoSelect},
+        name: "cuenta-material-create",
+        components: {MaterialSelect},
         data() {
             return {
-                id_fondo: '',
+                id_material: '',
+                id_tipo_cuenta_material: '',
                 cuenta: ''
-            }
-        },
-
-        computed: {
-            datosContables() {
-                return this.$store.getters['auth/datosContables']
             }
         },
 
@@ -84,14 +97,15 @@
             init() {
                 $(this.$refs.modal).modal('show');
 
-                this.id_fondo = '';
+                this.id_material = '';
+                this.id_tipo_cuenta_material = '';
                 this.cuenta = '';
 
                 this.$validator.reset()
             },
 
             store() {
-                return this.$store.dispatch('contabilidad/cuenta-fondo/store', this.$data)
+                return this.$store.dispatch('contabilidad/cuenta-material/store', this.$data)
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created', data);
@@ -104,6 +118,16 @@
                         this.store()
                     }
                 });
+            }
+        },
+
+        computed: {
+            datosContables() {
+                return this.$store.getters['auth/datosContables']
+            },
+
+            tipos() {
+                return this.$store.getters['contabilidad/tipo-cuenta-material/tipos'];
             }
         }
     }
