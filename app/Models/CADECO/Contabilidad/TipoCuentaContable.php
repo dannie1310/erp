@@ -49,4 +49,8 @@ class TipoCuentaContable extends Model
     {
         return $query->where('tipo', '=', 5);
     }
+
+   /* public function scopeParaRegistroCuenta($query){
+        return $query->where('')
+    }*/
 }

@@ -113,13 +113,11 @@
                 id_empresa: '',
                 cuenta: '',
                 id_tipo_cuenta_contable: '',
-                cuentas:[]
+                cuentas: [],
+                tipos: []
             }
         },
         computed: {
-            tipos() {
-                return this.$store.getters['contabilidad/tipo-cuenta-contable/tipos'];
-            },
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             }
@@ -134,7 +132,6 @@
 
                 this.$validator.reset()
             },
-
             getCuentas(){
                 return this.$store.dispatch('cadeco/empresa/find', {
                     id: this.id_empresa,
@@ -143,6 +140,11 @@
                     .then(data => {
                         this.cuentas = data.cuentas.data;
                     })
+            },
+            getTipos() {
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/tipos',{
+                    scope: 'paraDisponibles'
+                });
             },
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-banco/store', this.$data)
@@ -165,6 +167,12 @@
                 this.cuentas = []
                 if(value){
                     this.getCuentas();
+                }
+            },
+            id_cuenta(value){
+                this.tipos = [];
+                if(value){
+                    this.getTipos();
                 }
             }
         }
