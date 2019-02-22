@@ -50,7 +50,24 @@ class TipoCuentaContable extends Model
         return $query->where('tipo', '=', 5);
     }
 
-   /* public function scopeParaRegistroCuenta($query){
-        return $query->where('')
-    }*/
+    public function scopeParaDisponibles($query, $id_cuenta){
+        $disponibles = "";
+        $tipos = $query->where('tipo', '=', 5)->get();
+        foreach ($tipos as $tipo){
+            $cuenta = CuentaBanco::where('id_cuenta','=', $id_cuenta)
+                        ->where('id_tipo_cuenta_contable','=',$tipo->id_tipo_cuenta_contable)->first();
+
+            if($cuenta == []){
+                if($disponibles == ""){
+                    $disponibles = $tipo->id_tipo_cuenta_contable;
+                }else {
+                    $disponibles = $disponibles.",".$tipo->id_tipo_cuenta_contable;
+                }
+            }
+        }
+        if($disponibles != ""){
+            $datos = $query->whereIn('id_tipo_cuenta_contable',[$disponibles]);
+        }
+        return $datos;
+    }
 }

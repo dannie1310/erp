@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCuentaBancoRequest;
 use App\Http\Requests\UpdateCuentaBancoRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaBancoTransformer;
+use App\Models\CADECO\Contabilidad\TipoCuentaContable;
 use App\Services\CADECO\Contabilidad\CuentaBancoService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;

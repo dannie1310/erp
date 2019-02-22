@@ -38,8 +38,6 @@ class StoreCuentaBancoRequest extends FormRequest
 
             $id_cuenta = $validator->getData()['id_cuenta'];
 
-            //dd($id_cuenta);
-
             return ! CuentaBanco::query()
                 ->where('id_cuenta', '=', $id_cuenta)
                 ->where($attribute, '=', $value)
