@@ -32,6 +32,7 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', sortable: false },
                     { title: 'Folio', field: 'id', thComp: require('../../../globals/th-Filter'), sortable: true },
+                    { title: 'Tipo', field: 'tipo_solicitud__descripcion', thComp: require('../../../globals/th-Filter'), },
                     { title: 'Fecha', field: 'fecha', thClass: 'th_fecha', sortable: true },
                     { title: 'Referencia', field: 'referencia', thComp: require('../../../globals/th-Filter')},
                     { title: 'Folio Subcontrato', field: 'subcontrato__numero_folio', thClass: 'th_folio', thComp: require('../../../globals/th-Filter'), sortable: true },
@@ -76,6 +77,7 @@
                             observaciones: solicitud.observaciones,
                             ctg_tipos_mov_sol__estado_resultante_desc: solicitud.estado_desc,
                             subcontrato__numero_folio: solicitud.fondo_garantia.subcontrato.numero_folio_format,
+                            tipo_solicitud__descripcion: solicitud.tipo_solicitud.descripcion,
                         })
                     });
                 },

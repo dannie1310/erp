@@ -56,6 +56,9 @@ class SolicitudMovimientoFondoGarantiaService
         if (isset($data['referencia'])) {
             $fondo_garantia = $fondo_garantia->where([['solicitudes.referencia', 'LIKE', '%' . $data['referencia'] . '%']]);
         }
+        if (isset($data['tipo_solicitud__descripcion'])) {
+            $fondo_garantia = $fondo_garantia->where([['ctg_tipos_solicitud.descripcion', 'LIKE', '%' . $data['tipo_solicitud__descripcion'] . '%']]);
+        }
         return $fondo_garantia->paginate($data);
     }
 

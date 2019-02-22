@@ -16,6 +16,7 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
+
                                  <!-- Fecha -->
                                 <div class="offset-md-8 col-md-1">
                                      <label for="fecha">Fecha:</label>
@@ -37,7 +38,7 @@
                                 </div>
 
                             </div>
-                            <hr />
+
                             <div class="row">
 
                                 <!-- Referencia -->

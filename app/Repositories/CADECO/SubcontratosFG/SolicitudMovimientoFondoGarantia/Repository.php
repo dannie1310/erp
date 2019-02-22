@@ -31,10 +31,12 @@ class Repository implements RepositoryInterface
         $this->model = $model::select([
             'solicitudes.*',
             'transacciones.numero_folio',
-            'ctg_tipos_mov_sol.estado_resultante_desc'
+            'ctg_tipos_mov_sol.estado_resultante_desc',
+            'ctg_tipos_solicitud.descripcion'
         ])
             ->join('transacciones','transacciones.id_transaccion', 'solicitudes.id_fondo_garantia')
             ->join('SubcontratosFG.ctg_tipos_mov_sol','ctg_tipos_mov_sol.estado_resultante', 'solicitudes.estado')
+            ->join('SubcontratosFG.ctg_tipos_solicitud', 'ctg_tipos_solicitud.id', 'solicitudes.id_tipo_solicitud')
             ;
 
     }

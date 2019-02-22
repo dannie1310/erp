@@ -30,7 +30,7 @@ class SubcontratoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'empresa'
+        /*'empresa'*/
     ];
 
     /**
@@ -42,7 +42,6 @@ class SubcontratoTransformer extends TransformerAbstract
         return [
             'id' => (int)$model->getKey(),
             'fecha_format' => (string)$model->fecha_format,
-            /*'contratista' => (string)$model->empresa->razon_social,*/
             'numero_folio_format'=>(string)$model->numero_folio_format,
             'monto_format'=>(string)$model->monto_format,
             'referencia'=>(string)$model->referencia,
@@ -51,7 +50,7 @@ class SubcontratoTransformer extends TransformerAbstract
     /**
      * Include Empresa
      *
-     * @param FondoGarantia $model
+     * @param Subcontrato $model
      * @return \League\Fractal\Resource\Item
      */
     public function includeEmpresa(Subcontrato $model) {

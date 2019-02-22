@@ -20,7 +20,8 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'fondo_garantia'
+        'fondo_garantia',
+        'tipo_solicitud'
     ];
 
     /**
@@ -29,7 +30,8 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'fondo_garantia'
+        'fondo_garantia',
+        'tipo_solicitud'
     ];
 
     /**
@@ -61,6 +63,19 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
     public function includeFondoGarantia(SolicitudMovimientoFondoGarantia $model) {
         if ($fondo_garantia = $model->fondo_garantia) {
             return $this->item($fondo_garantia, new FondoGarantiaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Tipo de Solicitud
+     *
+     * @param SolicitudMovimientoFondoGarantia $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeTipoSolicitud(SolicitudMovimientoFondoGarantia $model) {
+        if ($tipo_solicitud = $model->tipo) {
+            return $this->item($tipo_solicitud, new CtgTipoSolicitudTransformer);
         }
         return null;
     }

@@ -7,19 +7,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header" style="display: none">
-                    <div class="form-row">
-                        <div class="col">
-                            <select class="form-control" style="width: 25%">
-                                <option value>-- Contratista --</option>
-                                <option v-for="item in estatus" v-bind:value="item.estatus">{{ item.descripcion }}</option>
-                            </select>
-                        </div>
-                        <div class="col" style="text-align:right">
-                            <label>Saldo de Fondo de Garantía:</label>
-                            <label>$ 10,000.00</label>
-                        </div>
 
-                    </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -58,7 +46,9 @@
             }
         },
         mounted() {
-            /*this.paginate()*/
+            this.paginate({
+                'include': 'subcontrato.empresa'
+            })
         },
         methods: {
             paginate(payload = {}) {
@@ -102,7 +92,7 @@
             },
             query: {
                 handler (query) {
-                    this.paginate(query)
+                    this.paginate({...query, include: 'subcontrato.empresa'})
                 },
                 deep: true
             }
