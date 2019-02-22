@@ -104,7 +104,21 @@ class SolicitudMovimientoFondoGarantia extends Model
     public function getUsuarioRegistraDescAttribute()
     {
         $usuario = Usuario::where('idusuario',$this->usuario_registra)->first();
-        return $usuario->usuario;
+        if($usuario)
+        {
+            return $usuario->usuario;
+        }
+        return null;
+    }
+
+    public function getUsuarioCompletoRegistraDescAttribute()
+    {
+        $usuario = Usuario::where('idusuario',$this->usuario_registra)->first();
+        if($usuario)
+        {
+            return $usuario->nombre.' '.$usuario->apaterno.' '.$usuario->amaterno;
+        }
+        return null;
     }
 
 

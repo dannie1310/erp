@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\SubcontratosFG;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\IGH\Usuario;
 
 class MovimientoSolicitudMovimientoFondoGarantia extends Model
 {
@@ -99,5 +100,31 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
         {
             return false;
         }
+    }
+    public function getCreatedAtFormatAttribute()
+    {
+        $date = date_create($this->created_at);
+        return date_format($date,"d/m/Y h:i:s");
+
+    }
+
+    public function getUsuarioRegistraDescAttribute()
+    {
+        $usuario = Usuario::where('idusuario',$this->usuario_registra)->first();
+        if($usuario)
+        {
+            return $usuario->usuario;
+        }
+        return null;
+    }
+
+    public function getUsuarioCompletoRegistraDescAttribute()
+    {
+        $usuario = Usuario::where('idusuario',$this->usuario_registra)->first();
+        if($usuario)
+        {
+            return $usuario->nombre.' '.$usuario->apaterno.' '.$usuario->amaterno;
+        }
+        return null;
     }
 }

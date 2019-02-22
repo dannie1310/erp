@@ -21,7 +21,8 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'fondo_garantia',
-        'tipo_solicitud'
+        'tipo_solicitud',
+        'movimientos'
     ];
 
     /**
@@ -76,6 +77,20 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
     public function includeTipoSolicitud(SolicitudMovimientoFondoGarantia $model) {
         if ($tipo_solicitud = $model->tipo) {
             return $this->item($tipo_solicitud, new CtgTipoSolicitudTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Movimientos
+     *
+     * @param SolicitudMovimientoFondoGarantia $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeMovimientos(SolicitudMovimientoFondoGarantia $model) {
+        if ($movimientos = $model->movimientos) {
+            $movimientos = $model->movimientos;
+            return $this->collection($movimientos, new MovimientoSolicitudMovimientoFondoGarantiaTransformer);
         }
         return null;
     }

@@ -13,7 +13,7 @@ export default {
             state.solicitudes = data
         },
 
-        SET_SOLCITUD(state, data) {
+        SET_SOLICITUD(state, data) {
             state.currentSolicitud = data
         },
 

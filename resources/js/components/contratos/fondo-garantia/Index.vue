@@ -46,9 +46,9 @@
             }
         },
         mounted() {
-            this.paginate({
+            /*this.paginate({
                 'include': 'subcontrato.empresa'
-            })
+            })*/
         },
         methods: {
             paginate(payload = {}) {
