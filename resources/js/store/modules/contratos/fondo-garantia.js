@@ -47,7 +47,13 @@ export default {
                     context.commit('SET_META', data.meta)
                 })
         },
-
+        fetch(context, payload) {
+            axios.get(URI, { params: payload })
+                .then(r => r.data)
+                .then((data) => {
+                    context.commit('SET_FONDOS_GARANTIA', data.data)
+                })
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

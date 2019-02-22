@@ -13,14 +13,7 @@
                 </router-link>
                 </a>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
-                <a href="#" class="nav-link" >
-                <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
-                    <i class="fa fa-circle-o nav-icon"></i>
-                    <p>Ajustes de Saldo</p>
-                </router-link>
-                </a>
-            </li>
+
             <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
                 <a href="#" class="nav-link" >
                 <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">

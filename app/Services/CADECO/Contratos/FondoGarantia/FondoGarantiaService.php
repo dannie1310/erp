@@ -52,7 +52,7 @@ class FondoGarantiaService
         return $fondo_garantia->paginate($data);
     }
 
-    public function create($data)
+    public function store($data)
     {
         $data['id_usuario'] = $this->id_usuario;
         $data['usuario'] = $this->usuario;
@@ -63,5 +63,10 @@ class FondoGarantiaService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function index()
+    {
+        return $this->repository->all();
     }
 }

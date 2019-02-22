@@ -124,6 +124,7 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
         //SOLICITUD DE MOVIMIENTO
         $api->group(['prefix' => 'fondo-garantia'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\FondoGarantiaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\FondoGarantiaController@paginate');
            /* #$api->group(['prefix'=>'{id}'])
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@store');
@@ -132,6 +133,7 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@destroy');*/
             $api->group(['prefix' => 'solicitud-movimiento'], function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@paginate');
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@store');
 
             });
         });

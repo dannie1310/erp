@@ -11,6 +11,7 @@ namespace App\Services\CADECO\Contratos;
 
 use App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia;
 use App\Repositories\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia\Repository;
+use App\Facades\Context;
 
 class SolicitudMovimientoFondoGarantiaService
 {
@@ -30,9 +31,9 @@ class SolicitudMovimientoFondoGarantiaService
     {
 
         $this->repository = new Repository($model);
-        /*$this->id_usuario = auth()->id();
+        $this->id_usuario = auth()->id();
         $this->usuario = auth()->user()->usuario;
-        $this->id_obra = Context::getIdObra();*/
+        $this->id_obra = Context::getIdObra();
     }
 
     public function all()
@@ -58,9 +59,10 @@ class SolicitudMovimientoFondoGarantiaService
         return $fondo_garantia->paginate($data);
     }
 
-    public function create($data)
+    public function store($data)
     {
         $data['id_usuario'] = $this->id_usuario;
+        $data['usuario_registra'] = $this->id_usuario;
         $data['usuario'] = $this->usuario;
         $data['id_obra'] = $this->id_obra;
         return $this->repository->create($data);

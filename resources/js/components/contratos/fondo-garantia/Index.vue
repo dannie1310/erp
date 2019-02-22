@@ -9,7 +9,7 @@
                 <div class="card-header" style="display: none">
                     <div class="form-row">
                         <div class="col">
-                            <select class="form-control" v-model="id_estatus" style="width: 25%">
+                            <select class="form-control" style="width: 25%">
                                 <option value>-- Contratista --</option>
                                 <option v-for="item in estatus" v-bind:value="item.estatus">{{ item.descripcion }}</option>
                             </select>

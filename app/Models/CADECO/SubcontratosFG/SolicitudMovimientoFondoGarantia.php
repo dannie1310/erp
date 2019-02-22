@@ -39,7 +39,7 @@ class SolicitudMovimientoFondoGarantia extends Model
                 throw New \Exception('Hay una solicitud de movimiento a fondo de garantía pendiente de autorizar, la solicitud actual no puede registrarse');
             }
             if (!$solicitud_movimiento_fg->validaMontoSolicitud()) {
-                throw New \Exception('El monto de la solicitud sobrepasa el monto disponible del fondo de garantía.');
+                throw New \Exception('El monto de la solicitud sobrepasa el monto disponible del fondo de garantía: $ '.number_format($solicitud_movimiento_fg->fondo_garantia->saldo,2).'.');
             }
         });
         self::created(function($solicitud_movimiento_fg){
