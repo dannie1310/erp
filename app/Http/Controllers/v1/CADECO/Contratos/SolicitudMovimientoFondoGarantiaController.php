@@ -62,28 +62,21 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
         return $this->respondWithItem($item);
     }
 
-    /*public function store(StoreSolicitudMovimientoFondoGarantiaRequest $request)
-    {
-        return $this->traitStore($request);
-    }
-
     public function cancelar(CancelarSolicitudMovimientoFondoGarantiaRequest $request, $id)
     {
-        $item = $this->service->cancelar($request, $id);
+        $item = $this->service->cancelar($request->all(), $id);
         return $this->respondWithItem($item);
     }
 
-
-
     public function rechazar(RechazarSolicitudMovimientoFondoGarantiaRequest $request, $id)
     {
-        $item = $this->service->rechazar($request, $id);
+        $item = $this->service->rechazar($request->all(), $id);
         return $this->respondWithItem($item);
     }
 
     public function revertirAutorizacion(RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest $request, $id)
     {
-        $item = $this->service->revertirAutorizacion($request, $id);
+        $item = $this->service->revertirAutorizacion($request->all(), $id);
         return $this->respondWithItem($item);
-    }*/
+    }
 }

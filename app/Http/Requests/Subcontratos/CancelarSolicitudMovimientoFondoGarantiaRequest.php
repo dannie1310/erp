@@ -20,7 +20,7 @@ class CancelarSolicitudMovimientoFondoGarantiaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('cancelar_solicitud_movimiento_fg');
+        return auth()->user()->can('consultar_cuenta_almacen');
     }
 
     protected function failedAuthorization()
@@ -36,7 +36,7 @@ class CancelarSolicitudMovimientoFondoGarantiaRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_solicitud' => ['required', 'numeric'],
+            'id' => ['required', 'numeric'],
             'observaciones' => ['required', 'string'],
         ];
     }

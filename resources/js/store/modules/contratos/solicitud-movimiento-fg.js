@@ -99,7 +99,6 @@ export default {
                     });
             });
         },
-
         autorizar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -139,8 +138,158 @@ export default {
                     });
             });
         },
-    },
 
+        cancelar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cancelar Solicitud de Movimiento a Fondo de Garantía",
+                    text: "¿Estás seguro/a de cancelar la solicitud de movimiento?",
+                    dangerMode: true,
+                    icon: "info",
+                    content: {
+                        element: "input",
+                        attributes: {
+                            placeholder: "Motivo de Cancelación",
+                            type: "text",
+                        },
+                    },
+                    buttons: [
+                        'Cancelar',
+                        {
+                            text: "Si, Cancelar",
+                            closeModal: false,
+                        }
+                    ]
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI+ payload.id+'/cancelar',  {id:payload.id, observaciones: value}, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal({
+                                        title: "Cancelación éxitosa",
+                                        text: " ",
+                                        icon: "success",
+                                        timer: 3000,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_SOLICITUD', data);
+                                        resolve(data);
+
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            swal("Ingrese el motivo de cancelación de la solicitud.",{icon: "error"});
+                        }
+                    });
+            });
+        },
+
+        rechazar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Rechazae Solicitud de Movimiento a Fondo de Garantía",
+                    text: "¿Estás seguro/a de rechazar la solicitud de movimiento?",
+                    dangerMode: true,
+                    icon: "info",
+                    content: {
+                        element: "input",
+                        attributes: {
+                            placeholder: "Motivo de Rechazo",
+                            type: "text",
+                        },
+                    },
+                    buttons: [
+                        'Cancelar',
+                        {
+                            text: "Si, Rechazar",
+                            closeModal: false,
+                        }
+                    ]
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI+ payload.id+'/rechazar',  {id:payload.id, observaciones: value}, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal({
+                                        title: "Rechazo éxitoso",
+                                        text: " ",
+                                        icon: "success",
+                                        timer: 3000,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_SOLICITUD', data);
+                                        resolve(data);
+
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            swal("Ingrese el motivo de rechazo de la solicitud.",{icon: "error"});
+                        }
+                    });
+            });
+        },
+
+        revertir_autorizacion(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Revertir Autorización de Solicitud de Movimiento a Fondo de Garantía",
+                    text: "¿Estás seguro/a de revertir la autorización de la solicitud de movimiento?",
+                    dangerMode: true,
+                    icon: "info",
+                    content: {
+                        element: "input",
+                        attributes: {
+                            placeholder: "Motivo de Reversión",
+                            type: "text",
+                        },
+                    },
+                    buttons: [
+                        'Cancelar',
+                        {
+                            text: "Si, Revertir",
+                            closeModal: false,
+                        }
+                    ]
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI+ payload.id+'/revertir-autorizacion',  {id:payload.id, observaciones: value}, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal({
+                                        title: "Reversión éxitosa",
+                                        text: " ",
+                                        icon: "success",
+                                        timer: 3000,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_SOLICITUD', data);
+                                        resolve(data);
+
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            swal("Ingrese el motivo para revertir la autorización de la solicitud.",{icon: "error"});
+                        }
+                    });
+            });
+        },
+
+    },
 
     getters: {
         solicitudes(state) {

@@ -9,7 +9,9 @@
 namespace App\Http\Requests\Subcontratos;
 
 
-class RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,7 +20,7 @@ class RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('revertir_autorizacion_solicitud_movimiento_fg');
+        return auth()->user()->can('consultar_cuenta_almacen');
     }
 
     protected function failedAuthorization()
@@ -34,8 +36,7 @@ class RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest
     public function rules()
     {
         return [
-            'id_solicitud' => ['required', 'numeric'],
-            'id_movimiento_autorizacion' => ['required', 'numeric'],
+            'id' => ['required', 'numeric'],
             'observaciones' => ['required', 'string'],
         ];
     }

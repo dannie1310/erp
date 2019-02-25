@@ -126,11 +126,11 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @throws \Throwable
      * Mètodo para cancelar solicitud de movimiento a fondo de garantía
      */
-    public function cancelar($usuario, $observaciones)
+    public function cancelar($datos)
     {
-        DB::connection('cadeco')->transaction(function() use($usuario, $observaciones){
+        DB::connection('cadeco')->transaction(function() use($datos){
             #1) Se genera movimiento de solicitud
-            $movimiento_solicitud = $this->generaMovimientoSolicitud(3, $usuario, $observaciones);
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(3, $datos["id_usuario"], $datos["observaciones"]);
             #2) Se actualiza estado de solicitud
             $this->actualizarEstado();
         });
@@ -158,11 +158,11 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @throws \Throwable
      * Mètodo para rechazar solicitud de movimiento a fondo de garantía
      */
-    public function rechazar($usuario, $observaciones)
+    public function rechazar($datos)
     {
-        DB::connection('cadeco')->transaction(function() use($usuario, $observaciones){
+        DB::connection('cadeco')->transaction(function() use($datos){
             #1) Se genera movimiento de solicitud
-            $movimiento_solicitud = $this->generaMovimientoSolicitud(4, $usuario, $observaciones);
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(4, $datos["id_usuario"], $datos["observaciones"]);
             #2) Se actualiza estado de solicitud
             $this->actualizarEstado();
         });
@@ -172,11 +172,11 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @throws \Throwable
      * Método para revertir autorización de solicitud de movimiento a fondo de garantía
      */
-    public function revertirAutorizacion($usuario, $observaciones)
+    public function revertirAutorizacion($datos)
     {
-        DB::connection('cadeco')->transaction(function() use($usuario, $observaciones){
+        DB::connection('cadeco')->transaction(function() use($datos){
             #1) Se genera movimiento de solicitud
-            $movimiento_solicitud = $this->generaMovimientoSolicitud(5, $usuario, $observaciones);
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(5, $datos["id_usuario"], $datos["observaciones"]);
             #2) Se actualiza estado de solicitud
             $this->actualizarEstado();
             #3) Se cancela transacción de movimiento a fondo de garantía

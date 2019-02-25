@@ -19,7 +19,7 @@ class StoreSolicitudMovimientoFondoGarantiaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('registrar_solicitud_movimiento_fg');
+        return auth()->user()->can('consultar_cuenta_almacen');
     }
 
     /**
