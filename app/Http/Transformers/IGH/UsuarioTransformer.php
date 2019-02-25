@@ -15,9 +15,10 @@ use League\Fractal\TransformerAbstract;
 class UsuarioTransformer extends TransformerAbstract
 {
     public function transform(Usuario $model) {
+
         return [
             'id' => (int) $model->getKey(),
-            'nombre' => (String) $model->nombre." ".$model->apaterno." ".$model->amaterno
+            'nombre' => $model->nombre." ".$model->apaterno." ".$model->amaterno
         ];
     }
 

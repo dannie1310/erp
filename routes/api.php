@@ -65,6 +65,14 @@ $api->version('v1', function ($api) {
      * CONTABILIDAD
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
+        //CIERRES DE PERIODO
+        $api->group(['prefix' => 'cierre-periodo'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@update')->where(['id' => '[0-9]+']);
+        });
+
         //CUENTAS DE ALMACÉN
         $api->group(['prefix' => 'cuenta-almacen'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@store');
