@@ -21,7 +21,7 @@
 
 <script>
     export default {
-        props: ['value','id', 'multiple', 'error'],
+        props: ['value','id', 'multiple', 'error', 'scope'],
         name: "costo-select",
         data() {
             return {
@@ -50,7 +50,7 @@
             getRootNodes() {
                 let self = this
                 return self.$store.dispatch('cadeco/costo/index', {
-                    params: { scope: 'roots' }
+                    params: { scope: this.scp }
                 })
                     .then(data => {
                         self.rootNodes = data.map(costo => ({
@@ -65,7 +65,7 @@
             loadOptions({ action, parentNode, callback }) {
                 return this.$store.dispatch('cadeco/costo/find',{
                     id: parentNode.id,
-                    params: { include: 'hijos' }
+                    params: { include: 'hijos', scope: this.scope }
                 })
                     .then(data => {
                         parentNode.children = data.hijos.data.map(costo => ({
@@ -80,6 +80,16 @@
                     .catch(error => {
                         callback(new Error('Failed to load options: network error.'))
                     });
+            }
+        },
+
+        computed: {
+            scp() {
+                if (this.scope) {
+                    return Array.isArray(this.scope) ? [...this.scope, 'roots'] : [this.scope, 'roots']
+                } else {
+                    return 'roots'
+                }
             }
         }
     }

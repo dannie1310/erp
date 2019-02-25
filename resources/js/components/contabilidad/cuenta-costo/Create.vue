@@ -15,25 +15,27 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group error-content">
-                                        <label for="id_costo">Costo</label>
+                            <div role="form">
+                                <div class="form-group error-content row">
+                                    <label for="id_costo" class="col-sm-2 col-form-label">Costo</label>
+                                    <div class="col-sm-10">
                                         <costo-select
                                                 name="id_costo"
                                                 data-vv-as="Costo"
                                                 v-validate="{required: true}"
                                                 id="id_costo"
                                                 v-model="id_costo"
-                                                :error="errors.has('id_costo')">
+                                                :error="errors.has('id_costo')"
+                                                scope="sinCuenta"
+                                                ref="costoSelect"
                                         ></costo-select>
                                         <div class="error-label" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="cuenta">Cuenta</label>
+                                <div class="form-group error-content row">
+                                    <label for="cuenta" class="col-sm-2 col-form-label">Cuenta</label>
+                                    <div class="col-sm-10">
                                         <input
                                                 type="text"
                                                 name="cuenta"
@@ -88,6 +90,7 @@
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created', data);
+                        this.$refs.costoSelect.getRootNodes();
                     });
             },
 

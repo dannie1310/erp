@@ -38,7 +38,7 @@ class CuentaCostoTransformer extends TransformerAbstract
      * Include Costo
      * @return \League\Fractal\Resource\Item
      */
-    public function includeMaterial(CuentaCosto $model)
+    public function includeCosto(CuentaCosto $model)
     {
         if ($costo = $model->costo) {
             return $this->item($costo, new CostoTransformer);

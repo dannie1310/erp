@@ -27,6 +27,12 @@
                         </router-link>
                     </li>
                     <li class="nav-item" >
+                        <router-link :to="{name: 'cuenta-costo'}" class="nav-link" >
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuentas de Costo</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" >
                         <router-link :to="{name: 'cuenta-empresa'}" class="nav-link" >
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas de Empresa</p>

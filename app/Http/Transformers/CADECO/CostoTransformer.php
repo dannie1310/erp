@@ -26,6 +26,8 @@ class CostoTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'descripcion' => $model->descripcion,
             'observaciones' => $model->observaciones,
+            'tiene_hijos' => $model->tiene_hijos,
+
         ];
     }
 
