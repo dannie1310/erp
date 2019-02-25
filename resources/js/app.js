@@ -35,7 +35,7 @@ Vue.use(Datatable, {
         ',': ',',
 
         /* PageSizeSelect.vue */
-        'items / page': 'elementos / pagina'
+        'items / page': 'elementos / página'
     }
 });
 

@@ -69,7 +69,12 @@ export default {
                     title: "Registrar Solicitud de Movimiento a Fondo de Garantía",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Registrar",
+                            closeModal: false,
+                        }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
@@ -77,7 +82,9 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Solicitud de Movimiento a Fondo de Garantía generada correctamente", {
+                                    swal({
+                                        title: "Registro éxitoso",
+                                        text: " ",
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -99,7 +106,13 @@ export default {
                     title: "Autorizar Solicitud de Movimiento a Fondo de Garantía",
                     text: "¿Estás seguro/a de autorizar la solicitud de movimiento?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Autorizar']
+                    buttons: [
+                        'Cancelar',
+                        {
+                            text: "Si, Autorizar",
+                            closeModal: false,
+                        }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
@@ -109,7 +122,7 @@ export default {
                                 .then(data => {
                                     swal({
                                         title: "Autorización éxitosa",
-                                        text: "Solicitud de Movimiento a Fondo de Garantía Autorizada Correctamente",
+                                        text: " ",
                                         icon: "success",
                                         timer: 3000,
                                         buttons: false
