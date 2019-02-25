@@ -22,6 +22,7 @@
 
 <script>
     import SolicitudMovimientoFondoGarantiaCreate from "./Create";
+    import ActionButtonsSmfg from "./partials/ActionButtons";
     export default {
         components: {SolicitudMovimientoFondoGarantiaCreate},
         name: "solicitud-movimiento-fondo-garantia-index",
@@ -80,6 +81,7 @@
                             tipo_solicitud__descripcion: solicitud.tipo_solicitud.descripcion,
                             buttons: $.extend({}, {
                                 show: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
+                                autorizar: self.$root.can('consultar_cuenta_almacen') && solicitud.estado == 0 ? true : undefined,
                                 id: solicitud.id,
                             })
                         })

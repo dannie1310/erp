@@ -26,13 +26,13 @@ export default {
         },
 
         UPDATE_SOLICITUD(state, data) {
-            state.solicit = state.solicitudes.map(solicitud => {
+            state.solicitudes = state.solicitudes.map(solicitud => {
                 if (solicitud.id === data.id) {
                     return Object.assign({}, solicitud, data)
                 }
                 return solicitud
             })
-            state.currentSolicitud = data;
+            state.currentSolicitud != null ? data : null;
         }
     },
 
@@ -63,7 +63,6 @@ export default {
             });
         },
 
-
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -84,6 +83,40 @@ export default {
                                         buttons: false
                                     }).then(() => {
                                         resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+
+        autorizar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Autorizar Solicitud de Movimiento a Fondo de Garantía",
+                    text: "¿Estás seguro/a de autorizar la solicitud de movimiento?",
+                    icon: "info",
+                    buttons: ['Cancelar', 'Si, Autorizar']
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI+ payload.id+'/autorizar',  {id:payload.id}, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal({
+                                        title: "Autorización éxitosa",
+                                        text: "Solicitud de Movimiento a Fondo de Garantía Autorizada Correctamente",
+                                        icon: "success",
+                                        timer: 3000,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_SOLICITUD', data);
+                                        resolve(data);
+
                                     })
                                 })
                                 .catch(error => {

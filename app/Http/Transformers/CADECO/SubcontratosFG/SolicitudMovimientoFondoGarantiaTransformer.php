@@ -51,6 +51,7 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
             'usuario_registra'=>(string)$model->usuario_registra,
             'usuario_registra_desc'=>(string)$model->usuario_registra_desc,
             'estado_desc'=>(string)$model->estado_desc,
+            'estado'=>(string)$model->estado,
             'created_at'=>(string)$model->created_at,
         ];
     }

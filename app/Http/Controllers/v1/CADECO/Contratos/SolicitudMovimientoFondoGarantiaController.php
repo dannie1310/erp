@@ -56,6 +56,12 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
         $this->transformer = $transformer;
     }
 
+    public function autorizar(AutorizarSolicitudMovimientoFondoGarantiaRequest $request, $id)
+    {
+        $item = $this->service->autorizar($request->all(), $id);
+        return $this->respondWithItem($item);
+    }
+
     /*public function store(StoreSolicitudMovimientoFondoGarantiaRequest $request)
     {
         return $this->traitStore($request);
@@ -67,11 +73,7 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
         return $this->respondWithItem($item);
     }
 
-    public function autorizar(AutorizarSolicitudMovimientoFondoGarantiaRequest $request, $id)
-    {
-        $item = $this->service->autorizar($request, $id);
-        return $this->respondWithItem($item);
-    }
+
 
     public function rechazar(RechazarSolicitudMovimientoFondoGarantiaRequest $request, $id)
     {

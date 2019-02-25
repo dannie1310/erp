@@ -20,7 +20,7 @@ class AutorizarSolicitudMovimientoFondoGarantiaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('autorizar_solicitud_movimiento_fg');
+        return auth()->user()->can('consultar_cuenta_almacen');
     }
 
     protected function failedAuthorization()
@@ -36,7 +36,7 @@ class AutorizarSolicitudMovimientoFondoGarantiaRequest extends FormRequest
     public function rules()
     {
         return [
-            'id_solicitud' => ['required', 'numeric'],
+            'id' => ['required', 'numeric'],
 
         ];
     }

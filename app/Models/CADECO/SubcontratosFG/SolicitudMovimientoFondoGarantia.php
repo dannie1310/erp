@@ -140,11 +140,11 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @throws \Throwable
      * Método para autorizar solicitud de movimiento a fondo de garantía
      */
-    public function autorizar($usuario)
+    public function autorizar($datos)
     {
-        DB::connection('cadeco')->transaction(function() use($usuario){
+        DB::connection('cadeco')->transaction(function() use($datos){
             #1) Se genera movimiento de solicitud
-            $movimiento_solicitud = $this->generaMovimientoSolicitud(2, $usuario);
+            $movimiento_solicitud = $this->generaMovimientoSolicitud(2, $datos['id_usuario']);
             #2) Se actualiza estado de solicitud
             $this->actualizarEstado();
             #3) Se genera transacción de movimiento a fondo de garantía
