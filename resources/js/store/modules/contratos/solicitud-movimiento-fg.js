@@ -83,7 +83,7 @@ export default {
                                 .then(r => r.data)
                                 .then(data => {
                                     swal({
-                                        title: "Registro éxitoso",
+                                        title: "Registro exitoso",
                                         text: " ",
                                         icon: "success",
                                         timer: 1500,
@@ -120,7 +120,7 @@ export default {
                                 .then(r => r.data)
                                 .then(data => {
                                     swal({
-                                        title: "Autorización éxitosa",
+                                        title: "Autorización exitosa",
                                         text: " ",
                                         icon: "success",
                                         timer: 3000,
@@ -168,7 +168,7 @@ export default {
                                 .then(r => r.data)
                                 .then(data => {
                                     swal({
-                                        title: "Cancelación éxitosa",
+                                        title: "Cancelación exitosa",
                                         text: " ",
                                         icon: "success",
                                         timer: 3000,
@@ -218,7 +218,7 @@ export default {
                                 .then(r => r.data)
                                 .then(data => {
                                     swal({
-                                        title: "Rechazo éxitoso",
+                                        title: "Rechazo exitoso",
                                         text: " ",
                                         icon: "success",
                                         timer: 3000,
@@ -268,7 +268,7 @@ export default {
                                 .then(r => r.data)
                                 .then(data => {
                                     swal({
-                                        title: "Reversión éxitosa",
+                                        title: "Reversión exitosa",
                                         text: " ",
                                         icon: "success",
                                         timer: 3000,
