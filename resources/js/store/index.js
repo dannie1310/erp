@@ -5,6 +5,7 @@ import auth from './modules/auth';
 //CADECO
 import obras from './modules/cadeco/obras';
 import almacen from './modules/cadeco/almacen';
+import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
 import fondo from './modules/cadeco/fondo';
@@ -13,6 +14,7 @@ import material from './modules/cadeco/material';
 //CONTABILIDAD
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
 import cuentaBanco from './modules/contabilidad/cuenta-banco';
+import cuentaCosto from './modules/contabilidad/cuenta-costo';
 import cuentaEmpresa from './modules/contabilidad/cuenta-empresa';
 import cuentaFondo from './modules/contabilidad/cuenta-fondo';
 import cuentaGeneral from './modules/contabilidad/cuenta-general';
@@ -35,12 +37,14 @@ export default new Vuex.Store({
         auth,
         'cadeco/obras': obras,
         'cadeco/almacen': almacen,
+        'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
         'cadeco/empresa': empresa,
         'cadeco/fondo': fondo,
         'cadeco/material': material,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
+        'contabilidad/cuenta-costo' : cuentaCosto,
         'contabilidad/cuenta-empresa' : cuentaEmpresa,
         'contabilidad/cuenta-fondo' : cuentaFondo,
         'contabilidad/cuenta-general': cuentaGeneral,

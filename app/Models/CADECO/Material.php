@@ -51,6 +51,11 @@ class Material extends Model
         return $query->has('cuentaMaterial');
     }
 
+    public function scopeSinCuenta($query)
+    {
+        return $query->has('cuentaMaterial', '=', 0);
+    }
+
     public function scopeTipo($query, $tipo)
     {
         return $query->where('tipo_material', '=', $tipo);
