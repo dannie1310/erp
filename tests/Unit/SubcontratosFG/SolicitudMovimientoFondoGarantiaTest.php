@@ -40,10 +40,10 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test revertir autorización';
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
-        $solicitud->autorizar(180);
+        $solicitud->autorizar(["id_usuario"=>180]);
         $movimientos_autorizacion = $solicitud->movimientos->where('id_tipo_movimiento',2);
         $movimiento_autorizacion = $movimientos_autorizacion[1];
-        $solicitud->revertirAutorizacion(180,'Error al autorizar');
+        $solicitud->revertirAutorizacion(["id_usuario"=>180, 'observaciones'=>"Error al autorizar"]);
         $movimientos_revertir_autorizacion = $solicitud->movimientos->where('id_tipo_movimiento',5);
         $movimiento_revertir_autorizacion = $movimientos_revertir_autorizacion[2];
 
@@ -66,10 +66,10 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test revertir descuento';
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
-        $solicitud->autorizar(180);
+        $solicitud->autorizar(["id_usuario"=>180]);
         $movimientos_autorizacion = $solicitud->movimientos->where('id_tipo_movimiento',2);
         $movimiento_autorizacion = $movimientos_autorizacion[1];
-        $solicitud->revertirAutorizacion(180,'Error al autorizar descuento');
+        $solicitud->revertirAutorizacion(["id_usuario"=>180, 'observaciones'=>"Error al autorizar descuento"]);
         $movimientos_revertir_autorizacion = $solicitud->movimientos->where('id_tipo_movimiento',5);
         $movimiento_revertir_autorizacion = $movimientos_revertir_autorizacion[2];
 
@@ -140,7 +140,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test autorización';
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
-        $solicitud->autorizar(180);
+        $solicitud->autorizar(["id_usuario"=>180]);
         $movimientos = $solicitud->movimientos->where('id_tipo_movimiento',2);
 
         $this->assertTrue(
@@ -158,7 +158,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test autorización';
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
-        $solicitud->autorizar(180);
+        $solicitud->autorizar(["id_usuario"=>180]);
         $movimientos = $solicitud->movimientos->where('id_tipo_movimiento',2);
 
         $this->assertTrue(
@@ -177,7 +177,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test cancelacion';
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
-        $solicitud->cancelar(180,'Error al registrar');
+        $solicitud->cancelar(["id_usuario"=>180, 'observaciones'=>"Error al registrar"]);
         $movimientos = $solicitud->movimientos->where('id_tipo_movimiento',3);
 
         $this->assertTrue(
@@ -193,7 +193,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test autorización';
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
-        $solicitud->cancelar(180,'Error al registrar solicitud de descuento');
+        $solicitud->cancelar(["id_usuario"=>180, 'observaciones'=>"Error al registrar solicitud de descuento"]);
         $movimientos = $solicitud->movimientos->where('id_tipo_movimiento',3);
 
         $this->assertTrue(
@@ -210,7 +210,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test rechazar solictud de liberación';
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
-        $solicitud->rechazar(182,'Error en la solicitud');
+        $solicitud->rechazar(["id_usuario"=>182, 'observaciones'=>"Error en la solicitud"]);
 
         $this->assertTrue(
             $solicitud->estado == -2  &&
@@ -226,7 +226,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $datos = array_merge($datos,['id_fondo_garantia'=>$this->fondo_afectable_nuevo->id_subcontrato]);
         $datos['observaciones'] = 'observaciones test rechazar solicitud de descuento';
         $solicitud = SolicitudMovimientoFondoGarantia::create($datos);
-        $solicitud->rechazar(182,'Error en la solicitud');
+        $solicitud->rechazar(["id_usuario"=>182, 'observaciones'=>"Error en la solicitud"]);
 
         $this->assertTrue(
             $solicitud->estado == -2  &&

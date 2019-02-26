@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-
+            <fondo-garantia-create></fondo-garantia-create>
         </div>
 
         <div class="col-12">
@@ -24,8 +24,10 @@
 </template>
 
 <script>
+    import FondoGarantiaCreate from "./Create";
     export default {
         name: "fondos-garantia-index",
+        components: {FondoGarantiaCreate},
         data() {
             return {
                 HeaderSettings: false,

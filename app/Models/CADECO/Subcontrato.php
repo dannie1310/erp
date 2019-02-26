@@ -73,4 +73,9 @@ class Subcontrato extends Transaccion
             }
         }
    }
+
+    public function scopeSinFondo($query)
+    {
+        return $query->whereDoesntHave('fondo_garantia');
+    }
 }

@@ -45,6 +45,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'numero_folio_format'=>(string)$model->numero_folio_format,
             'monto_format'=>(string)$model->monto_format,
             'referencia'=>(string)$model->referencia,
+            'retencion'=>(float)$model->referencia,
         ];
     }
     /**

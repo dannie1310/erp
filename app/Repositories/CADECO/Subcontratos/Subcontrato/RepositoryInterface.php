@@ -11,5 +11,7 @@ namespace App\Repositories\CADECO\Subcontratos\Subcontrato;
 
 interface RepositoryInterface
 {
+    public function all();
 
+    public function allSubcontratosSinFondo();
 }
