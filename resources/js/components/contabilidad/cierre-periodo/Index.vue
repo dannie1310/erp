@@ -1,8 +1,8 @@
 <template>
     <div class="row">
-       <!-- <div class="col-12">
+        <div class="col-12">
             <cierre-periodo-create></cierre-periodo-create>
-        </div>-->
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -20,10 +20,10 @@
 </template>
 
 <script>
-   // import CierrePeriodoCreate from "./Create";
+    import CierrePeriodoCreate from "./Create";
     export default {
         name: "cierre-periodo-index",
-      //  components: {CierrePeriodoCreate},
+        components: {CierrePeriodoCreate},
         data() {
             return {
                 HeaderSettings: false,
@@ -42,10 +42,7 @@
         },
 
         mounted() {
-            this.paginate({
-                sort: 'id',
-                order: 'desc'
-            })
+            this.paginate()
         },
 
         methods: {
@@ -90,10 +87,7 @@
             },
             query: {
                 handler (query) {
-                    this.paginate(query,{
-                        sort: 'id',
-                        order: 'desc'
-                    })
+                    this.paginate(query)
                 },
                 deep: true
             }

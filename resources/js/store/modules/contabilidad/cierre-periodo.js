@@ -40,10 +40,7 @@ export default {
         paginate (context, payload){
             context.commit('SET_CIERRES', [])
             axios
-                .get(URI + 'paginate', { params: payload,
-                    sort: 'id',
-                    order: 'desc'
-                })
+                .get(URI + 'paginate', { params: payload})
                 .then(r => r.data)
                 .then(data => {
                     context.commit('SET_CIERRES', data.data)
