@@ -1,6 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <cuenta-concepto-create></cuenta-concepto-create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -29,8 +30,10 @@
 </template>
 
 <script>
+    import CuentaConceptoCreate from "./Create";
     export default {
         name: "cuenta-concepto-index",
+        components: {CuentaConceptoCreate},
         data() {
             return {
                 HeaderSettings: false,
@@ -38,6 +41,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Cuenta', field: 'cuenta', sortable: true },
                     { title: 'Concepto', field: 'concepto', sortable: false },
+                    { title: 'Ruta', field: 'ruta', sortable: false },
                     { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -81,6 +85,7 @@
                             index: (i + 1) + self.query.offset,
                             cuenta: cuenta.cuenta,
                             concepto: cuenta.concepto.descripcion,
+                            ruta: cuenta.concepto.path,
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cuenta_concepto') ? true : undefined,
                                 id: cuenta.id

@@ -30,6 +30,28 @@ class Concepto extends Model
         });
     }
 
+    public function getPathAttribute()
+    {
+        if ($this->nivel_padre == '') {
+            return $this->descripcion;
+        } else {
+            return self::find($this->id_padre)->path . ' -> ' . $this->descripcion;
+        }
+    }
+
+    public function getNivelPadreAttribute()
+    {
+        return substr($this->nivel, 0, strlen($this->nivel) - 4);
+    }
+
+    public function getIdPadreAttribute()
+    {
+        if ($this->nivel_padre != '') {
+            return self::where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
+        }
+        return null;
+    }
+
     public function getTieneHijosAttribute()
     {
         return $this->hijos()->count() ? true : false;
@@ -42,12 +64,12 @@ class Concepto extends Model
 
     public function scopeConCuenta($query)
     {
-        return $query->has('cuenta');
+        return $query->has('cuentaConcepto');
     }
 
     public function scopeSinCuenta($query)
     {
-        return $query->has('cuenta', '=', 0);
+        return $query->has('cuentaConcepto', '=', 0);
     }
 
     public function cuentaConcepto()

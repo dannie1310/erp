@@ -5,6 +5,7 @@ import auth from './modules/auth';
 //CADECO
 import obras from './modules/cadeco/obras';
 import almacen from './modules/cadeco/almacen';
+import concepto from './modules/cadeco/concepto';
 import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
@@ -38,6 +39,7 @@ export default new Vuex.Store({
         auth,
         'cadeco/obras': obras,
         'cadeco/almacen': almacen,
+        'cadeco/concepto': concepto,
         'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
         'cadeco/empresa': empresa,

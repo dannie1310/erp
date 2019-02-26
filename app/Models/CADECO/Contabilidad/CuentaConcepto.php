@@ -19,11 +19,24 @@ class CuentaConcepto extends Model
 
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cuentas_conceptos';
-    protected $fillable = ['cuenta'];
+    protected $fillable = [
+        'cuenta',
+        'id_concepto'
+    ];
     public $searchable = [
         'cuenta',
         'concepto.descripcion',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->registro = auth()->id();
+            $model->estatus = 1;
+        });
+    }
 
     public function concepto()
     {
