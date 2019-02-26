@@ -73,6 +73,16 @@ export const routes = [
                 }
             },
             {
+                path: 'cuenta-concepto',
+                name: 'cuenta-concepto',
+                component: require('./components/contabilidad/cuenta-concepto/Index'),
+                meta: {
+                    title: 'Cuentas de Conceptos',
+                    breadcrumb: {name: 'CUENTAS DE CONCEPTOS', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
                 path: 'cuenta-costo',
                 name: 'cuenta-costo',
                 component: require('./components/contabilidad/cuenta-costo/Index'),

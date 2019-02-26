@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\Contabilidad;
 
 
+use App\Models\CADECO\Concepto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,4 +19,14 @@ class CuentaConcepto extends Model
 
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cuentas_conceptos';
+    protected $fillable = ['cuenta'];
+    public $searchable = [
+        'cuenta',
+        'concepto.descripcion',
+    ];
+
+    public function concepto()
+    {
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
 }

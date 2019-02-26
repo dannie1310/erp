@@ -14,6 +14,7 @@ import material from './modules/cadeco/material';
 //CONTABILIDAD
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
 import cuentaBanco from './modules/contabilidad/cuenta-banco';
+import cuentaConcepto from './modules/contabilidad/cuenta-concepto';
 import cuentaCosto from './modules/contabilidad/cuenta-costo';
 import cuentaEmpresa from './modules/contabilidad/cuenta-empresa';
 import cuentaFondo from './modules/contabilidad/cuenta-fondo';
@@ -45,6 +46,7 @@ export default new Vuex.Store({
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
         'contabilidad/cuenta-costo' : cuentaCosto,
+        'contabilidad/cuenta-concepto' : cuentaConcepto,
         'contabilidad/cuenta-empresa' : cuentaEmpresa,
         'contabilidad/cuenta-fondo' : cuentaFondo,
         'contabilidad/cuenta-general': cuentaGeneral,
