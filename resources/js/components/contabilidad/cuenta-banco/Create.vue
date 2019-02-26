@@ -142,8 +142,8 @@
                     })
             },
             getTipos() {
-                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/tipos',{
-                    scope: 'paraDisponibles:'$id_cuenta
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index',{
+                    scope: 'paraDisponibles:' + this.id_cuenta
                 })
                     .then(data => {
                         this.tipos = data.tipos.data;
@@ -173,7 +173,7 @@
                 }
             },
             id_cuenta(value){
-                this.tipos = [];
+                this.tipos = []
                 if(value){
                     this.getTipos();
                 }
