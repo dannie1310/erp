@@ -3,10 +3,10 @@
 namespace App\Services\CADECO;
 
 
-use App\Models\CADECO\Costo;
+use App\Models\CADECO\Concepto;
 use App\Repositories\Repository;
 
-class CostoService
+class ConceptoService
 {
     /**
      * @var Repository
@@ -14,10 +14,10 @@ class CostoService
     protected $repository;
 
     /**
-     * CostoService constructor.
-     * @param Costo $model
+     * ConceptoService constructor.
+     * @param Concepto $model
      */
-    public function __construct(Costo $model)
+    public function __construct(Concepto $model)
     {
         $this->repository = new Repository($model);
     }

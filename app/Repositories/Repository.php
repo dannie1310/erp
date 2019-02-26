@@ -111,7 +111,15 @@ class Repository implements RepositoryInterface
             $this->model = $this->model->where(function($query) {
                 foreach ($this->model->searchable as $col)
                 {
-                    $query->orWhere($col, 'LIKE', '%' . request('search') . '%');
+                    $explode = explode('.', $col);
+
+                    if (isset($explode[1])) {
+                        $query->orWhereHas($explode[0], function ($q) use ($explode) {
+                            return $q->where($explode[1], 'LIKE', '%' . request('search') . '%');
+                        });
+                    } else {
+                        $query->orWhere($col, 'LIKE', '%' . request('search') . '%');
+                    }
                 }
             });
         }
