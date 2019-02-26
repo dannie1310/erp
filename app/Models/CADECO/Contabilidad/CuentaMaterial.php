@@ -9,6 +9,8 @@
 namespace App\Models\CADECO\Contabilidad;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\Material;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,4 +20,33 @@ class CuentaMaterial extends Model
 
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cuentas_materiales';
+
+    protected $fillable = [
+        'cuenta',
+        'id_material',
+        'id_tipo_cuenta_material'
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function($query) {
+            return $query->where('id_obra', '=', Context::getIdObra());
+        });
+
+        self::creating(function ($model) {
+            $model->estatus = 1;
+            $model->registro = auth()->id();
+            $model->id_obra = Context::getIdObra();
+        });
+    }
+
+    public function material(){
+        return $this->belongsTo(Material::class,'id_material', 'id_material');
+    }
+
+    public function tipo(){
+        return $this->belongsTo(TipoCuentaMaterial::class, 'id_tipo_cuenta_material', 'id');
+    }
 }

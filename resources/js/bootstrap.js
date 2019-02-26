@@ -2,6 +2,7 @@ window._ = require('lodash');
 
 try {
     window.$ = window.jQuery = require('jquery');
+    require('jquery-ui/ui/widgets/autocomplete');
 
     require('admin-lte/plugins/bootstrap/js/bootstrap');
     require('admin-lte');
@@ -13,6 +14,8 @@ try {
     require('admin-lte/plugins/datepicker/bootstrap-datepicker')
     require('admin-lte/plugins/datepicker/locales/bootstrap-datepicker.es')
     window.Chart = require('chart.js')
+    window.VueTreeselect = require('@riophae/vue-treeselect');
+    window.LOAD_CHILDREN_OPTIONS = require('@riophae/vue-treeselect');
 } catch (e) {}
 
 window.axios = require('axios');

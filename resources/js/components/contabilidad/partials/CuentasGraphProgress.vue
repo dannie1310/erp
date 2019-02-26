@@ -32,6 +32,14 @@
                 </div>
             </div>
 
+            <p><b>Cuentas de Fondos</b></p>
+
+            <div class="progress">
+                <div class="progress-bar bg-gray progress-bar-striped" role="progressbar" :style="`width: ${fondo}%`">
+                    <span>{{ `${fondo} %` }}</span>
+                </div>
+            </div>
+
             <p><b>Cuentas de Materiales</b></p>
 
             <div class="progress">
@@ -74,6 +82,9 @@
             },
             material() {
                 return Math.round(this.config.material.con_cuenta * 100 / this.config.material.total)
+            },
+            fondo() {
+                return Math.round(this.config.fondo.con_cuenta * 100 / this.config.fondo.total)
             }
         }
     }

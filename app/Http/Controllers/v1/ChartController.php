@@ -14,6 +14,7 @@ use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contabilidad\EstatusPrepoliza;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Fondo;
 use App\Models\CADECO\Material;
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
@@ -39,11 +40,15 @@ class ChartController extends Controller
             ],
             'empresa' => [
                 'total' => Empresa::query()->count(),
-                'con_cuenta' => Empresa::query()->has('cuentaEmpresa')->count()
+                'con_cuenta' => Empresa::query()->has('cuentasEmpresa')->count()
             ],
             'material' => [
                 'total' => Material::query()->count(),
                 'con_cuenta' => Material::query()->has('cuentaMaterial')->count()
+            ],
+            'fondo' => [
+                'total' => Fondo::query()->count(),
+                'con_cuenta' => Fondo::query()->has('cuentaFondo')->count()
             ]
         ];
 

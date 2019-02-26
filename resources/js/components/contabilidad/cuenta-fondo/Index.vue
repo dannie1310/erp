@@ -1,6 +1,9 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <cuenta-fondo-create @created="paginate(query)"></cuenta-fondo-create>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -17,8 +20,10 @@
 </template>
 
 <script>
+    import CuentaFondoCreate from "./Create";
     export default {
         name: "cuenta-fondo-index",
+        components: {CuentaFondoCreate},
         data() {
             return {
                 HeaderSettings: false,

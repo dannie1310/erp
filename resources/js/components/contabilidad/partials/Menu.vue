@@ -20,7 +20,25 @@
                             <p>Cuentas de Almacén</p>
                         </router-link>
                     </li>
-                    <li class="nav-item" >
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_contable_bancaria')">
+                        <router-link :to="{name: 'cuenta-banco'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-banco'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuentas de Banco</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_concepto')">
+                        <router-link :to="{name: 'cuenta-concepto'}" class="nav-link" >
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuentas de Concepto</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_costo')">
+                        <router-link :to="{name: 'cuenta-costo'}" class="nav-link" >
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuentas de Costo</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_empresa')">
                         <router-link :to="{name: 'cuenta-empresa'}" class="nav-link" >
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas de Empresa</p>
@@ -36,6 +54,12 @@
                         <router-link :to="{name: 'cuenta-general'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-general'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas Generales</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_cuenta_material')">
+                        <router-link :to="{name: 'cuenta-material'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-material'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuentas de Materiales</p>
                         </router-link>
                     </li>
                 </ul>

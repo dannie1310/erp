@@ -63,6 +63,36 @@ export const routes = [
                 }
             },
             {
+                path: 'cuenta-banco',
+                name: 'cuenta-banco',
+                component: require('./components/contabilidad/cuenta-banco/Index'),
+                meta: {
+                    title: 'Cuentas de Bancos',
+                    breadcrumb: {name: 'CUENTAS DE BANCOS', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
+                path: 'cuenta-concepto',
+                name: 'cuenta-concepto',
+                component: require('./components/contabilidad/cuenta-concepto/Index'),
+                meta: {
+                    title: 'Cuentas de Conceptos',
+                    breadcrumb: {name: 'CUENTAS DE CONCEPTOS', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
+                path: 'cuenta-costo',
+                name: 'cuenta-costo',
+                component: require('./components/contabilidad/cuenta-costo/Index'),
+                meta: {
+                    title: 'Cuentas de Costos',
+                    breadcrumb: {name: 'CUENTAS DE COSTOS', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
                 path: 'cuenta-empresa',
                 name: 'cuenta-empresa',
                 component: require('./components/contabilidad/cuenta-empresa/Index'),
@@ -77,8 +107,8 @@ export const routes = [
                 name: 'cuenta-fondo',
                 component: require('./components/contabilidad/cuenta-fondo/Index'),
                 meta: {
-                    title: 'Cuentas de Fondo',
-                    breadcrumb: {name: 'CUENTAS DE FONDO', parent: 'contabilidad'},
+                    title: 'Cuentas de Fondos',
+                    breadcrumb: {name: 'CUENTAS DE FONDOS', parent: 'contabilidad'},
                     middleware: [auth, context]
                 }
             },
@@ -89,6 +119,16 @@ export const routes = [
                 meta: {
                     title: 'Cuentas Generales',
                     breadcrumb: {name: 'CUENTAS GENERALES', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
+                path: 'cuenta-material',
+                name: 'cuenta-material',
+                component: require('./components/contabilidad/cuenta-material/Index'),
+                meta: {
+                    title: 'Cuentas de Materiales',
+                    breadcrumb: {name: 'CUENTAS DE MATERIALES', parent: 'contabilidad'},
                     middleware: [auth, context]
                 }
             },

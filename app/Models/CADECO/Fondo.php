@@ -18,13 +18,17 @@ class Fondo extends Model
     protected $connection = 'cadeco';
     protected $table = 'fondos';
     protected $primaryKey = 'id_fondo';
-    public $timestamps =false;
+
+    public $timestamps = false;
+    public $searchable = [
+        'descripcion'
+    ];
 
     protected static function boot()
     {
         parent::boot();
-        self::addGlobalScope(function ($query){
-            return $query->where('id_obra','=',Context::getIdObra());
+        self::addGlobalScope(function ($query) {
+            return $query->where('id_obra', '=', Context::getIdObra());
         });
     }
 
@@ -32,5 +36,10 @@ class Fondo extends Model
     {
         return $this->hasOne(CuentaFondo::class, 'id_fondo', 'id_fondo')
             ->where('Contabilidad.cuentas_fondos.estatus', '=', 1);
+    }
+
+    public function scopeSinCuenta($query)
+    {
+        return $query->doesntHave('cuentaFondo');
     }
 }

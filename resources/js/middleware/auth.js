@@ -5,5 +5,8 @@ export default function auth({ next, router }) {
         return router.push({ name: 'login' });
     }
     window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + router.app.$session.get('jwt');
+    $.ajaxSetup({
+        headers: { 'Authorization': 'Bearer ' + router.app.$session.get('jwt') }
+    });
     return next();
 }

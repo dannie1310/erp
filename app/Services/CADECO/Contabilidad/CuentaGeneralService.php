@@ -42,4 +42,9 @@ class CuentaGeneralService
     {
         return $this->repository->update($data, $id);
     }
+
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
+    }
 }
