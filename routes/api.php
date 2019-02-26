@@ -31,21 +31,24 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'almacen'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
         });
-    });
 
-    $api->group(['middleware' => 'api'], function ($api) {
-        // CUENTAS
-        $api->group(['prefix' => 'cuenta'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\CuentaController@index');
+        // CONCEPTOS
+        $api->group(['prefix' => 'concepto'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\ConceptoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ConceptoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ConceptoController@show')->where(['id' => '[0-9]+']);
         });
-    });
 
-    $api->group(['middleware' => 'api'], function ($api) {
         // COSTOS
         $api->group(['prefix' => 'costo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\CostoController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\CostoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\CostoController@show')->where(['id' => '[0-9]+']);
+        });
+
+        // CUENTAS
+        $api->group(['prefix' => 'cuenta'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\CuentaController@index');
         });
 
         // EMPRESAS
@@ -87,7 +90,15 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@update')->where(['id' => '[0-9]+']);
         });
 
-        //CUENTAS DE COSTOS
+        //CUENTAS DE CONCEPTO
+        $api->group(['prefix' => 'cuenta-concepto'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaConceptoController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaConceptoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaConceptoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaConceptoController@update')->where(['id' => '[0-9]+']);
+        });
+
+        //CUENTAS DE COSTO
         $api->group(['prefix' => 'cuenta-costo'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaCostoController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaCostoController@paginate');
