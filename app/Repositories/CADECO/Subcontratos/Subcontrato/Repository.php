@@ -36,14 +36,6 @@ class Repository implements RepositoryInterface
         return $this->model->get();
     }
 
-    public function allSubcontratosSinFondo($data = null)
-    {
-        $this->search();
-        $this->scope();
-        $this->limit();
-        return $this->model->get();
-    }
-
     private function search()
     {
         if (request()->has('search')) {

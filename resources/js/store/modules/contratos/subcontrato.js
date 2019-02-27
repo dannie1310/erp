@@ -17,7 +17,7 @@ export default {
     },
 
     actions: {
-        allSubcontratosSinFondo(context, payload) {
+        index(context, payload) {
             return new Promise((resolve, reject) => {
 
                 axios

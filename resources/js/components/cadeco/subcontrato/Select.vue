@@ -15,7 +15,7 @@
 <script>
     export default {
         props: ['scope', 'value', 'error'],
-        name: "subcontrato-sin-fondo-select",
+        name: "subcontrato-select",
         data() {
             return {
                 val: null
@@ -23,7 +23,7 @@
         },
         methods: {
             loadOptions({ action, searchQuery, callback }) {
-                return this.$store.dispatch('contratos/subcontrato/allSubcontratosSinFondo', {
+                return this.$store.dispatch('contratos/subcontrato/index', {
                     params: {
                         search: searchQuery,
                         scope: this.scope,

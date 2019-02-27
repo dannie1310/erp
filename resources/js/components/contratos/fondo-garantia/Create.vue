@@ -31,7 +31,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group error-content">
-                                                <subcontrato-sin-fondo-select
+                                                <subcontrato-select
                                                         scope="sinFondo"
                                                         name="id_subcontrato"
                                                         id="id_subcontrato"
@@ -39,7 +39,7 @@
                                                         v-validate="{required: true}"
                                                         v-model="id_subcontrato"
                                                         :error="errors.has('id_subcontrato')">
-                                                ></subcontrato-sin-fondo-select>
+                                                ></subcontrato-select>
                                                  <div class="error-label" v-show="errors.has('id_subcontrato')">{{ errors.first('id_subcontrato') }}</div>
                                             </div>
                                         </div>
@@ -127,10 +127,10 @@
 </template>
 
 <script>
-    import SubcontratoSinFondoSelect from  "../subcontratos/SelectSubcontratosSinFondo";
+    import SubcontratoSelect from "../../cadeco/subcontrato/Select";
     export default {
         name: "fondo-garantia-create",
-        components: {SubcontratoSinFondoSelect},
+        components: {SubcontratoSelect},
         data() {
             return {
                 id_subcontrato : '',

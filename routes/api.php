@@ -206,7 +206,7 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
         $api->group(['prefix' => 'subcontratos'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@allSubcontratosSinFondo');
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
         });
 

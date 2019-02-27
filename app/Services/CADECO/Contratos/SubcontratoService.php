@@ -46,11 +46,6 @@ class SubcontratoService
         return $this->repository->all($data);
     }
 
-    public function allSubcontratosSinFondo($data)
-    {
-        return $this->repository->allSubcontratosSinFondo($data);
-    }
-
     public function show($id)
     {
         return $this->repository->show($id);

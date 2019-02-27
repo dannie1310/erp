@@ -50,10 +50,4 @@ class SubcontratoController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
-
-    public function allSubcontratosSinFondo(Request $request)
-    {
-        $collection = $this->service->allSubcontratosSinFondo($request->all());
-        return $this->respondWithCollection($collection);
-    }
 }
