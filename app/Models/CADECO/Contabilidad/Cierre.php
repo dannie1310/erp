@@ -36,7 +36,7 @@ class Cierre extends Model
 
     public function apertura()
     {
-        return $this->hasOne(CierreApertura::class, 'id_cierre', 'id')->orderBy('inicio_apertura','desc');
+        return $this->hasOne(Apertura::class, 'id_cierre', 'id')->orderBy('inicio_apertura','desc');
     }
 
     public function mes($model){

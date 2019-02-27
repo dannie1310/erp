@@ -28,10 +28,11 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'id', sortable: true },
+                    { title: '#', field: 'id', sortable: false },
                     { title: 'Año', field: 'anio', sortable: true },
                     { title: 'Mes', field: 'mes', sortable: true },
-                    { title: 'Fecha de Cierre', field: 'fecha_cierre', sortable: false },
+                    { title: 'Fecha de Cierre', field: 'fecha_cierre', sortable: true },
+                    { title: 'Estatus', field: 'estatus', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -69,6 +70,7 @@
                             anio: cierre.anio,
                             mes: cierre.mes,
                             fecha_cierre: cierre.fecha,
+                            estatus: cierre.apertura.estatus,
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cierre_periodo') ? true : undefined,
                                 id: cierre.id

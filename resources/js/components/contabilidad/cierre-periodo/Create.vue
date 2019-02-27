@@ -26,7 +26,6 @@
                                                    id="fecha"
                                                    class="form-control input-sm"
                                                    placeholder="Seleccione año y mes del Cierre" >
-
                                         </div>
                                     </div>
                                 </div>
@@ -50,12 +49,11 @@
         data() {
             return {
                 anio: '',
-                mes: '',
-                fecha: ''
+                mes: ''
             }
         },
 
-        mounted() {
+        mounted: function() {
             $('#fecha').datepicker({
                 autoclose: true,
                 minViewMode: 1,
@@ -94,6 +92,6 @@
 
         computed: {
 
-        }
+        },
     }
 </script>

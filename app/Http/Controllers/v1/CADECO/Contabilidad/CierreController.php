@@ -17,7 +17,10 @@ use League\Fractal\Manager;
 
 class CierreController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait {
+        update as protected traitUpdate;
+        store as protected traitStore;
+    }
 
     /**
      * @var CierreService
@@ -49,5 +52,15 @@ class CierreController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function update(UpdateCierreRequest $request, $id)
+    {
+        return $this->traitUpdate($request, $id);
+    }
+
+    public function store(StoreCierreRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

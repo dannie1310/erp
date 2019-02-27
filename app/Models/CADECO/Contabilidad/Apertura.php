@@ -11,7 +11,7 @@ namespace App\Models\CADECO\Contabilidad;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class CierreApertura extends Model
+class Apertura extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cierres_aperturas';

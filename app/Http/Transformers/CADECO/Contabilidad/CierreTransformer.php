@@ -47,7 +47,7 @@ class CierreTransformer extends TransformerAbstract
 
     public function includeApertura(Cierre $model) {
         if($apertura = $model->apertura){
-            return $this->item($apertura, new CierreAperturaTransformer);
+            return $this->item($apertura, new AperturaTransformer);
         }
         return null;
     }
