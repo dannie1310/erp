@@ -86,7 +86,7 @@ export default {
                                         title: "Registro exitoso",
                                         text: " ",
                                         icon: "success",
-                                        timer: 1500,
+                                        timer: 3000,
                                         buttons: false
                                     }).then(() => {
                                         resolve(data);

@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Subcontratos;
 
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Models\CADECO\Subcontrato;
 use League\Fractal\TransformerAbstract;
 
@@ -21,7 +22,8 @@ class SubcontratoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'empresa'
+        'empresa',
+        'moneda'
     ];
 
     /**
@@ -46,6 +48,8 @@ class SubcontratoTransformer extends TransformerAbstract
             'monto_format'=>(string)$model->monto_format,
             'referencia'=>(string)$model->referencia,
             'retencion'=>(float)$model->referencia,
+            'anticipo'=>(float)$model->anticipo,
+            'observaciones'=>(string)$model->observaciones,
         ];
     }
     /**
@@ -57,6 +61,19 @@ class SubcontratoTransformer extends TransformerAbstract
     public function includeEmpresa(Subcontrato $model) {
         if ($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Moneda
+     *
+     * @param Subcontrato $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeMoneda(Subcontrato $model) {
+        if ($moneda = $model->moneda) {
+            return $this->item($moneda, new MonedaTransformer);
         }
         return null;
     }

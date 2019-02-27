@@ -66,6 +66,11 @@ class Subcontrato extends Transaccion
         return $this->hasOne(FondoGarantia::class, 'id_subcontrato', 'id_transaccion');
     }
 
+    public function moneda()
+    {
+        return $this->hasOne(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
     public function generaFondoGarantia()
     {
         if(is_null($this->fondo_garantia))

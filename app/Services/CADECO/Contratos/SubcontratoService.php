@@ -55,4 +55,13 @@ class SubcontratoService
     {
         return $this->repository->show($id);
     }
+
+    public function store($data)
+    {
+        $data['id_usuario'] = $this->id_usuario;
+        $data['usuario_registra'] = $this->id_usuario;
+        $data['usuario'] = $this->usuario;
+        $data['id_obra'] = $this->id_obra;
+        return $this->repository->create($data);
+    }
 }

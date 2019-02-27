@@ -73,10 +73,15 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar fondo de garantía",
+                    title: "Generar fondo de garantía",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Generar",
+                            closeModal: false,
+                        }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
@@ -84,9 +89,11 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Fondo de Garantía generado correctamente", {
+                                    swal({
+                                        title: "Generación exitosa",
+                                        text: " ",
                                         icon: "success",
-                                        timer: 1500,
+                                        timer: 3000,
                                         buttons: false
                                     }).then(() => {
                                         resolve(data);

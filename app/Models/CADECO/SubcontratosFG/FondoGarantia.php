@@ -17,7 +17,7 @@ class FondoGarantia extends Model
     protected $connection = 'cadeco';
     protected $table = 'SubcontratosFG.fondos_garantia';
     protected $primaryKey = 'id_subcontrato';
-    protected $guarded = 'saldo';
+    protected $fillable = ['id_subcontrato'];
     public $timestamps = false;
     public $usuario_registra = 0;
     public $incrementing = false;

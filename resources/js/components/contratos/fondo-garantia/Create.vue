@@ -15,54 +15,102 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="callout callout-info">
+                             <div   class="card">
+                                 <div class="card-header">
+                                     <div class="row" >
+                                         <div class="col-md-12">
+                                              <label ><i  class="fa fa-info-circle" style="padding-right:3px"></i>Seleccione el subcontrato al que se generará el fondo de garantía</label>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="card-body">
+                                    <div class="row">
+                                        <!-- SubcontratoService -->
+                                        <div class="col-md-2">
+                                            <label for="id_subcontrato">Subcontrato:</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group error-content">
+                                                <subcontrato-sin-fondo-select
+                                                        scope="sinFondo"
+                                                        name="id_subcontrato"
+                                                        id="id_subcontrato"
+                                                        data-vv-as="Subcontrato"
+                                                        v-validate="{required: true}"
+                                                        v-model="id_subcontrato"
+                                                        :error="errors.has('id_subcontrato')">
+                                                ></subcontrato-sin-fondo-select>
+                                                 <div class="error-label" v-show="errors.has('id_subcontrato')">{{ errors.first('id_subcontrato') }}</div>
+                                            </div>
+                                        </div>
 
-                                <p><i  class="fa fa-info-circle" style="padding-right:3px"></i>Seleccione el subcontrato al que se generará el fondo de garantía.</p>
-                            </div>
-                            <div class="row">
-                                <!-- SubcontratoService -->
-                                <div class="col-md-2">
-                                    <label for="id_subcontrato">Subcontrato:</label>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group error-content">
-                                        <subcontrato-sin-fondo-select
-                                                scope="sinFondo"
-                                                name="id_subcontrato"
-                                                id="id_subcontrato"
-                                                data-vv-as="Subcontrato"
-                                                v-validate="{required: true}"
-                                                v-model="id_subcontrato"
-                                                :error="errors.has('id_subcontrato')">
-                                        ></subcontrato-sin-fondo-select>
-                                         <div class="error-label" v-show="errors.has('id_subcontrato')">{{ errors.first('id_subcontrato') }}</div>
                                     </div>
-                                </div>
-                                <div class="col-md-8">
-                                    {{referencia}}
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <!-- Porcentaje Retención -->
-                                <div class="col-md-2">
-                                     <label for="retencion">% de Retención:</label>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group error-content">
-                                        <input
-
-                                                type="number"
-                                                step="any"
-                                                class="form-control"
-                                                id="retencion"
-                                                name="retencion"
-                                                :value="retencion"
-                                                v-validate="{required: true, min_value: 1, max_value:100}"
-                                                data-vv-as="Retención"
-                                                :class="{'is-invalid': errors.has('retencion')}"
-                                        >
-                                        <div class="invalid-feedback" v-show="errors.has('retencion')">{{ errors.first('retencion') }}</div>
+                                 </div>
+                             </div>
+                            <div  v-if="subcontrato.id" class="card">
+                                <div class="card-header">
+                                     <div class="row" >
+                                         <div class="col-md-12">
+                                              <label ><i class="fa fa-info-circle" style="padding-right:3px"></i>Detalle de Subcontrato {{subcontrato.numero_folio_format}}</label>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label for="id_subcontrato">Referencia:</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            {{subcontrato.referencia}}
+                                        </div>
+                                        <!-- Fecha -->
+                                        <div class="col-md-3 money" >
+                                             <label>Fecha:</label>
+                                        </div>
+                                        <div class="col-md-2 money">
+                                            {{subcontrato.fecha_format}}
+                                        </div>
+                                    </div>
+                                     <div class="row">
+                                        <!-- Observaciones -->
+                                        <div class="col-md-2">
+                                            <label for="id_subcontrato">Empresa:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            {{subcontrato.empresa.razon_social}}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <!-- Total -->
+                                        <div class="col-md-2">
+                                             <label>Total:</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            {{subcontrato.monto_format}} ({{subcontrato.moneda.nombre}})
+                                        </div>
+                                        <!-- % Anticipo -->
+                                        <div class="col-md-1">
+                                             <label>Anticipo:</label>
+                                        </div>
+                                        <div class="col-md-1 money">
+                                            {{subcontrato.anticipo}} %
+                                        </div>
+                                        <!-- % Fondo e Garantía -->
+                                         <div class="col-md-3 money">
+                                             <label>Fondo de Garantía: </label>
+                                        </div>
+                                        <div class="col-md-2 money">
+                                            {{subcontrato.retencion}} %
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <!-- Observaciones -->
+                                        <div class="col-md-2">
+                                            <label for="id_subcontrato">Observaciones:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            {{subcontrato.observaciones}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -86,27 +134,26 @@
         data() {
             return {
                 id_subcontrato : '',
-                retencion : '',
-                referencia : ''
+                subcontrato : []
             }
         },
 
         mounted() {
             this.getSubcontratosSinFondo()
-
         },
 
         methods: {
             find(id) {
                 return this.$store.dispatch('contratos/subcontrato/find', {
-                    id: id
+                    id: id,
+                    params: { include: 'moneda,empresa' }
                 })
             },
             init() {
                 $(this.$refs.modal).modal('show');
                 this.id_subcontrato = '';
                 this.retencion = '';
-                this.referencia = '';
+                this.subcontrato = [];
                 this.$validator.reset()
             },
 
@@ -123,7 +170,7 @@
             },
 
             store() {
-                return this.$store.dispatch('contratos/fondo-garantia/store', this.$data)
+                return this.$store.dispatch('contratos/fondo-garantia/store', {id_subcontrato:this.id_subcontrato})
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                     })
@@ -141,8 +188,8 @@
             {
                 this.find(id)
                     .then(data=>{
+                        this.subcontrato = data
                         this.retencion = data.retencion
-                        this.referencia = data.referencia
                      })
             }
         }
@@ -150,6 +197,9 @@
 </script>
 
 <style scoped>
+    .modal-body {
+        background-color: #ddd;
+    }
     .btn-primary {
         background-color: #00c0ef;
         border-color: #00acd6;
@@ -167,5 +217,9 @@
         margin-top: 0.25rem;
         font-size: 80%;
         color: #dc3545;
+    }
+    .money
+    {
+        text-align: right;
     }
 </style>
