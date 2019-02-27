@@ -1,7 +1,12 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_almacen')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Cuenta
+        <button @click="init" v-if="$root.can('registrar_cuenta_almacen')" class="btn btn-app btn-outline-info pull-right" :disabled="cargando">
+            <span v-if="cargando">
+                <i class="fa fa-plus"></i> Registrar Cuenta
+            </span>
+            <span v-else>
+                <i class="fa fa-spin fa-spinner"></i> Registrar Cuenta
+            </span>
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -72,7 +77,8 @@
         data() {
             return {
                 id_almacen: '',
-                cuenta: ''
+                cuenta: '',
+                cargando: true
             }
         },
 
@@ -91,9 +97,15 @@
             },
 
             getAlmacenes() {
+                this.$store.commit('cadeco/almacen/SET_ALMACENES', []);
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/almacen/index', {
                     params: { scope: 'sinCuenta' }
                 })
+                    .then(data => {
+                        this.$store.commit('cadeco/almacen/SET_ALMACENES', data);
+                        this.cargando = false;
+                    })
             },
 
             store() {

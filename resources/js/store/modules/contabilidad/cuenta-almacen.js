@@ -38,14 +38,17 @@ export default {
 
     actions: {
         paginate (context, payload){
-            context.commit('SET_CUENTAS', [])
-            axios
-                .get(URI + 'paginate', { params: payload })
-                .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_CUENTAS', data.data)
-                    context.commit('SET_META', data.meta)
-                })
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
         },
 
         find(context, id) {

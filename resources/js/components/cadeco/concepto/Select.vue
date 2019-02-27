@@ -21,7 +21,7 @@
 
 <script>
     export default {
-        props: ['value','id', 'multiple', 'error', 'scope'],
+        props: ['value','id', 'multiple', 'error', 'scope', 'disableBranchNodes'],
         name: "concepto-select",
         data() {
             return {
