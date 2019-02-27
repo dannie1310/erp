@@ -33,9 +33,17 @@ class Subcontrato extends Transaccion
     ];
     protected $with = array( 'estimacion');
     public $usuario_registra = 1;
+
+    public $searchable = [
+        'numero_folio'
+    ];
+
     protected static function boot()
     {
         parent::boot();
+        self::addGlobalScope(function ($query) {
+            return $query->where('tipo_transaccion', '=', 51);
+        });
         self::creating(function ($subcontrato) {
 
             $subcontrato->tipo_transaccion = 51;

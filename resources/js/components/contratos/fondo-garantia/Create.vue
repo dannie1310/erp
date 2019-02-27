@@ -1,63 +1,64 @@
 <template>
     <span>
         <button @click="init" v-if="$root.can('registrar_movimiento_bancario')" class="btn btn-app pull-right" >
-            <i class="fa fa-plus"></i> Registrar Fondo de Garantía
+            <i class="fa fa-plus"></i> Generar Fondo de Garantía
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-edit" style="padding-right:3px"></i>Registrar Fondo de Garantía</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-edit" style="padding-right:3px"></i>Generar Fondo de Garantía</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
+                            <div class="callout callout-info">
 
+                                <p><i  class="fa fa-info-circle" style="padding-right:3px"></i>Seleccione el subcontrato al que se generará el fondo de garantía.</p>
+                            </div>
                             <div class="row">
                                 <!-- SubcontratoService -->
                                 <div class="col-md-2">
-                                    <label for="id_fondo_garantia">Subcontrato:</label>
-
+                                    <label for="id_subcontrato">Subcontrato:</label>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-2">
                                     <div class="form-group error-content">
-                                        <select
-                                                class="form-control"
+                                        <subcontrato-sin-fondo-select
+                                                scope="sinFondo"
                                                 name="id_subcontrato"
+                                                id="id_subcontrato"
                                                 data-vv-as="Subcontrato"
-                                                id="id_fondo_garantia"
-                                                v-model="id_subcontrato"
                                                 v-validate="{required: true}"
-                                                :class="{'is-invalid': errors.has('id_subcontrato')}"
-                                        >
-                                            <option value>-- Subcontrato --</option>
-                                            <option v-for="(item, index) in subcontratosSinFondo" :value="item.id">
-                                                {{ item.subcontrato.numero_folio_format + ' [' + item.subcontrato.referencia + ']' }}
-                                            </option>
-                                        </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_subcontrato')">{{ errors.first('id_subcontrato') }}</div>
+                                                v-model="id_subcontrato"
+                                                :error="errors.has('id_subcontrato')">
+                                        ></subcontrato-sin-fondo-select>
+                                         <div class="error-label" v-show="errors.has('id_subcontrato')">{{ errors.first('id_subcontrato') }}</div>
                                     </div>
+                                </div>
+                                <div class="col-md-8">
+                                    {{referencia}}
                                 </div>
                             </div>
 
                             <div class="row">
                                 <!-- Porcentaje Retención -->
                                 <div class="col-md-2">
-                                     <label for="importe">% de Retención:</label>
+                                     <label for="retencion">% de Retención:</label>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group error-content">
                                         <input
+
                                                 type="number"
                                                 step="any"
                                                 class="form-control"
                                                 id="retencion"
                                                 name="retencion"
-                                                v-model="retencion"
-                                                v-validate="{required: true, decimal: true}"
+                                                :value="retencion"
+                                                v-validate="{required: true, min_value: 1, max_value:100}"
                                                 data-vv-as="Retención"
                                                 :class="{'is-invalid': errors.has('retencion')}"
                                         >
@@ -78,14 +79,15 @@
 </template>
 
 <script>
+    import SubcontratoSinFondoSelect from  "../subcontratos/SelectSubcontratosSinFondo";
     export default {
         name: "fondo-garantia-create",
+        components: {SubcontratoSinFondoSelect},
         data() {
             return {
                 id_subcontrato : '',
-                retencion : ''
-
-
+                retencion : '',
+                referencia : ''
             }
         },
 
@@ -95,10 +97,16 @@
         },
 
         methods: {
+            find(id) {
+                return this.$store.dispatch('contratos/subcontrato/find', {
+                    id: id
+                })
+            },
             init() {
                 $(this.$refs.modal).modal('show');
                 this.id_subcontrato = '';
                 this.retencion = '';
+                this.referencia = '';
                 this.$validator.reset()
             },
 
@@ -126,6 +134,17 @@
             subcontratosSinFondo() {
                 return this.$store.getters['contratos/fondo-garantia/fondosGarantia']
             },
+        },
+
+        watch : {
+            id_subcontrato (id)
+            {
+                this.find(id)
+                    .then(data=>{
+                        this.retencion = data.retencion
+                        this.referencia = data.referencia
+                     })
+            }
         }
     }
 </script>
@@ -142,5 +161,11 @@
     .btn-primary:hover {
         background-color: #5bc0de;
         border-color: #46b8da;
+    }
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
     }
 </style>

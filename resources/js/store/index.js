@@ -35,6 +35,7 @@ import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 //CONTRATOS
 import fondoGarantia from './modules/contratos/fondo-garantia';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
+import subcontrato from './modules/contratos/subcontrato';
 
 Vue.use(Vuex);
 
@@ -69,6 +70,7 @@ export default new Vuex.Store({
 
         'contratos/fondo-garantia': fondoGarantia,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
+        'contratos/subcontrato': subcontrato,
     },
     strict: process.env.NODE_ENV !== 'production'
 })

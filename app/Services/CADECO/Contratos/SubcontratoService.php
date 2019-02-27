@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Contratos;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Subcontrato;
 use App\Repositories\CADECO\Subcontratos\Subcontrato\Repository;
 
@@ -35,13 +36,23 @@ class SubcontratoService
         $this->id_obra = Context::getIdObra();
     }
 
-    public function all()
+    public function all($data)
     {
-        return $this->repository->all();
+        return $this->repository->all($data);
     }
 
-    public function allSubcontratosSinFondo()
+    public function index($data)
     {
-        return $this->repository->allSubcontratosSinFondo();
+        return $this->repository->all($data);
+    }
+
+    public function allSubcontratosSinFondo($data)
+    {
+        return $this->repository->allSubcontratosSinFondo($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
     }
 }

@@ -16,7 +16,6 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-
                                  <!-- Fecha -->
                                 <div class="offset-md-8 col-md-1">
                                      <label for="fecha">Fecha:</label>
@@ -38,9 +37,7 @@
                                 </div>
 
                             </div>
-
                             <div class="row">
-
                                 <!-- Referencia -->
                                 <div class="col-md-2">
                                     <label for="referencia">Referencia:</label>
@@ -82,7 +79,6 @@
                                 <!-- Subcontrato -->
                                 <div class="col-md-2">
                                     <label for="id_fondo_garantia">Subcontrato:</label>
-
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
@@ -106,7 +102,6 @@
                             </div>
 
                             <div class="row">
-
                                 <!-- Importe -->
                                 <div class="offset-md-8 col-md-1">
                                      <label for="importe">Importe:</label>
@@ -169,14 +164,12 @@
                 referencia: '',
                 importe: '',
                 observaciones: '',
-
                 tipos_solicitud: {
                     1: "Descuento",
                     2: "Liberación"
                 },
             }
         },
-
         mounted() {
             this.getFondosGarantia()
 

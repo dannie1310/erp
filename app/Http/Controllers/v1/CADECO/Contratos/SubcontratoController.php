@@ -13,13 +13,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Subcontratos\SubcontratoTransformer;
 use App\Services\CADECO\Contratos\SubcontratoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
+use League\Fractal\Manager;
 
 class SubcontratoController extends Controller
 {
     use ControllerTrait;
 
     /**
-     * @var SubcontratoController
+     * @var SubcontratoService
      */
     private $service;
 
