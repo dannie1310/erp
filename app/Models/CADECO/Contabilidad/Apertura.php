@@ -16,15 +16,26 @@ class Apertura extends Model
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cierres_aperturas';
     public $timestamps = false;
+    protected $primaryKey = 'id_cierre';
+    protected $fillable = ['id_cierre',
+                            'motivo',
+                            'registro',
+                            'inicio_apertura',
+                            'fin_apertura',
+                            'estatus'];
 
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
-            $model->estatus = true;
+            $model->estatus = 1;
             $model->registro = auth()->id();
             $model->inicio_apertura = Carbon::now()->toDateTimeString();
+        });
+
+        self::updated(function ($model) {
+            $model->fin_apertura = Carbon::now()->toDateTimeString();
         });
     }
 

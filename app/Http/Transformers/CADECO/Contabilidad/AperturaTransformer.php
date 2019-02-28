@@ -21,7 +21,8 @@ class AperturaTransformer extends TransformerAbstract
     public function transform(Apertura $model) {
         return [
             'id' => (int) $model->id_cierre,
-            'estatus' => $model->estado
+            'estatus_actual' => $model->estatus,
+            'estatus' => (string) $model->getEstadoAttribute()
         ];
     }
 }

@@ -38,7 +38,8 @@
                 data: [],
                 total: 0,
                 query: {
-                }
+                },
+                estado: ""
             }
         },
 
@@ -65,15 +66,21 @@
                     let self = this
                     self.$data.data = []
                     cierres.forEach(function (cierre, i) {
+                        if(typeof cierre.apertura  !== 'undefined') {
+                            self.$data.estado = cierre.apertura.estatus;
+                        }else{
+                            self.$data.estado = 'Cerrado';
+                        }
                         self.$data.data.push({
                             id: (i + 1) + self.query.offset,
                             anio: cierre.anio,
                             mes: cierre.mes,
                             fecha_cierre: cierre.fecha,
-                            estatus: cierre.apertura.estatus,
+                            estatus: self.$data.estado,
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cierre_periodo') ? true : undefined,
-                                id: cierre.id
+                                id: cierre.id,
+                                datos: cierre
                             })
                         })
                     });

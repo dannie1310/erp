@@ -10,6 +10,8 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCierreRequest;
+use App\Http\Requests\UpdateCierreRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CierreTransformer;
 use App\Services\CADECO\Contabilidad\CierreService;
 use App\Traits\ControllerTrait;

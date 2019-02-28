@@ -9,8 +9,10 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
+use App\Models\CADECO\Contabilidad\Apertura;
 use App\Models\CADECO\Contabilidad\Cierre;
 use App\Repositories\Repository;
+use Carbon\Carbon;
 
 class CierreService
 {
@@ -38,9 +40,15 @@ class CierreService
         return $this->repository->show($id);
     }
 
-    public function update(array $data, $id)
+    public function update($data, $id)
     {
-        return $this->repository->update($data, $id);
+        if ($data["data"]["estatus"] == 1) { // ABRIR PERIODO
+            $apertura = new Apertura;
+            $apertura = $apertura->create($data["data"]);
+        } else { // CERRAR PERIODO
+            $apertura = Apertura::where('id_cierre', '=', $id)->where('estatus', '=', 1)->update(['estatus' => 0, 'fin_apertura' => Carbon::now()->toDateTimeString()]);
+        }
+        return $this->repository->show($id);
     }
 
     public function store(array $data)

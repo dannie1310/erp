@@ -38,7 +38,7 @@ class UpdateCierreRequest extends FormRequest
         }
 
         return [
-            'cierre' => ['filled', "regex:'{$regex}'"],
+            'id' => ['filled', 'numeric', 'exists:cadeco.Contabilidad.cierres,id']
         ];
     }
 
