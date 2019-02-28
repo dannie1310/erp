@@ -39,10 +39,7 @@
             }
         },
         mounted() {
-                this.paginate(),
-                this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {
-                    scope: 'paraBancos'
-                })
+                this.paginate()
         },
         methods: {
             paginate(payload = {}) {

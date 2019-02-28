@@ -114,12 +114,14 @@
                 cuenta: '',
                 id_tipo_cuenta_contable: '',
                 cuentas: [],
-                tipos: []
             }
         },
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
+            },
+            tipos(){
+                return this.$store.getters['contabilidad/tipo-cuenta-contable/tipos']
             }
         },
         methods: {
@@ -143,11 +145,8 @@
             },
             getTipos() {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index',{
-                    scope: 'paraDisponibles:' + this.id_cuenta
+                    scope: ['disponiblesParaCuentaBancaria:' + this.id_cuenta, 'paraBancos']
                 })
-                    .then(data => {
-                        this.tipos = data.tipos.data;
-                    });
             },
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-banco/store', this.$data)
@@ -173,7 +172,6 @@
                 }
             },
             id_cuenta(value){
-                this.tipos = []
                 if(value){
                     this.getTipos();
                 }

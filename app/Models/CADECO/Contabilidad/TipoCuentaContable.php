@@ -10,6 +10,7 @@ namespace App\Models\CADECO\Contabilidad;
 
 
 use App\Facades\Context;
+use function foo\func;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -50,24 +51,19 @@ class TipoCuentaContable extends Model
         return $query->where('tipo', '=', 5);
     }
 
-    public function scopeParaDisponibles($query, $id_cuenta){
-        $disponibles = "";
-        $tipos = $query->where('tipo', '=', 5)->get();
-        foreach ($tipos as $tipo){
-            $cuenta = CuentaBanco::where('id_cuenta','=', $id_cuenta)
-                        ->where('id_tipo_cuenta_contable','=',$tipo->id_tipo_cuenta_contable)->first();
+    public function cuentasBanco()
+    {
+        return $this->hasMany(CuentaBanco::class, 'id_tipo_cuenta_contable');
+    }
 
-            if($cuenta == []){
-                if($disponibles == ""){
-                    $disponibles = $tipo->id_tipo_cuenta_contable;
-                }else {
-                    $disponibles = $disponibles.",".$tipo->id_tipo_cuenta_contable;
-                }
-            }
-        }
-        if($disponibles != ""){
-            $datos = $query->whereIn('id_tipo_cuenta_contable',[$disponibles]);
-        }
-        return $datos;
+    public function scopeDisponiblesParaCuentaBancaria($query, $id_cuenta){
+
+        $existentes = self::query()->whereHas('cuentasBanco', function ($q) use ($id_cuenta) {
+            return $q->whereHas('cuentaContable', function ($q) use ($id_cuenta) {
+                return $q->where('id_cuenta', '=', $id_cuenta);
+            });
+        })->pluck('id_tipo_cuenta_contable');
+
+        return $query->whereNotIn('id_tipo_cuenta_contable', $existentes);
     }
 }
