@@ -24,6 +24,7 @@
                                                    v-validate="{required: true}"
                                                    type="text"
                                                    id="fecha"
+                                                   ref="fecha"
                                                    class="form-control input-sm"
                                                    placeholder="Seleccione año y mes del Cierre" >
                                         </div>
@@ -33,7 +34,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Registrar</button>
+                            <button type="submit" class="btn btn-primary"  @click="validate">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -48,20 +49,25 @@
         name: "cierre-periodo-create",
         data() {
             return {
-                anio: '',
-                mes: ''
+                    anio: '',
+                    mes: '',
+                fecha: ''
             }
         },
 
         mounted: function() {
-            $('#fecha').datepicker({
+            let self = this
+            $(self.$refs.fecha).datepicker({
                 autoclose: true,
+                clearBtn: true,
                 minViewMode: 1,
                 format: 'mm/yyyy',
                 language: 'es',
             }).on('changeDate', function(selected){
-                this.anio = new Date(selected.date.valueOf()).getFullYear();
-                this.mes = new Date(selected.date.valueOf()).getMonth() + 1;
+                if (selected.date) {
+                    self.$set(self, 'anio', new Date(selected.date.valueOf()).getFullYear());
+                    self.$set(self, 'mes', new Date(selected.date.valueOf()).getMonth() + 1);
+                }
             });
         },
 
@@ -84,6 +90,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
+                        console.log(this.$data)
                         this.store()
                     }
                 });

@@ -33,10 +33,6 @@ class Apertura extends Model
             $model->registro = auth()->id();
             $model->inicio_apertura = Carbon::now()->toDateTimeString();
         });
-
-        self::updated(function ($model) {
-            $model->fin_apertura = Carbon::now()->toDateTimeString();
-        });
     }
 
     public function cierre() {
