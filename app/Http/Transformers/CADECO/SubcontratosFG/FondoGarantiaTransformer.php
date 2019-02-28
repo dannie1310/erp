@@ -43,7 +43,8 @@ class FondoGarantiaTransformer extends TransformerAbstract
         return [
             'id' => (int)$model->getKey(),
             'fecha' => (string)$model->fecha,
-            'saldo' => (string)$model->saldo_format,
+            'saldo_format' => (string)$model->saldo_format,
+            'saldo' => (float)$model->saldo,
             'created_at'=>(string)$model->created_at,
         ];
     }

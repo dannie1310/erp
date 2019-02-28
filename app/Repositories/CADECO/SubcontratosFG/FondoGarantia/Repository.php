@@ -115,4 +115,12 @@ class Repository implements RepositoryInterface
         $this->model = $this->model->where($where);
         return $this;
     }
+
+    public function ajustarSaldo(array $data, $id)
+    {
+        $item = $this->show($id);
+        $item->ajustarSaldo($data);
+        return $item;
+    }
+
 }

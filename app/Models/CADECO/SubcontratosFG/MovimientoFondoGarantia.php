@@ -33,7 +33,7 @@ class MovimientoFondoGarantia extends Model
         self::creating(function($movimiento_fg)
         {
             $movimiento_fg->created_at = date('Y-m-d h:i:s');
-            $movimiento_fg->importe = ($movimiento_fg->tipo->naturaleza == 2)? $movimiento_fg->importe * -1 : $movimiento_fg->importe;
+            $movimiento_fg->importe = ($movimiento_fg->tipo->naturaleza == 2)? abs($movimiento_fg->importe) * -1 : $movimiento_fg->importe;
         });
         self::created(function($movimiento_fg)
         {

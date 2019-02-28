@@ -11,6 +11,7 @@ namespace App\Models\CADECO\SubcontratosFG;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class FondoGarantia extends Model
 {
@@ -34,7 +35,13 @@ class FondoGarantia extends Model
             $fondo->created_at = date('Y-m-d h:i:s');
             $fondo->usuario_registra = $subcontrato->usuario_registra;
         });
-
+        self::updating(function($fondo)
+        {
+            if($fondo->saldo<0)
+            {
+                throw New \Exception('El saldo del fondo de garantía no puede ser menor a 0');
+            }
+        });
         self::created(function($fondo)
         {
             $fondo->generaMovimientoRegistro();
@@ -89,12 +96,43 @@ class FondoGarantia extends Model
         );
 
     }
+    /*
+     * Función que permite ajustar el saldo del gondo de garantía
+     * */
+    public function ajustarSaldo($datos)
+    {
+        if (!$this->validaNoSolicitudesPendientes()) {
+            throw New \Exception('Hay una solicitud de movimiento a fondo de garantía pendiente de autorizar, el ajuste actual no puede registrarse');
+        }
+        DB::connection('cadeco')->transaction(function() use($datos){
+            #1) Se genera movimiento de fondo de garantia
+            MovimientoFondoGarantia::create([
+                'id_fondo_garantia'=>$datos["id_fondo_garantia"],
+                'id_tipo_movimiento'=>($datos["importe"]<0)?9:8,
+                'importe'=>$datos["importe"],
+                'usuario_registra'=>$datos["id_usuario"],
+                'observaciones'=>$datos["observaciones"]
+            ]);
+            #2) Se actualiza saldo después de regsitrar el movimiento de ajuste
+            $this->actualizaSaldo();
+        });
+    }
 
     public function actualizaSaldo()
     {
         $this->saldo = $this->movimientos()->sum('importe');
         $this->save();
 
+    }
+
+    private function validaNoSolicitudesPendientes()
+    {
+        $solicitudes = $this->solicitudes->where("estado",0);
+        if(count($solicitudes)>0)
+        {
+            return false;
+        }
+        return true;
     }
 
 }

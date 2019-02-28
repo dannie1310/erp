@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Subcontratos\AjustarSaldoFondoGarantiaRequest;
 use App\Http\Transformers\CADECO\SubcontratosFG\FondoGarantiaTransformer;
 use App\Services\CADECO\Contratos\FondoGarantia\FondoGarantiaService;
 use App\Traits\ControllerTrait;
@@ -47,6 +48,12 @@ class FondoGarantiaController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function ajustarSaldo(AjustarSaldoFondoGarantiaRequest $request, $id)
+    {
+        $item = $this->service->ajustarSaldo($request->all(), $id);
+        return $this->respondWithItem($item);
     }
 
 }

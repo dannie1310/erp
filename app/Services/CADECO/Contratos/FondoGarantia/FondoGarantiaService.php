@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Contratos\FondoGarantia;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Repositories\CADECO\SubcontratosFG\FondoGarantia\Repository;
 
@@ -25,9 +26,9 @@ class FondoGarantiaService
     public function __construct(FondoGarantia $model)
     {
         $this->repository = new Repository($model);
-        /*$this->id_usuario = auth()->id();
+        $this->id_usuario = auth()->id();
         $this->usuario = auth()->user()->usuario;
-        $this->id_obra = Context::getIdObra();*/
+        $this->id_obra = Context::getIdObra();
     }
 
     public function all()
@@ -58,6 +59,14 @@ class FondoGarantiaService
         $data['usuario'] = $this->usuario;
         $data['id_obra'] = $this->id_obra;
         return $this->repository->create($data);
+    }
+
+    public function ajustarSaldo(array $data, $id)
+    {
+        $data['id_usuario'] = $this->id_usuario;
+        $data['usuario'] = $this->usuario;
+        $data['id_obra'] = $this->id_obra;
+        return $this->repository->ajustarSaldo($data, $id);
     }
 
     public function show($id)

@@ -54,6 +54,9 @@ export default {
                     context.commit('SET_FONDOS_GARANTIA', data.data)
                 })
         },
+        limpia(context){
+            context.commit('SET_FONDO_GARANTIA', null);
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -68,8 +71,43 @@ export default {
                     })
             });
         },
-
-
+        ajustar_saldo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Ajustar saldo de fondo de garantía",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Ajustar",
+                            closeModal: false,
+                        }
+                    ]
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id+'/ajustar_saldo', payload.data,{ params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal({
+                                        title: "Ajuste exitoso",
+                                        text: " ",
+                                        icon: "success",
+                                        timer: 3000,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_FONDO_GARANTIA', data);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

@@ -34,10 +34,10 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', sortable: false },
                     { title: 'Contratista', field: 'empresa__razon_social', thComp: require('../../globals/th-Filter'), sortable: true },
-                    { title: 'Referencia', field: 'subcontrato__referencia', thComp: require('../../globals/th-Filter'), sortable: true },
-                    { title: 'Folio Subcontrato', field: 'subcontrato__numero_folio', thClass: 'th_folio', thComp: require('../../globals/th-Filter'), sortable: true },
-                    { title: 'Fecha Subcontrato', field: 'subcontrato__fecha', thClass: 'th_fecha', sortable: true },
-                    { title: 'Monto Subcontrato', field: 'subcontrato__monto', tdClass: 'money', thClass: 'th_money'},
+                    { title: 'Referencia de Subcontrato', field: 'subcontrato__referencia', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Folio de Subcontrato', field: 'subcontrato__numero_folio', thClass: 'th_folio', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Fecha de Subcontrato', field: 'subcontrato__fecha', thClass: 'th_fecha', sortable: true },
+                    { title: 'Monto de Subcontrato', field: 'subcontrato__monto', tdClass: 'money', thClass: 'th_money'},
                     { title: 'Saldo Fondo de Garantia', field: 'saldo', sortable: true, tdClass: 'money', thClass: 'th_money'},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
@@ -48,9 +48,7 @@
             }
         },
         mounted() {
-            /*this.paginate({
-                'include': 'subcontrato.empresa'
-            })*/
+
         },
         methods: {
             paginate(payload = {}) {
@@ -74,12 +72,17 @@
 
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            saldo: fondoGarantia.saldo,
+                            saldo: fondoGarantia.saldo_format,
                             empresa__razon_social: fondoGarantia.subcontrato.empresa.razon_social,
                             subcontrato__referencia: fondoGarantia.subcontrato.referencia,
                             subcontrato__numero_folio: fondoGarantia.subcontrato.numero_folio_format,
                             subcontrato__fecha: fondoGarantia.subcontrato.fecha_format,
                             subcontrato__monto: fondoGarantia.subcontrato.monto_format,
+                            buttons: $.extend({}, {
+                                show: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
+                                ajustar_saldo: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
+                                id: fondoGarantia.id,
+                            })
                         })
                     });
                 },
