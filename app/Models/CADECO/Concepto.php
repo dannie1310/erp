@@ -30,9 +30,57 @@ class Concepto extends Model
         });
     }
 
+    public function getPathAttribute()
+    {
+        if ($this->nivel_padre == '') {
+            return $this->descripcion;
+        } else {
+            return self::find($this->id_padre)->path . ' -> ' . $this->descripcion;
+        }
+    }
+
+    public function getNivelPadreAttribute()
+    {
+        return substr($this->nivel, 0, strlen($this->nivel) - 4);
+    }
+
+    public function getIdPadreAttribute()
+    {
+        if ($this->nivel_padre != '') {
+            return self::where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
+        }
+        return null;
+    }
+
+    public function getTieneHijosAttribute()
+    {
+        return $this->hijos()->count() ? true : false;
+    }
+
+    public function scopeRoots($query)
+    {
+        return $query->whereRaw('LEN(nivel) = 4');
+    }
+
+    public function scopeConCuenta($query)
+    {
+        return $query->has('cuentaConcepto');
+    }
+
+    public function scopeSinCuenta($query)
+    {
+        return $query->has('cuentaConcepto', '=', 0);
+    }
+
     public function cuentaConcepto()
     {
         return $this->hasOne(CuentaConcepto::class, 'id_concepto')
             ->where('Contabilidad.cuentas_conceptos.estatus', '=', 1);
+    }
+
+    public function hijos()
+    {
+        return $this->hasMany(self::class, 'id_obra', 'id_obra')
+            ->where('nivel', 'LIKE', $this->nivel . '___.');
     }
 }

@@ -19,15 +19,16 @@
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="id_fondo">Fondo</label>
-                                        <fondo-autocomplete scope="sinCuenta"
+                                        <fondo-select
+                                                scope="sinCuenta"
                                                 name="id_fondo"
                                                 id="id_fondo"
                                                 data-vv-as="Fondo"
                                                 v-validate="{required: true}"
                                                 v-model="id_fondo"
-                                                :class="{'is-invalid': errors.has('id_fondo')}">
-                                        ></fondo-autocomplete>
-                                        <div class="invalid-feedback" v-show="errors.has('id_fondo')">{{ errors.first('id_fondo') }}</div>
+                                                :error="errors.has('id_fondo')">
+                                        ></fondo-select>
+                                        <div class="error-label" v-show="errors.has('id_fondo')">{{ errors.first('id_fondo') }}</div>
                                     </div>
                                 </div>
 
@@ -45,7 +46,7 @@
                                                 placeholder="Cuenta"
                                                 v-model="cuenta"
                                                 :class="{'is-invalid': errors.has('cuenta')}">
-                                        <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
+                                        <div class="error-label" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -62,10 +63,10 @@
 </template>
 
 <script>
-    import FondoAutocomplete from "../../cadeco/fondo/Autocomplete";
+    import FondoSelect from "../../cadeco/fondo/Select";
     export default {
         name: "cuenta-fondo-create",
-        components: {FondoAutocomplete},
+        components: {FondoSelect},
         data() {
             return {
                 id_fondo: '',
@@ -107,3 +108,12 @@
         }
     }
 </script>
+
+<style scoped>
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+    }
+</style>
