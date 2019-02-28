@@ -12,8 +12,8 @@
                 noOptionsText="No hay opciones disponibles"
                 :options="rootNodes"
                 :load-options="loadOptions"
-                placeholder="-- Material --"
-                :disableBranchNodes="true"
+                placeholder="-- Concepto --"
+                :disableBranchNodes="disableBranchNodes"
                 v-model="val"
         />
     </span>
@@ -22,7 +22,7 @@
 <script>
     export default {
         props: ['value','id', 'multiple', 'error', 'scope'],
-        name: "material-select",
+        name: "concepto-select",
         data() {
             return {
                 val: null,
@@ -49,29 +49,29 @@
         methods: {
             getRootNodes() {
                 let self = this
-                return self.$store.dispatch('cadeco/material/index', {
+                return self.$store.dispatch('cadeco/concepto/index', {
                     params: { scope: this.scp }
                 })
                     .then(data => {
-                        self.rootNodes = data.map(material => ({
-                            id: material.id,
-                            children: material.tiene_hijos != 0 ? null : undefined,
-                            label: material.descripcion,
+                        self.rootNodes = data.map(concepto => ({
+                            id: concepto.id,
+                            children: concepto.tiene_hijos != 0 ? null : undefined,
+                            label: concepto.descripcion,
                         }));
                         self.disabled = false;
                     })
             },
 
             loadOptions({ action, parentNode, callback }) {
-                return this.$store.dispatch('cadeco/material/find',{
+                return this.$store.dispatch('cadeco/concepto/find',{
                     id: parentNode.id,
                     params: { include: 'hijos', scope: this.scope }
                 })
                     .then(data => {
-                        parentNode.children = data.hijos.data.map(material => ({
-                            id: material.id,
-                            children: material.tiene_hijos != 0 ? null : undefined,
-                            label: `[${material.numero_parte ? material.numero_parte : 'N/A'}] ${material.descripcion}`
+                        parentNode.children = data.hijos.data.map(concepto => ({
+                            id: concepto.id,
+                            children: concepto.tiene_hijos != 0 ? null : undefined,
+                            label: concepto.descripcion,
                         }))
                     })
                     .then(() => {

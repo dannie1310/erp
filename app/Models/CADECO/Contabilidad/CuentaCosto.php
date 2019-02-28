@@ -2,30 +2,28 @@
 /**
  * Created by PhpStorm.
  * User: jfesquivel
- * Date: 28/01/19
- * Time: 01:48 PM
+ * Date: 21/02/19
+ * Time: 05:09 PM
  */
 
 namespace App\Models\CADECO\Contabilidad;
 
 
-use App\Models\CADECO\Concepto;
+use App\Models\CADECO\Costo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CuentaConcepto extends Model
+class CuentaCosto extends Model
 {
     use SoftDeletes;
 
     protected $connection = 'cadeco';
-    protected $table = 'Contabilidad.cuentas_conceptos';
+    protected $table = 'Contabilidad.cuentas_costos';
+    protected $primaryKey = 'id_cuenta_costo';
+
     protected $fillable = [
-        'cuenta',
-        'id_concepto'
-    ];
-    public $searchable = [
-        'cuenta',
-        'concepto.descripcion',
+        'id_costo',
+        'cuenta'
     ];
 
     protected static function boot()
@@ -38,8 +36,8 @@ class CuentaConcepto extends Model
         });
     }
 
-    public function concepto()
+    public function costo()
     {
-        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+        return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
 }
