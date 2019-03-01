@@ -49,7 +49,7 @@
             paginate(payload = {}) {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/paginate', {
                     ...payload,
-                    include: [ 'naturaleza']
+                    include: ['usuario', 'naturaleza']
                 })
             }
         },
