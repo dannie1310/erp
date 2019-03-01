@@ -10,6 +10,7 @@ namespace App\Models\CADECO\Contabilidad;
 
 
 use App\Facades\Context;
+use function foo\func;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -66,5 +67,26 @@ class TipoCuentaContable extends Model
     public function scopeSinCuenta($query)
     {
         return $query->doesntHave('cuentaContable');
+    }
+
+    public function scopeParaBancos($query)
+    {
+        return $query->where('tipo', '=', 5);
+    }
+
+    public function cuentasBanco()
+    {
+        return $this->hasMany(CuentaBanco::class, 'id_tipo_cuenta_contable');
+    }
+
+    public function scopeDisponiblesParaCuentaBancaria($query, $id_cuenta){
+
+        $existentes = self::query()->whereHas('cuentasBanco', function ($q) use ($id_cuenta) {
+            return $q->whereHas('cuentaContable', function ($q) use ($id_cuenta) {
+                return $q->where('id_cuenta', '=', $id_cuenta);
+            });
+        })->pluck('id_tipo_cuenta_contable');
+
+        return $query->whereNotIn('id_tipo_cuenta_contable', $existentes);
     }
 }

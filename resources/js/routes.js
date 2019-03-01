@@ -53,6 +53,16 @@ export const routes = [
                 }
             },
             {
+                path: 'cierre-periodo',
+                name: 'cierre-periodo',
+                component: require('./components/contabilidad/cierre-periodo/Index'),
+                meta: {
+                    title: 'Cierres de periodo',
+                    breadcrumb: {name: 'CIERRES DE PERIODO', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
                 path: 'cuenta-almacen',
                 name: 'cuenta-almacen',
                 component: require('./components/contabilidad/cuenta-almacen/Index'),
