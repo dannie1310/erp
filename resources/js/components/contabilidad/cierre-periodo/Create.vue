@@ -50,8 +50,7 @@
         data() {
             return {
                     anio: '',
-                    mes: '',
-                fecha: ''
+                    mes: ''
             }
         },
 
@@ -90,7 +89,6 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        console.log(this.$data)
                         this.store()
                     }
                 });

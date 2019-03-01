@@ -31,6 +31,7 @@
                     { title: '#', field: 'id', sortable: false },
                     { title: 'Año', field: 'anio', sortable: true },
                     { title: 'Mes', field: 'mes', sortable: true },
+                    { title: 'Persona que cerró', field: 'registro', sortable: false },
                     { title: 'Fecha de Cierre', field: 'fecha_cierre', sortable: true },
                     { title: 'Estatus', field: 'estatus', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
@@ -49,7 +50,9 @@
 
         methods: {
             paginate(payload = {}) {
-                return this.$store.dispatch('contabilidad/cierre-periodo/paginate', payload)
+                return this.$store.dispatch('contabilidad/cierre-periodo/paginate', payload,{
+                    scope: 'ordenar'
+                })
             }
         },
         computed: {
@@ -75,6 +78,7 @@
                             id: (i + 1) + self.query.offset,
                             anio: cierre.anio,
                             mes: cierre.mes,
+                            registro: cierre.usuario.nombre,
                             fecha_cierre: cierre.fecha,
                             estatus: self.$data.estado,
                             buttons: $.extend({}, {

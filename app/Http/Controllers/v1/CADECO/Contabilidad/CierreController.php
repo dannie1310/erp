@@ -48,7 +48,7 @@ class CierreController extends Controller
      */
     public function __construct(CierreService $service, Manager $fractal, CierreTransformer $transformer)
     {
-        $this->middleware('auth');
+       $this->middleware('auth');
         $this->middleware('context');
 
         $this->service = $service;

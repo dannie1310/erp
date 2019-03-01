@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Contabilidad\Cierre;
 use League\Fractal\TransformerAbstract;
 
@@ -20,7 +21,8 @@ class CierreTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'apertura'
+        'apertura',
+        'usuario'
     ];
 
     /**
@@ -29,7 +31,8 @@ class CierreTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'apertura'
+        'apertura',
+        'usuario'
     ];
 
     /**
@@ -48,6 +51,13 @@ class CierreTransformer extends TransformerAbstract
     public function includeApertura(Cierre $model) {
         if($apertura = $model->apertura){
             return $this->item($apertura, new AperturaTransformer);
+        }
+        return null;
+    }
+
+    public function includeUsuario(Cierre $model){
+        if($usuario = $model->usuario){
+            return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }

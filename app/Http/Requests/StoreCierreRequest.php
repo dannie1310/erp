@@ -22,7 +22,7 @@ class StoreCierreRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('registrar_cierre_periodo');
+       return auth()->user()->can('generar_cierre_periodo');
     }
 
     /**

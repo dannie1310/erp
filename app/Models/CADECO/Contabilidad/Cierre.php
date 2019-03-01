@@ -19,6 +19,10 @@ class Cierre extends Model
     use SoftDeletes;
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cierres';
+    protected $fillable = ['anio',
+                            'mes',
+                            'registro',
+                            'id_obra'];
 
     protected static function boot()
     {
@@ -37,6 +41,10 @@ class Cierre extends Model
     public function apertura()
     {
         return $this->hasOne(Apertura::class, 'id_cierre', 'id')->orderBy('inicio_apertura','desc');
+    }
+
+    public function usuario(){
+        return $this->hasOne(Usuario::class, 'idusuario', 'registro');
     }
 
     public function mes($model){
@@ -66,5 +74,9 @@ class Cierre extends Model
             case 12:
                 return 'Diciembre';
         }
+    }
+
+    public function scopeOrdenar($query){
+        return $query->orderBy('id', 'desc');
     }
 }
