@@ -75,8 +75,4 @@ class Cierre extends Model
                 return 'Diciembre';
         }
     }
-
-    public function scopeOrdenar($query){
-        return $query->orderBy('id', 'desc');
-    }
 }

@@ -50,8 +50,10 @@
 
         methods: {
             paginate(payload = {}) {
-                return this.$store.dispatch('contabilidad/cierre-periodo/paginate', payload,{
-                    scope: 'ordenar'
+                return this.$store.dispatch('contabilidad/cierre-periodo/paginate', {
+                    ...payload,
+                    sort: 'id',
+                    order: 'desc'
                 })
             }
         },
