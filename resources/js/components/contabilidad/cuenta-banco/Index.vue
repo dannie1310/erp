@@ -1,6 +1,9 @@
 <template>
     <div class="row">
         <div class="col-12">
+          <cuenta-banco-create @created="paginate(query)"></cuenta-banco-create>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -17,40 +20,42 @@
 </template>
 
 <script>
+    import CuentaBancoCreate from "./Create";
     export default {
         name: "cuenta-banco-index",
+        components: {CuentaBancoCreate},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Cuenta', field: 'cuenta', sortable: true },
-                    { title: 'Tipo Cuenta Contable', field: 'tipo', sortable: true },
-                    { title: 'Tipo Cuenta', field: 'cuenta_contable', sortable: false },
-                    { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Cuenta', field: 'razon_social', sortable: true },
+                    { title: 'Número de Cuentas Registradas', field: 'cuentas_count', sortable: false },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                query: {
-                }
+                query: {}
             }
         },
-
         mounted() {
-            this.paginate()
+                this.paginate()
         },
-
         methods: {
             paginate(payload = {}) {
-                return this.$store.dispatch('contabilidad/cuenta-banco/paginate', payload)
+                return this.$store.dispatch('cadeco/cuenta/paginate', {
+                    ...payload,
+                    include: ['empresa','cuentasBanco'],
+                    scope: 'paraTraspaso'
+                })
             }
         },
         computed: {
             cuentas(){
-                return this.$store.getters['contabilidad/cuenta-banco/cuentas'];
+                return this.$store.getters['cadeco/cuenta/cuentas'];
             },
             meta(){
-                return this.$store.getters['contabilidad/cuenta-banco/meta'];
+                return this.$store.getters['cadeco/cuenta/meta'];
             },
         },
         watch: {
@@ -61,11 +66,12 @@
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            cuenta: cuenta.cuenta,
-                            tipo: cuenta.tipo.descripcion,
-                            cuenta_contable: cuenta.cuentaContable.abreviatura,
+                            razon_social: cuenta.numero+" ("+cuenta.abreviatura+" "+cuenta.empresa.razon_social+")",
+                            cuentas_count: cuenta.cuentasBanco.data.length,
                             buttons: $.extend({}, {
-                                edit: self.$root.can('editar_cuenta_banco') ? true : undefined,
+                                show: true,
+                                edit: self.$root.can('editar_cuenta_contable_bancaria') ? true : undefined,
+                                razon_social: cuenta.numero+" ("+cuenta.abreviatura+" "+cuenta.empresa.razon_social+")",
                                 id: cuenta.id
                             })
                         })

@@ -239,9 +239,11 @@
             },
 
             getCuentas() {
-                return this.$store.dispatch('cadeco/cuenta/fetch', {
-                    include: 'empresa',
-                    scope: 'paraTraspaso'
+                return this.$store.dispatch('cadeco/cuenta/index', {
+                    params: {
+                        include: 'empresa',
+                        scope: 'paraTraspaso'
+                    }
                 })
             },
 
