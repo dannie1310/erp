@@ -22,7 +22,8 @@ class TipoCuentaContableTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'cuentaContable',
-        'usuario'
+        'usuario',
+        'naturaleza'
     ];
 
     /**
@@ -62,6 +63,13 @@ class TipoCuentaContableTransformer extends TransformerAbstract
     public function includeUsuario(TipoCuentaContable $model){
         if($usuario = $model->registro){
             return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    public function includeNaturaleza(TipoCuentaContable $model){
+        if($naturaleza = $model->naturalezaPoliza){
+            return $this->item($naturaleza, new NaturalezaPolizaTransformer);
         }
         return null;
     }

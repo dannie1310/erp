@@ -153,4 +153,8 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
         return $permisos;
     }
+
+    public function getNombreCompletoAttribute(){
+        return $this->nombre." ".$this->apaterno." ".$this->amaterno;
+    }
 }

@@ -36,7 +36,8 @@
                 data: [],
                 total: 0,
                 query: {
-                }
+                },
+                naturaleza: ''
             }
         },
 
@@ -48,7 +49,7 @@
             paginate(payload = {}) {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/paginate', {
                     ...payload,
-                    include: 'usuario'
+                    include: [ 'naturaleza']
                 })
             }
         },
@@ -66,11 +67,16 @@
                     let self = this
                     self.$data.data = []
                     tipos.forEach(function (tipo, i) {
+                        if(typeof tipo.naturaleza  !== 'undefined') {
+                            self.$data.naturaleza = tipo.naturaleza.descripcion;
+                        }else{
+                            self.$data.naturaleza = '';
+                        }
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             descripcion: tipo.descripcion,
-                            registro: tipo.usuario.nombre,
-                            naturaleza: tipo.naturaleza.descripcion
+                            registro: tipo,
+                            naturaleza: self.$data.naturaleza
                         })
                     });
                 },

@@ -53,6 +53,11 @@ class TipoCuentaContable extends Model
         return $this->hasOne(Usuario::class, 'idusuario', 'registro');
     }
 
+    public function naturalezaPoliza() {
+        return $this->belongsTo(NaturalezaPoliza::class, 'id_naturaleza_poliza');
+
+    }
+
     public function scopeGenerales($query)
     {
         return $query->where('tipo', '=', 1);
