@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-
+            <tipo-cuenta-contable-create></tipo-cuenta-contable-create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -20,10 +20,10 @@
 </template>
 
 <script>
-
+    import TipoCuentaContableCreate from "./Create";
     export default {
         name: "tipo-cuenta-contable-index",
-
+        components: {TipoCuentaContableCreate},
         data() {
             return {
                 HeaderSettings: false,
@@ -49,7 +49,7 @@
             paginate(payload = {}) {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/paginate', {
                     ...payload,
-                    include: ['usuario', 'naturaleza']
+                    include: ['naturaleza']
                 })
             }
         },

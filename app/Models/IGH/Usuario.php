@@ -9,7 +9,6 @@
 namespace App\Models\IGH;
 
 use App\Facades\Context;
-use App\Models\CADECO\Contabilidad\TipoCuentaContable;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Traits\IghAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
