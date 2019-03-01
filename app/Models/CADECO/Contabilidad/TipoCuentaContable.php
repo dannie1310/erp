@@ -21,6 +21,15 @@ class TipoCuentaContable extends Model
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.int_tipos_cuentas_contables';
     protected $primaryKey = 'id_tipo_cuenta_contable';
+    protected $fillable = [
+        'id_tipo_cuenta_contable',
+        'descripcion',
+        'id_obra',
+        'registro',
+        'motivo',
+        'tipo',
+        'id_naturaleza_poliza'
+    ];
 
     protected static function boot()
     {
