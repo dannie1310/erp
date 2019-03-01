@@ -62,6 +62,12 @@
                             <p>Cuentas de Materiales</p>
                         </router-link>
                     </li>
+                    <li class="nav-item" v-if="$root.can('consultar_tipo_cuenta_contable')">
+                        <router-link :to="{name: 'tipo-cuenta-contable'}" class="nav-link" :class="{active: this.$route.name == 'tipo-cuenta-contable'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Tipo Cuenta Contable</p>
+                        </router-link>
+                    </li>
                 </ul>
             </li>
 

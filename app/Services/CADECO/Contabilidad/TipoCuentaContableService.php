@@ -32,4 +32,9 @@ class TipoCuentaContableService
     {
         return $this->repository->all();
     }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
 }

@@ -133,6 +133,16 @@ export const routes = [
                 }
             },
             {
+                path: 'tipo-cuenta-contable',
+                name: 'tipo-cuenta-contable',
+                component: require('./components/contabilidad/tipo-cuenta-contable/Index'),
+                meta: {
+                    title: 'Tipos de Cuentas Contables',
+                    breadcrumb: {name: 'TIPOS DE CUENTAS CONTABLES', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
                 path: 'poliza',
                 component: require('./components/contabilidad/poliza/Layout.vue'),
                 meta: {

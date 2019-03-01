@@ -10,6 +10,7 @@ namespace App\Models\CADECO\Contabilidad;
 
 
 use App\Facades\Context;
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -28,11 +29,19 @@ class TipoCuentaContable extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
+
+        static::creating(function($model) {
+            $model->tipo = 1;
+        });
     }
 
     public function cuentaContable()
     {
         return $this->hasOne(CuentaContable::class, 'id_int_tipo_cuenta_contable');
+    }
+
+    public function registro(){
+        return $this->hasOne(Usuario::class, 'idusuario', 'registro');
     }
 
     public function scopeGenerales($query)

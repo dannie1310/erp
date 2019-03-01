@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Contabilidad\TipoCuentaContable;
 use League\Fractal\TransformerAbstract;
 
@@ -20,7 +21,8 @@ class TipoCuentaContableTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'cuentaContable'
+        'cuentaContable',
+        'usuario'
     ];
 
     /**
@@ -28,7 +30,8 @@ class TipoCuentaContableTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $defaultIncludes = [];
+    protected $defaultIncludes = [
+    ];
 
 
     public function transform(TipoCuentaContable $model) {
@@ -49,6 +52,17 @@ class TipoCuentaContableTransformer extends TransformerAbstract
             return $this->item($cuenta, new CuentaContableTransformer);
         }
 
+        return null;
+    }
+
+    /**
+     * @param TipoCuentaContable $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuario(TipoCuentaContable $model){
+        if($usuario = $model->registro){
+            return $this->item($usuario, new UsuarioTransformer);
+        }
         return null;
     }
 }
