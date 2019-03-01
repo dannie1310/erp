@@ -50,7 +50,12 @@ class TipoCuentaContable extends Model
         return $this->hasOne(CuentaContable::class, 'id_int_tipo_cuenta_contable');
     }
 
-    public function registro(){
+    public function cuentasBanco()
+    {
+        return $this->hasMany(CuentaBanco::class, 'id_tipo_cuenta_contable');
+    }
+
+    public function usuario(){
         return $this->hasOne(Usuario::class, 'idusuario', 'registro');
     }
 
@@ -72,11 +77,6 @@ class TipoCuentaContable extends Model
     public function scopeParaBancos($query)
     {
         return $query->where('tipo', '=', 5);
-    }
-
-    public function cuentasBanco()
-    {
-        return $this->hasMany(CuentaBanco::class, 'id_tipo_cuenta_contable');
     }
 
     public function scopeDisponiblesParaCuentaBancaria($query, $id_cuenta){

@@ -60,7 +60,7 @@ class TipoCuentaContableTransformer extends TransformerAbstract
      * @return \League\Fractal\Resource\Item|null
      */
     public function includeUsuario(TipoCuentaContable $model){
-        if($usuario = $model->registro){
+        if($usuario = $model->usuario){
             return $this->item($usuario, new UsuarioTransformer);
         }
         return null;

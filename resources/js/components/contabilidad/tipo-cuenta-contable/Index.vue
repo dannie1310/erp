@@ -49,7 +49,7 @@
             paginate(payload = {}) {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/paginate', {
                     ...payload,
-                    include: ['naturaleza']
+                    include: ['naturaleza', 'usuario']
                 })
             }
         },
@@ -75,7 +75,7 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             descripcion: tipo.descripcion,
-                            registro: tipo,
+                            registro: tipo.usuario.nombre,
                             naturaleza: self.$data.naturaleza
                         })
                     });
