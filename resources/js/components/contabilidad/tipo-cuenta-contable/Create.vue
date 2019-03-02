@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_tipo_cuenta_contable')" class="btn btn-app btn-info pull-right">
+        <button @click="init" class="btn btn-app btn-info pull-right">
             <i class="fa fa-plus"></i> Registrar Tipo de Cuenta Contable
         </button>
 
@@ -18,38 +18,35 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="id_almacen">Almacén</label>
-                                        <select
-                                                name="id_almacen"
-                                                id="id_almacen"
-                                                data-vv-as="Almacén"
+                                        <label for="descripcion">Descripción de Tipo Cuenta Contable</label>
+                                        <input
+                                                type="text"
+                                                name="descripcion"
                                                 v-validate="{required: true}"
                                                 class="form-control"
-                                                v-model="id_almacen"
-                                                :class="{'is-invalid': errors.has('id_almacen')}"
+                                                id="descripcion"
+                                                placeholder="Descripcion"
+                                                v-model="data.descripcion"
                                         >
-                                            <option value>-- Almacén --</option>
-                                            <option v-for="item in almacenes" :value="item.id">{{ item.descripcion }}</option>
-                                        </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="cuenta">Cuenta</label>
-                                        <input
-                                                type="text"
-                                                name="cuenta"
-                                                data-vv-as="Cuenta"
-                                                v-validate="{required: true, regex: datosContables}"
+                                        <label for="id_naturaleza">Naturaleza de Cuenta</label>
+                                        <select
+                                                name="id_naturaleza"
+                                                id="id_naturaleza"
+                                                data-vv-as="Naturaleza"
+                                                v-validate="{required: true}"
                                                 class="form-control"
-                                                v-mask="{regex: datosContables}"
-                                                id="cuenta"
-                                                placeholder="Cuenta"
-                                                v-model="cuenta"
-                                                :class="{'is-invalid': errors.has('cuenta')}">
-                                        <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
+                                                v-model="id_naturaleza"
+                                                :class="{'is-invalid': errors.has('id_naturaleza')}"
+                                        >
+                                            <option value>-- Seleccione --</option>
+                                            <option v-for="item in tipos" :value="item.id">{{ item.descripcion }}</option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_naturaleza')">{{ errors.first('id_naturaleza') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -68,39 +65,37 @@
 
 <script>
     export default {
-        name: "cuenta-almacen-create",
+        name: "tipo-cuenta-contable-create",
         data() {
             return {
-                id_almacen: '',
-                cuenta: ''
+                descripcion: '',
+                id_naturaleza: ''
             }
         },
 
         mounted() {
-            this.getAlmacenes();
+            this.getTipos();
         },
 
         methods: {
             init() {
                 $(this.$refs.modal).modal('show');
 
-                this.id_almacen = '';
-                this.cuenta = '';
+                this.id_naturaleza = '';
+                this.descripcion = '';
 
                 this.$validator.reset()
             },
 
-            getAlmacenes() {
-                return this.$store.dispatch('cadeco/almacen/index', {
-                    params: { scope: 'sinCuenta' }
-                })
+            getTipos() {
+                return this.$store.dispatch('contabilidad/naturaleza-poliza/index');
             },
 
             store() {
-                return this.$store.dispatch('contabilidad/cuenta-almacen/store', this.$data)
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/store', this.$data)
                     .then(() => {
-                        this.$store.commit('cadeco/almacen/SET_ALMACENES', this.almacenes.filter(almacen => {
-                            return almacen.id != this.id_almacen;
+                        this.$store.commit('contabilidad/naturaleza-poliza/SET_TIPOS', this.tipos.filter(tipo => {
+                            return tipo.id != this.id_naturaleza;
                         }));
                         $(this.$refs.modal).modal('hide');
                     });
@@ -116,8 +111,8 @@
         },
 
         computed: {
-            almacenes() {
-                return this.$store.getters['cadeco/almacen/almacenes'];
+            tipos() {
+                return this.$store.getters['contabilidad/naturaleza-poliza/tipos'];
             },
 
             datosContables() {

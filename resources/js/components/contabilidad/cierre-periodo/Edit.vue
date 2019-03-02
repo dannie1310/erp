@@ -61,7 +61,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                  <div v-if="data.estatus == 1" class="col-md-6">
+                                <div v-if="data.estatus == 1" class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="motivo">Motivo</label>
                                         <input
