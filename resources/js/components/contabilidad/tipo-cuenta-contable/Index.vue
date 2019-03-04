@@ -42,7 +42,8 @@
         },
 
         mounted() {
-            this.paginate()
+            this.paginate(),
+            this.$store.dispatch('contabilidad/naturaleza-poliza/index')
         },
 
         methods: {

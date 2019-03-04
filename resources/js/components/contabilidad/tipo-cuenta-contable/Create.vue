@@ -26,7 +26,7 @@
                                                 class="form-control"
                                                 id="descripcion"
                                                 placeholder="Descripcion"
-                                                v-model="data.descripcion"
+                                                v-model="descripcion"
                                         >
                                     </div>
                                 </div>
@@ -44,7 +44,7 @@
                                                 :class="{'is-invalid': errors.has('id_naturaleza')}"
                                         >
                                             <option value>-- Seleccione --</option>
-                                            <option v-for="item in tipos" :value="item.id">{{ item.descripcion }}</option>
+                                            <option v-for="item in naturalezas" :value="item.id">{{ item.descripcion }}</option>
                                         </select>
                                         <div class="invalid-feedback" v-show="errors.has('id_naturaleza')">{{ errors.first('id_naturaleza') }}</div>
                                     </div>
@@ -73,8 +73,14 @@
             }
         },
 
-        mounted() {
-            this.getTipos();
+        computed: {
+            naturalezas() {
+                return this.$store.getters['contabilidad/naturaleza-poliza/naturalezas'];
+            },
+
+            datosContables() {
+                return this.$store.getters['auth/datosContables']
+            }
         },
 
         methods: {
@@ -87,17 +93,11 @@
                 this.$validator.reset()
             },
 
-            getTipos() {
-                return this.$store.dispatch('contabilidad/naturaleza-poliza/index');
-            },
-
             store() {
-                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/store', this.$data)
-                    .then(() => {
-                        this.$store.commit('contabilidad/naturaleza-poliza/SET_TIPOS', this.tipos.filter(tipo => {
-                            return tipo.id != this.id_naturaleza;
-                        }));
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contabilidad/store', this.$data)
+                    .then((data) => {
                         $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data);
                     });
             },
 
@@ -107,16 +107,6 @@
                         this.store()
                     }
                 });
-            },
-        },
-
-        computed: {
-            tipos() {
-                return this.$store.getters['contabilidad/naturaleza-poliza/tipos'];
-            },
-
-            datosContables() {
-                return this.$store.getters['auth/datosContables']
             }
         }
     }

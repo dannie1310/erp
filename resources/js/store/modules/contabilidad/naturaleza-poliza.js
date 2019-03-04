@@ -3,12 +3,12 @@ const URI = '/api/contabilidad/naturaleza-poliza/';
 export default {
     namespaced: true,
     state: {
-        tipos: []
+        naturalezas: []
     },
 
     mutations: {
-        SET_TIPOS(state, data) {
-            state.tipos = data
+        SET_NATURALEZAS(state, data) {
+            state.naturalezas = data
         }
     },
 
@@ -17,14 +17,14 @@ export default {
             axios.get(URI, {params: payload})
                 .then(r => r.data)
                 .then((data) => {
-                    context.commit('SET_TIPOS', data.data)
+                    context.commit('SET_NATURALEZAS', data.data)
                 })
         }
     },
 
     getters: {
-        tipos(state) {
-            return state.tipos
+        naturalezas(state) {
+            return state.naturalezas
         }
     }
 }
