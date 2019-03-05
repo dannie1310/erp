@@ -51,15 +51,13 @@ export default {
             });
         },
 
-        find(context, id) {
+        find(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_CUENTA', null)
                 axios
-                    .get(URI + id)
+                    .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
-                        context.commit('SET_CUENTA', data)
-                        resolve();
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error)
@@ -73,7 +71,15 @@ export default {
                     title: "Registrar Cuenta",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -83,7 +89,7 @@ export default {
                                 .then(data => {
                                     swal("Cuenta registrada correctamente", {
                                         icon: "success",
-                                        timer: 1500,
+                                        timer: 2000,
                                         buttons: false
                                     }).then(() => {
                                         resolve(data);
@@ -103,7 +109,16 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Cuenta de Almacén",
                     icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
+                    closeOnConfirm: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -113,21 +128,19 @@ export default {
                                 .then(data => {
                                     swal("Cuenta actualizada correctamente", {
                                         icon: "success",
-                                        timer: 1500,
+                                        timer: 2000,
                                         buttons: false
+                                    }).then(() => {
+                                        resolve(data);
                                     })
-                                        .then(() => {
-                                            context.commit('UPDATE_CUENTA', data);
-                                            resolve();
-                                        })
                                 })
                                 .catch(error => {
                                     reject(error);
-                                })
+                                });
                         }
                     });
             });
-        }
+        },
     },
 
     getters: {

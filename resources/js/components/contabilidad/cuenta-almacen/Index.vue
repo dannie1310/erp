@@ -88,7 +88,8 @@
                         cuenta: cuenta.cuenta,
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_cuenta_almacen') ? true : undefined,
-                            id: cuenta.id
+                            id: cuenta.id,
+                            cuenta: cuenta
                         })
                     }));
                 },

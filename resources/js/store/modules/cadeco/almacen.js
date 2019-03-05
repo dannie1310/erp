@@ -3,16 +3,13 @@ const URI = '/api/almacen/';
 export default {
     namespaced: true,
     state: {
-        almacenes: [],
-        cargando: false
+        almacenes: []
     },
 
     mutations: {
         SET_ALMACENES(state, data) {
             state.almacenes = data
-        },
-
-
+        }
     },
 
     actions: {
@@ -21,12 +18,12 @@ export default {
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        resolve(data);
+                    .then(data => {
+                        resolve(data.data);
                     })
                     .catch(error => {
                         reject(error)
-                    })
+                    });
             });
         }
     },
@@ -34,10 +31,6 @@ export default {
     getters: {
         almacenes(state) {
             return state.almacenes
-        },
-
-        cargando(state) {
-            return state.cargando
         }
     }
 }

@@ -1,12 +1,13 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info">
-            <i class="fa fa-pencil"></i>
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info" :disabled="cargando">
+            <i class="fa fa-pencil" v-if="!cargando"></i>
+            <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
 
         <!-- Modal -->
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">EDICIÓN DE CUENTA DE ALMACÉN</h5>
@@ -16,10 +17,16 @@
                     </div>
                     <form role="form" v-if="cuenta" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="cuenta">Cuenta</label>
+                            <div role="form">
+                                <div class="form-group row">
+                                    <label for="almacen" class="col-sm-2 col-form-label">Almacen</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control">{{ cuenta.almacen.descripcion}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group row error-content">
+                                    <label for="cuenta" class="col-sm-2 col-form-label">Cuenta</label>
+                                    <div class="col-sm-10">
                                         <input
                                                 type="text"
                                                 name="cuenta"
@@ -33,12 +40,6 @@
                                                 @input="updateAttribute"
                                                 :class="{'is-invalid': errors.has('cuenta')}">
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="almacen">Almacen</label>
-                                        <input readonly type="text" class="form-control" id="almacen" :value="cuenta.almacen.descripcion">
                                     </div>
                                 </div>
                             </div>
@@ -58,6 +59,11 @@
     export default {
         name: "cuenta-almacen-edit",
         props: ['id'],
+        data() {
+            return {
+                cargando: false,
+            }
+        },
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
@@ -70,15 +76,22 @@
 
         methods: {
             find(id) {
-                return this.$store.dispatch('contabilidad/cuenta-almacen/find', id)
-                    .then(() => {
+                this.$store.commit('contabilidad/cuenta-almacen/SET_CUENTA', null)
+                this.cargando = true;
+                return this.$store.dispatch('contabilidad/cuenta-almacen/find', {id: id})
+                    .then(data => {
+                        this.$store.commit('contabilidad/cuenta-almacen/SET_CUENTA', data)
                         $(this.$refs.modal).modal('show');
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             },
 
             update() {
                 return this.$store.dispatch('contabilidad/cuenta-almacen/update', this.cuenta)
-                    .then(() => {
+                    .then(data => {
+                        this.$store.commit('contabilidad/cuenta-almacen/UPDATE_CUENTA', data);
                         $(this.$refs.modal).modal('hide');
                     })
             },
