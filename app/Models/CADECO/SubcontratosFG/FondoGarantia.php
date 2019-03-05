@@ -53,6 +53,16 @@ class FondoGarantia extends Model
         return '$ ' . number_format($this->saldo,2);
     }
 
+    /*public function getSumaCargosAttribute()
+    {
+        return $this->movimientos()->where("naturaleza",1)->sum('importe');
+    }
+
+    public function getSumaAbonosAttribute()
+    {
+        return $this->movimientos()->where("naturaleza",2)->sum('importe');
+    }*/
+
     public function subcontrato()
     {
         return $this->hasOne(Subcontrato::class, "id_transaccion","id_subcontrato");

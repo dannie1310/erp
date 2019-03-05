@@ -86,7 +86,7 @@ class SolicitudMovimientoFondoGarantiaTransformer extends TransformerAbstract
      * Include Movimientos
      *
      * @param SolicitudMovimientoFondoGarantia $model
-     * @return \League\Fractal\Resource\Item
+     * @return \League\Fractal\Resource\Collection
      */
     public function includeMovimientos(SolicitudMovimientoFondoGarantia $model) {
         if ($movimientos = $model->movimientos) {

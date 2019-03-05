@@ -22,7 +22,8 @@ class FondoGarantiaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'subcontrato'
+        'subcontrato',
+        'movimientos'
     ];
 
     /**
@@ -45,6 +46,8 @@ class FondoGarantiaTransformer extends TransformerAbstract
             'fecha' => (string)$model->fecha,
             'saldo_format' => (string)$model->saldo_format,
             'saldo' => (float)$model->saldo,
+            'suma_cargos_format' => (float)$model->suma_cargos,
+            'suma_abonos_format' => (float)$model->suma_abonos,
             'created_at'=>(string)$model->created_at,
         ];
     }
@@ -61,4 +64,19 @@ class FondoGarantiaTransformer extends TransformerAbstract
         }
         return null;
     }
+
+    /**
+     * Include Movimientos
+     *
+     * @param FondoGarantia $model
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeMovimientos(FondoGarantia $model) {
+        if ($movimientos = $model->movimientos) {
+            $movimientos = $model->movimientos;
+            return $this->collection($movimientos, new MovimientoFondoGarantiaTransformer);
+        }
+        return null;
+    }
+
 }

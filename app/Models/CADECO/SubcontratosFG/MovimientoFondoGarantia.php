@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\SubcontratosFG;
 
 use App\Models\CADECO\Transaccion;
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class MovimientoFondoGarantia extends Model
@@ -55,6 +56,31 @@ class MovimientoFondoGarantia extends Model
     public function transaccion_generada()
     {
         return $this->hasOne(Transaccion::class,'id_transaccion', 'id_transaccion_generada');
+    }
+
+    public function getUsuarioRegistraDescAttribute()
+    {
+        $usuario = Usuario::where('idusuario',$this->usuario_registra)->first();
+        if($usuario)
+        {
+            return $usuario->usuario;
+        }
+        return null;
+    }
+
+    public function getUsuarioCompletoRegistraDescAttribute()
+    {
+        $usuario = Usuario::where('idusuario',$this->usuario_registra)->first();
+        if($usuario)
+        {
+            return $usuario->nombre.' '.$usuario->apaterno.' '.$usuario->amaterno;
+        }
+        return null;
+    }
+
+    public function getSaldoAttribute()
+    {
+        return $this->fondo_garantia->movimientos()->where("id","<=",$this->id)->sum('importe');
     }
 
 }
