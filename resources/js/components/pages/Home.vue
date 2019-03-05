@@ -16,6 +16,20 @@
         </div>
         <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box">
+                <span class="info-box-icon bg-success elevation-1"><i class="fa fa-file-text-o fa-fw"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-number">FORMATO</span>
+                    <router-link :to="{name: 'formato'}">
+                        <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
+                    </router-link>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box">
                 <span class="info-box-icon bg-primary elevation-1"><i class="fa fa-usd"></i></span>
 
                 <div class="info-box-content">

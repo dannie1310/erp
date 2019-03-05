@@ -47,6 +47,14 @@
                     </router-link>
                 </div>
                 <div class="d-block">
+                    <router-link :to="{name: 'formato'}" class="d-flex flex-wrap mb-3">
+                        <div class="bg-success elevation-2 text-center" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
+                            <i class="fa fa-file-text-o fa-fw"></i>
+                        </div>
+                        Formato
+                    </router-link>
+                </div>
+                <div class="d-block">
                     <router-link :to="{name: 'tesoreria'}" class="d-flex flex-wrap mb-3">
                         <div class="bg-primary elevation-2 text-center" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
                             <i class="fa fa-usd"></i>
