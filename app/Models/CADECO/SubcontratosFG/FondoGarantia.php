@@ -53,15 +53,50 @@ class FondoGarantia extends Model
         return '$ ' . number_format($this->saldo,2);
     }
 
-    /*public function getSumaCargosAttribute()
+    public function getSumaCargosAttribute()
     {
-        return $this->movimientos()->where("naturaleza",1)->sum('importe');
+        return $this->movimientos()->join("SubcontratosFG.ctg_tipos_mov","ctg_tipos_mov.id","movimientos.id_tipo_movimiento")
+            ->where("naturaleza",1)->sum('importe');
     }
 
     public function getSumaAbonosAttribute()
     {
-        return $this->movimientos()->where("naturaleza",2)->sum('importe');
-    }*/
+        return $this->movimientos()->join("SubcontratosFG.ctg_tipos_mov","ctg_tipos_mov.id","movimientos.id_tipo_movimiento")
+            ->where("naturaleza",2)->sum('importe');
+    }
+
+    public function getPorcentajeCargosAttribute()
+    {
+        if($this->suma_cargos>abs($this->suma_abonos)){
+            return 100;
+        }
+        else
+        {
+            if(abs($this->suma_abonos)>0){
+                return number_format($this->suma_cargos * 100 / abs($this->suma_abonos),0);
+            }
+            else{
+                return 0;
+            }
+        }
+    }
+
+    public function getPorcentajeAbonosAttribute()
+    {
+        if(abs($this->suma_abonos)>$this->suma_cargos){
+            return 100;
+        }
+        else
+        {
+            if($this->suma_cargos>0)
+            {
+                return number_format(abs($this->suma_abonos) * 100 / $this->suma_cargos,0);
+            }
+            else{
+                return 0;
+            }
+        }
+    }
 
     public function subcontrato()
     {

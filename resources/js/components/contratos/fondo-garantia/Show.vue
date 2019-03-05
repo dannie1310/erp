@@ -18,38 +18,35 @@
 
                             <div  v-if="fondo_garantia" class="card">
                                 <div class="row">
-                                <div class=" offset-md-6 col-md-3">
-                                    <div class="info-box">
-                                      <span class="info-box-icon bg-success"><i class="fa fa-dollar"></i></span>
-
-                                      <div class="info-box-content">
-                                        <span class="info-box-text">Saldo</span>
-                                        <span class="info-box-number">{{fondo_garantia.saldo_format}}</span>
-                                      </div>
-                                        <!-- /.info-box-content -->
-                                    </div>
-
-                                </div>
-                                <div class="col-md-3">
-                                    <div>
-                                        <label>Suma Cargos:</label> {{fondo_garantia.suma_cargos_format}}
-                                    </div>
-                                    <div>
-                                        <label>Suma Abonos:</label> {{fondo_garantia.suma_abonos_format}}
-                                    </div>
-                                    <div class="progress  progress-sm">
-                                        <div class="progress-bar bg-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                                          <span class="sr-only">40%</span>
+                                    <div class=" offset-md-6 col-md-3">
+                                        <div class="info-box">
+                                          <span class="info-box-icon bg-success"><i class="fa fa-dollar"></i></span>
+                                          <div class="info-box-content">
+                                            <span class="info-box-text">Saldo</span>
+                                            <span class="info-box-number">{{fondo_garantia.saldo_format}}</span>
+                                          </div>
+                                            <!-- /.info-box-content -->
                                         </div>
                                     </div>
-                                    <div class="progress  progress-sm">
-                                        <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                                          <span class="sr-only">20%</span>
+                                    <div class="col-md-3">
+                                        <div style="text-align: right">
+                                            <label>Suma Cargos:</label> {{fondo_garantia.suma_cargos_format}}
+                                        </div>
+                                        <div  style="text-align: right">
+                                            <label>Suma Abonos:</label> {{fondo_garantia.suma_abonos_format}}
+                                        </div>
+                                        <div class="progress  progress-sm">
+                                            <div class="progress-bar bg-success progress-bar-striped" role="progressbar" :aria-valuenow="fondo_garantia.porcentaje_cargos" aria-valuemin="0" aria-valuemax="100" :style="fondo_garantia.estilo_porcentaje_cargos">
+                                              <span class="sr-only">{{fondo_garantia.porcentaje_cargos}}%</span>
+                                            </div>
+                                        </div>
+                                        <div class="progress  progress-sm">
+                                            <div class="progress-bar bg-danger progress-bar-striped" role="progressbar" :aria-valuenow="fondo_garantia.porcentaje_abonos" aria-valuemin="0" aria-valuemax="100" :style="fondo_garantia.estilo_porcentaje_abonos">
+                                              <span class="sr-only">{{fondo_garantia.porcentaje_abonos}}%</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-                         </div>
+                             </div>
                                 <div class="card-header">
 
                                      <div class="row" >

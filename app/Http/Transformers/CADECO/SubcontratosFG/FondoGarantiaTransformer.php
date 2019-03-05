@@ -46,8 +46,12 @@ class FondoGarantiaTransformer extends TransformerAbstract
             'fecha' => (string)$model->fecha,
             'saldo_format' => (string)$model->saldo_format,
             'saldo' => (float)$model->saldo,
-            'suma_cargos_format' => (float)$model->suma_cargos,
-            'suma_abonos_format' => (float)$model->suma_abonos,
+            'suma_cargos_format' => (string) '$ ' . number_format($model->suma_cargos,2,".",","),
+            'suma_abonos_format' => (string) '$ ' . number_format(abs($model->suma_abonos),2,".",","),
+            'porcentaje_cargos' => (float) $model->porcentaje_cargos,
+            'porcentaje_abonos' => (float) $model->porcentaje_abonos,
+            'estilo_porcentaje_cargos' =>(string)"width: ".$model->porcentaje_cargos . "%",
+            'estilo_porcentaje_abonos' =>(string)"width: ".$model->porcentaje_abonos . "%",
             'created_at'=>(string)$model->created_at,
         ];
     }
