@@ -66,6 +66,12 @@
             </li>
 
             <li class="nav-header">MÓDULOS</li>
+            <li class="nav-item"  v-if="$root.can('consultar_cierre_periodo')">
+                <router-link :to="{name: 'cierre-periodo'}" class="nav-link">
+                    <i class="fa fa-file-text nav-icon"></i>
+                    <p>Cierres de periodo</p>
+                </router-link>
+            </li>
             <li class="nav-item">
                 <router-link :to="{name: 'poliza'}" class="nav-link">
                     <i class="fa fa-file-text nav-icon"></i>
