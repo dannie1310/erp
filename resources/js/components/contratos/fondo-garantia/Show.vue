@@ -17,7 +17,20 @@
                         <div class="table-responsive">
 
                             <div  v-if="fondo_garantia" class="card">
-                                <div class="row">
+                                <div class="row" v-if="!(fondo_garantia.porcentaje_abonos>0 && fondo_garantia.porcentaje_cargos>0)">
+                                    <div class=" offset-md-9 col-md-3">
+                                        <div class="info-box">
+                                          <span class="info-box-icon bg-success"><i class="fa fa-dollar"></i></span>
+                                          <div class="info-box-content">
+                                            <span class="info-box-text">Saldo</span>
+                                            <span class="info-box-number">{{fondo_garantia.saldo_format}}</span>
+                                          </div>
+                                            <!-- /.info-box-content -->
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row" v-else>
                                     <div class=" offset-md-6 col-md-3">
                                         <div class="info-box">
                                           <span class="info-box-icon bg-success"><i class="fa fa-dollar"></i></span>
