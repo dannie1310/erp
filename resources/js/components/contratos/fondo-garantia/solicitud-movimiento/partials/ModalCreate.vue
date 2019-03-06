@@ -1,14 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_movimiento_bancario') && tipo_boton ==1" class="btn btn-app pull-right" >
-            <i class="fa fa-plus"></i> Registrar Solicitud
-        </button>
-
-        <span>
-        <button @click="init"  v-if="$root.can('registrar_movimiento_bancario') && tipo_boton ==2" type="button" class="btn btn-sm btn-outline-success" title="Nueva Solicitud de Movimiento"><i class="fa fa-file-text"></i></button>
-        </span>
-
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="modal_create" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -49,15 +41,15 @@
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                     <input
-                                                type="text"
-                                                name="referencia"
-                                                id="referencia"
-                                                class="form-control"
-                                                v-model="referencia"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Referecia"
-                                                :class="{'is-invalid': errors.has('referencia')}"
-                                        >
+                                            type="text"
+                                            name="referencia"
+                                            id="referencia"
+                                            class="form-control"
+                                            v-model="referencia"
+                                            v-validate="{required: true}"
+                                            data-vv-as="Referecia"
+                                            :class="{'is-invalid': errors.has('referencia')}"
+                                    >
                                         <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                     </div>
                                 </div>
@@ -79,34 +71,30 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="objFondoGarantia.subcontrato">
-                                <!-- Subcontrato -->
-                                <div class="col-md-2">
-                                    <label for="id_fondo_garantia">Subcontrato:</label>
-                                </div>
-                                <div class="col-md-6">
-                                    {{objFondoGarantia.subcontrato.numero_folio_format}} - Referencia: [{{objFondoGarantia.subcontrato.referencia}}]
-                                </div>
-                            </div>
-                            <div class="row" v-if="!objFondoGarantia.subcontrato">
+                            <div class="row">
                                 <!-- Subcontrato -->
                                 <div class="col-md-2">
                                     <label for="id_fondo_garantia">Subcontrato:</label>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <subcontrato-select
-                                                scope="conFondo"
+                                        <select
+                                                class="form-control"
                                                 name="id_fondo_garantia"
-                                                id="id_fondo_garantia"
                                                 data-vv-as="Subcontrato"
-                                                v-validate="{required: true}"
+                                                id="id_fondo_garantia"
                                                 v-model="id_fondo_garantia"
-                                                :error="errors.has('id_subcontrato')">
-                                            ></subcontrato-select>
-                                        <div class="error-label" v-show="errors.has('id_fondo_garantia')">{{ errors.first('id_fondo_garantia') }}</div>
+                                                v-validate="{required: true}"
+                                                :class="{'is-invalid': errors.has('id_fondo_garantia')}"
+                                        >
+                                            <option value>-- Subcontrato --</option>
+                                            <option v-for="(item, index) in fondosGarantia" :value="item.id">
+                                                {{ item.subcontrato.numero_folio_format + ' [' + item.subcontrato.referencia + ']' }}
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_fondo_garantia')">{{ errors.first('id_fondo_garantia') }}</div>
                                     </div>
-                                 </div>
+                                </div>
                             </div>
 
                             <div class="row">
@@ -159,17 +147,12 @@
             </div><!-- /.modal-dialog -->
         </div>
     </span>
+    
 </template>
 
 <script>
-    import SubcontratoSelect from "../../../cadeco/subcontrato/Select";
     export default {
-        name: "solicitud-movimiento-fondo-garantia-create",
-        components: {SubcontratoSelect},
-        props: {'tipo_boton':{}, objFondoGarantia : {
-            type: Object,
-                default: () => ({})
-            }},
+        name: "modal-create",
         data() {
             return {
                 id_fondo_garantia: '',
@@ -185,15 +168,14 @@
             }
         },
         mounted() {
-            /*this.getFondosGarantia()*/
-
+            this.getFondosGarantia()
 
         },
 
         methods: {
             init() {
                 $(this.$refs.modal).modal('show');
-                this.id_fondo_garantia = (this.objFondoGarantia.subcontrato)?this.objFondoGarantia.subcontrato.id:'';
+                this.id_fondo_garantia = '';
                 this.id_tipo_solicitud = 1;
                 this.fecha = '';
                 this.referencia = '';
@@ -242,12 +224,5 @@
     .btn-primary:hover {
         background-color: #5bc0de;
         border-color: #46b8da;
-    }
-
-    .error-label {
-        width: 100%;
-        margin-top: 0.25rem;
-        font-size: 80%;
-        color: #dc3545;
     }
 </style>

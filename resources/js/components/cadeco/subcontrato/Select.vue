@@ -33,7 +33,7 @@
                     .then(data => {
                         const options = data.map(i => ({
                             id: i.id,
-                            label: i.numero_folio_format
+                            label: i.numero_folio_format + ' - Referencia: [' +i.referencia + ']'
                         }))
                         callback(null, options)
                     })

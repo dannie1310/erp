@@ -81,7 +81,9 @@
                             buttons: $.extend({}, {
                                 show: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
                                 ajustar_saldo: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
+                                nueva_soliciud_movimiento: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
                                 id: fondoGarantia.id,
+                                objFondoGarantia: fondoGarantia,
                             })
                         })
                     });

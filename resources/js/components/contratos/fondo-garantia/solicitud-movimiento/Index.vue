@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <solicitud-movimiento-fondo-garantia-create></solicitud-movimiento-fondo-garantia-create>
+            <solicitud-movimiento-fondo-garantia-create :tipo_boton="1"></solicitud-movimiento-fondo-garantia-create>
         </div>
 
         <div class="col-12">
@@ -22,9 +22,10 @@
 
 <script>
     import SolicitudMovimientoFondoGarantiaCreate from "./Create";
+    import SolicitudMovimientoFondoGarantiaButtonCreate from "./partials/ButtonCreate";
     import ActionButtonsSmfg from "./partials/ActionButtons";
     export default {
-        components: {SolicitudMovimientoFondoGarantiaCreate},
+        components: {SolicitudMovimientoFondoGarantiaCreate,SolicitudMovimientoFondoGarantiaButtonCreate},
         name: "solicitud-movimiento-fondo-garantia-index",
         /*components: {SolicitudMovimientoFondoGarantiaCreate},*/
         data() {

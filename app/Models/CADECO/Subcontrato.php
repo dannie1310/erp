@@ -35,7 +35,8 @@ class Subcontrato extends Transaccion
     public $usuario_registra = 1;
 
     public $searchable = [
-        'numero_folio'
+        'numero_folio',
+        'referencia'
     ];
 
     protected static function boot()
@@ -90,5 +91,10 @@ class Subcontrato extends Transaccion
     public function scopeSinFondo($query)
     {
         return $query->whereDoesntHave('fondo_garantia');
+    }
+
+    public function scopeConFondo($query)
+    {
+        return $query->whereHas('fondo_garantia');
     }
 }
