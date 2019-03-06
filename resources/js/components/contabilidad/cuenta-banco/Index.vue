@@ -61,7 +61,9 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/cuenta/paginate', this.query)
+                return this.$store.dispatch('cadeco/cuenta/paginate', {
+                    params: this.query
+                })
                     .then(data => {
                         this.$store.commit('cadeco/cuenta/SET_CUENTAS', data.data);
                         this.$store.commit('cadeco/cuenta/SET_META', data.meta);
