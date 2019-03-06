@@ -19,14 +19,15 @@
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
                                         <label for="id_empresa">Empresa</label>
-                                        <empresa-autocomplete
+                                        <empresa-select
                                                 name="id_empresa"
+                                                placeholder="-- Banco --"
                                                 id="id_empresa"
                                                 data-vv-as="Empresa"
                                                 v-validate="{required: true}"
                                                 v-model="id_empresa"
-                                                :class="{'is-invalid': errors.has('id_empresa')}">
-                                        ></empresa-autocomplete>
+                                                :error="errors.has('id_empresa')">
+                                        ></empresa-select>
                                         <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
                                     </div>
                                 </div>
@@ -81,10 +82,10 @@
 </template>
 
 <script>
-    import EmpresaAutocomplete from "../../cadeco/empresa/Autocomplete";
+    import EmpresaSelect from "../../cadeco/empresa/Select";
     export default {
         name: "cuenta-empresa-create",
-        components: {EmpresaAutocomplete},
+        components: {EmpresaSelect},
         data() {
             return {
                 id_empresa: '',
@@ -129,3 +130,11 @@
         }
     }
 </script>
+<style scoped>
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+    }
+</style>

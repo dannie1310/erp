@@ -41,20 +41,23 @@ export default {
                 }
                 return movimiento
             })
-            state.currentMovimiento = data;
+            state.currentMovimiento = state.currentMovimiento ? data : null;
         }
     },
 
     actions: {
-        paginate (context, payload){
-            context.commit('SET_MOVIMIENTOS', [])
-            axios
-                .get(URI + 'paginate', { params: payload })
-                .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_MOVIMIENTOS', data.data)
-                    context.commit('SET_META', data.meta)
-                })
+        paginate (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data)
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            })
         },
 
         find(context, payload) {
@@ -62,9 +65,8 @@ export default {
                 axios
                     .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        context.commit('SET_MOVIMIENTO', data)
-                        resolve();
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error);
@@ -78,7 +80,15 @@ export default {
                     title: "Eliminar movimiento",
                     text: "¿Estás seguro/a de que deseas eliminar este movimiento?",
                     icon: "warning",
-                    buttons: ['Cancelar', 'Si, Eliminar'],
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
                     dangerMode: true,
                 })
                     .then((value) => {
@@ -92,8 +102,7 @@ export default {
                                         timer: 1500,
                                         buttons: false
                                     }).then(() => {
-                                        context.commit('DELETE_MOVIMIENTO', id);
-                                        resolve();
+                                        resolve(data);
                                     })
                                 })
                                 .catch(error => {
@@ -110,7 +119,15 @@ export default {
                     title: "Registrar movimiento",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -140,22 +157,29 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Guardar cambios del Movimiento",
                     icon: "warning",
-                    buttons: ['Cancelar', 'Si, Guardar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Guardar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
                             axios
                                 .patch(URI + payload.id, payload.data, { params: payload.params })
                                 .then(r => r.data)
-                                .then((data) => {
+                                .then(data => {
                                     swal("Movimiento Actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
                                     })
                                         .then(() => {
-                                            context.commit('UPDATE_MOVIMIENTO', data);
-                                            resolve();
+                                            resolve(data);
                                         })
                                 })
                                 .catch(error => {

@@ -7,23 +7,24 @@
             loadingText="Cargando"
             searchPromptText="Escriba para buscar..."
             noResultsText="Sin Resultados"
-            placeholder="-- Fondo --"
+            :placeholder="placeholder ? placeholder :'-- Empresa --'"
     >
     </treeselect>
 </template>
 
 <script>
     export default {
-        props: ['scope', 'value', 'error'],
-        name: "fondo-select",
+        props: ['scope', 'value', 'error', 'placeholder'],
+        name: "empresa-select",
         data() {
             return {
                 val: null
             }
         },
+
         methods: {
             loadOptions({ action, searchQuery, callback }) {
-                return this.$store.dispatch('cadeco/fondo/index', {
+                return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
                         search: searchQuery,
                         scope: this.scope,
@@ -33,7 +34,7 @@
                     .then(data => {
                         const options = data.data.map(i => ({
                             id: i.id,
-                            label: i.descripcion
+                            label: i.razon_social
                         }))
                         callback(null, options)
                     })
@@ -52,6 +53,7 @@
         }
     }
 </script>
+
 <style>
     .error > .vue-treeselect__control{
         border-color: #dc3545

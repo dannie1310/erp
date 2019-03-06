@@ -1,14 +1,14 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_contable_bancaria')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Cuenta de Banco
+        <button @click="init" v-if="$root.can('registrar_cuenta_contable_bancaria')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <i class="fa fa-plus"></i> Registrar Cuenta
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR CUENTA DE BANCO:</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR CUENTA DE BANCO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -18,23 +18,25 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="id_empresa">Empresa</label>
-                                        <empresa-autocomplete
+                                        <label for="id_empresa">Banco</label>
+                                        <empresa-select
+                                                scope="bancos"
                                                 name="id_empresa"
+                                                placeholder="-- Banco --"
                                                 id="id_empresa"
                                                 data-vv-as="Empresa"
                                                 v-validate="{required: true}"
                                                 v-model="id_empresa"
-                                                v-bind:scope="'paraBancos'"
-                                                :class="{'is-invalid': errors.has('id_empresa')}">
-                                        ></empresa-autocomplete>
-                                        <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
+                                                :error="errors.has('id_empresa')">
+                                        ></empresa-select>
+                                        <div class="error-label" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="id_cuenta">Cuenta</label>
                                          <select
+                                                 :disabled="!id_empresa"
                                                  type="text"
                                                  name="id_cuenta"
                                                  data-vv-as="Cuenta"
@@ -45,7 +47,7 @@
                                                  :class="{'is-invalid': errors.has('id_cuenta')}"
                                          >
                                             <option value>-- Cuenta --</option>
-                                            <option v-for="c in cuentas" :value="c.id">{{ c.numero }} ({{c.abreviatura}})</option>
+                                            <option v-for="c in cuentas" :value="c.id">{{ `${c.numero} ${c.abreviatura ? '('+c.abreviatura+')' : ''}` }}</option>
                                         </select>
                                         <div class="invalid-feedback" v-show="errors.has('id_cuenta')">{{ errors.first('id_cuenta') }}</div>
                                     </div>
@@ -56,6 +58,7 @@
                                     <div class="form-group error-content">
                                         <label for="id_tipo_cuenta_contable">Tipo de Cuenta</label>
                                         <select
+                                                :disabled="!id_cuenta"
                                                 type="text"
                                                 name="id_tipo_cuenta_contable"
                                                 data-vv-as="Tipo de Cuenta Contable"
@@ -103,10 +106,10 @@
 </template>
 
 <script>
-    import EmpresaAutocomplete from "../../cadeco/empresa/Autocomplete";
+    import EmpresaSelect from "../../cadeco/empresa/Select";
     export default {
         name: "cuenta-banco-create",
-        components: {EmpresaAutocomplete},
+        components: {EmpresaSelect},
         data() {
             return {
                 id_cuenta: '',
@@ -114,14 +117,13 @@
                 cuenta: '',
                 id_tipo_cuenta_contable: '',
                 cuentas: [],
+                tipos: [],
+                cargando: false
             }
         },
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
-            },
-            tipos(){
-                return this.$store.getters['contabilidad/tipo-cuenta-contable/tipos']
             }
         },
         methods: {
@@ -145,8 +147,13 @@
             },
             getTipos() {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index',{
-                    scope: ['disponiblesParaCuentaBancaria:' + this.id_cuenta, 'paraBancos']
+                    params: {
+                        scope: ['disponiblesParaCuentaBancaria:' + this.id_cuenta, 'paraBancos']
+                    }
                 })
+                    .then(data => {
+                        this.tipos = data.data;
+                    })
             },
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-banco/store', this.$data)
@@ -179,3 +186,11 @@
         }
     }
 </script>
+<style scoped>
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+    }
+</style>

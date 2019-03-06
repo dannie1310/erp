@@ -28,7 +28,7 @@ export default {
                 }
                 return costo
             })
-            state.currentCosto = data;
+            state.currentCosto = state.currentCosto ? data : null;
         },
     },
 
@@ -42,8 +42,8 @@ export default {
                         resolve(data);
                     })
                     .catch(error => {
-                        reject(error)
-                    })
+                        reject(error);
+                    });
             });
         },
 
@@ -52,12 +52,12 @@ export default {
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        resolve(data.data);
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
-                        reject(error)
-                    })
+                        reject(error);
+                    });
             });
         },
 
@@ -71,17 +71,17 @@ export default {
                     })
                     .catch(error => {
                         reject(error);
-                    })
-            })
+                    });
+            });
         }
     },
 
     getters: {
         costos(state) {
-            return state.costos
+            return state.costos;
         },
         meta(state) {
-            return state.meta
+            return state.meta;
         }
     }
 }

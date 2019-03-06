@@ -89,7 +89,10 @@
             },
 
             update() {
-                return this.$store.dispatch('contabilidad/cuenta-almacen/update', this.cuenta)
+                return this.$store.dispatch('contabilidad/cuenta-almacen/update', {
+                    id: this.cuenta.id,
+                    data: this.cuenta
+                })
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-almacen/UPDATE_CUENTA', data);
                         $(this.$refs.modal).modal('hide');

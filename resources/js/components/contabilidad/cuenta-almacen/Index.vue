@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <create></create>
+            <create @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -80,7 +80,6 @@
             meta(){
                 return this.$store.getters['contabilidad/cuenta-almacen/meta'];
             },
-
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }

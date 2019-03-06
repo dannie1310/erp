@@ -8,7 +8,7 @@ export default {
 
     mutations: {
         SET_ALMACENES(state, data) {
-            state.almacenes = data
+            state.almacenes = data;
         }
     },
 
@@ -19,10 +19,10 @@ export default {
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
-                        resolve(data.data);
+                        resolve(data);
                     })
                     .catch(error => {
-                        reject(error)
+                        reject(error);
                     });
             });
         }

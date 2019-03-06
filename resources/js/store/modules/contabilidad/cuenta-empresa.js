@@ -38,24 +38,25 @@ export default {
 
     actions: {
         paginate(context, payload) {
-            context.commit('SET_CUENTAS', [])
-            axios
-                .get(URI + 'paginate', {params: payload})
-                .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_CUENTAS', data.data)
-                    context.commit('SET_META', data.meta)
-                })
-        },
-
-        find(context, id) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_CUENTA', null)
                 axios
-                    .get(URI + id)
+                    .get(URI + 'paginate', { params: payload })
                     .then(r => r.data)
                     .then(data => {
-                        context.commit('SET_CUENTA', data)
+                        resolve(data)
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            })
+        },
+
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
                         resolve(data);
                     })
                     .catch(error => {
@@ -70,7 +71,15 @@ export default {
                     title: "Registrar Cuenta",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -100,7 +109,15 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Cuenta de Empresa",
                     icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -114,8 +131,7 @@ export default {
                                         buttons: false
                                     })
                                         .then(() => {
-                                            context.commit('UPDATE_CUENTA', data);
-                                            resolve();
+                                            resolve(data);
                                         })
                                 })
                                 .catch(error => {

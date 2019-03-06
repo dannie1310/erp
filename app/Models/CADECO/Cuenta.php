@@ -17,6 +17,10 @@ class Cuenta extends Model
     protected $connection = 'cadeco';
     protected $table = 'dbo.cuentas';
     protected $primaryKey = 'id_cuenta';
+    public $searchable = [
+        'numero',
+        'empresa.razon_social'
+    ];
 
     public $timestamps = false;
 

@@ -1,7 +1,9 @@
 <template>
     <span>
         <button @click="init" v-if="$root.can('registrar_cuenta_almacen')" class="btn btn-app btn-info pull-right" :disabled="cargando">
-            <i class="fa fa-plus"></i>Registrar Cuenta
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i>
+            Registrar Cuenta
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -74,25 +76,13 @@
                 id_almacen: '',
                 cuenta: '',
                 cargando: false,
+                almacenes: []
             }
-        },
-
-        mounted() {
-            this.getAlmacenes();
         },
 
         methods: {
             init() {
-                if (this.almacenes.length) {
-                    $(this.$refs.modal).modal('show');
-
-                    this.id_almacen = '';
-                    this.cuenta = '';
-
-                    this.$validator.reset()
-                } else {
-                    swal("Todos los almacénes tienen una cuenta registrada", "", "warning");
-                }
+                this.getAlmacenes()
             },
 
             getAlmacenes() {
@@ -102,7 +92,17 @@
                     params: { scope: 'sinCuenta' }
                 })
                     .then(data => {
-                        this.$store.commit('cadeco/almacen/SET_ALMACENES', data)
+                        this.almacenes = data.data
+                        if (this.almacenes.length) {
+                            $(this.$refs.modal).modal('show');
+
+                            this.id_almacen = '';
+                            this.cuenta = '';
+
+                            this.$validator.reset()
+                        } else {
+                            swal("Todos los almacénes tienen una cuenta registrada", "", "warning");
+                        }
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -111,11 +111,12 @@
 
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-almacen/store', this.$data)
-                    .then(() => {
-                        this.$store.commit('cadeco/almacen/SET_ALMACENES', this.almacenes.filter(almacen => {
+                    .then(data => {
+                        this.almacenes = this.almacenes.filter(almacen => {
                             return almacen.id != this.id_almacen;
-                        }));
+                        });
                         $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data)
                     });
             },
 
@@ -129,10 +130,6 @@
         },
 
         computed: {
-            almacenes() {
-                return this.$store.getters['cadeco/almacen/almacenes'];
-            },
-
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             }
