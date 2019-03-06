@@ -13,11 +13,11 @@
                     <div class="col-md-2">
                         <label >Referencia:</label>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         {{subcontrato.referencia}}
                     </div>
                     <!-- Fecha -->
-                    <div class="col-md-3 money" >
+                    <div class="col-md-2 money" >
                         <label>Fecha:</label>
                     </div>
                     <div class="col-md-2 money">
@@ -38,18 +38,18 @@
                     <div class="col-md-2">
                         <label>Subtotal:</label>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2 money">
                         {{ subcontrato.subtotal_format}}
                     </div>
                     <!-- Impuesto -->
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <label>Impuesto:</label>
                     </div>
-                    <div class="col-md-1 money">
+                    <div class="col-md-2 money">
                         {{subcontrato.impuesto_format }}
                     </div>
                     <!-- Monto -->
-                    <div class="col-md-3 money">
+                    <div class="col-md-2 money">
                         <label>Total: </label>
                     </div>
                     <div class="col-md-2 money">
@@ -96,7 +96,12 @@
 
 <script>
     export default {
-        name: "detalle-subcontrato"
+        name: "detalle-subcontrato",
+        props: {
+            subcontrato : {
+                type: Object,
+                default: () => ({})
+            }},
     }
 </script>
 

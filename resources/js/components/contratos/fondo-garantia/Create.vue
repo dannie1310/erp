@@ -43,75 +43,12 @@
                                                  <div class="error-label" v-show="errors.has('id_subcontrato')">{{ errors.first('id_subcontrato') }}</div>
                                             </div>
                                         </div>
-
                                     </div>
                                  </div>
                              </div>
-                            <div  v-if="subcontrato.id" class="card">
-                                <div class="card-header">
-                                     <div class="row" >
-                                         <div class="col-md-12">
-                                              <label ><i class="fa fa-info-circle" style="padding-right:3px"></i>Detalle de Subcontrato {{subcontrato.numero_folio_format}}</label>
-                                         </div>
-                                     </div>
-                                 </div>
-                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label for="id_subcontrato">Referencia:</label>
-                                        </div>
-                                        <div class="col-md-5">
-                                            {{subcontrato.referencia}}
-                                        </div>
-                                        <!-- Fecha -->
-                                        <div class="col-md-3 money" >
-                                             <label>Fecha:</label>
-                                        </div>
-                                        <div class="col-md-2 money">
-                                            {{subcontrato.fecha_format}}
-                                        </div>
-                                    </div>
-                                     <div class="row">
-                                        <!-- Observaciones -->
-                                        <div class="col-md-2">
-                                            <label for="id_subcontrato">Empresa:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            {{subcontrato.empresa.razon_social}}
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <!-- Total -->
-                                        <div class="col-md-2">
-                                             <label>Total:</label>
-                                        </div>
-                                        <div class="col-md-3">
-                                            {{subcontrato.monto_format}} ({{subcontrato.moneda.nombre}})
-                                        </div>
-                                        <!-- % Anticipo -->
-                                        <div class="col-md-1">
-                                             <label>Anticipo:</label>
-                                        </div>
-                                        <div class="col-md-1 money">
-                                            {{subcontrato.anticipo}} %
-                                        </div>
-                                        <!-- % Fondo e Garantía -->
-                                         <div class="col-md-3 money">
-                                             <label>Fondo de Garantía: </label>
-                                        </div>
-                                        <div class="col-md-2 money">
-                                            {{subcontrato.retencion}} %
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <!-- Observaciones -->
-                                        <div class="col-md-2">
-                                            <label for="id_subcontrato">Observaciones:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            {{subcontrato.observaciones}}
-                                        </div>
-                                    </div>
+                            <div class="row" v-if="subcontrato.id">
+                                <div class="col-md-12">
+                                    <detalle-subcontrato :subcontrato="subcontrato" ></detalle-subcontrato>
                                 </div>
                             </div>
                         </div>
@@ -128,9 +65,10 @@
 
 <script>
     import SubcontratoSelect from "../../cadeco/subcontrato/Select";
+    import DetalleSubcontrato from "../subcontratos/partials/DetalleSubcontrato";
     export default {
         name: "fondo-garantia-create",
-        components: {SubcontratoSelect},
+        components: {SubcontratoSelect, DetalleSubcontrato},
         data() {
             return {
                 id_subcontrato : '',

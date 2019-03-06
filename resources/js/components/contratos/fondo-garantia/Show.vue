@@ -58,135 +58,49 @@
                                             </div>
                                         </div>
                                     </div>
-                             </div>
-                                <div class="card-header">
-
-                                     <div class="row" >
-                                         <div class="col-md-12">
-                                              <label ><i class="fa fa-info-circle" style="padding-right:3px"></i>Subcontrato {{fondo_garantia.subcontrato.numero_folio_format}} [{{fondo_garantia.subcontrato.referencia}}]</label>
-                                         </div>
-                                     </div>
-                                 </div>
-                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label >Referencia:</label>
-                                        </div>
-                                        <div class="col-md-5">
-                                            {{fondo_garantia.subcontrato.referencia}}
-                                        </div>
-                                        <!-- Fecha -->
-                                        <div class="col-md-3 money" >
-                                             <label>Fecha:</label>
-                                        </div>
-                                        <div class="col-md-2 money">
-                                            {{ fondo_garantia.subcontrato.fecha_format}}
-                                        </div>
-                                    </div>
-                                     <div class="row">
-                                        <!-- Observaciones -->
-                                        <div class="col-md-2">
-                                            <label >Empresa:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            {{fondo_garantia.subcontrato.empresa.razon_social}}
-                                        </div>
-                                    </div>
-                                     <div class="row">
-                                        <!-- Subtotal -->
-                                        <div class="col-md-2">
-                                             <label>Subtotal:</label>
-                                        </div>
-                                        <div class="col-md-3">
-                                            {{ fondo_garantia.subcontrato.subtotal_format}}
-                                        </div>
-                                         <!-- Impuesto -->
-                                        <div class="col-md-1">
-                                             <label>Impuesto:</label>
-                                        </div>
-                                        <div class="col-md-1 money">
-                                            {{fondo_garantia.subcontrato.impuesto_format }}
-                                        </div>
-                                         <!-- Monto -->
-                                         <div class="col-md-3 money">
-                                             <label>Total: </label>
-                                        </div>
-                                        <div class="col-md-2 money">
-                                            {{fondo_garantia.subcontrato.monto_format}}
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <!-- Moneda -->
-                                        <div class="col-md-2">
-                                             <label>Moneda:</label>
-                                        </div>
-                                        <div class="col-md-3 ">
-                                            {{fondo_garantia.subcontrato.moneda.nombre}}
-                                        </div>
-                                        <!-- % Anticipo -->
-                                        <div class="col-md-1">
-                                             <label>Anticipo:</label>
-                                        </div>
-                                        <div class="col-md-1 money">
-                                            {{fondo_garantia.subcontrato.anticipo}} %
-                                        </div>
-                                        <!-- % Fondo e Garantía -->
-                                         <div class="col-md-3 money">
-                                             <label>Fondo de Garantía: </label>
-                                        </div>
-                                        <div class="col-md-2 money">
-                                            {{fondo_garantia.subcontrato.retencion}} %
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <!-- Observaciones -->
-                                        <div class="col-md-2">
-                                            <label for="id_subcontrato">Observaciones:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            {{fondo_garantia.subcontrato.observaciones}}
-                                        </div>
-                                    </div>
-
-
-                                     <hr />
-                         <div class="row">
-                                <div class="col-md-12">
-                                     <label ><i class="fa fa-archive" style="padding-right:3px"></i>Histórico de Movimientos:</label>
                                 </div>
-                         </div>
-                        <div v-if="fondo_garantia.movimientos" class="row">
-                            <div class="col-12 table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th class="bg-gray-light">#</th>
-                                        <th class="bg-gray-light">Fecha</th>
-                                        <th class="bg-gray-light">Movimiento</th>
-                                        <th class="bg-gray-light">Cargo</th>
-                                        <th class="bg-gray-light">Abono</th>
-                                        <th class="bg-gray-light">Saldo</th>
-                                        <th class="bg-gray-light">Usuario</th>
-                                        <th class="bg-gray-light">Observaciones</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="(movimiento, i) in fondo_garantia.movimientos.data">
-                                        <td>{{ i + 1 }}</td>
-                                        <td>{{movimiento.created_at_format}}</td>
-                                        <td>{{movimiento.tipo_movimiento.descripcion}}</td>
-                                        <td class="money">{{(movimiento.tipo_movimiento.naturaleza == 1)?movimiento.importe_abs_format:'-'}}</td>
-                                        <td class="money">{{(movimiento.tipo_movimiento.naturaleza == 2)?movimiento.importe_abs_format:'-'}}</td>
-                                        <td class="money">{{movimiento.saldo_format}}</td>
-                                        <td>{{movimiento.usuario_registra_desc}}</td>
-                                        <td>{{movimiento.observaciones}}</td>
-                                    </tr>
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-                        </div>
+                                <div class="row" v-if="fondo_garantia.subcontrato.id">
+                                    <div class="col-md-12">
+                                        <detalle-subcontrato :subcontrato="fondo_garantia.subcontrato" ></detalle-subcontrato>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                     <hr />
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label ><i class="fa fa-archive" style="padding-right:3px"></i>Histórico de Movimientos:</label>
+                                        </div>
+                                    </div>
+                                    <div v-if="fondo_garantia.movimientos" class="row">
+                                        <div class="col-12 table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="bg-gray-light">#</th>
+                                                        <th class="bg-gray-light">Fecha</th>
+                                                        <th class="bg-gray-light">Movimiento</th>
+                                                        <th class="bg-gray-light">Cargo</th>
+                                                        <th class="bg-gray-light">Abono</th>
+                                                        <th class="bg-gray-light">Saldo</th>
+                                                        <th class="bg-gray-light">Usuario</th>
+                                                        <th class="bg-gray-light">Observaciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(movimiento, i) in fondo_garantia.movimientos.data">
+                                                        <td>{{ i + 1 }}</td>
+                                                        <td>{{movimiento.created_at_format}}</td>
+                                                        <td>{{movimiento.tipo_movimiento.descripcion}}</td>
+                                                        <td class="money">{{(movimiento.tipo_movimiento.naturaleza == 1)?movimiento.importe_abs_format:'-'}}</td>
+                                                        <td class="money">{{(movimiento.tipo_movimiento.naturaleza == 2)?movimiento.importe_abs_format:'-'}}</td>
+                                                        <td class="money">{{movimiento.saldo_format}}</td>
+                                                        <td>{{movimiento.usuario_registra_desc}}</td>
+                                                        <td>{{movimiento.observaciones}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -198,8 +112,10 @@
 </template>
 
 <script>
+    import DetalleSubcontrato from "../subcontratos/partials/DetalleSubcontrato";
     export default {
         name: "fondo-garantia-show",
+        components: {DetalleSubcontrato},
         props: ['id'],
         methods: {
             find(id) {
@@ -219,6 +135,9 @@
     }
 </script>
 <style>
+    .modal-body {
+        background-color: #ddd;
+    }
     .money
     {
         text-align: right;
