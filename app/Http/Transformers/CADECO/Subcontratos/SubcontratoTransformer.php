@@ -53,7 +53,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'total_format'=>(string)$model->monto_format,
             'monto_format'=>(string)$model->monto_format,
             'referencia'=>(string)$model->referencia,
-            'retencion'=>(float)$model->referencia,
+            'retencion'=>(float)$model->retencion,
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
         ];
