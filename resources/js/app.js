@@ -29,8 +29,6 @@ Vue.use(VueProgressBar, {
     height: '10px'
 });
 
-
-
 const app = new Vue({
     el: '#app',
     router,
@@ -38,56 +36,28 @@ const app = new Vue({
     components: {
         MainApp
     },
-    mounted() {
-        axios.interceptors.response.use((response) => {
-            return response;
-        }, (error) => {
-            if (!error.response) {
-                alert('NETWORK ERROR')
-            } else {
-                const code = error.response.status
-                const message = error.response.data.message
-                const originalRequest = error.config;
-                switch (true) {
-                    case (code === 401 && !originalRequest._retry):
-                        swal({
-                            title: "La sesión ha expirado",
-                            text: "Volviendo a la página de Inicio de Sesión",
-                            icon: "error",
-                        }).then((value) => {
-                            app.$store.commit('auth/logout');
-                            app.$session.destroy();
-                            return app.$router.push({name: 'login'});
-                        })
-                        break;
-                    case (code === 500):
-                        swal({
-                            title: "¡Error!",
-                            text: message,
-                            icon: "error"
-                        });
-                        break;
-                    default:
-                        swal({
-                            title: "¡Error!",
-                            text: message,
-                            icon: "error"
-                        });
-                }
-            }
-        });
-    },
-
     methods: {
         can(permiso) {
             let permisos = this.$session.get('permisos');
 
             if (permisos) {
-                return permisos.find(perm => {
-                    return perm.name == permiso;
-                })
+                if (Array.isArray(permiso)) {
+                    let result = false;
+                    permiso.forEach(perm => {
+                        let search = permisos.find(p => {
+                            return p.name == perm;
+                        });
+                        if (search) {
+                            result = true;
+                        }
+                    });
+                    return result;
+                }  else {
+                    return permisos.find(perm => {
+                        return perm.name == permiso;
+                    })
+                }
             }
-
             return false;
         }
     }

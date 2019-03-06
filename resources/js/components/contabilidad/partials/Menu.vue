@@ -4,8 +4,8 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">CATÁLOGOS</li>
-            <li class="nav-item">
+            <li class="nav-header" v-if="catalogos">CATÁLOGOS</li>
+            <li class="nav-item" v-if="catalogos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-money"></i>
                     <p>
@@ -65,14 +65,14 @@
                 </ul>
             </li>
 
-            <li class="nav-header">MÓDULOS</li>
-            <li class="nav-item"  v-if="$root.can('consultar_cierre_periodo')">
+            <li class="nav-header" v-if="modulos">MÓDULOS</li>
+            <li class="nav-item" v-if="$root.can('consultar_cierre_periodo')">
                 <router-link :to="{name: 'cierre-periodo'}" class="nav-link">
                     <i class="fa fa-file-text nav-icon"></i>
                     <p>Cierres de periodo</p>
                 </router-link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('consultar_prepolizas_generadas')">
                 <router-link :to="{name: 'poliza'}" class="nav-link">
                     <i class="fa fa-file-text nav-icon"></i>
                     <p>Prepólizas Generadas</p>
@@ -91,6 +91,28 @@
             mostrarMenu(event) {
                 event.stopPropagation();
                 $(event.target).closest('li').toggleClass('menu-open');
+            }
+        },
+
+        computed: {
+            catalogos() {
+                return this.$root.can([
+                    'consultar_cuenta_almacen',
+                    'consultar_cuenta_contable_bancaria',
+                    'consultar_cuenta_concepto',
+                    'consultar_cuenta_costo',
+                    'consultar_cuenta_empresa',
+                    'consultar_cuenta_fondo',
+                    'consultar_cuenta_general',
+                    'consultar_cuenta_material'
+                ])
+            },
+
+            modulos() {
+                return this.$root.can([
+                    'consultar_cierre_periodo',
+                    'consultar_prepolizas_generadas'
+                ])
             }
         }
     }

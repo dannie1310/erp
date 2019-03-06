@@ -46,24 +46,30 @@
                 data: [],
                 total: 0,
                 query: {},
-                search: ''
+                search: '',
+                cargando: false
             }
         },
 
         mounted() {
-            this.paginate();
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
 
         methods: {
             paginate() {
-                this.$Progress.start();
-                this.$store.commit('contabilidad/cuenta-almacen/SET_CUENTAS', []);
+                this.cargando = true;
                 return this.$store.dispatch('contabilidad/cuenta-almacen/paginate', this.query)
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-almacen/SET_CUENTAS', data.data);
                         this.$store.commit('contabilidad/cuenta-almacen/SET_META', data.meta);
-                        this.$Progress.finish();
-                    });
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             }
         },
 
@@ -74,6 +80,10 @@
             meta(){
                 return this.$store.getters['contabilidad/cuenta-almacen/meta'];
             },
+
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
         },
 
         watch: {
@@ -117,6 +127,12 @@
                     this.query.search = val;
                     this.paginate();
                 }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
             }
         }
     }
