@@ -125,6 +125,7 @@
                 }
                 this.timer = setTimeout(() => {
                     this.query.search = val;
+                    this.query.offset = 0;
                     this.paginate();
                 }, 500);
             },
