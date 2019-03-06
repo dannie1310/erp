@@ -51,6 +51,15 @@
                                     <detalle-subcontrato :subcontrato="subcontrato" ></detalle-subcontrato>
                                 </div>
                             </div>
+                            <div class="card" v-if="!subcontrato.id && buscando == 1">
+                                <div class="card-body">
+                                    <div class="row" >
+                                        <div class="col-md-12" align = "center">
+                                            <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -69,19 +78,22 @@
     export default {
         name: "fondo-garantia-create",
         components: {SubcontratoSelect, DetalleSubcontrato},
+
         data() {
             return {
                 id_subcontrato : '',
-                subcontrato : []
+                subcontrato : [],
+                buscando: 0,
             }
         },
 
         mounted() {
-            this.getSubcontratosSinFondo()
+            /*this.getSubcontratosSinFondo()*/
         },
 
         methods: {
             find(id) {
+                this.buscando = 1;
                 return this.$store.dispatch('contratos/subcontrato/find', {
                     id: id,
                     params: { include: 'moneda,empresa' }
@@ -128,6 +140,7 @@
                     .then(data=>{
                         this.subcontrato = data
                         this.retencion = data.retencion
+                        this.buscando = 0
                      })
             }
         }
