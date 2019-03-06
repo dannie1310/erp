@@ -61,7 +61,7 @@ class CuentaTransformer extends TransformerAbstract
      * @return \League\Fractal\Resource\Collection
      */
     public function includeCuentasBanco(Cuenta $model){
-        if ($cuentas = $model->cuentaBanco) {
+        if ($cuentas = $model->cuentasBanco) {
             return $this->collection($cuentas, new CuentaBancoTransformer);
         }
         return null;

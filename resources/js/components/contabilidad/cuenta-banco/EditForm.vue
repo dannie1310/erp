@@ -19,7 +19,7 @@
             </div>
         </td>
         <td>
-            <button class="btn btn-primary" @click="validate" :disabled="!cambio"><i class="fa fa-save"></i></button>
+            <button class="btn btn-primary btn-sm" @click="validate" :disabled="!cambio"><i class="fa fa-save"></i></button>
         </td>
     </tr>
 </template>

@@ -37,7 +37,12 @@ class Cuenta extends Model
             ->whereRaw('ISNUMERIC(numero) = 1');
     }
 
-    public function cuentaBanco(){
+    public function cuentasBanco(){
         return $this->hasMany(CuentaBanco::class, 'id_cuenta', 'id_cuenta');
+    }
+
+    public function scopeConCuentas($query)
+    {
+        return $query->has('cuentasBanco');
     }
 }

@@ -1,7 +1,9 @@
 <template>
     <span>
         <button @click="init" v-if="$root.can('registrar_cuenta_contable_bancaria')" class="btn btn-app btn-info pull-right" :disabled="cargando">
-            <i class="fa fa-plus"></i> Registrar Cuenta
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i>
+            Registrar Cuenta
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -128,13 +130,16 @@
         },
         methods: {
             init() {
+                this.cargando = true;
                 $(this.$refs.modal).modal('show');
+
                 this.id_cuenta = '';
                 this.cuenta = '';
                 this.id_tipo_cuenta_contable = '';
                 this.id_empresa = '';
 
                 this.$validator.reset()
+                this.cargando = false;
             },
             getCuentas(){
                 return this.$store.dispatch('cadeco/empresa/find', {

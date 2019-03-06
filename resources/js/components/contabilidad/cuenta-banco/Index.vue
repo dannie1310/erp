@@ -51,7 +51,7 @@
         },
         mounted() {
             this.query.include = ['empresa','cuentasBanco']
-            this.query.scope   = 'paraTraspaso'
+            this.query.scope   = ['paraTraspaso', 'conCuentas']
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
