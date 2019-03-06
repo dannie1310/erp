@@ -3,7 +3,6 @@
         <div class="col-md-12">
             <solicitud-movimiento-fondo-garantia-create :tipo_boton="1"></solicitud-movimiento-fondo-garantia-create>
         </div>
-
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -22,12 +21,10 @@
 
 <script>
     import SolicitudMovimientoFondoGarantiaCreate from "./Create";
-    import SolicitudMovimientoFondoGarantiaButtonCreate from "./partials/ButtonCreate";
     import ActionButtonsSmfg from "./partials/ActionButtons";
     export default {
-        components: {SolicitudMovimientoFondoGarantiaCreate,SolicitudMovimientoFondoGarantiaButtonCreate},
+        components: {SolicitudMovimientoFondoGarantiaCreate},
         name: "solicitud-movimiento-fondo-garantia-index",
-        /*components: {SolicitudMovimientoFondoGarantiaCreate},*/
         data() {
             return {
                 HeaderSettings: false,

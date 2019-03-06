@@ -28,7 +28,6 @@
                                             <!-- /.info-box-content -->
                                         </div>
                                     </div>
-
                                 </div>
                                 <div class="row" v-else>
                                     <div class=" offset-md-6 col-md-3">

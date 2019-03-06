@@ -29,7 +29,7 @@
                                         <div class="col-md-2">
                                             <label for="id_subcontrato">Subcontrato:</label>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-10">
                                             <div class="form-group error-content">
                                                 <subcontrato-select
                                                         scope="sinFondo"
