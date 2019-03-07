@@ -140,6 +140,45 @@ export default {
                     });
             });
         },
+
+        delete(context, id) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar cuenta",
+                    text: "¿Estás seguro/a de que deseas eliminar la cuenta?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + id)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cuenta eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

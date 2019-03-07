@@ -22,7 +22,7 @@
                                     <div class="form-group error-content">
                                         <label for="id_empresa">Banco</label>
                                         <empresa-select
-                                                scope="bancos"
+                                                :scope="'bancos'"
                                                 name="id_empresa"
                                                 placeholder="-- Banco --"
                                                 id="id_empresa"
@@ -147,7 +147,9 @@
                     params: { include: 'cuentas' }
                 })
                     .then(data => {
-                        this.cuentas = data.cuentas.data;
+                        this.cuentas = data.cuentas.data.filter(c => {
+                            return !isNaN(c.numero);
+                        });
                     })
             },
             getTipos() {

@@ -19,7 +19,8 @@
             </div>
         </td>
         <td>
-            <button class="btn btn-primary btn-sm" @click="validate" :disabled="!cambio"><i class="fa fa-save"></i></button>
+            <button class="btn btn-outline-primary btn-sm" @click="validate" :disabled="!cambio"><i class="fa fa-save"></i></button>
+            <button class="btn btn-outline-danger btn-sm" @click="destroy"><i class="fa fa-trash"></i></button>
         </td>
     </tr>
 </template>
@@ -58,6 +59,12 @@
         },
 
         methods: {
+            destroy() {
+                return this.$store.dispatch('contabilidad/cuenta-banco/delete', this.cuenta.id)
+                    .then(() => {
+                        this.$emit('deleted');
+                    })
+            },
             update() {
                 return this.$store.dispatch('contabilidad/cuenta-banco/update', {
                     id: this.cuenta.id,

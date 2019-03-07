@@ -26,7 +26,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <cuenta-banco-edit-form v-for="(c, i) in cuenta.cuentasBanco.data" :cuenta="c" :key="i"/>
+                                <cuenta-banco-edit-form v-for="(c, i) in cuenta.cuentasBanco.data" :cuenta="c" :key="i" @deleted="destroy(c)"/>
                                 </tbody>
                             </table>
                         </div>
@@ -72,6 +72,24 @@
                     })
                     .finally(() => {
                         this.cargando = false;
+                    })
+            },
+
+            destroy(cuenta) {
+                $(this.$refs.modal).modal('hide')
+                this.cuenta.cuentasBanco.data = this.cuenta.cuentasBanco.data.filter((c, i) => {
+                    return cuenta.id !== c.id;
+                })
+                this.$store.dispatch('cadeco/cuenta/paginate', {
+                    params: {
+                        include: ['empresa','cuentasBanco'],
+                        scope: ['paraTraspaso', 'conCuentas'],
+                        offset: 0
+                    }
+                })
+                    .then(data => {
+                        this.$store.commit('cadeco/cuenta/SET_CUENTAS', data.data)
+                        this.$store.commit('cadeco/cuenta/SET_META', data.meta)
                     })
             }
         }

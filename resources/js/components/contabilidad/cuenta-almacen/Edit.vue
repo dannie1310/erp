@@ -78,7 +78,9 @@
             find(id) {
                 this.$store.commit('contabilidad/cuenta-almacen/SET_CUENTA', null)
                 this.cargando = true;
-                return this.$store.dispatch('contabilidad/cuenta-almacen/find', {id: id})
+                return this.$store.dispatch('contabilidad/cuenta-almacen/find', {
+                    id: id
+                })
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-almacen/SET_CUENTA', data)
                         $(this.$refs.modal).modal('show');
