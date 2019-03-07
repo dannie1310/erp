@@ -112,8 +112,8 @@
                 deep: true
             },
             query: {
-                handler (query) {
-                    this.paginate(query)
+                handler () {
+                    this.paginate()
                 },
                 deep: true
             },

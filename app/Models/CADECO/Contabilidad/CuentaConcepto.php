@@ -26,6 +26,7 @@ class CuentaConcepto extends Model
     public $searchable = [
         'cuenta',
         'concepto.descripcion',
+        'concepto.clave_concepto',
     ];
 
     protected static function boot()
