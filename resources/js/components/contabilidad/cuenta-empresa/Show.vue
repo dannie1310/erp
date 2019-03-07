@@ -1,11 +1,14 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary"><i class="fa fa-eye"></i></button>
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-eye" v-else></i>
+        </button>
 
         <!-- Modal -->
-        <div v-if="empresa" class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
+                <div class="modal-content" v-if="empresa">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">{{ empresa.razon_social }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -46,14 +49,24 @@
     export default {
         name: "cuenta-empresa-show",
         props: ['id'],
+        data() {
+            return {
+                cargando: false,
+            }
+        },
         methods: {
-            find(id) {
+            find() {
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/empresa/find', {
-                    id: id,
+                    id: this.id,
                     params: { include: 'cuentasEmpresa' }
                 })
-                    .then(() => {
+                    .then(data => {
+                        this.$store.commit('cadeco/empresa/SET_EMPRESA', data);
                         $(this.$refs.modal).modal('show');
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             }
         },
