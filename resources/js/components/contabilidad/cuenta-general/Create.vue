@@ -1,7 +1,9 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_general')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Cuenta
+        <button @click="init" v-if="$root.can('registrar_cuenta_general')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i>
+            Registrar Cuenta
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -15,10 +17,10 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="id_int_tipo_cuenta_contable">Tipo de Cuenta</label>
+                            <div role="form">
+                                <div class="form-group row error-content">
+                                    <label for="id_int_tipo_cuenta_contable" class="col-sm-2 col-form-label">Tipo de Cuenta</label>
+                                    <div class="col-sm-10">
                                         <select
                                                 class="form-control"
                                                 v-model="id_int_tipo_cuenta_contable"
@@ -34,9 +36,9 @@
                                         <div class="invalid-feedback" v-show="errors.has('id_int_tipo_cuenta_contable')">{{ errors.first('id_int_tipo_cuenta_contable') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="cuenta_contable">Cuenta</label>
+                                <div class="form-group row error-content">
+                                    <label for="cuenta_contable" class="col-sm-2 col-form-label">Cuenta</label>
+                                    <div class="col-sm-10">
                                         <input
                                                 type="text"
                                                 name="cuenta_contable"
@@ -47,15 +49,16 @@
                                                 id="cuenta_contable"
                                                 placeholder="Cuenta"
                                                 v-model="cuenta_contable"
-                                                :class="{'is-invalid': errors.has('cuenta_contable')}">
+                                                :class="{'is-invalid': errors.has('cuenta_contable')}"
+                                        >
                                         <div class="invalid-feedback" v-show="errors.has('cuenta_contable')">{{ errors.first('cuenta_contable') }}</div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Registrar</button>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Registrar</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -71,37 +74,52 @@
         data() {
             return {
                 cuenta_contable: '',
-                id_int_tipo_cuenta_contable: ''
+                id_int_tipo_cuenta_contable: '',
+                tipos: [],
+                cargando: false
             }
         },
-
-        mounted() {
-            this.getTipos();
-        },
-
         methods: {
             init() {
-                $(this.$refs.modal).modal('show');
-
-                this.cuenta_contable = '';
-                this.id_int_tipo_cuenta_contable = '';
-
-                this.$validator.reset()
+                this.getTipos()
             },
 
             getTipos() {
+                this.cargando = true;
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {
-                    scope: ['generales', 'sinCuenta']
+                    params: {
+                        scope: ['generales', 'sinCuenta']
+                    }
                 })
+                    .then(data => {
+                        this.tipos = data.data
+                        if (this.tipos.length) {
+                            $(this.$refs.modal).modal('show');
+
+                            this.cuenta_contable = '';
+                            this.id_int_tipo_cuenta_contable = '';
+
+                            this.$validator.reset()
+                        } else {
+                            swal("No existen tipos de cuenta generales por registrar", "", "warning");
+                        }
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
             },
 
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-general/store', this.$data)
-                    .then(() => {
-                        this.getTipos();
+                    .then(data => {
+                        this.tipos = this.tipos.filter(tipo => {
+                            return tipo.id != this.id_int_tipo_cuenta_contable;
+                        });
                         $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data)
                     });
             },
+
 
             validate() {
                 this.$validator.validate().then(result => {
@@ -113,10 +131,6 @@
         },
 
         computed: {
-            tipos() {
-                return this.$store.getters['contabilidad/tipo-cuenta-contable/tipos'];
-            },
-
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             }
