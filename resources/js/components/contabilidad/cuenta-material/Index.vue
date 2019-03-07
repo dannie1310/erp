@@ -99,6 +99,10 @@
 
         mounted() {
             this.$Progress.start();
+            this.$store.dispatch('contabilidad/tipo-cuenta-material/index')
+                .then(data => {
+                    this.$store.commit('contabilidad/tipo-cuenta-material/SET_TIPOS', data.data);
+                })
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();

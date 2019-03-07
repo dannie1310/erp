@@ -102,20 +102,14 @@
         methods: {
             init() {
                 this.cargando = true;
-                this.$store.dispatch('contabilidad/tipo-cuenta-material/index')
-                    .then(data => {
-                        this.$store.commit('contabilidad/tipo-cuenta-material/SET_TIPOS', data.data);
-                    })
-                    .finally(() => {
-                        $(this.$refs.modal).modal('show');
+                $(this.$refs.modal).modal('show');
 
-                        this.id_material = '';
-                        this.id_tipo_cuenta_material = '';
-                        this.cuenta = '';
+                this.id_material = '';
+                this.id_tipo_cuenta_material = '';
+                this.cuenta = '';
 
-                        this.$validator.reset()
-                        this.cargando = false;
-                    })
+                this.$validator.reset()
+                this.cargando = false;
             },
 
             store() {
