@@ -88,7 +88,10 @@
                 this.cuenta = '';
 
                 this.$validator.reset()
-                this.cargando = false;
+                this.$refs.conceptoSelect.getRootNodes()
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             },
 
             store() {
@@ -96,7 +99,6 @@
                     .then(data => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created', data);
-                        this.$refs.conceptoSelect.getRootNodes();
                     });
             },
 
