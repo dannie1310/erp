@@ -62,7 +62,7 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('contabilidad/cuenta-almacen/paginate', this.query)
+                return this.$store.dispatch('contabilidad/cuenta-almacen/paginate', { params: this.query })
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-almacen/SET_CUENTAS', data.data);
                         this.$store.commit('contabilidad/cuenta-almacen/SET_META', data.meta);

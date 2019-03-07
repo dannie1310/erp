@@ -100,7 +100,6 @@
                             <button type="submit" class="btn btn-primary">Registrar</button>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
@@ -164,7 +163,7 @@
             },
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-banco/store', this.$data)
-                    .then((data) => {
+                    .then(data => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created', data);
                     });
