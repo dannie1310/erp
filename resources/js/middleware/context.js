@@ -6,7 +6,6 @@ export default function guest({ next, router }) {
             return next();
         })
         .catch(err => {
-            console.log('error: ', err.response)
             router.push({name: 'obras'});
         })
 }

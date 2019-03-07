@@ -15,9 +15,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Almacen extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'cadeco';
+
+    /**
+     * @var string
+     */
     protected $table = 'almacenes';
+
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id_almacen';
+
+    /**
+     * @var bool
+     */
     public $timestamps = false;
 
     protected static function boot()
@@ -28,6 +43,9 @@ class Almacen extends Model
         });
     }
 
+    /**
+     * @return string
+     */
     public function getTipoAttribute()
     {
         switch ($this->tipo_almacen) {
@@ -52,12 +70,19 @@ class Almacen extends Model
         }
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function cuentaAlmacen()
     {
         return $this->hasOne(CuentaAlmacen::class, "id_almacen")
             ->where('Contabilidad.cuentas_almacenes.estatus', '=', 1);
     }
 
+    /**
+     * @param $query
+     * @return mixed
+     */
     public function scopeSinCuenta($query)
     {
         return $query->has('cuentaAlmacen', '=', 0);

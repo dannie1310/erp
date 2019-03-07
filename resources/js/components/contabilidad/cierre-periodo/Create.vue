@@ -1,14 +1,14 @@
 <template>
     <span>
         <button @click="init" v-if="$root.can('generar_cierre_periodo')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Cierre de Periodo
+            <i class="fa fa-plus"></i> Cerrar Periodo
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR CIERRE DE PERIODO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">CERRAR PERIODO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -81,8 +81,9 @@
 
             store() {
                 return this.$store.dispatch('contabilidad/cierre-periodo/store', this.$data)
-                    .then(() => {
+                    .then(data => {
                        $(this.$refs.modal).modal('hide');
+                       this.$emit('created', data)
                     });
             },
 

@@ -53,7 +53,7 @@
                     params: { scope: this.scp }
                 })
                     .then(data => {
-                        self.rootNodes = data.map(costo => ({
+                        self.rootNodes = data.data.map(costo => ({
                             id: costo.id,
                             children: costo.tiene_hijos != 0 ? null : undefined,
                             label: `${costo.descripcion} ${costo.observaciones ? '(' + costo.observaciones + ')' : ''}`,

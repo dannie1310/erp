@@ -26,6 +26,11 @@ class CuentaCosto extends Model
         'cuenta'
     ];
 
+    public $searchable = [
+        'cuenta',
+        'costo.descripcion'
+    ];
+
     protected static function boot()
     {
         parent::boot();

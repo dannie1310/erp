@@ -1,26 +1,32 @@
 <template>
     <span>
-        <!-- Button trigger modal -->
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info">
-            <i class="fa fa-pencil"></i>
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-info" :disabled="cargando">
+            <i class="fa fa-pencil" v-if="!cargando"></i>
+            <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
 
         <!-- Modal -->
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
+                <div class="modal-content" v-if="cuenta">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">EDICIÓN DE CUENTA DE FONDO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form role="form" v-if="cuenta" @submit.prevent="validate">
+                    <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="cuenta">Cuenta</label>
+                            <div role="form">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Fondo</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control">{{ cuenta.fondo.descripcion}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group row error-content">
+                                    <label for="cuenta" class="col-sm-2 col-form-label">Cuenta</label>
+                                    <div class="col-sm-10">
                                         <input
                                                 type="text"
                                                 name="cuenta"
@@ -34,12 +40,6 @@
                                                 @input="updateAttribute"
                                                 :class="{'is-invalid': errors.has('cuenta')}">
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="fondo">Fondo</label>
-                                        <input readonly type="text" class="form-control" id="fondo" v-model="cuenta.fondo.descripcion">
                                     </div>
                                 </div>
                             </div>
@@ -59,6 +59,11 @@
     export default {
         name: "cuenta-fondo-edit",
         props: ['id'],
+        data() {
+            return {
+                cargando: false,
+            }
+        },
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
@@ -69,16 +74,28 @@
         },
 
         methods: {
-            find(id) {
-                return this.$store.dispatch('contabilidad/cuenta-fondo/find', id)
-                    .then(() => {
+            find() {
+                this.$store.commit('contabilidad/cuenta-fondo/SET_CUENTA', null)
+                this.cargando = true;
+                return this.$store.dispatch('contabilidad/cuenta-fondo/find', {
+                    id: this.id
+                })
+                    .then(data => {
+                        this.$store.commit('contabilidad/cuenta-fondo/SET_CUENTA', data)
                         $(this.$refs.modal).modal('show');
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             },
 
             update() {
-                return this.$store.dispatch('contabilidad/cuenta-fondo/update', this.cuenta)
-                    .then(() => {
+                return this.$store.dispatch('contabilidad/cuenta-fondo/update', {
+                    id: this.cuenta.id,
+                    data: this.cuenta
+                })
+                    .then(data => {
+                        this.$store.commit('contabilidad/cuenta-fondo/UPDATE_CUENTA', data);
                         $(this.$refs.modal).modal('hide');
                     })
             },

@@ -1,8 +1,9 @@
 <template>
     <span>
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#add-movimiento">
-            <i class="fa fa-plus"></i>
+        <button type="button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#add-movimiento" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i>
         </button>
 
         <!-- Modal -->
@@ -155,7 +156,8 @@
                     referencia: '',
                     id_tipo_cuenta_contable: '',
                     id_tipo_movimiento_poliza: ''
-                }
+                },
+                cargando: false
             }
         },
 
@@ -165,7 +167,16 @@
 
         methods: {
             getTiposCuentaContable() {
-                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {include: 'cuentaContable'})
+                this.cargando = true;
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {
+                    params: {include: 'cuentaContable'}
+                })
+                    .then(data => {
+                        this.$store.commit('contabilidad/tipo-cuenta-contable/SET_TIPOS', data.data);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             },
 
             setTipoMovimiento(e) {
@@ -199,7 +210,6 @@
                     this.movimiento.tipoCuentaContable.id = ''
                     this.movimiento.tipoCuentaContable.descripcion = ''
                 }
-
             },
 
             init() {

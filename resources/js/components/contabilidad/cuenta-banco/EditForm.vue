@@ -19,7 +19,8 @@
             </div>
         </td>
         <td>
-            <button class="btn btn-primary" @click="validate" :disabled="!cambio"><i class="fa fa-save"></i></button>
+            <button class="btn btn-outline-primary btn-sm" @click="validate" :disabled="!cambio"><i class="fa fa-save"></i></button>
+            <button class="btn btn-outline-danger btn-sm" @click="destroy"><i class="fa fa-trash"></i></button>
         </td>
     </tr>
 </template>
@@ -40,9 +41,6 @@
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             },
-            tipos() {
-                return this.$store.getters['contabilidad/tipo-cuenta-contable/tipos']
-            },
             cambio() {
                 return (this.cuenta.cuenta != this.form.cuenta) || (this.cuenta.tipo.id != this.form.id_tipo_cuenta_banco)
             }
@@ -58,6 +56,12 @@
         },
 
         methods: {
+            destroy() {
+                return this.$store.dispatch('contabilidad/cuenta-banco/delete', this.cuenta.id)
+                    .then(() => {
+                        this.$emit('deleted');
+                    })
+            },
             update() {
                 return this.$store.dispatch('contabilidad/cuenta-banco/update', {
                     id: this.cuenta.id,
