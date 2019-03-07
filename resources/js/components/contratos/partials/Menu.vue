@@ -65,7 +65,7 @@
                 </a>
 
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('consultar_fondo_garantia')">
                 <a href="#" class="nav-link" >
                     <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'fondo-garantia'}">
                     <i class="nav-icon fa fa-money"></i>

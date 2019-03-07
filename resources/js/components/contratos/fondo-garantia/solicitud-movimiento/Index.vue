@@ -78,11 +78,11 @@
                             subcontrato__numero_folio: solicitud.fondo_garantia.subcontrato.numero_folio_format,
                             tipo_solicitud__descripcion: solicitud.tipo_solicitud.descripcion,
                             buttons: $.extend({}, {
-                                show: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
-                                cancelar: self.$root.can('consultar_cuenta_almacen') && solicitud.estado == 0 ? true : undefined,
-                                autorizar: self.$root.can('consultar_cuenta_almacen') && solicitud.estado == 0 ? true : undefined,
-                                rechazar: self.$root.can('consultar_cuenta_almacen') && solicitud.estado == 0 ? true : undefined,
-                                revertir_autorizacion: self.$root.can('consultar_cuenta_almacen') && solicitud.estado == 1 ? true : undefined,
+                                show: self.$root.can('consultar_solicitud_movimiento_fondo_garantia') ? true : undefined,
+                                cancelar: self.$root.can('cancelar_solicitud_movimiento_fondo_garantia') && solicitud.estado == 0 ? true : undefined,
+                                autorizar: self.$root.can('autorizar_solicitud_movimiento_fondo_garantia') && solicitud.estado == 0 ? true : undefined,
+                                rechazar: self.$root.can('rechazar_solicitud_movimiento_fondo_garantia') && solicitud.estado == 0 ? true : undefined,
+                                revertir_autorizacion: self.$root.can('revertir_autorizacion_solicitud_movimiento_fondo_garantia') && solicitud.estado == 1 ? true : undefined,
                                 id: solicitud.id,
                             })
                         })

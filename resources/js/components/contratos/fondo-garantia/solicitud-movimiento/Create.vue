@@ -1,11 +1,11 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_movimiento_bancario') && tipo_boton ==1" class="btn btn-app pull-right" >
+        <button @click="init" v-if="$root.can('registrar_solicitud_movimiento_fondo_garantia') && tipo_boton ==1" class="btn btn-app pull-right" >
             <i class="fa fa-plus"></i> Registrar Solicitud
         </button>
 
         <span>
-        <button @click="init"  v-if="$root.can('registrar_movimiento_bancario') && tipo_boton ==2" type="button" class="btn btn-sm btn-outline-success" title="Nueva Solicitud de Movimiento"><i class="fa fa-file-text"></i></button>
+        <button @click="init"  v-if="$root.can('registrar_solicitud_movimiento_fondo_garantia') && tipo_boton ==2" type="button" class="btn btn-sm btn-outline-success" title="Nueva Solicitud de Movimiento"><i class="fa fa-file-text"></i></button>
         </span>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">

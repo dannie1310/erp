@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init()" v-if="$root.can('consultar_cuenta_almacen')" type="button" class="btn btn-sm btn-outline-warning" title="Ajustar Saldo" >
+        <button @click="init()" v-if="$root.can('ajustar_saldo_fondo_garantia')" type="button" class="btn btn-sm btn-outline-warning" title="Ajustar Saldo" >
             <i class="fa fa-usd" style="padding:2px"></i>
         </button>
 

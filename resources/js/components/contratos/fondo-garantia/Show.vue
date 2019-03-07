@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('consultar_cuenta_almacen')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+        <button @click="init" v-if="$root.can('consultar_fondo_garantia')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </button>
 

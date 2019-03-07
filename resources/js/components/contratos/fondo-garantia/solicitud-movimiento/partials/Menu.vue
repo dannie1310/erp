@@ -5,20 +5,11 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">FONDO DE GARANTÍA</li>
-            <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
+            <li class="nav-item" v-if="$root.can('consultar_solicitud_movimiento_fondo_garantia')">
                 <a href="#" class="nav-link" >
                 <router-link :to="{name: 'solicitud-movimiento-fg'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Solicitudes de Movimiento</p>
-                </router-link>
-                </a>
-            </li>
-
-            <li class="nav-item" v-if="$root.can('consultar_cuenta_almacen')">
-                <a href="#" class="nav-link" >
-                <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
-                    <i class="fa fa-circle-o nav-icon"></i>
-                    <p>Consultar</p>
                 </router-link>
                 </a>
             </li>

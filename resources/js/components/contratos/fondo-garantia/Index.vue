@@ -79,9 +79,9 @@
                             subcontrato__fecha: fondoGarantia.subcontrato.fecha_format,
                             subcontrato__monto: fondoGarantia.subcontrato.monto_format,
                             buttons: $.extend({}, {
-                                show: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
-                                ajustar_saldo: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
-                                nueva_soliciud_movimiento: self.$root.can('consultar_cuenta_almacen') ? true : undefined,
+                                show: self.$root.can('consultar_fondo_garantia') ? true : undefined,
+                                ajustar_saldo: self.$root.can('ajustar_saldo_fondo_garantia') ? true : undefined,
+                                nueva_soliciud_movimiento: self.$root.can('registrar_solicitud_movimiento_fondo_garantia') ? true : undefined,
                                 id: fondoGarantia.id,
                                 objFondoGarantia: fondoGarantia,
                             })
