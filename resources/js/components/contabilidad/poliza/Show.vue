@@ -128,15 +128,24 @@
         props: ['id'],
 
         mounted() {
-            this.find({
-                id: this.id,
-                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
-            })
+            this.$Progress.start();
+            this.find()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
 
         methods: {
-            find(payload) {
-                return this.$store.dispatch('contabilidad/poliza/find', payload);
+            find() {
+                this.$store.commit('contabilidad/poliza/SET_POLIZA', null);
+
+                return this.$store.dispatch('contabilidad/poliza/find', {
+                    id: this.id,
+                    params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+                })
+                    .then(data => {
+                        this.$store.commit('contabilidad/poliza/SET_POLIZA', data);
+                    })
             }
         },
 

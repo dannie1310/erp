@@ -17,9 +17,28 @@ class CuentaAlmacen extends Model
 {
     use SoftDeletes;
 
+    /**
+     * @var string
+     */
     protected $connection = 'cadeco';
+
+    /**
+     * @var string
+     */
     protected $table = 'Contabilidad.cuentas_almacenes';
+
+    /**
+     * @var array
+     */
     protected $fillable = ['id_almacen', 'cuenta'];
+
+    /**
+     * @var array
+     */
+    public $searchable = [
+        'cuenta',
+        'almacen.descripcion'
+    ];
 
     protected static function boot()
     {
@@ -31,6 +50,9 @@ class CuentaAlmacen extends Model
         });
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function almacen()
     {
         return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');

@@ -38,25 +38,26 @@ export default {
 
     actions: {
         paginate (context, payload){
-            context.commit('SET_CUENTAS', [])
-            axios
-                .get(URI + 'paginate', { params: payload })
-                .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_CUENTAS', data.data)
-                    context.commit('SET_META', data.meta)
-                })
-        },
-
-        find(context, id) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_CUENTA', null)
                 axios
-                    .get(URI + id)
+                    .get(URI + 'paginate', { params: payload })
                     .then(r => r.data)
                     .then(data => {
-                        context.commit('SET_CUENTA', data)
-                        resolve();
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error)
@@ -64,29 +65,112 @@ export default {
             });
         },
 
-        update(context, payload) {
+        store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
-                    text: "Actualizar Cuenta de Banco",
-                    icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
+                    title: "Registrar Cuenta",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id, payload)
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cuenta registrada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta de Almacén",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Cuenta actualizada correctamente", {
                                         icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+
+        delete(context, id) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar cuenta",
+                    text: "¿Estás seguro/a de que deseas eliminar la cuenta?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + id)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cuenta eliminada correctamente", {
+                                        icon: "success",
                                         timer: 1500,
                                         buttons: false
+                                    }).then(() => {
+                                        resolve(data);
                                     })
-                                        .then(() => {
-                                            context.commit('UPDATE_CUENTA', data);
-                                            resolve();
-                                        })
                                 })
                                 .catch(error => {
                                     reject(error);
@@ -94,7 +178,7 @@ export default {
                         }
                     });
             });
-        }
+        },
     },
 
     getters: {

@@ -99,9 +99,10 @@
                             data: this.$data,
                             params: { include: 'transaccionAntecedente,movimientos,traspaso' }
                         })
-                            .then(() => {
+                            .then(data => {
+                                this.$store.commit('contabilidad/poliza/UPDATE_POLIZA', data);
                                 $(this.$refs.modal).modal('hide');
-                            });
+                            })
                     }
                 });
             },

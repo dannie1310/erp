@@ -48,7 +48,6 @@ class TipoCuentaContableTransformer extends TransformerAbstract
         if($cuenta = $model->cuentaContable) {
             return $this->item($cuenta, new CuentaContableTransformer);
         }
-
         return null;
     }
 }

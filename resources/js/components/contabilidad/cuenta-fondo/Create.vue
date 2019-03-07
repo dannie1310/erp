@@ -1,7 +1,9 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_fondo')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Cuenta
+        <button @click="init" v-if="$root.can('registrar_cuenta_fondo')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i>
+            Registrar Cuenta
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -70,7 +72,8 @@
         data() {
             return {
                 id_fondo: '',
-                cuenta: ''
+                cuenta: '',
+                cargando: false
             }
         },
 
@@ -82,19 +85,21 @@
 
         methods: {
             init() {
+                this.cargando = true;
                 $(this.$refs.modal).modal('show');
 
                 this.id_fondo = '';
                 this.cuenta = '';
 
                 this.$validator.reset()
+                this.cargando = false
             },
 
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-fondo/store', this.$data)
-                    .then((data) => {
+                    .then(data => {
                         $(this.$refs.modal).modal('hide');
-                        this.$emit('created', data);
+                        this.$emit('created', data)
                     });
             },
 
