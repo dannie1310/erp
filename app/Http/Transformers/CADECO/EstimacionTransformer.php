@@ -20,32 +20,31 @@ class EstimacionTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'subcontrato',
-        'contratoProyectado'
+        'subcontrato'
+    ];
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'subcontrato'
     ];
 
     public function transform(Estimacion $model)
     {
         return [
-            'id' => $model->getKey()
+            'id' => $model->getKey(),
+            'numeroFolio' => $model->numero_folio
         ];
     }
 
     public function includeSubcontrato(Estimacion $model)
     {
         if ($subcontrato = $model->subcontrato) {
-          //  return $this->collection($cuentas, new CuentaEmpresaTransformer);
+            return $this->item($subcontrato, new SubcontratoTransformer);
         }
         return null;
     }
-
-    public function includeContratoProyectado(Estimacion $model)
-    {
-        if($contrato = $model->contrato)
-        {
-          //  return $this->collection($cuentas, new CuentaTransformer);
-        }
-        return null;
-    }
-
 }
