@@ -27,7 +27,7 @@ class FondoGarantiaService
     {
         $this->repository = new Repository($model);
         $this->id_usuario = auth()->id();
-        $this->usuario = auth()->user()->usuario;
+        $this->usuario = (auth()->user())?auth()->user()->usuario:null;
         $this->id_obra = Context::getIdObra();
     }
 

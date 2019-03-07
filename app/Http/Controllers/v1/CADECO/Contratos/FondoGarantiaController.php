@@ -11,6 +11,8 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subcontratos\AjustarSaldoFondoGarantiaRequest;
+use App\Http\Requests\Subcontratos\ShowFondoGarantiaRequest;
+use App\Http\Requests\Subcontratos\StoreFondoGarantiaRequest;
 use App\Http\Transformers\CADECO\SubcontratosFG\FondoGarantiaTransformer;
 use App\Services\CADECO\Contratos\FondoGarantia\FondoGarantiaService;
 use App\Traits\ControllerTrait;
@@ -18,9 +20,14 @@ use League\Fractal\Manager;
 
 class FondoGarantiaController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait {
+        store as protected traitStore;
+        show as protected traitShow;
+        paginate as protected traitPaginate;
+        index as protected traitIndex;
+    }
     /**
-     * @var SolicitudMovimientoFondoGarantiaService
+     * @var FondoGarantiaService
      */
     private $service;
 
@@ -30,15 +37,15 @@ class FondoGarantiaController extends Controller
     protected $fractal;
 
     /**
-     * @var SolicitudMovimientoFondoGarantiaTransformer
+     * @var FondoGarantiaTransformer
      */
     protected $transformer;
 
     /**
-     * CuentaAlmacenController constructor.
-     * @param SolicitudMovimientoFondoGarantiaService $service
+     * FondoGarantiaController constructor.
+     * @param FondoGarantiaService $service
      * @param Manager $fractal
-     * @param SolicitudMovimientoFondoGarantiaTransformer $transformer
+     * @param FondoGarantiaTransformer $transformer
      */
     public function __construct(FondoGarantiaService $service, Manager $fractal, FondoGarantiaTransformer $transformer)
     {
@@ -54,6 +61,26 @@ class FondoGarantiaController extends Controller
     {
         $item = $this->service->ajustarSaldo($request->all(), $id);
         return $this->respondWithItem($item);
+    }
+
+    public function store(StoreFondoGarantiaRequest $request)
+    {
+        return $this->traitStore($request);
+    }
+
+    public function show(ShowFondoGarantiaRequest $request, $id)
+    {
+        return $this->traitShow($request, $id);
+    }
+
+    public function paginate(ShowFondoGarantiaRequest $request)
+    {
+        return $this->traitPaginate($request);
+    }
+
+    public function index(ShowFondoGarantiaRequest $request)
+    {
+        return $this->traitIndex($request);
     }
 
 }

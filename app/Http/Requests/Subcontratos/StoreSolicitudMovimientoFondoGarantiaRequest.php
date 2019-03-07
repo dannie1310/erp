@@ -19,7 +19,7 @@ class StoreSolicitudMovimientoFondoGarantiaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('consultar_cuenta_almacen');
+        return auth()->user()->can('registrar_solicitud_movimiento_fondo_garantia');
     }
 
     /**
@@ -32,7 +32,7 @@ class StoreSolicitudMovimientoFondoGarantiaRequest extends FormRequest
         return [
 
             'fecha' => ['required', 'date_format:"Y-m-d"'],
-            'id_subcontrato' => ['required', 'numeric'],
+            'id_fondo_garantia' => ['required', 'numeric'],
             'importe' => ['required', 'numeric'],
             'observaciones' => ['required', 'string'],
             'referencia' => ['required', 'string'],

@@ -20,7 +20,7 @@ class RechazarSolicitudMovimientoFondoGarantiaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('consultar_cuenta_almacen');
+        return auth()->user()->can('rechazar_solicitud_movimiento_fondo_garantia');
     }
 
     protected function failedAuthorization()

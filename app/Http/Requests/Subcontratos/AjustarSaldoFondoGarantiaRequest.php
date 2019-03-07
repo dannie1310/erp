@@ -20,7 +20,7 @@ class AjustarSaldoFondoGarantiaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('consultar_cuenta_almacen');
+        return auth()->user()->can('ajustar_saldo_fondo_garantia');
     }
 
     protected function failedAuthorization()

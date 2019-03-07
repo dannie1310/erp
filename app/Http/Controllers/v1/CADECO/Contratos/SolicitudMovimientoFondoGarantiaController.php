@@ -14,6 +14,7 @@ use App\Http\Requests\Subcontratos\AutorizarSolicitudMovimientoFondoGarantiaRequ
 use App\Http\Requests\Subcontratos\CancelarSolicitudMovimientoFondoGarantiaRequest;
 use App\Http\Requests\Subcontratos\RechazarSolicitudMovimientoFondoGarantiaRequest;
 use App\Http\Requests\Subcontratos\RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest;
+use App\Http\Requests\Subcontratos\ShowSolicitudMovimientoFondoGarantiaRequest;
 use App\Http\Requests\Subcontratos\StoreSolicitudMovimientoFondoGarantiaRequest;
 use App\Http\Transformers\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantiaTransformer;
 use App\Services\CADECO\Contratos\SolicitudMovimientoFondoGarantiaService;
@@ -22,7 +23,12 @@ use League\Fractal\Manager;
 
 class SolicitudMovimientoFondoGarantiaController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait {
+        store as protected traitStore;
+        show as protected traitShow;
+        paginate as protected traitPaginate;
+        index as protected traitIndex;
+    }
     /*use ControllerTrait {update as protected traitUpdate; store as protected traitStore; }*/
 
     /**
@@ -78,5 +84,25 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
     {
         $item = $this->service->revertirAutorizacion($request->all(), $id);
         return $this->respondWithItem($item);
+    }
+
+    public function store(StoreSolicitudMovimientoFondoGarantiaRequest $request)
+    {
+        return $this->traitStore($request);
+    }
+
+    public function show(ShowSolicitudMovimientoFondoGarantiaRequest $request, $id)
+    {
+        return $this->traitShow($request, $id);
+    }
+
+    public function paginate(ShowSolicitudMovimientoFondoGarantiaRequest $request)
+    {
+        return $this->traitPaginate($request);
+    }
+
+    public function index(ShowSolicitudMovimientoFondoGarantiaRequest $request)
+    {
+        return $this->traitIndex($request);
     }
 }
