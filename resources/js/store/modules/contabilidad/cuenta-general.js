@@ -40,7 +40,7 @@ export default {
         paginate (context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'paginate', { params: payload })
+                    .get(URI + 'paginate', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data)
