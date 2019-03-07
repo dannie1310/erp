@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" v-if="$root.can('consultar_cuenta_almacen')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+        <button @click="init" v-if="$root.can('consultar_cuenta_almacen')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </button>
 
@@ -124,24 +124,34 @@
         name: "fondo-garantia-show",
         components: {DetalleSubcontrato},
         props: ['id'],
+        data() {
+            return {
+                fondo_garantia : null
+            }
+        },
         methods: {
-            find(id) {
-                return this.$store.dispatch('contratos/fondo-garantia/find', {
-                    id: id,
-                    params: { include: 'movimientos,subcontrato.empresa,subcontrato.moneda' }
-                }).then(() => {
+            init(){
+                this.find({id: this.id}).then(data=>{
+
+                    this.fondo_garantia = data
                     $(this.$refs.modal).modal('show')
+                });
+            },
+            find(payload) {
+                return this.$store.dispatch('contratos/fondo-garantia/find', {
+                    id: payload.id,
+                    params: { include: 'movimientos,subcontrato.empresa,subcontrato.moneda' }
                 })
             },
         },
         computed: {
-            fondo_garantia() {
+            /*fondo_garantia() {
                 return this.$store.getters['contratos/fondo-garantia/currentFondoGarantia']
-            }
+            }*/
         }
     }
 </script>
-<style>
+<style scoped>
     .modal-body {
         background-color: #dedede;
     }

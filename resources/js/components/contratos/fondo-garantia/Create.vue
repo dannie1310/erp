@@ -149,7 +149,7 @@
 
 <style scoped>
     .modal-body {
-        background-color: #ddd;
+        background-color: #dedede;
     }
     .btn-primary {
         background-color: #00c0ef;

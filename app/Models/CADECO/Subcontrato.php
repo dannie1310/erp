@@ -88,6 +88,11 @@ class Subcontrato extends Transaccion
         }
    }
 
+   public function getSubtotalAttribute()
+   {
+       return $this->monto-$this->impuesto;
+   }
+
     public function scopeSinFondo($query)
     {
         return $query->whereDoesntHave('fondo_garantia');

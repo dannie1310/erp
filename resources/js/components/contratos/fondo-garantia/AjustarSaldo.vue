@@ -21,7 +21,7 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div   class="card" v-if="!fondo_garantia">
+                            <div   class="card" v-if="buscando==1">
                                  <div class="card-body">
                                      <div class="row">
                                          <div class="col-md-12" align = "center">
@@ -30,7 +30,7 @@
                                      </div>
                                  </div>
                             </div>
-                             <div   class="card" v-if="fondo_garantia">
+                             <div   class="card" v-else>
                                  <div class="card-header">
                                      <div class="row" >
                                          <div class="col-md-12">
@@ -118,7 +118,9 @@
                 id_fondo_garantia : this.id,
                 importe :0,
                 saldo_resultante: 0,
-                observaciones: ''
+                observaciones: '',
+                buscando: 1,
+                fondo_garantia : null
             }
         },
 
@@ -128,21 +130,34 @@
 
         methods: {
             find(payload) {
+                this.buscando = 1;
                 return this.$store.dispatch('contratos/fondo-garantia/find', {
                     id: payload.id,
-                    params: {include : 'subcontrato.empresa'}
+                    params: {include : 'subcontrato.empresa,subcontrato.moneda'}
                 })
             },
-            limpia_fondo(){
+            /*limpia_fondo(){
                 return this.$store.dispatch('contratos/fondo-garantia/limpia')
-            },
+            },*/
             init() {
-                this.limpia_fondo();
-                this.find({id: this.id});
-                $(this.$refs.modal).modal('show');
+                /*this.limpia_fondo();*/
+                /*
+                * this.find(id)
+                    .then(data=>{
+                        this.subcontrato = data
+                        this.retencion = data.retencion
+                        this.buscando = 0
+                     })
+                * */
+                this.find({id: this.id}).then(data=>{
+                    this.fondo_garantia = data
+                    this.buscando = 0
+                    this.saldo_resultante= data.saldo
+                    $(this.$refs.modal).modal('show');
+                });
+
                 this.importe = 0;
-                this.saldo_resultate = 0;
-                this.observaciones;
+                this.observaciones = '';
                 this.$validator.reset()
             },
             validate() {
@@ -156,7 +171,7 @@
                 return this.$store.dispatch('contratos/fondo-garantia/ajustar_saldo', {
                     id:this.id,
                     data: this.$data,
-                    params: {include : 'subcontrato.empresa'}
+                    params: {include : 'subcontrato.empresa,subcontrato.moneda'}
                 })
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
@@ -165,9 +180,9 @@
         },
 
         computed: {
-            fondo_garantia() {
+            /*fondo_garantia() { se usaba antes de quitar del find del store la actualizacoón del fondo de garantía acutal
                 return this.$store.getters['contratos/fondo-garantia/currentFondoGarantia']
-            }
+            }*/
         },
 
         watch : {

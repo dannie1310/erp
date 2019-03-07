@@ -54,17 +54,17 @@ export default {
                     context.commit('SET_FONDOS_GARANTIA', data.data)
                 })
         },
-        limpia(context){
+        /*limpia(context){
             context.commit('SET_FONDO_GARANTIA', null);
-        },
+        },*/
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + payload.id, {params: payload.params})
                     .then(r => r.data)
                     .then((data) => {
-                        context.commit('SET_FONDO_GARANTIA', data)
-                        resolve();
+                        /*context.commit('SET_FONDO_GARANTIA', data)*/
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error);

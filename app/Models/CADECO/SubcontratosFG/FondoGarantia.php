@@ -27,7 +27,9 @@ class FondoGarantia extends Model
     {
         parent::boot();
         self::creating(function ($fondo) {
-
+            /*
+             * se valida que la retención establecida en el subcontrato sea mayor a 0 para que el fondo de garantía pueda ser generado
+             * */
             $subcontrato = Subcontrato::find($fondo->id_subcontrato);
             if(!(float) $subcontrato->retencion>0){
                 throw New \Exception('La retención de fondo de garantía establecida en el subcontrato no es mayor a 0, el fondo de garantía no puede generarse');
@@ -37,10 +39,21 @@ class FondoGarantia extends Model
         });
         self::updating(function($fondo)
         {
+            /*
+             * se valida que el saldo del fondo de garantía no sea menor a 0 al momento de actualizarlo
+             * */
             if($fondo->saldo<0)
             {
                 throw New \Exception('El saldo del fondo de garantía no puede ser menor a 0');
             }
+            /*
+             * se valida que el saldo del fondo de garantía no sea mayor al subtotal del subcontrato al momento de actualizarlo
+             * */
+            if($fondo->saldo> $fondo->subcontrato->subtotal)
+            {
+                throw New \Exception('El saldo del fondo de garantía no puede ser mayor al subtotal del subcontrato');
+            }
+
         });
         self::created(function($fondo)
         {
