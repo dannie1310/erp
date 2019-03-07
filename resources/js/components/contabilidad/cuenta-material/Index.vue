@@ -99,7 +99,6 @@
 
         mounted() {
             this.$Progress.start();
-            this.$store.dispatch('contabilidad/tipo-cuenta-material/index');
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
