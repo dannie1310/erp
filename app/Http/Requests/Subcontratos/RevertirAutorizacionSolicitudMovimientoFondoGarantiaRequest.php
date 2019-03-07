@@ -20,7 +20,7 @@ class RevertirAutorizacionSolicitudMovimientoFondoGarantiaRequest extends FormRe
      */
     public function authorize()
     {
-        return auth()->user()->can('consultar_cuenta_almacen');
+        return auth()->user()->can('revertir_autorizacion_solicitud_movimiento_fondo_garantia');
     }
 
     protected function failedAuthorization()

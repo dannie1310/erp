@@ -46,7 +46,7 @@
                     <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
                         <i class="nav-icon fa fa-file-text"></i>
                         <p>
-                            Contratos
+                            Subcontratos
 
                         </p>
                     </router-link>
