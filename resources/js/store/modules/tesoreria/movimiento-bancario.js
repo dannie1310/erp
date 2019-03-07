@@ -21,6 +21,7 @@ export default {
             state.meta = data
         },
 
+
         DELETE_MOVIMIENTO(state, id) {
             state.movimientos = state.movimientos.filter((mov) => {
                 return mov.id !== id;

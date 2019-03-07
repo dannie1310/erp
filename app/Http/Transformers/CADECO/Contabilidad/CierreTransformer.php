@@ -39,24 +39,28 @@ class CierreTransformer extends TransformerAbstract
      * @param Cierre $model
      * @return array
      */
-    public function transform(Cierre $model) {
+    public function transform(Cierre $model)
+    {
         return [
             'id' => (int) $model->getKey(),
             'anio' => (int) $model->anio,
-            'mes' => $model->mes($model),
-            'fecha' => $model->created_at->format('Y-m-d G:i:s a')
+            'mes' => (int) $model->mes,
+            'fecha' => $model->created_at->format('Y-m-d G:i:s a'),
+            'abierto' => (boolean) $model->abierto
         ];
     }
 
-    public function includeApertura(Cierre $model) {
-        if($apertura = $model->apertura){
+    public function includeApertura(Cierre $model)
+    {
+        if ($apertura = $model->apertura) {
             return $this->item($apertura, new AperturaTransformer);
         }
         return null;
     }
 
-    public function includeUsuario(Cierre $model){
-        if($usuario = $model->usuario){
+    public function includeUsuario(Cierre $model)
+    {
+        if ($usuario = $model->usuario) {
             return $this->item($usuario, new UsuarioTransformer);
         }
         return null;

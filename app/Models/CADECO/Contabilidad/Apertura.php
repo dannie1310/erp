@@ -16,13 +16,13 @@ class Apertura extends Model
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cierres_aperturas';
     public $timestamps = false;
-    protected $primaryKey = 'id_cierre';
-    protected $fillable = ['id_cierre',
-                            'motivo',
-                            'registro',
-                            'inicio_apertura',
-                            'fin_apertura',
-                            'estatus'];
+    protected $fillable = [
+        'motivo',
+        'registro',
+        'inicio_apertura',
+        'fin_apertura',
+        'estatus'
+    ];
 
     protected static function boot()
     {
@@ -35,16 +35,18 @@ class Apertura extends Model
         });
     }
 
-    public function cierre() {
-        return $this->belongsTo(Cierre::class, 'id_cierre', 'id');
+    public function cierre()
+    {
+        return $this->belongsTo(Cierre::class, 'id_cierre');
     }
 
-    public function getEstadoAttribute(){
-        switch ($this->estatus){
-            case 0:
-                return 'Cerrado';
-            case 1:
-                return 'Abierto';
-        }
+    public function scopeAbiertas($query)
+    {
+        return $query->where('estatus', '=', true);
+    }
+
+    public function scopeCerradas($query)
+    {
+        return $query->where('estatus', '=', false);
     }
 }

@@ -45,7 +45,6 @@
                         var activePoints = dona.getElementAtEvent(e);
                         if( activePoints[0]) {
                             var estatu = activePoints[0]._chart.config.data.estatus;
-                            console.log(activePoints[0], estatu );
                             var url = '/contabilidad/poliza?estatus=' + estatu[activePoints[0]._index];
                             self.$router.push(url);
                         }

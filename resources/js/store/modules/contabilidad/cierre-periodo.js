@@ -103,29 +103,85 @@ export default {
             });
         },
 
-        update(context, payload) {
+        abrir(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Estás seguro?",
-                    text: "Actualizar Cierre de Periodo",
+                    text: "Por favor escriba un motivo de apertura",
+                    content: 'input',
                     icon: "warning",
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
                         },
                         confirm: {
-                            text: 'Si, Actualizar',
+                            text: 'Si, Abrir',
                             closeModal: false,
                         }
-                    }
+                    },
+                    dangerMode: true
+                })
+                    .then(value => {
+                        return new Promise((resolve, reject) => {
+                           if (value.length === 0) {
+                               swal.stopLoading();
+                               swal.close();
+                               swal("", "El motivo de apertura es obligatorio", "error")
+                                   .then(() => {
+                                       context.dispatch('abrir',payload);
+                                   })
+                           } else {
+                               resolve(value);
+                           }
+                        })
+                    })
+                    .then(value => {
+                        axios
+                            .patch(URI + payload.id + '/abrir', {
+                                motivo: value
+                            })
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Periodo abierto correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                })
+                                    .then(() => {
+                                        resolve(data);
+                                    })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            })
+                    })
+            })
+        },
+
+        cerrar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Cerrar Periodo",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Cerrar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true
                 })
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id, payload.data)
+                                .patch(URI + payload.id + '/cerrar')
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cierre de periodo actualizado correctamente", {
+                                    swal("Periodo cerrado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
