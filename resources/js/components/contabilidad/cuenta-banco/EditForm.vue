@@ -41,9 +41,6 @@
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             },
-            tipos() {
-                return this.$store.getters['contabilidad/tipo-cuenta-contable/tipos']
-            },
             cambio() {
                 return (this.cuenta.cuenta != this.form.cuenta) || (this.cuenta.tipo.id != this.form.id_tipo_cuenta_banco)
             }

@@ -164,7 +164,7 @@ export default {
                                 .delete(URI + id)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cuenta eliminado correctamente", {
+                                    swal("Cuenta eliminada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
