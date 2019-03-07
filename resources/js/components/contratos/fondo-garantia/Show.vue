@@ -14,9 +14,8 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="table-responsive">
-
-                            <div  v-if="fondo_garantia" class="card">
+                        <div >
+                            <div v-if="fondo_garantia">
                                 <div class="row" v-if="!(fondo_garantia.porcentaje_abonos>0 && fondo_garantia.porcentaje_cargos>0)">
                                     <div class=" offset-md-9 col-md-3">
                                         <div class="info-box">
@@ -29,6 +28,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="row" v-else>
                                     <div class=" offset-md-6 col-md-3">
                                         <div class="info-box">
@@ -49,28 +49,35 @@
                                         </div>
                                         <div class="progress  progress-sm">
                                             <div class="progress-bar bg-success progress-bar-striped" role="progressbar" :aria-valuenow="fondo_garantia.porcentaje_cargos" aria-valuemin="0" aria-valuemax="100" :style="fondo_garantia.estilo_porcentaje_cargos">
-                                              <span class="sr-only">{{fondo_garantia.porcentaje_cargos}}%</span>
+                                                <span class="sr-only">{{fondo_garantia.porcentaje_cargos}}%</span>
                                             </div>
                                         </div>
                                         <div class="progress  progress-sm">
                                             <div class="progress-bar bg-danger progress-bar-striped" role="progressbar" :aria-valuenow="fondo_garantia.porcentaje_abonos" aria-valuemin="0" aria-valuemax="100" :style="fondo_garantia.estilo_porcentaje_abonos">
-                                              <span class="sr-only">{{fondo_garantia.porcentaje_abonos}}%</span>
+                                                <span class="sr-only">{{fondo_garantia.porcentaje_abonos}}%</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div v-if="fondo_garantia">
                                 <div class="row" v-if="fondo_garantia.subcontrato.id">
                                     <div class="col-md-12">
                                         <detalle-subcontrato :subcontrato="fondo_garantia.subcontrato" ></detalle-subcontrato>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                     <hr />
+                            </div>
+
+                            <div  v-if="fondo_garantia" class="card">
+                                <div class="card-header">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <label ><i class="fa fa-archive" style="padding-right:3px"></i>Histórico de Movimientos:</label>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="card-body">
+
                                     <div v-if="fondo_garantia.movimientos" class="row">
                                         <div class="col-12 table-responsive">
                                             <table class="table table-striped">
@@ -136,7 +143,7 @@
 </script>
 <style>
     .modal-body {
-        background-color: #ddd;
+        background-color: #dedede;
     }
     .money
     {
