@@ -203,9 +203,9 @@ export const routes = [
                 }
             },
             {
-                path: 'formato-estimacion',
-                name: 'formato-estimacion',
-                component: require('./components/formato/formato-estimacion/Index'),
+                path: 'orden-pago-estimacion',
+                name: 'orden-pago-estimacion',
+                component: require('./components/formato/orden-pago-estimacion/Index'),
                 meta: {
                     title: 'Orden de Pago Estimación',
                     breadcrumb: {name: 'ORDEN DE PAGO ESTIMACIÓN', parent: 'formato'},

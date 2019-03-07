@@ -11,6 +11,7 @@ namespace App\Http\Controllers\v1\CADECO;
 
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\EstimacionTransformer;
+use App\PDF\Formato\OrdenPagoEstimacion;
 use App\Services\CADECO\EstimacionService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
@@ -50,5 +51,12 @@ class EstimacionController extends Controller
         $this->transformer = $transformer;
     }
 
+    public function pdf($id)
+    {
+        $estimacion = $this->service->find($id);
+        dd("AQUI", $estimacion);
+        $pdf = new OrdenPagoEstimacion($estimacion);
+        $pdf->create();
 
+    }
 }

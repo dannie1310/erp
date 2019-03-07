@@ -31,4 +31,10 @@ class EstimacionService
     {
         return $this->repository->all($data);
     }
+
+    public function find($id)
+    {
+        return $this->repository->where('id_transaccion', '=', $id);
+    }
+
 }
