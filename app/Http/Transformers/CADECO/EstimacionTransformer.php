@@ -36,7 +36,8 @@ class EstimacionTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'numeroFolio' => $model->numero_folio
+            'numero_folio' => $model->numero_folio,
+            'observaciones' => $model->observaciones
         ];
     }
 

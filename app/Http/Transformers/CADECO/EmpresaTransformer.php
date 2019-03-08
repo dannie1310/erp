@@ -16,7 +16,8 @@ class EmpresaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'cuentasEmpresa',
-        'cuentas'
+        'cuentas',
+        'subcontratos'
     ];
 
     public function transform(Empresa $model)
@@ -40,6 +41,15 @@ class EmpresaTransformer extends TransformerAbstract
         if($cuentas = $model->cuentas)
         {
             return $this->collection($cuentas, new CuentaTransformer);
+        }
+        return null;
+    }
+
+    public function includeSubcontratos(Empresa $model)
+    {
+        if($subcontratos = $model->subcontrato)
+        {
+            return $this->collection($subcontratos, new SubcontratoTransformer);
         }
         return null;
     }

@@ -20,7 +20,9 @@ class SubcontratoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'contrato'
+        'contrato',
+        'empresa',
+        'estimaciones'
     ];
 
     /**
@@ -29,14 +31,16 @@ class SubcontratoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'contrato'
+        'contrato',
+        'empresa',
+        'estimaciones'
     ];
 
     public function transform(Subcontrato $model)
     {
         return [
             'id' => $model->getKey(),
-            'numeroFolio' => $model->numero_folio
+            'referencia' => $model->referencia
         ];
     }
 
@@ -44,6 +48,22 @@ class SubcontratoTransformer extends TransformerAbstract
     {
         if ($contrato = $model->contratoProyectado) {
             return $this->item($contrato, new ContratoProyectadoTransformer);
+        }
+        return null;
+    }
+
+    public function includeEmpresa(Subcontrato $model)
+    {
+        if($empresa = $model->empresa){
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    public function includeEstimaciones(Subcontrato $model)
+    {
+        if($estimaciones = $model->estimaciones){
+            return $this->collection($estimaciones, new EstimacionTransformer);
         }
         return null;
     }

@@ -41,7 +41,7 @@
                                             :class="{'is-invalid': errors.has('id_subcontrato')}"
                                     >
                                         <option value>-- Seleccione --</option>
-                                        <option v-for="c in subcontrato" :value="c.id">{{ c.referencia }}</option>
+                                        <option v-for="c in subcontratos" :value="c.id">{{ c.referencia }}</option>
                                     </select>
                                     <div class="invalid-feedback" v-show="errors.has('id_subcontrato')">{{ errors.first('id_subcontrato') }}</div>
                                 </div>
@@ -60,7 +60,7 @@
                                             :class="{'is-invalid': errors.has('id_estimacion')}"
                                     >
                                         <option value>-- Estimación --</option>
-                                        <option v-for="tipo in estimaciones" :value="tipo.id">{{ tipo.descripcion }}</option>
+                                        <option v-for="tipo in estimaciones" :value="tipo.id">{{ tipo.referencia }}</option>
                                     </select>
                                     <div class="invalid-feedback" v-show="errors.has('id_estimacion')">{{ errors.first('id_estimacion') }}</div>
                                 </div>
@@ -85,7 +85,8 @@
                 id_empresa: '',
                 id_subcontrato:  '',
                 id_estimacion: '',
-                subcontratos: []
+                subcontratos: [],
+                estimaciones: []
             }
         },
         mounted() {
@@ -97,6 +98,7 @@
             },
         },
         methods: {
+
             getEmpresas() {
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {scope: 'paraSubcontratistas'}
@@ -104,12 +106,24 @@
             },
 
             getSubcontratos(){
-                return this.$store.dispatch('cadeco/subcontrato/find', {
+                return this.$store.dispatch('cadeco/empresa/find', {
                     id: this.id_empresa,
-                    //params: { include: 'cuentas' }
+                    params: { include: 'subcontratos' }
                 })
                     .then(data => {
-                        this.subcontratos = data.subcontratos.data;
+                        this.subcontratos = data.subcontratos;
+                    })
+            },
+
+            getEstimaciones(){
+                return this.$store.dispatch('cadeco/subcontrato/find', {
+                    id: this.id_subcontrato,
+                    params: {
+                        include: 'estimaciones'
+                    }
+                })
+                    .then(data => {
+                        this.estimaciones = data.estimaciones.data;
                     })
             },
 
@@ -128,11 +142,12 @@
                      this.getSubcontratos();
                  }
              },
-            // id_cuenta(value){
-            //     if(value){
-            //         this.getTipos();
-            //     }
-            // }
+             id_subcontrato(value){
+                 this.estimaciones = []
+                 if(value){
+                     this.getEStimaciones();
+                 }
+             }
         }
     }
 </script>
