@@ -1,7 +1,8 @@
 <template>
     <span>
-        <button @click="find(id)" v-if="$root.can('consultar_solicitud_movimiento_fondo_garantia')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-            <i class="fa fa-eye"></i>
+        <button @click="init" v-if="$root.can('consultar_solicitud_movimiento_fondo_garantia')" :disabled="cargando" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-eye" v-else></i>
         </button>
 
         <div ref="modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -116,21 +117,35 @@
     export default {
         name: "solicitud-movimiento-fondo-garantia-show",
         props: ['id'],
+        data() {
+            return {
+                solicitud : null,
+                cargando: false,
+            }
+        },
         methods: {
-            find(id) {
-                return this.$store.dispatch('contratos/solicitud-movimiento-fg/find', {
-                    id: id,
-                    params: { include: 'movimientos' }
-                }).then(() => {
+            init(){
+                this.find({id: this.id}).then(data=>{
+                    this.solicitud = data
                     $(this.$refs.modal).modal('show')
+                })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
+            },
+            find(payload) {
+                this.cargando = true;
+                return this.$store.dispatch('contratos/solicitud-movimiento-fg/find', {
+                    id: payload.id,
+                    params: { include: 'movimientos' }
                 })
             },
         },
 
         computed: {
-            solicitud() {
+            /*solicitud() {
                 return this.$store.getters['contratos/solicitud-movimiento-fg/currentSolicitud']
-            }
+            }*/
         }
     }
 </script>

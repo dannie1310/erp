@@ -5,7 +5,10 @@
         </button>
 
         <span>
-        <button @click="init"  v-if="$root.can('registrar_solicitud_movimiento_fondo_garantia') && tipo_boton ==2" type="button" class="btn btn-sm btn-outline-success" title="Nueva Solicitud de Movimiento"><i class="fa fa-file-text"></i></button>
+        <button @click="init"  v-if="$root.can('registrar_solicitud_movimiento_fondo_garantia') && tipo_boton ==2" :disabled="cargando" type="button" class="btn btn-sm btn-outline-success" title="Nueva Solicitud de Movimiento">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-file-text" style="padding:2px" v-else></i>
+        </button>
         </span>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -182,6 +185,7 @@
                     1: "Descuento",
                     2: "Liberación"
                 },
+                cargando: false
             }
         },
         mounted() {
@@ -192,13 +196,16 @@
 
         methods: {
             init() {
-                $(this.$refs.modal).modal('show');
+                this.cargando = true;
+
                 this.id_fondo_garantia = (this.objFondoGarantia.subcontrato)?this.objFondoGarantia.subcontrato.id:'';
                 this.id_tipo_solicitud = 1;
                 this.fecha = '';
                 this.referencia = '';
                 this.importe = '';
                 this.observaciones = '';
+                $(this.$refs.modal).modal('show');
+                this.cargando = false;
                 this.$validator.reset()
             },
 

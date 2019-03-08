@@ -1,7 +1,9 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('generar_fondo_garantias')" class="btn btn-app pull-right" >
-            <i class="fa fa-plus"></i> Generar Fondo de Garantía
+        <button @click="init" v-if="$root.can('generar_fondo_garantia')" class="btn btn-app pull-right" :disabled="cargando" >
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i>
+            Generar Fondo de Garantía
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -84,6 +86,7 @@
                 id_subcontrato : '',
                 subcontrato : [],
                 buscando: 0,
+                cargando: false,
             }
         },
 
@@ -100,11 +103,13 @@
                 })
             },
             init() {
+                cargando: true;
                 $(this.$refs.modal).modal('show');
                 this.id_subcontrato = '';
                 this.retencion = '';
                 this.subcontrato = [];
-                this.$validator.reset()
+                this.$validator.reset();
+                cargando: false;
             },
 
             getSubcontratosSinFondo() {

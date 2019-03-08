@@ -54,8 +54,8 @@ export default {
                     .get(URI + payload.id, {params: payload.params})
                     .then(r => r.data)
                     .then((data) => {
-                        context.commit('SET_SOLICITUD', data)
-                        resolve();
+                        /*context.commit('SET_SOLICITUD', data)*/
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error);

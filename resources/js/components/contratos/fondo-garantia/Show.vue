@@ -1,7 +1,8 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('consultar_fondo_garantia')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-            <i class="fa fa-eye"></i>
+        <button @click="init" v-if="$root.can('consultar_fondo_garantia')" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando" title="Ver">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-eye" v-else></i>
         </button>
 
         <div ref="modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -126,7 +127,8 @@
         props: ['id'],
         data() {
             return {
-                fondo_garantia : null
+                fondo_garantia : null,
+                cargando: false,
             }
         },
         methods: {
@@ -135,13 +137,18 @@
 
                     this.fondo_garantia = data
                     $(this.$refs.modal).modal('show')
-                });
+                })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
             },
             find(payload) {
+                this.cargando = true;
                 return this.$store.dispatch('contratos/fondo-garantia/find', {
                     id: payload.id,
                     params: { include: 'movimientos,subcontrato.empresa,subcontrato.moneda' }
                 })
+
             },
         },
         computed: {

@@ -1,7 +1,8 @@
 <template>
     <span>
-        <button @click="init()" v-if="$root.can('ajustar_saldo_fondo_garantia')" type="button" class="btn btn-sm btn-outline-warning" title="Ajustar Saldo" >
-            <i class="fa fa-usd" style="padding:2px"></i>
+        <button @click="init()" v-if="$root.can('ajustar_saldo_fondo_garantia')" type="button" class="btn btn-sm btn-outline-warning" title="Ajustar Saldo" :disabled="cargando" >
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-usd" style="padding:2px" v-else></i>
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -21,16 +22,8 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div   class="card" v-if="buscando==1">
-                                 <div class="card-body">
-                                     <div class="row">
-                                         <div class="col-md-12" align = "center">
-                                             <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-                                         </div>
-                                     </div>
-                                 </div>
-                            </div>
-                             <div   class="card" v-else>
+
+                             <div   class="card" v-if="fondo_garantia">
                                  <div class="card-header">
                                      <div class="row" >
                                          <div class="col-md-12">
@@ -119,8 +112,8 @@
                 importe :0,
                 saldo_resultante: 0,
                 observaciones: '',
-                buscando: 1,
-                fondo_garantia : null
+                fondo_garantia : null,
+                cargando: false,
             }
         },
 
@@ -130,7 +123,7 @@
 
         methods: {
             find(payload) {
-                this.buscando = 1;
+                this.cargando= true;
                 return this.$store.dispatch('contratos/fondo-garantia/find', {
                     id: payload.id,
                     params: {include : 'subcontrato.empresa,subcontrato.moneda'}
@@ -151,10 +144,12 @@
                 * */
                 this.find({id: this.id}).then(data=>{
                     this.fondo_garantia = data
-                    this.buscando = 0
                     this.saldo_resultante= data.saldo
                     $(this.$refs.modal).modal('show');
-                });
+                })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
 
                 this.importe = 0;
                 this.observaciones = '';
