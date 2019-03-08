@@ -1,11 +1,13 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_almacen')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Cuenta
+        <button @click="init" v-if="$root.can('registrar_cuenta_almacen')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i>
+            Registrar Cuenta
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR CUENTA DE ALMACÉN</h5>
@@ -15,10 +17,10 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="id_almacen">Almacén</label>
+                            <div role="form">
+                                <div class="form-group row error-content">
+                                    <label for="almacen" class="col-sm-2 col-form-label">Almacén</label>
+                                    <div class="col-sm-10">
                                         <select
                                                 name="id_almacen"
                                                 id="id_almacen"
@@ -34,10 +36,9 @@
                                         <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                     </div>
                                 </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="cuenta">Cuenta</label>
+                                <div class="form-group row error-content">
+                                    <label for="cuenta" class="col-sm-2 col-form-label">Cuenta</label>
+                                    <div class="col-sm-10">
                                         <input
                                                 type="text"
                                                 name="cuenta"
@@ -54,6 +55,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                             <button type="submit" class="btn btn-primary">Registrar</button>
@@ -72,37 +74,49 @@
         data() {
             return {
                 id_almacen: '',
-                cuenta: ''
+                cuenta: '',
+                cargando: false,
+                almacenes: []
             }
-        },
-
-        mounted() {
-            this.getAlmacenes();
         },
 
         methods: {
             init() {
-                $(this.$refs.modal).modal('show');
-
-                this.id_almacen = '';
-                this.cuenta = '';
-
-                this.$validator.reset()
+                this.getAlmacenes()
             },
 
             getAlmacenes() {
+                this.$store.commit('cadeco/almacen/SET_ALMACENES', []);
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/almacen/index', {
                     params: { scope: 'sinCuenta' }
                 })
+                    .then(data => {
+                        this.almacenes = data.data
+                        if (this.almacenes.length) {
+                            $(this.$refs.modal).modal('show');
+
+                            this.id_almacen = '';
+                            this.cuenta = '';
+
+                            this.$validator.reset()
+                        } else {
+                            swal("Todos los almacénes tienen una cuenta registrada", "", "warning");
+                        }
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
             },
 
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-almacen/store', this.$data)
-                    .then(() => {
-                        this.$store.commit('cadeco/almacen/SET_ALMACENES', this.almacenes.filter(almacen => {
+                    .then(data => {
+                        this.almacenes = this.almacenes.filter(almacen => {
                             return almacen.id != this.id_almacen;
-                        }));
+                        });
                         $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data)
                     });
             },
 
@@ -116,10 +130,6 @@
         },
 
         computed: {
-            almacenes() {
-                return this.$store.getters['cadeco/almacen/almacenes'];
-            },
-
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             }

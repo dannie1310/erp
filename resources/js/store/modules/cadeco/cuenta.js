@@ -26,40 +26,34 @@ export default {
                 axios
                     .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        context.commit('SET_CUENTA', data)
+                    .then(data => {
                         resolve(data);
                     })
                     .catch(error => {
                         reject(error);
-                    })
+                    });
             });
         },
         index(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_CUENTAS', null)
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        context.commit('SET_CUENTAS', data.data)
-                        resolve();
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
-                        reject(error)
-                    })
+                        reject(error);
+                    });
             });
         },
         paginate(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_CUENTAS', []);
                 axios
-                    .get(URI + 'paginate', { params: payload })
+                    .get(URI + 'paginate', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
-                        context.commit('SET_CUENTAS', data.data);
-                        context.commit('SET_META', data.meta);
-                        resolve();
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error);
@@ -70,13 +64,13 @@ export default {
 
     getters: {
         cuentas(state) {
-            return state.cuentas
+            return state.cuentas;
         },
         meta(state) {
-            return state.meta
+            return state.meta;
         },
         currentCuenta(state) {
-            return state.currentCuenta
+            return state.currentCuenta;
         }
     }
 }

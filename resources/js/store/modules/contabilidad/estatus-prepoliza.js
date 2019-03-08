@@ -13,12 +13,17 @@ export default {
     },
 
     actions: {
-        fetch(context) {
-            axios.get(URI)
-                .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_ESTATUS', data.data)
-                })
+        index(context, payload = {}) {
+            return new Promise((resolve, reject) => {
+                axios.get(URI, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data)
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            })
         }
     },
 

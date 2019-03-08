@@ -1,7 +1,9 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_empresa')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Cuenta
+        <button @click="init" v-if="$root.can('registrar_cuenta_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i>
+            Registrar Cuenta
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -19,14 +21,15 @@
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
                                         <label for="id_empresa">Empresa</label>
-                                        <empresa-autocomplete
+                                        <empresa-select
                                                 name="id_empresa"
+                                                placeholder="-- Banco --"
                                                 id="id_empresa"
                                                 data-vv-as="Empresa"
                                                 v-validate="{required: true}"
                                                 v-model="id_empresa"
-                                                :class="{'is-invalid': errors.has('id_empresa')}">
-                                        ></empresa-autocomplete>
+                                                :error="errors.has('id_empresa')">
+                                        ></empresa-select>
                                         <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
                                     </div>
                                 </div>
@@ -35,6 +38,7 @@
                                     <div class="form-group error-content">
                                         <label for="id_tipo_cuenta_empresa">Tipo de Cuenta</label>
                                         <select
+                                                :disabled="!id_empresa"
                                                 type="text"
                                                 name="id_tipo_cuenta_empresa"
                                                 data-vv-as="Tipo de Cuenta"
@@ -81,27 +85,27 @@
 </template>
 
 <script>
-    import EmpresaAutocomplete from "../../cadeco/empresa/Autocomplete";
+    import EmpresaSelect from "../../cadeco/empresa/Select";
     export default {
         name: "cuenta-empresa-create",
-        components: {EmpresaAutocomplete},
+        components: {EmpresaSelect},
         data() {
             return {
                 id_empresa: '',
                 cuenta: '',
-                id_tipo_cuenta_empresa: ''
+                id_tipo_cuenta_empresa: '',
+                tipos: [],
+                cargando: false
             }
         },
         computed: {
-            tipos() {
-                return this.$store.getters['contabilidad/tipo-cuenta-empresa/tipos'];
-            },
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             }
         },
         methods: {
             init() {
+                this.cargando = true;
                 $(this.$refs.modal).modal('show');
 
                 this.id_empresa = '';
@@ -109,11 +113,23 @@
                 this.id_tipo_cuenta_empresa = '';
 
                 this.$validator.reset()
+                this.cargando = false;
+            },
+
+            getTipos() {
+                return this.$store.dispatch('contabilidad/tipo-cuenta-empresa/index',{
+                    params: {
+                        scope: 'disponiblesParaEmpresa:' + this.id_empresa
+                    }
+                })
+                    .then(data => {
+                        this.tipos = data.data;
+                    })
             },
 
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-empresa/store', this.$data)
-                    .then((data) => {
+                    .then(data => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created', data);
                     });
@@ -126,6 +142,22 @@
                     }
                 });
             }
+        },
+        watch: {
+            id_empresa(value){
+                this.tipos = []
+                if(value){
+                    this.getTipos();
+                }
+            }
         }
     }
 </script>
+<style scoped>
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+    }
+</style>

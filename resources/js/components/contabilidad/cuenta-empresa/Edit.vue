@@ -1,7 +1,8 @@
 <template>
     <span>
-        <button @click="find" class="btn btn-sm btn-outline-info">
-            <i class="fa fa-pencil"></i>
+        <button @click="find" class="btn btn-sm btn-outline-info" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-pencil" v-else></i>
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -19,13 +20,13 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Cuenta Contable</th>
                                     <th>Tipo de Cuenta</th>
+                                    <th>Cuenta Contable</th>
                                     <th>Guardar</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <cuenta-empresa-edit-form v-for="(cuenta, i) in empresa.cuentasEmpresa.data" :cuenta="cuenta" :key="i"/>
+                                <cuenta-empresa-edit-form v-for="(cuenta, i) in empresa.cuentasEmpresa.data" :cuenta="cuenta" :key="i" @deleted="destroy(cuenta)"/>
                                 </tbody>
                             </table>
                         </div>
@@ -47,7 +48,8 @@
         props: ['id'],
         data() {
             return {
-                empresa: null
+                empresa: null,
+                cargando: false
             }
         },
 
@@ -59,13 +61,35 @@
 
         methods: {
             find() {
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/empresa/find', {
                     id: this.id,
                     params: { include: 'cuentasEmpresa' }
                 })
-                    .then((data) => {
+                    .then(data => {
                         this.empresa = data
                         $(this.$refs.modal).modal('show')
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
+            },
+
+            destroy(cuenta) {
+                $(this.$refs.modal).modal('hide')
+                this.empresa.cuentasEmpresa.data = this.empresa.cuentasEmpresa.data.filter((c, i) => {
+                    return cuenta.id !== c.id;
+                })
+                this.$store.dispatch('cadeco/empresa/paginate', {
+                    params: {
+                        include: 'cuentasEmpresa',
+                        scope: 'conCuentas',
+                        offset: 0
+                    }
+                })
+                    .then(data => {
+                        this.$store.commit('cadeco/empresa/SET_EMPRESAS', data.data)
+                        this.$store.commit('cadeco/empresa/SET_META', data.meta)
                     })
             }
         }

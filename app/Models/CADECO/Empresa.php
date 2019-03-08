@@ -43,7 +43,7 @@ class Empresa extends Model
         return $query->has('cuentasEmpresa');
     }
 
-    public function scopeParaBancos($query)
+    public function scopeBancos($query)
     {
         return $query->where('tipo_empresa', '=', 8);
     }

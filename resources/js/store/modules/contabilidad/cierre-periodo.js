@@ -38,25 +38,26 @@ export default {
 
     actions: {
         paginate (context, payload){
-            context.commit('SET_CIERRES', [])
-            axios
-                .get(URI + 'paginate', { params: payload})
-                .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_CIERRES', data.data)
-                    context.commit('SET_META', data.meta)
-                })
-        },
-
-        find(context, id) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_CIERRE', null)
                 axios
-                    .get(URI + id)
+                    .get(URI + 'paginate', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
-                        context.commit('SET_CIERRE', data)
-                        resolve();
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error)
@@ -70,7 +71,15 @@ export default {
                     title: "Registrar Cierre de Periodo",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -94,28 +103,91 @@ export default {
             });
         },
 
-        update(context, payload) {
+        abrir(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Estás seguro?",
-                    text: "Actualizar Cierre de Periodo",
+                    text: "Por favor escriba un motivo de apertura",
+                    content: 'input',
                     icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Abrir',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true
+                })
+                    .then(value => {
+                        return new Promise((resolve, reject) => {
+                           if (value.length === 0) {
+                               swal.stopLoading();
+                               swal.close();
+                               swal("", "El motivo de apertura es obligatorio", "error")
+                                   .then(() => {
+                                       context.dispatch('abrir',payload);
+                                   })
+                           } else {
+                               resolve(value);
+                           }
+                        })
+                    })
+                    .then(value => {
+                        axios
+                            .patch(URI + payload.id + '/abrir', {
+                                motivo: value
+                            })
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Periodo abierto correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                })
+                                    .then(() => {
+                                        resolve(data);
+                                    })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            })
+                    })
+            })
+        },
+
+        cerrar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Cerrar Periodo",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Cerrar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true
                 })
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id, payload)
+                                .patch(URI + payload.id + '/cerrar')
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cierre de periodo actualizado correctamente", {
+                                    swal("Periodo cerrado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
                                     })
                                         .then(() => {
-                                            context.commit('UPDATE_CIERRE', data);
-                                            resolve();
+                                            resolve(data);
                                         })
                                 })
                                 .catch(error => {

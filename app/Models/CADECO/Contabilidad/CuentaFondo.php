@@ -26,6 +26,12 @@ class CuentaFondo extends Model
         'estatus'
     ];
 
+    public $searchable = [
+        'cuenta',
+        'fondo.descripcion',
+        'fondo.nombre',
+    ];
+
     protected static function boot()
     {
         parent::boot();

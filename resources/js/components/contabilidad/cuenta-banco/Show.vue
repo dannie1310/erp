@@ -1,13 +1,16 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary"><i class="fa fa-eye"></i></button>
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" :disabled="cargando">
+            <i class="fa fa-eye" v-if="!cargando"></i>
+            <i class="fa fa-spinner fa-spin" v-else></i>
+        </button>
 
         <!-- Modal -->
-        <div v-if="cuenta" class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
+                <div class="modal-content" v-if="cuenta">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">{{ titulo }}</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{ `${cuenta.numero} (${cuenta.abreviatura ? cuenta.abreviatura : ''} ${cuenta.empresa.razon_social})` }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -29,8 +32,6 @@
                                     <td>{{ cuenta_bancaria.cuenta }}</td>
                                     <td>{{ cuenta_bancaria.tipo.descripcion }}</td>
                                 </tr>
-
-
                                 </tbody>
                             </table>
                         </div>
@@ -47,19 +48,28 @@
 <script>
     export default {
         name: "cuenta-banco-show",
-        props: ['id','titulo'],
+        props: ['id'],
+        data() {
+            return {
+                cargando: false,
+            }
+        },
         methods: {
-            find(id) {
+            find() {
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/cuenta/find', {
-                    id: id,
-                    params: { include: 'cuentasBanco' }
+                    id: this.id,
+                    params: { include: 'cuentasBanco,empresa' }
                 })
-                    .then(() => {
+                    .then(data => {
+                        this.$store.commit('cadeco/cuenta/SET_CUENTA', data);
                         $(this.$refs.modal).modal('show');
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             }
         },
-
         computed: {
             cuenta() {
                 return this.$store.getters['cadeco/cuenta/currentCuenta']

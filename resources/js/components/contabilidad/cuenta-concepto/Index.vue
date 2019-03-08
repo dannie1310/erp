@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <cuenta-concepto-create></cuenta-concepto-create>
+            <create @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -15,7 +15,6 @@
                     </div>
                 </div>
                 <!-- /.card-header -->
-
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
@@ -30,10 +29,10 @@
 </template>
 
 <script>
-    import CuentaConceptoCreate from "./Create";
+    import Create from "./Create";
     export default {
         name: "cuenta-concepto-index",
-        components: {CuentaConceptoCreate},
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
@@ -41,32 +40,42 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Cuenta', field: 'cuenta', sortable: true },
                     { title: 'Concepto', field: 'concepto', sortable: false },
+                    { title: 'Clave del Concepto', field: 'clave', sortable: false },
                     { title: 'Ruta', field: 'ruta', sortable: false },
                     { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
                 query: {},
-                search: ''
+                search: '',
+                cargando: false
             }
         },
 
         mounted() {
-            this.query.include = 'concepto'
+            this.$Progress.start();
             this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
 
         methods: {
             paginate() {
-                let self = this
-                self.$store.commit('contabilidad/cuenta-concepto/SET_CUENTAS', []);
-                return self.$store.dispatch('contabilidad/cuenta-concepto/paginate', self.query)
+                this.cargando = true;
+                return this.$store.dispatch('contabilidad/cuenta-concepto/paginate',{
+                    params: this.query
+                })
                     .then(data => {
-                        self.$store.commit('contabilidad/cuenta-concepto/SET_CUENTAS', data.data);
-                        self.$store.commit('contabilidad/cuenta-concepto/SET_META', data.meta);
+                        this.$store.commit('contabilidad/cuenta-concepto/SET_CUENTAS', data.data);
+                        this.$store.commit('contabilidad/cuenta-concepto/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             }
         },
+
         computed: {
             cuentas(){
                 return this.$store.getters['contabilidad/cuenta-concepto/cuentas'];
@@ -74,24 +83,27 @@
             meta(){
                 return this.$store.getters['contabilidad/cuenta-concepto/meta'];
             },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
         },
+
         watch: {
             cuentas: {
                 handler(cuentas) {
                     let self = this
                     self.$data.data = []
-                    cuentas.forEach(function (cuenta, i) {
-                        self.$data.data.push({
-                            index: (i + 1) + self.query.offset,
-                            cuenta: cuenta.cuenta,
-                            concepto: cuenta.concepto.descripcion,
-                            ruta: cuenta.concepto.path,
-                            buttons: $.extend({}, {
-                                edit: self.$root.can('editar_cuenta_concepto') ? true : undefined,
-                                id: cuenta.id
-                            })
+                    self.$data.data = cuentas.map((cuenta, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        cuenta: cuenta.cuenta,
+                        concepto: cuenta.concepto.descripcion,
+                        ruta: cuenta.concepto.path,
+                        clave: cuenta.concepto.clave_concepto,
+                        buttons: $.extend({}, {
+                            edit: self.$root.can('editar_cuenta_concepto') ? true : undefined,
+                            id: cuenta.id
                         })
-                    });
+                    }));
                 },
                 deep: true
             },
@@ -103,8 +115,8 @@
                 deep: true
             },
             query: {
-                handler (query) {
-                    this.paginate(query)
+                handler () {
+                    this.paginate()
                 },
                 deep: true
             },
@@ -115,9 +127,16 @@
                 }
                 this.timer = setTimeout(() => {
                     this.query.search = val;
+                    this.query.offset = 0;
                     this.paginate();
                 }, 500);
             },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
         },
     }
 </script>
