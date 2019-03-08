@@ -57,11 +57,7 @@ class ContextSession implements Context
      */
     public function getIdObra()
     {
-        try {
-            return $this->auth->payload()->get('obra');
-        } catch (\Exception $e) {
-            return session()->get('id_obra');
-        }
+        return $this->auth->payload()->get('obra') != null ? $this->auth->payload()->get('obra') : config()->get('app.id_obra');
     }
 
     /**
@@ -71,12 +67,7 @@ class ContextSession implements Context
      */
     public function getDatabase()
     {
-        try {
-            return $this->auth->payload()->get('db');
-        } catch (\Exception $e) {
-            return session()->get('db');
-        }
-
+        return $this->auth->payload()->get('db') != null ? $this->auth->payload()->get('db') : config()->get('database.connections.cadeco.database');
     }
 
     /**

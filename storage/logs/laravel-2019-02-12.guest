@@ -1,8 +1,0 @@
-[2019-02-12 23:19:25] local.ERROR: Cannot use lexical variable $usuario as a parameter name {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalErrorException(code: 64): Cannot use lexical variable $usuario as a parameter name at /home/vagrant/code/erp-hi/app/Models/CADECO/SubcontratosFG/SolicitudMovimientoFondoGarantia.php:85)
-[stacktrace]
-#0 {main}
-"} 
-[2019-02-12 23:20:25] local.ERROR: Cannot use lexical variable $usuario as a parameter name {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalErrorException(code: 64): Cannot use lexical variable $usuario as a parameter name at /home/vagrant/code/erp-hi/app/Models/CADECO/SubcontratosFG/SolicitudMovimientoFondoGarantia.php:85)
-[stacktrace]
-#0 {main}
-"} 
