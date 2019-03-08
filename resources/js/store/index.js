@@ -13,6 +13,7 @@ import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
 
 //CONTABILIDAD
+import cierrePeriodo from './modules/contabilidad/cierre-periodo'
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
 import cuentaBanco from './modules/contabilidad/cuenta-banco';
 import cuentaConcepto from './modules/contabilidad/cuenta-concepto';
@@ -50,6 +51,7 @@ export default new Vuex.Store({
         'cadeco/empresa': empresa,
         'cadeco/fondo': fondo,
         'cadeco/material': material,
+        'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
         'contabilidad/cuenta-costo' : cuentaCosto,

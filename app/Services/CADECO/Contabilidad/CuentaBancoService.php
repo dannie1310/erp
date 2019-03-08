@@ -38,8 +38,18 @@ class CuentaBancoService
         return $this->repository->show($id);
     }
 
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
+
     public function update(array $data, $id)
     {
         return $this->repository->update($data, $id);
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->delete($data, $id);
     }
 }

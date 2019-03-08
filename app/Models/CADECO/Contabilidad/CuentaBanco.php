@@ -20,6 +20,22 @@ class CuentaBanco extends Model
     protected $connection = 'cadeco';
     protected $table = 'Contabilidad.cuentas_contables_bancarias';
     protected $primaryKey = 'id_cuenta_contable_bancaria';
+    protected $fillable = [
+        'id_cuenta',
+        'id_tipo_cuenta_contable',
+        'cuenta'
+    ];
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->estatus = 1;
+            $model->registro = auth()->id();
+        });
+    }
 
     public function cuentaContable(){
         return $this->belongsTo(Cuenta::class, 'id_cuenta', 'id_cuenta');

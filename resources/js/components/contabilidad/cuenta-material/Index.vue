@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <cuenta-material-create @created="paginate()"></cuenta-material-create>
+            <create @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -22,21 +22,25 @@
                         </div>
                     </div>
                 </div>
+                <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
                     </div>
                 </div>
+                <!-- /.card-body -->
             </div>
+            <!-- /.card -->
         </div>
+        <!-- /.col -->
     </div>
 </template>
 
 <script>
-    import CuentaMaterialCreate from "./Create";
+    import Create from "./Create";
     export default {
         name: "cuenta-material-index",
-        components: {CuentaMaterialCreate},
+        components: {Create},
         data() {
             return {
                 timer: null,
@@ -62,7 +66,8 @@
                     {id: 8, descripcion: 'Maquinaria'}
                 ],
                 tipo_material: '',
-                search: ''
+                search: '',
+                cargando: false
             }
         },
 
@@ -70,28 +75,38 @@
             meta() {
                 return this.$store.getters['cadeco/material/meta']
             },
-
             materiales() {
                 return this.$store.getters['cadeco/material/materiales']
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
 
         methods: {
             paginate() {
-                let self = this
-                self.$store.commit('cadeco/material/SET_MATERIALES', []);
-
-                return self.$store.dispatch('cadeco/material/paginate', self.query)
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/material/paginate', { params: this.query })
                     .then(data => {
-                        self.$store.commit('cadeco/material/SET_MATERIALES', data.data);
-                        self.$store.commit('cadeco/material/SET_META', data.meta);
+                        this.$store.commit('cadeco/material/SET_MATERIALES', data.data);
+                        this.$store.commit('cadeco/material/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             }
         },
 
         mounted() {
-            this.$store.dispatch('contabilidad/tipo-cuenta-material/index');
+            this.$Progress.start();
+            this.$store.dispatch('contabilidad/tipo-cuenta-material/index')
+                .then(data => {
+                    this.$store.commit('contabilidad/tipo-cuenta-material/SET_TIPOS', data.data);
+                })
             this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
 
         watch: {
@@ -116,6 +131,13 @@
                     this.query.search = val;
                     this.paginate();
                 }, 500);
+            },
+
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
             },
 
             materiales: {

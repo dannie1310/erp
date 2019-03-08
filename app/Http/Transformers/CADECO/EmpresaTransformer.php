@@ -15,7 +15,8 @@ class EmpresaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'cuentasEmpresa'
+        'cuentasEmpresa',
+        'cuentas'
     ];
 
     public function transform(Empresa $model)
@@ -30,6 +31,15 @@ class EmpresaTransformer extends TransformerAbstract
     {
         if ($cuentas = $model->cuentasEmpresa) {
             return $this->collection($cuentas, new CuentaEmpresaTransformer);
+        }
+        return null;
+    }
+
+    public function includeCuentas(Empresa $model)
+    {
+        if($cuentas = $model->cuentas)
+        {
+            return $this->collection($cuentas, new CuentaTransformer);
         }
         return null;
     }

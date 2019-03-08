@@ -49,6 +49,9 @@ $api->version('v1', function ($api) {
         // CUENTAS
         $api->group(['prefix' => 'cuenta'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\CuentaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\CuentaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\CuentaController@show')->where(['id' => '[0-9]+']);
+
         });
 
         // EMPRESAS
@@ -75,6 +78,15 @@ $api->version('v1', function ($api) {
      * CONTABILIDAD
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
+        //CIERRES DE PERIODO
+        $api->group(['prefix' => 'cierre-periodo'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/abrir', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@abrir')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cerrar', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@cerrar')->where(['id' => '[0-9]+']);
+        });
+
         //CUENTAS DE ALMACÉN
         $api->group(['prefix' => 'cuenta-almacen'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@store');
@@ -85,9 +97,12 @@ $api->version('v1', function ($api) {
 
         //CUENTAS DE BANCO
         $api->group(['prefix' => 'cuenta-banco'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@destroy')->where(['id' => '[0-9]+']);
+
         });
 
         //CUENTAS DE CONCEPTO
@@ -112,6 +127,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@destroy')->where(['id' => '[0-9]+']);
         });
 
         //CUENTAS DE FONDO

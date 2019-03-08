@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Contabilidad\CuentaBanco;
 use Illuminate\Database\Eloquent\Model;
 
 class Cuenta extends Model
@@ -16,6 +17,10 @@ class Cuenta extends Model
     protected $connection = 'cadeco';
     protected $table = 'dbo.cuentas';
     protected $primaryKey = 'id_cuenta';
+    public $searchable = [
+        'numero',
+        'empresa.razon_social'
+    ];
 
     public $timestamps = false;
 
@@ -30,5 +35,14 @@ class Cuenta extends Model
             $q->where('tipo_empresa', '=', 8);
         })
             ->whereRaw('ISNUMERIC(numero) = 1');
+    }
+
+    public function cuentasBanco(){
+        return $this->hasMany(CuentaBanco::class, 'id_cuenta', 'id_cuenta');
+    }
+
+    public function scopeConCuentas($query)
+    {
+        return $query->has('cuentasBanco');
     }
 }

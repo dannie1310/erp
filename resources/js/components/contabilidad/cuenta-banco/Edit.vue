@@ -1,53 +1,39 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info">
-            <i class="fa fa-pencil"></i>
+        <button @click="find" class="btn btn-sm btn-outline-info" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-pencil" v-else></i>
         </button>
 
-        <!-- Modal -->
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
+                <div class="modal-content" v-if="cuenta">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">EDICIÓN DE CUENTA DE BANCO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{ `${cuenta.numero} (${cuenta.abreviatura ? cuenta.abreviatura : ''} ${cuenta.empresa.razon_social})` }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form role="form" v-if="cuenta" @submit.prevent="validate">
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="cuenta">Cuenta</label>
-                                        <input
-                                                type="text"
-                                                name="cuenta"
-                                                data-vv-as="Cuenta"
-                                                v-validate="{required: true, regex: datosContables}"
-                                                class="form-control"
-                                                v-mask="{regex: datosContables}"
-                                                id="cuenta"
-                                                placeholder="Cuenta"
-                                                :value="cuenta.cuenta"
-                                                @input="updateAttribute"
-                                                :class="{'is-invalid': errors.has('cuenta')}">
-                                        <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="tipo">Tipo Cuenta</label>
-                                        <input readonly type="text" class="form-control" id="tipo" :value="cuenta.tipo.descripcion">
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tipo de Cuenta</th>
+                                    <th>Cuenta Contable</th>
+                                    <th>Guardar</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <cuenta-banco-edit-form v-for="(c, i) in cuenta.cuentasBanco.data" :cuenta="c" :key="i" @deleted="destroy(c)"/>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                        </div>
-                    </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,44 +41,56 @@
 </template>
 
 <script>
+    import CuentaBancoEditForm from "./EditForm";
     export default {
         name: "cuenta-banco-edit",
+        components: {CuentaBancoEditForm},
         props: ['id'],
+        data() {
+            return {
+                cuenta: null,
+                cargando: false
+            }
+        },
+
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
-            },
-
-            cuenta() {
-                return this.$store.getters['contabilidad/cuenta-banco/currentCuenta']
             }
         },
 
         methods: {
-            find(id) {
-                return this.$store.dispatch('contabilidad/cuenta-banco/find', id)
-                    .then(() => {
-                        $(this.$refs.modal).modal('show');
+            find() {
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/cuenta/find', {
+                    id: this.id,
+                    params: { include: ['cuentasBanco', 'empresa'] }
+                })
+                    .then(data => {
+                        this.cuenta = data
+                        $(this.$refs.modal).modal('show')
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             },
 
-            update() {
-                return this.$store.dispatch('contabilidad/cuenta-banco/update', this.cuenta)
-                    .then(() => {
-                        $(this.$refs.modal).modal('hide');
-                    })
-            },
-
-            validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        this.update()
+            destroy(cuenta) {
+                $(this.$refs.modal).modal('hide')
+                this.cuenta.cuentasBanco.data = this.cuenta.cuentasBanco.data.filter((c, i) => {
+                    return cuenta.id !== c.id;
+                })
+                this.$store.dispatch('cadeco/cuenta/paginate', {
+                    params: {
+                        include: ['empresa','cuentasBanco'],
+                        scope: ['paraTraspaso', 'conCuentas'],
+                        offset: 0
                     }
-                });
-            },
-
-            updateAttribute(e) {
-                return this.$store.commit('contabilidad/cuenta-banco/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
+                })
+                    .then(data => {
+                        this.$store.commit('cadeco/cuenta/SET_CUENTAS', data.data)
+                        this.$store.commit('cadeco/cuenta/SET_META', data.meta)
+                    })
             }
         }
     }

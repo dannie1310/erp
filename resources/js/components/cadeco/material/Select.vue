@@ -53,7 +53,7 @@
                     params: { scope: this.scp }
                 })
                     .then(data => {
-                        self.rootNodes = data.map(material => ({
+                        self.rootNodes = data.data.map(material => ({
                             id: material.id,
                             children: material.tiene_hijos != 0 ? null : undefined,
                             label: material.descripcion,

@@ -28,9 +28,7 @@ export default {
                 }
                 return cuenta
             })
-            if (state.currentCuenta) {
-                state.currentCuenta = data
-            }
+            state.currentCuenta = state.currentCuenta ? data : null
         },
 
         UPDATE_ATTRIBUTE(state, data) {
@@ -39,10 +37,10 @@ export default {
     },
 
     actions: {
-        find(context, id) {
+        find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + id)
+                    .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -59,7 +57,15 @@ export default {
                     title: "Registrar Cuenta",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -89,12 +95,20 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Cuenta de Material",
                     icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id, payload)
+                                .patch(URI + payload.id, payload.data)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Cuenta actualizada correctamente", {

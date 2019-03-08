@@ -20,13 +20,11 @@ export default {
     actions: {
         index(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_FONDOS', null)
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        context.commit('SET_FONDOS', data.data)
-                        resolve(data.data);
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error)
