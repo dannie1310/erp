@@ -71,7 +71,7 @@ class Transaccion extends Model
     protected function validaTipoAntecedente(){
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
-            $antecedente = Transaccion::find($this->id_antecedente);
+            $antecedente = Transaccion::withoutGlobalScope('tipo')->find($this->id_antecedente);
             if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opcion != $this::OPCION_ANTECEDENTE)
             {
                 return false;

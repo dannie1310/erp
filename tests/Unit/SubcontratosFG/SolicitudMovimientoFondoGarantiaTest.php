@@ -304,7 +304,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $subcontrato_nuevo->anticipo = 1;
         $subcontrato_nuevo->anticipo_monto = 100;
         $subcontrato_nuevo->anticipo_saldo = 100;
-        $subcontrato_nuevo->monto = 100;
+        $subcontrato_nuevo->monto = 1000;
         $subcontrato_nuevo->PorcentajeDescuento = 1;
         $subcontrato_nuevo->impuesto = 16;
         $subcontrato_nuevo->impuesto_retenido = 16;
@@ -348,7 +348,7 @@ class SolicitudMovimientoFondoGarantiaTest extends TestCase
         $subcontrato_nuevo->anticipo = 1;
         $subcontrato_nuevo->anticipo_monto = 100;
         $subcontrato_nuevo->anticipo_saldo = 100;
-        $subcontrato_nuevo->monto = 100;
+        $subcontrato_nuevo->monto = 1000;
         $subcontrato_nuevo->PorcentajeDescuento = 1;
         $subcontrato_nuevo->impuesto = 16;
         $subcontrato_nuevo->impuesto_retenido = 16;

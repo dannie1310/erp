@@ -11,6 +11,6 @@ abstract class TestCase extends BaseTestCase
     protected function setUp()
     {
         parent::setUp();
-        auth()->attempt(['usuario' => 'username', 'clave' => 'password']);
+        auth()->attempt(['usuario' => 'emartinez', 'clave' => '31124837']);
     }
 }
