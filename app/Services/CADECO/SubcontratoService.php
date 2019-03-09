@@ -28,8 +28,8 @@ class SubcontratoService
         $this->repository = new Repository($model);
     }
 
-    public function index($data)
+    public function show($id)
     {
-        return $this->repository->all($data);
+        return $this->repository->show($id);
     }
 }

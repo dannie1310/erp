@@ -42,6 +42,9 @@ class SubcontratoController extends Controller
      */
     public function __construct(SubcontratoService $service, Manager $fractal, SubcontratoTransformer $transformer)
     {
+        $this->middleware('auth');
+        $this->middleware('context');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;

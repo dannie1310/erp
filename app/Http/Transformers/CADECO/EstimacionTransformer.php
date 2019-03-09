@@ -14,23 +14,7 @@ use League\Fractal\TransformerAbstract;
 
 class EstimacionTransformer extends TransformerAbstract
 {
-    /**
-     * List of resources possible to include
-     *
-     * @var array
-     */
-    protected $availableIncludes = [
-        'subcontrato'
-    ];
 
-    /**
-     * List of resources to automatically include
-     *
-     * @var array
-     */
-    protected $defaultIncludes = [
-        'subcontrato'
-    ];
 
     public function transform(Estimacion $model)
     {
@@ -41,11 +25,4 @@ class EstimacionTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeSubcontrato(Estimacion $model)
-    {
-        if ($subcontrato = $model->subcontrato) {
-            return $this->item($subcontrato, new SubcontratoTransformer);
-        }
-        return null;
-    }
 }

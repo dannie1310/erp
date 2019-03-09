@@ -21,11 +21,7 @@ class Subcontrato extends Transaccion
         });
     }
 
-    public function contratoProyectado(){
-        return $this->hasOne(ContratoProyectado::class, 'id_transaccion', 'id_antecedente');
-    }
-
-    public function estimaciones (){
+    public function estimaciones(){
         return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
     }
 

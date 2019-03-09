@@ -72,6 +72,11 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
         });
+
+        // SUBCONTRATO
+        $api->group(['prefix' => 'subcontrato'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SubcontratoController@show')->where(['id' => '[0-9]+']);
+        });
     });
 
     /**
