@@ -31,6 +31,7 @@
                                 <div class="form-group error-content">
                                     <label for="id_subcontrato">Subcontrato</label>
                                     <select
+                                            :disabled="!id_empresa"
                                             type="text"
                                             name="id_subcontrato"
                                             data-vv-as="Subcontrato"
@@ -50,6 +51,7 @@
                                 <div class="form-group error-content">
                                     <label for="id_estimacion">Estimación</label>
                                     <select
+                                            :disabled="!id_subcontrato"
                                             type="text"
                                             name="id_estimacion"
                                             data-vv-as="Estimacion"
@@ -67,19 +69,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Ver Formato</button>
+                    <div class="modal-footer btn-group">
+                        <button type="submit" class="btn btn-primary" v-model="show">Ver Formato <ordenPagoEstimacionPdf v-bind:id="id_estimacion" v-if="show"></ordenPagoEstimacionPdf></button>
                     </div>
                 </form>
             </div>
+        </div>
+        <div class="col-12">
+
+
         </div>
         <!-- /.card -->
     </div>
 </template>
 
 <script>
+    import ordenPagoEstimacionPdf from "./OrdenPagoFormato";
     export default {
         name: "orden-pago-estimacion-index",
+        components: {ordenPagoEstimacionPdf},
         data() {
             return {
                 cargando: false,
@@ -88,7 +96,8 @@
                 id_estimacion: '',
                 empresas: [],
                 subcontratos: [],
-                estimaciones: []
+                estimaciones: [],
+                show : false
             }
         },
         mounted() {
@@ -150,10 +159,24 @@
                     })
             },
 
+            pdf() {
+                this.$data.show = true;
+                return this.$store.dispatch('formato/orden-pago-estimacion/pdf', this.$data.id_estimacion)
+                            .then(                           );
+            },
+
+            store() {
+                return this.$store.dispatch('contabilidad/cierre-periodo/store', this.$data)
+                    .then(data => {
+                        $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data)
+                    });
+            },
+
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        this.pdf()
                     }
                 });
             }
@@ -174,3 +197,12 @@
         }
     }
 </script>
+
+<style scoped>
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+    }
+</style>

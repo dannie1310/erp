@@ -199,8 +199,8 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'formato'], function ($api) {
         //ORDEN DE PAGO ESTIMACION
-        $api->group(['prefix' => 'estimacion'], function ($api) {
-            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\EstimacionController@pdf')->where(['id' => '[0-9]+']);
+        $api->group(['prefix' => 'orden-pago-estimacion'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EstimacionController@pdf')->where(['id' => '[0-9]+']);
         });
     });
 

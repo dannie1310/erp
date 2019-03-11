@@ -13,13 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contrato extends Model
 {
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 49)
-                ->where('estado', '!=', -2);
-        });
-    }
+    protected $connection = 'cadeco';
+    protected $table = 'Subcontratos.subcontrato';
+    protected $primaryKey = 'id_transaccion';
+    public $timestamps = false;
 }

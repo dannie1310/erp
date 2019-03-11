@@ -9,7 +9,17 @@
 namespace App\Models\CADECO;
 
 
-class ContratoProyectado
-{
+use Illuminate\Database\Eloquent\Model;
 
+class ContratoProyectado extends Transaccion
+{
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->where('tipo_transaccion', '=', 49)
+                ->where('estado', '!=', -2);
+        });
+    }
 }
