@@ -9,11 +9,39 @@
 namespace App\Models\SEGURIDAD_ERP;
 
 
+use App\Facades\Context;
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Sistema extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'sistemas';
     public $timestamps = false;
+
+
+    public function permisos()
+    {
+        return $this->belongsToMany(Permiso::class, 'dbo.sistemas_permisos', 'sistema_id', 'permission_id');
+    }
+
+    public function proyectos()
+    {
+        return $this->belongsToMany(Proyecto::class,  'dbo.proyectos_sistemas', 'id_sistema', 'id_proyecto');
+    }
+
+    public function scopePorUsuario($query)
+    {
+        $permisos = Arr::pluck(auth()->user()->permisos(), 'name');
+
+        return $query
+            ->whereHas('permisos', function($q) use ($permisos) {
+            return $q->whereIn('name', $permisos);
+        })
+            ->whereHas('proyectos', function ($q) {
+                return $q->where('base_datos', '=', Context::getDatabase());
+            });
+
+    }
 }
