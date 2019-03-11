@@ -25,6 +25,9 @@ import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 
+//SEGURIDAD
+import sistema from './modules/seguridad/sistema';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -48,6 +51,7 @@ export default new Vuex.Store({
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
+        'seguridad/sistema': sistema,
     },
     strict: process.env.NODE_ENV !== 'production'
 })

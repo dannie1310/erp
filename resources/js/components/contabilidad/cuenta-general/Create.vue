@@ -91,7 +91,7 @@
 
             getTipos() {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {
-                    scope: ['generales', 'sinCuenta']
+                    scope: ['generales', 'sinCuenta'],
                 })
             },
 

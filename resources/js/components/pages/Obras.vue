@@ -5,7 +5,7 @@
             <span v-for="(grupo, i) in obrasAgrupadas">
                 <li class="list-group-item disabled"><i class="fa fa-fw fa-database"></i>{{ i }}</li>
                     <a v-for="obra in grupo" href="#" class="list-group-item" @click="setContext(i, obra.id_obra)" v-bind:class="{disabled: loading}">
-                    {{ obra.nombre }}
+                        {{ obra.nombre }}
                 </a>
             </span>
             </ul>
