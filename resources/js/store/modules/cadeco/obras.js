@@ -12,8 +12,8 @@ export default {
     },
 
     actions: {
-        fetch (context){
-            axios.get('/api/auth/obras')
+        fetch (context, payload = { }){
+            axios.get('/api/auth/obras', { params: payload.params})
                 .then(res => {
                     context.commit('fetch', res.data)
                 })

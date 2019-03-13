@@ -90,8 +90,34 @@ class AuthService
             return [];
         }
         if ($usuarioCadeco->tieneAccesoATodasLasObras()) {
-            return Obra::orderBy('nombre')->get();
+            return Obra::orderBy('nombre')->where(function($query) {
+                foreach ((new Obra())->searchable as $col)
+                {
+                    $explode = explode('.', $col);
+
+                    if (isset($explode[1])) {
+                        $query->orWhereHas($explode[0], function ($q) use ($explode) {
+                            return $q->where($explode[1], 'LIKE', '%' . request('search') . '%');
+                        });
+                    } else {
+                        $query->orWhere($col, 'LIKE', '%' . request('search') . '%');
+                    }
+                }
+            })->get();
         }
-        return $usuarioCadeco->obras()->orderBy('nombre')->get();
+        return $usuarioCadeco->obras()->orderBy('nombre')->where(function($query) {
+            foreach ((new Obra())->searchable as $col)
+            {
+                $explode = explode('.', $col);
+
+                if (isset($explode[1])) {
+                    $query->orWhereHas($explode[0], function ($q) use ($explode) {
+                        return $q->where($explode[1], 'LIKE', '%' . request('search') . '%');
+                    });
+                } else {
+                    $query->orWhere($col, 'LIKE', '%' . request('search') . '%');
+                }
+            }
+        })->get();
     }
 }
