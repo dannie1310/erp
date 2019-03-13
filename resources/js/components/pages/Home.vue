@@ -35,6 +35,7 @@
         },
         methods: {
             index() {
+                this.$store.commit('seguridad/sistema/SET_SISTEMAS', []);
                 return this.$store.dispatch('seguridad/sistema/index', {
                     params: { scope: 'porUsuario'}
                 })

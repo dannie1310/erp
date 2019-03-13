@@ -41,6 +41,7 @@
             }),
             setContext(database, id_obra) {
                 this.loading = true;
+
                 return new Promise((res, rej) => {
                     axios.post('/api/auth/setContext', {database: database, id_obra: id_obra})
                         .then(response => {

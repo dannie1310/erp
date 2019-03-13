@@ -19,7 +19,7 @@ class SistemaTransformer extends TransformerAbstract
         return [
             'id' => (int) $model->getKey(),
             'name' => (string) $model->name,
-            'descripcion' => (string) $model->description,
+            'description' => (string) $model->description,
             'url' => (string) $model->url,
             'icon' => (string) $model->icon,
             'color' => (string) $model->color,

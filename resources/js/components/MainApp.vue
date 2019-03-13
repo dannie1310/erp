@@ -57,6 +57,8 @@
         <router-view></router-view>
     </div>
     <!-- ./wrapper -->
+
+    <asignacion-roles></asignacion-roles>
     </body>
 
 </template>
@@ -66,30 +68,18 @@
     import AppSidebar from "./pages/partials/Sidebar";
     import AppBreadcrumb from "./pages/partials/Breadcrumb";
     import AppFooter from "./pages/partials/Footer";
+    import AsignacionRoles from "./AsignacionRoles";
 
     export default {
         name: 'main-app',
-        components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
+        components: {AsignacionRoles, AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
 
         data() {
             return {
                 loading: false
             }
         },
-        /*mounted() {
-            this.index();
-        },
-        methods: {
-            index() {
-                return this.$store.dispatch('seguridad/sistema/index', {
-                    params: { scope: 'porUsuario'}
-                })
-                    .then(data => {
-                        this.$store.commit('seguridad/sistema/SET_SISTEMAS', data);
-                    })
 
-            }
-        },*/
         computed:{
             currentUser(){
                 return this.$store.getters['auth/currentUser']
