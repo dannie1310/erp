@@ -40,13 +40,13 @@ class OrdenPagoEstimacion extends Rotation
      * OrdenPagoEstimacion constructor.
      * @param $estimacion
      */
-    public function __construct($estimacion, Context $context)
+    public function __construct($estimacion)
     {
         parent::__construct('P', 'cm', 'A4');
-dd(Context::getIdObra());
+
         $this->obra = Obra::find(Context::getIdObra());
-        $this->estimacion = Estimacion::where('id_trans6accion', '=', $estimacion)->get();
-        dd($this->estimacion);
+        $this->estimacion = Estimacion::where('id_transaccion', '=', $estimacion)->get();
+
         $this->estimacion = $this->estimacion[0];
 
         $this->objeto_contrato = Subcontratos::where('id_transaccion', '=', $this->estimacion->id_antecedente)->get();
@@ -575,7 +575,7 @@ dd(Context::getIdObra());
         $this->Ln(1);
         $this->totales();
         try {
-            $this->Output('D', 'Formato - Orden de Pago Estimación.pdf', 1);
+            $this->Output('I', 'Formato - Orden de Pago Estimación.pdf', 1);
         } catch (\Exception $ex) {
             dd("error",$ex);
         }

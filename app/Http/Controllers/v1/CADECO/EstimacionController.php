@@ -43,9 +43,9 @@ class EstimacionController extends Controller
      */
     public function __construct(EstimacionService $service, Manager $fractal, EstimacionTransformer $transformer)
     {
-     /*   $this->middleware('auth');
+        $this->middleware('auth');
         $this->middleware('context');
-*/
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
@@ -53,7 +53,7 @@ class EstimacionController extends Controller
 
     public function pdf($id)
     {
-        return $this->service->pdf($id);
+        return $this->service->pdf($id)->create();
     }
 
 }

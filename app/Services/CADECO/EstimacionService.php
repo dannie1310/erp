@@ -9,7 +9,6 @@
 namespace App\Services\CADECO;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\Estimacion;
 use App\PDF\Formato\OrdenPagoEstimacion;
 use App\Repositories\Repository;
@@ -42,8 +41,7 @@ class EstimacionService
     public function pdf($id)
     {
         //$pdf = $this->repository->where('id_transaccion', '=', $id);
-        $pdf = new OrdenPagoEstimacion($id, Context::getContext());
-        $pdf->create()->Output('I', 'Formato - Orden Pago Estimacion.pdf', 1);
+        $pdf = new OrdenPagoEstimacion($id);
        return $pdf;
     }
 }

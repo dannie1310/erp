@@ -1,4 +1,4 @@
-<template v-if="id != ''">
+<template v-show="id">
         <span>
             <button @click="init"  type="submit" class="btn btn-primary">Ver Formato</button>
 
@@ -40,7 +40,7 @@
 
             },
             pdf(){
-               var url = '/api/formato/orden-pago-estimacion/' + this.id;
+               var url = '/api/formato/orden-pago-estimacion/' + this.id +'?token='+this.$session.get('jwt');
               //  var url = 'http://www.ti.com/lit/ds/symlink/ads7853.pdf';
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="99.6%">d</iframe>');
                 $(this.$refs.modal).modal('show');
