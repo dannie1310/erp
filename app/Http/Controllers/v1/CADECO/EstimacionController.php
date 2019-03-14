@@ -53,8 +53,7 @@ class EstimacionController extends Controller
 
     public function pdf($id)
     {
-        $pdf = $this->service->pdf($id);
-        return $this->respondWithItem($pdf);
+        return $this->service->pdf($id);
     }
 
 }

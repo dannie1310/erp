@@ -16,6 +16,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Subcontratos\Contrato;
 use App\Models\CADECO\Subcontratos\Subcontratos;
+use App\Models\CADECO\Transaccion;
 use Ghidev\Fpdf\Rotation;
 
 class OrdenPagoEstimacion extends Rotation
@@ -39,12 +40,13 @@ class OrdenPagoEstimacion extends Rotation
      * OrdenPagoEstimacion constructor.
      * @param $estimacion
      */
-    public function __construct($estimacion)
+    public function __construct($estimacion, Context $context)
     {
         parent::__construct('P', 'cm', 'A4');
-
+dd(Context::getIdObra());
         $this->obra = Obra::find(Context::getIdObra());
-        $this->estimacion = Estimacion::where('id_transaccion', '=', $estimacion)->get();
+        $this->estimacion = Estimacion::where('id_trans6accion', '=', $estimacion)->get();
+        dd($this->estimacion);
         $this->estimacion = $this->estimacion[0];
 
         $this->objeto_contrato = Subcontratos::where('id_transaccion', '=', $this->estimacion->id_antecedente)->get();

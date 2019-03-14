@@ -1,28 +1,25 @@
-<template>
-    <div>
+<template v-if="id != ''">
         <span>
             <button @click="init"  type="submit" class="btn btn-primary">Ver Formato</button>
 
-            <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                    <div class="modal-content">
+             <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
+                 <div class="modal-dialog modal-lg" id="mdialTamanio">
+                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle">{{id}}</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                            <h4 class="modal-title">Orden de Pago Estimación</h4>
                         </div>
-                       <pdf>
-                           <object data="value.data" type="application/pdf" width="800" height="400"></object>
-                              <!--  src="http://dev-sao.grupohi.mx/api/formato/orden-pago-estimacion/369"
-                                @num-pages="pageCount = $event"
-                                @page-loaded="currentPage = $event"-->
-                        </pdf>
-                    </div>
-                </div>
-            </div>
+                        <div class="modal-body modal-lg" style="height: 800px" ref="body">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        </div>
+                     </div>
+                 </div>
+             </div>
+
         </span>
-    </div>
 </template>
 
 <script>
@@ -35,20 +32,19 @@
         props: ['id'],
         data() {
             return {
-                d : ''
             }
         },
         methods: {
             init() {
-                $(this.$refs.modal).modal('show');
                 this.pdf()
 
             },
             pdf(){
-                return this.$store.dispatch('formato/orden-pago-estimacion/pdf', this.id)
-                    .then(                           );
+               var url = '/api/formato/orden-pago-estimacion/' + this.id;
+              //  var url = 'http://www.ti.com/lit/ds/symlink/ads7853.pdf';
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="99.6%">d</iframe>');
+                $(this.$refs.modal).modal('show');
             }
         }
-
     }
 </script>
