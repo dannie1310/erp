@@ -75,7 +75,7 @@ class OrdenPagoEstimacion extends Rotation
     }
 
     function Header() {
-        //$this->logo();
+        $this->logo();
         $this->detalles();
         $this->Ln(1);
 
@@ -135,7 +135,8 @@ class OrdenPagoEstimacion extends Rotation
     }
 
     function logo() {
-        $data = $this->obra->logotipo;
+        $data = $this->obra->getLogoAttribute();
+        dd(hex2bin($data));
         $data = pack('H*', hex2bin($data));
         $file = public_path('img/logo_temp.png');
         if (file_put_contents($file, $data) !== false) {

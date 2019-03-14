@@ -40,7 +40,6 @@ class EstimacionService
 
     public function pdf($id)
     {
-        //$pdf = $this->repository->where('id_transaccion', '=', $id);
         $pdf = new OrdenPagoEstimacion($id);
        return $pdf;
     }
