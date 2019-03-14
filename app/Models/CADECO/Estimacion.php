@@ -11,13 +11,14 @@ namespace App\Models\CADECO;
 
 class Estimacion extends Transaccion
 {
+    protected $fillable = ['id_transaccion', 'id_antecedente', 'tipo_transaccion'];
+
     protected static function boot()
     {
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 52)
-                ->where('estado', '!=', -2);
+            return $query->where('tipo_transaccion', '=', 52);
         });
     }
 

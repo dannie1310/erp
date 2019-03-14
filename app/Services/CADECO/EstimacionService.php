@@ -40,10 +40,9 @@ class EstimacionService
 
     public function pdf($id)
     {
-        $estimacion = $this->find($id);
-        $pdf = new OrdenPagoEstimacion($estimacion);
-        $pdf->create();
-
+        //$pdf = $this->repository->where('id_transaccion', '=', $id);
+        $pdf = new OrdenPagoEstimacion($id);
+        $pdf->create()->Output('D', 'Formato - Orden Pago Estimacion.pdf', 1);
+       return $pdf;
     }
-
 }

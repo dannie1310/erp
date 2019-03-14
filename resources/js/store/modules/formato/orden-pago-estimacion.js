@@ -22,7 +22,9 @@ export default {
         },
         pdf(context, payload) {
             axios.get(URI + payload, {params: payload.params})
-                .then(r => URI+payload);
+                .then((data) => {
+
+                });
 
         },
     },

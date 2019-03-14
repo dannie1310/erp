@@ -15,6 +15,7 @@ use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Subcontratos\Contrato;
+use App\Models\CADECO\Subcontratos\Subcontratos;
 use Ghidev\Fpdf\Rotation;
 
 class OrdenPagoEstimacion extends Rotation
@@ -36,19 +37,23 @@ class OrdenPagoEstimacion extends Rotation
 
     /**
      * OrdenPagoEstimacion constructor.
-     * @param Estimacion $estimacion
+     * @param $estimacion
      */
-    public function __construct(Estimacion $estimacion)  //podria recibir un transformer
+    public function __construct($estimacion)
     {
         parent::__construct('P', 'cm', 'A4');
 
-        $this->obra = Obra::find(Context::getId());
-        $this->estimacion = $estimacion;
-        $this->objeto_contrato = Contrato::where('id_transaccion', '=', $this->estimacion->id_antecedente)->pluck('observacion')->first();
+        $this->obra = Obra::find(Context::getIdObra());
+        $this->estimacion = Estimacion::where('id_transaccion', '=', $estimacion)->get();
+        $this->estimacion = $this->estimacion[0];
 
-        if (empty($this->objeto_contrato->observacion))
+        $this->objeto_contrato = Subcontratos::where('id_transaccion', '=', $this->estimacion->id_antecedente)->get();
+
+        if($this->objeto_contrato[0]['observacion'] == null)
         {
-            $subcontrato_transaccion = Subcontrato::where('id_transaccion', '=', $this->estimacion->id_antecedente)->pluck(['id_antecedente', 'referencia'])->first();
+
+            $subcontrato_transaccion = Subcontrato::where('id_transaccion', '=', $this->estimacion->id_antecedente)->get();
+            $subcontrato_transaccion = $subcontrato_transaccion[0];
 
             // Si existe el campo referencia, úsalo.
             if ($subcontrato_transaccion->referencia)
@@ -56,6 +61,7 @@ class OrdenPagoEstimacion extends Rotation
 
             // ¿No? obten la referencia del contrato proyectado
             else{
+                dd("AQUI3");
                 $contrato_proyectado = ContratoProyectado::where('id_transaccion', '=', $subcontrato_transaccion->id_antecedente)->pluck('referencia')->first();
 
                 $this->objeto_contrato = $contrato_proyectado->referencia;
@@ -63,11 +69,11 @@ class OrdenPagoEstimacion extends Rotation
         }
 
         else
-            $this->objeto_contrato = $this->objeto_contrato->observacion;
+            $this->objeto_contrato = $this->objeto_contrato[0]['observacion'];
     }
 
     function Header() {
-        $this->logo();
+        //$this->logo();
         $this->detalles();
         $this->Ln(1);
 
@@ -87,14 +93,7 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
             $this->SetHeights([0.5]);
             $this->SetAligns(['C', 'C', 'C', 'C', 'C', 'C']);
-            $this->Row([
-                'Partida',
-                utf8_decode('Descripción'),
-                'Importe',
-                utf8_decode('Aplicación de Costo'),
-                '%',
-                'Cuenta'
-            ]);
+           // $this->Row(['Partida',utf8_decode('Descripción'),'Importe', utf8_decode('Aplicación de Costo'), '%','Cuenta']);
 
             $this->SetFont('Arial', '', 7);
             $this->SetWidths([
@@ -112,7 +111,7 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetAligns(['L', 'L', 'R', 'L', 'L', 'L']);
         }
 
-        if (trim(Context::getDatabaseName())== 'SAO1814_DEV_PISTA_AEROPUERTO')
+        if (trim(Context::getDatabase())== 'SAO1814_DEV_PISTA_AEROPUERTO')
         {
             $this->SetFont('Arial','B',60);
             $this->SetTextColor(155,155,155);
@@ -172,7 +171,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(6);
         $this->SetFont('Arial', '', 8);
         $this->Cell(4, 0.4, 'Fecha :', 0, 0, 'R');
-        $this->CellFitScale(10, 0.4, $this->estimacion->fecha->format('d/m/Y'), 'B', 1, 'C');
+        $this->CellFitScale(10, 0.4, date("d/m/Y", strtotime($this->estimacion->fecha)), 'B', 1, 'C');
         $this->Ln(0.1);
 
         $this->SetX(6);
@@ -196,8 +195,8 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(6   );
         $this->SetFont('Arial', '', 8);
         $this->Cell(4, 0.35, 'Periodo :', 0, 0, 'R');
-        $this->CellFitScale(5, 0.35, 'Del : ' . $this->estimacion->cumplimiento->format('d/m/Y'), 'B', 0, 'C');
-        $this->CellFitScale(5, 0.35, 'Al : ' . $this->estimacion->vencimiento->format('d/m/Y'), 'B', 1, 'C');
+        $this->CellFitScale(5, 0.35, 'Del : ' .  date("d/m/Y", strtotime($this->estimacion->cumplimiento)), 'B', 0, 'C');
+        $this->CellFitScale(5, 0.35, 'Al : ' .  date("d/m/Y", strtotime($this->estimacion->vencimiento)), 'B', 1, 'C');
 
         $this->Ln();
     }
@@ -219,14 +218,15 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
         $this->SetHeights([0.5]);
         $this->SetAligns(['C', 'C', 'C', 'C', 'C', 'C']);
-        $this->Row([
+
+     /*   $this->Row([
             'Partida',
             utf8_decode('Descripción'),
             'Importe',
             utf8_decode('Aplicación de Costo'),
             '%',
             'Cuenta'
-        ]);
+        ]); */
         foreach ($this->estimacion->items as $item) {
             $this->SetFont('Arial', '', 7);
             $this->SetWidths([
@@ -243,14 +243,15 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetHeights([0.35]);
             $this->SetAligns(['L', 'L', 'R', 'L', 'L', 'L']);
             $this->encola = 'partidas';
-            $this->Row([
+          /*  $this->Row([
                 '',
-                utf8_decode($item->contrato),
+                utf8_decode($item->contrato->descripcion),
                 '$ ' . number_format($item->importe, 2, '.', ','),
-                utf8_decode($item->concepto ? $item->concepto->padre() : ''),
+//                utf8_decode($item->concepto ? $item->concepto->padre() : ''),
+            '',
                 '',
                 ''
-            ]);
+            ]);*/
         }
 
         $this->SetFont('Arial', '', 7);
@@ -267,11 +268,11 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->encola = 'total_partidas';
 
-        $this->Row([
+     /*   $this->Row([
             'Importe Total :',
             '$ ' . number_format($this->estimacion->suma_importes, 2, '.', ','),
             ''
-        ]);
+        ]);*/
 
         $this->encola = '';
     }
@@ -287,7 +288,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetTextColors(['0,0,0']);
         $this->SetHeights([0.5]);
         $this->SetAligns(['C']);
-        $this->Row(['Seguimiento del Anticipo']);
+       // $this->Row(['Seguimiento del Anticipo']);
 
         $this->SetWidths([
             ($this->w - 2) * 0.25,
@@ -299,19 +300,19 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0']);
         $this->SetAligns(['C', 'C', 'C', 'C']);
         $this->SetHeights([0.35]);
-        $this->Row([
+       /* $this->Row([
             'Monto Anticipo',
             utf8_decode('Amortización Pendiente Anterior'),
             utf8_decode('Amortización de esta Estimación'),
             utf8_decode('Amortización Pendiente')
-        ]);
+        ]);*/
         $this->SetAligns(['R', 'R', 'R', 'R']);
-        $this->Row([
+       /* $this->Row([
             '$ ' . number_format($this->estimacion->subcontrato->anticipo_monto, 2, '.', ','),
             '$ ' . number_format($this->estimacion->amortizacion_pendiente_anterior, 2, '.', ','),
             '$ ' . number_format($this->estimacion->monto_anticipo_aplicado, 2, '.', ','),
             '$ ' . number_format($this->estimacion->amortizacion_pendiente, 2, '.', ',')
-        ]);
+        ]);*/
     }
 
     function totales() {
@@ -330,11 +331,11 @@ class OrdenPagoEstimacion extends Rotation
         $this->CellFitScale(($this->w - 2) * 0.15, 0.4, number_format($this->estimacion->monto_anticipo_aplicado, 2 ,'.', ','), 'B', 1, 'R');
         $this->Ln(0.1);
 
-        if(in_array(Context::getDatabaseName(),['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM'])) {
+        if(in_array(Context::getDatabase(),['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM'])) {
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Deductivas :', 0, 0, 'R');
-            $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->descuentos->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+          //  $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->descuentos->sum('importe'), 2, '.', ','), 'B', 1, 'R');
             $this->Ln(0.1);
         }
 
@@ -376,7 +377,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->CellFitScale(($this->w - 2) * 0.25, 0.4, '', 'B', 1, 'C');
         $this->Ln(0.1);
 
-        if(!in_array(Context::getDatabaseName(),['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM'])) {
+        if(!in_array(Context::getDatabase(),['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM'])) {
             $this->SetX(($this->w) * 0.45);
             $this->SetFont('Arial', '', 8);
             $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Deductivas :', 0, 0, 'R');
@@ -388,7 +389,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones :', 0, 0, 'R');
-        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->retenciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+       // $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->retenciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
         $this->Ln(0.1);
 
         $this->SetX(($this->w) * 0.45);
@@ -400,25 +401,25 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Retenciones Liberadas :', 0, 0, 'R');
-        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->liberaciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
+       // $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->liberaciones->sum('importe'), 2, '.', ','), 'B', 1, 'R');
         $this->Ln(0.1);
 
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total Anticipo a Liberar :', 0, 0, 'R');
-        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->subcontratoEstimacion ?$this->estimacion->subcontratoEstimacion->ImporteAnticipoLiberar : 0, 2, '.', ','), 'B', 1, 'R');
+       // $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->subcontratoEstimacion ?$this->estimacion->subcontratoEstimacion->ImporteAnticipoLiberar : 0, 2, '.', ','), 'B', 1, 'R');
         $this->Ln(0.1);
 
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Total de la Orden de Pago :', 0, 0, 'R');
-        $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->monto_a_pagar, 2, '.', ','), 'B', 1, 'R');
+    //    $this->CellFitScale(($this->w - 2) * 0.25, 0.4, number_format($this->estimacion->monto_a_pagar, 2, '.', ','), 'B', 1, 'R');
         $this->Ln(0.1);
 
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Importe con letra :', 0, 0, 'R');
-        $this->MultiCell(($this->w - 2) * 0.25, 0.35, utf8_decode(strtoupper((new NumberToLetterConverter())->num2letras(round($this->estimacion->monto_a_pagar, 2), 0, 1, $this->estimacion->id_moneda))), 1, 1, 'L');
+       // $this->MultiCell(($this->w - 2) * 0.25, 0.35, utf8_decode(strtoupper((new NumberToLetterConverter())->num2letras(round($this->estimacion->monto_a_pagar, 2), 0, 1, $this->estimacion->id_moneda))), 1, 1, 'L');
 
         $y_final = $this->GetY();
 
@@ -426,11 +427,11 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.21, 0.4, 'Acumulado Retenido Anterior :', 0, 0, 'L');
-        $this->CellFitScale(($this->w - 2) * 0.125, 0.4, '$ ' .  number_format($this->estimacion->retenido_anterior, 2, '.', ','), 'B', 1, 'R');
+     //   $this->CellFitScale(($this->w - 2) * 0.125, 0.4, '$ ' .  number_format($this->estimacion->retenido_anterior, 2, '.', ','), 'B', 1, 'R');
 
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.21, 0.4, 'Retenido Origen :', 0, 0, 'L');
-        $this->CellFitScale(($this->w - 2) * 0.125, 0.4, '$ ' .  number_format($this->estimacion->retenido_origen, 2, '.', ','), 'B', 1, 'R');
+    //    $this->CellFitScale(($this->w - 2) * 0.125, 0.4, '$ ' .  number_format($this->estimacion->retenido_origen, 2, '.', ','), 'B', 1, 'R');
 
         $this->SetY($y_final);
 
@@ -459,7 +460,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetFillColor(180, 180, 180);
 
         // Firmas específicas para la pista
-        if (Context::getDatabaseName() == "SAO1814_PISTA_AEROPUERTO")
+        if (Context::getDatabase() == "SAO1814_PISTA_AEROPUERTO")
         {
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
@@ -496,7 +497,7 @@ class OrdenPagoEstimacion extends Rotation
         }
 
         // Firmas para tunel drenaje profundo.
-        if (Context::getDatabaseName() == "SAO1814_TUNEL_DRENAJE_PRO")
+        if (Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO")
         {
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
@@ -572,9 +573,9 @@ class OrdenPagoEstimacion extends Rotation
         $this->Ln(1);
         $this->totales();
         try {
-            $this->Output('I', 'Formato - Orden de Pago Estimación.pdf', 1);
+            $this->Output('D', 'Formato - Orden de Pago Estimación.pdf', 1);
         } catch (\Exception $ex) {
-            dd($ex);
+            dd("error",$ex);
         }
         exit;
     }

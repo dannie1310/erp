@@ -11,6 +11,8 @@ namespace App\Models\CADECO;
 
 class Subcontrato extends Transaccion
 {
+    protected $fillable = ['id_transaccion', 'id_antecedente', 'tipo_transaccion'];
+
     protected static function boot()
     {
         parent::boot();
