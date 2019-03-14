@@ -21,6 +21,11 @@ class CuentaContable extends Model
     protected $table = 'Contabilidad.int_cuentas_contables';
     protected $primaryKey = 'id_int_cuenta_contable';
 
+    public $searchable = [
+        'tipo.descripcion',
+        'cuenta_contable'
+    ];
+
     protected static function boot()
     {
         parent::boot();

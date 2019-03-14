@@ -2,6 +2,7 @@
     <div class="row">
         <div class="col-md-12">
             <ul class="list-group">
+                <input class="form-control" placeholder="Buscar obra..." v-model="search">
             <span v-for="(grupo, i) in obrasAgrupadas">
                 <li class="list-group-item disabled"><i class="fa fa-fw fa-database"></i>{{ i }}</li>
                     <a v-for="obra in grupo" href="#" class="list-group-item" @click="setContext(i, obra.id_obra)" v-bind:class="{disabled: loading}">
@@ -21,7 +22,8 @@
 
         data() {
             return {
-                loading: false
+                loading: false,
+                search:''
             }
         },
 
@@ -35,10 +37,27 @@
             this.fetch();
         },
 
+        watch:{
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                     this.fetch();
+                     this.$store.getters['cadeco/obras/obrasAgrupadas'];
+                }, 650);
+
+            }
+        },
         methods: {
-            ...mapActions({
-                fetch: 'cadeco/obras/fetch'
-            }),
+            fetch(){
+                return this.$store.dispatch('cadeco/obras/fetch', {
+                    params: {
+                        search:this.search
+                    }
+                })
+            },
             setContext(database, id_obra) {
                 this.loading = true;
                 return new Promise((res, rej) => {
@@ -68,5 +87,8 @@
     a.disabled {
         pointer-events: none;
         cursor: default;
+    }
+    input {
+        margin-bottom: 20px;
     }
 </style>

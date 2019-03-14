@@ -5,7 +5,7 @@
                 <poliza-validar :poliza="poliza"></poliza-validar>
                 <poliza-omitir :poliza="poliza"></poliza-omitir>
                 <poliza-ingresar-folio :poliza="poliza"></poliza-ingresar-folio>
-                <poliza-ingresar-cuentas :movimientos="movimientosSinCuenta"></poliza-ingresar-cuentas>
+                <!--<poliza-ingresar-cuentas :movimientos="movimientosSinCuenta"></poliza-ingresar-cuentas>-->
             </div>
         </div>
         <div class="row">
@@ -300,30 +300,52 @@
         data() {
             return {
                 poliza: null,
-                original: null
+                original: null,
+                cargando: false
             }
         },
         mounted() {
-            this.find({
-                id: this.id,
-                params: { include: 'transaccionAntecedente,movimientos,traspaso' }
-            })
+            this.$Progress.start();
+            this.find()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
 
         methods: {
-            find(payload) {
-                return this.$store.dispatch('contabilidad/poliza/find', payload)
+            find() {
+                this.cargando = true;
+                this.$store.commit('contabilidad/poliza/SET_POLIZA', null);
+                return this.$store.dispatch('contabilidad/poliza/find', {
+                    id: this.id,
+                    params: { include: 'transaccionAntecedente,movimientos,traspaso' }
+                })
+                    .then(data => {
+                        this.$store.commit('contabilidad/poliza/SET_POLIZA', data);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             },
 
             update(payload) {
                 return this.$store.dispatch('contabilidad/poliza/update', payload)
+                    .then(data => {
+                        this.$store.commit('contabilidad/poliza/UPDATE_POLIZA', data);
+                    })
             },
 
             add(movimiento) {
                 this.poliza.movimientos.data.push(movimiento)
+                this.original.movimientos.data.push(movimiento)
             },
 
             remove(movimiento) {
+                if(!movimiento.id) {
+                    this.original.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
+                        return JSON.stringify(movimiento) != JSON.stringify(m)
+                    })
+                }
                 this.poliza.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
                     return JSON.stringify(movimiento) != JSON.stringify(m)
                 })
@@ -374,9 +396,6 @@
             diff() {
                 return diff(this.poliza, this.original)
             },
-            cargando() {
-                return this.$store.getters['contabilidad/poliza/cargando']
-            },
             datosContables() {
                 return this.$store.getters['auth/datosContables']
             },
@@ -409,7 +428,13 @@
                 }
             },
             cambio() {
-                return JSON.stringify(this.poliza) != JSON.stringify(this.original)
+                return JSON.stringify(this.poliza) != JSON.stringify(this.original) || this.nuevosMovimientos
+            },
+
+            nuevosMovimientos() {
+                return !!this.original.movimientos.data.find(mov => {
+                    return !mov.id
+                })
             }
         }
     }
