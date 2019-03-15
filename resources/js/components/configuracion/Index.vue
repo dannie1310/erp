@@ -1,13 +1,13 @@
 <template>
     <div class="row">
-        <obra></obra>
+        <configuracion-obra></configuracion-obra>
     </div>
 </template>
 
 <script>
-    import Obra from "./partials/Obra";
+    import ConfiguracionObra from "./partials/Obra";
     export default {
         name: "configuracion",
-        components: {Obra}
+        components: {ConfiguracionObra},
     }
 </script>

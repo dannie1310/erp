@@ -1,5 +1,14 @@
 <template>
-    <vue-dropzone :options="dropzoneOptions" ref="dropzone"></vue-dropzone>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Logotipo de Obra</h3>
+                </div>
+                <div class="card-body">
+                    <vue-dropzone :options="dropzoneOptions" ref="dropzone" id="dropzone"></vue-dropzone>
+                </div>
+            </div>
+        </div>
 </template>
 
 <script>
@@ -8,10 +17,9 @@
         data() {
             return {
                 dropzoneOptions: {
-                    url: '/api/SEGURIDAD_ERP/cnfiguracion-obra',
-                    thumbnailWidth: 150,
-                    maxFilesize: 0.5,
-                    headers: { "My-Awesome-Header": "header value" }
+                    url: '/api/SEGURIDAD_ERP/configuracion-obra',
+                    method: 'PATCH',
+                    thumbnailWidth: 150
                 }
             }
         },
