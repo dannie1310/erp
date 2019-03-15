@@ -17,6 +17,19 @@ export const routes = [
         }
     },
     {
+        path: '/configuracion',
+        name: 'configuracion',
+        component: require('./components/configuracion/Index.vue'),
+        meta: {
+            title: 'CONFIGURACIÓN',
+            middleware: [auth, context],
+            breadcrumb: {
+                name: 'CONFIGURACIÓN',
+                parent: 'home'
+            }
+        }
+    },
+    {
         path: '/login',
         name: 'login',
         component: require('./components/pages/Login.vue'),
