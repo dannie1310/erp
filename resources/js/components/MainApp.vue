@@ -57,8 +57,6 @@
         <router-view></router-view>
     </div>
     <!-- ./wrapper -->
-
-    <asignacion-roles></asignacion-roles>
     </body>
 
 </template>
@@ -68,7 +66,6 @@
     import AppSidebar from "./pages/partials/Sidebar";
     import AppBreadcrumb from "./pages/partials/Breadcrumb";
     import AppFooter from "./pages/partials/Footer";
-    import AsignacionRoles from "./AsignacionRoles";
 
     export default {
         name: 'main-app',
