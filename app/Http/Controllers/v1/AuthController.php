@@ -124,5 +124,10 @@ class AuthController extends Controller
         $obras = $this->auth->getObras();
 
         return response()->json($obras, 200);
-        }
+
+    }
+
+    public function paginate() {
+
+    }
 }

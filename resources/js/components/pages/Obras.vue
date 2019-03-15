@@ -10,7 +10,31 @@
                 </a>
             </span>
             </ul>
+
+
+
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ">
+                        <a class="page-link" href="#" v-if="currentPage>1"tabindex="-1" @click="changePage(currentPage-1)" >Anterior</a>
+                    </li>
+                    <li class="page-item" v-for="page in totalPages" @click="changePage(page)"  ><a class="page-link" href="#">{{page}}</a></li>
+
+                    <li class="page-item">
+                        <a class="page-link" href="#" v-if="currentPage<totalPages" @click="changePage(currentPage+1)" >Siguiente</a>
+                    </li>
+                </ul>
+
+
+
+
+
+            </nav>
+
+
         </div>
+
     </div>
 </template>
 
@@ -20,21 +44,33 @@
     export default {
         name: "Obras",
 
+
         data() {
             return {
                 loading: false,
-                search:''
+                search:'',
+                page:0
             }
         },
 
         computed: {
             obrasAgrupadas() {
                 return this.$store.getters['cadeco/obras/obrasAgrupadas']
+            },
+            totalPages(){
+                return this.$store.getters['cadeco/obras/totalPages']
+            },
+            currentPage(){
+                return this.$store.getters['cadeco/obras/currentPage']
             }
         },
 
         mounted() {
             this.fetch();
+
+
+
+
         },
 
         watch:{
@@ -46,17 +82,29 @@
                 this.timer = setTimeout(() => {
                      this.fetch();
                      this.$store.getters['cadeco/obras/obrasAgrupadas'];
+
+
                 }, 650);
 
             }
         },
         methods: {
+
             fetch(){
                 return this.$store.dispatch('cadeco/obras/fetch', {
                     params: {
                         search:this.search
                     }
                 })
+            },
+            changePage(newPage){
+                console.log("Siguiente: "+newPage);
+                return this.$store.dispatch('cadeco/obras/fetch', {
+                    params: {
+                        page:newPage
+                    }
+                })
+                this.$store.getters['cadeco/obras/obrasAgrupadas'];
             },
             setContext(database, id_obra) {
                 this.loading = true;
@@ -90,5 +138,8 @@
     }
     input {
         margin-bottom: 20px;
+    }
+    nav{
+        margin-top: 25px;
     }
 </style>

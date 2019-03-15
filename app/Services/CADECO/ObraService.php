@@ -20,19 +20,6 @@ use Illuminate\Support\Facades\DB;
 
 class ObraService
 {
-    /**
-     * @var Repository
-     */
-    protected $repository;
-
-    /**
-     * ObraService constructor.
-     * @param Obra $model
-     */
-    public function __construct(Obra $model)
-    {
-        $this->repository = new Repository($model);
-    }
 
     public function authPaginate() {
 
