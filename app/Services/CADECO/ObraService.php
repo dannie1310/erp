@@ -36,7 +36,7 @@ class ObraService
             }
             DB::disconnect('cadeco');
         }
-        $perPage     = 3;
+        $perPage     = 10;
         $currentPage = Paginator::resolveCurrentPage();
         $currentPage = $currentPage ? $currentPage : 1;
         $offset      = ($currentPage * $perPage) - $perPage;

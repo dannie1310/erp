@@ -105,7 +105,7 @@ class Repository implements RepositoryInterface
         return $this->model->find($id);
     }
 
-    public function search()
+    private function search()
     {
         if (request()->has('search'))
         {

@@ -3,37 +3,28 @@
         <div class="col-md-12">
             <ul class="list-group">
                 <input class="form-control" placeholder="Buscar obra..." v-model="search">
-            <span v-for="(grupo, i) in obrasAgrupadas">
-                <li class="list-group-item disabled"><i class="fa fa-fw fa-database"></i>{{ i }}</li>
+                <span v-for="(grupo, i) in obrasAgrupadas">
+                    <li class="list-group-item disabled"><i class="fa fa-fw fa-database"></i>{{ i }}</li>
                     <a v-for="obra in grupo" href="#" class="list-group-item" @click="setContext(i, obra.id_obra)" v-bind:class="{disabled: loading}">
-                    {{ obra.nombre }}
-                </a>
-            </span>
+                        {{ obra.nombre }}
+                    </a>
+                </span>
             </ul>
 
-
-
-
-            <nav aria-label="Page navigation example">
+            <nav aria-label="Page navigation example" v-if="!(Object.keys(meta).length === 0 && meta.constructor === Object)" totalPages="meta.pagination.total_pages">
                 <ul class="pagination justify-content-center">
                     <li class="page-item ">
-                        <a class="page-link" href="#" v-if="currentPage>1"tabindex="-1" @click="changePage(currentPage-1)" >Anterior</a>
+                        <a class="page-link" href="#" v-if="meta.pagination.current_page>1" tabindex="-1" @click="changePage(meta.pagination.current_page-1)" >Anterior</a>
                     </li>
-                    <li class="page-item" v-for="page in totalPages" @click="changePage(page)"  ><a class="page-link" href="#">{{page}}</a></li>
+                    <li class="page-item " v-if="meta.pagination.total_pages>1"v-for="page in meta.pagination.total_pages" @click="changePage(page)" v-bind:class="{active : page == meta.pagination.current_page}"  ><a class="page-link" href="#">{{page}}</a></li>
 
                     <li class="page-item">
-                        <a class="page-link" href="#" v-if="currentPage<totalPages" @click="changePage(currentPage+1)" >Siguiente</a>
+                        <a class="page-link" href="#" v-if="meta.pagination.current_page<meta.pagination.total_pages"@click="changePage(meta.pagination.current_page+1)" >Siguiente</a>
                     </li>
                 </ul>
-
-
-
-
-
             </nav>
-
-
         </div>
+
 
     </div>
 </template>
@@ -49,6 +40,7 @@
             return {
                 loading: false,
                 search:''
+
             }
         },
 
@@ -56,11 +48,8 @@
             obrasAgrupadas() {
                 return this.$store.getters['cadeco/obras/obrasAgrupadas']
             },
-            totalPages(){
-                return this.$store.getters['cadeco/obras/totalPages']
-            },
-            currentPage(){
-                return this.$store.getters['cadeco/obras/currentPage']
+            meta() {
+                return this.$store.getters['cadeco/obras/meta']
             }
         },
 
@@ -78,23 +67,21 @@
                      this.fetch();
                      this.$store.getters['cadeco/obras/obrasAgrupadas'];
 
+                }, 550);
+            },
 
-                }, 650);
-
-            }
         },
         methods: {
-
             fetch(){
-                return this.$store.dispatch('cadeco/obras/fetch', {
+                return this.$store.dispatch('cadeco/obras/paginate', {
                     params: {
                         search:this.search
                     }
                 })
+
             },
             changePage(newPage){
-                console.log("Siguiente: "+newPage);
-                return this.$store.dispatch('cadeco/obras/fetch', {
+                return this.$store.dispatch('cadeco/obras/paginate', {
                     params: {
                         page:newPage
                     }
