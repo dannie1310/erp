@@ -18,6 +18,11 @@ class Obra extends Model
     protected $table = 'obras';
     protected $primaryKey = 'id_obra';
 
+    public $searchable = [
+        'nombre',
+        'descripcion'
+    ];
+
     public $timestamps = false;
 
     public function datosContables() {

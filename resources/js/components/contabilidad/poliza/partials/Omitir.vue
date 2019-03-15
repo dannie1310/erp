@@ -14,7 +14,8 @@
                     id: this.poliza.id,
                     params: { include: 'transaccionAntecedente,movimientos,traspaso' }
                 })
-                    .then(() => {
+                    .then(data => {
+                        this.$store.commit('contabilidad/poliza/UPDATE_POLIZA', data);
                         this.$emit('success')
                     })
             }

@@ -29,8 +29,17 @@ class Empresa extends Model
             ->where('Contabilidad.cuentas_empresas.estatus', '=', 1);
     }
 
+    public function cuentas(){
+        return $this->hasMany(Cuenta::class, 'id_empresa', 'id_empresa');
+    }
+
     public function scopeConCuentas($query)
     {
         return $query->has('cuentasEmpresa');
+    }
+
+    public function scopeBancos($query)
+    {
+        return $query->where('tipo_empresa', '=', 8);
     }
 }

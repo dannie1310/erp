@@ -23,7 +23,7 @@ export default {
                 }
                 return poliza
             })
-            state.currentPoliza = data;
+            state.currentPoliza = state.currentPoliza ? data : null;
         },
 
         SET_POLIZA(state, data) {
@@ -33,30 +33,30 @@ export default {
 
     actions: {
         paginate (context, payload) {
-            context.commit('SET_POLIZAS', [])
-            axios
-                .get(URI + 'paginate', {params: payload})
-                .then(r => r.data)
-                .then((data) => {
-                    context.commit('SET_POLIZAS', data.data)
-                    context.commit('SET_META', data.meta)
-                })
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            })
         },
 
         find(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_POLIZA', null)
-                axios.get(URI + payload.id, {params: payload.params})
+                axios.get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        context.commit('SET_POLIZA', data)
-                        resolve();
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error);
                     })
             });
-
         },
 
         update(context, payload) {
@@ -65,26 +65,33 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Guardar cambios de la Prepóliza",
                     icon: "warning",
-                    buttons: ['Cancelar', 'Si, Guardar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Guardar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
                             axios
                                 .patch(URI + payload.id, payload.data, { params: payload.params })
                                 .then(r => r.data)
-                                .then((data) => {
+                                .then(data => {
                                     swal("Prepóliza Actualizada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
                                     })
                                         .then(() => {
-                                            context.commit('UPDATE_POLIZA', data);
-                                            resolve();
+                                            resolve(data);
                                         })
                                 })
                                 .catch(error => {
-                                    reject();
+                                    reject(error);
                                 })
                         }
                     });
@@ -97,20 +104,27 @@ export default {
                     title: "Validar Prepóliza",
                     text: "¿Esta seguro de que deseas validar la Prepóliza?",
                     icon: "warning",
-                    buttons: ["Cancelar", "Si, Validar"]
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Validar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
                             axios.patch(URI + payload.id + '/validar', payload.data, { params: payload.params })
                                 .then(r => r.data)
-                                .then((data) => {
+                                .then(data => {
                                     swal("Prepóliza Validada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
                                     }).then(() => {
-                                        context.commit('UPDATE_POLIZA', data)
-                                        resolve();
+                                        resolve(data);
                                     })
                                 })
                                 .catch(error => {
@@ -127,20 +141,27 @@ export default {
                     title: "Omitir Prepóliza",
                     text: "¿Esta seguro de que deseas omitir la Prepóliza?",
                     icon: "warning",
-                    buttons: ["Cancelar", "Si, Omitir"]
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Omitir',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
                             axios.patch(URI + payload.id + '/omitir', payload.data,  { params: payload.params })
                                 .then(r => r.data)
-                                .then((data) => {
+                                .then(data => {
                                     swal("Prepóliza omitida correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
                                     }).then(() => {
-                                        context.commit('UPDATE_POLIZA', data);
-                                        resolve();
+                                        resolve(data);
                                     })
                                 })
                                 .catch(error => {

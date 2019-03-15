@@ -1,5 +1,6 @@
 <template>
     <body class="hold-transition sidebar-mini">
+    <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
     <div v-if="currentUser" class="wrapper">
         <AppHeader/>

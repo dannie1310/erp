@@ -31,7 +31,7 @@
                     }
                 })
                     .then(data => {
-                        const options = data.map(i => ({
+                        const options = data.data.map(i => ({
                             id: i.id,
                             label: i.descripcion
                         }))

@@ -21,7 +21,7 @@
 
 <script>
     export default {
-        props: ['value','id', 'multiple', 'error'],
+        props: ['value','id', 'multiple', 'error', 'scope'],
         name: "material-select",
         data() {
             return {
@@ -50,10 +50,10 @@
             getRootNodes() {
                 let self = this
                 return self.$store.dispatch('cadeco/material/index', {
-                    params: { scope: 'roots' }
+                    params: { scope: this.scp }
                 })
                     .then(data => {
-                        self.rootNodes = data.map(material => ({
+                        self.rootNodes = data.data.map(material => ({
                             id: material.id,
                             children: material.tiene_hijos != 0 ? null : undefined,
                             label: material.descripcion,
@@ -65,7 +65,7 @@
             loadOptions({ action, parentNode, callback }) {
                 return this.$store.dispatch('cadeco/material/find',{
                     id: parentNode.id,
-                    params: { include: 'hijos' }
+                    params: { include: 'hijos', scope: this.scope }
                 })
                     .then(data => {
                         parentNode.children = data.hijos.data.map(material => ({
@@ -80,6 +80,16 @@
                     .catch(error => {
                         callback(new Error('Failed to load options: network error.'))
                     });
+            }
+        },
+
+        computed: {
+            scp() {
+                if (this.scope) {
+                    return Array.isArray(this.scope) ? [...this.scope, 'roots'] : [this.scope, 'roots']
+                } else {
+                    return 'roots'
+                }
             }
         }
     }

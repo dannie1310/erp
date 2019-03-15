@@ -8,24 +8,22 @@ export default {
 
     mutations: {
         SET_ALMACENES(state, data) {
-            state.almacenes = data
+            state.almacenes = data;
         }
     },
 
     actions: {
         index(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_ALMACENES', null)
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        context.commit('SET_ALMACENES', data.data)
-                        resolve();
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
-                        reject(error)
-                    })
+                        reject(error);
+                    });
             });
         }
     },

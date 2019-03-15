@@ -1,7 +1,8 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_material')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Cuenta
+        <button @click="init" v-if="$root.can('registrar_cuenta_material')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i> Registrar Cuenta
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -25,7 +26,9 @@
                                                 v-validate="{required: true}"
                                                 id="id_material"
                                                 v-model="id_material"
-                                                :error="errors.has('id_material')">
+                                                :error="errors.has('id_material')"
+                                                scope="sinCuenta"
+                                        >
                                         ></material-select>
                                         <div class="error-label" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                     </div>
@@ -63,7 +66,9 @@
                                                 id="cuenta"
                                                 placeholder="Cuenta"
                                                 v-model="cuenta"
-                                                :class="{'is-invalid': errors.has('cuenta')}">
+                                                :class="{'is-invalid': errors.has('cuenta')}"
+                                                ref="selectMaterial"
+                                        >
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>
                                 </div>
@@ -89,12 +94,14 @@
             return {
                 id_material: '',
                 id_tipo_cuenta_material: '',
-                cuenta: ''
+                cuenta: '',
+                cargando: false
             }
         },
 
         methods: {
             init() {
+                this.cargando = true;
                 $(this.$refs.modal).modal('show');
 
                 this.id_material = '';
@@ -102,6 +109,7 @@
                 this.cuenta = '';
 
                 this.$validator.reset()
+                this.cargando = false;
             },
 
             store() {
@@ -109,6 +117,7 @@
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created', data);
+                        this.$refs.selectMaterial.getRootNodes();
                     });
             },
 

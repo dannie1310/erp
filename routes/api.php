@@ -31,16 +31,29 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'almacen'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
         });
-    });
 
-    $api->group(['middleware' => 'api'], function ($api) {
+        // CONCEPTOS
+        $api->group(['prefix' => 'concepto'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\ConceptoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ConceptoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ConceptoController@show')->where(['id' => '[0-9]+']);
+        });
+
+        // COSTOS
+        $api->group(['prefix' => 'costo'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\CostoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\CostoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\CostoController@show')->where(['id' => '[0-9]+']);
+        });
+
         // CUENTAS
         $api->group(['prefix' => 'cuenta'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\CuentaController@index');
-        });
-    });
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\CuentaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\CuentaController@show')->where(['id' => '[0-9]+']);
 
-    $api->group(['middleware' => 'api'], function ($api) {
+        });
+
         // EMPRESAS
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\EmpresaController@index');
@@ -48,12 +61,12 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EmpresaController@show')->where(['id' => '[0-9]+']);
         });
 
-        //FONDOS
+        // FONDOS
         $api->group(['prefix' =>  'fondo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\FondoController@index');
         });
 
-        //MATERIALES
+        // MATERIALES
         $api->group(['prefix' => 'material'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MaterialController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
@@ -65,6 +78,15 @@ $api->version('v1', function ($api) {
      * CONTABILIDAD
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
+        //CIERRES DE PERIODO
+        $api->group(['prefix' => 'cierre-periodo'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/abrir', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@abrir')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cerrar', 'App\Http\Controllers\v1\CADECO\Contabilidad\CierreController@cerrar')->where(['id' => '[0-9]+']);
+        });
+
         //CUENTAS DE ALMACÉN
         $api->group(['prefix' => 'cuenta-almacen'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaAlmacenController@store');
@@ -75,9 +97,28 @@ $api->version('v1', function ($api) {
 
         //CUENTAS DE BANCO
         $api->group(['prefix' => 'cuenta-banco'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaBancoController@destroy')->where(['id' => '[0-9]+']);
+
+        });
+
+        //CUENTAS DE CONCEPTO
+        $api->group(['prefix' => 'cuenta-concepto'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaConceptoController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaConceptoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaConceptoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaConceptoController@update')->where(['id' => '[0-9]+']);
+        });
+
+        //CUENTAS DE COSTO
+        $api->group(['prefix' => 'cuenta-costo'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaCostoController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaCostoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaCostoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaCostoController@update')->where(['id' => '[0-9]+']);
         });
 
         //CUENTAS DE EMPRESA
@@ -86,6 +127,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaEmpresaController@destroy')->where(['id' => '[0-9]+']);
         });
 
         //CUENTAS DE FONDO

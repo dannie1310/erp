@@ -53,6 +53,16 @@ export const routes = [
                 }
             },
             {
+                path: 'cierre-periodo',
+                name: 'cierre-periodo',
+                component: require('./components/contabilidad/cierre-periodo/Index'),
+                meta: {
+                    title: 'Cierres de periodo',
+                    breadcrumb: {name: 'CIERRES DE PERIODO', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
                 path: 'cuenta-almacen',
                 name: 'cuenta-almacen',
                 component: require('./components/contabilidad/cuenta-almacen/Index'),
@@ -69,6 +79,26 @@ export const routes = [
                 meta: {
                     title: 'Cuentas de Bancos',
                     breadcrumb: {name: 'CUENTAS DE BANCOS', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
+                path: 'cuenta-concepto',
+                name: 'cuenta-concepto',
+                component: require('./components/contabilidad/cuenta-concepto/Index'),
+                meta: {
+                    title: 'Cuentas de Conceptos',
+                    breadcrumb: {name: 'CUENTAS DE CONCEPTOS', parent: 'contabilidad'},
+                    middleware: [auth, context]
+                }
+            },
+            {
+                path: 'cuenta-costo',
+                name: 'cuenta-costo',
+                component: require('./components/contabilidad/cuenta-costo/Index'),
+                meta: {
+                    title: 'Cuentas de Costos',
+                    breadcrumb: {name: 'CUENTAS DE COSTOS', parent: 'contabilidad'},
                     middleware: [auth, context]
                 }
             },
