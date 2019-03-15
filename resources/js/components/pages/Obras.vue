@@ -48,8 +48,7 @@
         data() {
             return {
                 loading: false,
-                search:'',
-                page:0
+                search:''
             }
         },
 
@@ -67,10 +66,6 @@
 
         mounted() {
             this.fetch();
-
-
-
-
         },
 
         watch:{
