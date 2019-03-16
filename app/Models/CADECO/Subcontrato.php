@@ -23,11 +23,18 @@ class Subcontrato extends Transaccion
         });
     }
 
-    public function estimaciones(){
+    public function estimaciones()
+    {
         return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function empresa(){
+    public function empresa()
+    {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function getMontoSubcontratoAttribute()
+    {
+        return $this->monto - $this->impuesto;
     }
 }

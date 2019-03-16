@@ -35,7 +35,7 @@ class Obra extends Model
     public function getLogoAttribute()
     {
         if(isset($this->configuracionObra->logotipo_original)){
-            return $this->configuracionObra->logotipo_original;
+            return bin2hex($this->configuracionObra->logotipo_original);
         }else{
             $file = public_path('img/ghi-logo.png');
             $data = unpack("H*", file_get_contents($file));

@@ -6,8 +6,8 @@
                  <div class="modal-dialog modal-lg" id="mdialTamanio">
                      <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                             <h4 class="modal-title">Orden de Pago Estimación</h4>
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                         </div>
                         <div class="modal-body modal-lg" style="height: 800px" ref="body">
 
@@ -18,7 +18,6 @@
                      </div>
                  </div>
              </div>
-
         </span>
 </template>
 
@@ -42,7 +41,7 @@
             pdf(){
                var url = '/api/formato/orden-pago-estimacion/' + this.id +'?token='+this.$session.get('jwt');
               //  var url = 'http://www.ti.com/lit/ds/symlink/ads7853.pdf';
-                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="99.6%">d</iframe>');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">d</iframe>');
                 $(this.$refs.modal).modal('show');
             }
         }

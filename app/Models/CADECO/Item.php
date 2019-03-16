@@ -18,7 +18,13 @@ class Item extends Model
     protected $primaryKey = 'id_item';
     public $timestamps = false;
 
-    public function contrato() {
+    public function contrato()
+    {
         return $this->belongsTo(Contrato::class, 'item_antecedente', 'id_concepto');
+    }
+
+    public function concepto()
+    {
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 }
