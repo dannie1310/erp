@@ -1,4 +1,4 @@
-<template v-show="id">
+<template>
         <span>
             <button @click="init"  type="submit" class="btn btn-primary">Ver Formato</button>
 
