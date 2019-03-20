@@ -70,8 +70,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer btn-group">
-                                <orden-pago-estimacion-pdf v-bind:id="id_estimacion" @click="validate"></orden-pago-estimacion-pdf>
+                        <div class="modal-footer btn-group" v-if="id_estimacion">
+                            <!--<button type="submit" class="btn btn-primary" @click="validate">Ver Formato</button>-->
+                            <orden-pago-estimacion-pdf v-bind:id="id_estimacion" @click="validate" v-show="id_estimacion"></orden-pago-estimacion-pdf>
+                        </div>
+                        <div class="modal-footer btn-group" v-else>
+                            <button type="submit" class="btn btn-primary" @click="validate">Ver Formato</button>
+                            <!--<orden-pago-estimacion-pdf v-bind:id="id_estimacion" @click="validate" v-show="id_estimacion"></orden-pago-estimacion-pdf>-->
                         </div>
                     </form>
                 </div>
@@ -170,18 +175,10 @@
                     })
             },
 
-            store() {
-                return this.$store.dispatch('contabilidad/cierre-periodo/store', this.$data)
-                    .then(data => {
-                        $(this.$refs.modal).modal('hide');
-                        this.$emit('created', data)
-                    });
-            },
-
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.$data.ok = true;
+                        console.log("AQUI");
                     }
                 });
             }
@@ -197,11 +194,6 @@
                 this.estimaciones = []
                 if(value){
                     this.getEstimaciones();
-                }
-            },
-            id_estimacion(value){
-                if(value){
-                    this.$data.ok = true;
                 }
             }
         }

@@ -40,8 +40,7 @@
             },
             pdf(){
                var url = '/api/formato/orden-pago-estimacion/' + this.id +'?token='+this.$session.get('jwt');
-              //  var url = 'http://www.ti.com/lit/ds/symlink/ads7853.pdf';
-                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">d</iframe>');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Orden de Pago Estimación</iframe>');
                 $(this.$refs.modal).modal('show');
             }
         }
