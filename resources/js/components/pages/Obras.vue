@@ -24,8 +24,6 @@
                 </ul>
             </nav>
         </div>
-
-
     </div>
 </template>
 
@@ -35,12 +33,10 @@
     export default {
         name: "Obras",
 
-
         data() {
             return {
                 loading: false,
                 search:''
-
             }
         },
 
@@ -69,7 +65,6 @@
 
                 }, 550);
             },
-
         },
         methods: {
             fetch(){
@@ -78,7 +73,6 @@
                         search:this.search
                     }
                 })
-
             },
             changePage(newPage){
                 return this.$store.dispatch('cadeco/obras/paginate', {

@@ -153,4 +153,6 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
         return $permisos;
     }
+
+
 }
