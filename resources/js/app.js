@@ -20,6 +20,8 @@ import router from './router';
 Vue.use(VueSession, {persist: true});
 Vue.use(VeeValidate);
 Vue.component('treeselect', VueTreeselect.Treeselect);
+import vue2Dropzone from 'vue2-dropzone';
+Vue.component('vueDropzone', vue2Dropzone);
 Validator.localize('es', es);
 Vue.use(Datatable, { locale: datatableEs });
 

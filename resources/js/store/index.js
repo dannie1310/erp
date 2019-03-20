@@ -11,6 +11,7 @@ import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
 import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
+import moneda from './modules/cadeco/moneda';
 import subcontrato from './modules/cadeco/subcontrato';
 
 //CONTABILIDAD
@@ -23,6 +24,7 @@ import cuentaEmpresa from './modules/contabilidad/cuenta-empresa';
 import cuentaFondo from './modules/contabilidad/cuenta-fondo';
 import cuentaGeneral from './modules/contabilidad/cuenta-general';
 import cuentaMaterial from './modules/contabilidad/cuenta-material';
+import datosContables from './modules/contabilidad/datos-contables';
 import estatusPrepoliza from './modules/contabilidad/estatus-prepoliza';
 import poliza from './modules/contabilidad/poliza';
 import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
@@ -37,6 +39,9 @@ import ordenPagoEstimacion from './modules/formato/orden-pago-estimacion';
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 
+//SEGURIDAD
+import sistema from './modules/seguridad/sistema';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -50,6 +55,7 @@ export default new Vuex.Store({
         'cadeco/empresa': empresa,
         'cadeco/fondo': fondo,
         'cadeco/material': material,
+        'cadeco/moneda': moneda,
         'cadeco/subcontrato': subcontrato,
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
@@ -60,6 +66,7 @@ export default new Vuex.Store({
         'contabilidad/cuenta-fondo' : cuentaFondo,
         'contabilidad/cuenta-general': cuentaGeneral,
         'contabilidad/cuenta-material' : cuentaMaterial,
+        'contabilidad/datos-contables' : datosContables,
         'contabilidad/estatus-prepoliza': estatusPrepoliza,
         'contabilidad/poliza': poliza,
         'contabilidad/tipo-cuenta-contable': tipoCuentaContable,
@@ -71,6 +78,7 @@ export default new Vuex.Store({
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
+        'seguridad/sistema': sistema,
     },
     strict: process.env.NODE_ENV !== 'production'
 })

@@ -19,13 +19,48 @@ class Obra extends Model
     protected $table = 'obras';
     protected $primaryKey = 'id_obra';
 
+    public $searchable = [
+        'nombre',
+        'descripcion'
+    ];
+
     public $timestamps = false;
+
+    protected $fillable = [
+        'nombre',
+        'constructora',
+        'cliente',
+        'facturar',
+        'responsable',
+        'rfc',
+        'id_moneda',
+        'iva',
+        'fecha_inicial',
+        'fecha_final',
+        'tipo_obra',
+        'descripcion',
+        'estado',
+        'direccion',
+        'ciudad',
+        'codigo_postal',
+        'valor_contrato'
+    ];
+
+    protected $dates = [
+        'fecha_inicial',
+        'fecha_final'
+    ];
 
     protected $hidden = ['logo'];
 
     public function datosContables()
     {
         return $this->hasOne(DatosContables::class, 'id_obra');
+    }
+
+    public function configuracion()
+    {
+        return $this->hasOne(ConfiguracionObra::class, 'id_obra');
     }
 
     public function configuracionObra(){

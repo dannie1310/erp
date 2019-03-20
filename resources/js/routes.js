@@ -17,6 +17,22 @@ export const routes = [
         }
     },
     {
+        path: '/configuracion',
+        name: 'configuracion',
+        components: {
+            default: require('./components/configuracion/Index.vue'),
+            menu: require('./components/configuracion/partials/Menu.vue')
+        },
+        meta: {
+            title: 'CONFIGURACIÓN',
+            middleware: [auth, context],
+            breadcrumb: {
+                name: 'CONFIGURACIÓN',
+                parent: 'home'
+            }
+        }
+    },
+    {
         path: '/login',
         name: 'login',
         component: require('./components/pages/Login.vue'),
@@ -44,7 +60,7 @@ export const routes = [
         children: [
             {
                 path: '',
-                name: 'contabilidad',
+                name: 'sistema_contable',
                 component: require('./components/contabilidad/Index'),
                 meta: {
                     title: 'Contabilidad',

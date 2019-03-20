@@ -20,7 +20,8 @@ $api->version('v1', function ($api) {
         $api->post('setContext', 'App\Http\Controllers\v1\AuthController@setContext');
         $api->post('getContext', 'App\Http\Controllers\v1\AuthController@getContext');
         $api->post('refresh', 'App\Http\Controllers\v1\AuthController@refresh');
-        $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');
+      /*  $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');*/
+        $api->get('obras/paginate', 'App\Http\Controllers\v1\CADECO\ObraController@authPaginate');
     });
 
     /**
@@ -76,6 +77,17 @@ $api->version('v1', function ($api) {
         // SUBCONTRATO
         $api->group(['prefix' => 'subcontrato'], function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SubcontratoController@show')->where(['id' => '[0-9]+']);
+        });
+
+        // MONEDA
+        $api->group(['prefix' => 'moneda'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\MonedaController@index');
+        });
+
+        // OBRA
+        $api->group(['prefix' => 'obra'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@show');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
         });
     });
 
@@ -159,6 +171,11 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@update')->where(['id' => '[0-9]+']);
         });
 
+        // DATOS CONTABLES
+        $api->group(['prefix' => 'datos-contables'], function ($api){
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\DatosContablesController@update')->where(['id' => '[0-9]+']);
+        });
+
         //ESTATUS PREPÓLIZA
         $api->group(['prefix' => 'estatus-prepoliza'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\EstatusPrepolizaController@index');
@@ -230,5 +247,13 @@ $api->version('v1', function ($api) {
         $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
         $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
         $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
+    });
+
+    /** SEGURIDAD ERP */
+    $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
+        $api->group(['prefix' => 'sistema'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@index');
+
+        });
     });
 });
