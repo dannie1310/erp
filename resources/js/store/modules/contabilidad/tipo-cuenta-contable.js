@@ -71,8 +71,8 @@ export default {
                                 .then(r => r.data)
                                 .then(data => {
                                     swal({
-                                        title: "",
-                                        text: "Cuenta contable registrada correctamente",
+                                        title: "Cuenta contable registrada correctamente",
+                                        text: " ",
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
