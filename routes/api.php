@@ -20,7 +20,8 @@ $api->version('v1', function ($api) {
         $api->post('setContext', 'App\Http\Controllers\v1\AuthController@setContext');
         $api->post('getContext', 'App\Http\Controllers\v1\AuthController@getContext');
         $api->post('refresh', 'App\Http\Controllers\v1\AuthController@refresh');
-        $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');
+      /*  $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');*/
+        $api->get('obras/paginate', 'App\Http\Controllers\v1\CADECO\ObraController@authPaginate');
     });
 
     /**
@@ -72,6 +73,11 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
         });
+
+        /*// OBRAS
+        $api->group(['prefix' => 'obra'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ObraController@paginate');
+        });*/
     });
 
     /**
