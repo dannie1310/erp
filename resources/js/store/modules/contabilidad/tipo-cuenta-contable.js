@@ -24,11 +24,16 @@ export default {
 
     actions: {
         index(context, payload) {
-            axios.get(URI, {params: payload})
-                .then(r => r.data)
-                .then((data) => {
-                    context.commit('SET_TIPOS', data.data)
-                })
+            return new Promise((resolve, reject) => {
+                axios.get(URI, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data)
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
         },
         paginate (context, payload){
             context.commit('SET_TIPOS', [])

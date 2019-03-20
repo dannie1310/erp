@@ -10,15 +10,15 @@ export default {
 
     mutations: {
         SET_EMPRESAS(state, data) {
-            state.empresas = data
+            state.empresas = data;
         },
 
         SET_EMPRESA(state, data) {
-            state.currentEmpresa = data
+            state.currentEmpresa = data;
         },
 
         SET_META(state, data) {
-            state.meta = data
+            state.meta = data;
         }
     },
 
@@ -28,42 +28,36 @@ export default {
                 axios
                     .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        context.commit('SET_EMPRESA', data)
+                    .then(data => {
                         resolve(data);
                     })
                     .catch(error => {
                         reject(error);
-                    })
+                    });
             });
         },
 
         index(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_EMPRESAS', null)
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        context.commit('SET_EMPRESAS', data.data)
-                        resolve();
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
-                        reject(error)
-                    })
+                        reject(error);
+                    });
             });
         },
 
         paginate(context, payload) {
             return new Promise((resolve, reject) => {
-                context.commit('SET_EMPRESAS', []);
                 axios
-                    .get(URI + 'paginate', { params: payload })
+                    .get(URI + 'paginate', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
-                        context.commit('SET_EMPRESAS', data.data);
-                        context.commit('SET_META', data.meta);
-                        resolve();
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error);
@@ -74,15 +68,15 @@ export default {
 
     getters: {
         empresas(state) {
-            return state.empresas
+            return state.empresas;
         },
 
         meta(state) {
-            return state.meta
+            return state.meta;
         },
 
         currentEmpresa(state) {
-            return state.currentEmpresa
+            return state.currentEmpresa;
         }
     }
 }

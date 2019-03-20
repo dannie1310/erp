@@ -86,6 +86,7 @@ class Repository implements RepositoryInterface
     public function where($where)
     {
         $this->model = $this->model->where($where);
+        return $this;
     }
 
     public function create(array $data)

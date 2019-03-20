@@ -39,10 +39,10 @@ export default {
     },
 
     actions: {
-        find(context, id) {
+        find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + id)
+                    .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -53,13 +53,35 @@ export default {
             });
         },
 
+        paginate(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Cuenta",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -87,14 +109,22 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Estás seguro?",
-                    text: "Actualizar Cuenta de Material",
+                    text: "Actualizar Cuenta de Costo",
                     icon: "warning",
-                    buttons: ['Cancelar', 'Si, Actualizar']
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id, payload)
+                                .patch(URI + payload.id, payload.data)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Cuenta actualizada correctamente", {

@@ -13,6 +13,8 @@ use App\Models\CADECO\Contabilidad\Apertura;
 use App\Models\CADECO\Contabilidad\Cierre;
 use App\Repositories\Repository;
 use Carbon\Carbon;
+use HttpResponseException;
+use Illuminate\Support\Facades\DB;
 
 class CierreService
 {
@@ -40,19 +42,71 @@ class CierreService
         return $this->repository->show($id);
     }
 
-    public function update($data, $id)
-    {
-        if ($data["data"]["estatus"] == 1) { // ABRIR PERIODO
-            $apertura = new Apertura;
-            $apertura = $apertura->create($data["data"]);
-        } else { // CERRAR PERIODO
-            $apertura = Apertura::where('id_cierre', '=', $id)->where('estatus', '=', 1)->update(['estatus' => 0, 'fin_apertura' => Carbon::now()->toDateTimeString()]);
-        }
-        return $this->repository->show($id);
-    }
-
     public function store(array $data)
     {
-        return $this->repository->create($data);
+        try {
+            if($cierre = Cierre::query()->where('mes', '=', $data['mes'])->where('anio', '=', $data['anio'])->first()) {
+                throw new \Exception('Ya existe un cierre para el Periodo Seleccionado', 404);
+            }
+
+            DB::connection('cadeco')->beginTransaction();
+
+            $cierre = $this->repository->create($data);
+
+            DB::connection('cadeco')->commit();
+            return $cierre;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollback();
+            abort($e->getCode(), $e->getMessage());
+        }
+    }
+
+    public function abrir($data, $id)
+    {
+        try {
+            $cierre = $this->repository->show($id);
+
+            if ($cierre->abierto) {
+                throw new \Exception("El periodo de Cierre presenta ya una apertura activa", 404);
+            }
+
+            DB::connection('cadeco')->beginTransaction();
+
+            $cierre->aperturas()->create($data);
+
+            DB::connection('cadeco')->commit();
+
+            return $cierre;
+
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollback();
+            abort($e->getCode(), $e->getMessage());
+        }
+    }
+
+    public function cerrar($id)
+    {
+        try {
+            $cierre = $this->repository->show($id);
+
+            if (!$cierre->abierto) {
+                throw new \Exception("El periodo ya se encuentra cerrado", 404);
+            }
+
+            DB::connection('cadeco')->beginTransaction();
+
+            $cierre->aperturas()->abiertas()->update([
+                'fin_apertura' => Carbon::now()->toDateTimeString(),
+                'estatus' => false
+            ]);
+
+            DB::connection('cadeco')->commit();
+
+            return $cierre;
+
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollback();
+            abort($e->getCode(), $e->getMessage());
+        }
     }
 }

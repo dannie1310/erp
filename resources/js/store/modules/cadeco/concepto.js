@@ -8,7 +8,7 @@ export default {
 
     mutations: {
         SET_CONCEPTOS(state, data) {
-            state.conceptos = data
+            state.conceptos = data;
         },
     },
 
@@ -23,7 +23,7 @@ export default {
                     })
                     .catch(error => {
                         reject(error)
-                    })
+                    });
             });
         },
 
@@ -32,12 +32,12 @@ export default {
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        resolve(data.data);
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error)
-                    })
+                    });
             });
         },
     },

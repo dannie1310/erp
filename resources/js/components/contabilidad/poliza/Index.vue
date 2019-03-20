@@ -61,12 +61,17 @@
                 },
                 daterange: null,
                 id_tipo_poliza_contpaq: '',
-                id_estatus: ''
+                id_estatus: '',
+                cargando: false
             }
         },
 
         mounted() {
-            this.fetch()
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
             this.getEstatus()
             this.getTiposPolizaContaq()
 
@@ -74,14 +79,28 @@
         },
 
         methods: {
-            fetch(payload = {}) {
-                return this.$store.dispatch('contabilidad/poliza/paginate', payload)
+            paginate(payload = {}) {
+                this.cargando = true;
+                return this.$store.dispatch('contabilidad/poliza/paginate', { params: payload })
+                    .then(data => {
+                        this.$store.commit('contabilidad/poliza/SET_POLIZAS', data.data);
+                        this.$store.commit('contabilidad/poliza/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             },
             getEstatus() {
-                return this.$store.dispatch('contabilidad/estatus-prepoliza/fetch')
+                return this.$store.dispatch('contabilidad/estatus-prepoliza/index')
+                    .then(data => {
+                        this.$store.commit('contabilidad/estatus-prepoliza/SET_ESTATUS', data.data);
+                    })
             },
             getTiposPolizaContaq() {
-                return this.$store.dispatch('contabilidad/tipo-poliza-contpaq/fetch')
+                return this.$store.dispatch('contabilidad/tipo-poliza-contpaq/index')
+                    .then(data => {
+                        this.$store.commit('contabilidad/tipo-poliza-contpaq/SET_TIPOS', data.data);
+                    })
             }
         },
         computed: {
@@ -96,6 +115,9 @@
             },
             tiposPolizaContaq() {
                 return this.$store.getters['contabilidad/tipo-poliza-contpaq/tipos']
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
@@ -103,24 +125,22 @@
                 handler(polizas) {
                     let self = this
                     self.$data.data = []
-                    polizas.forEach(function (poliza, i) {
-                        self.$data.data.push({
-                            index: (i + 1) + self.query.offset,
-                            id_tipo_poliza_interfaz: poliza.transaccionInterfaz.descripcion,
-                            id_tipo_poliza_contpaq: poliza.tipoPolizaContpaq.descripcion,
-                            concepto: poliza.concepto,
-                            fecha: poliza.fecha,
-                            total: '$' + parseFloat(poliza.total).formatMoney(2, '.', ','),
-                            cuadre: '$' + parseFloat(poliza.cuadre).formatMoney(2, '.', ','),
-                            estatus: poliza.estatusPrepoliza,
-                            buttons: $.extend({}, {
-                                edit: self.$root.can('editar_prepolizas_generadas') ? true : undefined,
-                                show: true,
-                                historico: false,
-                                id: poliza.id
-                            })
+                    self.$data.data = polizas.map((poliza, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        id_tipo_poliza_interfaz: poliza.transaccionInterfaz.descripcion,
+                        id_tipo_poliza_contpaq: poliza.tipoPolizaContpaq.descripcion,
+                        concepto: poliza.concepto,
+                        fecha: poliza.fecha,
+                        total: '$' + parseFloat(poliza.total).formatMoney(2, '.', ','),
+                        cuadre: '$' + parseFloat(poliza.cuadre).formatMoney(2, '.', ','),
+                        estatus: poliza.estatusPrepoliza,
+                        buttons: $.extend({}, {
+                            edit: self.$root.can('editar_prepolizas_generadas') ? true : undefined,
+                            show: true,
+                            historico: false,
+                            id: poliza.id
                         })
-                    });
+                    }));
                 },
                 deep: true
             },
@@ -133,35 +153,41 @@
             },
             query: {
                 handler () {
-                    this.fetch(this.query)
+                    this.paginate(this.query)
                 },
                 deep: true
             },
             'daterange.startDate': {
                 handler(sd) {
-                    this.$data.query.startDate = sd.format('YYYY-MM-DD')
+                    this.query.startDate = sd.format('YYYY-MM-DD')
                     this.query.offset = 0;
-                    this.fetch(this.$data.query)
+                    this.paginate(this.$data.query)
                 },
                 deep: true
             },
             'daterange.endDate': {
                 handler(ed) {
-                    this.$data.query.endDate = ed.format('YYYY-MM-DD')
+                    this.query.endDate = ed.format('YYYY-MM-DD')
                     this.query.offset = 0;
-                    this.fetch(this.$data.query)
+                    this.paginate(this.$data.query)
                 },
                 deep: true
             },
             id_tipo_poliza_contpaq(id_tipo) {
                 this.$data.query.id_tipo_poliza_contpaq = id_tipo;
                 this.query.offset = 0;
-                this.fetch(this.$data.query)
+                this.paginate(this.$data.query)
             },
             id_estatus(estatus) {
                 this.$data.query.estatus = estatus;
                 this.query.offset = 0;
-                this.fetch(this.$data.query)
+                this.paginate(this.$data.query)
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
             }
         },
     }

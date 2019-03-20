@@ -1,21 +1,22 @@
 <template>
     <span>
         <!-- Button trigger modal -->
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info">
-            <i class="fa fa-pencil"></i>
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-info" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-pencil" v-else></i>
         </button>
 
         <!-- Modal -->
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
+                <div class="modal-content" v-if="cuenta">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">EDICIÓN DE CUENTA DE MATERIAL</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form role="form" v-if="cuenta" @submit.prevent="validate">
+                    <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6">
@@ -72,6 +73,11 @@
     export default {
         name: "cuenta-material-edit",
         props: ['id'],
+        data() {
+            return {
+                cargando: false
+            }
+        },
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
@@ -87,17 +93,26 @@
         },
 
         methods: {
-            find(id) {
+            find() {
+                this.cargando = true;
                 this.$store.commit('contabilidad/cuenta-material/SET_CUENTA', null)
-                return this.$store.dispatch('contabilidad/cuenta-material/find', id)
+                return this.$store.dispatch('contabilidad/cuenta-material/find', {
+                    id: this.id
+                })
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-material/SET_CUENTA', data)
                         $(this.$refs.modal).modal('show');
                     })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             },
 
             update() {
-                return this.$store.dispatch('contabilidad/cuenta-material/update', this.cuenta)
+                return this.$store.dispatch('contabilidad/cuenta-material/update', {
+                    id: this.id,
+                    data: this.cuenta
+                })
                     .then(data => {
                         this.$store.dispatch('cadeco/material/find', {
                             id: data.material.id,

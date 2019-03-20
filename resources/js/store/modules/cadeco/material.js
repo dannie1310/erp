@@ -28,7 +28,7 @@ export default {
                 }
                 return material
             })
-            state.currentMaterial = data;
+            state.currentMaterial = state.currentMaterial ? data : null;
         },
     },
 
@@ -52,8 +52,8 @@ export default {
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
-                    .then((data) => {
-                        resolve(data.data);
+                    .then(data => {
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error)
@@ -64,7 +64,7 @@ export default {
         paginate(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'paginate', { params: payload })
+                    .get(URI + 'paginate', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);

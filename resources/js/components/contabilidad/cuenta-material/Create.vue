@@ -1,7 +1,8 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_material')" class="btn btn-app btn-info pull-right">
-            <i class="fa fa-plus"></i> Registrar Cuenta
+        <button @click="init" v-if="$root.can('registrar_cuenta_material')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i> Registrar Cuenta
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -93,12 +94,14 @@
             return {
                 id_material: '',
                 id_tipo_cuenta_material: '',
-                cuenta: ''
+                cuenta: '',
+                cargando: false
             }
         },
 
         methods: {
             init() {
+                this.cargando = true;
                 $(this.$refs.modal).modal('show');
 
                 this.id_material = '';
@@ -106,6 +109,7 @@
                 this.cuenta = '';
 
                 this.$validator.reset()
+                this.cargando = false;
             },
 
             store() {
