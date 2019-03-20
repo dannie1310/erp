@@ -4,20 +4,26 @@ export default {
     namespaced: true,
 
     state: {
-        obras: []
+        obras: [],
+        meta: {}
     },
 
     mutations: {
-        fetch(state, obras) {
+        SET_OBRAS(state, obras) {
             state.obras = obras;
+        },
+        SET_META(state, data) {
+            state.meta = data;
         }
     },
 
     actions: {
-        fetch (context, payload = { }){
-            axios.get('/api/auth/obras', { params: payload.params})
-                .then(res => {
-                    context.commit('fetch', res.data)
+        paginate (context, payload = { }){
+            axios.get('/api/auth/obras/paginate', { params: payload.params})
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('SET_OBRAS', data.data)
+                    context.commit('SET_META', data.meta)
                 })
         },
 
@@ -79,6 +85,9 @@ export default {
     getters: {
         obrasAgrupadas(state) {
             return _.groupBy(state.obras, 'base_datos');
+        },
+        meta(state) {
+            return state.meta;
         }
     }
 }
