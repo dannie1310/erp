@@ -73,6 +73,9 @@
         },
         methods: {
             fetch(){
+                this.$store.commit('cadeco/obras/SET_OBRAS', []);
+                this.$store.commit('cadeco/obras/SET_META', {});
+
                 return this.$store.dispatch('cadeco/obras/paginate', {
                     params: {
                         search:this.search
