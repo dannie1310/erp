@@ -36,14 +36,17 @@ export default {
             });
         },
         paginate (context, payload){
-            context.commit('SET_TIPOS', [])
-            axios
-                .get(URI + 'paginate', { params: payload })
-                .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_TIPOS', data.data)
-                    context.commit('SET_META', data.meta)
-                })
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
         },
         store(context, payload) {
             return new Promise((resolve, reject) => {
@@ -51,7 +54,15 @@ export default {
                     title: "Registrar Cuenta Contable",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar', 'Si, Registrar']
+                    buttons: {
+                        cancel:{
+                            text: "Cancelar"
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -59,7 +70,9 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cuenta contable registrada correctamente", {
+                                    swal({
+                                        title: "",
+                                        text: "Cuenta contable registrada correctamente",
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

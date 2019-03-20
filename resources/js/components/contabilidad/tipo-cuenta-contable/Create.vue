@@ -33,20 +33,20 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="id_naturaleza">Naturaleza de Cuenta</label>
+                                        <label for="id_naturaleza_poliza">Naturaleza de Cuenta</label>
                                         <select
-                                                name="id_naturaleza"
-                                                id="id_naturaleza"
+                                                name="id_naturaleza_poliza"
+                                                id="id_naturaleza_poliza"
                                                 data-vv-as="Naturaleza"
                                                 v-validate="{required: true}"
                                                 class="form-control"
-                                                v-model="id_naturaleza"
-                                                :class="{'is-invalid': errors.has('id_naturaleza')}"
+                                                v-model="id_naturaleza_poliza"
+                                                :class="{'is-invalid': errors.has('id_naturaleza_poliza')}"
                                         >
                                             <option value>-- Seleccione --</option>
                                             <option v-for="item in naturalezas" :value="item.id">{{ item.descripcion }}</option>
                                         </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_naturaleza')">{{ errors.first('id_naturaleza') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('id_naturaleza_poliza')">{{ errors.first('id_naturaleza_poliza') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -69,7 +69,7 @@
         data() {
             return {
                 descripcion: '',
-                id_naturaleza: ''
+                id_naturaleza_poliza: ''
             }
         },
 
@@ -87,7 +87,7 @@
             init() {
                 $(this.$refs.modal).modal('show');
 
-                this.id_naturaleza = '';
+                this.id_naturaleza_poliza = '';
                 this.descripcion = '';
 
                 this.$validator.reset()

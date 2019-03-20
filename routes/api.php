@@ -194,6 +194,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'tipo-cuenta-contable'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@store');
         });
 
         //TIPOS CUENTA EMPRESA

@@ -42,6 +42,8 @@ class TipoCuentaContable extends Model
 
         static::creating(function($model) {
             $model->tipo = 1;
+            $model->registro = auth()->id();
+            $model->id_obra = Context::getIdObra();
         });
     }
 

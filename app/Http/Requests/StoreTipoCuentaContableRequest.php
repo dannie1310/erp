@@ -34,7 +34,7 @@ class StoreTipoCuentaContableRequest extends FormRequest
     {
         return [
             'descripcion' => ['required', "string"],
-            'id_naturaleza' => ['required', 'integer', 'exists:cadeco.Contabilidad.naturaleza_poliza,id_naturaleza_poliza']
+            'id_naturaleza_poliza' => ['required', 'integer', 'exists:cadeco.Contabilidad.naturaleza_poliza,id_naturaleza_poliza']
         ];
     }
 

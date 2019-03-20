@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <tipo-cuenta-contable-create></tipo-cuenta-contable-create>
+            <create @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -20,10 +20,10 @@
 </template>
 
 <script>
-    import TipoCuentaContableCreate from "./Create";
+    import Create from "./Create";
     export default {
         name: "tipo-cuenta-contable-index",
-        components: {TipoCuentaContableCreate},
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
@@ -31,29 +31,39 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Descripcion', field: 'descripcion', sortable: true },
                     { title: 'Registró', field: 'registro', sortable: false },
-                    { title: 'Naturaleza de la Cuenta', field: 'naturaleza', sortable: true },
+                    { title: 'Naturaleza de la Cuenta', field: 'naturaleza', sortable: true }
                 ],
                 data: [],
                 total: 0,
-                query: {
-                },
-                naturaleza: ''
+                query: {include: ['naturaleza', 'usuario']},
+                search: '',
+                cargando: false
             }
         },
 
         mounted() {
-            this.paginate(),
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
             this.$store.dispatch('contabilidad/naturaleza-poliza/index')
         },
 
         methods: {
-            paginate(payload = {}) {
-                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/paginate', {
-                    ...payload,
-                    include: ['naturaleza', 'usuario']
-                })
+            paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('contabilidad/tipo-cuenta-contable/SET_TIPOS', data.data);
+                        this.$store.commit('contabilidad/tipo-cuenta-contable/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             }
         },
+
         computed: {
             tipos(){
                 return this.$store.getters['contabilidad/tipo-cuenta-contable/tipos'];
@@ -61,41 +71,69 @@
             meta(){
                 return this.$store.getters['contabilidad/tipo-cuenta-contable/meta'];
             },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
         },
+
         watch: {
             tipos: {
                 handler(tipos) {
                     let self = this
                     self.$data.data = []
                     tipos.forEach(function (tipo, i) {
-                        if(typeof tipo.naturaleza  !== 'undefined') {
+                        if (typeof tipo.naturaleza !== 'undefined') {
                             self.$data.naturaleza = tipo.naturaleza.descripcion;
-                        }else{
+                        } else {
                             self.$data.naturaleza = '';
+                        }
+                        if(tipo.usuario){
+                            self.$data.registro = tipo.usuario.nombre;
+                        }else{
+                            self.$data.registro = '';
                         }
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             descripcion: tipo.descripcion,
-                            registro: tipo.usuario.nombre,
+                            registro: self.$data.registro,
                             naturaleza: self.$data.naturaleza
                         })
                     });
                 },
                 deep: true
             },
+
+
             meta: {
-                handler (meta) {
+                handler(meta) {
                     let total = meta.pagination.total
                     this.$data.total = total
                 },
                 deep: true
             },
             query: {
-                handler (query) {
+                handler(query) {
                     this.paginate(query)
                 },
                 deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
             }
-        },
+        }
     }
 </script>
