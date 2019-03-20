@@ -37,7 +37,6 @@
             return {
                 loading: false,
                 search:''
-
             }
         },
 
@@ -75,7 +74,6 @@
                         search:this.search
                     }
                 })
-
             },
             changePage(newPage){
                 return this.$store.dispatch('cadeco/obras/paginate', {
@@ -97,14 +95,11 @@
                         })
                 })
                     .then(res => {
-
-                        console.log(res)
                         this.$session.set('jwt', res.access_token)
                         this.$session.set('obra', res.obra)
 
                         this.$store.commit("auth/setObra", res)
                         this.$router.push({name: 'home'})
-
                     })
                     .finally(() => {
                         this.loading = false;
@@ -123,12 +118,5 @@
     }
     nav{
         margin-top: 25px;
-    }
-
-    .fade-enter-active, .fade-leave-active {
-        transition: opacity .5s;
-    }
-    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-        opacity: 0;
     }
 </style>

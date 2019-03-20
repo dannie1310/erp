@@ -39,22 +39,17 @@
             <div class="p-3">
                 <h5>Acceso Rápido</h5>
                 <hr class="mb-2">
-                <div class="d-block">
-                    <router-link :to="{name: 'contabilidad'}" class="d-flex flex-wrap mb-3">
-                        <div class="bg-info elevation-2 text-center" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
-                            <i class="fa fa-calculator"></i>
+                <div class="d-block"   v-for="(sistema, i) in sistemas">
+                    <router-link :to="{name: sistema.url}" class="d-flex flex-wrap mb-3">
+                        <div :class="sistema.color+' elevation-2 text-center'" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
+                            <i :class="sistema.icon"></i>
                         </div>
-                        Contabilidad
+
+                        {{sistema.name}}
                     </router-link>
                 </div>
-                <div class="d-block">
-                    <router-link :to="{name: 'tesoreria'}" class="d-flex flex-wrap mb-3">
-                        <div class="bg-primary elevation-2 text-center" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
-                            <i class="fa fa-usd"></i>
-                        </div>
-                        Tesorería
-                    </router-link>
-                </div>
+
+
             </div>
         </aside>
         <!-- /.control-sidebar -->
@@ -76,12 +71,22 @@
     export default {
         name: 'main-app',
         components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
+
+        data() {
+            return {
+                loading: false
+            }
+        },
+
         computed:{
             currentUser(){
                 return this.$store.getters['auth/currentUser']
             },
             currentObra() {
                 return this.$store.getters['auth/currentObra']
+            },
+            sistemas() {
+                return this.$store.getters['seguridad/sistema/sistemas']
             }
         }
     }
