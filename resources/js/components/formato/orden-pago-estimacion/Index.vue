@@ -71,12 +71,10 @@
                             </div>
                         </div>
                         <div class="modal-footer btn-group" v-if="id_estimacion">
-                            <!--<button type="submit" class="btn btn-primary" @click="validate">Ver Formato</button>-->
-                            <orden-pago-estimacion-pdf v-bind:id="id_estimacion" @click="validate" v-show="id_estimacion"></orden-pago-estimacion-pdf>
+                            <orden-pago-estimacion-pdf v-bind:id="id_estimacion" @click="validate"></orden-pago-estimacion-pdf>
                         </div>
                         <div class="modal-footer btn-group" v-else>
                             <button type="submit" class="btn btn-primary" @click="validate">Ver Formato</button>
-                            <!--<orden-pago-estimacion-pdf v-bind:id="id_estimacion" @click="validate" v-show="id_estimacion"></orden-pago-estimacion-pdf>-->
                         </div>
                     </form>
                 </div>
@@ -178,7 +176,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        console.log("AQUI");
+
                     }
                 });
             }
