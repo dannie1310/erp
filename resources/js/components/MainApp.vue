@@ -70,7 +70,7 @@
 
     export default {
         name: 'main-app',
-        components: {AsignacionRoles, AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
+        components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
 
         data() {
             return {
