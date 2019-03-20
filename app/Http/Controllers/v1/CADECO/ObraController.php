@@ -15,6 +15,7 @@ use App\Http\Transformers\CADECO\ObraTransformer;
 use App\Services\CADECO\ObraService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
 
 class ObraController extends Controller
 {
@@ -56,5 +57,11 @@ class ObraController extends Controller
     public function update(UpdateObraRequest $request, $id)
     {
         return $this->updateTrait($request, $id);
+    }
+
+    public function authPaginate(Request $request)
+    {
+        $paginator = $this->service->authPaginate();
+        return $this->respondWithPaginator($paginator);
     }
 }

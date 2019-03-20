@@ -20,7 +20,8 @@ $api->version('v1', function ($api) {
         $api->post('setContext', 'App\Http\Controllers\v1\AuthController@setContext');
         $api->post('getContext', 'App\Http\Controllers\v1\AuthController@getContext');
         $api->post('refresh', 'App\Http\Controllers\v1\AuthController@refresh');
-        $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');
+      /*  $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');*/
+        $api->get('obras/paginate', 'App\Http\Controllers\v1\CADECO\ObraController@authPaginate');
     });
 
     /**
@@ -227,11 +228,6 @@ $api->version('v1', function ($api) {
     /**
      * CHARTS
      */
-    $api->group(['middleware' => 'api', 'prefix' => 'chart'], function ($api) {
-        $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
-        $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
-        $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
-    });
     $api->group(['middleware' => 'api', 'prefix' => 'chart'], function ($api) {
         $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
         $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
