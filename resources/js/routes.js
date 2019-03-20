@@ -19,7 +19,10 @@ export const routes = [
     {
         path: '/configuracion',
         name: 'configuracion',
-        component: require('./components/configuracion/Index.vue'),
+        components: {
+            default: require('./components/configuracion/Index.vue'),
+            menu: require('./components/configuracion/partials/Menu.vue')
+        },
         meta: {
             title: 'CONFIGURACIÓN',
             middleware: [auth, context],

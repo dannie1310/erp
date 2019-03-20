@@ -72,6 +72,17 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
         });
+
+        // MONEDA
+        $api->group(['prefix' => 'moneda'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\MonedaController@index');
+        });
+
+        // OBRA
+        $api->group(['prefix' => 'obra'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@show');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
+        });
     });
 
     /**
@@ -152,6 +163,11 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@update')->where(['id' => '[0-9]+']);
+        });
+
+        // DATOS CONTABLES
+        $api->group(['prefix' => 'datos-contables'], function ($api){
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\DatosContablesController@update')->where(['id' => '[0-9]+']);
         });
 
         //ESTATUS PREPÓLIZA
