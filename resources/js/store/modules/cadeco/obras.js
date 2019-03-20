@@ -1,28 +1,93 @@
+const URI = '/api/obra/';
+
 export default {
     namespaced: true,
 
     state: {
-        obras: []
+        obras: [],
+        meta: {}
     },
 
     mutations: {
-        fetch(state, obras) {
+        SET_OBRAS(state, obras) {
             state.obras = obras;
+        },
+        SET_META(state, data) {
+            state.meta = data;
         }
     },
 
     actions: {
-        fetch (context, payload = { }){
-            axios.get('/api/auth/obras', { params: payload.params})
-                .then(res => {
-                    context.commit('fetch', res.data)
+        paginate (context, payload = { }){
+            axios.get('/api/auth/obras/paginate', { params: payload.params})
+                .then(r => r.data)
+                .then(data => {
+                    context.commit('SET_OBRAS', data.data)
+                    context.commit('SET_META', data.meta)
                 })
-        }
+        },
+
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Configuración de Obra",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar'
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id, payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Configuración actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            resolve();
+                        }
+                    });
+            });
+        },
     },
 
     getters: {
         obrasAgrupadas(state) {
             return _.groupBy(state.obras, 'base_datos');
+        },
+        meta(state) {
+            return state.meta;
         }
     }
 }

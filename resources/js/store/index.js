@@ -11,6 +11,7 @@ import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
 import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
+import moneda from './modules/cadeco/moneda';
 
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo'
@@ -22,6 +23,7 @@ import cuentaEmpresa from './modules/contabilidad/cuenta-empresa';
 import cuentaFondo from './modules/contabilidad/cuenta-fondo';
 import cuentaGeneral from './modules/contabilidad/cuenta-general';
 import cuentaMaterial from './modules/contabilidad/cuenta-material';
+import datosContables from './modules/contabilidad/datos-contables';
 import estatusPrepoliza from './modules/contabilidad/estatus-prepoliza';
 import poliza from './modules/contabilidad/poliza';
 import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
@@ -49,6 +51,7 @@ export default new Vuex.Store({
         'cadeco/empresa': empresa,
         'cadeco/fondo': fondo,
         'cadeco/material': material,
+        'cadeco/moneda': moneda,
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
@@ -58,6 +61,7 @@ export default new Vuex.Store({
         'contabilidad/cuenta-fondo' : cuentaFondo,
         'contabilidad/cuenta-general': cuentaGeneral,
         'contabilidad/cuenta-material' : cuentaMaterial,
+        'contabilidad/datos-contables' : datosContables,
         'contabilidad/estatus-prepoliza': estatusPrepoliza,
         'contabilidad/poliza': poliza,
         'contabilidad/tipo-cuenta-contable': tipoCuentaContable,

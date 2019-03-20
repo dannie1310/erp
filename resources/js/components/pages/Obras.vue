@@ -3,13 +3,26 @@
         <div class="col-md-12">
             <ul class="list-group">
                 <input class="form-control" placeholder="Buscar obra..." v-model="search">
-            <span v-for="(grupo, i) in obrasAgrupadas">
-                <li class="list-group-item disabled"><i class="fa fa-fw fa-database"></i>{{ i }}</li>
+                <span v-for="(grupo, i) in obrasAgrupadas">
+                    <li class="list-group-item disabled"><i class="fa fa-fw fa-database"></i>{{ i }}</li>
                     <a v-for="obra in grupo" href="#" class="list-group-item" @click="setContext(i, obra.id_obra)" v-bind:class="{disabled: loading}">
                         {{ obra.nombre }}
-                </a>
-            </span>
+                    </a>
+                </span>
             </ul>
+
+            <nav aria-label="Page navigation example" v-if="!(Object.keys(meta).length === 0 && meta.constructor === Object)" totalPages="meta.pagination.total_pages">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ">
+                        <a class="page-link" href="#" v-if="meta.pagination.current_page>1" tabindex="-1" @click="changePage(meta.pagination.current_page-1)" >Anterior</a>
+                    </li>
+                    <li class="page-item " v-if="meta.pagination.total_pages>1"v-for="page in meta.pagination.total_pages" @click="changePage(page)" v-bind:class="{active : page == meta.pagination.current_page}"  ><a class="page-link" href="#">{{page}}</a></li>
+
+                    <li class="page-item">
+                        <a class="page-link" href="#" v-if="meta.pagination.current_page<meta.pagination.total_pages"@click="changePage(meta.pagination.current_page+1)" >Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </template>
@@ -30,6 +43,9 @@
         computed: {
             obrasAgrupadas() {
                 return this.$store.getters['cadeco/obras/obrasAgrupadas']
+            },
+            meta() {
+                return this.$store.getters['cadeco/obras/meta']
             }
         },
 
@@ -46,21 +62,28 @@
                 this.timer = setTimeout(() => {
                      this.fetch();
                      this.$store.getters['cadeco/obras/obrasAgrupadas'];
-                }, 650);
 
-            }
+                }, 550);
+            },
         },
         methods: {
             fetch(){
-                return this.$store.dispatch('cadeco/obras/fetch', {
+                return this.$store.dispatch('cadeco/obras/paginate', {
                     params: {
                         search:this.search
                     }
                 })
             },
+            changePage(newPage){
+                return this.$store.dispatch('cadeco/obras/paginate', {
+                    params: {
+                        page:newPage
+                    }
+                })
+                this.$store.getters['cadeco/obras/obrasAgrupadas'];
+            },
             setContext(database, id_obra) {
                 this.loading = true;
-
                 return new Promise((res, rej) => {
                     axios.post('/api/auth/setContext', {database: database, id_obra: id_obra})
                         .then(response => {
@@ -91,5 +114,8 @@
     }
     input {
         margin-bottom: 20px;
+    }
+    nav{
+        margin-top: 25px;
     }
 </style>
