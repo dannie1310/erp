@@ -53,7 +53,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Registrar</button>
+                            <button type="submit" class="btn btn-primary" @click="validate">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -94,7 +94,7 @@
             },
 
             store() {
-                return this.$store.dispatch('contabilidad/tipo-cuenta-contabilidad/store', this.$data)
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/store', this.$data)
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created', data);
