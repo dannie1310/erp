@@ -72,6 +72,17 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
         });
+
+        // MONEDA
+        $api->group(['prefix' => 'moneda'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\MonedaController@index');
+        });
+
+        // OBRA
+        $api->group(['prefix' => 'obra'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@show');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
+        });
     });
 
     /**
@@ -154,6 +165,11 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\CuentaMaterialController@update')->where(['id' => '[0-9]+']);
         });
 
+        // DATOS CONTABLES
+        $api->group(['prefix' => 'datos-contables'], function ($api){
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\DatosContablesController@update')->where(['id' => '[0-9]+']);
+        });
+
         //ESTATUS PREPÓLIZA
         $api->group(['prefix' => 'estatus-prepoliza'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\EstatusPrepolizaController@index');
@@ -211,6 +227,11 @@ $api->version('v1', function ($api) {
     /**
      * CHARTS
      */
+    $api->group(['middleware' => 'api', 'prefix' => 'chart'], function ($api) {
+        $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
+        $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
+        $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
+    });
     $api->group(['middleware' => 'api', 'prefix' => 'chart'], function ($api) {
         $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
         $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
