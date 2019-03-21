@@ -66,7 +66,7 @@ class ObraService
     public function authPaginate() {
 
         $obrasUsuario = new Collection();
-        $basesDatos = Proyecto::query()->orderBy('base_datos')->pluck('base_datos');
+        $basesDatos = Proyecto::query()->withoutGlobalScopes()->orderBy('base_datos')->pluck('base_datos');
 
         foreach ($basesDatos as $key => $bd) {
             config()->set('database.connections.cadeco.database', $bd);
@@ -88,7 +88,6 @@ class ObraService
             $perPage
         );
         return $paginator;
-
     }
 
     /**

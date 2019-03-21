@@ -1,12 +1,12 @@
-/**
- * Created by Hermes on 26/02/2019.
- */
+import { getSistemas } from './../partials/sistemas';
+
+const sistemas = getSistemas();
 const URI = '/api/SEGURIDAD_ERP/sistema/'
 export default {
     namespaced: true,
 
     state: {
-        sistemas:[]
+        sistemas: sistemas
     },
 
     mutations: {

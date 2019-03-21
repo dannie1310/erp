@@ -3,23 +3,24 @@
         <div class="col-md-12">
             <ul class="list-group">
                 <input class="form-control" placeholder="Buscar obra..." v-model="search">
-                <span v-for="(grupo, i) in obrasAgrupadas">
+                <span v-for="(grupo, i) in obrasAgrupadas" style="margin-bottom: 10px">
                     <li class="list-group-item disabled"><i class="fa fa-fw fa-database"></i>{{ i }}</li>
-                    <a v-for="obra in grupo" href="#" class="list-group-item" @click="setContext(i, obra.id_obra)" v-bind:class="{disabled: loading}">
-                        {{ obra.nombre }}
-                    </a>
+                    <a v-for="obra in grupo" href="#" class="list-group-item" @click="setContext(i, obra.id_obra)" v-bind:class="{disabled: loading}">{{ obra.nombre }}</a>
                 </span>
             </ul>
 
             <nav aria-label="Page navigation example" v-if="!(Object.keys(meta).length === 0 && meta.constructor === Object)" totalPages="meta.pagination.total_pages">
                 <ul class="pagination justify-content-center">
                     <li class="page-item ">
-                        <a class="page-link" href="#" v-if="meta.pagination.current_page>1" tabindex="-1" @click="changePage(meta.pagination.current_page-1)" >Anterior</a>
+                        <button class="page-link"  v-if="meta.pagination.current_page>1" tabindex="-1" @click="changePage(meta.pagination.current_page-1)" >Anterior</button>
                     </li>
-                    <li class="page-item " v-if="meta.pagination.total_pages>1"v-for="page in meta.pagination.total_pages" @click="changePage(page)" v-bind:class="{active : page == meta.pagination.current_page}"  ><a class="page-link" href="#">{{page}}</a></li>
+
+                    <li class="page-item" v-if="meta.pagination.total_pages>1"v-for="page in meta.pagination.total_pages" @click="changePage(page)" v-bind:class="{active : page == meta.pagination.current_page}">
+                        <button class="page-link">{{page}}</button>
+                    </li>
 
                     <li class="page-item">
-                        <a class="page-link" href="#" v-if="meta.pagination.current_page<meta.pagination.total_pages"@click="changePage(meta.pagination.current_page+1)" >Siguiente</a>
+                        <button class="page-link" v-if="meta.pagination.current_page<meta.pagination.total_pages"@click="changePage(meta.pagination.current_page+1)" >Siguiente</button>
                     </li>
                 </ul>
             </nav>
@@ -32,7 +33,6 @@
 
     export default {
         name: "Obras",
-
         data() {
             return {
                 loading: false,
@@ -61,13 +61,14 @@
                 }
                 this.timer = setTimeout(() => {
                      this.fetch();
-                     this.$store.getters['cadeco/obras/obrasAgrupadas'];
-
                 }, 550);
             },
         },
         methods: {
             fetch(){
+                this.$store.commit('cadeco/obras/SET_OBRAS', []);
+                this.$store.commit('cadeco/obras/SET_META', {});
+
                 return this.$store.dispatch('cadeco/obras/paginate', {
                     params: {
                         search:this.search
@@ -79,15 +80,15 @@
                     params: {
                         page:newPage
                     }
-                })
-                this.$store.getters['cadeco/obras/obrasAgrupadas'];
+                });
             },
             setContext(database, id_obra) {
                 this.loading = true;
                 return new Promise((res, rej) => {
                     axios.post('/api/auth/setContext', {database: database, id_obra: id_obra})
+                        .then(r => r.data)
                         .then(response => {
-                            res(response.data);
+                            res(response);
                         })
                         .catch(err => {
                             rej(err)
@@ -96,11 +97,12 @@
                     .then(res => {
                         this.$session.set('jwt', res.access_token)
                         this.$session.set('obra', res.obra)
-
+                        this.$session.set('permisos', res.permisos)
+                        this.$store.commit("auth/setPermisos", res)
                         this.$store.commit("auth/setObra", res)
                         this.$router.push({name: 'home'})
                     })
-                    .then(() => {
+                    .finally(() => {
                         this.loading = false;
                     })
             }

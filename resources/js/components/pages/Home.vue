@@ -21,7 +21,6 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'
     export default {
 
         name: "home",
@@ -36,13 +35,15 @@
         methods: {
             index() {
                 this.$store.commit('seguridad/sistema/SET_SISTEMAS', []);
+                this.$session.remove('sistemas');
+
                 return this.$store.dispatch('seguridad/sistema/index', {
                     params: { scope: 'porUsuario'}
                 })
                     .then(data => {
                         this.$store.commit('seguridad/sistema/SET_SISTEMAS', data);
+                        this.$session.set('sistemas', data);
                     })
-
             }
         },
 

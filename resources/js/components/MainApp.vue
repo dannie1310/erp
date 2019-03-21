@@ -48,8 +48,6 @@
                         {{sistema.name}}
                     </router-link>
                 </div>
-
-
             </div>
         </aside>
         <!-- /.control-sidebar -->

@@ -20,7 +20,7 @@ class UpdateObraRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->user()->can('administracion_configuracion_obra');
     }
 
     /** codigo_postal  int default 0
