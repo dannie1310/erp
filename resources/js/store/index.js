@@ -12,6 +12,7 @@ import empresa from './modules/cadeco/empresa';
 import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
+import subcontrato from './modules/cadeco/subcontrato';
 
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo'
@@ -30,6 +31,9 @@ import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
 import tipoCuentaEmpresa from './modules/contabilidad/tipo-cuenta-empresa';
 import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
+
+//FORMATO
+import ordenPagoEstimacion from './modules/formato/orden-pago-estimacion';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
@@ -52,6 +56,7 @@ export default new Vuex.Store({
         'cadeco/fondo': fondo,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
+        'cadeco/subcontrato': subcontrato,
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
@@ -68,6 +73,8 @@ export default new Vuex.Store({
         'contabilidad/tipo-cuenta-empresa': tipoCuentaEmpresa,
         'contabilidad/tipo-cuenta-material': tipoCuentaMaterial,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
+
+        'formato/orden-pago-estimacion': ordenPagoEstimacion,
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,

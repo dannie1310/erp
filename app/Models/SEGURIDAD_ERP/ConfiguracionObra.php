@@ -1,9 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: jfesquivel
- * Date: 10/12/18
- * Time: 06:27 PM
+ * User: DBenitezc
+ * Date: 13/03/2019
+ * Time: 08:05 PM
  */
 
 namespace App\Models\SEGURIDAD_ERP;
@@ -11,16 +11,20 @@ namespace App\Models\SEGURIDAD_ERP;
 use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
 
-class Proyecto extends Model
+class ConfiguracionObra extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'proyectos';
+    protected $table = 'configuracion_obra';
 
     protected static function boot()
     {
         parent::boot();
         self::addGlobalScope(function ($query) {
-            return $query->where('base_datos', '=', Context::getDatabase());
+            return $query->where('id_obra', '=', Context::getIdObra());
         });
+    }
+
+    public function proyecto(){
+        return $this->hasOne(Proyecto::class, 'id','id_proyecto');
     }
 }

@@ -41,4 +41,8 @@ class Transaccion extends Model
         return $this->belongsTo(TipoTransaccion::class, 'tipo_transaccion', 'tipo_transaccion')
             ->where('opciones', '=', $this->opciones);
     }
+
+    public function items(){
+        return $this->hasMany(Item::class, 'id_transaccion', 'id_transaccion');
+    }
 }

@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 
+use App\PDF\Formato\OrdenPagoEstimacion;
 use Illuminate\Database\Eloquent\Model;
 
 class Repository implements RepositoryInterface

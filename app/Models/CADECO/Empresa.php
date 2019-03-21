@@ -33,6 +33,14 @@ class Empresa extends Model
         return $this->hasMany(Cuenta::class, 'id_empresa', 'id_empresa');
     }
 
+    public function subcontrato(){
+        return $this->hasMany(Subcontrato::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function estimacion(){
+        return $this->hasMany(Estimacion::class, 'id_empresa', 'id_empresa');
+    }
+
     public function scopeConCuentas($query)
     {
         return $query->has('cuentasEmpresa');
@@ -41,5 +49,10 @@ class Empresa extends Model
     public function scopeBancos($query)
     {
         return $query->where('tipo_empresa', '=', 8);
+    }
+
+    public function scopeParaSubcontratistas($query)
+    {
+        return $query->has('subcontrato')->has('estimacion')->distinct('id_empresa')->orderBy('razon_social');
     }
 }

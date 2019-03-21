@@ -202,6 +202,35 @@ export const routes = [
         ]
     },
     {
+        path: '/formato',
+        components: {
+            default: require('./components/formato/partials/Layout.vue'),
+            menu: require('./components/formato/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'formato',
+                component: require('./components/formato/Index'),
+                meta: {
+                    title: 'Formato',
+                    breadcrumb: { parent: 'home', name: 'Formato'},
+                    middleware: [auth, context]
+                }
+            },
+            {
+                path: 'orden-pago-estimacion',
+                name: 'orden-pago-estimacion',
+                component: require('./components/formato/orden-pago-estimacion/Index'),
+                meta: {
+                    title: 'Orden de Pago Estimación',
+                    breadcrumb: {name: 'ORDEN DE PAGO ESTIMACIÓN', parent: 'formato'},
+                    middleware: [auth, context]
+                }
+            },
+        ]
+    },
+    {
         path: '/tesoreria',
         components: {
             default: require('./components/tesoreria/partials/Layout.vue'),
