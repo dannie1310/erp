@@ -74,6 +74,11 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
         });
 
+        // SUBCONTRATO
+        $api->group(['prefix' => 'subcontrato'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SubcontratoController@show')->where(['id' => '[0-9]+']);
+        });
+
         // MONEDA
         $api->group(['prefix' => 'moneda'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MonedaController@index');
@@ -176,6 +181,11 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\EstatusPrepolizaController@index');
         });
 
+        //NATURALEZA PÓLIZA
+        $api->group(['prefix' => 'naturaleza-poliza'], function($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\NaturalezaPolizaController@index');
+        });
+
         //PÓLIZAS
         $api->group(['prefix' => 'poliza'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@paginate');
@@ -188,6 +198,8 @@ $api->version('v1', function ($api) {
         //TIPOS CUENTA CONTABLE
         $api->group(['prefix' => 'tipo-cuenta-contable'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@store');
         });
 
         //TIPOS CUENTA EMPRESA
@@ -203,6 +215,16 @@ $api->version('v1', function ($api) {
         //TIPOS PÓLIZA CONTPAQ
         $api->group(['prefix' => 'tipo-poliza-contpaq'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoPolizaContpaqController@index');
+        });
+    });
+
+    /**
+     * FORMATO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'formato'], function ($api) {
+        //ORDEN DE PAGO ESTIMACION
+        $api->group(['prefix' => 'orden-pago-estimacion'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EstimacionController@pdf')->where(['id' => '[0-9]+']);
         });
     });
 

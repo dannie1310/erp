@@ -10,7 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Contabilidad\DatosContables;
-use App\Models\CADECO\Seguridad\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use Illuminate\Database\Eloquent\Model;
 
 class Obra extends Model
@@ -51,6 +51,8 @@ class Obra extends Model
         'fecha_final'
     ];
 
+    protected $hidden = ['logo'];
+
     public function datosContables()
     {
         return $this->hasOne(DatosContables::class, 'id_obra');
@@ -59,5 +61,16 @@ class Obra extends Model
     public function configuracion()
     {
         return $this->hasOne(ConfiguracionObra::class, 'id_obra');
+    }
+
+    public function getLogoAttribute()
+    {
+        if(isset($this->configuracion->logotipo_original)){
+            return bin2hex($this->configuracion->logotipo_original);
+        }else{
+            $file = public_path('img/ghi-logo.png');
+            $data = unpack("H*", file_get_contents($file));
+            return bin2hex($data[1]);
+        }
     }
 }
