@@ -243,7 +243,7 @@
                     id: this.obra.id_obra,
                     data: formData,
                     config: {
-                        params: { _method: 'PATCH'}
+                        params: { _method: 'PATCH', include: 'configuracion'}
                     }
                 })
                     .then(data => {
