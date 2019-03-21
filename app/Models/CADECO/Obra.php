@@ -63,14 +63,10 @@ class Obra extends Model
         return $this->hasOne(ConfiguracionObra::class, 'id_obra');
     }
 
-    public function configuracionObra(){
-        return $this->hasOne(ConfiguracionObra::class, 'id_obra', 'id_obra');
-    }
-
     public function getLogoAttribute()
     {
-        if(isset($this->configuracionObra->logotipo_original)){
-            return bin2hex($this->configuracionObra->logotipo_original);
+        if(isset($this->configuracion->logotipo_original)){
+            return bin2hex($this->configuracion->logotipo_original);
         }else{
             $file = public_path('img/ghi-logo.png');
             $data = unpack("H*", file_get_contents($file));
