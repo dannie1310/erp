@@ -24,7 +24,13 @@ class ConfiguracionObra extends Model
         });
     }
 
-    public function proyecto(){
-        return $this->hasOne(Proyecto::class, 'id','id_proyecto');
+    public function proyecto()
+    {
+        return $this->hasOne(Proyecto::class, 'id', 'id_proyecto');
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(TipoProyecto::class, 'id_tipo_proyecto');
     }
 }
