@@ -226,7 +226,7 @@ export const routes = [
                 meta: {
                     title: 'Formatos',
                     breadcrumb: { parent: 'home', name: 'FORMATOS'},
-                    middleware: [auth, context]
+                    middleware: [auth, context],
                 }
             },
             {
