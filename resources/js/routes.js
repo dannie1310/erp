@@ -216,7 +216,7 @@ export const routes = [
                 meta: {
                     title: 'Tesorería',
                     breadcrumb: { parent: 'home', name: 'TESORERIA'},
-                    middleware: [auth, context]
+                    middleware: [auth, context, access]
                 }
             },
             {
