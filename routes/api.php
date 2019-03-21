@@ -240,4 +240,12 @@ $api->version('v1', function ($api) {
         $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
         $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
     });
+
+    /** SEGURIDAD ERP */
+    $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
+        $api->group(['prefix' => 'sistema'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@index');
+
+        });
+    });
 });

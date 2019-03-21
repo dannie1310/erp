@@ -56,7 +56,8 @@ class ObraTransformer extends TransformerAbstract
             'id_moneda' => $model->id_moneda,
             'responsable' => $model->responsable,
             'rfc' => $model->rfc,
-            'valor_contrato' => $model->valor_contrato
+            'valor_contrato' => $model->valor_contrato,
+            'base_datos' => $model->base_datos
         ];
     }
 

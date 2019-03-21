@@ -60,7 +60,7 @@ export const routes = [
         children: [
             {
                 path: '',
-                name: 'contabilidad',
+                name: 'sistema_contable',
                 component: require('./components/contabilidad/Index'),
                 meta: {
                     title: 'Contabilidad',
