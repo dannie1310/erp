@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <cierre-periodo-create @created="paginate"></cierre-periodo-create>
+            <create @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -20,10 +20,10 @@
 </template>
 
 <script>
-    import CierrePeriodoCreate from "./Create";
+    import Create from "./Create";
     export default {
         name: "cierre-periodo-index",
-        components: {CierrePeriodoCreate},
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
@@ -38,8 +38,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {
-                },
+                query: {},
                 estado: "",
                 cargando: false
             }
