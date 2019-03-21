@@ -62,7 +62,7 @@ export default {
             return state.currentObra;
         },
         datosContables(state){
-            return state.currentObra ? (state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null) : null
+            return state.currentObra ? (state.currentObra.datosContables ? state.currentObra.datosContables.FormatoCuentaRegExp : null) : null
         },
         authError(state){
             return state.auth_error;

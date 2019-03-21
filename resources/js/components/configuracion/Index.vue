@@ -1,7 +1,9 @@
 <template>
     <div class="row">
-        <div class="col" v-if="obra">
+        <div class="col-lg" v-if="obra">
             <configuracion-obra :obra="obra"></configuracion-obra>
+        </div>
+        <div class="col-lg" v-if="obra">
             <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>
         </div>
     </div>

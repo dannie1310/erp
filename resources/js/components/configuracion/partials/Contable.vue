@@ -9,32 +9,6 @@
                 {{ mensaje }}
             </div>
 
-            <h5 id="contpaq">ContPaq</h5>
-
-            <div class="form-group row">
-                <label for="BDContPaq" class="col-sm-2 col-form-label">Base de Datos CONTPAQ</label>
-                <div class="col-sm-10">
-                    <input type="text" name="BDContPaq" class="form-control" id="BDContPaq" v-model="form.BDContPaq" :disabled="guardadosPreviamente">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label for="NumobraContPaq" class="col-sm-2 col-form-label">Número de Obra CONTPAQ</label>
-                <div class="col-sm-10">
-                    <input type="number" class="form-control" id="NumobraContPaq" name="NumobraContPaq" v-model="form.NumobraContPaq" :disabled="guardadosPreviamente">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label for="FormatoCuenta" class="col-sm-2 col-form-label">Formato de Cuentas</label>
-                <div class="col-sm-10">
-                    <input type="text" name="FormatoCuenta" class="form-control" id="FormatoCuenta" v-model="form.FormatoCuenta" :disabled="guardadosPreviamente">
-                </div>
-            </div>
-
-            <hr>
-            <h5 id="pagos">Pagos</h5>
-
             <fieldset class="form-group">
                 <div class="row">
                     <legend class="col-form-label col-sm-2 pt-0"><b>Afectación Contable de Almacenes</b></legend>
@@ -112,6 +86,31 @@
                     </div>
                 </div>
             </fieldset>
+
+
+            <hr>
+            <h5 id="contpaq">ContPaq</h5>
+
+            <div class="form-group row">
+                <label for="BDContPaq" class="col-sm-2 col-form-label">Base de Datos CONTPAQ</label>
+                <div class="col-sm-10">
+                    <input type="text" name="BDContPaq" class="form-control" id="BDContPaq" v-model="form.BDContPaq" :disabled="guardadosPreviamente">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="NumobraContPaq" class="col-sm-2 col-form-label">Número de Obra CONTPAQ</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="NumobraContPaq" name="NumobraContPaq" v-model="form.NumobraContPaq" :disabled="guardadosPreviamente">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="FormatoCuenta" class="col-sm-2 col-form-label">Formato de Cuentas</label>
+                <div class="col-sm-10">
+                    <input type="text" name="FormatoCuenta" class="form-control" id="FormatoCuenta" v-model="form.FormatoCuenta" :disabled="guardadosPreviamente">
+                </div>
+            </div>
             <div class="form-group row">
                 <div class="col">
                     <button type="submit" @click="update" class="btn btn-outline-primary pull-right" :disabled="!cambio">
