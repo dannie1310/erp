@@ -262,5 +262,9 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@index');
 
         });
+
+        $api->group(['prefix' => 'tipo-proyecto'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\TipoProyectoController@index');
+        });
     });
 });
