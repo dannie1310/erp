@@ -32,8 +32,7 @@ class ObraTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'datosContables',
-        'configuracion'
+        'datosContables'
     ];
 
     public function transform(Obra $model)
