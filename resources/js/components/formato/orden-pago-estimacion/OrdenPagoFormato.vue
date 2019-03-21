@@ -22,22 +22,13 @@
 </template>
 
 <script>
-    import pdf from 'vue-pdf'
-
     export default {
-        components: {
-            pdf
-        },
         props: ['id'],
-        data() {
-            return {
-            }
-        },
         methods: {
             init() {
                 this.pdf()
-
             },
+
             pdf(){
                var url = '/api/formato/orden-pago-estimacion/' + this.id +'?token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Orden de Pago Estimación</iframe>');
