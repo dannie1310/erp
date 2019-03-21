@@ -1,4 +1,4 @@
-export default function permission({ next, router }) {
+export default function permission({from, next, router }) {
     let permisos = router.app.$session.get('permisos');
 
     if (permisos) {
@@ -12,12 +12,12 @@ export default function permission({ next, router }) {
                     result = true;
                 }
             });
-            return result ? next() : router.go(-1);
+            return result ? next() : next(from.path);
         }  else {
             return permisos.find(perm => {
-                return perm.name == router.currentRoute.meta.permission ? next() : router.go(-1);
+                return perm.name == router.currentRoute.meta.permission ? next() : next(from.path);
             })
         }
     }
-    return router.go(-1);
+    return next(from.path);
 }

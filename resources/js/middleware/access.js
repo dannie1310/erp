@@ -7,5 +7,5 @@ export default function access({ next, router }) {
         return sistema.url === router.currentRoute.name;
     });
 
-    return sistema ? next() : router.go(-1);
+    return sistema ? next() : next(false);
 }
