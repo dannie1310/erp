@@ -14,6 +14,25 @@ use League\Fractal\TransformerAbstract;
 
 class ConfiguracionObraTransformer extends TransformerAbstract
 {
+
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'tipo',
+    ];
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'tipo'
+    ];
+
     public function transform(ConfiguracionObra $model)
     {
         return [
@@ -22,6 +41,14 @@ class ConfiguracionObraTransformer extends TransformerAbstract
             'id_obra' => $model->id_obra,
             'esquema_permisos' => $model->esquema_permisos
         ];
+    }
+
+    public function includeTipo(ConfiguracionObra $model)
+    {
+        if ($tipo = $model->tipo) {
+            return $this->item($tipo, new TipoProyectoTransformer);
+        }
+        return null;
     }
 
     private function getImagen($imagen = ''){
