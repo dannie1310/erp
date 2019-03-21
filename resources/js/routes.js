@@ -1,4 +1,5 @@
 //Middlewares
+import access from "./middleware/access";
 import auth from "./middleware/auth";
 import guest from "./middleware/guest";
 import context from "./middleware/context";
@@ -65,7 +66,7 @@ export const routes = [
                 meta: {
                     title: 'Contabilidad',
                     breadcrumb: { parent: 'home', name: 'CONTABILIDAD'},
-                    middleware: [auth, context]
+                    middleware: [auth, context, access]
                 }
             },
             {

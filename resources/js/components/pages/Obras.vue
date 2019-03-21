@@ -97,7 +97,8 @@
                     .then(res => {
                         this.$session.set('jwt', res.access_token)
                         this.$session.set('obra', res.obra)
-
+                        this.$session.set('permisos', res.permisos)
+                        this.$store.commit("auth/setPermisos", res)
                         this.$store.commit("auth/setObra", res)
                         this.$router.push({name: 'home'})
                     })
