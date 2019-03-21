@@ -16,20 +16,17 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                 <div class="col-md-12">
                                     <div class="form-group error-content">
                                         <div class="form-group">
-                                            <label for="fecha"><b>Fecha</b></label>
-                                            <input name="Fecha"
-                                                   v-validate="{required: true}"
-                                                   type="text"
-                                                   id="fecha"
-                                                   ref="fecha"
-                                                   class="form-control input-sm"
-                                                   placeholder="Seleccione año y mes del Cierre" >
+                                            <label><b>Fecha</b></label>
+                                                <datepicker v-model="date" name="fecha"
+                                                            :language="es"
+                                                            :format="formatoFecha"
+                                                ></datepicker>
                                         </div>
                                     </div>
-                                </div>
+                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -45,16 +42,50 @@
 </template>
 
 <script>
+   import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "cierre-periodo-create",
+        components: {Datepicker},
         data() {
             return {
-                    anio: '',
-                    mes: ''
+                es: es,
+                anio: '',
+                mes: '',
+                date: new Date()
             }
         },
+        methods: {
+            init() {
+                $(this.$refs.modal).modal('show');
+                this.mes = '';
+                this.anio = '';
 
-        mounted: function() {
+                this.$validator.reset()
+            },
+            formatoFecha(date){
+              return moment(date).format('MM/YYYY');
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store()
+                    }
+                });
+            },
+        },
+        watch: {
+            date(value){
+                this.anio = '';
+                this.mes = '';
+                if(value){
+                        this.anio = new Date (value).getFullYear();
+                        this.mes = new Date (value).getMonth() + 1;
+                }
+            },
+        }
+
+       /* mounted: function() {
             let self = this
             $(self.$refs.fecha).datepicker({
                 autoclose: true,
@@ -99,5 +130,6 @@
         computed: {
 
         },
+        */
     }
 </script>
