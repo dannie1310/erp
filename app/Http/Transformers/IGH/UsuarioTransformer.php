@@ -18,7 +18,7 @@ class UsuarioTransformer extends TransformerAbstract
 
         return [
             'id' => (int) $model->getKey(),
-            'nombre' => $model->nombre." ".$model->apaterno." ".$model->amaterno
+            'nombre' => $model->getNombreCompletoAttribute()
         ];
     }
 
