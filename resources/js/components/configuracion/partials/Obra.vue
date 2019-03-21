@@ -5,7 +5,7 @@
         </div>
         <div class="card-body" v-if="form">
             <h5 id="identificacion">Identificaicón</h5>
-            <div class="form-group row error-content">
+            <div class="form-group row">
                 <label for="logotipo_original" class="col-sm-2 col-form-label">Logotipo</label>
                 <div :class="{'col-sm-5': logo, 'col-sm-10': !logo}">
                     <input type="file" class="form-control" id="logotipo_original" @change="onLogoSelected"
