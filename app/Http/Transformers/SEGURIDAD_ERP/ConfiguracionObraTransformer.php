@@ -9,7 +9,7 @@
 namespace App\Http\Transformers\SEGURIDAD_ERP;
 
 
-use App\Models\CADECO\Seguridad\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use League\Fractal\TransformerAbstract;
 
 class ConfiguracionObraTransformer extends TransformerAbstract

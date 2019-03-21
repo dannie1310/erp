@@ -3,6 +3,7 @@ import access from "./middleware/access";
 import auth from "./middleware/auth";
 import guest from "./middleware/guest";
 import context from "./middleware/context";
+import permission from "./middleware/permission";
 
 
 //Routes
@@ -26,11 +27,12 @@ export const routes = [
         },
         meta: {
             title: 'CONFIGURACIÓN',
-            middleware: [auth, context],
+            middleware: [auth, context, permission],
             breadcrumb: {
                 name: 'CONFIGURACIÓN',
                 parent: 'home'
-            }
+            },
+            permission: 'administracion_configuracion_obra'
         }
     },
     {
