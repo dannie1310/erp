@@ -71,6 +71,7 @@
                     </div>
                 </div>
             </fieldset>
+
             <fieldset class="form-group">
                 <div class="row">
                     <legend class="col-form-label col-sm-2 pt-0"><b>Amortización de Anticipo</b></legend>
@@ -94,26 +95,44 @@
             <div class="form-group row">
                 <label for="BDContPaq" class="col-sm-2 col-form-label">Base de Datos CONTPAQ</label>
                 <div class="col-sm-10">
-                    <input type="text" name="BDContPaq" class="form-control" id="BDContPaq" v-model="form.BDContPaq" :disabled="guardadosPreviamente">
+                    <input type="text" class="form-control" id="BDContPaq" v-model="form.BDContPaq" :disabled="guardadosPreviamente"
+                           v-validate="{ max: 255, alpha_num: true }"
+                           name="BDContPaq"
+                           data-vv-as="Base de Datos CONTPAQ"
+                           :class="{'is-invalid': errors.has('BDContPaq')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('BDContPaq')">{{ errors.first('BDContPaq') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="NumobraContPaq" class="col-sm-2 col-form-label">Número de Obra CONTPAQ</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="NumobraContPaq" name="NumobraContPaq" v-model="form.NumobraContPaq" :disabled="guardadosPreviamente">
+                    <input type="number" class="form-control" id="NumobraContPaq" v-model="form.NumobraContPaq" :disabled="guardadosPreviamente"
+                           v-validate="{ integer: true }"
+                           name="NumobraContPaq"
+                           data-vv-as="Número de Obra CONTPAQ"
+                           :class="{'is-invalid': errors.has('NumobraContPaq')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('NumobraContPaq')">{{ errors.first('NumobraContPaq') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="FormatoCuenta" class="col-sm-2 col-form-label">Formato de Cuentas</label>
                 <div class="col-sm-10">
-                    <input type="text" name="FormatoCuenta" class="form-control" id="FormatoCuenta" v-model="form.FormatoCuenta" :disabled="guardadosPreviamente">
+                    <input type="text" class="form-control" id="FormatoCuenta" v-model="form.FormatoCuenta" :disabled="guardadosPreviamente"
+                           v-validate="{ regex: '^\#[\#\-]+\#$' }"
+                           name="FormatoCuenta"
+                           data-vv-as="Formato de Cuentas"
+                           :class="{'is-invalid': errors.has('FormatoCuenta')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('FormatoCuenta')">{{ errors.first('FormatoCuenta') }}</div>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col">
-                    <button type="submit" @click="update" class="btn btn-outline-primary pull-right" :disabled="!cambio">
+                    <button type="submit" @click="validate" class="btn btn-outline-primary pull-right" :disabled="!cambio">
                         <i class="fa fa-save"></i>
                     </button>
                 </div>
@@ -136,6 +155,14 @@
         },
 
         methods: {
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.update()
+                    }
+                });
+            },
+
             update() {
                 this.guardando = true;
                 return this.$store.dispatch('contabilidad/datos-contables/update', {

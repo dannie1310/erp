@@ -8,7 +8,13 @@
             <div class="form-group row">
                 <label for="logotipo_original" class="col-sm-2 col-form-label">Logotipo</label>
                 <div :class="{'col-sm-5': logo, 'col-sm-10': !logo}">
-                    <input type="file" class="form-control" id="logotipo_original" @change="onLogoSelected">
+                    <input type="file" class="form-control" id="logotipo_original" @change="onLogoSelected"
+                           v-validate="{ image: true, ext: 'png' }"
+                           name="logotipo_original"
+                           data-vv-as="Logotipo"
+                           :class="{'is-invalid': errors.has('logotipo_original')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('logotipo_original')">{{ errors.first('logotipo_original') }}</div>
                 </div>
                 <div v-if="logo" class="thumbnail col-sm-5">
                     <img :src="logo" class="img-thumbnail">
@@ -17,49 +23,91 @@
             <div class="form-group row">
                 <label for="nombre" class="col-sm-2 col-form-label">Abreviatura</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="nombre" v-model="form.nombre">
+                    <input type="text" class="form-control" id="nombre" v-model="form.nombre"
+                           v-validate="{alpha_spaces: true, max: 16}"
+                           name="nombre"
+                           data-vv-as="Abreviatura"
+                           :class="{'is-invalid': errors.has('nombre')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('nombre')">{{ errors.first('nombre') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="descripcion" class="col-sm-2 col-form-label">Descripción</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="descripcion" v-model="form.descripcion">
+                    <input type="text" class="form-control" id="descripcion" v-model="form.descripcion"
+                           v-validate="{max: 255}"
+                           name="descripcion"
+                           data-vv-as="Descripción"
+                           :class="{'is-invalid': errors.has('descripcion')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="constructora" class="col-sm-2 col-form-label">Constructora</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="constructora" v-model="form.constructora">
+                    <input type="text" class="form-control" id="constructora" v-model="form.constructora"
+                           v-validate="{max: 255}"
+                           name="constructora"
+                           data-vv-as="Constructora"
+                           :class="{'is-invalid': errors.has('constructora')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('constructora')">{{ errors.first('constructora') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="cliente" v-model="form.cliente">
+                    <input type="text" class="form-control" id="cliente" v-model="form.cliente"
+                           v-validate="{max: 255}"
+                           name="cliente"
+                           data-vv-as="Cliente"
+                           :class="{'is-invalid': errors.has('cliente')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('cliente')">{{ errors.first('cliente') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="facturar" class="col-sm-2 col-form-label">Facturar a</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="facturar" v-model="form.facturar">
+                    <input type="text" class="form-control" id="facturar" v-model="form.facturar"
+                           v-validate="{max: 255}"
+                           name="facturar"
+                           data-vv-as="Facturar a"
+                           :class="{'is-invalid': errors.has('facturar')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('facturar')">{{ errors.first('facturar') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="responsable" class="col-sm-2 col-form-label">Responsable</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="responsable" v-model="form.responsable">
+                    <input type="text" class="form-control" id="responsable" v-model="form.responsable"
+                           v-validate="{max: 64}"
+                           name="responsable"
+                           data-vv-as="Responsable"
+                           :class="{'is-invalid': errors.has('responsable')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('responsable')">{{ errors.first('responsable') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="rfc" class="col-sm-2 col-form-label">RFC</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="rfc" v-model="form.rfc">
+                    <input type="text" class="form-control" id="rfc" v-model="form.rfc"
+                           v-validate="{max: 16}"
+                           name="rfc"
+                           data-vv-as="RFC"
+                           :class="{'is-invalid': errors.has('rfc')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                 </div>
             </div>
 
@@ -69,21 +117,40 @@
             <div class="form-group row">
                 <label for="id_moneda" class="col-sm-2 col-form-label">Moneda</label>
                 <div class="col-sm-4">
-                    <select class="form-control" id="id_moneda" v-model="form.id_moneda">
+                    <select class="form-control" id="id_moneda" v-model="form.id_moneda"
+                            v-validate="{integer: true}"
+                            name="id_moneda"
+                            data-vv-as="Moneda"
+                            :class="{'is-invalid': errors.has('id_moneda')}"
+                    >
                         <option value>-- Moneda --</option>
                         <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.nombre }}</option>
                     </select>
+                    <div class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
                 </div>
+
                 <label for="iva" class="col-sm-2 col-form-label">Porcentaje de IVA</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" id="iva" v-model="form.iva">
+                    <input type="text" class="form-control" id="iva" v-model="form.iva"
+                           v-validate="{ decimal: true,  max_value: 100, min_value: 0}"
+                           name="iva"
+                           data-vv-as="Porcentaje de IVA"
+                           :class="{'is-invalid': errors.has('iva')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="valor_contrato" class="col-sm-2 col-form-label">Valor Contrato</label>
+                <label for="valor_contrato" class="col-sm-2 col-form-label">Valor del Contrato</label>
                 <div class="col-sm-10">
-                    <input type="number" step="any" class="form-control" id="valor_contrato" v-model="form.valor_contrato">
+                    <input type="number" step="any" class="form-control" id="valor_contrato" v-model="form.valor_contrato"
+                           v-validate="{ decimal: true }"
+                           name="valor_contrato"
+                           data-vv-as="Valor del Contrato"
+                           :class="{'is-invalid': errors.has('valor_contrato')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('valor_contrato')">{{ errors.first('valor_contrato') }}</div>
                 </div>
             </div>
 
@@ -93,11 +160,23 @@
             <div class="form-group row">
                 <label for="fecha_inicial" class="col-sm-2 col-form-label">Inicio de Obra</label>
                 <div class="col-sm-4">
-                    <input type="date" class="form-control" id="fecha_inicial" v-model="form.fecha_inicial">
+                    <input type="date" class="form-control" id="fecha_inicial" v-model="form.fecha_inicial"
+                           v-validate="{date_format: 'YYYY-MM-DD'}"
+                           name="fecha_inicial"
+                           data-vv-as="Inicio de Obra"
+                           :class="{'is-invalid': errors.has('fecha_inicial')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                 </div>
                 <label for="fecha_final" class="col-sm-2 col-form-label">Fin de Obra</label>
                 <div class="col-sm-4">
-                    <input type="date" id="fecha_final" class="form-control" v-model="form.fecha_final">
+                    <input type="date" id="fecha_final" class="form-control" v-model="form.fecha_final"
+                           v-validate="{date_format: 'YYYY-MM-DD'}"
+                           name="fecha_final"
+                           data-vv-as="Fin de Obra"
+                           :class="{'is-invalid': errors.has('fecha_final')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
                 </div>
             </div>
 
@@ -150,31 +229,57 @@
             <div class="form-group row">
                 <label for="direccion" class="col-sm-2 col-form-label">Dirección</label>
                 <div class="col-sm-10">
-                    <textarea id="direccion" class="form-control" v-model="form.direccion"></textarea>
+                    <textarea id="direccion" class="form-control" v-model="form.direccion"
+                              v-validate="{max: 255}"
+                              name="direccion"
+                              data-vv-as="Dirección"
+                              :class="{'is-invalid': errors.has('direccion')}"
+                    ></textarea>
+                    <div class="invalid-feedback" v-show="errors.has('direccion')">{{ errors.first('direccion') }}</div>
                 </div>
             </div>
             <div class="form-group row">
                 <label for="ciudad" class="col-sm-2 col-form-label">Ciudad</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="ciudad" v-model="form.ciudad">
+                    <input type="text" class="form-control" id="ciudad" v-model="form.ciudad"
+                           v-validate="{max: 255}"
+                           name="ciudad"
+                           data-vv-as="Ciudad"
+                           :class="{'is-invalid': errors.has('ciudad')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('ciudad')">{{ errors.first('ciudad') }}</div>
                 </div>
             </div>
+
             <div class="form-group row">
                 <label for="estado" class="col-sm-2 col-form-label">Estado</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="estado" v-model="form.estado">
+                    <input type="text" class="form-control" id="estado" v-model="form.estado"
+                           v-validate="{max: 255}"
+                           name="estado"
+                           data-vv-as="Estado"
+                           :class="{'is-invalid': errors.has('estado')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('estado')">{{ errors.first('estado') }}</div>
                 </div>
             </div>
+
             <div class="form-group row">
-                <label for="codigo_postal" class="col-sm-2 col-form-label">Codigo Postal</label>
+                <label for="codigo_postal" class="col-sm-2 col-form-label">Código Postal</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="codigo_postal" v-model="form.codigo_postal">
+                    <input type="text" class="form-control" id="codigo_postal" v-model="form.codigo_postal"
+                           v-validate="{integer: true, digits: 5}"
+                           name="codigo_postal"
+                           data-vv-as="Código Postal"
+                           :class="{'is-invalid': errors.has('codigo_postal')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('codigo_postal')">{{ errors.first('codigo_postal') }}</div>
                 </div>
             </div>
 
             <div class="form-group row">
                 <div class="col">
-                    <button type="submit" @click="update" class="btn btn-outline-primary pull-right" :disabled="guardando">
+                    <button type="submit" @click="validate" class="btn btn-outline-primary pull-right" :disabled="guardando">
                         <i class="fa fa-spin fa-spinner" v-if="guardando"></i>
                         <i class="fa fa-save" v-else></i>
                     </button>
@@ -210,6 +315,14 @@
         methods: {
             onLogoSelected(event) {
                 this.logo_nuevo = event.target.files[0]
+            },
+
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.update()
+                    }
+                });
             },
 
             update() {
