@@ -379,6 +379,7 @@
                 if (this.form.valor_contrato)
                     formData.append('valor_contrato', this.form.valor_contrato)
                 formData.append('configuracion.esquema_permisos', this.form.configuracion.esquema_permisos);
+                formData.append('configuracion.id_tipo_proyecto', this.form.configuracion.id_tipo_proyecto);
 
                 return this.$store.dispatch('cadeco/obras/update', {
                     id: this.obra.id_obra,
