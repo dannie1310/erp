@@ -47,6 +47,10 @@ class ObraService
             $obra->configuracion()->update(['esquema_permisos' => $data['configuracion_esquema_permisos']]);
         }
 
+        if (request()->has('configuracion_id_tipo_proyecto')) {
+            $obra->configuracion()->update(['id_tipo_proyecto' => $data['configuracion_id_tipo_proyecto']]);
+        }
+
         if (request()->has('configuracion_logotipo_original')) {
             $file = request()->file('configuracion_logotipo_original');
             $imageData = unpack("H*", file_get_contents($file->getPathname()));

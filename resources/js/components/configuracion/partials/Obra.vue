@@ -200,6 +200,21 @@
                 </div>
             </fieldset>
 
+            <div class="form-group row">
+                <label for="id_tipo_proyecto" class="col-sm-2 col-form-label">Tipo de Proyecto</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="id_tipo_proyecto" v-model="form.configuracion.id_tipo_proyecto"
+                            v-validate="{integer: true}"
+                            name="id_tipo_proyecto"
+                            data-vv-as="Tipo de Proyecto"
+                            :class="{'is-invalid': errors.has('id_tipo_proyecto')}"
+                    >
+                        <option v-for="tipo in tipos_proyecto" :value="tipo.id">{{ tipo.descripcion }}</option>
+                    </select>
+                    <div class="invalid-feedback" v-show="errors.has('id_tipo_proyecto')">{{ errors.first('id_tipo_proyecto') }}</div>
+                </div>
+            </div>
+
             <hr>
             <h5 id="seguridad">Seguridad</h5>
 
@@ -299,11 +314,13 @@
                 logo_nuevo: null,
                 form: null,
                 cargando: true,
-                guardando: false
+                guardando: false,
+                tipos_proyecto: []
             }
         },
 
         mounted() {
+            this.getTiposProyectos();
             this.form = JSON.parse(JSON.stringify(this.obra));
             setTimeout(() => {
                 if (this.form.configuracion.logotipo_original) {
@@ -313,6 +330,17 @@
         },
 
         methods: {
+            getTiposProyectos() {
+                this.cargando = true;
+                return this.$store.dispatch('seguridad/tipo-proyecto/index')
+                    .then(data => {
+                        this.tipos_proyecto = data;
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
+            },
+
             onLogoSelected(event) {
                 this.logo_nuevo = event.target.files[0]
             },
@@ -351,6 +379,7 @@
                 if (this.form.valor_contrato)
                     formData.append('valor_contrato', this.form.valor_contrato)
                 formData.append('configuracion.esquema_permisos', this.form.configuracion.esquema_permisos);
+                formData.append('configuracion.id_tipo_proyecto', this.form.configuracion.id_tipo_proyecto);
 
                 return this.$store.dispatch('cadeco/obras/update', {
                     id: this.obra.id_obra,

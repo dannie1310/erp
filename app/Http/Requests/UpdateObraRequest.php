@@ -44,7 +44,8 @@ class UpdateObraRequest extends FormRequest
             'fecha_final' => ['date_format:"Y-m-d"'],
             'tipo_obra' => ['integer'],
             'configuracion_esquema_permisos' => ['integer'],
-            'configuracion_logotipo_original' => ['image', 'mimes:png']
+            'configuracion_logotipo_original' => ['image', 'mimes:png'],
+            'configuracion_id_tipo_proyecto' => ['integer', 'exists:seguridad.ctg_tipos_proyecto,id']
         ];
     }
 
