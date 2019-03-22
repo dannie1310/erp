@@ -3,16 +3,16 @@
  * Created by PhpStorm.
  * User: jfesquivel
  * Date: 3/21/19
- * Time: 5:35 PM
+ * Time: 6:59 PM
  */
 
-namespace App\Services\SEGURIDAD_ERP;
+namespace App\Services\IGH;
 
 
-use App\Models\SEGURIDAD_ERP\TipoProyecto;
-use App\Repositories\Repository;
+use App\Models\IGH\Usuario;
+use App\Repositories\IGH\UsuarioRepository as Repository;
 
-class TipoProyectoService
+class UsuarioService
 {
     /**
      * @var Repository
@@ -20,10 +20,10 @@ class TipoProyectoService
     protected $repository;
 
     /**
-     * TipoProyectoService constructor.
-     * @param TipoProyecto $model
+     * UsuarioService constructor.
+     * @param Usuario $model
      */
-    public function __construct(TipoProyecto $model)
+    public function __construct(Usuario $model)
     {
         $this->repository = new Repository($model);
     }

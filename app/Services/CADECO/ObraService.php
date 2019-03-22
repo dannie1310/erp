@@ -47,6 +47,11 @@ class ObraService
             $obra->configuracion()->update(['esquema_permisos' => $data['configuracion_esquema_permisos']]);
         }
 
+        if (request()->has('configuracion_id_responsable')) {
+            $obra->configuracion()->update(['id_responsable' => $data['configuracion_id_responsable']]);
+            $data['responsable'] = \App\Models\IGH\Usuario::query()->find($data['configuracion_id_responsable'])->nombre_completo;
+        }
+
         if (request()->has('configuracion_id_tipo_proyecto')) {
             $obra->configuracion()->update(['id_tipo_proyecto' => $data['configuracion_id_tipo_proyecto']]);
         }

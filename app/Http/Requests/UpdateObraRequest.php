@@ -45,7 +45,8 @@ class UpdateObraRequest extends FormRequest
             'tipo_obra' => ['integer'],
             'configuracion_esquema_permisos' => ['integer'],
             'configuracion_logotipo_original' => ['image', 'mimes:png'],
-            'configuracion_id_tipo_proyecto' => ['integer', 'exists:seguridad.ctg_tipos_proyecto,id']
+            'configuracion_id_tipo_proyecto' => ['integer', 'exists:seguridad.ctg_tipos_proyecto,id'],
+            'configuracion_id_responsable' => ['integer', 'exists:igh.usuario,idusuario']
         ];
     }
 

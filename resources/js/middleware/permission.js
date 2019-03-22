@@ -14,9 +14,10 @@ export default function permission({from, next, router }) {
             });
             return result ? next() : next(from.path);
         }  else {
-            return permisos.find(perm => {
-                return perm.name == router.currentRoute.meta.permission ? next() : next(from.path);
-            })
+            var find = permisos.find(perm => {
+                return perm.name == router.currentRoute.meta.permission;
+            });
+            return find ? next() : next(from.path);
         }
     }
     return next(from.path);

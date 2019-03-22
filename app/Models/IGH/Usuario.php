@@ -68,6 +68,15 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public $timestamps = false;
 
     /**
+     * @var array
+     */
+    public $searchable = [
+        'usuario',
+        'nombre',
+        'correo'
+    ];
+
+    /**
      * @param $value
      */
     public function setClaveAttribute($value)
