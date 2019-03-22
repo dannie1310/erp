@@ -43,6 +43,7 @@ import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 //SEGURIDAD
 import sistema from './modules/seguridad/sistema';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
+import usuario from "./modules/igh/usuario";
 
 Vue.use(Vuex);
 
@@ -80,8 +81,11 @@ export default new Vuex.Store({
 
         'formato/orden-pago-estimacion': ordenPagoEstimacion,
 
+        'igh/usuario': usuario,
+
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
+
         'seguridad/sistema': sistema,
         'seguridad/tipo-proyecto': tipoProyecto,
     },

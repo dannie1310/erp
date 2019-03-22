@@ -88,13 +88,13 @@
             <div class="form-group row">
                 <label for="responsable" class="col-sm-2 col-form-label">Responsable</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="responsable" v-model="form.responsable"
-                           v-validate="{max: 64}"
-                           name="responsable"
-                           data-vv-as="Responsable"
-                           :class="{'is-invalid': errors.has('responsable')}"
+                    <usuario-select
+                            name="responsable"
+                            data-vv-as="Responsable"
+                            v-model="form.configuracion.id_responsable"
+                            :placeholder="form.responsable"
                     >
-                    <div class="invalid-feedback" v-show="errors.has('responsable')">{{ errors.first('responsable') }}</div>
+                    </usuario-select>
                 </div>
             </div>
 
@@ -305,11 +305,14 @@
 </template>
 
 <script>
+    import UsuarioSelect from "../../igh/usuario/Select";
     export default {
         name: "configuracion-obra",
+        components: {UsuarioSelect},
         props: ['obra'],
         data() {
             return {
+                user: '',
                 logo: null,
                 logo_nuevo: null,
                 form: null,
@@ -369,7 +372,7 @@
                 formData.append('constructora', this.form.constructora)
                 formData.append('cliente', this.form.cliente)
                 formData.append('facturar', this.form.facturar)
-                formData.append('responsable', this.form.responsable)
+                //formData.append('responsable', this.form.responsable)
                 formData.append('rfc', this.form.rfc)
                 formData.append('id_moneda', this.form.id_moneda)
                 formData.append('iva', this.form.iva)
@@ -380,6 +383,7 @@
                     formData.append('valor_contrato', this.form.valor_contrato)
                 formData.append('configuracion.esquema_permisos', this.form.configuracion.esquema_permisos);
                 formData.append('configuracion.id_tipo_proyecto', this.form.configuracion.id_tipo_proyecto);
+                formData.append('configuracion.id_responsable', this.form.configuracion.id_responsable);
 
                 return this.$store.dispatch('cadeco/obras/update', {
                     id: this.obra.id_obra,
@@ -412,3 +416,12 @@
         }
     }
 </script>
+
+<style scoped>
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+    }
+</style>

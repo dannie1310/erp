@@ -267,4 +267,12 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\TipoProyectoController@index');
         });
     });
+
+    /** IGH */
+    $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
+        $api->group(['prefix' => 'usuario'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\IGH\UsuarioController@index');
+
+        });
+    });
 });
