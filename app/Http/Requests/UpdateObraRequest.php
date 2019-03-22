@@ -23,7 +23,7 @@ class UpdateObraRequest extends FormRequest
         return auth()->user()->can('administracion_configuracion_obra');
     }
 
-    /** codigo_postal  int default 0
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -31,22 +31,31 @@ class UpdateObraRequest extends FormRequest
     public function rules()
     {
         return [
-            'logotipo_original' => ['filled', 'image'],
-            'nombre' => ['max:16', 'string'],
-            'constructora' => ['max:255', 'string'],
-            'cliente' => ['max:255', 'string'],
-            'facturar' => ['max:255', 'string'],
-            'responsable' => ['max:64', 'string'],
-            'rfc' => ['max:16', 'string'],
-            'id_moneda' => ['integer', 'exists:cadeco.monedas,id_moneda'],
-            'iva' => ['numeric'],
-            'fecha_inicial' => ['date_format:"Y-m-d"'],
-            'fecha_final' => ['date_format:"Y-m-d"'],
-            'tipo_obra' => ['integer'],
-            'configuracion_esquema_permisos' => ['integer'],
-            'configuracion_logotipo_original' => ['image', 'mimes:png'],
-            'configuracion_id_tipo_proyecto' => ['integer', 'exists:seguridad.ctg_tipos_proyecto,id'],
-            'configuracion_id_responsable' => ['integer', 'exists:igh.usuario,idusuario']
+            'ciudad' => ['filled', 'max:255', 'string'],
+            'cliente' => ['max:255', 'string', 'filled'],
+            'codigo_postal' => ['digits:5'],
+            'configuracion' => ['array', 'required'],
+
+                'configuracion.esquema_permisos' => ['integer', 'required'],
+                'configuracion.id_administrador' => ['integer', 'exists:igh.usuario,idusuario', 'filled'],
+                'configuracion.id_responsable' => ['integer', 'exists:igh.usuario,idusuario', 'filled'],
+                'configuracion.id_tipo_proyecto' => ['integer', 'exists:seguridad.ctg_tipos_proyecto,id', 'required'],
+                'configuracion.logotipo_original' => ['image', 'mimes:png', 'filled'],
+
+            'constructora' => ['max:255', 'string', 'filled'],
+            'descripcion' => ['filled', 'max:255', 'string'],
+            'direccion' => ['filled', 'max:255', 'string'],
+            'estado' => ['filled', 'max:255', 'string'],
+            'facturar' => ['max:255', 'string', 'filled'],
+            'fecha_final' => ['date_format:"Y-m-d"', 'required'],
+            'fecha_inicial' => ['date_format:"Y-m-d"', 'required'],
+            'id_moneda' => ['integer', 'exists:cadeco.monedas,id_moneda', 'required'],
+            'iva' => ['numeric', 'required'],
+            'nombre' => ['max:16', 'string', 'required'],
+            'responsable' => ['max:64', 'string', 'filled'],
+            'rfc' => ['max:16', 'string', 'filled'],
+            'tipo_obra' => ['integer', 'required'],
+            'valor_contrato' => ['filled', 'numeric'],
         ];
     }
 

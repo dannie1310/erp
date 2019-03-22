@@ -38,6 +38,7 @@ class ObraTransformer extends TransformerAbstract
     public function transform(Obra $model)
     {
         return [
+            'administrador' => $model->administrador,
             'id_obra' => $model->getKey(),
             'nombre' => $model->nombre,
             'tipo_obra' => $model->tipo_obra,

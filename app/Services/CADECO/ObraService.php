@@ -43,21 +43,12 @@ class ObraService
     {
         $obra = $this->repository->show($id);
 
-        if (request()->has('configuracion_esquema_permisos')) {
-            $obra->configuracion()->update(['esquema_permisos' => $data['configuracion_esquema_permisos']]);
+        if (isset($data['configuracion']['id_responsable'])) {
+            $data['responsable'] = \App\Models\IGH\Usuario::query()->find($data['configuracion']['id_responsable'])->nombre_completo;
         }
 
-        if (request()->has('configuracion_id_responsable')) {
-            $obra->configuracion()->update(['id_responsable' => $data['configuracion_id_responsable']]);
-            $data['responsable'] = \App\Models\IGH\Usuario::query()->find($data['configuracion_id_responsable'])->nombre_completo;
-        }
-
-        if (request()->has('configuracion_id_tipo_proyecto')) {
-            $obra->configuracion()->update(['id_tipo_proyecto' => $data['configuracion_id_tipo_proyecto']]);
-        }
-
-        if (request()->has('configuracion_logotipo_original')) {
-            $file = request()->file('configuracion_logotipo_original');
+        if (isset($data['configuracion']['logotipo_original'])) {
+            $file = request()->file('configuracion')['logotipo_original'];
             $imageData = unpack("H*", file_get_contents($file->getPathname()));
             $obra->configuracion()->update([
                 'logotipo_original' => DB::raw("CONVERT(VARBINARY(MAX), '" . $imageData[1] . "')"),
@@ -65,9 +56,10 @@ class ObraService
             ]);
         }
 
-        $obra->update(array_filter($data, function ($d) {
-            return $d != null;
-        }));
+        $obra->configuracion->fill(array_except($data['configuracion'], 'logotipo_original'));
+        $obra->configuracion->save();
+
+        $obra->update($data);
 
         return $obra;
     }

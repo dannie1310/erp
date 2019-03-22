@@ -41,7 +41,8 @@ class ConfiguracionObraTransformer extends TransformerAbstract
             'id_obra' => $model->id_obra,
             'esquema_permisos' => $model->esquema_permisos,
             'id_tipo_proyecto' => $model->id_tipo_proyecto,
-            'id_responsable' => $model->id_responsable
+            'id_responsable' => $model->id_responsable,
+            'id_administrador' => $model->id_administrador
         ];
     }
 
@@ -53,7 +54,8 @@ class ConfiguracionObraTransformer extends TransformerAbstract
         return null;
     }
 
-    private function getImagen($imagen = ''){
+    private function getImagen($imagen = '')
+    {
         $bin = '';
         $data = hex2bin($imagen);
         $file = public_path('img/logo_temp.png');
