@@ -73,4 +73,8 @@ class Obra extends Model
             return bin2hex($data[1]);
         }
     }
+    public function getAdministradorAttribute()
+    {
+        return \App\Models\IGH\Usuario::query()->find($this->configuracion->id_administrador)->nombreCompleto;
+    }
 }

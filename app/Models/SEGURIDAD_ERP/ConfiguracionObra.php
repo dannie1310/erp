@@ -16,6 +16,15 @@ class ConfiguracionObra extends Model
     protected $connection = 'seguridad';
     protected $table = 'dbo.configuracion_obra';
 
+    protected $fillable = [
+        'esquema_permisos',
+        'id_administrador',
+        'id_responsable',
+        'id_tipo_proyecto',
+        'logotipo_original',
+        'logotipo_reportes'
+    ];
+
     protected static function boot()
     {
         parent::boot();

@@ -91,10 +91,29 @@
                     <usuario-select
                             name="responsable"
                             data-vv-as="Responsable"
+                            v-validate="{integer: true}"
                             v-model="form.configuracion.id_responsable"
-                            :placeholder="form.responsable"
+                            :placeholder="form.configuracion.id_responsable ? form.responsable : '-- Buscar --'"
+                            :error="errors.has('responsable')">
                     >
                     </usuario-select>
+                    <div class="error-label" v-show="errors.has('responsable')">{{ errors.first('responsable') }}</div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="administrador" class="col-sm-2 col-form-label">Administrador</label>
+                <div class="col-sm-10">
+                    <usuario-select
+                            name="administrador"
+                            data-vv-as="Administrador"
+                            v-validate="{integer: true}"
+                            v-model="form.configuracion.id_administrador"
+                            :placeholder="form.configuracion.id_administrador ? form.administrador : '-- Buscar --'"
+                            :error="errors.has('administrador')">
+                    >
+                    </usuario-select>
+                    <div class="error-label" v-show="errors.has('administrador')">{{ errors.first('responsable') }}</div>
                 </div>
             </div>
 
@@ -313,7 +332,7 @@
         data() {
             return {
                 user: '',
-                logo: null,
+                logo: '',
                 logo_nuevo: null,
                 form: null,
                 cargando: true,
@@ -327,7 +346,7 @@
             this.form = JSON.parse(JSON.stringify(this.obra));
             setTimeout(() => {
                 if (this.form.configuracion.logotipo_original) {
-                    this.logo = "data:image/png;base64," + this.form.configuracion.logotipo_original;
+                    this.logo = `data:image/png;base64,${this.form.configuracion.logotipo_original}`;
                 }
             }, 100);
         },
@@ -359,31 +378,35 @@
             update() {
                 this.guardando = true;
                 var formData = new FormData();
-                if (this.logo_nuevo) {
-                    formData.append('configuracion.logotipo_original', this.logo_nuevo, this.logo_nuevo.name);
-                }
 
-                formData.append('nombre', this.form.nombre);
-                formData.append('descripcion', this.form.descripcion);
-                formData.append('estado', this.form.estado);
-                formData.append('direccion', this.form.direccion);
                 formData.append('ciudad', this.form.ciudad);
-                formData.append('codigo_postal', this.form.codigo_postal);
-                formData.append('constructora', this.form.constructora)
                 formData.append('cliente', this.form.cliente)
+                formData.append('codigo_postal', this.form.codigo_postal);
+
+                formData.append('configuracion[esquema_permisos]', this.form.configuracion.esquema_permisos);
+                if (this.form.configuracion.id_administrador) formData.append('configuracion[id_administrador]', this.form.configuracion.id_administrador);
+                if (this.form.configuracion.id_responsable) formData.append('configuracion[id_responsable]', this.form.configuracion.id_responsable);
+                formData.append('configuracion[id_tipo_proyecto]', this.form.configuracion.id_tipo_proyecto);
+                if (this.logo_nuevo) formData.append('configuracion[logotipo_original]', this.logo_nuevo, this.logo_nuevo.name);
+
+                formData.append('constructora', this.form.constructora)
+                formData.append('descripcion', this.form.descripcion);
+                formData.append('direccion', this.form.direccion);
+                formData.append('estado', this.form.estado);
                 formData.append('facturar', this.form.facturar)
-                //formData.append('responsable', this.form.responsable)
-                formData.append('rfc', this.form.rfc)
+                formData.append('fecha_final', this.form.fecha_final)
+                formData.append('fecha_inicial', this.form.fecha_inicial)
                 formData.append('id_moneda', this.form.id_moneda)
                 formData.append('iva', this.form.iva)
-                formData.append('fecha_inicial', this.form.fecha_inicial)
-                formData.append('fecha_final', this.form.fecha_final)
+                formData.append('nombre', this.form.nombre);
+                formData.append('rfc', this.form.rfc)
                 formData.append('tipo_obra', this.form.tipo_obra)
-                if (this.form.valor_contrato)
-                    formData.append('valor_contrato', this.form.valor_contrato)
-                formData.append('configuracion.esquema_permisos', this.form.configuracion.esquema_permisos);
-                formData.append('configuracion.id_tipo_proyecto', this.form.configuracion.id_tipo_proyecto);
-                formData.append('configuracion.id_responsable', this.form.configuracion.id_responsable);
+                formData.append('valor_contrato', this.form.valor_contrato)
+
+                formData.forEach((value, key) => {
+                    if(value == 'null' || value == '')
+                        formData.delete(key);
+                });
 
                 return this.$store.dispatch('cadeco/obras/update', {
                     id: this.obra.id_obra,
@@ -397,8 +420,8 @@
                             this.$store.commit('auth/setObra', { obra: data });
                             this.form = data
                             setTimeout(() => {
-                                if (this.form.configuracion.logotipo_original) {
-                                    this.logo = "data:image/png;base64," + this.form.configuracion.logotipo_original;
+                                if (data.configuracion.logotipo_original) {
+                                    this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
                                 }
                             }, 100);
                         }
@@ -417,11 +440,14 @@
     }
 </script>
 
-<style scoped>
+<style>
     .error-label {
         width: 100%;
         margin-top: 0.25rem;
         font-size: 80%;
         color: #dc3545;
+    }
+    .vue-treeselect__placeholder {
+        color: #495057
     }
 </style>
