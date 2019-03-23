@@ -37,11 +37,11 @@
                 </div>
             </fieldset>
 
-            <div class="row">
+            <div class="row" v-if="form.tipo_asignacion">
                 <div class="col-lg-4">
                     <div class="form form-group">
                         <label for="id_proyecto">{{ form.tipo_asignacion == 1 ? 'Proyectos' : 'Proyecto' }}</label>
-                        <select size="10" class="form-control" multiple :disabled="!obras_agrupadas" v-model="form.id_proyecto">
+                        <select size="10" class="form-control" :multiple="form.tipo_asignacion == 1" :disabled="!obras_agrupadas" v-model="form.id_proyecto">
                             <optgroup :label="i" v-for="(grupo, i) in obras_agrupadas">
                                 <option v-for="obra in grupo" :value="`${i}-${obra.id_obra}`">{{ obra.nombre }}</option>
                             </optgroup>
@@ -65,7 +65,7 @@
             return {
                 form: {
                     user_id: '',
-                    id_proyecto: []
+                    id_proyecto: ''
                 },
                 obras_agrupadas: null,
                 cargando: false
@@ -95,6 +95,10 @@
                             this.cargando = false;
                         })
                 }
+            },
+
+            'form.tipo_asignacion'(tipo) {
+                this.form.id_proyecto = [];
             }
         }
     }
