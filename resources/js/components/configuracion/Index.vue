@@ -1,10 +1,9 @@
 <template>
     <div class="row">
-        <div class="col-lg" v-if="obra">
+        <div class="col-lg-10 offset-lg-1" v-if="obra">
             <configuracion-obra :obra="obra"></configuracion-obra>
-        </div>
-        <div class="col-lg" v-if="obra">
             <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>
+            <configuracion-seguridad></configuracion-seguridad>
         </div>
     </div>
 </template>
@@ -12,9 +11,10 @@
 <script>
     import ConfiguracionObra from "./partials/Obra";
     import ConfiguracionContable from "./partials/Contable";
+    import ConfiguracionSeguridad from "./seguridad/Index";
     export default {
         name: "configuracion",
-        components: {ConfiguracionContable, ConfiguracionObra},
+        components: {ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra},
         data() {
             return {
                 obra: null

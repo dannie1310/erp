@@ -89,7 +89,7 @@ class AuthController extends Controller
             'access_token' => $new_token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'obra' => Obra::with('datosContables')->find($request->id_obra),
+            'obra' => Obra::with(['datosContables', 'configuracion'])->find($request->id_obra),
             'permisos' => auth()->user()->permisos()
         ]);
     }

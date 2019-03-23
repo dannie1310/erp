@@ -22,6 +22,7 @@ $api->version('v1', function ($api) {
         $api->post('refresh', 'App\Http\Controllers\v1\AuthController@refresh');
       /*  $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');*/
         $api->get('obras/paginate', 'App\Http\Controllers\v1\CADECO\ObraController@authPaginate');
+        $api->get('obras/por-usuario/{id_usuario}', 'App\Http\Controllers\v1\CADECO\ObraController@porUsuario')->where(['id_usuario' => '[0-9]+']);
     });
 
     /**

@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\DatosContables;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use Illuminate\Database\Eloquent\Model;
@@ -65,16 +66,23 @@ class Obra extends Model
 
     public function getLogoAttribute()
     {
-        if(isset($this->configuracion->logotipo_original)){
+        if (isset($this->configuracion->logotipo_original)) {
             return bin2hex($this->configuracion->logotipo_original);
-        }else{
+        } else {
             $file = public_path('img/ghi-logo.png');
             $data = unpack("H*", file_get_contents($file));
             return bin2hex($data[1]);
         }
     }
+
     public function getAdministradorAttribute()
     {
-        return \App\Models\IGH\Usuario::query()->find($this->configuracion->id_administrador)->nombreCompleto;
+        if (Context::isEstablished()) {
+            if ($this->configuracion)
+                return \App\Models\IGH\Usuario::query()->find($this->configuracion->id_administrador)->nombreCompleto;
+            return null;
+        } else {
+            return null;
+        }
     }
 }
