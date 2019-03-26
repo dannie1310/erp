@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
         'context' => \App\Http\Middleware\CheckForContext::class,
         'refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
         'permiso' => \App\Http\Middleware\Permiso::class,
+        'esquemaGlobal' => \App\Http\Middleware\EsquemaGlobal::class,
     ];
 
     /**

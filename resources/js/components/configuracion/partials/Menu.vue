@@ -4,7 +4,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">CONFIGURACIÓN DE OBRA</li>
+            <li class="nav-header"><a href="#configuracion-obra">CONFIGURACIÓN DE OBRA</a></li>
             <li class="nav-item">
                 <a href="#identificacion" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
@@ -40,17 +40,11 @@
                 </a>
             </li>
 
-            <li class="nav-header">CONFIGURACIÓN CONTABLE</li>
+            <li class="nav-header"><a href="#configuracion-contable">CONFIGURACIÓN CONTABLE</a></li>
             <li class="nav-item">
                 <a href="#contpaq" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>COntPaq</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#pagos" class="nav-link">
-                    <i class="fa fa-circle-o nav-icon"></i>
-                    <p>Pagos</p>
                 </a>
             </li>
         </ul>

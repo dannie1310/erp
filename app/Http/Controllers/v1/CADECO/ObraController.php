@@ -64,4 +64,10 @@ class ObraController extends Controller
         $paginator = $this->service->authPaginate();
         return $this->respondWithPaginator($paginator);
     }
+
+    public function porUsuario(Request $request, $user_id)
+    {
+        $obras = $this->service->getObrasPorUsuario($user_id);
+        return $this->respondWithCollection($obras);
+    }
 }

@@ -80,6 +80,20 @@ export default {
                     });
             });
         },
+
+        getObrasPorUsuario(context, payload = {}) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get('/api/auth/obras/por-usuario/' + payload.user_id, payload.config)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        }
     },
 
     getters: {

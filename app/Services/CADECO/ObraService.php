@@ -65,20 +65,7 @@ class ObraService
     }
 
     public function authPaginate() {
-
-        $obrasUsuario = new Collection();
-        $basesDatos = Proyecto::query()->withoutGlobalScopes()->orderBy('base_datos')->pluck('base_datos');
-
-        foreach ($basesDatos as $key => $bd) {
-            config()->set('database.connections.cadeco.database', $bd);
-            $usuarioCadeco = $this->getUsuarioCadeco(auth()->user());
-            $obras = $this->getObrasUsuario($usuarioCadeco);
-            foreach ($obras as $obra) {
-                $obra->base_datos = $bd;
-                $obrasUsuario->push($obra);
-            }
-            DB::disconnect('cadeco');
-        }
+        $obrasUsuario = $this->getObrasPorUsuario(auth()->id());
         $perPage     = 10;
         $currentPage = Paginator::resolveCurrentPage();
         $currentPage = $currentPage ? $currentPage : 1;
@@ -91,15 +78,33 @@ class ObraService
         return $paginator;
     }
 
+    public function getObrasPorUsuario($idusuaio) {
+        $obrasUsuario = new Collection();
+        $basesDatos = Proyecto::query()->withoutGlobalScopes()->orderBy('base_datos')->pluck('base_datos');
+
+        foreach ($basesDatos as $key => $bd) {
+            config()->set('database.connections.cadeco.database', $bd);
+            $usuarioCadeco = $this->getUsuarioCadeco($idusuaio);
+            $obras = $this->getObrasUsuario($usuarioCadeco);
+            foreach ($obras as $obra) {
+                $obra->base_datos = $bd;
+                $obrasUsuario->push($obra);
+            }
+            DB::disconnect('cadeco');
+        }
+        return $obrasUsuario;
+    }
+
     /**
      * Obtiene el usuario cadeco asociado al usuario de intranet
      *
      * @param $idUsuario
      * @return UsuarioCadeco
      */
-    public function getUsuarioCadeco($usuario)
+    public function getUsuarioCadeco($idusuario)
     {
-        return Usuario::where('usuario', $usuario->usuario)->first();
+        $usuario = \App\Models\IGH\Usuario::query()->find($idusuario);
+        return Usuario::where('usuario', '=', $usuario->usuario)->first();
     }
 
     /**

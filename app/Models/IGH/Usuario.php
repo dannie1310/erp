@@ -9,6 +9,7 @@
 namespace App\Models\IGH;
 
 use App\Facades\Context;
+use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Traits\IghAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -147,7 +148,17 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function roles()
     {
-        return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
+        $obra =  Obra::query()->find(Context::getIdObra());
+
+        if (isset($obra->configuracion->esquema_permisos) && $obra->configuracion->esquema_permisos == 1) {
+            // Esquema Global
+            return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
+                ->where('id_obra', $obra->getKey())
+                ->where('proyecto', Context::getDatabase());
+        } else {
+            // Esquema Personalizado
+            return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
+        }
     }
 
     public function permisos()

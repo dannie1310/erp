@@ -1,7 +1,12 @@
 <template>
-    <div class="card">
+    <div class="card" id="configuracion-contable">
         <div class="card-header">
             <h3 class="card-title">Configuración Contable</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
         </div>
         <div class="card-body" v-if="form">
             <div class="alert alert-warning">
@@ -107,7 +112,7 @@
 
             <div class="form-group row">
                 <label for="NumobraContPaq" class="col-sm-2 col-form-label">Número de Obra CONTPAQ</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <input type="number" class="form-control" id="NumobraContPaq" v-model="form.NumobraContPaq" :disabled="guardadosPreviamente"
                            v-validate="{ integer: true }"
                            name="NumobraContPaq"
@@ -116,11 +121,11 @@
                     >
                     <div class="invalid-feedback" v-show="errors.has('NumobraContPaq')">{{ errors.first('NumobraContPaq') }}</div>
                 </div>
-            </div>
+<!--            </div>
 
-            <div class="form-group row">
+            <div class="form-group row">-->
                 <label for="FormatoCuenta" class="col-sm-2 col-form-label">Formato de Cuentas</label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <input type="text" class="form-control" id="FormatoCuenta" v-model="form.FormatoCuenta" :disabled="guardadosPreviamente"
                            v-validate="{ regex: '^\#[\#\-]+\#$' }"
                            name="FormatoCuenta"

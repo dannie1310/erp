@@ -22,6 +22,7 @@ $api->version('v1', function ($api) {
         $api->post('refresh', 'App\Http\Controllers\v1\AuthController@refresh');
       /*  $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');*/
         $api->get('obras/paginate', 'App\Http\Controllers\v1\CADECO\ObraController@authPaginate');
+        $api->get('obras/por-usuario/{id_usuario}', 'App\Http\Controllers\v1\CADECO\ObraController@porUsuario')->where(['id_usuario' => '[0-9]+']);
     });
 
     /**
@@ -258,9 +259,13 @@ $api->version('v1', function ($api) {
 
     /** SEGURIDAD ERP */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
+        $api->group(['prefix' => 'rol'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@index');
+            $api->post('asignacion-masiva', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@asignacionMasiva');
+        });
+
         $api->group(['prefix' => 'sistema'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@index');
-
         });
 
         $api->group(['prefix' => 'tipo-proyecto'], function ($api) {
@@ -272,7 +277,7 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
         $api->group(['prefix' => 'usuario'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\IGH\UsuarioController@index');
-
+            $api->get('{id}', 'App\Http\Controllers\v1\IGH\UsuarioController@show')->where(['id' => '[0-9]+']);
         });
     });
 });
