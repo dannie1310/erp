@@ -68,8 +68,8 @@
 
                         <div class="container col-sm-2">
                             <div class="vertical-center align-content-center">
-                                <button class="btn col-xs-12 btn-default" @click="asignar" title="Asignar"><i class="fa fa-long-arrow-left"></i></button>
-                                <button class="btn col-xs-12 btn-default" @click="desasignar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>
+                                <button class="btn col-xs-12 btn-default" @click="agregar" title="Agregar"><i class="fa fa-long-arrow-left"></i></button>
+                                <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>
                             </div>
                         </div>
 
@@ -127,7 +127,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary">Asignar</button>
+                        <button type="button" class="btn btn-primary" @click="asignar">Asignar</button>
                     </div>
                 </div>
             </div>
@@ -178,7 +178,7 @@
                     });
             },
 
-            asignar() {
+            agregar() {
                 this.selected.forEach(rol => {
                     this.roles_disponibles.forEach(r => {
                         if(r.id == rol) {
@@ -191,7 +191,7 @@
                 })
             },
 
-            desasignar() {
+            quitar() {
                 this.form.role_id.forEach(rol => {
                     this.roles_asignados.forEach(r => {
                         if(r.id == rol) {
@@ -201,6 +201,16 @@
                             });
                         }
                     })
+                })
+            },
+
+            asignar() {
+                return this.$store.dispatch('seguridad/rol/asignacionMasiva', {
+                    id_proyecto: Array.isArray(this.form.id_proyecto) ? this.form.id_proyecto : [this.form.id_proyecto],
+                    user_id: this.form.user_id,
+                    role_id: this.roles_asignados.map(rol => (
+                        rol.id
+                    ))
                 })
             },
 

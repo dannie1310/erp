@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\RolTransformer;
 use App\Services\SEGURIDAD_ERP\RolService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class RolController extends Controller
@@ -43,5 +44,11 @@ class RolController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function asignacionMasiva(Request $request)
+    {
+        $response = $this->service->asignacionMasiva($request->all());
+        return response()->json($response, 200);
     }
 }

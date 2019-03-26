@@ -27,6 +27,20 @@ export default {
                         reject(error)
                     })
             });
+        },
+
+        asignacionMasiva(context, payload = {}) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'asignacion-masiva', payload)
+                    .then(data => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error =>  {
+                        reject(error);
+                    });
+            });
         }
     },
 
