@@ -212,16 +212,16 @@
                     <legend class="col-form-label col-lg-2 pt-0"><b>Estado</b></legend>
                     <div class="col-lg-10">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="0" value="0" v-model="form.tipo_obra">
-                            <label class="form-check-label" for="0"> En ejecución </label>
+                            <input class="form-check-input" type="radio" id="tipo_obra0" value="0" v-model="form.tipo_obra">
+                            <label class="form-check-label" for="tipo_obra0"> En ejecución </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="1" value="1" v-model="form.tipo_obra">
-                            <label class="form-check-label" for="1"> En Proyecto</label>
+                            <input class="form-check-input" type="radio" id="tipo_obra1" value="1" v-model="form.tipo_obra">
+                            <label class="form-check-label" for="tipo_obra1"> En Proyecto</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="2" value="2" v-model="form.tipo_obra">
-                            <label class="form-check-label" for="2"> Terminada</label>
+                            <input class="form-check-input" type="radio" id="tipo_obra2" value="2" v-model="form.tipo_obra">
+                            <label class="form-check-label" for="tipo_obra2"> Terminada</label>
                         </div>
                     </div>
                 </div>
@@ -250,16 +250,16 @@
                     <legend class="col-form-label col-lg-2 pt-0"><b>Esquema de Permisos</b></legend>
                     <div class="col-lg-10">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="1" value="1"
+                            <input class="form-check-input" type="radio" id="esquema_permisos1" value="1"
                                    v-model="form.configuracion.esquema_permisos"
                                    :disabled="!$root.can('modificar_esquema_permisos_proyecto')">
-                            <label class="form-check-label" for="1"> Esquema Global</label>
+                            <label class="form-check-label" for="esquema_permisos1"> Esquema Global</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="2" value="2"
+                            <input class="form-check-input" type="radio" id="esquema_permisos2" value="2"
                                    v-model="form.configuracion.esquema_permisos"
                                    :disabled="!$root.can('modificar_esquema_permisos_proyecto')">
-                            <label class="form-check-label" for="2"> Esquema Personalizado</label>
+                            <label class="form-check-label" for="esquema_permisos2"> Esquema Personalizado</label>
                         </div>
                     </div>
                 </div>

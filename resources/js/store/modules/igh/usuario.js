@@ -26,6 +26,20 @@ export default {
                         reject(error)
                     })
             });
+        },
+
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, payload.config)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
         }
     },
 

@@ -259,9 +259,12 @@ $api->version('v1', function ($api) {
 
     /** SEGURIDAD ERP */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
+        $api->group(['prefix' => 'rol'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@index');
+        });
+
         $api->group(['prefix' => 'sistema'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@index');
-
         });
 
         $api->group(['prefix' => 'tipo-proyecto'], function ($api) {
@@ -273,7 +276,7 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
         $api->group(['prefix' => 'usuario'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\IGH\UsuarioController@index');
-
+            $api->get('{id}', 'App\Http\Controllers\v1\IGH\UsuarioController@show')->where(['id' => '[0-9]+']);
         });
     });
 });

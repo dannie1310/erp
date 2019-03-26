@@ -41,8 +41,11 @@ import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 
 //SEGURIDAD
+import rol from './modules/seguridad/rol';
 import sistema from './modules/seguridad/sistema';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
+
+//IGH
 import usuario from "./modules/igh/usuario";
 
 Vue.use(Vuex);
@@ -86,6 +89,7 @@ export default new Vuex.Store({
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
 
+        'seguridad/rol': rol,
         'seguridad/sistema': sistema,
         'seguridad/tipo-proyecto': tipoProyecto,
     },
