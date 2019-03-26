@@ -127,7 +127,14 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" @click="asignar">Asignar</button>
+                        <button type="button" class="btn btn-primary" @click="asignar" :disabled="guardando">
+                            <span v-if="guardando">
+                                <i class="fa fa-spin fa-spinner"></i>
+                            </span>
+                            <span v-else>
+                                <i class="fa fa-save"></i> Asignar
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -150,6 +157,7 @@
                 },
                 obras: null,
                 cargando: false,
+                guardando: false,
                 selected: [],
                 roles_disponibles: [],
                 roles_asignados: [],
@@ -205,6 +213,7 @@
             },
 
             asignar() {
+                this.guardando = true;
                 return this.$store.dispatch('seguridad/rol/asignacionMasiva', {
                     id_proyecto: Array.isArray(this.form.id_proyecto) ? this.form.id_proyecto : [this.form.id_proyecto],
                     user_id: this.form.user_id,
@@ -212,6 +221,15 @@
                         rol.id
                     ))
                 })
+                    .finally(() => {
+                        this.guardando = false;
+                        this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados)
+                        this.roles_asignados = [];
+                        this.form.id_proyecto = this.form.tipo_asignacion == 1 ? [] : '';
+                        this.form.role_id = [];
+                        $(this.$refs.modal).modal('hide');
+                        this.$validator.reset()
+                    });
             },
 
             validate() {
@@ -251,7 +269,7 @@
                 }
             },
 
-            'form.tipo_asignacion'(tipo) {
+            'form.tipo_asignacion'() {
                 this.form.id_proyecto = [];
                 this.$validator.reset()
             }

@@ -31,14 +31,39 @@ export default {
 
         asignacionMasiva(context, payload = {}) {
             return new Promise((resolve, reject) => {
-                axios
-                    .post(URI + 'asignacion-masiva', payload)
-                    .then(data => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error =>  {
-                        reject(error);
+                swal({
+                    title: "Asignar Roles",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                        },
+                        confirm: {
+                            text: 'Si, Asignar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'asignacion-masiva', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("La asignación de roles ha sido aplicada exitosamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        }
                     });
             });
         }
