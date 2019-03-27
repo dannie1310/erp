@@ -305,11 +305,9 @@ export const routes = [
                 meta: {
                     title: 'Contratos',
                     breadcrumb: { parent: 'home', name: 'CONTRATOS'},
-                    middleware: [auth, context]
+                    middleware: [auth, context, access]
                 }
-            },
-
-
+            }
         ]
     },
 
