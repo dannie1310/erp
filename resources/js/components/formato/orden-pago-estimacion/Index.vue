@@ -164,7 +164,7 @@
             getEstimaciones(){
                 this.id_estimacion= '';
                 this.estimaciones= [];
-                return this.$store.dispatch('cadeco/subcontrato/find', {
+                return this.$store.dispatch('contratos/subcontrato/find', {
                     id: this.id_subcontrato,
                     params: { include: 'estimaciones' }
                 })
