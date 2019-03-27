@@ -86,9 +86,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.mes !== '' && this.anio !== '') {
                             this.store()
-                        }
                     }
                 });
             },
