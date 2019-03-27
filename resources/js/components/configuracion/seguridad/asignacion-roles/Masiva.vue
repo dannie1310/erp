@@ -186,6 +186,15 @@
                     });
             },
 
+            getRolesUsuario(data) {
+                this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados);
+                return this.$store.dispatch('seguridad/rol/getRolesUsuario', data)
+                    .then(data => {
+                        this.roles_asignados = data.data.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
+                        this.roles_disponibles = this.roles_disponibles.diff(this.roles_asignados);
+                    });
+            },
+
             agregar() {
                 this.selected.forEach(rol => {
                     this.roles_disponibles.forEach(r => {
@@ -269,9 +278,30 @@
                 }
             },
 
-            'form.tipo_asignacion'() {
-                this.form.id_proyecto = [];
-                this.$validator.reset()
+            'form.tipo_asignacion'(tipo) {
+                this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados);
+                this.roles_asignados = [];
+
+                if (tipo == 1) {
+                    this.form.id_proyecto = [];
+                } else if (tipo == 2) {
+                    this.form.id_proyecto = '';
+                }
+                this.$validator.reset();
+            },
+
+            'form.id_proyecto'(id) {
+                if (id) {
+                    if (this.form.tipo_asignacion == 2) {
+                        this.getRolesUsuario({
+                            user_id: this.form.user_id,
+                            params: {
+                                id_obra: id.split('-')[1],
+                                base_datos: id.split('-')[0],
+                            }
+                        })
+                    }
+                }
             }
         },
 

@@ -29,6 +29,20 @@ export default {
             });
         },
 
+        getRolesUsuario(context, payload = {}) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'por-usuario/' + payload.user_id, payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+
         asignacionMasiva(context, payload = {}) {
             return new Promise((resolve, reject) => {
                 swal({

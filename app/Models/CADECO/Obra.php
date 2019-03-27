@@ -78,9 +78,11 @@ class Obra extends Model
     public function getAdministradorAttribute()
     {
         if (Context::isEstablished()) {
-            if ($this->configuracion)
+            try {
                 return \App\Models\IGH\Usuario::query()->find($this->configuracion->id_administrador)->nombreCompleto;
-            return null;
+            } catch(\Exception $e) {
+                return null;
+            }
         } else {
             return null;
         }
