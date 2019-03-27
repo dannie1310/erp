@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 
+use App\PDF\Formato\OrdenPagoEstimacion;
 use Illuminate\Database\Eloquent\Model;
 
 class Repository implements RepositoryInterface
@@ -105,7 +106,7 @@ class Repository implements RepositoryInterface
         return $this->model->find($id);
     }
 
-    private function search()
+    public function search()
     {
         if (request()->has('search'))
         {

@@ -4,6 +4,9 @@
  * User: EMartinez
  * Date: 27/02/2019
  * Time: 10:59 AM
+ * User: jfesquivel
+ * Date: 19/03/2019
+ * Time: 05:42 PM
  */
 
 namespace App\Http\Transformers\CADECO;
@@ -23,8 +26,8 @@ class MonedaTransformer extends TransformerAbstract
         return [
             'id' => (int)$model->getKey(),
             'nombre'=>(string)$model->nombre,
+            'tipo' => $model->tipo,
             'abreviatura'=>(string)$model->abreviatura,
         ];
     }
-
 }

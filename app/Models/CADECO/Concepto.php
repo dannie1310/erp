@@ -78,6 +78,11 @@ class Concepto extends Model
             ->where('Contabilidad.cuentas_conceptos.estatus', '=', 1);
     }
 
+    public function padre()
+    {
+        return $this->where('nivel', '=', $this->nivel_padre)->first()->descripcion;
+    }
+
     public function hijos()
     {
         return $this->hasMany(self::class, 'id_obra', 'id_obra')

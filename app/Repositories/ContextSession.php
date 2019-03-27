@@ -41,6 +41,10 @@ class ContextSession implements Context
             }
 
             if($obras->where('obras.id_obra', '=', $id_obra)->first()) {
+
+                session()->put('db', $database);
+                session()->put('id_obra', $id_obra);
+
                 return $this->auth->claims(['db' => $database, 'obra' => $id_obra])->refresh();
             } else {
                 abort('403', 'Forbidden');
@@ -57,7 +61,7 @@ class ContextSession implements Context
      */
     public function getIdObra()
     {
-        return $this->auth->payload()->get('obra') != null ? $this->auth->payload()->get('obra') : config()->get('app.id_obra');
+        return $this->auth->payload()->get('obra') != null ? $this->auth->payload()->get('obra') : (session()->get('id_obra') != null ? session()->get('id_obra') :  config()->get('app.id_obra'));
     }
 
     /**
@@ -67,7 +71,7 @@ class ContextSession implements Context
      */
     public function getDatabase()
     {
-        return $this->auth->payload()->get('db') != null ? $this->auth->payload()->get('db') : config()->get('database.connections.cadeco.database');
+        return $this->auth->payload()->get('db') != null ? $this->auth->payload()->get('db') : (session()->get('db') ? session()->get('db') : config()->get('database.connections.cadeco.database'));
     }
 
     /**

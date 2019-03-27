@@ -1,7 +1,9 @@
 //Middlewares
+import access from "./middleware/access";
 import auth from "./middleware/auth";
 import guest from "./middleware/guest";
 import context from "./middleware/context";
+import permission from "./middleware/permission";
 
 
 //Routes
@@ -14,6 +16,23 @@ export const routes = [
             title: 'Inicio',
             middleware: [auth, context],
             breadcrumb: {name: 'INICIO'}
+        }
+    },
+    {
+        path: '/configuracion',
+        name: 'configuracion',
+        components: {
+            default: require('./components/configuracion/Index.vue'),
+            menu: require('./components/configuracion/partials/Menu.vue')
+        },
+        meta: {
+            title: 'CONFIGURACIÓN',
+            middleware: [auth, context, permission],
+            breadcrumb: {
+                name: 'CONFIGURACIÓN',
+                parent: 'home'
+            },
+            permission: 'administracion_configuracion_obra'
         }
     },
     {
@@ -44,12 +63,12 @@ export const routes = [
         children: [
             {
                 path: '',
-                name: 'contabilidad',
+                name: 'sistema_contable',
                 component: require('./components/contabilidad/Index'),
                 meta: {
                     title: 'Contabilidad',
                     breadcrumb: { parent: 'home', name: 'CONTABILIDAD'},
-                    middleware: [auth, context]
+                    middleware: [auth, context, access]
                 }
             },
             {
@@ -58,8 +77,9 @@ export const routes = [
                 component: require('./components/contabilidad/cierre-periodo/Index'),
                 meta: {
                     title: 'Cierres de periodo',
-                    breadcrumb: {name: 'CIERRES DE PERIODO', parent: 'contabilidad'},
-                    middleware: [auth, context]
+                    breadcrumb: {name: 'CIERRES DE PERIODO', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cierre_periodo'
                 }
             },
             {
@@ -68,8 +88,9 @@ export const routes = [
                 component: require('./components/contabilidad/cuenta-almacen/Index'),
                 meta: {
                     title: 'Cuentas de Almacén',
-                    breadcrumb: {name: 'CUENTAS DE ALMACÉN', parent: 'contabilidad'},
-                    middleware: [auth, context]
+                    breadcrumb: {name: 'CUENTAS DE ALMACÉN', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cuenta_almacen'
                 }
             },
             {
@@ -78,8 +99,9 @@ export const routes = [
                 component: require('./components/contabilidad/cuenta-banco/Index'),
                 meta: {
                     title: 'Cuentas de Bancos',
-                    breadcrumb: {name: 'CUENTAS DE BANCOS', parent: 'contabilidad'},
-                    middleware: [auth, context]
+                    breadcrumb: {name: 'CUENTAS DE BANCOS', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cuenta_contable_bancaria'
                 }
             },
             {
@@ -88,8 +110,9 @@ export const routes = [
                 component: require('./components/contabilidad/cuenta-concepto/Index'),
                 meta: {
                     title: 'Cuentas de Conceptos',
-                    breadcrumb: {name: 'CUENTAS DE CONCEPTOS', parent: 'contabilidad'},
-                    middleware: [auth, context]
+                    breadcrumb: {name: 'CUENTAS DE CONCEPTOS', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cuenta_concepto'
                 }
             },
             {
@@ -98,8 +121,9 @@ export const routes = [
                 component: require('./components/contabilidad/cuenta-costo/Index'),
                 meta: {
                     title: 'Cuentas de Costos',
-                    breadcrumb: {name: 'CUENTAS DE COSTOS', parent: 'contabilidad'},
-                    middleware: [auth, context]
+                    breadcrumb: {name: 'CUENTAS DE COSTOS', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cuenta_costo'
                 }
             },
             {
@@ -108,8 +132,9 @@ export const routes = [
                 component: require('./components/contabilidad/cuenta-empresa/Index'),
                 meta: {
                     title: 'Cuentas de Empresas',
-                    breadcrumb: {name: 'CUENTAS DE EMPRESAS', parent: 'contabilidad'},
-                    middleware: [auth, context]
+                    breadcrumb: {name: 'CUENTAS DE EMPRESAS', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cuenta_empresa'
                 }
             },
             {
@@ -118,8 +143,9 @@ export const routes = [
                 component: require('./components/contabilidad/cuenta-fondo/Index'),
                 meta: {
                     title: 'Cuentas de Fondos',
-                    breadcrumb: {name: 'CUENTAS DE FONDOS', parent: 'contabilidad'},
-                    middleware: [auth, context]
+                    breadcrumb: {name: 'CUENTAS DE FONDOS', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cuenta_fondo'
                 }
             },
             {
@@ -128,8 +154,9 @@ export const routes = [
                 component: require('./components/contabilidad/cuenta-general/Index'),
                 meta: {
                     title: 'Cuentas Generales',
-                    breadcrumb: {name: 'CUENTAS GENERALES', parent: 'contabilidad'},
-                    middleware: [auth, context]
+                    breadcrumb: {name: 'CUENTAS GENERALES', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cuenta_general'
                 }
             },
             {
@@ -138,16 +165,25 @@ export const routes = [
                 component: require('./components/contabilidad/cuenta-material/Index'),
                 meta: {
                     title: 'Cuentas de Materiales',
-                    breadcrumb: {name: 'CUENTAS DE MATERIALES', parent: 'contabilidad'},
-                    middleware: [auth, context]
+                    breadcrumb: {name: 'CUENTAS DE MATERIALES', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_cuenta_material'
+                }
+            },
+            {
+                path: 'tipo-cuenta-contable',
+                name: 'tipo-cuenta-contable',
+                component: require('./components/contabilidad/tipo-cuenta-contable/Index'),
+                meta: {
+                    title: 'Tipos de Cuentas Contables',
+                    breadcrumb: {name: 'TIPOS DE CUENTAS CONTABLES', parent: 'sistema_contable'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_tipo_cuenta_contable'
                 }
             },
             {
                 path: 'poliza',
                 component: require('./components/contabilidad/poliza/Layout.vue'),
-                meta: {
-                    middleware: [auth, context]
-                },
                 children: [
                     {
                         path: '/',
@@ -155,8 +191,9 @@ export const routes = [
                         component: require('./components/contabilidad/poliza/Index'),
                         meta: {
                             title: 'Prepólizas Generadas',
-                            breadcrumb: {parent: 'contabilidad', name: 'PREPÓLIZAS GENERADAS'},
-                            middleware: [auth, context]
+                            breadcrumb: {parent: 'sistema_contable', name: 'PREPÓLIZAS GENERADAS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_prepolizas_generadas'
                         }
                     },
                     {
@@ -167,7 +204,8 @@ export const routes = [
                         meta: {
                             title: 'Ver Prepóliza Generada',
                             breadcrumb: {parent: 'poliza', name: 'VER'},
-                            middleware: [auth, context]
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_prepolizas_generadas'
                         }
                     },
                     {
@@ -178,11 +216,42 @@ export const routes = [
                         meta: {
                             title: 'Editar Prepóliza Generada',
                             breadcrumb: { parent: 'poliza-show', name: 'EDITAR'},
-                            middleware: [auth, context]
+                            middleware: [auth, context, permission],
+                            permission: 'editar_prepolizas_generadas'
                         }
                     }
                 ]
             }
+        ]
+    },
+    {
+        path: '/formatos',
+        components: {
+            default: require('./components/formato/partials/Layout.vue'),
+            menu: require('./components/formato/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'formatos',
+                component: require('./components/formato/Index'),
+                meta: {
+                    title: 'Formatos',
+                    breadcrumb: { parent: 'home', name: 'FORMATOS'},
+                    middleware: [auth, context, access],
+                }
+            },
+            {
+                path: 'orden-pago-estimacion',
+                name: 'orden-pago-estimacion',
+                component: require('./components/formato/orden-pago-estimacion/Index'),
+                meta: {
+                    title: 'Orden de Pago Estimación',
+                    breadcrumb: {name: 'ORDEN DE PAGO ESTIMACIÓN', parent: 'formatos'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_formato_estimacion'
+                }
+            },
         ]
     },
     {
@@ -199,15 +268,12 @@ export const routes = [
                 meta: {
                     title: 'Tesorería',
                     breadcrumb: { parent: 'home', name: 'TESORERIA'},
-                    middleware: [auth, context]
+                    middleware: [auth, context, access]
                 }
             },
             {
                 path: 'movimiento-bancario',
                 component: require('./components/tesoreria/movimiento-bancario/Layout.vue'),
-                meta: {
-                    middleware: [auth, context]
-                },
                 children: [
                     {
                         path: '/',
@@ -216,7 +282,8 @@ export const routes = [
                         meta: {
                             title: 'Movimientos Bancarios',
                             breadcrumb: {parent: 'tesoreria', name: 'MOVIMIENTOS BANCARIOS'},
-                            middleware: [auth, context]
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_movimiento_bancario'
                         }
                     }
                 ]

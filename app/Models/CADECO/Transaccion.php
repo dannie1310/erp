@@ -68,6 +68,10 @@ class Transaccion extends Model
             ->where('opciones', '=', $this->opciones);
     }
 
+    public function items(){
+        return $this->hasMany(Item::class, 'id_transaccion', 'id_transaccion');
+    }
+
     protected function validaTipoAntecedente(){
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
@@ -85,5 +89,4 @@ class Transaccion extends Model
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa')
             ;
     }
-
 }

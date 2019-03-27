@@ -21,3 +21,11 @@ Date.prototype.toDate = function() {
 function padValue(value) {
     return (value < 10) ? "0" + value : value;
 };
+
+Array.prototype.diff = function (a) {
+    return this.filter(function (i) {
+        return ! a.find(function (r) {
+            return r.id == i.id;
+        })
+    });
+};
