@@ -1,6 +1,5 @@
 <template>
     <div class="row">
-
         <div class="col-12 col-sm-6 col-md-3" v-for="(sistema, i) in sistemas">
             <div class="info-box">
                 <span :class="'info-box-icon '+sistema.color+' elevation-1'"><i :class="sistema.icon"></i></span>
@@ -16,22 +15,7 @@
 
             <!-- /.info-box -->
         </div>
-        <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box">
-                <span class="info-box-icon bg-success elevation-1"><i class="fa fa-drivers-license"></i></span>
-
-                <div class="info-box-content">
-                    <span class="info-box-number">CONTRATOS</span>
-                    <router-link :to="{name: 'contratos'}">
-                        <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
-                    </router-link>
-                </div>
-                <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-        </div>
     </div>
-
 </template>
 
 <script>

@@ -64,7 +64,11 @@ class ContextSession implements Context
         try {
             return $this->auth->payload()->get('obra');
         } catch (\Exception $e) {
-            return config()->get('app.id_obra');
+            try {
+                return session()->get('id_obra');
+            } catch (\Exception $e) {
+                return config()->get('app.id_obra');
+            }
         }
     }
 
@@ -78,7 +82,11 @@ class ContextSession implements Context
         try {
             return $this->auth->payload()->get('db');
         } catch (\Exception $e) {
-            return config()->get('database.connections.cadeco.database');
+            try {
+                return session()->get('db');
+            } catch (\Exception $e) {
+                return config()->get('database.connections.cadeco.database');
+            }
         }
     }
 
