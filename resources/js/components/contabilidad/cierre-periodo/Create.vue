@@ -58,14 +58,17 @@
                 anio: '',
                 mes: '',
                 cargando: false,
-                date: new Date()
+                date: ''
             }
         },
         methods: {
             init() {
                 $(this.$refs.modal).modal('show');
-                this.mes = '';
-                this.anio = '';
+                this.date = new Date();
+                this.anio = new Date (this.date).getFullYear();
+                this.mes = new Date (this.date).getMonth() + 1;
+                this.cargando = false;
+
 
                 this.$validator.reset()
             },
@@ -83,7 +86,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                            this.store()
                     }
                 });
             },
