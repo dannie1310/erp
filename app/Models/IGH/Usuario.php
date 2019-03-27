@@ -114,7 +114,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     /**
      * Check if user has a permission by its name.
      *
-     * @param string|array $permission Permission string or array of permissions.
+     * @param string/array $permission Permission string or array of permissions.
      * @param bool $requireAll All permissions in the array are required.
      *
      * @return bool
@@ -157,7 +157,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
                 return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
                     ->withPivot('id_obra', 'id_proyecto')
                     ->where('id_obra', $obra->getKey())
-                    ->where('id_proyecto', Proyecto::query()->withoutGlobalScopes()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+                    ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
             } else if ($obra->configuracion->esquema_permisos == 2) {
                 // Esquema Personalizado
                 return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
@@ -166,7 +166,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
             // Esquema Global
             return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
                 ->where('id_obra', $obra->getKey())
-                ->where('id_proyecto', Proyecto::query()->withoutGlobalScopes()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+                ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
         }
     }
 
@@ -183,11 +183,11 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function permisos()
     {
-        $permisos = new Collection();
+        $permisos = [];
         foreach ($this->roles as $rol) {
             // Validate against the Permission table
             foreach ($rol->permisos as $perm) {
-                $permisos->push($perm);
+                array_push($permisos, $perm->name);
             }
         }
 
