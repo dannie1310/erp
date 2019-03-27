@@ -48,4 +48,14 @@ class RolService
 
         return true;
     }
+
+    public function porUsuario($data, $user_id)
+    {
+        $usuario = Usuario::query()->find($user_id);
+        $proyecto = Proyecto::query()->withoutGlobalScopes()->where('base_datos', '=', $data['base_datos'])->first();
+        return $usuario->rolesGlobales()
+            ->wherePivot('id_proyecto', '=', $proyecto->getKey())
+            ->wherePivot('id_obra', '=', $data['id_obra'])
+            ->get();
+    }
 }

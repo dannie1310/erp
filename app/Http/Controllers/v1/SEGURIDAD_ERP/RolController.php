@@ -51,4 +51,10 @@ class RolController extends Controller
         $response = $this->service->asignacionMasiva($request->all());
         return response()->json($response, 200);
     }
+
+    public function porUsuario(Request $request, $user_id)
+    {
+        $roles = $this->service->porUsuario($request->all(), $user_id);
+        return $this->respondWithCollection($roles);
+    }
 }
