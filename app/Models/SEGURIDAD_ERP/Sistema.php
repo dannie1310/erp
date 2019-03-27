@@ -33,7 +33,7 @@ class Sistema extends Model
 
     public function scopePorUsuario($query)
     {
-        $permisos = Arr::pluck(auth()->user()->permisos(), 'name');
+        $permisos = auth()->user()->permisos();
 
         return $query
             ->whereHas('permisos', function($q) use ($permisos) {
@@ -42,6 +42,5 @@ class Sistema extends Model
             ->whereHas('proyectos', function ($q) {
                 return $q->where('base_datos', '=', Context::getDatabase());
             });
-
     }
 }
