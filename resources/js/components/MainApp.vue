@@ -48,6 +48,14 @@
                         {{sistema.name}}
                     </router-link>
                 </div>
+                <div class="d-block">
+                    <router-link :to="{name: 'contratos'}" class="d-flex flex-wrap mb-3">
+                        <div class="bg-success elevation-2 text-center" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
+                            <i class="fa fa-drivers-license"></i>
+                        </div>
+                        Contratos
+                    </router-link>
+                </div>
             </div>
         </aside>
         <!-- /.control-sidebar -->

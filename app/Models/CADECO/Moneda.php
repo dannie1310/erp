@@ -1,9 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: jfesquivel
- * Date: 3/19/19
- * Time: 5:39 PM
+ * User: EMartinez
+ * Date: 27/02/2019
+ * Time: 11:03 AM
  */
 
 namespace App\Models\CADECO;
@@ -18,4 +18,8 @@ class Moneda extends Model
     protected $primaryKey = 'id_moneda';
 
     public $timestamps = false;
+    public $searchable = [
+        'nombre',
+        'abreviatura',
+    ];
 }

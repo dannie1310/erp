@@ -40,6 +40,11 @@ import ordenPagoEstimacion from './modules/formato/orden-pago-estimacion';
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 
+//CONTRATOS
+import fondoGarantia from './modules/contratos/fondo-garantia';
+import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
+import subcontrato from './modules/contratos/subcontrato';
+
 //SEGURIDAD
 import rol from './modules/seguridad/rol';
 import sistema from './modules/seguridad/sistema';
@@ -88,6 +93,10 @@ export default new Vuex.Store({
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
+
+        'contratos/fondo-garantia': fondoGarantia,
+        'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
+        'contratos/subcontrato': subcontrato,
 
         'seguridad/rol': rol,
         'seguridad/sistema': sistema,
