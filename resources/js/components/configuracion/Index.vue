@@ -3,7 +3,7 @@
         <div class="col-lg-10 offset-lg-1" v-if="obra">
             <configuracion-obra :obra="obra"></configuracion-obra>
             <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>
-            <configuracion-seguridad></configuracion-seguridad>
+            <configuracion-seguridad v-if="obra.configuracion.esquema_permisos == 1"></configuracion-seguridad>
         </div>
     </div>
 </template>
