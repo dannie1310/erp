@@ -228,6 +228,15 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EstimacionController@pdf')->where(['id' => '[0-9]+']);
         });
     });
+    /**
+     * PERSONALIZADO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'personalizado'], function($api){
+        //ESQUEMA PERSONALIZADO
+        $api->group(['prefix' => 'rol-personalizado'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@index');
+        });
+    });
 
     /**
      * TESORERIA

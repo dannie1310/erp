@@ -9,7 +9,6 @@
 namespace App\Services\CADECO\Seguridad;
 
 use App\Models\IGH\Usuario;
-use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Repositories\Repository;
 
@@ -32,6 +31,10 @@ class RolService
         return $this->repository->all($data);
     }
 
+    /**
+     * @param $data
+     * @return bool
+     */
     public function asignacionPersonalizada($data)
     {
         $user = Usuario::query()->find($data['user_id']);
@@ -51,7 +54,7 @@ class RolService
     public function porUsuario($data, $user_id)
     {
         $usuario = Usuario::query()->find($user_id);
-        return $usuario->rolesGlobales()
+        return $usuario->rolesPersonalizados()
             ->wherePivot('id_obra', '=', $data['id_obra'])
             ->get();
     }
