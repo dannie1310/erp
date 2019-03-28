@@ -32,6 +32,7 @@ class Repository implements RepositoryInterface
     {
         $this->search();
         $this->scope();
+        $this->sort();
         $this->limit();
 
         return $this->model->get();
@@ -41,10 +42,8 @@ class Repository implements RepositoryInterface
     {
         $this->search();
         $this->scope();
+        $this->sort();
         $query = $this->model;
-        if (request('sort')) {
-            $query = $query->orderBy(request('sort'), request('order'));
-        }
 
         if (request('limit') && request('offset') != '') {
             return $query->paginate(request('limit'), ['*'], 'page', (request('offset') / request('limit')) + 1);
@@ -131,6 +130,13 @@ class Repository implements RepositoryInterface
     {
         if (request()->has('limit')) {
             $this->model = $this->model->limit(request('limit'));
+        }
+    }
+
+    public function sort()
+    {
+        if (request('sort')) {
+            $this->model = $this->model->orderBy(request('sort'), request('order'));
         }
     }
 }
