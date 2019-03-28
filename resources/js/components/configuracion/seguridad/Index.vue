@@ -9,7 +9,3 @@
         components: {AsignacionRolesMasiva}
     }
 </script>
-
-<style scoped>
-
-</style>
