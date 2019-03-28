@@ -279,7 +279,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

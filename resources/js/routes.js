@@ -27,7 +27,7 @@ export const routes = [
         },
         meta: {
             title: 'CONFIGURACIÓN',
-            middleware: [auth, context, permission],
+            middleware: [auth, context, access],
             breadcrumb: {
                 name: 'CONFIGURACIÓN',
                 parent: 'home'
