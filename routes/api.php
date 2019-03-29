@@ -75,11 +75,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
         });
 
-        // SUBCONTRATO
-        $api->group(['prefix' => 'subcontrato'], function ($api) {
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SubcontratoController@show')->where(['id' => '[0-9]+']);
-        });
-
         // MONEDA
         $api->group(['prefix' => 'moneda'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MonedaController@index');
@@ -260,7 +255,7 @@ $api->version('v1', function ($api) {
      * CONTRATOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
-        $api->group(['prefix' => 'subcontratos'], function ($api) {
+        $api->group(['prefix' => 'subcontrato'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
         });

@@ -10,7 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Subcontratos\SubcontratoTransformer;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use App\Services\CADECO\Contratos\SubcontratoService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;

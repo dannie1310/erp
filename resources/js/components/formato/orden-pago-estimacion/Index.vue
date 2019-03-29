@@ -160,7 +160,6 @@
                         this.cargando = false;
                     })
             },
-
             getEstimaciones(){
                 this.id_estimacion= '';
                 this.estimaciones= [];

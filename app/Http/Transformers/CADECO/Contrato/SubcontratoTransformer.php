@@ -6,10 +6,11 @@
  * Time: 11:07 AM
  */
 
-namespace App\Http\Transformers\CADECO\Subcontratos;
+namespace App\Http\Transformers\CADECO\Contrato;
 
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\EstimacionTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Models\CADECO\Subcontrato;
 use League\Fractal\TransformerAbstract;
@@ -23,7 +24,8 @@ class SubcontratoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'empresa',
-        'moneda'
+        'moneda',
+        'estimaciones'
     ];
 
     /**
@@ -32,7 +34,7 @@ class SubcontratoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        /*'empresa'*/
+
     ];
 
     /**
@@ -80,6 +82,19 @@ class SubcontratoTransformer extends TransformerAbstract
     public function includeMoneda(Subcontrato $model) {
         if ($moneda = $model->moneda) {
             return $this->item($moneda, new MonedaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Estimaciones
+     * @param Subcontrato $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeEstimaciones(Subcontrato $model)
+    {
+        if($estimaciones = $model->estimaciones){
+            return $this->collection($estimaciones, new EstimacionTransformer);
         }
         return null;
     }
