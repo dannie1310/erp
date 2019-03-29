@@ -1,9 +1,9 @@
 <template>
-    <span></span>
+    <span>Estimación</span>
 </template>
 
 <script>
     export default {
-        name: "contabilidad-index",
+        name: "contratos-index",
     }
 </script>

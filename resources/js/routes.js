@@ -225,36 +225,6 @@ export const routes = [
         ]
     },
     {
-        path: '/formatos',
-        components: {
-            default: require('./components/formato/partials/Layout.vue'),
-            menu: require('./components/formato/partials/Menu.vue')
-        },
-        children: [
-            {
-                path: '',
-                name: 'formatos',
-                component: require('./components/formato/Index'),
-                meta: {
-                    title: 'Formatos',
-                    breadcrumb: { parent: 'home', name: 'FORMATOS'},
-                    middleware: [auth, context, access],
-                }
-            },
-            {
-                path: 'orden-pago-estimacion',
-                name: 'orden-pago-estimacion',
-                component: require('./components/formato/orden-pago-estimacion/Index'),
-                meta: {
-                    title: 'Orden de Pago Estimación',
-                    breadcrumb: {name: 'ORDEN DE PAGO ESTIMACIÓN', parent: 'formatos'},
-                    middleware: [auth, context, permission],
-                    permission: 'consultar_formato_estimacion'
-                }
-            },
-        ]
-    },
-    {
         path: '/tesoreria',
         components: {
             default: require('./components/tesoreria/partials/Layout.vue'),

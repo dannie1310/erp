@@ -30,8 +30,8 @@
             },
 
             pdf(){
-               var url = '/api/formato/orden-pago-estimacion/' + this.id +'?token='+this.$session.get('jwt');
-                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Orden de Pago Estimación</iframe>');
+               var url = '/api/contratos/estimacion/' + this.id +'/formato-orden-pago?token='+this.$session.get('jwt');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Orden de Pago Estimación</iframe>');
                 $(this.$refs.modal).modal('show');
             }
         }

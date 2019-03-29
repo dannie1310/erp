@@ -32,17 +32,15 @@ import tipoCuentaEmpresa from './modules/contabilidad/tipo-cuenta-empresa';
 import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 
-//FORMATO
-import ordenPagoEstimacion from './modules/formato/orden-pago-estimacion';
+//CONTRATOS
+import estimacion from './modules/contratos/estimacion';
+import fondoGarantia from './modules/contratos/fondo-garantia';
+import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
+import subcontrato from './modules/contratos/subcontrato';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
-
-//CONTRATOS
-import fondoGarantia from './modules/contratos/fondo-garantia';
-import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
-import subcontrato from './modules/contratos/subcontrato';
 
 //SEGURIDAD
 import rol from './modules/seguridad/rol';
@@ -66,6 +64,11 @@ export default new Vuex.Store({
         'cadeco/fondo': fondo,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
+
+        'contratos/fondo-garantia': fondoGarantia,
+        'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
+        'contratos/subcontrato': subcontrato,
+
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
@@ -78,23 +81,16 @@ export default new Vuex.Store({
         'contabilidad/datos-contables' : datosContables,
         'contabilidad/estatus-prepoliza': estatusPrepoliza,
         'contabilidad/naturaleza-poliza' : naturalezaPoliza,
-
         'contabilidad/poliza': poliza,
         'contabilidad/tipo-cuenta-contable': tipoCuentaContable,
         'contabilidad/tipo-cuenta-empresa': tipoCuentaEmpresa,
         'contabilidad/tipo-cuenta-material': tipoCuentaMaterial,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
 
-        'formato/orden-pago-estimacion': ordenPagoEstimacion,
-
         'igh/usuario': usuario,
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
-
-        'contratos/fondo-garantia': fondoGarantia,
-        'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
-        'contratos/subcontrato': subcontrato,
 
         'seguridad/rol': rol,
         'seguridad/sistema': sistema,

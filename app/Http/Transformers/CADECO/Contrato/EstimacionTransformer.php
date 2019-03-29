@@ -6,7 +6,7 @@
  * Time: 03:22 PM
  */
 
-namespace App\Http\Transformers\CADECO;
+namespace App\Http\Transformers\CADECO\Contrato;
 
 
 use App\Models\CADECO\Estimacion;
