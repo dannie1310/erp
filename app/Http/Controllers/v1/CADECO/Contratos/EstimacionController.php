@@ -50,9 +50,9 @@ class EstimacionController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function pdf($id)
+    public function pdfOrdenPago($id)
     {
-        return $this->service->pdf($id)->create();
+        return $this->service->pdfOrdenPago($id)->create();
     }
 
 }

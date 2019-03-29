@@ -235,7 +235,7 @@ $api->version('v1', function ($api) {
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION
              */
-                $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdf')->where(['id' => '[0-9]+']);
+                $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
 
