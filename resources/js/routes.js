@@ -277,7 +277,41 @@ export const routes = [
                     breadcrumb: { parent: 'home', name: 'CONTRATOS'},
                     middleware: [auth, context, access]
                 }
-            }
+            },
+            {
+                path: 'estimacion',
+                component: require('./components/contratos/estimacion/Layout.vue'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'estimacion',
+                        component: require('./components/contratos/estimacion/Index'),
+                        meta: {
+                            title: 'Estimaciones',
+                            breadcrumb: {
+                                parent: 'contratos',
+                                name: 'ESTIMACIONES'
+                            },
+                            middleware: [auth, context, permission]
+                        }
+                    },
+                    {
+                        path: 'formato-orden-pago',
+                        name: 'Formato',
+                        props: true,
+                        component: require('./components/contratos/estimacion/formato-orden-pago/Index'),
+                        meta:{
+                            title: '',
+                            breadcrumb: {
+                                parent: 'estimacion',
+                                name: 'FORMATO'
+                            },
+                            middleware: [auth, context, permission]
+                        }
+
+                    }
+                ]
+            },
         ]
     },
 

@@ -26,7 +26,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item" >
-                        <router-link :to="{name: 'estimacion'}" class="nav-link" :class="{active: this.$route.name == 'formato-orden-pago'}">
+                        <router-link :to="{name: 'estimacion\formato-orden-pago'}" class="nav-link" :class="{active: this.$route.name == 'estimacion\formato-orden-pago'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Orden de Pago Estimación</p>
                         </router-link>
