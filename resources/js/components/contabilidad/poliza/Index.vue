@@ -53,6 +53,7 @@
                     { title: 'Monto', field: 'total'},
                     { title: 'Cuadre', field: 'cuadre'},
                     { title: 'Estado', field: 'estatus', sortable: true, tdComp: require('./partials/EstatusLabel')},
+                    { title: 'Poliza ContPaq', field: 'poliza_contpaq' },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -134,6 +135,7 @@
                         total: '$' + parseFloat(poliza.total).formatMoney(2, '.', ','),
                         cuadre: '$' + parseFloat(poliza.cuadre).formatMoney(2, '.', ','),
                         estatus: poliza.estatusPrepoliza,
+                        poliza_contpaq: poliza.poliza_contpaq ? '# ' + poliza.poliza_contpaq : '',
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_prepolizas_generadas') ? true : undefined,
                             show: true,
