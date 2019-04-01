@@ -31,6 +31,7 @@ import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
 import tipoCuentaEmpresa from './modules/contabilidad/tipo-cuenta-empresa';
 import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
+import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 
 //FORMATO
 import ordenPagoEstimacion from './modules/formato/orden-pago-estimacion';
@@ -84,6 +85,7 @@ export default new Vuex.Store({
         'contabilidad/tipo-cuenta-empresa': tipoCuentaEmpresa,
         'contabilidad/tipo-cuenta-material': tipoCuentaMaterial,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
+        'contabilidad/transaccion-interfaz': transaccionInterfaz,
 
         'formato/orden-pago-estimacion': ordenPagoEstimacion,
 
