@@ -14,9 +14,9 @@
                             </select>
                         </div>
                         <div class="col">
-                            <select class="form-control" v-model="id_tipo_poliza_contpaq">
+                            <select class="form-control" v-model="id_tipo_poliza_interfaz">
                                 <option value>-- Tipo de Póliza --</option>
-                                <option v-for="item in tiposPolizaContaq" v-bind:value="item.id">{{ item.descripcion }}</option>
+                                <option v-for="item in transaccionesInterfaz" v-bind:value="item.id">{{ item.descripcion }}</option>
                             </select>
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                 query: {
                 },
                 daterange: null,
-                id_tipo_poliza_contpaq: '',
+                id_tipo_poliza_interfaz: '',
                 id_estatus: '',
                 cargando: false
             }
@@ -74,7 +74,7 @@
                     this.$Progress.finish();
                 })
             this.getEstatus()
-            this.getTiposPolizaContaq()
+            this.getPolizasInterfaz()
 
             this.id_estatus = this.$router.currentRoute.query.estatus ? this.$router.currentRoute.query.estatus : '';
         },
@@ -97,10 +97,10 @@
                         this.$store.commit('contabilidad/estatus-prepoliza/SET_ESTATUS', data.data);
                     })
             },
-            getTiposPolizaContaq() {
-                return this.$store.dispatch('contabilidad/tipo-poliza-contpaq/index')
+            getPolizasInterfaz() {
+                return this.$store.dispatch('contabilidad/transaccion-interfaz/index')
                     .then(data => {
-                        this.$store.commit('contabilidad/tipo-poliza-contpaq/SET_TIPOS', data.data);
+                        this.$store.commit('contabilidad/transaccion-interfaz/SET_TRANSACCIONES', data.data);
                     })
             }
         },
@@ -114,8 +114,8 @@
             estatus() {
                 return this.$store.getters['contabilidad/estatus-prepoliza/estatus']
             },
-            tiposPolizaContaq() {
-                return this.$store.getters['contabilidad/tipo-poliza-contpaq/tipos']
+            transaccionesInterfaz() {
+                return this.$store.getters['contabilidad/transaccion-interfaz/transacciones']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -175,8 +175,8 @@
                 },
                 deep: true
             },
-            id_tipo_poliza_contpaq(id_tipo) {
-                this.$data.query.id_tipo_poliza_contpaq = id_tipo;
+            id_tipo_poliza_interfaz(id_tipo) {
+                this.$data.query.id_tipo_poliza_interfaz = id_tipo;
                 this.query.offset = 0;
                 this.paginate(this.$data.query)
             },
