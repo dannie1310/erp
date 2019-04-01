@@ -274,7 +274,7 @@ export const routes = [
                 meta: {
                     title: 'Contratos',
                     breadcrumb: {parent:'home', name: 'CONTRATOS'},
-                    middleware: [auth, context]
+                    middleware: [auth, context, access]
                 }
              },
             {
@@ -293,19 +293,6 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'estimacion',
-                        name: 'estimacion',
-                        component: require('./components/contratos/estimacion/Index'),
-                        meta: {
-                            title: 'Estimación',
-                            breadcrumb: {
-                                parent: 'estimacion',
-                                name: 'ESTIMACION'
-                            },
-                            middleware: [auth, context]
-                        }
-                    },
-                    {
                         path: 'formato-orden-pago',
                         name: 'formato-orden-pago',
                         component: require('./components/contratos/estimacion/formato-orden-pago/Index'),
@@ -315,11 +302,12 @@ export const routes = [
                                 parent: 'estimacion',
                                 name: 'FORMATO'
                             },
-                            middleware: [auth, context]
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_formato_orden_pago_estimacion'
                         }
                     },
                 ]
-            }
+            },
         ]
     },
 
