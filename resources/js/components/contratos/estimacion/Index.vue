@@ -1,5 +1,5 @@
 <template>
-    <span>Estimación</span>
+    <span></span>
 </template>
 
 <script>

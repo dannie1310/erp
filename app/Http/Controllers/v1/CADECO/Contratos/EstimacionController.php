@@ -10,7 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\EstimacionTransformer;
+use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
 use App\Services\CADECO\EstimacionService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;

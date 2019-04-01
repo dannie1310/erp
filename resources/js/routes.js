@@ -260,7 +260,6 @@ export const routes = [
             }
         ]
     },
-
     {
         path: '/contratos',
         components: {
@@ -268,50 +267,59 @@ export const routes = [
             menu: require('./components/contratos/partials/Menu.vue')
         },
         children: [
-            {
+             {
                 path: '',
                 name: 'contratos',
                 component: require('./components/contratos/Index'),
                 meta: {
                     title: 'Contratos',
-                    breadcrumb: { parent: 'home', name: 'CONTRATOS'},
-                    middleware: [auth, context, access]
+                    breadcrumb: {parent:'home', name: 'CONTRATOS'},
+                    middleware: [auth, context]
                 }
-            },
+             },
             {
                 path: 'estimacion',
-                component: require('./components/contratos/estimacion/Layout.vue'),
+                component: require('./components/contratos/estimacion/Layout'),
                 children: [
                     {
                         path: '/',
                         name: 'estimacion',
                         component: require('./components/contratos/estimacion/Index'),
                         meta: {
-                            title: 'Estimaciones',
+                            title: 'Estimacion',
+                            breadcrumb: {parent: 'contratos', name: 'ESTIMACION'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'estimacion',
+                        name: 'estimacion',
+                        component: require('./components/contratos/estimacion/Index'),
+                        meta: {
+                            title: 'Estimación',
                             breadcrumb: {
-                                parent: 'contratos',
-                                name: 'ESTIMACIONES'
+                                parent: 'estimacion',
+                                name: 'ESTIMACION'
                             },
-                            middleware: [auth, context, permission]
+                            middleware: [auth, context]
                         }
                     },
                     {
                         path: 'formato-orden-pago',
-                        name: 'Formato',
-                        props: true,
+                        name: 'formato-orden-pago',
                         component: require('./components/contratos/estimacion/formato-orden-pago/Index'),
-                        meta:{
-                            title: '',
+                        meta: {
+                            title: 'Formato Orden Pago Estimación',
                             breadcrumb: {
                                 parent: 'estimacion',
                                 name: 'FORMATO'
                             },
-                            middleware: [auth, context, permission]
+                            middleware: [auth, context]
                         }
-
-                    }
+                    },
                 ]
-            },
+            }
         ]
     },
 
