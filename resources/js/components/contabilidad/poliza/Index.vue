@@ -98,7 +98,13 @@
                     })
             },
             getPolizasInterfaz() {
-                return this.$store.dispatch('contabilidad/transaccion-interfaz/index')
+                return this.$store.dispatch('contabilidad/transaccion-interfaz/index', {
+                    config: {
+                        params: {
+                            scope: 'usadas'
+                        }
+                    }
+                })
                     .then(data => {
                         this.$store.commit('contabilidad/transaccion-interfaz/SET_TRANSACCIONES', data.data);
                     })
