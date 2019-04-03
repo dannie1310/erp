@@ -59,7 +59,7 @@
                     <div class="row">
                         <div class="col-sm-5">
                             <div class="form-group">
-                                <label for="from">ROLES ASIGNADOS</label>
+                                <label for="from">{{ form.tipo_asignacion == 1 ? 'ROLES A DESASIGNAR' : 'ROLES ASIGNADOS' }}</label>
                                 <select multiple id="from" size="10" class="form-control" v-model="form.role_id">
                                     <option v-for="rol in roles_asignados" :value="rol.id">{{ rol.display_name }}</option>
                                 </select>
@@ -75,7 +75,7 @@
 
                         <div class="col-sm-5">
                             <div class="form-group">
-                                <label for="to">ROLES NO ASIGNADOS</label>
+                                <label for="to">{{ form.tipo_asignacion == 1 ? 'ROLES DISPONIBLES' : 'ROLES NO ASIGNADOS' }} </label>
                                 <select multiple id="to" size="10" class="form-control" v-model="selected">
                                     <option v-for="rol in roles_disponibles" :value="rol.id">{{ rol.display_name }}</option>
                                 </select>
@@ -85,7 +85,7 @@
                 </div>
             </div>
             <div>
-                <button class="btn btn-outline-success pull-right" :disabled="!roles_asignados.length" @click="validate"><i class="fa fa-save"></i> Guardar </button>
+                <button class="btn btn-outline-success pull-right" :disabled="!roles_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
             </div>
         </div>
     </div>
@@ -320,9 +320,13 @@
             },
 
             roles_desasignados() {
-                return this.roles_disponibles.filter(rol => {
-                    return $.inArray(rol.id, this.roles_originales) > -1;
-                })
+                if (this.form.tipo_asignacion == 1) {
+                    return this.roles_asignados;
+                } else {
+                    return this.roles_disponibles.filter(rol => {
+                        return $.inArray(rol.id, this.roles_originales) > -1;
+                    })
+                }
             },
 
             obras_seleccionadas() {
