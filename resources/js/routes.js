@@ -294,12 +294,12 @@ export const routes = [
             {
                 path: 'orden-pago-estimacion',
                 name: 'orden-pago-estimacion',
-                component: require('./components/formato/orden-pago-estimacion/Index'),
+                component: require('./components/contratos/estimacion/formato-orden-pago/Index'),
                 meta: {
                     title: 'Orden de Pago Estimación',
                     breadcrumb: {name: 'ORDEN DE PAGO ESTIMACIÓN', parent: 'formatos'},
                     middleware: [auth, context, permission],
-                    permission: 'consultar_formato_estimacion'
+                    permission: 'consultar_formato_orden_pago_estimacion'
                 }
             },
         ]
