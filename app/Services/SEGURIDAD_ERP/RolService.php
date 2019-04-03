@@ -49,6 +49,29 @@ class RolService
         return true;
     }
 
+    public function desasignacionMasiva($data)
+    {
+        $user = Usuario::query()->find($data['user_id']);
+
+        foreach ($data['id_proyecto'] as $datum) {
+            $database = explode('-', $datum)[0];
+            $proyecto = Proyecto::query()->withoutGlobalScopes()->where('base_datos', '=', $database)->first();
+            $id_obra =explode('-', $datum)[1];
+
+            foreach ($data['role_id'] as $role_id) {
+                try {
+                    $user->roles()
+                        ->wherePivot('role_id', '=', $role_id)
+                        ->wherePivot('id_obra', '=', $id_obra)
+                        ->wherePivot('id_proyecto', '=', $proyecto->getKey())
+                        ->detach();
+                } catch (\Exception $e) {}
+            }
+        }
+
+        return true;
+    }
+
     public function porUsuario($data, $user_id)
     {
         $usuario = Usuario::query()->find($user_id);
