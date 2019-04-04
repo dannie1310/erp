@@ -10,7 +10,7 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Estimacion;
-use App\PDF\Formato\OrdenPagoEstimacion;
+use App\PDF\OrdenPagoEstimacion;
 use App\Repositories\Repository;
 
 class EstimacionService
