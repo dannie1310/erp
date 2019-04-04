@@ -1,4 +1,4 @@
-const URI = '/api/contratos/subcontratos/';
+const URI = '/api/contratos/subcontrato/';
 
 export default {
     namespaced: true,
@@ -50,6 +50,9 @@ export default {
     getters: {
         subcontratos(state) {
             return state.subcontratos
+        },
+        currentSubcontrato(state) {
+            return state.currentSubcontrato
         }
     }
 }

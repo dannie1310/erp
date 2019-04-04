@@ -1,4 +1,4 @@
-const URI = '/api/formato/orden-pago-estimacion/';
+const URI = '/api/contratos/estimacion/';
 
 export default {
     namespaced: true,
@@ -13,19 +13,11 @@ export default {
     },
 
     actions: {
-        index(context, payload) {
-            axios.get(URI, {params: payload})
-                .then(r => r.data)
-                .then((data) => {
-                    context.commit('SET_ESTIMACIONES', data.data)
-                })
-        },
         pdf(context, payload) {
-            axios.get(URI + payload, {params: payload.params})
+            axios.get(URI + payload+'/formato-orden-pago', {params: payload.params})
                 .then((data) => {
 
                 });
-
         },
     },
     getters: {

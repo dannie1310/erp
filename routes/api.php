@@ -75,11 +75,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
         });
 
-        // SUBCONTRATO
-        $api->group(['prefix' => 'subcontrato'], function ($api) {
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SubcontratoController@show')->where(['id' => '[0-9]+']);
-        });
-
         // MONEDA
         $api->group(['prefix' => 'moneda'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MonedaController@index');
@@ -90,6 +85,15 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@show');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
         });
+    });
+
+    /**
+     * CHARTS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'chart'], function ($api) {
+        $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
+        $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
+        $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
     });
 
     /**
@@ -225,47 +229,25 @@ $api->version('v1', function ($api) {
     });
 
     /**
-     * FORMATO
-     */
-    $api->group(['middleware' => 'api', 'prefix' => 'formato'], function ($api) {
-        //ORDEN DE PAGO ESTIMACION
-        $api->group(['prefix' => 'orden-pago-estimacion'], function ($api) {
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EstimacionController@pdf')->where(['id' => '[0-9]+']);
-        });
-    });
-
-    /**
-     * TESORERIA
-     */
-    $api->group(['middleware' => 'api', 'prefix' => 'tesoreria'], function ($api) {
-        //MOVIMIENTOS BANCARIOS
-        $api->group(['prefix' => 'movimiento-bancario'], function ($api) {
-            $api->post('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@store');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@paginate');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@show')->where(['id' => '[0-9]+']);
-            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@update')->where(['id' => '[0-9]+']);
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@destroy')->where(['id' => '[0-9]+']);
-        });
-
-        //TIPOS MOVIMIENTO
-        $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\TipoMovimientoController@index');
-        });
-    });
-
-    /**
-     * CHARTS
-     */
-    $api->group(['middleware' => 'api', 'prefix' => 'chart'], function ($api) {
-        $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
-        $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
-        $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
-    });
-    /**
      * CONTRATOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
-        $api->group(['prefix' => 'subcontratos'], function ($api) {
+
+        /**
+         * ESTIMACIÓN
+         */
+        $api->group(['prefix' => 'estimacion'], function ($api) {
+            /**
+             * FORMATO ORDEN DE PAGO DE ESTIMACION
+             */
+                $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
+        });
+
+
+        /**
+         * SUBCONTRATO
+         */
+        $api->group(['prefix' => 'subcontrato'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
         });
@@ -287,8 +269,28 @@ $api->version('v1', function ($api) {
                 $api->patch('{id}/revertir-autorizacion', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@revertirAutorizacion')->where(['id' => '[0-9]+']);
             });
         });
-
     });
+
+      /**
+     * TESORERIA
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'tesoreria'], function ($api) {
+        //MOVIMIENTOS BANCARIOS
+        $api->group(['prefix' => 'movimiento-bancario'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        //TIPOS MOVIMIENTO
+        $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\TipoMovimientoController@index');
+        });
+    });
+
+
     /** SEGURIDAD ERP */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
         $api->group(['prefix' => 'permiso'], function ($api) {

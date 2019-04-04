@@ -6,6 +6,54 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
             <li class="nav-item">
+                <a href="#" class="nav-link" >
+                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>
+                            Asignación de Contratistas
+
+                        </p>
+                    </router-link>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-signal"></i>
+                    <p>
+                       Estimaciones
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'estimacion'}" class="nav-link" :class="{active: this.$route.name == 'estimacion'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Estimación</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item"  v-if="$root.can('consultar_formato_orden_pago_estimacion')">
+                        <router-link :to="{name: 'formato-orden-pago'}" class="nav-link" :class="{active: this.$route.name == 'formato-orden-pago'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Orden de Pago Estimación</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item" v-if="$root.can('consultar_fondo_garantia')">
+                <a href="#" class="nav-link" >
+                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'fondo-garantia'}">
+                        <i class="nav-icon fa fa-money"></i>
+                        <p>
+                            Fondos de Garantía
+                        </p>
+                    </router-link>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a href="#" class="nav-link">
                     <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
                         <i class="nav-icon fa fa-sitemap"></i>
@@ -17,6 +65,7 @@
                 </a>
 
             </li>
+
             <li class="nav-item">
                 <a href="#" class="nav-link" >
                     <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
@@ -29,18 +78,7 @@
                 </a>
 
             </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" >
-                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
-                        <i class="nav-icon fa fa-users"></i>
-                        <p>
-                            Asignación de Contratistas
 
-                        </p>
-                    </router-link>
-                </a>
-
-            </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
                     <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
@@ -52,28 +90,6 @@
                     </router-link>
                 </a>
 
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" >
-                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
-                    <i class="nav-icon fa fa-signal"></i>
-                    <p>
-                        Estimaciones
-
-                    </p>
-                    </router-link>
-                </a>
-
-            </li>
-            <li class="nav-item" v-if="$root.can('consultar_fondo_garantia')">
-                <a href="#" class="nav-link" >
-                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'fondo-garantia'}">
-                    <i class="nav-icon fa fa-money"></i>
-                    <p>
-                        Fondos de Garantía
-                    </p>
-                    </router-link>
-                </a>
             </li>
         </ul>
     </nav>

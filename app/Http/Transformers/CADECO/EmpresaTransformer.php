@@ -6,6 +6,7 @@ namespace App\Http\Transformers\CADECO;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaEmpresaTransformer;
 use App\Models\CADECO\Empresa;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 
 class EmpresaTransformer extends TransformerAbstract
 {

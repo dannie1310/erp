@@ -6,7 +6,7 @@
  * Time: 02:59 PM
  */
 
-namespace App\PDF\Formato;
+namespace App\PDF;
 
 
 use App\Facades\Context;
@@ -401,8 +401,12 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, 'Importe con letra :', 0, 0, 'R');
-        $this->MultiCell(($this->w - 2) * 0.25, 0.35, utf8_decode(strtoupper((new NumberToLetterConverter())->num2letras(round($this->estimacion->monto_a_pagar, 2), 0, 1, $this->estimacion->id_moneda))), 1, 1, 'L');
 
+        if($this->estimacion->monto_a_pagar != '0.0') {
+            $this->MultiCell(($this->w - 2) * 0.25, 0.35, utf8_decode(strtoupper((new NumberToLetterConverter())->num2letras(round($this->estimacion->monto_a_pagar, 2), 0, 1, $this->estimacion->id_moneda))), 1, 1, 'L');
+        }else{
+            $this->MultiCell(($this->w - 2) * 0.25, 0.35,"CERO", 1, 1, 'L');
+        }
         $y_final = $this->GetY();
 
         $this->SetY($y_inicial + (($y_final - $y_inicial) / 2) - 1);

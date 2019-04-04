@@ -6,12 +6,11 @@
  * Time: 02:15 PM
  */
 
-namespace App\Http\Controllers\v1\CADECO;
+namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\EstimacionTransformer;
-use App\PDF\Formato\OrdenPagoEstimacion;
+use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
 use App\Services\CADECO\EstimacionService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
@@ -51,9 +50,9 @@ class EstimacionController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function pdf($id)
+    public function pdfOrdenPago($id)
     {
-        return $this->service->pdf($id)->create();
+        return $this->service->pdfOrdenPago($id)->create();
     }
 
 }

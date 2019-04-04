@@ -1,9 +1,9 @@
 <template>
-    <span></span>
+    <router-view></router-view>
 </template>
 
 <script>
     export default {
-        name: "formato-index",
+        name: "Layout"
     }
 </script>
