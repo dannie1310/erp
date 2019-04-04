@@ -221,6 +221,11 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'tipo-poliza-contpaq'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoPolizaContpaqController@index');
         });
+
+        //TRANSACCIÓN INTERFÁZ
+        $api->group(['prefix' => 'transaccion-interfaz'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TransaccionInterfazController@index');
+        });
     });
 
     /**
@@ -288,10 +293,16 @@ $api->version('v1', function ($api) {
 
     /** SEGURIDAD ERP */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
+        $api->group(['prefix' => 'permiso'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@index');
+        });
+
         $api->group(['prefix' => 'rol'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@store');
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@index');
             $api->get('por-usuario/{user_id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@porUsuario')->where(['user_id' => '[0-9]+']);
             $api->post('asignacion-masiva', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@asignacionMasiva');
+            $api->post('desasignacion-masiva', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@desasignacionMasiva');
         });
 
         $api->group(['prefix' => 'sistema'], function ($api) {

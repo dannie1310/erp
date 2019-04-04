@@ -31,6 +31,7 @@ import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
 import tipoCuentaEmpresa from './modules/contabilidad/tipo-cuenta-empresa';
 import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
+import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 
 //CONTRATOS
 import estimacion from './modules/contratos/estimacion';
@@ -43,6 +44,7 @@ import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 
 //SEGURIDAD
+import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import sistema from './modules/seguridad/sistema';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
@@ -86,12 +88,14 @@ export default new Vuex.Store({
         'contabilidad/tipo-cuenta-empresa': tipoCuentaEmpresa,
         'contabilidad/tipo-cuenta-material': tipoCuentaMaterial,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
+        'contabilidad/transaccion-interfaz': transaccionInterfaz,
 
         'igh/usuario': usuario,
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
 
+        'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/sistema': sistema,
         'seguridad/tipo-proyecto': tipoProyecto,

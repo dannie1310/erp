@@ -14,9 +14,9 @@
                             </select>
                         </div>
                         <div class="col">
-                            <select class="form-control" v-model="id_tipo_poliza_contpaq">
+                            <select class="form-control" v-model="id_tipo_poliza_interfaz">
                                 <option value>-- Tipo de Póliza --</option>
-                                <option v-for="item in tiposPolizaContaq" v-bind:value="item.id">{{ item.descripcion }}</option>
+                                <option v-for="item in transaccionesInterfaz" v-bind:value="item.id">{{ item.descripcion }}</option>
                             </select>
                         </div>
                     </div>
@@ -49,10 +49,11 @@
                     { title: 'Tipo de Póliza', field: 'id_tipo_poliza_interfaz', sortable: true },
                     { title: 'Tipo de Transacción', field: 'id_tipo_poliza_contpaq', sortable: true },
                     { title: 'Concepto', field: 'concepto', thComp: require('../../globals/th-Filter'), sortable: true },
-                    { title: 'Fecha', field: 'fecha'},
-                    { title: 'Monto', field: 'total'},
+                    { title: 'Fecha de Prepóliza', field: 'fecha', sortable: true },
+                    { title: 'Total', field: 'total', sortable: true },
                     { title: 'Cuadre', field: 'cuadre'},
-                    { title: 'Estado', field: 'estatus', sortable: true, tdComp: require('./partials/EstatusLabel')},
+                    { title: 'Estatus', field: 'estatus', sortable: true, tdComp: require('./partials/EstatusLabel')},
+                    { title: 'Poliza ContPaq', field: 'poliza_contpaq', sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -60,7 +61,7 @@
                 query: {
                 },
                 daterange: null,
-                id_tipo_poliza_contpaq: '',
+                id_tipo_poliza_interfaz: '',
                 id_estatus: '',
                 cargando: false
             }
@@ -73,7 +74,7 @@
                     this.$Progress.finish();
                 })
             this.getEstatus()
-            this.getTiposPolizaContaq()
+            this.getPolizasInterfaz()
 
             this.id_estatus = this.$router.currentRoute.query.estatus ? this.$router.currentRoute.query.estatus : '';
         },
@@ -96,10 +97,16 @@
                         this.$store.commit('contabilidad/estatus-prepoliza/SET_ESTATUS', data.data);
                     })
             },
-            getTiposPolizaContaq() {
-                return this.$store.dispatch('contabilidad/tipo-poliza-contpaq/index')
+            getPolizasInterfaz() {
+                return this.$store.dispatch('contabilidad/transaccion-interfaz/index', {
+                    config: {
+                        params: {
+                            scope: 'usadas'
+                        }
+                    }
+                })
                     .then(data => {
-                        this.$store.commit('contabilidad/tipo-poliza-contpaq/SET_TIPOS', data.data);
+                        this.$store.commit('contabilidad/transaccion-interfaz/SET_TRANSACCIONES', data.data);
                     })
             }
         },
@@ -113,8 +120,8 @@
             estatus() {
                 return this.$store.getters['contabilidad/estatus-prepoliza/estatus']
             },
-            tiposPolizaContaq() {
-                return this.$store.getters['contabilidad/tipo-poliza-contpaq/tipos']
+            transaccionesInterfaz() {
+                return this.$store.getters['contabilidad/transaccion-interfaz/transacciones']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -134,6 +141,7 @@
                         total: '$' + parseFloat(poliza.total).formatMoney(2, '.', ','),
                         cuadre: '$' + parseFloat(poliza.cuadre).formatMoney(2, '.', ','),
                         estatus: poliza.estatusPrepoliza,
+                        poliza_contpaq: poliza.poliza_contpaq ? '# ' + poliza.poliza_contpaq : '',
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_prepolizas_generadas') ? true : undefined,
                             show: true,
@@ -173,8 +181,8 @@
                 },
                 deep: true
             },
-            id_tipo_poliza_contpaq(id_tipo) {
-                this.$data.query.id_tipo_poliza_contpaq = id_tipo;
+            id_tipo_poliza_interfaz(id_tipo) {
+                this.$data.query.id_tipo_poliza_interfaz = id_tipo;
                 this.query.offset = 0;
                 this.paginate(this.$data.query)
             },
