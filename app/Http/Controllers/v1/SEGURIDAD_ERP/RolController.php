@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\SEGURIDAD_ERP;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateRolRequest;
 use App\Http\Transformers\SEGURIDAD_ERP\RolTransformer;
 use App\Services\SEGURIDAD_ERP\RolService;
 use App\Traits\ControllerTrait;
@@ -18,7 +19,9 @@ use League\Fractal\Manager;
 
 class RolController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait {
+        store as traitStore;
+    }
 
     /**
      * @var Manager
@@ -62,5 +65,10 @@ class RolController extends Controller
     {
         $roles = $this->service->porUsuario($request->all(), $user_id);
         return $this->respondWithCollection($roles);
+    }
+
+    public function store(CreateRolRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

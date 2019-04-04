@@ -46,6 +46,7 @@ import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
 
 //SEGURIDAD
+import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import sistema from './modules/seguridad/sistema';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
@@ -98,6 +99,7 @@ export default new Vuex.Store({
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
 
+        'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/sistema': sistema,
         'seguridad/tipo-proyecto': tipoProyecto,

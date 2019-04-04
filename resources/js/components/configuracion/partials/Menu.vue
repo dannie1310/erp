@@ -47,6 +47,28 @@
                     <p>COntPaq</p>
                 </a>
             </li>
+
+            <li class="nav-header"><a href="#configuracion-seguridad">ROLES Y PERMISOS</a></li>
+            <li class="nav-item">
+                <a href="#asignacion" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Asignación de Roles</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#desasignacion" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Dessignación de Roles</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#seguridad-rol-create" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Crear Roles</p>
+                </a>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
