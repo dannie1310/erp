@@ -44,7 +44,7 @@
             <li class="nav-item">
                 <a href="#contpaq" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
-                    <p>COntPaq</p>
+                    <p>ContPaq</p>
                 </a>
             </li>
 
@@ -59,7 +59,7 @@
             <li class="nav-item">
                 <a href="#desasignacion" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
-                    <p>Dessignación de Roles</p>
+                    <p>Desasignación de Roles</p>
                 </a>
             </li>
 
