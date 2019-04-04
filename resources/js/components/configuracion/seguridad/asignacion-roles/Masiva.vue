@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card">
+        <div class="card" id="asignacion">
         <div class="card-header">
             <h3 class="card-title">Asignación de Roles</h3>
         </div>

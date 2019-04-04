@@ -8,6 +8,7 @@
 
 namespace App\Models\SEGURIDAD_ERP;
 
+use App\Utils\Normalizar;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -17,11 +18,21 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Rol extends Model
 {
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            $name = Normalizar::normaliza($model->display_name);
+            $model->name = str_replace(' ', '_', $name);
+        });
+    }
+
     protected $connection = 'seguridad';
     protected $table = 'dbo.roles';
 
     protected $fillable = [
-        'name',
         'display_name',
         'description'
     ];

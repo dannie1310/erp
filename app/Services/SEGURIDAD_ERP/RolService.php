@@ -81,4 +81,15 @@ class RolService
             ->wherePivot('id_obra', '=', $data['id_obra'])
             ->get();
     }
+
+    public function store($data)
+    {
+        $rol = $this->repository->create($data);
+
+        if (isset($data['permission_id'])) {
+           $rol->permisos()->attach($data['permission_id']);
+        }
+
+        return $rol;
+    }
 }
