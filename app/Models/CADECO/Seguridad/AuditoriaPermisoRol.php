@@ -8,8 +8,24 @@
 
 namespace App\Models\CADECO\Seguridad;
 
+use App\Facades\Context;
+use App\Models\CADECO\Seguridad\Rol;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\SEGURIDAD_ERP\Permiso;
 
-class AuditoriaPermisoRol
+class AuditoriaPermisoRol extends Model
 {
 
+    protected $connection = 'cadeco';
+    protected $table = 'Seguridad.auditoria_permission_role';
+
+    protected $fillable = [
+        'usuario_registro',
+        'action'
+    ];
+
+    public function roles()
+    {
+        return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.roles', 'id', 'role_id');
+    }
 }

@@ -8,8 +8,17 @@
 
 namespace App\Http\Transformers\CADECO\Seguridad;
 
+use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
+use League\Fractal\TransformerAbstract;
 
-class AuditoriaPermisoRolTransformer
+
+class AuditoriaPermisoRolTransformer extends TransformerAbstract
 {
-
+    public function transform(AuditoriaPermisoRol $model) {
+        return [
+            'id' => (int) $model->getKey(),
+            'usuario_registro' => (string) $model->usuario_registro,
+            'action' => (string) $model->action
+        ];
+    }
 }
