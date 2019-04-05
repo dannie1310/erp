@@ -38,7 +38,8 @@ class TipoCuentaContableTransformer extends TransformerAbstract
     public function transform(TipoCuentaContable $model) {
         return [
             'id' => $model->getKey(),
-            'descripcion' => $model->descripcion
+            'descripcion' => $model->descripcion,
+            'fecha' => $model->created_at->format('Y-m-d G:i:s a')
         ];
     }
 
