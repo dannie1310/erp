@@ -31,7 +31,8 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Descripcion', field: 'descripcion', sortable: true },
                     { title: 'Registró', field: 'registro', sortable: false },
-                    { title: 'Naturaleza de la Cuenta', field: 'id_naturaleza_poliza', sortable: true }
+                    { title: 'Naturaleza de la Cuenta', field: 'id_naturaleza_poliza', sortable: true },
+                    { title: 'Fecha y Hora de Registro', field: 'fecha_registro', sortable: false}
                 ],
                 data: [],
                 total: 0,
@@ -96,7 +97,8 @@
                             index: (i + 1) + self.query.offset,
                             descripcion: tipo.descripcion,
                             registro: self.$data.registro,
-                            id_naturaleza_poliza: self.$data.naturaleza
+                            id_naturaleza_poliza: self.$data.naturaleza,
+                            fecha_registro: tipo.fecha
                         })
                     });
                 },
