@@ -26,6 +26,10 @@ class AuditoriaPermisoRol extends Model
 
     public function roles()
     {
-        return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.roles', 'id', 'role_id');
+        return $this->belongsTo(Rol::class,'rol_id');
+    }
+    public function permisos()
+    {
+        return $this->belongsTo(Permiso::class, 'permission_id');
     }
 }
