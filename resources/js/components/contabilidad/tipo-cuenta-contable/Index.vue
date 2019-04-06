@@ -103,6 +103,7 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: self.$root.can('editar_tipo_cuenta_contable') ? true : undefined,
+                                delete: self.$root.can('eliminar_tipo_cuenta_contable') ? true : undefined,
                                 id: tipo.id
                             })
                         })
