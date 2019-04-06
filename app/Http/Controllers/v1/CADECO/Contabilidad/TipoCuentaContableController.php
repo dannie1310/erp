@@ -11,6 +11,7 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTipoCuentaContableRequest;
+use App\Http\Requests\UpdateTipoCuentaContableRequest;
 use App\Http\Transformers\CADECO\Contabilidad\TipoCuentaContableTransformer;
 use App\Services\CADECO\Contabilidad\TipoCuentaContableService;
 use App\Traits\ControllerTrait;
@@ -19,6 +20,7 @@ use League\Fractal\Manager;
 class TipoCuentaContableController extends Controller
 {
     use ControllerTrait {
+        update as protected traitUpdate;
         store as protected traitStore;
     }
 
@@ -53,6 +55,10 @@ class TipoCuentaContableController extends Controller
         $this->transformer = $transformer;
     }
 
+    public function update(UpdateTipoCuentaContableRequest $request, $id)
+    {
+        return $this->traitUpdate($request, $id);
+    }
 
     public function store(StoreTipoCuentaContableRequest $request)
     {

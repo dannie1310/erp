@@ -32,7 +32,8 @@
                     { title: 'Descripcion', field: 'descripcion', sortable: true },
                     { title: 'Registró', field: 'registro', sortable: false },
                     { title: 'Naturaleza de la Cuenta', field: 'id_naturaleza_poliza', sortable: true },
-                    { title: 'Fecha y Hora de Registro', field: 'fecha_registro', sortable: false}
+                    { title: 'Fecha y Hora de Registro', field: 'fecha_registro', sortable: false},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
@@ -98,7 +99,12 @@
                             descripcion: tipo.descripcion,
                             registro: self.$data.registro,
                             id_naturaleza_poliza: self.$data.naturaleza,
-                            fecha_registro: tipo.fecha
+                            fecha_registro: tipo.fecha,
+                            buttons: $.extend({}, {
+                                show: true,
+                                edit: self.$root.can('editar_tipo_cuenta_contable') ? true : undefined,
+                                id: tipo.id
+                            })
                         })
                     });
                 },
