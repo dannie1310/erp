@@ -109,15 +109,12 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Cuenta General",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Actualizar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Actualizar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {

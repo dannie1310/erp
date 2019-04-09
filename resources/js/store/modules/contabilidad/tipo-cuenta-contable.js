@@ -71,15 +71,12 @@ export default {
                     title: "Registrar Cuenta Contable",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: {
-                        cancel:{
-                            text: "Cancelar"
-                        },
-                        confirm: {
-                            text: 'Si, Registrar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Registrar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
@@ -110,15 +107,12 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Tipo de Cuenta Contable",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Actualizar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Actualizar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
@@ -149,15 +143,12 @@ export default {
                     title: "Eliminar tipo de cuenta contable",
                     text: "¿Estás seguro/a de que deseas eliminar este tipo de cuenta contable?",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Eliminar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Eliminar",
                             closeModal: false,
                         }
-                    },
+                    ],
                     dangerMode: true,
                 })
                     .then((value) => {

@@ -65,15 +65,12 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Guardar cambios de la Prepóliza",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Guardar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Guardar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
@@ -104,15 +101,12 @@ export default {
                     title: "Validar Prepóliza",
                     text: "¿Esta seguro de que deseas validar la Prepóliza?",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Validar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Validar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
@@ -141,15 +135,12 @@ export default {
                     title: "Omitir Prepóliza",
                     text: "¿Esta seguro de que deseas omitir la Prepóliza?",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Omitir',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Omitir",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {

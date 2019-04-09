@@ -71,15 +71,12 @@ export default {
                     title: "Registrar Cierre de Periodo",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Registrar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Registrar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
@@ -112,15 +109,12 @@ export default {
                     text: "Por favor escriba un motivo de apertura",
                     content: 'input',
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Abrir',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Abrir",
                             closeModal: false,
                         }
-                    },
+                    ],
                     dangerMode: true
                 })
                     .then(value => {
@@ -166,15 +160,12 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Cerrar Periodo",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Cerrar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Cerrar",
                             closeModal: false,
                         }
-                    },
+                    ],
                     dangerMode: true
                 })
                     .then((value) => {
