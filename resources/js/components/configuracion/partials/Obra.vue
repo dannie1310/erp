@@ -30,7 +30,7 @@
                 <label for="nombre" class="col-lg-2 col-form-label">Abreviatura</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="nombre" v-model="form.nombre"
-                           v-validate="{alpha_spaces: true, max: 16}"
+                           v-validate="{max: 16}"
                            name="nombre"
                            data-vv-as="Abreviatura"
                            :class="{'is-invalid': errors.has('nombre')}"

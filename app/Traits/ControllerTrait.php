@@ -89,7 +89,7 @@ trait ControllerTrait
 
     public function store(Request $request)
     {
-        $item = $this->service->store($request->all());
+         $item = $this->service->store($request->all());
         return $this->respondWithItem($item);
     }
 }

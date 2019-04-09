@@ -138,9 +138,8 @@
                                                 </span>
                                             </span>
                                             <span v-else>
-                                                <p>ahere</p>
                                                 <label v-if="movimiento.cuenta_contable">{{ movimiento.cuenta_contable }}</label>
-                                                <label v-else>{{ datosContables }}</label>
+                                                <label v-else></label>
                                             </span>
                                         </td>
                                         <td>{{ movimiento.tipoCuentaContable ? movimiento.tipoCuentaContable.descripcion :

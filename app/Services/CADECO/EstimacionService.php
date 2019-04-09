@@ -10,7 +10,7 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Estimacion;
-use App\PDF\Formato\OrdenPagoEstimacion;
+use App\PDF\OrdenPagoEstimacion;
 use App\Repositories\Repository;
 
 class EstimacionService
@@ -38,7 +38,7 @@ class EstimacionService
         return $this->repository->where('id_transaccion', '=', $id);
     }
 
-    public function pdf($id)
+    public function pdfOrdenPago($id)
     {
         $pdf = new OrdenPagoEstimacion($id);
        return $pdf;

@@ -6,7 +6,7 @@ export default function permission({from, next, router }) {
             let result = false;
             router.currentRoute.meta.permission.forEach(perm => {
                 let search = permisos.find(p => {
-                    return p.name == perm;
+                    return p == perm;
                 });
                 if (search) {
                     result = true;
@@ -15,7 +15,7 @@ export default function permission({from, next, router }) {
             return result ? next() : next(from.path);
         }  else {
             var find = permisos.find(perm => {
-                return perm.name == router.currentRoute.meta.permission;
+                return perm == router.currentRoute.meta.permission;
             });
             return find ? next() : next(from.path);
         }

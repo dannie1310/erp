@@ -1,6 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
+ * User: EMartinez
+ * Date: 27/02/2019
+ * Time: 10:59 AM
  * User: jfesquivel
  * Date: 19/03/2019
  * Time: 05:42 PM
@@ -14,13 +17,17 @@ use League\Fractal\TransformerAbstract;
 
 class MonedaTransformer extends TransformerAbstract
 {
+    /**
+     * @param Moneda $model
+     * @return array
+     */
     public function transform(Moneda $model)
     {
         return [
-            'id' => $model->getKey(),
-            'nombre' => $model->nombre,
+            'id' => (int)$model->getKey(),
+            'nombre'=>(string)$model->nombre,
             'tipo' => $model->tipo,
-            'abreviatura' => $model->abreviatura
+            'abreviatura'=>(string)$model->abreviatura,
         ];
     }
 }

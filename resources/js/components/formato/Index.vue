@@ -4,6 +4,6 @@
 
 <script>
     export default {
-        name: "contabilidad-index",
+        name: "formato-index",
     }
 </script>

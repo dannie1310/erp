@@ -25,6 +25,10 @@ class ConfiguracionObra extends Model
         'logotipo_reportes'
     ];
 
+    protected $hidden = [
+        'logotipo_reportes'
+    ];
+
     protected static function boot()
     {
         parent::boot();

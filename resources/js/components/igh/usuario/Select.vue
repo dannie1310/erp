@@ -27,7 +27,9 @@
                     params: {
                         search: searchQuery,
                         scope: this.scope,
-                        limit: 15
+                        limit: 15,
+                        sort: 'full_name',
+                        order: 'ASC'
                     }
                 })
                     .then(data => {

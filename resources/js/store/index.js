@@ -12,7 +12,6 @@ import empresa from './modules/cadeco/empresa';
 import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
-import subcontrato from './modules/cadeco/subcontrato';
 
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo'
@@ -32,15 +31,20 @@ import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
 import tipoCuentaEmpresa from './modules/contabilidad/tipo-cuenta-empresa';
 import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
+import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 
-//FORMATO
-import ordenPagoEstimacion from './modules/formato/orden-pago-estimacion';
+//CONTRATOS
+import estimacion from './modules/contratos/estimacion';
+import fondoGarantia from './modules/contratos/fondo-garantia';
+import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
+import subcontrato from './modules/contratos/subcontrato';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 
 //SEGURIDAD
+import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import sistema from './modules/seguridad/sistema';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
@@ -62,7 +66,11 @@ export default new Vuex.Store({
         'cadeco/fondo': fondo,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
-        'cadeco/subcontrato': subcontrato,
+
+        'contratos/fondo-garantia': fondoGarantia,
+        'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
+        'contratos/subcontrato': subcontrato,
+
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
@@ -75,20 +83,19 @@ export default new Vuex.Store({
         'contabilidad/datos-contables' : datosContables,
         'contabilidad/estatus-prepoliza': estatusPrepoliza,
         'contabilidad/naturaleza-poliza' : naturalezaPoliza,
-
         'contabilidad/poliza': poliza,
         'contabilidad/tipo-cuenta-contable': tipoCuentaContable,
         'contabilidad/tipo-cuenta-empresa': tipoCuentaEmpresa,
         'contabilidad/tipo-cuenta-material': tipoCuentaMaterial,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
-
-        'formato/orden-pago-estimacion': ordenPagoEstimacion,
+        'contabilidad/transaccion-interfaz': transaccionInterfaz,
 
         'igh/usuario': usuario,
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
 
+        'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/sistema': sistema,
         'seguridad/tipo-proyecto': tipoProyecto,

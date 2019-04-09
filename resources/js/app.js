@@ -47,7 +47,7 @@ const app = new Vue({
                     let result = false;
                     permiso.forEach(perm => {
                         let search = permisos.find(p => {
-                            return p.name == perm;
+                            return p == perm;
                         });
                         if (search) {
                             result = true;
@@ -56,7 +56,7 @@ const app = new Vue({
                     return result;
                 }  else {
                     return permisos.find(perm => {
-                        return perm.name == permiso;
+                        return perm == permiso;
                     })
                 }
             }
