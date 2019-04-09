@@ -35,6 +35,10 @@ class RolService
      * @param $data
      * @return bool
      */
+
+    /*public function auditoriaRolUser(){
+
+    }*/
     public function asignacionPersonalizada($data)
     {
         $user = Usuario::query()->find($data['user_id']);

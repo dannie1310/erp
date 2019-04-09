@@ -8,11 +8,13 @@
 
 namespace App\Traits;
 
+use Illuminate\Http\Request;
 
 trait AuditoriaTrait
 {
     private function getAuditoriaRolUsuario(){
-
+        $item = $this->service->auditoriaRolUser(/*$request->all()*/);
+        return $this->respondWithItem($item);
     }
 
     private function getAuditoriaPermisoRol(){
