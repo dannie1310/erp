@@ -60,15 +60,13 @@ export default {
                     title: "Registrar Cuenta",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Registrar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Registrar",
                             closeModal: false,
                         }
-                    }                })
+                    ],
+                    })
                     .then((value) => {
                         if (value) {
                             axios
@@ -97,15 +95,12 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Cuenta de Concepto",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Actualizar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Actualizar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {

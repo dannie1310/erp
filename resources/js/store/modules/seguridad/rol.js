@@ -50,15 +50,12 @@ export default {
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     closeOnClickOutside: false,
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Asignar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Asignar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
