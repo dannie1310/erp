@@ -33,7 +33,6 @@ export default {
         },
 
         UPDATE_ATTRIBUTE(state, data) {
-            console.log("AQUI", state, data);
             state.currentTipo[data.attribute] = data.value
         }
     },

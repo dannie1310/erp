@@ -93,11 +93,22 @@
                 handler(tipos) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = tipos.map ((tipo, i) => ({
+                    tipos.forEach(function (tipo, i) {
+                        if (typeof tipo.naturaleza !== 'undefined') {
+                            self.$data.naturaleza = tipo.naturaleza.descripcion;
+                        } else {
+                            self.$data.naturaleza = '';
+                        }
+                        if(tipo.usuario){
+                            self.$data.registro = tipo.usuario.nombre;
+                        }else{
+                            self.$data.registro = '';
+                        }
+                        self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             descripcion: tipo.descripcion,
-                            registro: tipo.usuario ? tipo.usuario.nombre : "",
-                            id_naturaleza_poliza: tipo.id_naturaleza_poliza ? tipo.naturaleza.descripcion : "",
+                            registro: self.$data.registro,
+                            id_naturaleza_poliza: self.$data.naturaleza,
                             fecha_registro: tipo.fecha,
                             buttons: $.extend({}, {
                                 show: true,
@@ -105,7 +116,8 @@
                                 delete: self.$root.can('eliminar_tipo_cuenta_contable') ? true : undefined,
                                 id: tipo.id
                             })
-                        }));
+                        })
+                    });
                 },
                 deep: true
             },
@@ -123,17 +135,6 @@
                     this.paginate(query)
                 },
                 deep: true
-            },
-            search(val) {
-                if (this.timer) {
-                    clearTimeout(this.timer);
-                    this.timer = null;
-                }
-                this.timer = setTimeout(() => {
-                    this.query.search = val;
-                    this.query.offset = 0;
-                    this.paginate();
-                }, 500);
             },
             cargando(val) {
                 $('tbody').css({
