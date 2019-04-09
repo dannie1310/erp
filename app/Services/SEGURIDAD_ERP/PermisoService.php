@@ -24,7 +24,7 @@ class PermisoService
 
     public function asignacionPersonalizada($data)
     {
-        $rol = Usuario::query()->find($data['role_id']);
+        $rol = Rol::query()->find($data['role_id']);
 
         foreach ($data['permission_id'] as $permission_id) {
             try {

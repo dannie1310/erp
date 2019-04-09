@@ -43,11 +43,11 @@ class RolService
     {
         $user = Usuario::query()->find($data['user_id']);
         /** @var TYPE_NAME $id_obra */
-        $id_obra = Usuario::query()->find($data['id_obra']);
+        //$id_obra = Usuario::query()->find($data['id_obra']);
 
             foreach ($data['role_id'] as $role_id) {
                 try {
-                    $user->roles()->attach( [$role_id => ['id_obra' => $id_obra]] );
+                    $user->roles()->attach( $role_id  );
                 } catch (\Exception $e) {
                 }
             }
