@@ -21,7 +21,7 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Tipo Cuenta Contable</th>
+                                    <th>Descripcion</th>
                                     <th>Registró</th>
                                     <th>Naturaleza de la Cuenta</th>
                                     <th>Fecha y Hora de Registro</th>

@@ -19,24 +19,29 @@
                         <div class="modal-body">
                             <div role="form">
                                 <div class="form-group row">
-                                    <label for="descripcion" class="col-sm-6 col-form-label">Descripción de Tipo Cuenta Contable</label>
+                                    <label class="col-sm-4 col-form-label">Descripción de Tipo Cuenta Contable</label>
+                                    <div class="col-sm-8">
                                         <p class="form-control">{{ tipo.descripcion }}</p>
+                                    </div>
                                 </div>
                                 <div class="form-group row error-content">
-                                    <label for="id_naturaleza_poliza">Naturaleza de Cuenta</label>
+                                    <label for="id_naturaleza_poliza" class="col-sm-4 col-form-label">Naturaleza de Cuenta</label>
+                                    <div class="col-sm-8">
                                         <select
                                                 name="id_naturaleza_poliza"
                                                 id="id_naturaleza_poliza"
                                                 data-vv-as="Naturaleza"
                                                 v-validate="{required: true}"
                                                 class="form-control"
-                                                v-model="id_naturaleza_poliza"
+                                                :value="tipo.id_naturaleza_poliza"
+                                                @input="updateAttribute"
                                                 :class="{'is-invalid': errors.has('id_naturaleza_poliza')}"
                                         >
                                             <option value>-- Seleccione --</option>
                                             <option v-for="item in naturalezas" :value="item.id">{{ item.descripcion }}</option>
                                         </select>
                                         <div class="invalid-feedback" v-show="errors.has('id_naturaleza_poliza')">{{ errors.first('id_naturaleza_poliza') }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -57,9 +62,7 @@
         props: ['id'],
         data() {
             return {
-                cargando: false,
-                descripcion: '',
-                id_naturaleza_poliza: ''
+                cargando: false
             }
         },
         computed: {
@@ -82,21 +85,24 @@
                 this.cargando = true;
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/find', {
                     id: id,
-                    params: { include: 'naturaleza' }
+                    params : {include: ['naturaleza']}
                 })
                     .then(data => {
                         this.$store.commit('contabilidad/tipo-cuenta-contable/SET_TIPO', data)
+                        if(data.id_naturaleza_poliza !== null){
+                            this.id_naturaleza_poliza = data.id_naturaleza_poliza
+                        }
                         $(this.$refs.modal).modal('show');
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
             },
-
             update() {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/update', {
                     id: this.tipo.id,
-                    data: this.tipo
+                    data: this.tipo,
+                    params : {include: ['naturaleza']}
                 })
                     .then(data => {
                         this.$store.commit('contabilidad/tipo-cuenta-contable/UPDATE_TIPO', data);

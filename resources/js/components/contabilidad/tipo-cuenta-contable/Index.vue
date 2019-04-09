@@ -6,6 +6,16 @@
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
@@ -83,22 +93,11 @@
                 handler(tipos) {
                     let self = this
                     self.$data.data = []
-                    tipos.forEach(function (tipo, i) {
-                        if (typeof tipo.naturaleza !== 'undefined') {
-                            self.$data.naturaleza = tipo.naturaleza.descripcion;
-                        } else {
-                            self.$data.naturaleza = '';
-                        }
-                        if(tipo.usuario){
-                            self.$data.registro = tipo.usuario.nombre;
-                        }else{
-                            self.$data.registro = '';
-                        }
-                        self.$data.data.push({
+                    self.$data.data = tipos.map ((tipo, i) => ({
                             index: (i + 1) + self.query.offset,
                             descripcion: tipo.descripcion,
-                            registro: self.$data.registro,
-                            id_naturaleza_poliza: self.$data.naturaleza,
+                            registro: tipo.usuario ? tipo.usuario.nombre : "",
+                            id_naturaleza_poliza: tipo.id_naturaleza_poliza ? tipo.naturaleza.descripcion : "",
                             fecha_registro: tipo.fecha,
                             buttons: $.extend({}, {
                                 show: true,
@@ -106,8 +105,7 @@
                                 delete: self.$root.can('eliminar_tipo_cuenta_contable') ? true : undefined,
                                 id: tipo.id
                             })
-                        })
-                    });
+                        }));
                 },
                 deep: true
             },

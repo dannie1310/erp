@@ -20,34 +20,25 @@ export default {
         SET_TIPO(state, data) {
             state.currentTipo = data
         },
+
         UPDATE_TIPO(state, data) {
+
             state.tipos = state.tipos.map(tipo => {
                 if (tipo.id === data.id) {
                     return Object.assign([], tipo, data)
                 }
                 return tipo
             })
-            state.currentTipo = data
+            state.currentTipo = state.currentTipo ? data : null
         },
 
         UPDATE_ATTRIBUTE(state, data) {
+            console.log("AQUI", state, data);
             state.currentTipo[data.attribute] = data.value
         }
     },
 
     actions: {
-        index(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios.get(URI, { params: payload.params })
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data)
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
-        },
         paginate (context, payload){
             return new Promise((resolve, reject) => {
                 axios
