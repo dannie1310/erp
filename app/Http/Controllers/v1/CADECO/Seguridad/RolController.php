@@ -13,18 +13,12 @@ use App\Http\Controllers\Controller;
 use App\Services\CADECO\Seguridad\RolService;
 use App\Http\Transformers\CADECO\Seguridad\RolTransformer;
 use App\Traits\ControllerTrait;
-use App\Traits\AuditoriaTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class RolController extends Controller
 {
     use ControllerTrait;
-
-    use AuditoriaTrait{
-        getAuditoriaRolUsuario as protected traitRolUsuario;
-    }
-
 
     protected $fractal;
 
@@ -58,9 +52,5 @@ class RolController extends Controller
     {
         $roles = $this->service->porUsuario($request->all(), $user_id);
         return $this->respondWithCollection($roles);
-    }
-
-    public function getAuditoriaRolUsuario(/*Request $request*/){
-        return $this->traitRolUsuario(/*$request*/);
     }
 }
