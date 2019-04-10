@@ -18,6 +18,18 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Rol extends Model
 {
+    protected $connection = 'seguridad';
+    protected $table = 'dbo.roles';
+
+    protected $fillable = [
+        'display_name',
+        'description'
+    ];
+
+    public $searchable = [
+        'name',
+        'display_name',
+    ];
 
     protected static function boot()
     {
@@ -28,14 +40,6 @@ class Rol extends Model
             $model->name = str_replace(' ', '_', $name);
         });
     }
-
-    protected $connection = 'seguridad';
-    protected $table = 'dbo.roles';
-
-    protected $fillable = [
-        'display_name',
-        'description'
-    ];
 
     public function permisos()
     {

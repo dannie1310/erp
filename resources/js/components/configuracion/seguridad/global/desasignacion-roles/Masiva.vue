@@ -143,7 +143,7 @@
 </template>
 
 <script>
-    import UsuarioSelect from "../../../igh/usuario/Select";
+    import UsuarioSelect from "../../../../igh/usuario/Select";
     export default {
         name: "desasignacion-roles-masiva",
         components: {UsuarioSelect},
@@ -181,6 +181,7 @@
             },
 
             getRoles() {
+                this.roles_disponibles = [];
                 return this.$store.dispatch('seguridad/rol/index')
                     .then(data => {
                         this.roles_disponibles = data.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
@@ -268,6 +269,7 @@
 
         watch: {
             'form.user_id'(id) {
+                this.getRoles();
                 this.form.id_proyecto = [];
                 this.obras = null;
                 this.$validator.reset()
