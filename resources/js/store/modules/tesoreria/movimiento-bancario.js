@@ -81,15 +81,12 @@ export default {
                     title: "Eliminar movimiento",
                     text: "¿Estás seguro/a de que deseas eliminar este movimiento?",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Eliminar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Eliminar",
                             closeModal: false,
                         }
-                    },
+                    ],
                     dangerMode: true,
                 })
                     .then((value) => {
@@ -120,15 +117,12 @@ export default {
                     title: "Registrar movimiento",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Registrar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Registrar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
@@ -158,15 +152,12 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Guardar cambios del Movimiento",
                     icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                        },
-                        confirm: {
-                            text: 'Si, Guardar',
+                    buttons: ['Cancelar',
+                        {
+                            text: "Si, Guardar",
                             closeModal: false,
                         }
-                    }
+                    ]
                 })
                     .then((value) => {
                         if (value) {
