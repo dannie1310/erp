@@ -103,11 +103,15 @@
                     id: this.tipo.id,
                     data: this.tipo,
                     params : {include: ['naturaleza']}
-                })
-                    .then(data => {
-                        this.$store.commit('contabilidad/tipo-cuenta-contable/UPDATE_TIPO', data);
-                        $(this.$refs.modal).modal('hide');
+                }).then(data => {
+                    $(this.$refs.modal).modal('hide');
+                        return this.$store.dispatch('contabilidad/tipo-cuenta-contable/find', {id: this.tipo.id, params: {include: ['naturaleza']}})
+                            .then(data => {
+                                this.$store.commit('contabilidad/tipo-cuenta-contable/UPDATE_TIPO', data);
+                            })
+
                     })
+
             },
 
             validate() {
