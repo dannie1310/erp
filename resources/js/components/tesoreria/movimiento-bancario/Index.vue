@@ -6,6 +6,15 @@
 
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -40,8 +49,9 @@
                 ],
                 data: [],
                 total: 0,
-                query: {
-                }
+                query: {},
+                search: '',
+                cargando: false
             }
         },
 
@@ -105,6 +115,23 @@
                     this.paginate({...query, include: 'cuenta.empresa,transaccion'})
                 },
                 deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate({...this.query, include: 'cuenta.empresa,transaccion'})
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
             }
         },
     }
