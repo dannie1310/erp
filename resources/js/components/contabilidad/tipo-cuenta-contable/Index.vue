@@ -6,16 +6,6 @@
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />

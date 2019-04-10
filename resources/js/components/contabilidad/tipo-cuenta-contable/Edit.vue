@@ -89,8 +89,8 @@
                 })
                     .then(data => {
                         this.$store.commit('contabilidad/tipo-cuenta-contable/SET_TIPO', data)
-                        if(data.id_naturaleza_poliza !== null){
-                            this.id_naturaleza_poliza = data.id_naturaleza_poliza
+                        if(data.naturaleza){
+                            this.id_naturaleza_poliza = data.naturaleza.id_naturaleza_poliza
                         }
                         $(this.$refs.modal).modal('show');
                     })
