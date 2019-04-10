@@ -5,6 +5,7 @@ namespace App\Services\SEGURIDAD_ERP;
 
 
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\Rol;
 use App\Repositories\Repository;
@@ -30,6 +31,11 @@ class RolService
         return $this->repository->all($data);
     }
 
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
     public function asignacionMasiva($data)
     {
         $user = Usuario::query()->find($data['user_id']);
@@ -45,6 +51,24 @@ class RolService
                 } catch (\Exception $e) {}
             }
         }
+
+        return true;
+    }
+
+    public function asignacionPermisos($data)
+    {
+        $rol = $this->repository->show($data['role_id']);
+
+        foreach ($data['permission_id'] as $perm) {
+            $permiso = Permiso::find($perm);
+
+            if($permiso->reservado &&  ! auth()->user()->can('asignar_permisos_reservados')) {
+                throw new \Exception('No es posible asignar el permiso "' . $permiso->display_name. '" porque se trata de un permiso reservado, favor de solicitar la asignación al administrador del sistema.', 403);
+            }
+        }
+
+        $rol->permisos()->detach($rol->permisos()->pluck('id')->toArray());
+        $rol->permisos()->sync($data['permission_id'], false);
 
         return true;
     }

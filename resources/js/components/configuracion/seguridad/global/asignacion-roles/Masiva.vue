@@ -1,8 +1,8 @@
 <template>
     <span>
-        <div class="card" id="desasignacion">
+        <div class="card" id="asignacion">
         <div class="card-header">
-            <h3 class="card-title">Desasignación de Roles</h3>
+            <h3 class="card-title">Asignación de Roles</h3>
         </div>
 
         <div class="card-body">
@@ -59,7 +59,7 @@
                     <div class="row">
                         <div class="col-sm-5">
                             <div class="form-group">
-                                <label for="from">{{ form.tipo_asignacion == 1 ? 'ROLES A DESASIGNAR' : 'ROLES ASIGNADOS' }}</label>
+                                <label for="from">ROLES A ASIGNAR</label>
                                 <select multiple id="from" size="10" class="form-control" v-model="form.role_id">
                                     <option v-for="rol in roles_asignados" :value="rol.id">{{ rol.display_name }}</option>
                                 </select>
@@ -75,7 +75,7 @@
 
                         <div class="col-sm-5">
                             <div class="form-group">
-                                <label for="to">{{ form.tipo_asignacion == 1 ? 'ROLES DISPONIBLES' : 'ROLES NO ASIGNADOS' }} </label>
+                                <label for="to">ROLES DISPONIBLES</label>
                                 <select multiple id="to" size="10" class="form-control" v-model="selected">
                                     <option v-for="rol in roles_disponibles" :value="rol.id">{{ rol.display_name }}</option>
                                 </select>
@@ -94,7 +94,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Detalle de Desasignación</h5>
+                        <h5 class="modal-title">Detalle de Asignación</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -107,10 +107,10 @@
                                     <td>{{ usuario_seleccionado }}</td>
                                 </tr>
                                  <tr>
-                                    <th>Roles a Desasignar:</th>
+                                    <th>Roles a Asignar:</th>
                                     <td>
                                         <ul>
-                                            <li v-for="rol in roles_desasignados">{{ rol.display_name }}</li>
+                                            <li v-for="rol in roles_asignados">{{ rol.display_name }}</li>
                                         </ul>
                                     </td>
                                 </tr>
@@ -127,12 +127,12 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" @click="desasignar" :disabled="guardando">
+                        <button type="button" class="btn btn-primary" @click="asignar" :disabled="guardando">
                             <span v-if="guardando">
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
                             <span v-else>
-                                <i class="fa fa-save"></i> Desasignar
+                                <i class="fa fa-save"></i> Asignar
                             </span>
                         </button>
                     </div>
@@ -143,9 +143,9 @@
 </template>
 
 <script>
-    import UsuarioSelect from "../../../igh/usuario/Select";
+    import UsuarioSelect from "../../../../igh/usuario/Select";
     export default {
-        name: "desasignacion-roles-masiva",
+        name: "asignacion-roles-masiva",
         components: {UsuarioSelect},
         data() {
             return {
@@ -161,8 +161,7 @@
                 selected: [],
                 roles_disponibles: [],
                 roles_asignados: [],
-                usuario_seleccionado: '',
-                roles_originales: []
+                usuario_seleccionado: ''
             }
         },
 
@@ -189,14 +188,9 @@
             },
 
             getRolesUsuario(data) {
-                this.roles_originales = [];
                 this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados);
                 return this.$store.dispatch('seguridad/rol/getRolesUsuario', data)
                     .then(data => {
-                        data.data.forEach(rol => {
-                            this.roles_originales.push(rol.id);
-                        });
-
                         this.roles_asignados = data.data.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
                         this.roles_disponibles = this.roles_disponibles.diff(this.roles_asignados);
                     });
@@ -228,12 +222,12 @@
                 })
             },
 
-            desasignar() {
+            asignar() {
                 this.guardando = true;
-                return this.$store.dispatch('seguridad/rol/desasignacionMasiva', {
+                return this.$store.dispatch('seguridad/rol/asignacionMasiva', {
                     id_proyecto: Array.isArray(this.form.id_proyecto) ? this.form.id_proyecto : [this.form.id_proyecto],
                     user_id: this.form.user_id,
-                    role_id: this.roles_desasignados.map(rol => (
+                    role_id: this.roles_asignados.map(rol => (
                         rol.id
                     ))
                 })
@@ -319,16 +313,6 @@
                     return _.groupBy(this.obras, 'base_datos');
                 else
                     return [];
-            },
-
-            roles_desasignados() {
-                if (this.form.tipo_asignacion == 1) {
-                    return this.roles_asignados;
-                } else {
-                    return this.roles_disponibles.filter(rol => {
-                        return $.inArray(rol.id, this.roles_originales) > -1;
-                    })
-                }
             },
 
             obras_seleccionadas() {
