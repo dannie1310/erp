@@ -60,6 +60,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Registrar',
@@ -98,6 +99,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Actualizar',

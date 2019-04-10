@@ -68,6 +68,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Guardar',
@@ -107,6 +108,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Validar',
@@ -144,6 +146,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Omitir',

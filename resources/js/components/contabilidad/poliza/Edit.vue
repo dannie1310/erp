@@ -340,14 +340,34 @@
             },
 
             remove(movimiento) {
-                if(!movimiento.id) {
-                    this.original.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
-                        return JSON.stringify(movimiento) != JSON.stringify(m)
-                    })
-                }
-                this.poliza.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
-                    return JSON.stringify(movimiento) != JSON.stringify(m)
+                swal({
+                    title: "Quitar Movimiento",
+                    text: "¿Estás seguro de que deseas quitar el movimiento de la Prepóliza?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Quitar',
+                            closeModal: true,
+                        }
+                    },
+                    dangerMode: true,
                 })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            if(!movimiento.id) {
+                                this.original.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
+                                    return JSON.stringify(movimiento) != JSON.stringify(m)
+                                })
+                            }
+                            this.poliza.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
+                                return JSON.stringify(movimiento) != JSON.stringify(m)
+                            })
+                        }
+                    });
             },
 
             validate() {
