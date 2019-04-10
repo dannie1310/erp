@@ -71,12 +71,16 @@ export default {
                     title: "Registrar Cierre de Periodo",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Registrar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -109,12 +113,16 @@ export default {
                     text: "Por favor escriba un motivo de apertura",
                     content: 'input',
                     icon: "warning",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Abrir",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Abrir',
                             closeModal: false,
                         }
-                    ],
+                    },
                     dangerMode: true
                 })
                     .then(value => {
@@ -160,12 +168,16 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Cerrar Periodo",
                     icon: "warning",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Cerrar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cerrar',
                             closeModal: false,
                         }
-                    ],
+                    },
                     dangerMode: true
                 })
                     .then((value) => {

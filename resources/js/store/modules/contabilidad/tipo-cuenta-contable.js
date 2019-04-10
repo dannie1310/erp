@@ -80,12 +80,16 @@ export default {
                     title: "Registrar Cuenta Contable",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Registrar",
+                    buttons: {
+                        cancel:{
+                            text: "Cancelar",
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -116,12 +120,16 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Tipo de Cuenta Contable",
                     icon: "warning",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Actualizar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -152,12 +160,16 @@ export default {
                     title: "Eliminar tipo de cuenta contable",
                     text: "¿Estás seguro/a de que deseas eliminar este tipo de cuenta contable?",
                     icon: "warning",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Eliminar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
                             closeModal: false,
                         }
-                    ],
+                    },
                     dangerMode: true,
                 })
                     .then((value) => {
