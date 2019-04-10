@@ -53,7 +53,7 @@
 
         methods: {
             paginate(payload = {}) {
-                return this.$store.dispatch('tesoreria/movimiento-bancario/paginate', payload)
+                return this.$store.dispatch('tesoreria/movimiento-bancario/paginate', {params: payload})
                     .then(data => {
                         this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTOS', data.data);
                         this.$store.commit('tesoreria/movimiento-bancario/SET_META', data.meta);
