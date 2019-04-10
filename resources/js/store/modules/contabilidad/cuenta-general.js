@@ -74,6 +74,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Registrar',
@@ -109,12 +110,16 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Cuenta General",
                     icon: "warning",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Actualizar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {

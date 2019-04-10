@@ -71,12 +71,16 @@ export default {
                     title: "Registrar Cuenta",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Registrar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
                             closeModal: false,
                         }
-                    ],
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -106,12 +110,16 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Cuenta de Almacén",
                     icon: "warning",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Actualizar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
                             closeModal: false,
                         }
-                    ],
+                    }
                 })
                     .then((value) => {
                         if (value) {

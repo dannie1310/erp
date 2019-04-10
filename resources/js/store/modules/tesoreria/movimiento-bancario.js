@@ -81,12 +81,16 @@ export default {
                     title: "Eliminar movimiento",
                     text: "¿Estás seguro/a de que deseas eliminar este movimiento?",
                     icon: "warning",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Eliminar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
                             closeModal: false,
                         }
-                    ],
+                    },
                     dangerMode: true,
                 })
                     .then((value) => {
@@ -117,12 +121,16 @@ export default {
                     title: "Registrar movimiento",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Registrar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -152,12 +160,16 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Guardar cambios del Movimiento",
                     icon: "warning",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Guardar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Guardar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {

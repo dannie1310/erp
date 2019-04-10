@@ -9,12 +9,16 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Datos Contables",
                     icon: "warning",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Actualizar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {

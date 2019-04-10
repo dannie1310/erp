@@ -47,12 +47,16 @@ export default {
                     title: "¿Estás seguro?",
                     text: "Actualizar Configuración de Obra",
                     icon: "info",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Actualizar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {

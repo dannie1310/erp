@@ -50,12 +50,16 @@ export default {
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     closeOnClickOutside: false,
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Asignar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Asignar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -89,6 +93,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Desasignar',
