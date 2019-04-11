@@ -52,14 +52,14 @@
             <li class="nav-item">
                 <a href="#asignacion" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
-                    <p>Asignación de Roles</p>
+                    <p>Asignar Roles</p>
                 </a>
             </li>
 
             <li class="nav-item">
                 <a href="#desasignacion" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
-                    <p>Desasignación de Roles</p>
+                    <p>Desasignar Roles</p>
                 </a>
             </li>
 
