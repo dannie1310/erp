@@ -5,7 +5,7 @@
             <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>
             <!-- ESTE COMPONENTE CONTIENE LAS ASIGNACIONES PARA EL ESQUEMA GLOBAL, PARA EL ESQUEMA PERSONALIZADO SE DEBERÁ CREAR EL CORRESPONDIENTE COMPONENTE -->
             <configuracion-seguridad v-if="obra.configuracion.esquema_permisos == 1"></configuracion-seguridad>
-            <configuracion-seguridad v-else-if="obra.configuracion.esquema_permisos == 2"></configuracion-seguridad>
+            <configuracion-seguridad-personalizado v-else-if="obra.configuracion.esquema_permisos == 2"></configuracion-seguridad-personalizado>
         </div>
     </div>
 </template>
@@ -13,10 +13,11 @@
 <script>
     import ConfiguracionObra from "./partials/Obra";
     import ConfiguracionContable from "./partials/Contable";
-    import ConfiguracionSeguridad from "./seguridad/Index";
+    import ConfiguracionSeguridad from "./seguridad/global/Index";
+    import ConfiguracionSeguridadPersonalizado from "./seguridad/personalizado/Index";
     export default {
         name: "configuracion",
-        components: {ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra},
+        components: {ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra, ConfiguracionSeguridadPersonalizado},
         data() {
             return {
                 obra: null

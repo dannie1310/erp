@@ -278,7 +278,11 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'personalizado'], function($api){
         //ESQUEMA PERSONALIZADO
         $api->group(['prefix' => 'rol-personalizado'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@store');
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@index');
+            $api->get('por-usuario/{user_id}', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@porUsuario')->where(['user_id' => '[0-9]+']);
+            $api->post('asignacion-personalizado', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@asignacionMasiva');
+            $api->post('desasignacion-personalizado', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@desasignacionMasiva');
         });
     });
 
