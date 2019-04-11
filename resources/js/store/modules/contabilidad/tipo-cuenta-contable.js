@@ -21,19 +21,27 @@ export default {
             state.currentTipo = data
         },
 
-        UPDATE_TIPO(state, data) {
-
-            state.tipos = state.tipos.map(tipo => {
-                if (tipo.id === data.id) {
-                    return Object.assign([], tipo, data)
-                }
-                return tipo
+        DELETE_TIPO(state, id) {
+            state.tipos = state.tipos.filter((tipo) => {
+                return tipo.id !== id;
             })
-            state.currentTipo = state.currentTipo ? data : null
+            if (state.currentTipo && state.currentTipo.id === id) {
+                state.currentTipo = null;
+            }
         },
 
         UPDATE_ATTRIBUTE(state, data) {
-            state.currentTipo[data.attribute] = data.value
+            _.set(state.currentTipo, data.attribute, data.value);
+        },
+
+        UPDATE_TIPO(state, data) {
+            state.tipos = state.tipos.map(tipo => {
+                if (tipo.id === data.id) {
+                    return Object.assign({}, tipo, data)
+                }
+                return tipo
+            })
+            state.currentTipo = state.currentTipo ? data : null;
         }
     },
 
@@ -104,11 +112,12 @@ export default {
                     });
             });
         },
+
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Estás seguro?",
-                    text: "Actualizar Tipo de Cuenta Contable",
+                    text: "Guardar cambios del Tipo de Cuenta Contable",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -116,7 +125,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Actualizar',
+                            text: 'Si, Guardar',
                             closeModal: false,
                         }
                     }
@@ -124,26 +133,26 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id, payload.data)
+                                .patch(URI + payload.id, payload.data, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal({
-                                        title: " ",
-                                        text: "Cuenta actualizada correctamente",
+                                    swal("Cuenta actualizada correctamente", {
                                         icon: "success",
-                                        timer: 2000,
+                                        timer: 1500,
                                         buttons: false
-                                    }).then(() => {
-                                        resolve(data);
                                     })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
                                 })
                                 .catch(error => {
                                     reject(error);
-                                });
+                                })
                         }
                     });
             });
         },
+
         delete(context, id) {
             return new Promise((resolve, reject) => {
                 swal({
