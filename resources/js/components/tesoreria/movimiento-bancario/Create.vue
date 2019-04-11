@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_movimiento_bancario')" class="btn btn-app btn-info pull-right">
+        <button @click="init" class="btn btn-app btn-info pull-right">
             <i class="fa fa-plus"></i> Registrar Movimiento
         </button>
 
@@ -209,7 +209,9 @@
                 referencia: '',
                 observaciones: '',
                 cumplimiento: '',
-                fecha: ''
+                fecha: '',
+                tiposMovimiento: [],
+                cuentas: []
             }
         },
 
@@ -238,7 +240,7 @@
                 return this.$store.dispatch('tesoreria/tipo-movimiento/index',{
                 })
                     .then(data => {
-                        this.tipos = data.data;
+                        this.tiposMovimiento = data.data;
                     })
             },
 
@@ -249,6 +251,9 @@
                         scope: 'paraTraspaso'
                     }
                 })
+                    .then(data => {
+                        this.cuentas = data.data;
+                    })
             },
 
             validate() {
@@ -268,13 +273,6 @@
         },
 
         computed: {
-            tiposMovimiento() {
-                return this.$store.getters['tesoreria/tipo-movimiento/tipos']
-            },
-
-            cuentas() {
-                return this.$store.getters['cadeco/cuenta/cuentas']
-            },
             total() {
                 let impuesto = this.impuesto ? parseFloat(this.impuesto) : 0;
                 let importe = this.importe ? parseFloat(this.importe) : 0;

@@ -15,7 +15,10 @@
         props: ['value'],
         methods: {
             destroy() {
-                return this.$store.dispatch('tesoreria/movimiento-bancario/delete', this.value.id);
+                return this.$store.dispatch('tesoreria/movimiento-bancario/delete', this.value.id)
+                    .then(() => {
+                        this.$store.commit('tesoreria/movimiento-bancario/DELETE_MOVIMIENTO', this.value.id);
+                    })
             },
             show() {
                 this.$router.push({name: 'movimiento-bancario-show', params: {id: this.value.id}});

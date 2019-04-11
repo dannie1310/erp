@@ -32,6 +32,12 @@ class MovimientoBancario extends Model
         'observaciones'
     ];
 
+    public $searchable = [
+        'observaciones',
+        'tipo.descripcion',
+        'cuenta.numero'
+    ];
+
     protected static function boot()
     {
         parent::boot();
