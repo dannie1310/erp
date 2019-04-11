@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <movimiento-bancario-create></movimiento-bancario-create>
+            <movimiento-bancario-create v-if="$root.can('registrar_movimiento_bancario')"></movimiento-bancario-create>
         </div>
 
         <div class="col-12">

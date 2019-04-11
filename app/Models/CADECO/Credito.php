@@ -13,6 +13,9 @@ use App\Facades\Context;
 
 class Credito extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = null;
+    public const OPCION_ANTECEDENTE = null;
+
     protected $fillable = [
         'cumplimiento',
         'fecha',
