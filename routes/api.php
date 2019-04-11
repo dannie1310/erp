@@ -202,11 +202,11 @@ $api->version('v1', function ($api) {
 
         //TIPOS CUENTA CONTABLE
         $api->group(['prefix' => 'tipo-cuenta-contable'], function($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@destroy')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\TipoCuentaContableController@update')->where(['id' => '[0-9]+']);
         });
 
         //TIPOS CUENTA EMPRESA
@@ -275,7 +275,10 @@ $api->version('v1', function ($api) {
     /**
      * PERSONALIZADO
      */
-    $api->group(['middleware' => 'api', 'prefix' => 'personalizado'], function($api){
+    $api->group(['middleware' => 'api', 'prefix' => 'CADECO'], function($api){
+        $api->group(['prefix' => 'permiso'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@index');
+        });
         //ESQUEMA PERSONALIZADO
         $api->group(['prefix' => 'rol-personalizado'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@store');
@@ -283,6 +286,7 @@ $api->version('v1', function ($api) {
             $api->get('por-usuario/{user_id}', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@porUsuario')->where(['user_id' => '[0-9]+']);
             $api->post('asignacion-personalizado', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@asignacionMasiva');
             $api->post('desasignacion-personalizado', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@desasignacionMasiva');
+            //$api->post('asignacion-permisos', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@asignacionPermisos');
         });
     });
 
@@ -315,9 +319,11 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'rol'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@store');
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@show')->where(['id' => '[0-9]+']);
             $api->get('por-usuario/{user_id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@porUsuario')->where(['user_id' => '[0-9]+']);
             $api->post('asignacion-masiva', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@asignacionMasiva');
             $api->post('desasignacion-masiva', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@desasignacionMasiva');
+            $api->post('asignacion-permisos', 'App\Http\Controllers\v1\SEGURIDAD_ERP\RolController@asignacionPermisos');
         });
 
         $api->group(['prefix' => 'sistema'], function ($api) {

@@ -49,7 +49,8 @@ export default {
                     icon: "info",
                     buttons: {
                         cancel: {
-                            text: 'Cancelar'
+                            text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Actualizar',

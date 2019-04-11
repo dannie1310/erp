@@ -1,13 +1,147 @@
 <template>
+    <span>
+        <div class="card" id="desasignacion">
+            <div class="card-header">
+                <h3 class="card-title">Desasignación de Roles</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <label for="user_id" class="col-lg-2 col-form-label">Buscar Usuario</label>
+                    <div class="col-lg-6">
+                        <usuario-select
+                            name="user_id"
+                            id="user_id"
+                            data-vv-as="Usuario"
+                            v-validate="{required: true, integer: true}"
+                            v-model="form.user_id"
+                            :error="errors.has('user_id')"
+                        >
+                        </usuario-select>
+                        <div class="error-label" v-show="errors.has('user_id')">{{ errors.first('user_id') }}</div>
+                    </div>
+                </div>
+                <div class="row" v-if="form.user_id">
+                    <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                <label for="from">{{ form.tipo_asignacion == 1 ? 'ROLES A DESASIGNAR' : 'ROLES ASIGNADOS' }}</label>
+                                <select multiple id="from" size="10" class="form-control" v-model="form.role_id">
+                                    <option v-for="rol in roles_asignados" :value="rol.id">{{ rol.display_name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="container col-sm-2">
+                            <div class="vertical-center align-content-center">
+                                <button class="btn col-xs-12 btn-default" @click="agregar" title="Agregar"><i class="fa fa-long-arrow-left"></i></button>
+                                <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                <label for="to">{{ form.tipo_asignacion == 1 ? 'ROLES DISPONIBLES' : 'ROLES NO ASIGNADOS' }} </label>
+                                <select multiple id="to" size="10" class="form-control" v-model="selected">
+                                    <option v-for="rol in roles_disponibles" :value="rol.id">{{ rol.display_name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                     </div>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-outline-success pull-right" :disabled="!roles_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal" ref="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Detalle de Desasignación</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tr>
+                                    <th>Usuario:</th>
+                                    <td>{{ usuario_seleccionado }}</td>
+                                </tr>
+                                 <tr>
+                                    <th>Roles a Desasignar:</th>
+                                    <td>
+                                        <ul>
+                                            <li v-for="rol in roles_desasignados">{{ rol.display_name }}</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Proyectos:</th>
+                                    <td>
+                                        <ul>
+                                            <li v-for="obra in obras_seleccionadas">{{ `[${obra.base_datos}] ${obra.nombre}` }}</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" @click="desasignar" :disabled="guardando">
+                            <span v-if="guardando">
+                                <i class="fa fa-spin fa-spinner"></i>
+                            </span>
+                            <span v-else>
+                                <i class="fa fa-save"></i> Desasignar
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </span>
     
 </template>
 
 <script>
+    import UsuarioSelect from "../../../../igh/usuario/Select";
     export default {
-        name: "desasignacion-roles-personalizado"
+        name: "desasignacion-roles-personalizado",
+        components: {UsuarioSelect}
     }
 </script>
 
-<style scoped>
+<style>
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+    }
+    .vue-treeselect__placeholder {
+        color: #495057
+    }
+
+    .container {
+        height: auto;
+        position: relative;
+        min-height: 50px;
+    }
+
+    .vertical-center {
+        position: relative;
+        top: 50%;
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
 </style>

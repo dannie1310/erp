@@ -235,7 +235,11 @@
             },
 
             getTiposMovimiento() {
-                return this.$store.dispatch('tesoreria/tipo-movimiento/fetch');
+                return this.$store.dispatch('tesoreria/tipo-movimiento/index',{
+                })
+                    .then(data => {
+                        this.tipos = data.data;
+                    })
             },
 
             getCuentas() {

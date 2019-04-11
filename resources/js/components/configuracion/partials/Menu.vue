@@ -69,6 +69,13 @@
                     <p>Crear Roles</p>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a href="#asignar-permisos" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Asignar Permisos</p>
+                </a>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
@@ -76,36 +83,7 @@
 
 <script>
     export default {
-        name: "configuracion-menu",
-
-        methods: {
-            mostrarMenu(event) {
-                event.stopPropagation();
-                $(event.target).closest('li').toggleClass('menu-open');
-            }
-        },
-
-        computed: {
-            catalogos() {
-                return this.$root.can([
-                    'consultar_cuenta_almacen',
-                    'consultar_cuenta_contable_bancaria',
-                    'consultar_cuenta_concepto',
-                    'consultar_cuenta_costo',
-                    'consultar_cuenta_empresa',
-                    'consultar_cuenta_fondo',
-                    'consultar_cuenta_general',
-                    'consultar_cuenta_material'
-                ])
-            },
-
-            modulos() {
-                return this.$root.can([
-                    'consultar_cierre_periodo',
-                    'consultar_prepolizas_generadas'
-                ])
-            }
-        }
+        name: "configuracion-menu"
     }
 </script>
 
