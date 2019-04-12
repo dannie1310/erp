@@ -20,7 +20,8 @@ class RolTransformer extends TransformerAbstract
             'id' => (int) $model->getKey(),
             'description' => (string) $model->description,
             'display_name' => (string) $model->display_name,
-            'name' => (string) $model->name
+            'name' => (string) $model->name,
+            'id_obra' => (int) $model->id_obra
         ];
     }
 

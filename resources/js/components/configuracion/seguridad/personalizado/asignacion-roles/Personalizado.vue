@@ -37,7 +37,7 @@
                             <div class="container col-sm-2">
                                 <div class="vertical-center align-content-center">
                                     <button class="btn col-xs-12 btn-default" @click="agregar" title="Agregar"><i class="fa fa-long-arrow-left"></i></button>
-<!--                                    <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>-->
+                                    <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>
                                 </div>
                             </div>
 

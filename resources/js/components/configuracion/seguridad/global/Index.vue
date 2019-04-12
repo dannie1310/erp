@@ -2,7 +2,7 @@
     <span id="configuracion-seguridad">
         <asignacion-roles-masiva></asignacion-roles-masiva>
         <desasignacion-roles-masiva></desasignacion-roles-masiva>
-        <seguridad-rol-create v-if="$root.can('registrar-roles')"></seguridad-rol-create>
+        <seguridad-rol-create ></seguridad-rol-create>
     </span>
 </template>
 

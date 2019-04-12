@@ -34,6 +34,10 @@ class RolService
     {
         return $this->repository->all($data);
     }
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 
     /**
      * @param $data
