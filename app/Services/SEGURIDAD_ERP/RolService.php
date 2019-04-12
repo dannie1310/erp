@@ -5,6 +5,8 @@ namespace App\Services\SEGURIDAD_ERP;
 
 
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\AuditoriaPermisoRol;
+use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\Rol;
@@ -48,6 +50,13 @@ class RolService
             foreach ($data['role_id'] as $role_id) {
                 try {
                     $user->roles()->attach([$role_id => ['id_obra' => $id_obra, 'id_proyecto' => $proyecto->getKey()]]);
+                    AuditoriaRolUsuario::query()->create([
+                        'user_id' => $data['user_id'],
+                        'role_id' => $role_id,
+                        'id_proyecto' => $proyecto->getKey(),
+                        'id_obra' => $id_obra,
+                        'action' => 'Registro'
+                    ]);
                 } catch (\Exception $e) {}
             }
         }
@@ -67,8 +76,34 @@ class RolService
             }
         }
 
+        $permisos_originales = $rol->permisos()->pluck('id')->toArray();
+
+        foreach ($data['permission_id'] as $id) {
+            // ASIGNACIÓN
+            if (! in_array($id, $permisos_originales)) {
+                AuditoriaPermisoRol::query()->create([
+                    'role_id' => $data['role_id'],
+                    'permission_id' => $id,
+                    'action' => 'Registro'
+                ]);
+            }
+        }
+
         $rol->permisos()->detach($rol->permisos()->pluck('id')->toArray());
         $rol->permisos()->sync($data['permission_id'], false);
+
+        $permisos_actualizados = $rol->permisos;
+
+        foreach ($permisos_originales as $id) {
+            // DESASIGNACIÓN
+            if (! in_array($id, $permisos_actualizados)) {
+                AuditoriaPermisoRol::query()->create([
+                    'role_id' => $data['role_id'],
+                    'permission_id' => $id,
+                    'action' => 'Eliminación'
+                ]);
+            }
+        }
 
         return true;
     }
@@ -89,6 +124,14 @@ class RolService
                         ->wherePivot('id_obra', '=', $id_obra)
                         ->wherePivot('id_proyecto', '=', $proyecto->getKey())
                         ->detach();
+
+                    AuditoriaRolUsuario::query()->create([
+                        'user_id' => $data['user_id'],
+                        'role_id' => $role_id,
+                        'id_proyecto' => $proyecto->getKey(),
+                        'id_obra' => $id_obra,
+                        'action' => 'Eliminación'
+                    ]);
                 } catch (\Exception $e) {}
             }
         }
@@ -112,6 +155,14 @@ class RolService
 
         if (isset($data['permission_id'])) {
            $rol->permisos()->attach($data['permission_id']);
+
+           foreach ($data['permission_id'] as $id) {
+               AuditoriaPermisoRol::query()->create([
+                   'role_id' => $rol->id,
+                   'permission_id' => $id,
+                   'action' => 'Registro'
+               ]);
+           }
         }
 
         return $rol;
