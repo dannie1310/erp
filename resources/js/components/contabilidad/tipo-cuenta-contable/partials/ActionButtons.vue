@@ -17,6 +17,12 @@
             destroy() {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/delete', this.value.id);
             },
+            destroy() {
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/delete', this.value.id)
+                    .then(() => {
+                        this.$store.commit('contabilidad/tipo-cuenta-contable/DELETE_TIPO', this.value.id);
+                    })
+            },
         },
         mounted() {
         }

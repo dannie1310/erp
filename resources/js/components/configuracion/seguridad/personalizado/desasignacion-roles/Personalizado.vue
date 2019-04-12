@@ -1,31 +1,34 @@
 <template>
     <span>
-        <div class="card" id="desasignacion">
-            <div class="card-header">
-                <h3 class="card-title">Desasignación de Roles</h3>
-            </div>
-            <div class="card-body">
-                <div class="form-group row">
-                    <label for="user_id" class="col-lg-2 col-form-label">Buscar Usuario</label>
-                    <div class="col-lg-6">
-                        <usuario-select
+       <div class="card" id="desasignacion">
+        <div class="card-header">
+            <h3 class="card-title">Desasignación de Roles</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="form-group row">
+                <label for="user_id" class="col-lg-2 col-form-label">Buscar Usuario</label>
+                <div class="col-lg-6">
+                    <usuario-select
                             name="user_id"
                             id="user_id"
                             data-vv-as="Usuario"
                             v-validate="{required: true, integer: true}"
                             v-model="form.user_id"
                             :error="errors.has('user_id')"
-                        >
-                        </usuario-select>
-                        <div class="error-label" v-show="errors.has('user_id')">{{ errors.first('user_id') }}</div>
-                    </div>
+                    >
+                    </usuario-select>
+                    <div class="error-label" v-show="errors.has('user_id')">{{ errors.first('user_id') }}</div>
                 </div>
-                <div class="row" v-if="form.user_id">
-                    <div class="col-sm-8">
+            </div>
+
+            <div class="row" v-if="form.user_id">
+
+                <div class="col-sm-8">
                     <div class="row">
                         <div class="col-sm-5">
                             <div class="form-group">
-                                <label for="from">{{ form.tipo_asignacion == 1 ? 'ROLES A DESASIGNAR' : 'ROLES ASIGNADOS' }}</label>
+                                <label for="from">{{ form.tipo_asignacion == 2 ? 'ROLES A DESASIGNAR' : 'ROLES ASIGNADOS' }}</label>
                                 <select multiple id="from" size="10" class="form-control" v-model="form.role_id">
                                     <option v-for="rol in roles_asignados" :value="rol.id">{{ rol.display_name }}</option>
                                 </select>
@@ -34,28 +37,28 @@
 
                         <div class="container col-sm-2">
                             <div class="vertical-center align-content-center">
-<!--                                <button class="btn col-xs-12 btn-default" @click="agregar" title="Agregar"><i class="fa fa-long-arrow-left"></i></button>-->
+                                <button class="btn col-xs-12 btn-default" @click="agregar" title="Agregar"><i class="fa fa-long-arrow-left"></i></button>
                                 <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>
                             </div>
                         </div>
 
                         <div class="col-sm-5">
                             <div class="form-group">
-                                <label for="to">{{ form.tipo_asignacion == 1 ? 'ROLES DISPONIBLES' : 'ROLES NO ASIGNADOS' }} </label>
+                                <label for="to">{{ form.tipo_asignacion == 2 ? 'ROLES DISPONIBLES' : 'ROLES NO ASIGNADOS' }} </label>
                                 <select multiple id="to" size="10" class="form-control" v-model="selected">
                                     <option v-for="rol in roles_disponibles" :value="rol.id">{{ rol.display_name }}</option>
                                 </select>
                             </div>
                         </div>
-                     </div>
                     </div>
                 </div>
-                <div>
-                    <button class="btn btn-outline-success pull-right" :disabled="!roles_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
-                </div>
             </div>
-
+            <div>
+                <button class="btn btn-outline-success pull-right" :disabled="!roles_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
+            </div>
         </div>
+    </div>
+
         <div class="modal" ref="modal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -80,6 +83,7 @@
                                         </ul>
                                     </td>
                                 </tr>
+
                             </table>
                         </div>
                     </div>
@@ -98,7 +102,6 @@
             </div>
         </div>
     </span>
-    
 </template>
 
 <script>
@@ -120,7 +123,8 @@
                 selected: [],
                 roles_disponibles: [],
                 roles_asignados: [],
-                usuario_seleccionado: ''
+                usuario_seleccionado: '',
+                roles_originales: []
             }
         },
 
@@ -130,6 +134,7 @@
                 this.usuario_seleccionado = '';
             })
         },
+
         methods: {
             getObrasPorUsuario(id) {
                 return this.$store.dispatch('cadeco/obras/getObrasPorUsuario', {
@@ -145,10 +150,15 @@
                     });
             },
 
-            getRolesUsuario(user_id) {
+            getRolesUsuario(data) {
+                this.roles_originales = [];
                 this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados);
-                return this.$store.dispatch('seguridad/rol-personalizado/getRolesUsuario', user_id)
+                return this.$store.dispatch('seguridad/rol-personalizado/getRolesUsuario', data)
                     .then(data => {
+                        data.data.forEach(rol => {
+                            this.roles_originales.push(rol.id);
+                        });
+
                         this.roles_asignados = data.data.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
                         this.roles_disponibles = this.roles_disponibles.diff(this.roles_asignados);
                     });
@@ -193,7 +203,7 @@
                         this.guardando = false;
                         this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados)
                         this.roles_asignados = [];
-                        this.form.id_proyecto = this.form.tipo_asignacion == 1 ? [] : '';
+                        this.form.id_proyecto = this.form.tipo_asignacion == 2 ? [] : '';
                         this.form.role_id = [];
                         $(this.$refs.modal).modal('hide');
                         this.$validator.reset()
@@ -218,6 +228,7 @@
                     })
             }
         },
+
         watch: {
             'form.user_id'(id) {
                 if(id) {
@@ -225,6 +236,7 @@
                 }
             }
         },
+
         computed: {
             obras_agrupadas() {
                 if (this.obras)

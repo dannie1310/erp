@@ -100,18 +100,14 @@
             },
             update() {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/update', {
-                    id: this.tipo.id,
+                    id: this.id,
                     data: this.tipo,
-                    params : {include: ['naturaleza']}
-                }).then(data => {
-                    $(this.$refs.modal).modal('hide');
-                        return this.$store.dispatch('contabilidad/tipo-cuenta-contable/find', {id: this.tipo.id, params: {include: ['naturaleza']}})
-                            .then(data => {
-                                this.$store.commit('contabilidad/tipo-cuenta-contable/UPDATE_TIPO', data);
-                            })
-
+                    params : {include: ['naturaleza', 'usuario']}
+                })
+                    .then(data => {
+                        this.$store.commit('contabilidad/tipo-cuenta-contable/UPDATE_TIPO', data);
+                        $(this.$refs.modal).modal('hide');
                     })
-
             },
 
             validate() {
