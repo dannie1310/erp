@@ -34,7 +34,7 @@
 
                         <div class="container col-sm-2">
                             <div class="vertical-center align-content-center">
-                                <button class="btn col-xs-12 btn-default" @click="agregar" title="Agregar"><i class="fa fa-long-arrow-left"></i></button>
+<!--                                <button class="btn col-xs-12 btn-default" @click="agregar" title="Agregar"><i class="fa fa-long-arrow-left"></i></button>-->
                                 <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>
                             </div>
                         </div>
@@ -80,14 +80,6 @@
                                         </ul>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th>Proyectos:</th>
-                                    <td>
-                                        <ul>
-                                            <li v-for="obra in obras_seleccionadas">{{ `[${obra.base_datos}] ${obra.nombre}` }}</li>
-                                        </ul>
-                                    </td>
-                                </tr>
                             </table>
                         </div>
                     </div>
@@ -113,7 +105,161 @@
     import UsuarioSelect from "../../../../igh/usuario/Select";
     export default {
         name: "desasignacion-roles-personalizado",
-        components: {UsuarioSelect}
+        components: {UsuarioSelect},
+        data() {
+            return {
+                form: {
+                    id_proyecto: '',
+                    tipo_asignacion: 2,
+                    user_id: '',
+                    role_id: []
+                },
+                obras: null,
+                cargando: false,
+                guardando: false,
+                selected: [],
+                roles_disponibles: [],
+                roles_asignados: [],
+                usuario_seleccionado: ''
+            }
+        },
+
+        mounted() {
+            this.getRoles();
+            $(this.$refs.modal).on('hidden.bs.modal', () => {
+                this.usuario_seleccionado = '';
+            })
+        },
+        methods: {
+            getObrasPorUsuario(id) {
+                return this.$store.dispatch('cadeco/obras/getObrasPorUsuario', {
+                    user_id: id
+                });
+            },
+
+            getRoles() {
+                this.roles_disponibles = [];
+                return this.$store.dispatch('seguridad/rol-personalizado/index')
+                    .then(data => {
+                        this.roles_disponibles = data.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
+                    });
+            },
+
+            getRolesUsuario(user_id) {
+                this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados);
+                return this.$store.dispatch('seguridad/rol-personalizado/getRolesUsuario', user_id)
+                    .then(data => {
+                        this.roles_asignados = data.data.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
+                        this.roles_disponibles = this.roles_disponibles.diff(this.roles_asignados);
+                    });
+            },
+
+            agregar() {
+                this.selected.forEach(rol => {
+                    this.roles_disponibles.forEach(r => {
+                        if(r.id == rol) {
+                            this.roles_asignados.push(r)
+                            this.roles_disponibles = this.roles_disponibles.filter(role => {
+                                return role.id != r.id;
+                            });
+                        }
+                    })
+                })
+            },
+
+            quitar() {
+                this.form.role_id.forEach(rol => {
+                    this.roles_asignados.forEach(r => {
+                        if(r.id == rol) {
+                            this.roles_disponibles.push(r)
+                            this.roles_asignados = this.roles_asignados.filter(role => {
+                                return role.id != r.id;
+                            });
+                        }
+                    })
+                })
+            },
+
+            desasignar() {
+                this.guardando = true;
+                return this.$store.dispatch('seguridad/rol-personalizado/desasignacionMasiva', {
+                    id_proyecto: Array.isArray(this.form.id_proyecto) ? this.form.id_proyecto : [this.form.id_proyecto],
+                    user_id: this.form.user_id,
+                    role_id: this.roles_desasignados.map(rol => (
+                        rol.id
+                    ))
+                })
+                    .finally(() => {
+                        this.guardando = false;
+                        this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados)
+                        this.roles_asignados = [];
+                        this.form.id_proyecto = this.form.tipo_asignacion == 1 ? [] : '';
+                        this.form.role_id = [];
+                        $(this.$refs.modal).modal('hide');
+                        this.$validator.reset()
+                    });
+            },
+
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.save()
+                    }
+                });
+            },
+
+            save() {
+                this.$store.dispatch('igh/usuario/find', {
+                    id: this.form.user_id
+                })
+                    .then(data => {
+                        this.usuario_seleccionado = data.nombre;
+                        $(this.$refs.modal).modal('show');
+                    })
+            }
+        },
+        watch: {
+            'form.user_id'(id) {
+                if(id) {
+                    this.getRolesUsuario(id);
+                }
+            }
+        },
+        computed: {
+            obras_agrupadas() {
+                if (this.obras)
+                    return _.groupBy(this.obras, 'base_datos');
+                else
+                    return [];
+            },
+
+            roles_desasignados() {
+                if (this.form.tipo_asignacion == 2) {
+                    return this.roles_asignados;
+                } else {
+                    return this.roles_disponibles.filter(rol => {
+                        return $.inArray(rol.id, this.roles_originales) > -1;
+                    })
+                }
+            },
+
+            obras_seleccionadas() {
+                if (this.form.id_proyecto && this.obras) {
+                    if (Array.isArray(this.form.id_proyecto)) {
+                        return this.obras.filter(obra => {
+                            return  $.inArray(`${obra.base_datos}-${obra.id_obra}`, this.form.id_proyecto) > -1;
+                        })
+                    } else {
+                        return this.obras.filter(obra => {
+                            return  `${obra.base_datos}-${obra.id_obra}` === this.form.id_proyecto;
+                        })
+                    }
+                }  else {
+                    return [];
+                }
+            }
+        }
+
     }
 </script>
 

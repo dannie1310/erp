@@ -8,16 +8,14 @@
                 <div class="form-group row">
                     <label for="role_id" class="col-lg-2 col-form-label">Buscar Rol</label>
                     <div class="col-lg-10">
-                        <rol-select
+                        <rol-personalizado-select
                                 name="role_id"
                                 id="role_id"
                                 data-vv-as="Rol"
                                 v-validate="{required: true, integer: true}"
                                 v-model="form.role_id"
                                 :error="errors.has('role_id')"
-                        >
-
-                        </rol-select>
+                        ></rol-personalizado-select>
                         <div class="error-label" v-show="errors.has('role_id')">{{ errors.first('role_id') }}</div>
 
                     </div>
@@ -114,10 +112,154 @@
 </template>
 
 <script>
-    import RolSelect from "../../../../seguridad/rol/Select";
+    import RolPersonalizadoSelect from "../../../../seguridad/personalizado/rol/Select";
     export default {
         name: "asignacion-permisos-personalizado",
-        components:{RolSelect}
+        components: {RolPersonalizadoSelect},
+        data() {
+            return {
+                form: {
+                    role_id: '',
+                    permission_id: []
+                },
+                permisos_disponibles: [],
+                permisos_asignados: [],
+                permisos_originales: [],
+                rol_seleccionado: '',
+                cargando: false,
+                guardando: false,
+                selected: []
+            }
+        },
+
+        mounted() {
+            this.getPermisos();
+        },
+
+        methods: {
+            getPermisos() {
+                return this.$store.dispatch('seguridad/permiso/index')
+                    .then(data => {
+                        this.permisos_disponibles = data.data.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
+                    })
+            },
+
+            getPermisosPorRol(role_id) {
+                this.permisos_originales = [];
+                this.permisos_disponibles = this.permisos_disponibles.concat(this.permisos_asignados);
+                return this.$store.dispatch('seguridad/permiso/index', {
+                    config: { params: { scope: 'porRol:' + role_id } }
+                })
+                    .then(data => {
+                        data.data.forEach(perm=> {
+                            this.permisos_originales.push(perm.id);
+                        })
+
+                        this.permisos_asignados = data.data.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
+                        this.permisos_disponibles = this.permisos_disponibles.diff(this.permisos_asignados);
+                    });
+            },
+
+            agregar() {
+                this.selected.forEach(permiso => {
+                    this.permisos_disponibles.forEach(r => {
+                        if(r.id == permiso) {
+                            this.permisos_asignados.push(r)
+                            this.permisos_disponibles = this.permisos_disponibles.filter(perm => {
+                                return perm.id != r.id;
+                            });
+                        }
+                    })
+                })
+            },
+
+            quitar() {
+                this.form.permission_id.forEach(permiso => {
+                    this.permisos_asignados.forEach(r => {
+                        if(r.id == permiso) {
+                            this.permisos_disponibles.push(r)
+                            this.permisos_asignados = this.permisos_asignados.filter(perm => {
+                                return perm.id != r.id;
+                            });
+                        }
+                    })
+                })
+            },
+
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.save();
+                    }
+                });
+            },
+
+            save() {
+                this.$store.dispatch('seguridad/rol-personalizado/find', {
+                    id: this.form.role_id
+                })
+                    .then(data => {
+                        this.rol_seleccionado = data.display_name;
+                        $(this.$refs.modal).modal('show');
+                    })
+            },
+
+            guardar() {
+                this.guardando = true;
+                return this.$store.dispatch('seguridad/rol-personalizado/asignarPermisos', {
+                    role_id: this.form.role_id,
+                    permission_id: this.permisos_asignados.map(permiso => (
+                        permiso.id
+                    ))
+                })
+                    .finally(() => {
+                        $(this.$refs.modal).modal('hide');
+                        this.$validator.reset()
+                        this.guardando = false;
+                        this.permisos_originales = this.permisos_asignados.map(perm => (
+                            perm.id
+                        ))
+                    });
+            }
+        },
+
+        watch: {
+            'form.role_id'(id) {
+                this.$validator.reset()
+                if (id) {
+                    this.cargando = true;
+                    this.getPermisosPorRol(id)
+                        .finally(() => {
+                            this.cargando = false;
+                        });
+                }
+            },
+        },
+
+        computed: {
+            permisos_disponibles_ordered() {
+                return this.permisos_disponibles.sort((a,b) => {
+                    return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));
+                });
+            },
+            permisos_asignados_ordered() {
+                return this.permisos_asignados.sort((a,b) => {
+                    return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));
+                });
+            },
+
+            permisos_desasignados() {
+                return this.permisos_disponibles.filter(permiso => {
+                    return $.inArray(permiso.id, this.permisos_originales) > -1;
+                })
+            },
+
+            permisos_nuevos_asignados() {
+                return this.permisos_asignados.filter(permiso => {
+                    return $.inArray(permiso.id, this.permisos_originales) == -1;
+                })
+            }
+        }
     }
 </script>
 
@@ -147,5 +289,4 @@
         align-items: center;
         justify-content: center;
     }
-
 </style>

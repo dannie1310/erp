@@ -73,10 +73,12 @@
         props: ['id'],
         methods: {
             find(id) {
+                this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', null);
                 return this.$store.dispatch('tesoreria/movimiento-bancario/find', {
                     id: id,
                     params: { include: 'cuenta.empresa,transaccion' }
-                }).then(() => {
+                }).then(data => {
+                    this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', data);
                     $(this.$refs.modal).modal('show')
                 })
             }

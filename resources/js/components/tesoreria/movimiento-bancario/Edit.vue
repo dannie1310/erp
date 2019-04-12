@@ -211,17 +211,21 @@
     export default {
         name: "movimiento-bancario-edit",
         props: ['id'],
+        data() {
+            return {
+                tiposMovimiento: [],
+                cuentas: []
+            }
+        },
+
+        mounted() {
+            this.getTiposMovimiento()
+            this.getCuentas()
+        },
+
         computed: {
             movimiento() {
                 return (this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] != null && this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'].id == this.id) ?  this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] : null
-            },
-
-            tiposMovimiento() {
-                return this.$store.getters['tesoreria/tipo-movimiento/tipos']
-            },
-
-            cuentas() {
-                return this.$store.getters['cadeco/cuenta/cuentas']
             },
 
             total() {
@@ -233,8 +237,20 @@
 
         methods: {
             getTiposMovimiento() {
-                return this.$store.dispatch('tesoreria/tipo-movimiento/fetch');
+                return this.$store.dispatch('tesoreria/tipo-movimiento/index')
+                    .then(data => {
+                        this.tiposMovimiento = data.data;
+                    });
             },
+
+            getTiposMovimiento() {
+                return this.$store.dispatch('tesoreria/tipo-movimiento/index',{
+                })
+                    .then(data => {
+                        this.tiposMovimiento = data.data;
+                    })
+            },
+
 
             getCuentas() {
                 return this.$store.dispatch('cadeco/cuenta/index', {
@@ -243,6 +259,9 @@
                         scope: 'paraTraspaso'
                     }
                 })
+                    .then(data => {
+                        this.cuentas = data.data;
+                    });
             },
 
             find(id) {
@@ -250,7 +269,8 @@
                     id: id,
                     params: { include: 'transaccion' }
                 })
-                    .then(() => {
+                    .then(data => {
+                        this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', data);
                         $(this.$refs.modal).modal('show');
                     })
             },
@@ -270,7 +290,8 @@
                     },
                     params: { include: 'cuenta.empresa,transaccion' }
                 })
-                    .then(() => {
+                    .then(data => {
+                        this.$store.commit('tesoreria/movimiento-bancario/UPDATE_MOVIMIENTO', data);
                         $(this.$refs.modal).modal('hide');
                     })
             },

@@ -112,7 +112,7 @@
 </template>
 
 <script>
-    import RolSelect from "../../../../seguridad/rol/Select";
+    import RolSelect from "../../../../seguridad/global/rol/Select";
     export default {
         name: "asignacion-permisos-global",
         components: {RolSelect},

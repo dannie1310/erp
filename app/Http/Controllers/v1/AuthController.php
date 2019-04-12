@@ -85,6 +85,12 @@ class AuthController extends Controller
     public function setContext(SetContextRequest $request)
     {
         $new_token = $this->auth->setContext($request->only(['database', 'id_obra']));
+        $obra = Obra::query()->find($request->id_obra);
+
+        if (! $obra->datosContables) {
+            $obra->datosContables()->create();
+        }
+
         return response()->json([
             'access_token' => $new_token,
             'token_type' => 'bearer',
