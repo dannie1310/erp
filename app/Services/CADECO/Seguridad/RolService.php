@@ -10,6 +10,7 @@ namespace App\Services\CADECO\Seguridad;
 
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\Seguridad\Rol;
+use App\Models\SEGURIDAD_ERP\AuditoriaPermisoRol;
 use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Repositories\Repository;
 use App\Traits\AuditoriaTrait;
@@ -50,14 +51,15 @@ class RolService
     public function asignacionPersonalizada($data)
     {
         $user = Usuario::query()->find($data['user_id']);
-        /** @var TYPE_NAME $id_obra */
-        //$id_obra = Usuario::query()->find($data['id_obra']);
-        //$auditoria = AuditoriaRolUser::query()->find($data['user_id']);
 
             foreach ($data['role_id'] as $role_id) {
                 try {
                     $user->roles()->attach( $role_id  );
-                    //$auditoria->traitRolUsuario($data);
+                    AuditoriaRolUser::query()->create([
+                        'user_id' => $data['user_id'],
+                        'role_id' => $role_id,
+                        'action' => 'Registro'
+                    ]);
 
                 } catch (\Exception $e) {
                 }
@@ -74,6 +76,11 @@ class RolService
                     $user->roles()
                         ->wherePivot('role_id', '=', $role_id)
                         ->detach();
+                    AuditoriaRolUser::query()->create([
+                        'user_id' => $data['user_id'],
+                        'role_id' => $role_id,
+                        'action' => 'Eliminación'
+                    ]);
                 } catch (\Exception $e) {}
             }
         return true;
@@ -90,10 +97,33 @@ class RolService
                 throw new \Exception('No es posible asignar el permiso "' . $permiso->display_name. '" porque se trata de un permiso reservado, favor de solicitar la asignación al administrador del sistema.', 403);
             }
         }
+        $permisos_originales = $rol->permisos()->pluck('id')->toArray();
+
+        foreach ($data['permission_id'] as $id) {
+            // ASIGNACIÓN
+            if (! in_array($id, $permisos_originales)) {
+                \App\Models\CADECO\Seguridad\AuditoriaPermisoRol::query()->create([
+                    'role_id' => $data['role_id'],
+                    'permission_id' => $id,
+                    'action' => 'Registro'
+                ]);
+            }
+        }
 
         $rol->permisos()->detach($rol->permisos()->pluck('id')->toArray());
         $rol->permisos()->sync($data['permission_id'], false);
+        $permisos_actualizados = $rol->permisos;
 
+        foreach ($permisos_originales as $id) {
+            // DESASIGNACIÓN
+            if (! in_array($id, $permisos_actualizados)) {
+                \App\Models\CADECO\Seguridad\AuditoriaPermisoRol::query()->create([
+                    'role_id' => $data['role_id'],
+                    'permission_id' => $id,
+                    'action' => 'Eliminación'
+                ]);
+            }
+        }
         return true;
     }
 

@@ -9,27 +9,32 @@
 namespace App\Models\CADECO\Seguridad;
 
 use App\Facades\Context;
-use App\Models\CADECO\Seguridad\Rol;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\SEGURIDAD_ERP\Permiso;
 
 class AuditoriaPermisoRol extends Model
 {
 
     protected $connection = 'cadeco';
-    protected $table = 'Seguridad.auditoria_permission_role';
+    public $timestamps = false;
 
     protected $fillable = [
-        'usuario_registro',
+        'role_id',
+        'permission_id',
         'action'
     ];
-
-    public function roles()
+    public function __construct(array $attributes = [])
     {
-        return $this->belongsTo(Rol::class,'rol_id');
+        parent::__construct($attributes);
+        $this->table = Context::getDatabase() . '.Seguridad.auditoria_permission_role';
     }
-    public function permisos()
+
+    protected static function boot()
     {
-        return $this->belongsTo(Permiso::class, 'permission_id');
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->usuario_registro = auth()->id();
+            $model->created_at = date('Y-m-d h:i:s');
+        });
     }
 }

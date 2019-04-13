@@ -8,23 +8,27 @@
 
 namespace App\Models\CADECO\Seguridad;
 
-use App\Facades\Context;
-use App\Models\CADECO\Seguridad\Rol;
 use Illuminate\Database\Eloquent\Model;
 
 class AuditoriaRolUser extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Seguridad.auditoria_role_user';
+    public $timestamps = false;
 
     protected $fillable = [
-        'usuario_registro',
+        'user_id',
+        'role_id',
         'action'
     ];
 
-
-    public function roles()
+    protected static function boot()
     {
-        return $this->belongsTo(Rol::class, 'role_id');
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->usuario_registro = auth()->id();
+            $model->created_at = date('Y-m-d h:i:s');
+        });
     }
 }
