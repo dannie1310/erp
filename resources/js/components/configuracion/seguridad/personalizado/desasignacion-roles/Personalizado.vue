@@ -113,7 +113,7 @@
             return {
                 form: {
                     id_proyecto: '',
-                    tipo_asignacion: 2,
+                    tipo_asignacion: 1,
                     user_id: '',
                     role_id: []
                 },
@@ -203,7 +203,7 @@
                         this.guardando = false;
                         this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados)
                         this.roles_asignados = [];
-                        this.form.id_proyecto = this.form.tipo_asignacion == 2 ? [] : '';
+                        this.form.id_proyecto = this.form.tipo_asignacion == 1 ? [] : '';
                         this.form.role_id = [];
                         $(this.$refs.modal).modal('hide');
                         this.$validator.reset()
