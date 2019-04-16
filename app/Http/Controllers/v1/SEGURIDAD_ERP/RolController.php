@@ -11,6 +11,7 @@ namespace App\Http\Controllers\v1\SEGURIDAD_ERP;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRolRequest;
+use App\Http\Requests\DeleteRolRequest;
 use App\Http\Transformers\SEGURIDAD_ERP\RolTransformer;
 use App\Services\SEGURIDAD_ERP\RolService;
 use App\Traits\ControllerTrait;
@@ -21,6 +22,7 @@ class RolController extends Controller
 {
     use ControllerTrait {
         store as traitStore;
+        destroy as traitDestroy;
     }
 
     /**
@@ -76,5 +78,10 @@ class RolController extends Controller
     public function store(CreateRolRequest $request)
     {
         return $this->traitStore($request);
+    }
+
+    public function destroy(DeleteRolRequest $request, $id)
+    {
+        return $this->traitDestroy($request->all(), $id);
     }
 }

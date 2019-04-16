@@ -10,6 +10,7 @@ namespace App\Models\SEGURIDAD_ERP;
 
 use App\Utils\Normalizar;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Ésta clase solo se utiliza para los poyectos que tengan un esquema de permisos global
@@ -44,5 +45,18 @@ class Rol extends Model
     public function permisos()
     {
         return $this->belongsToMany(Permiso::class, 'dbo.permission_role', 'role_id', 'permission_id');
+    }
+
+    /*public function scopeUsados($query)
+    {
+        $ids = DB::connection('seguridad')->table('dbo.role_user')->selectRaw('DISTINCT(role_id)')->get()->pluck('role_id')->toArray();
+
+        return $query->whereIn('id', $ids);
+    }*/
+
+    public function getUsadoAttribute()
+    {
+        $ids = DB::connection('seguridad')->table('dbo.role_user')->selectRaw('DISTINCT(role_id)')->get()->pluck('role_id')->toArray();
+        return in_array($this->getKey(), $ids);
     }
 }
