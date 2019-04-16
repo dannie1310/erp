@@ -46,6 +46,7 @@ import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 //SEGURIDAD
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
+import rolPersonalizado from './modules/seguridad/rol-personalizado';
 import sistema from './modules/seguridad/sistema';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
@@ -97,6 +98,7 @@ export default new Vuex.Store({
 
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
+        'seguridad/rol-personalizado': rolPersonalizado,
         'seguridad/sistema': sistema,
         'seguridad/tipo-proyecto': tipoProyecto,
     },

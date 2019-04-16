@@ -272,6 +272,23 @@ $api->version('v1', function ($api) {
             });
         });
     });
+    /**
+     * PERSONALIZADO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'seguridad'], function($api){
+
+        //ESQUEMA PERSONALIZADO
+        $api->group(['prefix' => 'rol'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@store');
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@show')->where(['id' => '[0-9]+']);
+            $api->get('por-usuario/{user_id}', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@porUsuario')->where(['user_id' => '[0-9]+']);
+            $api->post('asignacion-masiva', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@asignacionPersonalizada');
+            $api->post('desasignacion-masiva', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@desasignacionPersonalizada');
+            $api->post('asignacion-permisos', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@asignacionPermisos');
+            //$api->post('crear-rol', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@crearRol');
+        });
+    });
 
       /**
      * TESORERIA
