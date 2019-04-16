@@ -4,24 +4,23 @@
             <div class="card-header">
                 <h3 class="card-title">Asignación de Permisos</h3>
             </div>
-
             <div class="card-body">
                 <div class="form-group row">
                     <label for="role_id" class="col-lg-2 col-form-label">Buscar Rol</label>
                     <div class="col-lg-10">
-                        <rol-select
+                        <rol-personalizado-select
                                 name="role_id"
                                 id="role_id"
                                 data-vv-as="Rol"
                                 v-validate="{required: true, integer: true}"
                                 v-model="form.role_id"
                                 :error="errors.has('role_id')"
-                        >
-                        </rol-select>
+                        ></rol-personalizado-select>
                         <div class="error-label" v-show="errors.has('role_id')">{{ errors.first('role_id') }}</div>
-                    </div>
-                </div>
 
+                    </div>
+
+                </div>
                 <div class="row" v-if="form.role_id">
                     <div class="col-sm-12">
                         <div class="row">
@@ -52,13 +51,13 @@
                         </div>
                     </div>
                 </div>
-
-                 <div>
+                <div>
                      <button class="btn btn-outline-success pull-right" :disabled="!permisos_desasignados.length && !permisos_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
                  </div>
             </div>
-        </div>
 
+
+        </div>
         <div class="modal" ref="modal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -109,13 +108,14 @@
             </div>
         </div>
     </span>
+    
 </template>
 
 <script>
-    import RolSelect from "../../../../seguridad/global/rol/Select";
+    import RolPersonalizadoSelect from "../../../../seguridad/personalizado/rol/Select";
     export default {
-        name: "asignacion-permisos-global",
-        components: {RolSelect},
+        name: "asignacion-permisos-personalizado",
+        components: {RolPersonalizadoSelect},
         data() {
             return {
                 form: {
@@ -195,7 +195,7 @@
             },
 
             save() {
-                this.$store.dispatch('seguridad/rol/find', {
+                this.$store.dispatch('seguridad/rol-personalizado/find', {
                     id: this.form.role_id
                 })
                     .then(data => {
@@ -206,7 +206,7 @@
 
             guardar() {
                 this.guardando = true;
-                return this.$store.dispatch('seguridad/rol/asignarPermisos', {
+                return this.$store.dispatch('seguridad/rol-personalizado/asignarPermisos', {
                     role_id: this.form.role_id,
                     permission_id: this.permisos_asignados.map(permiso => (
                         permiso.id

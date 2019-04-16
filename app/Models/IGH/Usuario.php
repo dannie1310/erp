@@ -181,6 +181,16 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         }
     }
 
+    public function rolesPersonalizados()
+    {
+        $obra = Obra::query()->find( Context::getIdObra() );
+
+        if (isset( $obra->configuracion ) && $obra->configuracion->esquema_permisos == 2) {
+            // Esquema Personalizado
+            return $this->belongsToMany( Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id' );
+        }
+    }
+
     public function permisos()
     {
         $permisos = [];
