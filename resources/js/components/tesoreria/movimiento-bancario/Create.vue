@@ -268,6 +268,7 @@
                 return this.$store.dispatch('tesoreria/movimiento-bancario/store', this.$data)
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
+                        this.$emit('created')
                     })
             }
         },
