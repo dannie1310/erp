@@ -10,6 +10,8 @@ namespace App\Models\SEGURIDAD_ERP;
 
 use App\Utils\Normalizar;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Ésta clase solo se utiliza para los poyectos que tengan un esquema de permisos global
@@ -18,6 +20,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Rol extends Model
 {
+    use SoftDeletes;
+
     protected $connection = 'seguridad';
     protected $table = 'dbo.roles';
 
@@ -44,5 +48,11 @@ class Rol extends Model
     public function permisos()
     {
         return $this->belongsToMany(Permiso::class, 'dbo.permission_role', 'role_id', 'permission_id');
+    }
+
+    public function getUsadoAttribute()
+    {
+        $ids = DB::connection('seguridad')->table('dbo.role_user')->selectRaw('DISTINCT(role_id)')->get()->pluck('role_id')->toArray();
+        return in_array($this->getKey(), $ids);
     }
 }

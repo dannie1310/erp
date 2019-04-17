@@ -92,8 +92,9 @@ export default {
                                 .catch(error =>  {
                                     reject(error);
                                 });
+                        } else {
+                            reject();
                         }
-                        reject();
                     });
             });
         },
@@ -133,8 +134,9 @@ export default {
                                 .catch(error =>  {
                                     reject(error);
                                 });
+                        } else {
+                            reject();
                         }
-                        reject();
                     });
             });
         },
@@ -185,12 +187,16 @@ export default {
                     title: "Crear Rol",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
-                    buttons: ['No, cancelar',
-                        {
-                            text: "Si, Crear",
+                    buttons:  {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Crear',
                             closeModal: false,
                         }
-                    ]
+                    },
                 })
                     .then((value) => {
                         if (value) {
@@ -211,8 +217,51 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 });
+                        } else {
+                            reject();
                         }
-                        reject()
+                    });
+            });
+        },
+
+        delete(context, id) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar rol",
+                    text: "¿Estás seguro/a de que deseas eliminar este rol?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + id)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Rol eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        } else {
+                            reject();
+                        }
                     });
             });
         }

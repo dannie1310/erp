@@ -125,7 +125,6 @@
             },
 
             save() {
-
                 this.guardando = true;
                 return this.$store.dispatch('seguridad/rol/store', this.form)
                     .then(data => {
