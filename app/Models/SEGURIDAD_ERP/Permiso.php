@@ -58,7 +58,7 @@ class Permiso extends Model
     public function scopePorRol($query, $role_id)
     {
         return $query->whereHas('roles', function ($q) use ($role_id){
-            return $q->where(Context::getDatabase().'.Seguridad.roles.id', '=', $role_id);
+            return $q->where('id', '=', $role_id);
         });
     }
 }
