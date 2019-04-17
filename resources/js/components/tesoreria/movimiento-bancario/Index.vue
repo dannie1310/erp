@@ -98,7 +98,7 @@
                             cuenta: movimiento.cuenta ? movimiento.cuenta.numero + ' ' + (movimiento.cuenta.abreviatura ? movimiento.cuenta.abreviatura : '') + ' (' + movimiento.cuenta.empresa.razon_social + ')' : '',
                             referencia: movimiento.transaccion ? movimiento.transaccion.referencia : '',
                             importe: '$ ' + parseFloat(movimiento.importe).formatMoney(2, '.', ','),
-                            impueso: '$ ' +  parseFloat(movimiento.impuesto).formatMoney(2, '.', ','),
+                            impuesto: '$ ' +  parseFloat(movimiento.impuesto).formatMoney(2, '.', ','),
                             total: '$ ' +  (parseFloat(movimiento.importe) + parseFloat(movimiento.impuesto)).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
                                 show: true,
