@@ -35,15 +35,13 @@ class Rol extends Model
     protected static function boot()
     {
         parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
-        });
-
         self::creating(function ($model) {
             $name = Normalizar::normaliza($model->display_name);
             $model->name = str_replace(' ', '_', $name);
             $model->id_obra = Context::getIdObra();
+        });
+        self::addGlobalScope(function ($query) {
+            return $query->where('id_obra', '=', Context::getIdObra());
         });
     }
 
