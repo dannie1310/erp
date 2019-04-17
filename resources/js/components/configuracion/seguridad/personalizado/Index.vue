@@ -1,9 +1,9 @@
 <template>
     <span id="configuracion-seguridad-personalizado">
-        <asignacion-roles-personalizado></asignacion-roles-personalizado>
-        <desasignacion-roles-personalizado></desasignacion-roles-personalizado>
-        <seguridad-rol-create-personalizado></seguridad-rol-create-personalizado>
-        <asignacion-permisos-personalizado></asignacion-permisos-personalizado>
+        <asignacion-roles-personalizado v-if="$root.can('asignar_roles')"></asignacion-roles-personalizado>
+        <desasignacion-roles-personalizado v-if="$root.can('asignar_roles')"></desasignacion-roles-personalizado>
+        <seguridad-rol-create-personalizado v-if="$root.can('registrar_roles')"></seguridad-rol-create-personalizado>
+        <asignacion-permisos-personalizado v-if="$root.can('asignar_permisos')"></asignacion-permisos-personalizado>
     </span>
     
 </template>

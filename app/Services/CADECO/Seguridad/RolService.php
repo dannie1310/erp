@@ -108,6 +108,7 @@ class RolService
                     'action' => 'Registro'
                 ]);
             }
+            return true;
         }
 
         $rol->permisos()->detach($rol->permisos()->pluck('id')->toArray());
