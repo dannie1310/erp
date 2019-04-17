@@ -92,8 +92,10 @@ export default {
                                 .catch(error =>  {
                                     reject(error);
                                 });
+                        }else{
+                            reject();
+
                         }
-                        reject();
                     });
             });
         },
@@ -133,8 +135,10 @@ export default {
                                 .catch(error =>  {
                                     reject(error);
                                 });
+                        }else{
+                            reject();
+
                         }
-                        reject();
                     });
             });
         },
@@ -211,8 +215,10 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 });
+                        }else{
+                            reject()
+
                         }
-                        reject()
                     });
             });
         }

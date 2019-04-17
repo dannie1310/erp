@@ -49,28 +49,28 @@
             </li>
 
             <li class="nav-header"><a href="#configuracion-seguridad">ROLES Y PERMISOS</a></li>
-            <li class="nav-item">
-                <a href="#asignacion" class="nav-link">
+            <li class="nav-item" v-if="$root.can('asignar_roles')">
+                <a href="#asignacion"  class="nav-link" >
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Asignar Roles</p>
                 </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('asignar_roles')">
                 <a href="#desasignacion" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Desasignar Roles</p>
                 </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('registrar_roles')">
                 <a href="#seguridad-rol-create" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Crear Roles</p>
                 </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('asignar_permisos')">
                 <a href="#asignar-permisos" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Asignar Permisos</p>
