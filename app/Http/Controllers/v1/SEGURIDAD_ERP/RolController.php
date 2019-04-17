@@ -82,6 +82,6 @@ class RolController extends Controller
 
     public function destroy(DeleteRolRequest $request, $id)
     {
-        return $this->traitDestroy($request->all(), $id);
+        return $this->traitDestroy($request, $id);
     }
 }

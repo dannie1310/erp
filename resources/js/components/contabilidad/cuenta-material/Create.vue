@@ -28,7 +28,7 @@
                                                 v-model="id_material"
                                                 :error="errors.has('id_material')"
                                                 scope="sinCuenta"
-                                        >
+                                                ref="selectMaterial"
                                         ></material-select>
                                         <div class="error-label" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                     </div>
@@ -67,7 +67,7 @@
                                                 placeholder="Cuenta"
                                                 v-model="cuenta"
                                                 :class="{'is-invalid': errors.has('cuenta')}"
-                                                ref="selectMaterial"
+
                                         >
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>

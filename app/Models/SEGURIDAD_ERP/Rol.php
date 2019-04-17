@@ -10,6 +10,7 @@ namespace App\Models\SEGURIDAD_ERP;
 
 use App\Utils\Normalizar;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\DB;
  */
 class Rol extends Model
 {
+    use SoftDeletes;
+
     protected $connection = 'seguridad';
     protected $table = 'dbo.roles';
 
@@ -46,13 +49,6 @@ class Rol extends Model
     {
         return $this->belongsToMany(Permiso::class, 'dbo.permission_role', 'role_id', 'permission_id');
     }
-
-    /*public function scopeUsados($query)
-    {
-        $ids = DB::connection('seguridad')->table('dbo.role_user')->selectRaw('DISTINCT(role_id)')->get()->pluck('role_id')->toArray();
-
-        return $query->whereIn('id', $ids);
-    }*/
 
     public function getUsadoAttribute()
     {

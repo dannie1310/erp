@@ -11,6 +11,7 @@ use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\Rol;
 use App\Repositories\Repository;
+use Monolog\Handler\IFTTTHandler;
 
 class RolService
 {
@@ -172,8 +173,11 @@ class RolService
     {
         $rol = $this->repository->show($id);
 
+        if (! $rol) {
+            throw new \Exception('No se encontró el rol que desea eliminar', 404);
+        }
+
         if ($rol->usado) {
-            dd($rol);
             throw new \Exception('No es posible eliminar el Rol porque se encuentra asignado a uno o varios usuarios', 403);
         } else {
             $rol->delete();
