@@ -41,10 +41,10 @@
                                     <th style="text-align: right">Cumplimiento</th>
                                     <td>{{ movimiento.transaccion ? (new Date(movimiento.transaccion.cumplimiento)).toLocaleDateString('es') : '' }}</td>
                                 </tr>
-                                <tr>
+                                <!--<tr>
                                     <th style="text-align: right">Vencimiento</th>
                                     <td>{{ movimiento.transaccion ? (new Date(movimiento.transaccion.vencimiento)).toLocaleDateString('es') : '' }}</td>
-                                </tr>
+                                </tr>-->
                                 <tr>
                                     <th style="text-align: right">Importe</th>
                                     <td>$ {{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}</td>
