@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <movimiento-bancario-create v-if="$root.can('registrar_movimiento_bancario')"></movimiento-bancario-create>
+            <movimiento-bancario-create @created="created()" v-if="$root.can('registrar_movimiento_bancario')"></movimiento-bancario-create>
         </div>
 
         <div class="col-12">
@@ -57,11 +57,21 @@
 
         mounted() {
             this.paginate({
-                'include': 'cuenta.empresa,transaccion'
+                'include': 'cuenta.empresa,transaccion',
+                'sort': 'numero_folio',
+                'order': 'DESC'
             })
         },
 
         methods: {
+            created() {
+                this.paginate({
+                    'include': 'cuenta.empresa,transaccion',
+                    'sort': 'numero_folio',
+                    'order': 'DESC'
+                })
+            },
+
             paginate(payload = {}) {
                 this.cargando = true;
                 return this.$store.dispatch('tesoreria/movimiento-bancario/paginate', {params: payload})
@@ -116,7 +126,11 @@
             },
             query: {
                 handler (query) {
-                    this.paginate({...query, include: 'cuenta.empresa,transaccion'})
+                    this.paginate({...query,
+                        include: 'cuenta.empresa,transaccion',
+                        'sort': 'numero_folio',
+                        'order': 'DESC'
+                    })
                 },
                 deep: true
             },
