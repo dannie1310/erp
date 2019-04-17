@@ -87,6 +87,10 @@ class MovimientoBancarioService
         try {
             DB::connection('cadeco')->beginTransaction();
 
+            if ($data['id_tipo_movimiento'] != 4) {
+                $data['impuesto'] = 0;
+            }
+
             $movimiento = $this->repository->update($data,  $id);
 
 
