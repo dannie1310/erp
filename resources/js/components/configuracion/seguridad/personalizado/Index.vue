@@ -5,7 +5,6 @@
         <seguridad-rol-create-personalizado v-if="$root.can('registrar_roles')"></seguridad-rol-create-personalizado>
         <asignacion-permisos-personalizado v-if="$root.can('asignar_permisos')"></asignacion-permisos-personalizado>
     </span>
-    
 </template>
 
 <script>

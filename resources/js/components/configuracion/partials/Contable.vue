@@ -1,5 +1,5 @@
 <template>
-    <div class="card" id="configuracion-contable">
+    <div class="card" id="configuracion-contable" v-if="$root.can('editar_configuracion_contable')">
         <div class="card-header">
             <h3 class="card-title">Configuración Contable</h3>
             <div class="card-tools">

@@ -4,44 +4,44 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header"><a href="#configuracion-obra">CONFIGURACIÓN DE OBRA</a></li>
-            <li class="nav-item">
+            <li class="nav-header" v-if="$root.can('administracion_configuracion_obra')"><a href="#configuracion-obra">CONFIGURACIÓN DE OBRA</a></li>
+            <li class="nav-item" v-if="$root.can('administracion_configuracion_obra')">
                 <a href="#identificacion" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Identificación</p>
                 </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('administracion_configuracion_obra')">
                 <a href="#informacion_financiera" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Información Financiera</p>
                 </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('administracion_configuracion_obra')">
                 <a href="#plan" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Plan de Obra</p>
                 </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('administracion_configuracion_obra')">
                 <a href="#seguridad" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Seguridad</p>
                 </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('administracion_configuracion_obra')">
                 <a href="#ubicacion" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Ubicación</p>
                 </a>
             </li>
 
-            <li class="nav-header"><a href="#configuracion-contable">CONFIGURACIÓN CONTABLE</a></li>
-            <li class="nav-item">
+            <li class="nav-header" v-if="$root.can('editar_configuracion_contable')"><a href="#configuracion-contable">CONFIGURACIÓN CONTABLE</a></li>
+            <li class="nav-item" v-if="$root.can('editar_configuracion_contable')">
                 <a href="#contpaq" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>ContPaq</p>

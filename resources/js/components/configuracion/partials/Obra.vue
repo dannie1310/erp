@@ -1,5 +1,5 @@
 <template>
-    <div class="card" id="configuracion-obra">
+    <div class="card" id="configuracion-obra" v-if="$root.can('administracion_configuracion_obra')">
         <div class="card-header">
             <h3 class="card-title">Configuración de Obra</h3>
             <div class="card-tools">
