@@ -59,6 +59,10 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            <div class="form-group" v-if="movimiento">
+                                <label>Observaciones</label>
+                                <p>{{ movimiento.observaciones }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
