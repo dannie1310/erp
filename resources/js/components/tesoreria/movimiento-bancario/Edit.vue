@@ -218,11 +218,6 @@
             }
         },
 
-        mounted() {
-            this.getTiposMovimiento()
-            this.getCuentas()
-        },
-
         computed: {
             movimiento() {
                 return (this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] != null && this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'].id == this.id) ?  this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] : null
@@ -265,14 +260,20 @@
             },
 
             find(id) {
-                return this.$store.dispatch('tesoreria/movimiento-bancario/find', {
-                    id: id,
-                    params: { include: 'transaccion' }
-                })
-                    .then(data => {
-                        this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', data);
-                        $(this.$refs.modal).modal('show');
-                    })
+                axios.all([
+                    this.getTiposMovimiento(),
+                    this.getCuentas()
+                ])
+                    .then(() => {
+                        this.$store.dispatch('tesoreria/movimiento-bancario/find', {
+                            id: id,
+                            params: { include: 'transaccion' }
+                        })
+                            .then(data => {
+                                this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', data);
+                                $(this.$refs.modal).modal('show');
+                            })
+                    });
             },
 
             update() {

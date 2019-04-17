@@ -44,6 +44,8 @@
                     { title: 'Tipo', field: 'tipo', sortable: false },
                     { title: 'Cuenta', field: 'cuenta', sortable: false },
                     { title: 'Referencia', field: 'referencia'},
+                    { title: 'Importe', field: 'importe'},
+                    { title: 'Impuesto', field: 'impuesto'},
                     { title: 'Total', field: 'total'},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
@@ -95,6 +97,8 @@
                             tipo: movimiento.tipo.descripcion,
                             cuenta: movimiento.cuenta ? movimiento.cuenta.numero + ' ' + (movimiento.cuenta.abreviatura ? movimiento.cuenta.abreviatura : '') + ' (' + movimiento.cuenta.empresa.razon_social + ')' : '',
                             referencia: movimiento.transaccion ? movimiento.transaccion.referencia : '',
+                            importe: '$ ' + parseFloat(movimiento.importe).formatMoney(2, '.', ','),
+                            impueso: '$ ' +  parseFloat(movimiento.impuesto).formatMoney(2, '.', ','),
                             total: '$ ' +  (parseFloat(movimiento.importe) + parseFloat(movimiento.impuesto)).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
                                 show: true,
