@@ -54,17 +54,19 @@ class MovimientoBancario extends Model
             $model->registro = auth()->id();
             $model->id_obra = Context::getIdObra();
             $model->numero_folio = $folio;
-        });
 
-        self::created(function ($model) {
-            if ($model->tipo->naturaleza == 2) {
+            $tipo = TipoMovimiento::query()->find($model->id_tipo_movimiento);
+
+            if ($tipo->naturaleza == 2) {
                 $model->importe = -1 * abs($model->importe);
                 $model->impuesto = -1 * abs($model->impuesto);
             }
         });
 
-        self::updated(function ($model) {
-            if ($model->tipo->naturaleza == 2) {
+        self::updating(function ($model) {
+            $tipo = TipoMovimiento::query()->find($model->id_tipo_movimiento);
+
+            if ($tipo->naturaleza == 2) {
                 $model->importe = -1 * abs($model->importe);
                 $model->impuesto = -1 * abs($model->impuesto);
             }
