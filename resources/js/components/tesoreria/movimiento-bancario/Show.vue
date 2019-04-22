@@ -39,7 +39,7 @@
                                 </tr>
                                 <tr>
                                     <th style="text-align: right">Cumplimiento</th>
-                                    <td>{{ movimiento.transaccion ? (new Date(movimiento.transaccion.cumplimiento)).toDate() : '' }}</td>
+                                    <td>{{ movimiento.transaccion ? movimiento.transaccion.cumplimiento : '' }}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: right">Importe</th>
