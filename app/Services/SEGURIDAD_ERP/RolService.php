@@ -93,7 +93,7 @@ class RolService
         $rol->permisos()->detach($rol->permisos()->pluck('id')->toArray());
         $rol->permisos()->sync($data['permission_id'], false);
 
-        $permisos_actualizados = $rol->permisos;
+        $permisos_actualizados = $rol->permisos()->pluck('id')->toArray();
 
         foreach ($permisos_originales as $id) {
             // DESASIGNACIÓN
