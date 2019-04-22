@@ -35,16 +35,12 @@
                                 </tr>
                                 <tr>
                                     <th style="text-align: right">Fecha</th>
-                                    <td>{{ (new Date(movimiento.fecha)).toLocaleDateString('es') }}</td>
+                                    <td>{{ movimiento.fecha }}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: right">Cumplimiento</th>
-                                    <td>{{ movimiento.transaccion ? (new Date(movimiento.transaccion.cumplimiento)).toLocaleDateString('es') : '' }}</td>
+                                    <td>{{ movimiento.transaccion ? (new Date(movimiento.transaccion.cumplimiento)).toDate() : '' }}</td>
                                 </tr>
-                                <!--<tr>
-                                    <th style="text-align: right">Vencimiento</th>
-                                    <td>{{ movimiento.transaccion ? (new Date(movimiento.transaccion.vencimiento)).toLocaleDateString('es') : '' }}</td>
-                                </tr>-->
                                 <tr>
                                     <th style="text-align: right">Importe</th>
                                     <td>$ {{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}</td>

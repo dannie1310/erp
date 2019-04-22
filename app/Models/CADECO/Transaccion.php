@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Transaccion extends Model
@@ -19,6 +20,9 @@ class Transaccion extends Model
     protected $primaryKey = 'id_transaccion';
 
     public $timestamps = false;
+
+    protected $dates = ['cumplimiento'];
+
     public const CREATED_AT = 'FechaHoraRegistro';
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
@@ -86,7 +90,6 @@ class Transaccion extends Model
 
     public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa')
-            ;
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 }
