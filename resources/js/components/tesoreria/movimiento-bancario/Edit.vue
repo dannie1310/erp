@@ -286,7 +286,7 @@
                         impuesto: this.movimiento.impuesto,
                         referencia: this.movimiento.transaccion.referencia,
                         observaciones: this.movimiento.observaciones,
-                        cumplimiento: new Date(this.movimiento.transaccion.cumplimiento).toDate(),
+                        cumplimiento: this.movimiento.transaccion.cumplimiento,
                         fecha: this.movimiento.fecha
                     },
                     params: { include: 'cuenta.empresa,transaccion' }

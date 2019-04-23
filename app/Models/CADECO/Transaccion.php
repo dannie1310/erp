@@ -92,4 +92,9 @@ class Transaccion extends Model
     {
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
+
+    public function getCumplimientoAttribute($cumplimiento)
+    {
+        return substr($cumplimiento, 0, 10);
+    }
 }
