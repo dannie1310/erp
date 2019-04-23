@@ -29,6 +29,7 @@
                                                 :error="errors.has('id_material')"
                                                 scope="sinCuenta"
                                                 ref="selectMaterial"
+                                                :disableBranchNodes="false"
                                         ></material-select>
                                         <div class="error-label" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                     </div>

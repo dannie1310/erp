@@ -13,7 +13,7 @@
                 :options="rootNodes"
                 :load-options="loadOptions"
                 placeholder="-- Material --"
-                :disableBranchNodes="true"
+                :disableBranchNodes="disableBranchNodes ? disableBranchNodes : true"
                 v-model="val"
         />
     </span>
