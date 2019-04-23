@@ -120,7 +120,7 @@
                                         <td>{{ i + 1 }}</td>
                                         <td>
                                             <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
-                                                <span v-if="movimiento.id_tipo_cuenta_contable == 1 && original.movimientos.data[i].cuenta_contable != null">
+                                                <span v-if="movimiento.id_tipo_cuenta_contable == 1 && original.movimientos.data[i] ? original.movimientos.data[i].cuenta_contable !=null ? true : false : false">
                                                     {{ movimiento.cuenta_contable }}
                                                 </span>
                                                 <span v-else>

@@ -52,4 +52,9 @@ class TipoCuentaContableService
     {
         $this->repository->delete($data, $id);
     }
+
+    public function index()
+    {
+        return $this->repository->all();
+    }
 }

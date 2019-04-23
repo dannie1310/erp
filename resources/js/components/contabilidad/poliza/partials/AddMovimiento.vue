@@ -169,7 +169,9 @@
             getTiposCuentaContable() {
                 this.cargando = true;
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {
-                    params: {include: 'cuentaContable'}
+                    config: {
+                        params: { include: 'cuentaContable' }
+                    }
                 })
                     .then(data => {
                         this.$store.commit('contabilidad/tipo-cuenta-contable/SET_TIPOS', data.data);
