@@ -28,8 +28,8 @@
                             <div class="col-sm-5">
                                 <div class="form-group">
                                     <label for="from">ROLES A ASIGNAR</label>
-                                    <select multiple id="from" size="10" class="form-control" v-model="form.role_id">
-                                        <option v-for="rol in roles_asignados" :value="rol.id">{{ rol.display_name }}</option>
+                                    <select multiple id="from" size="10" class="form-control" v-model="form.role_id" :disabled="cargando">
+                                        <option v-for="rol in roles_asignados_ordered" :value="rol.id">{{ rol.display_name }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                                 <div class="form-group">
                                     <label for="to">ROLES DISPONIBLES</label>
                                     <select multiple id="to" size="10" class="form-control" v-model="selected">
-                                        <option v-for="rol in roles_disponibles" :value="rol.id">{{ rol.display_name }}</option>
+                                        <option v-for="rol in roles_disponibles_ordered" :value="rol.id">{{ rol.display_name }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <div>
-                <button class="btn btn-outline-success pull-right" :disabled="!roles_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
+                <button class="btn btn-outline-success pull-right" :disabled="!roles_desasignados.length && !roles_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
                 </div>
             </div>
 
@@ -74,11 +74,11 @@
                                     <th>Usuario:</th>
                                     <td>{{ usuario_seleccionado }}</td>
                                 </tr>
-                                 <tr>
+                                 <tr  v-if="roles_nuevos_asignados.length">
                                     <th>Roles a Asignar:</th>
                                     <td>
                                         <ul>
-                                            <li v-for="rol in roles_asignados">{{ rol.display_name }}</li>
+                                            <li v-for="rol in roles_nuevos_asignados">{{ rol.display_name }}</li>
                                         </ul>
                                     </td>
                                 </tr>
@@ -113,7 +113,7 @@
             return {
                 form: {
                     id_proyecto: '',
-                    tipo_asignacion: 2,
+                    tipo_asignacion: 1,
                     user_id: '',
                     role_id: []
                 },
@@ -123,6 +123,7 @@
                 selected: [],
                 roles_disponibles: [],
                 roles_asignados: [],
+                roles_originales:[],
                 usuario_seleccionado: ''
             }
         },
@@ -148,9 +149,14 @@
             },
 
             getRolesUsuario(user_id) {
+                this.roles_originales = []
                 this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados);
                 return this.$store.dispatch('seguridad/rol-personalizado/getRolesUsuario', user_id)
                     .then(data => {
+                        data.data.forEach(perm=> {
+                            this.roles_originales.push(perm.id);
+                        })
+
                         this.roles_asignados = data.data.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
                         this.roles_disponibles = this.roles_disponibles.diff(this.roles_asignados);
                     });
@@ -192,13 +198,11 @@
                     ))
                 })
                     .finally(() => {
-                        this.guardando = false;
-                        this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados)
-                        this.roles_asignados = [];
-                        this.form.id_proyecto = this.form.tipo_asignacion == 2 ? [] : '';
-                        this.form.role_id = [];
                         $(this.$refs.modal).modal('hide');
-                        this.$validator.reset()
+                        this.guardando = false;
+                        this.roles_originales = this.roles_asignados.map(rol => (
+                            rol.id
+                        ))
                     });
             },
 
@@ -218,6 +222,29 @@
                         this.usuario_seleccionado = data.nombre;
                         $(this.$refs.modal).modal('show');
                     })
+            }
+        },
+        computed:{
+            roles_asignados_ordered() {
+                return this.roles_asignados.sort((a,b) => {
+                    return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));
+                });
+            },
+            roles_disponibles_ordered() {
+                return this.roles_disponibles.sort((a,b) => {
+                    return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));
+                });
+            },
+            roles_desasignados() {
+                return this.roles_disponibles.filter(roles => {
+                    return $.inArray(roles.id, this.roles_originales) > -1;
+                })
+            },
+
+            roles_nuevos_asignados() {
+                return this.roles_asignados.filter(roles => {
+                    return $.inArray(roles.id, this.roles_originales) == -1;
+                })
             }
         },
         watch: {

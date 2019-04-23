@@ -29,8 +29,9 @@
                         <div class="col-sm-5">
                             <div class="form-group">
                                 <label for="from">{{ form.tipo_asignacion == 2 ? 'ROLES A DESASIGNAR' : 'ROLES ASIGNADOS' }}</label>
-                                <select multiple id="from" size="10" class="form-control" v-model="form.role_id">
-                                    <option v-for="rol in roles_asignados" :value="rol.id">{{ rol.display_name }}</option>
+                                <select multiple id="from" size="10" class="form-control" v-model="form.role_id" :disabled="cargando">
+                                    <option v-for="rol in roles_asignados_ordered" :value="rol.id">{{ rol.display_name }}</option>
+
                                 </select>
                             </div>
                         </div>
@@ -46,7 +47,7 @@
                             <div class="form-group">
                                 <label for="to">{{ form.tipo_asignacion == 2 ? 'ROLES DISPONIBLES' : 'ROLES NO ASIGNADOS' }} </label>
                                 <select multiple id="to" size="10" class="form-control" v-model="selected">
-                                    <option v-for="rol in roles_disponibles" :value="rol.id">{{ rol.display_name }}</option>
+                                    <option v-for="rol in roles_disponibles_ordered" :value="rol.id">{{ rol.display_name }}</option>
                                 </select>
                             </div>
                         </div>
@@ -54,7 +55,7 @@
                 </div>
             </div>
             <div>
-                <button class="btn btn-outline-success pull-right" :disabled="!roles_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
+                <button class="btn btn-outline-success pull-right"  :disabled="!roles_desasignados.length && !roles_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
             </div>
         </div>
     </div>
@@ -122,6 +123,7 @@
                 guardando: false,
                 selected: [],
                 roles_disponibles: [],
+                roles_originales: [],
                 roles_asignados: [],
                 usuario_seleccionado: '',
                 roles_originales: []
@@ -200,13 +202,13 @@
                     ))
                 })
                     .finally(() => {
-                        this.guardando = false;
-                        this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados)
-                        this.roles_asignados = [];
-                        this.form.id_proyecto = this.form.tipo_asignacion == 1 ? [] : '';
-                        this.form.role_id = [];
+
+
                         $(this.$refs.modal).modal('hide');
-                        this.$validator.reset()
+                        this.guardando = false;
+                        this.roles_originales = this.roles_asignados.map(rol => (
+                            rol.id
+                        ))
                     });
             },
 
@@ -237,40 +239,29 @@
             }
         },
 
-        computed: {
-            obras_agrupadas() {
-                if (this.obras)
-                    return _.groupBy(this.obras, 'base_datos');
-                else
-                    return [];
+        computed:{
+            roles_asignados_ordered() {
+                return this.roles_asignados.sort((a,b) => {
+                    return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));
+                });
             },
-
+            roles_disponibles_ordered() {
+                return this.roles_disponibles.sort((a,b) => {
+                    return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));
+                });
+            },
             roles_desasignados() {
-                if (this.form.tipo_asignacion == 2) {
-                    return this.roles_asignados;
-                } else {
-                    return this.roles_disponibles.filter(rol => {
-                        return $.inArray(rol.id, this.roles_originales) > -1;
-                    })
-                }
+                return this.roles_disponibles.filter(roles => {
+                    return $.inArray(roles.id, this.roles_originales) > -1;
+                })
             },
 
-            obras_seleccionadas() {
-                if (this.form.id_proyecto && this.obras) {
-                    if (Array.isArray(this.form.id_proyecto)) {
-                        return this.obras.filter(obra => {
-                            return  $.inArray(`${obra.base_datos}-${obra.id_obra}`, this.form.id_proyecto) > -1;
-                        })
-                    } else {
-                        return this.obras.filter(obra => {
-                            return  `${obra.base_datos}-${obra.id_obra}` === this.form.id_proyecto;
-                        })
-                    }
-                }  else {
-                    return [];
-                }
+            roles_nuevos_asignados() {
+                return this.roles_asignados.filter(roles => {
+                    return $.inArray(roles.id, this.roles_originales) == -1;
+                })
             }
-        }
+        },
 
     }
 </script>
