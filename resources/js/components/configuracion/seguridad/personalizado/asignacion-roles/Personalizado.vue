@@ -117,7 +117,6 @@
                     user_id: '',
                     role_id: []
                 },
-                obras: null,
                 cargando: false,
                 guardando: false,
                 selected: [],
@@ -134,6 +133,11 @@
             })
         },
         methods: {
+            addRol(data){
+                this.roles_disponibles.push(data);
+                this.roles_disponibles = this.roles_disponibles.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
+            },
+
             getObrasPorUsuario(id) {
                 return this.$store.dispatch('cadeco/obras/getObrasPorUsuario', {
                     user_id: id
@@ -224,6 +228,7 @@
                     })
             }
         },
+
         computed:{
             roles_asignados_ordered() {
                 return this.roles_asignados.sort((a,b) => {
@@ -246,14 +251,21 @@
                     return $.inArray(roles.id, this.roles_originales) == -1;
                 })
             }
-        },
-        watch: {
+        },watch: {
             'form.user_id'(id) {
-                if(id) {
-                    this.getRolesUsuario(id);
+                this.$validator.reset()
+                if (id) {
+                    this.cargando = true;
+                    this.getRolesUsuario(id)
+                        .finally(() => {
+                            this.cargando = false;
+                        });
                 }
             }
-        }
+
+        },
+
+
     }
 </script>
 

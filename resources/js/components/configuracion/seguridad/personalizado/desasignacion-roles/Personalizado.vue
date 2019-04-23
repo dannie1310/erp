@@ -138,6 +138,10 @@
         },
 
         methods: {
+            addRol(data){
+                this.roles_disponibles.push(data);
+                this.roles_disponibles = this.roles_disponibles.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
+            },
             getObrasPorUsuario(id) {
                 return this.$store.dispatch('cadeco/obras/getObrasPorUsuario', {
                     user_id: id
@@ -233,8 +237,13 @@
 
         watch: {
             'form.user_id'(id) {
-                if(id) {
-                    this.getRolesUsuario(id);
+                this.$validator.reset()
+                if (id) {
+                    this.cargando = true;
+                    this.getRolesUsuario(id)
+                        .finally(() => {
+                            this.cargando = false;
+                        });
                 }
             }
         },
