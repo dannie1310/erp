@@ -167,7 +167,7 @@
                                                 name="transaccion.cumplimiento"
                                                 id="cumplimiento"
                                                 class="form-control"
-                                                :value="new Date(movimiento.transaccion.cumplimiento).toDate()"
+                                                :value="movimiento.transaccion.cumplimiento"
                                                 @input="updateAttribute"
                                                 v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                 data-vv-as="Cumplimiento"
