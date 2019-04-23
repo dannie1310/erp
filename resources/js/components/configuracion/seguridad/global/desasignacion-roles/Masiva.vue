@@ -174,6 +174,10 @@
         },
 
         methods: {
+            addRol(data) {
+                this.roles_disponibles.push(data);
+                this.roles_disponibles = this.roles_disponibles.sort((a, b) => (a.display_name > b.display_name) ? 1 : -1);
+            },
             getObrasPorUsuario(id) {
                 return this.$store.dispatch('cadeco/obras/getObrasPorUsuario', {
                     user_id: id
@@ -269,7 +273,7 @@
 
         watch: {
             'form.user_id'(id) {
-                this.getRoles();
+                //this.getRoles();
                 this.form.id_proyecto = [];
                 this.obras = null;
                 this.$validator.reset()
