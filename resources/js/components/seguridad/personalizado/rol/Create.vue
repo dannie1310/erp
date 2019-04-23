@@ -137,6 +137,7 @@
 
                         this.search = '';
                         this.$validator.reset()
+                        this.$emit('creado',data);
                     })
                     .finally(() => {
                         this.guardando = false;
