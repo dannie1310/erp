@@ -216,6 +216,10 @@
                         this.permisos_originales = this.permisos_asignados.map(perm => (
                             perm.id
                         ))
+                        this.$store.dispatch('seguridad/permiso/porUsuario', this.currentUser.idusuario)
+                            .then(data => {
+                                this.$session.set('permisos', data)
+                            })
                     } )
                     .finally(() => {
                         $(this.$refs.modal).modal('hide');
@@ -240,6 +244,9 @@
         },
 
         computed: {
+            currentUser(){
+                return this.$store.getters['auth/currentUser']
+            },
             permisos_disponibles_ordered() {
                 return this.permisos_disponibles.sort((a,b) => {
                     return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));

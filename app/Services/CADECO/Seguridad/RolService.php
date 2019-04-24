@@ -65,7 +65,7 @@ class RolService
                 }
             }
 
-        return true;
+        return $user->permisos();
     }
     public function desasignacionPersonalizada($data)
     {
@@ -83,7 +83,7 @@ class RolService
                     ]);
                 } catch (\Exception $e) {}
             }
-        return true;
+        return $user->permisos();
     }
 
     public function asignacionPermisos($data)
