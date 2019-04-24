@@ -5,11 +5,13 @@ namespace App\Http\Controllers\v1\CADECO\Contabilidad;
 
 use App\Http\Controllers\Controller;
 
+use App\Http\Requests\DeleteCuentaCostoRequest;
 use App\Http\Requests\StoreCuentaCostoRequest;
 use App\Http\Requests\UpdateCuentaCostoRequest;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaCostoTransformer;
 use App\Services\CADECO\Contabilidad\CuentaCostoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class CuentaCostoController extends Controller
@@ -17,6 +19,7 @@ class CuentaCostoController extends Controller
     use ControllerTrait {
         store as protected traitStore;
         update as protected traitUpdate;
+        destroy as protected traitDestroy;
     }
 
     /**
@@ -58,5 +61,10 @@ class CuentaCostoController extends Controller
     public function update(UpdateCuentaCostoRequest $request, $id)
     {
         return $this->traitUpdate($request, $id);
+    }
+
+    public function destroy(DeleteCuentaCostoRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);
     }
 }

@@ -48,4 +48,9 @@ class CuentaCostoService
     {
         return $this->repository->update($data, $id);
     }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->delete($data, $id);
+    }
 }
