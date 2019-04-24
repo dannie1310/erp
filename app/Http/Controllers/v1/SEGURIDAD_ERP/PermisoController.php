@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\PermisoTransformer;
 use App\Services\SEGURIDAD_ERP\PermisoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class PermisoController extends Controller
@@ -43,11 +44,16 @@ class PermisoController extends Controller
      */
     public function __construct(Manager $fractal, PermisoService $service, PermisoTransformer $transformer)
     {
-        $this->middleware('auth');
-        $this->middleware('context');
+        $this->middleware( 'auth' );
+        $this->middleware( 'context' );
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function porUsuario(Request $request, $id)
+    {
+        return $this->service->porUsuario($id);
     }
 }

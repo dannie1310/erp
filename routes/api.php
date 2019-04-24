@@ -315,6 +315,7 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
         $api->group(['prefix' => 'permiso'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@index');
+            $api->get('por-usuario/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@porUsuario')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'rol'], function ($api) {

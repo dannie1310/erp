@@ -201,11 +201,15 @@
                 return this.$store.dispatch('seguridad/rol-personalizado/desasignacionMasiva', {
                     //id_proyecto: Array.isArray(this.form.id_proyecto) ? this.form.id_proyecto : [this.form.id_proyecto],
                     user_id: this.form.user_id,
-                    role_id: this.roles_asignados.map(rol => (
+                    role_id: this.roles_desasignados.map(rol => (
                         rol.id
                     ))
                 })
                     .then(data => {
+                        if (this.currentUser.idusuario == this.form.user_id) {
+                            this.$session.set('permisos', data)
+                        }
+
                         this.roles_originales = this.roles_asignados.map(rol => (
                             rol.id
                         ))
@@ -251,6 +255,9 @@
         },
 
         computed:{
+            currentUser(){
+                return this.$store.getters['auth/currentUser']
+            },
             roles_asignados_ordered() {
                 return this.roles_asignados.sort((a,b) => {
                     return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));

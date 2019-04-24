@@ -3,6 +3,7 @@
 
 namespace App\Services\SEGURIDAD_ERP;
 
+use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Repositories\Repository;
 
@@ -25,5 +26,10 @@ class PermisoService
     public function index($data)
     {
         return $this->repository->all($data);
+    }
+
+    public function porUsuario($id)
+    {
+        return Usuario::query()->find($id)->permisos();
     }
 }

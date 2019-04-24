@@ -36,7 +36,7 @@ class Permiso
             $permisos = explode(self::DELIMITER, $permisos);
     }
         if ($this->auth->guest() || !$request->user()->can($permisos)) {
-            abort(403);
+            abort(403, 'No cuentas con los permisos necesarios para realizar la acción solicitada');
         }
         return $next($request);
     }

@@ -26,6 +26,20 @@ export default {
                         reject(error)
                     });
             });
+        },
+
+        porUsuario(context, id) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'por-usuario/' + id)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    });
+            });
         }
     },
 
