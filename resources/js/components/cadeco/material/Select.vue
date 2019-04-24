@@ -13,7 +13,7 @@
                 :options="rootNodes"
                 :load-options="loadOptions"
                 placeholder="-- Material --"
-                :disableBranchNodes="disableBranchNodes ? disableBranchNodes : true"
+                :disableBranchNodes="this.disableBranchNodes"
                 v-model="val"
         />
     </span>
@@ -21,7 +21,7 @@
 
 <script>
     export default {
-        props: ['value','id', 'multiple', 'error', 'scope'],
+        props: ['value','id', 'multiple', 'error', 'scope', 'disableBranchNodes'],
         name: "material-select",
         data() {
             return {
