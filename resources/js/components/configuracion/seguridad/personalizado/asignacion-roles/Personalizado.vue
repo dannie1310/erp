@@ -201,12 +201,15 @@
                         rol.id
                     ))
                 })
-                    .finally(() => {
-                        $(this.$refs.modal).modal('hide');
-                        this.guardando = false;
+                    .then(data => {
                         this.roles_originales = this.roles_asignados.map(rol => (
                             rol.id
                         ))
+                    } )
+                    .finally(() => {
+                        $(this.$refs.modal).modal('hide');
+                        this.guardando = false;
+
                     });
             },
 
@@ -235,6 +238,7 @@
                     return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));
                 });
             },
+
             roles_disponibles_ordered() {
                 return this.roles_disponibles.sort((a,b) => {
                     return (a.display_name<b.display_name?-1:(a.display_name>b.display_name?1:0));
