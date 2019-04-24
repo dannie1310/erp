@@ -201,7 +201,7 @@
                 return this.$store.dispatch('seguridad/rol-personalizado/desasignacionMasiva', {
                     //id_proyecto: Array.isArray(this.form.id_proyecto) ? this.form.id_proyecto : [this.form.id_proyecto],
                     user_id: this.form.user_id,
-                    role_id: this.roles_asignados.map(rol => (
+                    role_id: this.roles_desasignados.map(rol => (
                         rol.id
                     ))
                 })
