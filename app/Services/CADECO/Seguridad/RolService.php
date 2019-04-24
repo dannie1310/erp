@@ -97,6 +97,7 @@ class RolService
                 throw new \Exception('No es posible asignar el permiso "' . $permiso->display_name. '" porque se trata de un permiso reservado, favor de solicitar la asignación al administrador del sistema.', 403);
             }
         }
+
         $permisos_originales = $rol->permisos()->pluck('id')->toArray();
 
         foreach ($data['permission_id'] as $id) {
@@ -108,12 +109,12 @@ class RolService
                     'action' => 'Registro'
                 ]);
             }
-            return true;
         }
 
         $rol->permisos()->detach($rol->permisos()->pluck('id')->toArray());
         $rol->permisos()->sync($data['permission_id'], false);
-        $permisos_actualizados = $rol->permisos;
+
+        $permisos_actualizados = $rol->permisos()->pluck('id')->toArray();
 
         foreach ($permisos_originales as $id) {
             // DESASIGNACIÓN
