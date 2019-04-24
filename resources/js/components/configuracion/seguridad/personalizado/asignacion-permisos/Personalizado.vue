@@ -212,13 +212,16 @@
                         permiso.id
                     ))
                 })
+                    .then(data => {
+                        this.permisos_originales = this.permisos_asignados.map(perm => (
+                            perm.id
+                        ))
+                    } )
                     .finally(() => {
                         $(this.$refs.modal).modal('hide');
                         this.$validator.reset()
                         this.guardando = false;
-                        this.permisos_originales = this.permisos_asignados.map(perm => (
-                            perm.id
-                        ))
+
                     });
             }
         },
