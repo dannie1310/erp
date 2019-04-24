@@ -28,7 +28,7 @@
                     <div class="row">
                         <div class="col-sm-5">
                             <div class="form-group">
-                                <label for="from">{{ form.tipo_asignacion == 2 ? 'ROLES A DESASIGNAR' : 'ROLES ASIGNADOS' }}</label>
+                                <label for="from">{{ form.tipo_asignacion == 1 ? 'ROLES A DESASIGNAR' : 'ROLES ASIGNADOS' }}</label>
                                 <select multiple id="from" size="10" class="form-control" v-model="form.role_id" :disabled="cargando">
                                     <option v-for="rol in roles_asignados_ordered" :value="rol.id">{{ rol.display_name }}</option>
 
@@ -45,7 +45,7 @@
 
                         <div class="col-sm-5">
                             <div class="form-group">
-                                <label for="to">{{ form.tipo_asignacion == 2 ? 'ROLES DISPONIBLES' : 'ROLES NO ASIGNADOS' }} </label>
+                                <label for="to">{{ form.tipo_asignacion == 1 ? 'ROLES DISPONIBLES' : 'ROLES NO ASIGNADOS' }} </label>
                                 <select multiple id="to" size="10" class="form-control" v-model="selected">
                                     <option v-for="rol in roles_disponibles_ordered" :value="rol.id">{{ rol.display_name }}</option>
                                 </select>
@@ -75,7 +75,7 @@
                                 <tr>
                                     <th>Usuario:</th>
                                     <td>{{ usuario_seleccionado }}</td>
-                                </tr>
+                                </tr v-if="roles_desasignados.length">
                                  <tr>
                                     <th>Roles a Desasignar:</th>
                                     <td>
@@ -198,16 +198,14 @@
 
             desasignar() {
                 this.guardando = true;
-                return this.$store.dispatch('seguridad/rol-personalizado/desasignacionMasiva', {
-                    id_proyecto: Array.isArray(this.form.id_proyecto) ? this.form.id_proyecto : [this.form.id_proyecto],
+                return this.$store.dispatch('seguridad/rol-personalizado/asignacionMasiva', {
+                    //id_proyecto: Array.isArray(this.form.id_proyecto) ? this.form.id_proyecto : [this.form.id_proyecto],
                     user_id: this.form.user_id,
-                    role_id: this.roles_desasignados.map(rol => (
+                    role_id: this.roles_asignados.map(rol => (
                         rol.id
                     ))
                 })
                     .finally(() => {
-
-
                         $(this.$refs.modal).modal('hide');
                         this.guardando = false;
                         this.roles_originales = this.roles_asignados.map(rol => (
