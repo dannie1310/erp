@@ -75,7 +75,7 @@
                                 <tr>
                                     <th>Usuario:</th>
                                     <td>{{ usuario_seleccionado }}</td>
-                                </tr v-if="roles_nuevos_asignados.length">
+                                </tr v-if="roles_desasignados.length">
                                  <tr>
                                     <th>Roles a Desasignar:</th>
                                     <td>
