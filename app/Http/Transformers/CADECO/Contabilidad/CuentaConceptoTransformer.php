@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
 use App\Http\Transformers\CADECO\ConceptoTransformer;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Contabilidad\CuentaConcepto;
 use League\Fractal\TransformerAbstract;
 
@@ -21,7 +22,8 @@ class CuentaConceptoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'concepto'
+        'concepto',
+        'usuario'
     ];
 
     /**
@@ -38,7 +40,8 @@ class CuentaConceptoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'cuenta' => $model->cuenta,
-            'id_concepto' => $model->id_concepto
+            'id_concepto' => $model->id_concepto,
+            'created_at' => $model->created_at->format('Y-m-d h:i:s')
         ];
     }
 
@@ -46,6 +49,14 @@ class CuentaConceptoTransformer extends TransformerAbstract
     {
         if ($concepto = $model->concepto) {
             return $this->item($concepto, new ConceptoTransformer);
+        }
+        return null;
+    }
+
+    public function includeUsuario(CuentaConcepto $model)
+    {
+        if ($usuario = $model->usuario) {
+            return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }

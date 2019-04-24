@@ -42,6 +42,8 @@
                     { title: 'Concepto', field: 'concepto', sortable: false },
                     { title: 'Clave del Concepto', field: 'clave', sortable: false },
                     { title: 'Ruta', field: 'ruta', sortable: false },
+                    { title: 'Usuario que Registró', field: 'usuario', sortable: false },
+                    { title: 'Fecha y Hora de Registro', field: 'timestamp', sortable: false },
                     { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -53,6 +55,7 @@
         },
 
         mounted() {
+            this.query.include = 'usuario';
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -99,6 +102,8 @@
                         concepto: cuenta.concepto.descripcion,
                         ruta: cuenta.concepto.path,
                         clave: cuenta.concepto.clave_concepto,
+                        usuario: cuenta.usuario.nombre,
+                        timestamp: cuenta.created_at,
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_cuenta_concepto') ? true : undefined,
                             id: cuenta.id
