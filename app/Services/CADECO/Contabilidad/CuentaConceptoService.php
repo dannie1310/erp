@@ -34,6 +34,9 @@ class CuentaConceptoService
 
     public function store($data)
     {
+        if(CuentaConcepto::query()->where('id_concepto', '=', $data['id_concepto'])->first()) {
+            throw new \Exception('Ya existe una cuenta registrada para el concepto seleccionado', 400);
+        }
         return $this->repository->create($data);
     }
 
