@@ -331,6 +331,8 @@
                 return this.$store.dispatch('contabilidad/poliza/update', payload)
                     .then(data => {
                         this.$store.commit('contabilidad/poliza/UPDATE_POLIZA', data);
+                        let id = this.id
+                        this.$router.push({ name: 'poliza-show', params: { id }})
                     })
             },
 
