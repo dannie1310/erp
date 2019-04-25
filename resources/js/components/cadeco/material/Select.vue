@@ -73,7 +73,11 @@
                 self.rootNodes = [];
                 this.cargando = true;
                 return self.$store.dispatch('cadeco/material/index', {
-                    params: { scope: this.scp }
+                    params: {
+                        scope: this.scp,
+                        sort: 'descripcion',
+                        order: 'ASC'
+                    }
                 })
                     .then(data => {
                         self.rootNodes = data.data.map(material => ({
