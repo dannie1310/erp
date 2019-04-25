@@ -35,10 +35,55 @@ export default {
 
         UPDATE_ATTRIBUTE(state, data) {
             state.currentCuenta[data.attribute] = data.value
+        },
+
+        DELETE_CUENTA(state, id) {
+            state.cuentas = state.cuentas.filter(cuenta => {
+                return cuenta.id != id
+            });
         }
     },
 
     actions: {
+        delete(context, id) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar cuenta",
+                    text: "¿Estás seguro/a de que deseas eliminar la cuenta?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + id)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cuenta eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
