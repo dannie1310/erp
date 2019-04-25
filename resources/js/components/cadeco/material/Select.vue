@@ -62,7 +62,11 @@
             },
             tipo_material(tipo) {
                 if(tipo) {
-                    this.getRootNodes();
+                    this.val = null
+                    this.getRootNodes()
+                        .finally(() => {
+                            this.$validator.reset()
+                        });
                 }
             }
         },
