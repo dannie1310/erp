@@ -37,7 +37,7 @@
                                 <div class="form-group row error-content">
                                     <label for="cuenta" class="col-sm-2 col-form-label">Cuenta</label>
                                     <div class="col-sm-10">
-                                        <input
+                                        <input v-if="datosContables"
                                                 type="text"
                                                 name="cuenta"
                                                 data-vv-as="Cuenta"
@@ -48,6 +48,17 @@
                                                 v-model="cuenta"
                                                 :class="{'is-invalid': errors.has('cuenta')}"
                                         >
+                                         <input v-else
+                                                 type="text"
+                                                 name="cuenta"
+                                                 data-vv-as="Cuenta"
+                                                 v-validate="{required: true}"
+                                                 class="form-control"
+                                                 id="cuenta"
+                                                 placeholder="Cuenta"
+                                                 v-model="cuenta"
+                                                 :class="{'is-invalid': errors.has('cuenta')}"
+                                         >
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>
                                 </div>
