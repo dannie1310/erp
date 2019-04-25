@@ -241,15 +241,17 @@
                         rol.id
                     ))
                 })
-                    .finally(() => {
-                        this.guardando = false;
+                    .then(() => {
                         this.roles_disponibles = this.roles_disponibles.concat(this.roles_asignados)
                         this.roles_asignados = [];
                         this.form.id_proyecto = this.form.tipo_asignacion == 1 ? [] : '';
                         this.form.role_id = [];
                         $(this.$refs.modal).modal('hide');
-                        this.$validator.reset()
-                    });
+                        this.$validator.reset();
+                    })
+                    .finally(() => {
+                        this.guardando = false;
+                    })
             },
 
             validate() {
