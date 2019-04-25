@@ -238,7 +238,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                            <button type="button" class="btn btn-sm btn-outline-danger" v-if="poliza.estatus != 1 && poliza.estatus != 2"
                                                     @click="remove(movimiento)"><i class="fa fa-trash"></i>
                                             </button>
                                         </td>
