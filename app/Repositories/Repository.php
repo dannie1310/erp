@@ -114,7 +114,13 @@ class Repository implements RepositoryInterface
 
                     if (isset($explode[1])) {
                         $query->orWhereHas($explode[0], function ($q) use ($explode) {
-                            return $q->where($explode[1], 'LIKE', '%' . request('search') . '%');
+                            if (isset($explode[2])) {
+                                return $q->whereHas($explode[1], function ($q2) use ($explode) {
+                                    return $q2->where($explode[2], 'LIKE', '%' . request('search') . '%');
+                                });
+                            } else {
+                                return $q->where($explode[1], 'LIKE', '%' . request('search') . '%');
+                            }
                         });
                     } else {
                         $query->orWhere($col, 'LIKE', '%' . request('search') . '%');
