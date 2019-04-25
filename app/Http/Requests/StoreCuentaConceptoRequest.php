@@ -32,13 +32,9 @@ class StoreCuentaConceptoRequest extends FormRequest
         } catch (\Exception $e) {
             $regex = "";
         }
-
-        Validator::extend('sin_cuenta', function ($attribute, $value, $parameters, $validator) {
-            return Concepto::query()->sinCuenta()->find($value);
-        });
-
+        
         return [
-            'id_concepto' => ['required', 'integer', 'exists:cadeco.conceptos,id_concepto,id_obra,' . Context::getIdObra(), 'sin_cuenta'],
+            'id_concepto' => ['required', 'integer', 'exists:cadeco.conceptos,id_concepto,id_obra,' . Context::getIdObra()],
             'cuenta' => ['required', "regex:'{$regex}'"]
         ];
     }
