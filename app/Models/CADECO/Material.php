@@ -22,7 +22,9 @@ class Material extends Model
     public $searchable = [
         'descripcion',
         'numero_parte',
-        'unidad'
+        'unidad',
+        'cuentaMaterial.cuenta',
+        'cuentaMaterial.tipo.descripcion'
     ];
 
     public function getTieneHijosAttribute()
