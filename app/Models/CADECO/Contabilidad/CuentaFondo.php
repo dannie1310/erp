@@ -30,6 +30,7 @@ class CuentaFondo extends Model
         'cuenta',
         'fondo.descripcion',
         'fondo.nombre',
+        'fondo.saldo'
     ];
 
     protected static function boot()

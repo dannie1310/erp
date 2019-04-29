@@ -38,7 +38,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Cuenta', field: 'cuenta', sortable: true },
+                    { title: 'Cuenta', field: 'cuenta__cuenta', sortable: true },
                     { title: 'Fondo', field: 'id_fondo', sortable: true },
                     { title: 'Saldo', field: 'saldo', sortable: true },
                     { title: 'Editar', field: 'buttons', tdComp: require('./partials/ActionButtons')},
@@ -96,12 +96,12 @@
                     fondos.forEach(function (fondo, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            cuenta: fondo.cuentaFondo.cuenta,
+                            cuenta__cuenta: fondo.cuentaFondo.cuenta,
                             id_fondo: fondo.descripcion,
                             saldo:  '$'+parseFloat(fondo.saldo).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cuenta_fondo') ? true : undefined,
-                                id: fondo.cuentaFondo.id
+                                id: fondo.cuenta__id
                             })
                         })
                     })

@@ -10,12 +10,12 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Fondo;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Fondo\Reporsitory;
 
 class FondoService
 {
     /**
-     * @var Repository
+     * @var Reporsitory
      */
     protected $repository;
 
@@ -26,12 +26,12 @@ class FondoService
      */
     public function __construct(Fondo $model)
     {
-        $this->repository = new Repository($model);
+        $this->repository = new Reporsitory($model);
     }
 
-    public function index($data)
+    public function all()
     {
-        return $this->repository->all($data);
+        return $this->repository->all();
     }
 
     public function paginate($data)
@@ -44,14 +44,9 @@ class FondoService
         return $this->repository->show($id);
     }
 
-    public function update(array $data, $id)
+    public function index()
     {
-        return $this->repository->update($data, $id);
-    }
-
-    public function store(array $data)
-    {
-        return $this->repository->create($data);
+        return $this->repository->all();
     }
 
 }
