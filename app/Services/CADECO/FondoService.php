@@ -33,4 +33,25 @@ class FondoService
     {
         return $this->repository->all($data);
     }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
+    }
+
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
+    }
+
 }

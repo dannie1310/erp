@@ -39,7 +39,7 @@ class CuentaFondoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'fondo'
+
     ];
 
     /**
