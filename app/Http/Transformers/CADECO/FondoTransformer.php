@@ -9,11 +9,23 @@
 namespace App\Http\Transformers\CADECO;
 
 
+use App\Http\Transformers\CADECO\Contabilidad\CuentaFondoTransformer;
 use App\Models\CADECO\Fondo;
 use League\Fractal\TransformerAbstract;
 
 class FondoTransformer extends TransformerAbstract
 {
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'cuentaFondo'
+    ];
+
+
     public function transform(Fondo $model)
     {
         return [
@@ -22,4 +34,16 @@ class FondoTransformer extends TransformerAbstract
             'saldo' => $model->saldo
         ];
     }
+
+    /**
+     * @param CuentaFondo $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeCuentaFondo(Fondo $model){
+        if($fondo = $model->cuentaFondo){
+            return $this->item($fondo, new CuentaFondoTransformer);
+        }
+        return null;
+    }
+
 }

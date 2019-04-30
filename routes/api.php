@@ -66,6 +66,7 @@ $api->version('v1', function ($api) {
         // FONDOS
         $api->group(['prefix' =>  'fondo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\FondoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\FondoController@paginate');
         });
 
         // MATERIALES

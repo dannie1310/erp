@@ -38,14 +38,17 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Cuenta', field: 'cuenta', sortable: true },
+                    { title: 'Cuenta', field: 'cuenta__cuenta', sortable: true },
                     { title: 'Fondo', field: 'id_fondo', sortable: true },
-                    { title: 'Saldo', field: 'saldo', sortable: false },
+                    { title: 'Saldo', field: 'saldo', sortable: true },
                     { title: 'Editar', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {
+                    include: 'cuentaFondo',
+                    scope: 'conCuenta'
+                },
                 search: '',
                 cargando: false
             }
@@ -62,10 +65,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('contabilidad/cuenta-fondo/paginate', { params: this.query })
+                return this.$store.dispatch('cadeco/fondo/paginate', { params: this.query })
                     .then(data => {
-                        this.$store.commit('contabilidad/cuenta-fondo/SET_CUENTAS', data.data);
-                        this.$store.commit('contabilidad/cuenta-fondo/SET_META', data.meta);
+                        this.$store.commit('cadeco/fondo/SET_FONDOS', data.data);
+                        this.$store.commit('cadeco/fondo/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -74,11 +77,11 @@
         },
 
         computed: {
-            cuentas(){
-                return this.$store.getters['contabilidad/cuenta-fondo/cuentas'];
+            fondos(){
+                return this.$store.getters['cadeco/fondo/fondos'];
             },
             meta(){
-                return this.$store.getters['contabilidad/cuenta-fondo/meta'];
+                return this.$store.getters['cadeco/fondo/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -86,20 +89,22 @@
         },
 
         watch: {
-            cuentas: {
-                handler(cuentas) {
-                    let self = this
-                    self.$data.data = []
-                    self.$data.data = cuentas.map((cuenta, i) => ({
-                        index: (i + 1) + self.query.offset,
-                        cuenta: cuenta.cuenta,
-                        id_fondo: cuenta.fondo.descripcion,
-                        saldo:  '$'+parseFloat(cuenta.fondo.saldo).formatMoney(2, '.', ','),
-                        buttons: $.extend({}, {
-                            edit: self.$root.can('editar_cuenta_fondo') ? true : undefined,
-                            id: cuenta.id
+            fondos: {
+                handler(fondos) {
+                    let self = this;
+                    self.$data.data = [];
+                    fondos.forEach(function (fondo, i) {
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            cuenta__cuenta: fondo.cuentaFondo.cuenta,
+                            id_fondo: fondo.descripcion,
+                            saldo:  '$'+parseFloat(fondo.saldo).formatMoney(2, '.', ','),
+                            buttons: $.extend({}, {
+                                edit: self.$root.can('editar_cuenta_fondo') ? true : undefined,
+                                id: fondo.cuenta__id
+                            })
                         })
-                    }));
+                    })
                 },
                 deep: true
             },
