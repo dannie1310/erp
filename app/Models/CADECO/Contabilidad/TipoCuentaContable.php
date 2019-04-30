@@ -36,14 +36,14 @@ class TipoCuentaContable extends Model
     {
         parent::boot();
 
-        self::addGlobalScope(function ($query) {
+        /*self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
-        });
+        });*/
 
         static::creating(function($model) {
             $model->tipo = 1;
             $model->registro = auth()->id();
-            $model->id_obra = Context::getIdObra();
+            //$model->id_obra = Context::getIdObra();
         });
     }
 
