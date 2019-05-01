@@ -28,7 +28,7 @@ class Sistema extends Model
 
     public function proyectos()
     {
-        return $this->belongsToMany(Proyecto::class,  'dbo.proyectos_sistemas', 'id_sistema', 'id_proyecto');
+        return $this->belongsToMany(Proyecto::class,  'dbo.proyectos_sistemas', 'id_sistema', 'id_proyecto', "id_obra");
     }
 
     public function scopePorUsuario($query)
