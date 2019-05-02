@@ -151,10 +151,14 @@
                         });
                     })
             },
+
+
             getTipos() {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index',{
-                    params: {
-                        scope: ['disponiblesParaCuentaBancaria:' + this.id_cuenta, 'paraBancos']
+                    config: {
+                        params: {
+                            scope: ['disponiblesParaCuentaBancaria:' + this.id_cuenta, 'paraBancos']
+                        }
                     }
                 })
                     .then(data => {
