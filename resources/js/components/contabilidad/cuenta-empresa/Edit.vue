@@ -32,7 +32,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <cuenta-empresa-create :id="id" :btnclass="'btn btn-primary pull-right'" @created="created()"></cuenta-empresa-create>
+                                <cuenta-empresa-create :id="id" :btnclass="'btn btn-primary pull-right'" @created="created($event)"></cuenta-empresa-create>
                             </div>
                         </div>
                     </div>
@@ -70,8 +70,8 @@
                 $(this.$refs.editModal).modal('hide')
             },
 
-            created() {
-
+            created(cuenta) {
+                this.empresa.cuentasEmpresa.data.push(cuenta);
             },
 
             find() {
