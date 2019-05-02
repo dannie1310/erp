@@ -1,24 +1,24 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_cuenta_empresa')" :class="btnclass ? btnclass : 'btn btn-app btn-info pull-right'" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Cuenta
         </button>
 
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="createModal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR CUENTA DE EMPRESA</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title">REGISTRAR CUENTA DE EMPRESA</h5>
+                        <button type="button" class="close" @click="closeModal()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="!id">
                                     <div class="form-group error-content">
                                         <label for="id_empresa">Empresa</label>
                                         <empresa-select
@@ -34,7 +34,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4">
+                                <div :class="id ? 'col-md-6' : 'col-md-4'">
                                     <div class="form-group error-content">
                                         <label for="id_tipo_cuenta_empresa">Tipo de Cuenta</label>
                                         <select
@@ -54,7 +54,7 @@
                                         <div class="invalid-feedback" v-show="errors.has('id_tipo_cuenta_empresa')">{{ errors.first('id_tipo_cuenta_empresa') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div :class="id ? 'col-md-6' : 'col-md-4'">
                                     <div class="form-group error-content">
                                         <label for="cuenta">Cuenta</label>
                                         <input
@@ -74,7 +74,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
                             <button type="submit" class="btn btn-primary">Registrar</button>
                         </div>
                     </form>
@@ -87,6 +87,7 @@
 <script>
     import EmpresaSelect from "../../cadeco/empresa/Select";
     export default {
+        props: ['id', 'btnclass'],
         name: "cuenta-empresa-create",
         components: {EmpresaSelect},
         data() {
@@ -104,11 +105,16 @@
             }
         },
         methods: {
-            init() {
-                this.cargando = true;
-                $(this.$refs.modal).modal('show');
+            closeModal() {
+                $(this.$refs.createModal).modal('hide');
+            },
 
-                this.id_empresa = '';
+            init() {
+                if (this.id) { this.getTipos() }
+                this.cargando = true;
+                $(this.$refs.createModal).modal('show');
+
+                this.id_empresa = this.id;
                 this.cuenta = '';
                 this.id_tipo_cuenta_empresa = '';
 
@@ -130,7 +136,7 @@
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-empresa/store', this.$data)
                     .then(data => {
-                        $(this.$refs.modal).modal('hide');
+                        $(this.$refs.createModal).modal('hide');
                         this.$emit('created', data);
                     });
             },
