@@ -62,6 +62,7 @@
         data() {
             return {
                 cargando: false,
+                id_fondo: ""
             }
         },
         computed: {
@@ -78,10 +79,12 @@
                 this.$store.commit('contabilidad/cuenta-fondo/SET_CUENTA', null)
                 this.cargando = true;
                 return this.$store.dispatch('contabilidad/cuenta-fondo/find', {
-                    id: this.id
+                    id: this.id,
+                    params: { include: 'fondo' }
                 })
                     .then(data => {
                         this.$store.commit('contabilidad/cuenta-fondo/SET_CUENTA', data)
+                        this.id_fondo = data.fondo.id
                         $(this.$refs.modal).modal('show');
                     })
                     .finally(() => {
@@ -95,10 +98,35 @@
                     data: this.cuenta
                 })
                     .then(data => {
-                        this.$store.commit('contabilidad/cuenta-fondo/UPDATE_CUENTA', data);
-                        $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('cadeco/fondo/find', {
+                            id: this.id_fondo,
+                            params: { include: 'cuentaFondo' }
+                        })
+                            .then(data => {
+                                $(this.$refs.modal).modal('hide');
+                                this.$store.commit('cadeco/fondo/UPDATE_FONDO', data);
+                            });
                     })
             },
+
+
+       /*     update() {
+                return this.$store.dispatch('contabilidad/cuenta-material/update', {
+                    id: this.id,
+                    data: this.cuenta
+                })
+                    .then(data => {
+                        this.$store.dispatch('cadeco/material/find', {
+                            id: data.material.id,
+                            params: { include: 'cuentaMaterial' }
+                        })
+                            .then(data => {
+                                $(this.$refs.modal).modal('hide');
+                                this.$store.commit('cadeco/material/UPDATE_MATERIAL', data);
+                            });
+                    })
+            },*/
+
 
             validate() {
                 this.$validator.validate().then(result => {

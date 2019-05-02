@@ -36,7 +36,15 @@ class FondoService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $fondo = $this->repository;
+        if (isset($data['cuenta__cuenta'])) {
+            $fondo = $fondo->where([['cuenta.cuenta', 'LIKE', '%' . $data['cuenta__cuenta'] . '%']]);
+        }
+
+        if (isset($data['id_fondo'])) {
+            $fondo= $fondo->where([['fondos.descripcion', 'LIKE', '%' . $data['id_fondo'] . '%']]);
+        }
+        return $fondo->paginate($data);
     }
 
     public function show($id)
