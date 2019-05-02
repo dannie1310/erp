@@ -9,7 +9,9 @@
 namespace App\Services\CADECO\Contabilidad;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaAlmacen;
+use App\Models\CADECO\Obra;
 use App\Repositories\Repository;
 
 class CuentaAlmacenService
@@ -45,6 +47,17 @@ class CuentaAlmacenService
 
     public function store(array $data)
     {
-        return $this->repository->create($data);
+        try {
+            $obra = Obra::query()->find(Context::getIdObra());
+
+            if ($obra->datosContables) {
+                if ($obra->datosContables->FormatoCuenta) {
+                    return $this->repository->create($data);
+                }
+            }
+            throw new \Exception("No es posible registrar la cuaenta debido a que no se ha configurado el formato de cuentas de la obra.", 400);
+        } catch (\Exception $e) {
+            abort($e->getCode(), $e->getMessage());
+        }
     }
 }
