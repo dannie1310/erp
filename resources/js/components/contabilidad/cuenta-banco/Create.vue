@@ -152,9 +152,9 @@
                     })
             },
 
+
             getTipos() {
-                this.cargando = true;
-                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {
+                return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index',{
                     config: {
                         params: {
                             scope: ['disponiblesParaCuentaBancaria:' + this.id_cuenta, 'paraBancos']
@@ -162,17 +162,7 @@
                     }
                 })
                     .then(data => {
-                        this.tipos = data.data
-                        if (this.tipos.length) {
-                            $(this.$refs.modal).modal('show');
-
-                            this.cuenta_contable = '';
-                            this.id_int_tipo_cuenta_contable = '';
-
-                            this.$validator.reset()
-                        } else {
-                            swal("No existen tipos de cuenta generales por registrar", "", "warning");
-                        }
+                        this.tipos = data.data;
                     })
             },
             store() {
