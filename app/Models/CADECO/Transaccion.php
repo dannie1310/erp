@@ -68,8 +68,7 @@ class Transaccion extends Model
 
     public function tipo()
     {
-        return $this->belongsTo(TipoTransaccion::class, 'tipo_transaccion', 'tipo_transaccion')
-            ->where('opciones', '=', $this->opciones);
+        return $this->belongsTo(TipoTransaccion::class, 'tipo_transaccion', 'tipo_transaccion');
     }
 
     public function items(){
