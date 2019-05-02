@@ -38,7 +38,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Tipo de Cuenta', field: 'tipo', sortable: true },
+                    { title: 'Tipo de Cuenta', field: 'id_int_tipo_cuenta_contable', sortable: true },
                     { title: 'Cuenta', field: 'cuenta_contable', sortable: true },
                     { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
@@ -89,7 +89,7 @@
                     self.$data.data = []
                     self.$data.data = cuentas.map((cuenta, i) => ({
                         index: (i + 1) + self.query.offset,
-                        tipo: cuenta.tipo.descripcion,
+                        id_int_tipo_cuenta_contable: cuenta.tipo.descripcion,
                         cuenta_contable: cuenta.cuenta_contable,
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_cuenta_general') ? true : undefined,
