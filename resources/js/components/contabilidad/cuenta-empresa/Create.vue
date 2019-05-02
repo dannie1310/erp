@@ -23,7 +23,7 @@
                                         <label for="id_empresa">Empresa</label>
                                         <empresa-select
                                                 name="id_empresa"
-                                                placeholder="-- Banco --"
+                                                placeholder="-- Empresa --"
                                                 id="id_empresa"
                                                 data-vv-as="Empresa"
                                                 v-validate="{required: true}"
