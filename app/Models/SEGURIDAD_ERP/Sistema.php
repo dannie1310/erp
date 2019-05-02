@@ -28,7 +28,7 @@ class Sistema extends Model
 
     public function proyectos()
     {
-        return $this->belongsToMany(Proyecto::class,  'dbo.proyectos_sistemas', 'id_sistema', 'id_proyecto', "id_obra");
+        return $this->belongsToMany(Proyecto::class,  'dbo.proyectos_sistemas', 'id_sistema', 'id_proyecto');
     }
 
     public function scopePorUsuario($query)
@@ -40,7 +40,7 @@ class Sistema extends Model
             return $q->whereIn('name', $permisos);
         })
             ->whereHas('proyectos', function ($q) {
-                return $q->where('base_datos', '=', Context::getDatabase());
+                return $q->where('base_datos', '=', Context::getDatabase())->where('id_obra','=',Context::getIdObra());
             });
     }
 }
