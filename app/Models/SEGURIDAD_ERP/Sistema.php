@@ -40,7 +40,7 @@ class Sistema extends Model
             return $q->whereIn('name', $permisos);
         })
             ->whereHas('proyectos', function ($q) {
-                return $q->where('base_datos', '=', Context::getDatabase());
+                return $q->where('base_datos', '=', Context::getDatabase())->where('id_obra','=',Context::getIdObra());
             });
     }
 }
