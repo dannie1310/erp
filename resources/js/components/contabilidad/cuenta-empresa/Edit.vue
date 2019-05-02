@@ -72,6 +72,7 @@
 
             created(cuenta) {
                 this.empresa.cuentasEmpresa.data.push(cuenta);
+                this.$store.commit('cadeco/empresa/SET_CUENTA_EMPRESA', cuenta)
             },
 
             find() {
