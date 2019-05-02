@@ -32,7 +32,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <cuenta-empresa-create :btnclass="'btn btn-primary pull-right'" @created="created()"></cuenta-empresa-create>
+                                <cuenta-empresa-create :id="id" :btnclass="'btn btn-primary pull-right'" @created="created()"></cuenta-empresa-create>
                             </div>
                         </div>
                     </div>

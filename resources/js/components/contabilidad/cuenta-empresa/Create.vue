@@ -18,7 +18,7 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-4" v-if="!id">
                                     <div class="form-group error-content">
                                         <label for="id_empresa">Empresa</label>
                                         <empresa-select
@@ -34,7 +34,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4">
+                                <div :class="id ? 'col-md-6' : 'col-md-4'">
                                     <div class="form-group error-content">
                                         <label for="id_tipo_cuenta_empresa">Tipo de Cuenta</label>
                                         <select
@@ -54,7 +54,7 @@
                                         <div class="invalid-feedback" v-show="errors.has('id_tipo_cuenta_empresa')">{{ errors.first('id_tipo_cuenta_empresa') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div :class="id ? 'col-md-6' : 'col-md-4'">
                                     <div class="form-group error-content">
                                         <label for="cuenta">Cuenta</label>
                                         <input
@@ -110,10 +110,11 @@
             },
 
             init() {
+                if (this.id) { this.getTipos() }
                 this.cargando = true;
                 $(this.$refs.createModal).modal('show');
 
-                this.id_empresa = '';
+                this.id_empresa = this.id;
                 this.cuenta = '';
                 this.id_tipo_cuenta_empresa = '';
 
