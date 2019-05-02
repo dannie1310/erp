@@ -101,7 +101,7 @@
                             saldo:  '$'+parseFloat(fondo.saldo).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cuenta_fondo') ? true : undefined,
-                                id: fondo.cuenta__id
+                                id: fondo.cuentaFondo.id
                             })
                         })
                     })

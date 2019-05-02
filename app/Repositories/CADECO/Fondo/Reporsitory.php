@@ -30,10 +30,10 @@ class Reporsitory implements RepositoryInterface
             'fondos.saldo',
             'fondos.descripcion',
             'fondos.id_obra',
-            'cuenta.id',
-            'cuenta.cuenta'
+            'cuentaFondo.id',
+            'cuentaFondo.cuenta'
         ])
-            ->join('Contabilidad.cuentas_fondos as cuenta','cuenta.id_fondo', 'fondos.id_fondo');
+            ->join('Contabilidad.cuentas_fondos as cuentaFondo','cuentaFondo.id_fondo', 'fondos.id_fondo');
     }
 
     public function show($id)
@@ -51,6 +51,10 @@ class Reporsitory implements RepositoryInterface
 
     public function paginate($data)
     {
+        $this->search();
+       // $this->scope();
+       // $this->sort();
+
         if (count($data)) {
             #validar si $data['sort'] viene con doble guión __
             $doble_guion = strpos($data['sort'], '__');
@@ -115,5 +119,45 @@ class Reporsitory implements RepositoryInterface
     public function create(array $data)
     {
         // TODO: Implement create() method.
+    }
+
+    public function search()
+    {
+        if (request()->has('search'))
+        {
+            $this->model = $this->model->where(function($query) {
+                foreach ($this->model->searchable as $col)
+                {
+                    $explode = explode('.', $col);
+
+                    if (isset($explode[1])) {
+                        $query->orWhereHas($explode[0], function ($q) use ($explode) {
+                            if (isset($explode[2])) {
+                                return $q->whereHas($explode[1], function ($q2) use ($explode) {
+                                    return $q2->where($explode[2], 'LIKE', '%' . request('search') . '%');
+                                });
+                            } else {
+                                return $q->where($explode[1], 'LIKE', '%' . request('search') . '%');
+                            }
+                        });
+                    } else {
+                        $query->orWhere($col, 'LIKE', '%' . request('search') . '%');
+                    }
+                }
+            });
+        }
+    }
+    private function limit()
+    {
+        if (request()->has('limit')) {
+            $this->model = $this->model->limit(request('limit'));
+        }
+    }
+
+    public function sort()
+    {
+        if (request('sort')) {
+            $this->model = $this->model->orderBy(request('sort'), request('order'));
+        }
     }
 }
