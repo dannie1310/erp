@@ -1,17 +1,17 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_cuenta_empresa')" :class="btnclass ? btnclass : 'btn btn-app btn-info pull-right'" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Cuenta
         </button>
 
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="createModal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR CUENTA DE EMPRESA</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title">REGISTRAR CUENTA DE EMPRESA</h5>
+                        <button type="button" class="close" @click="closeModal()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -74,7 +74,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
                             <button type="submit" class="btn btn-primary">Registrar</button>
                         </div>
                     </form>
@@ -87,6 +87,7 @@
 <script>
     import EmpresaSelect from "../../cadeco/empresa/Select";
     export default {
+        props: ['id', 'btnclass'],
         name: "cuenta-empresa-create",
         components: {EmpresaSelect},
         data() {
@@ -104,9 +105,13 @@
             }
         },
         methods: {
+            closeModal() {
+                $(this.$refs.createModal).modal('hide');
+            },
+
             init() {
                 this.cargando = true;
-                $(this.$refs.modal).modal('show');
+                $(this.$refs.createModal).modal('show');
 
                 this.id_empresa = '';
                 this.cuenta = '';
@@ -130,7 +135,7 @@
             store() {
                 return this.$store.dispatch('contabilidad/cuenta-empresa/store', this.$data)
                     .then(data => {
-                        $(this.$refs.modal).modal('hide');
+                        $(this.$refs.createModal).modal('hide');
                         this.$emit('created', data);
                     });
             },
