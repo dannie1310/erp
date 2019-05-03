@@ -7,7 +7,7 @@
                         <span class="bg-primary info-box-icon elevation-1"><i class="fa fa-window-maximize"></i></span>
                         <div class="info-box-content">
                             <span class="info-box-number">{{aplicacion.menu}}</span>
-                            <a :href="aplicacion.ruta">
+                            <a :href="aplicacion.ruta" target="_blank">
                                 <span class="info-box-text">IR <i class="fa fa-arrow-circle-o-right"></i> </span>
                             </a>
                         </div>
