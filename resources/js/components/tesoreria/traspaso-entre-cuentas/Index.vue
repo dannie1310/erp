@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <!--<movimiento-bancario-create @created="created()" v-if="$root.can('registrar_movimiento_bancario')"></movimiento-bancario-create>-->
+            <traspaso-entre-cuentas-create @created="created($event)" v-if="$root.can('registrar_traspaso_cuenta')"></traspaso-entre-cuentas-create>
         </div>
 
         <div class="col-12">
@@ -30,8 +30,10 @@
 </template>
 
 <script>
+    import TraspasoEntreCuentasCreate from "./Create";
     export default {
         name: "traspaso-entre-cuentas-index",
+        components: {TraspasoEntreCuentasCreate},
         data() {
             return {
                 HeaderSettings: false,
