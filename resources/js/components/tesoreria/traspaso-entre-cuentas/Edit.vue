@@ -10,132 +10,55 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">EDITAR MOVIMIENTO BANCARIO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">EDITAR TRASPASO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form role="form" v-if="movimiento" @submit.prevent="validate">
+                    <form role="form" v-if="traspaso" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-                                <!-- Tipo de Movimiento -->
+                                <!-- Cuenta Origen -->
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="id_tipo_movimiento">Tipo</label>
+                                        <label for="id_cuenta_origen">Cuenta Origen</label>
                                         <select
                                                 class="form-control"
-                                                name="id_tipo_movimiento"
-                                                data-vv-as="Tipo"
-                                                id="id_tipo_movimiento"
-                                                :value="movimiento.id_tipo_movimiento"
-                                                @input="updateAttribute"
+                                                name="id_cuenta_origen"
+                                                data-vv-as="Cuenta Origen"
+                                                id="id_cuenta_origen"
+                                                v-model="traspaso.id_cuenta_origen"
                                                 v-validate="{required: true}"
-                                                :class="{'is-invalid': errors.has('id_tipo_movimiento')}"
+                                                :class="{'is-invalid': errors.has('id_cuenta_origen')}"
                                         >
-                                            <option value>-- Tipo de Movimiento --</option>
-                                            <option v-for="(item, index) in tiposMovimiento" :value="item.id">
-                                                {{ item.descripcion }}
-                                            </option>
-                                        </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_tipo_movimiento')">{{ errors.first('id_tipo_movimiento') }}</div>
-                                    </div>
-                                </div>
-
-                                <!-- Cuenta -->
-                                <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="id_cuenta">Cuenta</label>
-                                        <select
-                                                class="form-control"
-                                                name="id_cuenta"
-                                                data-vv-as="Cuenta"
-                                                id="id_cuenta"
-                                                :value="movimiento.id_cuenta"
-                                                @input="updateAttribute"
-                                                v-validate="{required: true}"
-                                                :class="{'is-invalid': errors.has('id_cuenta')}"
-                                        >
-                                            <option value>-- Cuenta --</option>
-                                            <option v-for="(item, index) in cuentas" :value="item.id">
+                                            <option value>-- Cuenta Origen --</option>
+                                            <option v-for="(item, index) in cuentasOrigen" :value="item.id">
                                                 {{ `${item.numero} ${item.abreviatura } (${item.empresa.razon_social})` }}
                                             </option>
                                         </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_cuenta')">{{ errors.first('id_cuenta') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('id_cuenta_origen')">{{ errors.first('id_cuenta_origen') }}</div>
                                     </div>
                                 </div>
 
-                                <!-- Importe -->
-                                <div class="col-md-4">
+                                <!-- Cuenta Destino -->
+                                <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="importe">Importe</label>
-                                        <input
-                                                type="number"
-                                                step="any"
+                                        <label for="id_cuenta_destino">Cuenta Destino</label>
+                                        <select
                                                 class="form-control"
-                                                id="importe"
-                                                name="importe"
-                                                :value="movimiento.importe"
-                                                @input="updateAttribute"
-                                                v-validate="{required: true, decimal: true}"
-                                                data-vv-as="Importe"
-                                                :class="{'is-invalid': errors.has('importe')}"
-                                        >
-                                        <div class="invalid-feedback" v-show="errors.has('importe')">{{ errors.first('importe') }}</div>
-                                    </div>
-                                </div>
-
-                                <!-- Impuesto -->
-                                <div class="col-md-4" v-if="movimiento.id_tipo_movimiento == 4">
-                                    <div class="form-group error-content">
-                                        <label for="impuesto">Impuesto</label>
-                                        <input
-                                                type="number"
-                                                step="any"
-                                                name="impuesto"
-                                                id="impuesto"
-                                                class="form-control"
-                                                :value="movimiento.impuesto"
-                                                @input="updateAttribute"
-                                                v-validate="{decimal: true}"
-                                                data-vv-as="Impuesto"
-                                                :class="{'is-invalid': errors.has('impuesto')}"
-                                        >
-                                        <div class="invalid-feedback" v-show="errors.has('impuesto')">{{ errors.first('impuesto') }}</div>
-                                    </div>
-                                </div>
-
-                                <!-- Total -->
-                                <div class="col-md-4" v-if="movimiento.id_tipo_movimiento == 4">
-                                    <div class="form-group">
-                                        <label for="total">Total</label>
-                                        <input
-                                                type="number"
-                                                step="any"
-                                                readonly
-                                                name="total"
-                                                id="total"
-                                                class="form-control"
-                                                :value="total"
-                                        >
-                                    </div>
-                                </div>
-
-                                <!-- Referencia -->
-                                <div class="col-md-12">
-                                    <div class="form-group error-content">
-                                        <label for="referencia">Referencia</label>
-                                        <input
-                                                type="text"
-                                                name="transaccion.referencia"
-                                                id="referencia"
-                                                class="form-control"
-                                                :value="movimiento.transaccion.referencia"
-                                                @input="updateAttribute"
+                                                name="id_cuenta_destino"
+                                                data-vv-as="Cuenta Destino"
+                                                id="id_cuenta_destino"
+                                                v-model="traspaso.id_cuenta_destino"
                                                 v-validate="{required: true}"
-                                                data-vv-as="Referecia"
-                                                :class="{'is-invalid': errors.has('referencia')}"
+                                                :class="{'is-invalid': errors.has('id_cuenta_destino')}"
                                         >
-                                        <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
+                                            <option value>-- Cuenta Destino --</option>
+                                            <option v-for="(item, index) in cuentasDestino" :value="item.id">
+                                                {{ `${item.numero} ${item.abreviatura } (${item.empresa.razon_social})` }}
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_cuenta_destino')">{{ errors.first('id_cuenta_destino') }}</div>
                                     </div>
                                 </div>
 
@@ -148,8 +71,7 @@
                                                 name="fecha"
                                                 id="fecha"
                                                 class="form-control"
-                                                :value="movimiento.fecha"
-                                                @input="updateAttribute"
+                                                v-model="traspaso.fecha"
                                                 v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                 data-vv-as="Fecha"
                                                 :class="{'is-invalid': errors.has('fecha')}"
@@ -167,13 +89,49 @@
                                                 name="transaccion.cumplimiento"
                                                 id="cumplimiento"
                                                 class="form-control"
-                                                :value="movimiento.transaccion.cumplimiento"
-                                                @input="updateAttribute"
+                                                v-model="traspaso.cumplimiento"
                                                 v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                 data-vv-as="Cumplimiento"
                                                 :class="{'is-invalid': errors.has('cumplimiento')}"
                                         >
                                         <div class="invalid-feedback" v-show="errors.has('cumplimiento')">{{ errors.first('cumplimiento') }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Importe -->
+                                <div class="col-md-4">
+                                    <div class="form-group error-content">
+                                        <label for="importe">Importe</label>
+                                        <input
+                                                type="number"
+                                                step="any"
+                                                class="form-control"
+                                                id="importe"
+                                                name="importe"
+                                                v-model="traspaso.importe"
+                                                v-validate="{required: true, decimal: true}"
+                                                data-vv-as="Importe"
+                                                :class="{'is-invalid': errors.has('importe')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('importe')">{{ errors.first('importe') }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Referencia -->
+                                <div class="col-md-8">
+                                    <div class="form-group error-content">
+                                        <label for="referencia">Referencia</label>
+                                        <input
+                                                type="text"
+                                                name="transaccion.referencia"
+                                                id="referencia"
+                                                class="form-control"
+                                                v-model="traspaso.referencia"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Referecia"
+                                                :class="{'is-invalid': errors.has('referencia')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                     </div>
                                 </div>
 
@@ -185,8 +143,7 @@
                                                 name="observaciones"
                                                 id="observaciones"
                                                 class="form-control"
-                                                :value="movimiento.observaciones"
-                                                @input="updateAttribute"
+                                                v-model="traspaso.observaciones"
                                                 v-validate="{required: true}"
                                                 data-vv-as="Observaciones"
                                                 :class="{'is-invalid': errors.has('observaciones')}"
@@ -213,40 +170,12 @@
         props: ['id'],
         data() {
             return {
-                tiposMovimiento: [],
+                traspaso: null,
                 cuentas: []
             }
         },
 
-        computed: {
-            movimiento() {
-                return (this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] != null && this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'].id == this.id) ?  this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] : null
-            },
-
-            total() {
-                let impuesto = this.movimiento.impuesto ? parseFloat(this.movimiento.impuesto) : 0;
-                let importe = this.movimiento.importe ? parseFloat(this.movimiento.importe) : 0;
-                return importe + impuesto;
-            }
-        },
-
         methods: {
-            getTiposMovimiento() {
-                return this.$store.dispatch('tesoreria/tipo-movimiento/index')
-                    .then(data => {
-                        this.tiposMovimiento = data.data;
-                    });
-            },
-
-            getTiposMovimiento() {
-                return this.$store.dispatch('tesoreria/tipo-movimiento/index',{
-                })
-                    .then(data => {
-                        this.tiposMovimiento = data.data;
-                    })
-            },
-
-
             getCuentas() {
                 return this.$store.dispatch('cadeco/cuenta/index', {
                     params: {
@@ -261,38 +190,39 @@
 
             find(id) {
                 axios.all([
-                    this.getTiposMovimiento(),
                     this.getCuentas()
                 ])
                     .then(() => {
-                        this.$store.dispatch('tesoreria/movimiento-bancario/find', {
+                        this.$store.dispatch('tesoreria/traspaso-entre-cuentas/find', {
                             id: id,
-                            params: { include: 'transaccion' }
+                            params: { include: 'cuentaOrigen.empresa,cuentaDestino.empresa' }
                         })
                             .then(data => {
-                                this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', data);
+                                this.traspaso = data;
+                                this.traspaso.cumplimiento = data.traspasoTransaccion.debito ? data.traspasoTransaccion.debito.cumplimiento : data.traspasoTransaccion.credito.cumplimiento
+                                this.traspaso.referencia = data.traspasoTransaccion.debito ? data.traspasoTransaccion.debito.referencia : data.traspasoTransaccion.credito.cumplimiento
+
                                 $(this.$refs.modal).modal('show');
                             })
                     });
             },
 
             update() {
-                return this.$store.dispatch('tesoreria/movimiento-bancario/update', {
+                return this.$store.dispatch('tesoreria/traspaso-entre-cuentas/update', {
                     id: this.id,
                     data: {
-                        id_tipo_movimiento: this.movimiento.id_tipo_movimiento,
-                        id_cuenta: this.movimiento.id_cuenta,
-                        importe: this.movimiento.importe,
-                        impuesto: this.movimiento.impuesto,
-                        referencia: this.movimiento.transaccion.referencia,
-                        observaciones: this.movimiento.observaciones,
-                        cumplimiento: this.movimiento.transaccion.cumplimiento,
-                        fecha: this.movimiento.fecha
+                        id_cuenta_origen: this.traspaso.id_cuenta_origen,
+                        id_cuenta_destino: this.traspaso.id_cuenta_destino,
+                        fecha: this.traspaso.fecha,
+                        cumplimiento: this.traspaso.cumplimiento,
+                        importe: this.traspaso.importe,
+                        referencia: this.traspaso.referencia,
+                        observaciones: this.traspaso.observaciones
                     },
-                    params: { include: 'cuenta.empresa,transaccion' }
+                    params: { include: 'cuentaOrigen.empresa, cuentaDestino.empresa' }
                 })
                     .then(data => {
-                        this.$store.commit('tesoreria/movimiento-bancario/UPDATE_MOVIMIENTO', data);
+                        this.traspaso = data;
                         $(this.$refs.modal).modal('hide');
                     })
             },
@@ -303,11 +233,21 @@
                         this.update()
                     }
                 });
+            }
+        },
+
+        computed: {
+            cuentasDestino() {
+                return this.cuentas.filter(cuenta => {
+                    return cuenta.id != this.id_cuenta_origen;
+                })
             },
 
-            updateAttribute(e) {
-                return this.$store.commit('tesoreria/movimiento-bancario/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
-            }
+            cuentasOrigen() {
+                return this.cuentas.filter(cuenta => {
+                    return cuenta.id != this.id_cuenta_destino;
+                })
+            },
         }
     }
 </script>
