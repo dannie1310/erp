@@ -9,15 +9,45 @@
 namespace App\Http\Transformers\CADECO\Tesoreria;
 
 
+use App\Http\Transformers\CADECO\CuentaTransformer;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use League\Fractal\TransformerAbstract;
 
 class TraspasoCuentasTransformer extends TransformerAbstract
 {
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'cuentaOrigen',
+        'cuentaDestino'
+    ];
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'cuentaOrigen',
+        'cuentaDestino'
+    ];
+
     public function transform(TraspasoCuentas $model) {
-        return [
-            'id' => $model->getKey(),
-            'numero_folio' => $model->numero_folio
-        ];
+        return $model->toArray();
+    }
+
+    public function includeCuentaOrigen(TraspasoCuentas $model)
+    {
+        $cuenta_origen = $model->cuentaOrigen;
+        return $this->item($cuenta_origen, new CuentaTransformer);
+    }
+
+    public function includeCuentaDestino(TraspasoCuentas $model)
+    {
+        $cuenta_destino = $model->cuentaDestino;
+        return $this->item($cuenta_destino, new CuentaTransformer);
     }
 }

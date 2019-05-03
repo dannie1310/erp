@@ -307,6 +307,15 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@destroy')->where(['id' => '[0-9]+']);
         });
 
+        //TRASPASO ENTRE CUENTAS
+        $api->group(['prefix' => 'traspaso-entre-cuentas'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@destroy')->where(['id' => '[0-9]+']);
+        });
+
         //TIPOS MOVIMIENTO
         $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\TipoMovimientoController@index');
