@@ -10,6 +10,18 @@ import permission from "./middleware/permission";
 export const routes = [
     {
         path: '/',
+        name: 'portal',
+        components: {
+            default: require('./components/pages/Portal.vue'),
+            menu: null
+        },
+        meta: {
+            title: 'Índice de Aplicaciones',
+            middleware: [auth]
+        }
+    },
+    {
+        path: '/sao',
         name: 'home',
         component: require('./components/pages/Home.vue'),
         meta: {
@@ -19,7 +31,7 @@ export const routes = [
         }
     },
     {
-        path: '/configuracion',
+        path: '/sao/configuracion',
         name: 'configuracion',
         components: {
             default: require('./components/configuracion/Index.vue'),
@@ -45,7 +57,7 @@ export const routes = [
         },
     },
     {
-        path: '/obras',
+        path: '/sao/obras',
         name: 'obras',
         component: require('./components/pages/Obras.vue'),
         meta: {
@@ -55,7 +67,7 @@ export const routes = [
         }
     },
     {
-        path: '/contabilidad',
+        path: '/sao/contabilidad',
         components: {
             default: require('./components/contabilidad/partials/Layout.vue'),
             menu: require('./components/contabilidad/partials/Menu.vue')
@@ -225,7 +237,7 @@ export const routes = [
         ]
     },
     {
-        path: '/contratos',
+        path: '/sao/contratos',
         components: {
             default: require('./components/contratos/partials/Layout.vue'),
             menu: require('./components/contratos/partials/Menu.vue')
@@ -322,7 +334,7 @@ export const routes = [
     },
 
     {
-        path: '/formatos',
+        path: '/sao/formatos',
         components: {
             default: require('./components/formato/partials/Layout.vue'),
             menu: require('./components/formato/partials/Menu.vue')
@@ -352,7 +364,7 @@ export const routes = [
         ]
     },
     {
-        path: '/tesoreria',
+        path: '/sao/tesoreria',
         components: {
             default: require('./components/tesoreria/partials/Layout.vue'),
             menu: require('./components/tesoreria/partials/Menu.vue')

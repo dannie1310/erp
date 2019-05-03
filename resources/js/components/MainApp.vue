@@ -1,5 +1,5 @@
 <template>
-    <body class="hold-transition sidebar-mini">
+    <body class="hold-transition sidebar-mini" :class="$router.currentRoute.name == 'portal' ? 'sidebar-collapse' : ''">
     <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
     <div v-if="currentUser" class="wrapper">
@@ -15,7 +15,7 @@
                             <h1>{{ this.$route.meta.title }}</h1>
                         </div>
                         <div class="col-sm-6">
-                            <AppBreadcrumb/>
+                            <AppBreadcrumb v-if="$router.currentRoute.name != 'portal'"/>
                         </div>
                     </div>
                 </div><!-- /.container-fluid -->
@@ -31,7 +31,7 @@
         </div>
         <!-- /.content-wrapper -->
 
-        <AppFooter/>
+        <AppFooter v-if="$router.currentRoute.name != 'portal'"/>
 
 
         <!-- Control Sidebar -->
