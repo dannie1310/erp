@@ -9,6 +9,7 @@
 namespace App\Repositories\CADECO\Fondo;
 
 use App\Models\CADECO\Fondo as Model;
+use App\Models\CADECO\Fondo;
 
 
 class Reporsitory implements RepositoryInterface
@@ -51,7 +52,7 @@ class Reporsitory implements RepositoryInterface
 
     public function paginate($data)
     {
-        $this->search();
+        $this->search($data);
        // $this->scope();
        // $this->sort();
 
@@ -121,12 +122,13 @@ class Reporsitory implements RepositoryInterface
         // TODO: Implement create() method.
     }
 
-    public function search()
+    public function search($data)
     {
         if (request()->has('search'))
         {
+            $this->fondo = new  Fondo ();
             $this->model = $this->model->where(function($query) {
-                foreach ($this->model->searchable as $col)
+                foreach ($this->fondo->searchable as $col)
                 {
                     $explode = explode('.', $col);
 
