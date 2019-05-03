@@ -11,29 +11,37 @@ namespace App\Models\CADECO\Seguridad;
 
 use App\Facades\Context;
 use App\Models\SEGURIDAD_ERP\Permiso;
+use App\Utils\Normalizar;
 use Illuminate\Database\Eloquent\Model;
 
 class Rol extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'Seguridad.roles';
-
     protected $fillable = [
-        'name',
         'display_name',
         'description'
     ];
 
+    public $searchable = [
+        'name',
+        'display_name',
+    ];
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table = Context::getDatabase() . '.Seguridad.roles';
+    }
+
     protected static function boot()
     {
         parent::boot();
-
+        self::creating(function ($model) {
+            $name = Normalizar::normaliza($model->display_name);
+            $model->name = str_replace(' ', '_', $name);
+            $model->id_obra = Context::getIdObra();
+        });
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
-        });
-
-        self::creating(function ($model) {
-            $model->id_obra = Context::getIdObra();
         });
     }
 

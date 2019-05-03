@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <create @created="paginate()"></create>
+            <create @created="created($event)"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -61,6 +61,10 @@
         },
 
         methods: {
+            created(data) {
+                this.$store.commit('cadeco/empresa/SET_CUENTA_EMPRESA', data)
+            },
+
             paginate() {
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/empresa/paginate', { params: this.query })

@@ -129,16 +129,20 @@
         },
         methods: {
             init() {
-                this.cargando = true;
-                $(this.$refs.modal).modal('show');
+                if (!this.datosContables) {
+                    swal('¡Error!', 'No es posible registrar la cuenta debido a que no se ha configurado el formato de cuentas de la obra.', 'error')
+                } else {
+                    this.cargando = true;
+                    $(this.$refs.modal).modal('show');
 
-                this.id_cuenta = '';
-                this.cuenta = '';
-                this.id_tipo_cuenta_contable = '';
-                this.id_empresa = '';
+                    this.id_cuenta = '';
+                    this.cuenta = '';
+                    this.id_tipo_cuenta_contable = '';
+                    this.id_empresa = '';
 
-                this.$validator.reset()
-                this.cargando = false;
+                    this.$validator.reset()
+                    this.cargando = false;
+                }
             },
             getCuentas(){
                 return this.$store.dispatch('cadeco/empresa/find', {
@@ -151,10 +155,14 @@
                         });
                     })
             },
+
+
             getTipos() {
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index',{
-                    params: {
-                        scope: ['disponiblesParaCuentaBancaria:' + this.id_cuenta, 'paraBancos']
+                    config: {
+                        params: {
+                            scope: ['disponiblesParaCuentaBancaria:' + this.id_cuenta, 'paraBancos']
+                        }
                     }
                 })
                     .then(data => {

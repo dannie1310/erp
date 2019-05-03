@@ -35,15 +35,11 @@
                                 </tr>
                                 <tr>
                                     <th style="text-align: right">Fecha</th>
-                                    <td>{{ (new Date(movimiento.fecha)).toLocaleDateString('es') }}</td>
+                                    <td>{{ movimiento.fecha }}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: right">Cumplimiento</th>
-                                    <td>{{ movimiento.transaccion ? (new Date(movimiento.transaccion.cumplimiento)).toLocaleDateString('es') : '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: right">Vencimiento</th>
-                                    <td>{{ movimiento.transaccion ? (new Date(movimiento.transaccion.vencimiento)).toLocaleDateString('es') : '' }}</td>
+                                    <td>{{ movimiento.transaccion ? movimiento.transaccion.cumplimiento : '' }}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: right">Importe</th>
@@ -59,6 +55,10 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            <div class="form-group" v-if="movimiento">
+                                <label>Observaciones</label>
+                                <p>{{ movimiento.observaciones }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -73,10 +73,12 @@
         props: ['id'],
         methods: {
             find(id) {
+                this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', null);
                 return this.$store.dispatch('tesoreria/movimiento-bancario/find', {
                     id: id,
                     params: { include: 'cuenta.empresa,transaccion' }
-                }).then(() => {
+                }).then(data => {
+                    this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', data);
                     $(this.$refs.modal).modal('show')
                 })
             }

@@ -8,7 +8,7 @@
 
 namespace App\Models\SEGURIDAD_ERP;
 
-
+use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
 
 class Proyecto extends Model

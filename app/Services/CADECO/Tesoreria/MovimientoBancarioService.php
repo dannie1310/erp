@@ -87,6 +87,10 @@ class MovimientoBancarioService
         try {
             DB::connection('cadeco')->beginTransaction();
 
+            if ($data['id_tipo_movimiento'] != 4) {
+                $data['impuesto'] = 0;
+            }
+
             $movimiento = $this->repository->update($data,  $id);
 
 
@@ -95,7 +99,11 @@ class MovimientoBancarioService
             $data['monto'] = $movimiento->importe + $movimiento->impuesto;
             $data['impuesto'] = $movimiento->impuesto;
 
-            $transaccionRepository->update($data, $movimiento->transacciones()->first()->getKey());
+            if($transaccion = $transaccionRepository->show($movimiento->transacciones()->first()->getKey())) {
+                $transaccionRepository->update($data, $movimiento->transacciones()->first()->getKey());
+            } else {
+                $transaccionRepository->create($data);
+            }
 
             DB::connection('cadeco')->commit();
 

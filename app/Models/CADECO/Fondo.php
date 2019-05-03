@@ -21,7 +21,9 @@ class Fondo extends Model
 
     public $timestamps = false;
     public $searchable = [
-        'descripcion'
+        'descripcion',
+        'saldo',
+        'cuentaFondo.cuenta'
     ];
 
     protected static function boot()
@@ -42,4 +44,10 @@ class Fondo extends Model
     {
         return $query->doesntHave('cuentaFondo');
     }
+
+    public function scopeConCuenta($query)
+    {
+        return $query->has('cuentaFondo');
+    }
+
 }

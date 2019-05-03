@@ -41,6 +41,7 @@ export default {
         },
         setObra(state, payload) {
             state.currentObra = Object.assign({}, payload.obra);
+            this._vm.$session.set('obra', payload.obra);
         },
         setPermisos(state, payload) {
                 state.permisos = Object.assign({}, payload.permisos);

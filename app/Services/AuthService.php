@@ -47,8 +47,4 @@ class AuthService
             throw $e;
         }
     }
-
-
-
-
 }

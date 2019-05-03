@@ -11,6 +11,7 @@ import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
 import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
+import moneda from './modules/cadeco/moneda';
 
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo'
@@ -22,16 +23,37 @@ import cuentaEmpresa from './modules/contabilidad/cuenta-empresa';
 import cuentaFondo from './modules/contabilidad/cuenta-fondo';
 import cuentaGeneral from './modules/contabilidad/cuenta-general';
 import cuentaMaterial from './modules/contabilidad/cuenta-material';
+import datosContables from './modules/contabilidad/datos-contables';
 import estatusPrepoliza from './modules/contabilidad/estatus-prepoliza';
+import naturalezaPoliza from './modules/contabilidad/naturaleza-poliza';
 import poliza from './modules/contabilidad/poliza';
 import tipoCuentaContable from './modules/contabilidad/tipo-cuenta-contable';
 import tipoCuentaEmpresa from './modules/contabilidad/tipo-cuenta-empresa';
 import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
+import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
+
+//CONTRATOS
+import estimacion from './modules/contratos/estimacion';
+import fondoGarantia from './modules/contratos/fondo-garantia';
+import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
+import subcontrato from './modules/contratos/subcontrato';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
+import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
+
+//SEGURIDAD
+import permiso from './modules/seguridad/permiso';
+import rol from './modules/seguridad/rol';
+import rolPersonalizado from './modules/seguridad/rol-personalizado';
+import sistema from './modules/seguridad/sistema';
+import tipoProyecto from './modules/seguridad/tipo-proyecto';
+
+//IGH
+import usuario from "./modules/igh/usuario";
+import aplicacion from "./modules/igh/aplicacion";
 
 Vue.use(Vuex);
 
@@ -46,6 +68,12 @@ export default new Vuex.Store({
         'cadeco/empresa': empresa,
         'cadeco/fondo': fondo,
         'cadeco/material': material,
+        'cadeco/moneda': moneda,
+
+        'contratos/fondo-garantia': fondoGarantia,
+        'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
+        'contratos/subcontrato': subcontrato,
+
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
         'contabilidad/cuenta-banco' : cuentaBanco,
@@ -55,15 +83,28 @@ export default new Vuex.Store({
         'contabilidad/cuenta-fondo' : cuentaFondo,
         'contabilidad/cuenta-general': cuentaGeneral,
         'contabilidad/cuenta-material' : cuentaMaterial,
+        'contabilidad/datos-contables' : datosContables,
         'contabilidad/estatus-prepoliza': estatusPrepoliza,
+        'contabilidad/naturaleza-poliza' : naturalezaPoliza,
         'contabilidad/poliza': poliza,
         'contabilidad/tipo-cuenta-contable': tipoCuentaContable,
         'contabilidad/tipo-cuenta-empresa': tipoCuentaEmpresa,
         'contabilidad/tipo-cuenta-material': tipoCuentaMaterial,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
+        'contabilidad/transaccion-interfaz': transaccionInterfaz,
+
+        'igh/usuario': usuario,
+        'igh/aplicacion': aplicacion,
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
+        'tesoreria/traspaso-entre-cuentas': traspaso,
+
+        'seguridad/permiso': permiso,
+        'seguridad/rol': rol,
+        'seguridad/rol-personalizado': rolPersonalizado,
+        'seguridad/sistema': sistema,
+        'seguridad/tipo-proyecto': tipoProyecto,
     },
     strict: process.env.NODE_ENV !== 'production'
 })

@@ -167,7 +167,7 @@
                                                 name="transaccion.cumplimiento"
                                                 id="cumplimiento"
                                                 class="form-control"
-                                                :value="new Date(movimiento.transaccion.cumplimiento).toDate()"
+                                                :value="movimiento.transaccion.cumplimiento"
                                                 @input="updateAttribute"
                                                 v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                 data-vv-as="Cumplimiento"
@@ -211,17 +211,16 @@
     export default {
         name: "movimiento-bancario-edit",
         props: ['id'],
+        data() {
+            return {
+                tiposMovimiento: [],
+                cuentas: []
+            }
+        },
+
         computed: {
             movimiento() {
                 return (this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] != null && this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'].id == this.id) ?  this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento'] : null
-            },
-
-            tiposMovimiento() {
-                return this.$store.getters['tesoreria/tipo-movimiento/tipos']
-            },
-
-            cuentas() {
-                return this.$store.getters['cadeco/cuenta/cuentas']
             },
 
             total() {
@@ -233,8 +232,20 @@
 
         methods: {
             getTiposMovimiento() {
-                return this.$store.dispatch('tesoreria/tipo-movimiento/fetch');
+                return this.$store.dispatch('tesoreria/tipo-movimiento/index')
+                    .then(data => {
+                        this.tiposMovimiento = data.data;
+                    });
             },
+
+            getTiposMovimiento() {
+                return this.$store.dispatch('tesoreria/tipo-movimiento/index',{
+                })
+                    .then(data => {
+                        this.tiposMovimiento = data.data;
+                    })
+            },
+
 
             getCuentas() {
                 return this.$store.dispatch('cadeco/cuenta/index', {
@@ -243,16 +254,26 @@
                         scope: 'paraTraspaso'
                     }
                 })
+                    .then(data => {
+                        this.cuentas = data.data;
+                    });
             },
 
             find(id) {
-                return this.$store.dispatch('tesoreria/movimiento-bancario/find', {
-                    id: id,
-                    params: { include: 'transaccion' }
-                })
+                axios.all([
+                    this.getTiposMovimiento(),
+                    this.getCuentas()
+                ])
                     .then(() => {
-                        $(this.$refs.modal).modal('show');
-                    })
+                        this.$store.dispatch('tesoreria/movimiento-bancario/find', {
+                            id: id,
+                            params: { include: 'transaccion' }
+                        })
+                            .then(data => {
+                                this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', data);
+                                $(this.$refs.modal).modal('show');
+                            })
+                    });
             },
 
             update() {
@@ -265,12 +286,13 @@
                         impuesto: this.movimiento.impuesto,
                         referencia: this.movimiento.transaccion.referencia,
                         observaciones: this.movimiento.observaciones,
-                        cumplimiento: new Date(this.movimiento.transaccion.cumplimiento).toDate(),
+                        cumplimiento: this.movimiento.transaccion.cumplimiento,
                         fecha: this.movimiento.fecha
                     },
                     params: { include: 'cuenta.empresa,transaccion' }
                 })
-                    .then(() => {
+                    .then(data => {
+                        this.$store.commit('tesoreria/movimiento-bancario/UPDATE_MOVIMIENTO', data);
                         $(this.$refs.modal).modal('hide');
                     })
             },

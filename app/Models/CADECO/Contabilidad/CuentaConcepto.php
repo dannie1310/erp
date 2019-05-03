@@ -10,6 +10,7 @@ namespace App\Models\CADECO\Contabilidad;
 
 
 use App\Models\CADECO\Concepto;
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -42,5 +43,10 @@ class CuentaConcepto extends Model
     public function concepto()
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'registro');
     }
 }

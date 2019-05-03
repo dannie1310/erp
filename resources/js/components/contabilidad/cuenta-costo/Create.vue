@@ -79,18 +79,22 @@
 
         methods: {
             init() {
-                this.cargando = true;
+                if (!this.datosContables) {
+                    swal('¡Error!', 'No es posible registrar la cuenta debido a que no se ha configurado el formato de cuentas de la obra.', 'error')
+                } else {
+                    this.cargando = true;
 
-                $(this.$refs.modal).modal('show');
+                    $(this.$refs.modal).modal('show');
 
-                this.id_costo = '';
-                this.cuenta = '';
+                    this.id_costo = '';
+                    this.cuenta = '';
 
-                this.$validator.reset()
-                this.$refs.costoSelect.getRootNodes()
-                    .finally(() => {
-                        this.cargando = false
-                    })
+                    this.$validator.reset()
+                    this.$refs.costoSelect.getRootNodes()
+                        .finally(() => {
+                            this.cargando = false
+                        })
+                }
             },
 
             store() {

@@ -28,6 +28,31 @@ class TipoCuentaContableService
         $this->repository = new Repository($model);
     }
 
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
+
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
+    }
+
+    public function delete($data, $id)
+    {
+        $this->repository->delete($data, $id);
+    }
+
     public function index()
     {
         return $this->repository->all();

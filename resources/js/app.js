@@ -20,6 +20,8 @@ import router from './router';
 Vue.use(VueSession, {persist: true});
 Vue.use(VeeValidate);
 Vue.component('treeselect', VueTreeselect.Treeselect);
+import vue2Dropzone from 'vue2-dropzone';
+Vue.component('vueDropzone', vue2Dropzone);
 Validator.localize('es', es);
 Vue.use(Datatable, { locale: datatableEs });
 
@@ -45,7 +47,7 @@ const app = new Vue({
                     let result = false;
                     permiso.forEach(perm => {
                         let search = permisos.find(p => {
-                            return p.name == perm;
+                            return p == perm;
                         });
                         if (search) {
                             result = true;
@@ -54,7 +56,7 @@ const app = new Vue({
                     return result;
                 }  else {
                     return permisos.find(perm => {
-                        return perm.name == permiso;
+                        return perm == permiso;
                     })
                 }
             }

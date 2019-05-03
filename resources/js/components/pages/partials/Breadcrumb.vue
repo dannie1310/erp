@@ -40,7 +40,6 @@
                 if(this.$route.name != null) {
                     this.push(this.$route)
                 }
-
             },
 
             push(route) {

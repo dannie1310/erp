@@ -74,6 +74,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Registrar',
@@ -87,7 +88,9 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cierre de periodo registrado correctamente", {
+                                    swal({
+                                        title: "Cierre de periodo registrado correctamente",
+                                        text: " ",
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -113,6 +116,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Abrir',
@@ -167,6 +171,7 @@ export default {
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
+                            visible: true
                         },
                         confirm: {
                             text: 'Si, Cerrar',

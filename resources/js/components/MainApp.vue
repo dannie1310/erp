@@ -1,5 +1,5 @@
 <template>
-    <body class="hold-transition sidebar-mini">
+    <body class="hold-transition sidebar-mini" :class="$router.currentRoute.name == 'portal' ? 'sidebar-collapse' : ''">
     <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
     <div v-if="currentUser" class="wrapper">
@@ -15,7 +15,7 @@
                             <h1>{{ this.$route.meta.title }}</h1>
                         </div>
                         <div class="col-sm-6">
-                            <AppBreadcrumb/>
+                            <AppBreadcrumb v-if="$router.currentRoute.name != 'portal'"/>
                         </div>
                     </div>
                 </div><!-- /.container-fluid -->
@@ -31,7 +31,7 @@
         </div>
         <!-- /.content-wrapper -->
 
-        <AppFooter/>
+        <AppFooter v-if="$router.currentRoute.name != 'portal'"/>
 
 
         <!-- Control Sidebar -->
@@ -39,20 +39,12 @@
             <div class="p-3">
                 <h5>Acceso Rápido</h5>
                 <hr class="mb-2">
-                <div class="d-block">
-                    <router-link :to="{name: 'contabilidad'}" class="d-flex flex-wrap mb-3">
-                        <div class="bg-info elevation-2 text-center" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
-                            <i class="fa fa-calculator"></i>
+                <div class="d-block"   v-for="(sistema, i) in sistemas">
+                    <router-link :to="{name: sistema.url}" class="d-flex flex-wrap mb-3">
+                        <div :class="sistema.color+' elevation-2 text-center'" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
+                            <i :class="sistema.icon"></i>
                         </div>
-                        Contabilidad
-                    </router-link>
-                </div>
-                <div class="d-block">
-                    <router-link :to="{name: 'tesoreria'}" class="d-flex flex-wrap mb-3">
-                        <div class="bg-primary elevation-2 text-center" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
-                            <i class="fa fa-usd"></i>
-                        </div>
-                        Tesorería
+                        {{sistema.name}}
                     </router-link>
                 </div>
             </div>
@@ -76,12 +68,22 @@
     export default {
         name: 'main-app',
         components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
+
+        data() {
+            return {
+                loading: false
+            }
+        },
+
         computed:{
             currentUser(){
                 return this.$store.getters['auth/currentUser']
             },
             currentObra() {
                 return this.$store.getters['auth/currentObra']
+            },
+            sistemas() {
+                return this.$store.getters['seguridad/sistema/sistemas']
             }
         }
     }

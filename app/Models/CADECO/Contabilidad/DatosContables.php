@@ -27,14 +27,17 @@ class DatosContables extends Model
     ];
 
     protected $appends = ['mask'];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Obra
      */
-    public function obra() {
+    public function obra()
+    {
         return $this->belongsTo(Obra::class, 'id_obra');
     }
 
-    public function getMaskAttribute() {
+    public function getMaskAttribute()
+    {
         return str_replace('#', '0', $this->FormatoCuenta);
     }
 }

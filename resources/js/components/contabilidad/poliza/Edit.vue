@@ -120,7 +120,7 @@
                                         <td>{{ i + 1 }}</td>
                                         <td>
                                             <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
-                                                <span v-if="movimiento.id_tipo_cuenta_contable == 1 && original.movimientos.data[i].cuenta_contable != null">
+                                                <span v-if="movimiento.id_tipo_cuenta_contable == 1 && original.movimientos.data[i] ? original.movimientos.data[i].cuenta_contable !=null ? true : false : false">
                                                     {{ movimiento.cuenta_contable }}
                                                 </span>
                                                 <span v-else>
@@ -138,9 +138,8 @@
                                                 </span>
                                             </span>
                                             <span v-else>
-                                                <p>ahere</p>
                                                 <label v-if="movimiento.cuenta_contable">{{ movimiento.cuenta_contable }}</label>
-                                                <label v-else>{{ datosContables }}</label>
+                                                <label v-else></label>
                                             </span>
                                         </td>
                                         <td>{{ movimiento.tipoCuentaContable ? movimiento.tipoCuentaContable.descripcion :
@@ -239,7 +238,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                            <button type="button" class="btn btn-sm btn-outline-danger" v-if="poliza.estatus != 1 && poliza.estatus != 2"
                                                     @click="remove(movimiento)"><i class="fa fa-trash"></i>
                                             </button>
                                         </td>
@@ -332,6 +331,8 @@
                 return this.$store.dispatch('contabilidad/poliza/update', payload)
                     .then(data => {
                         this.$store.commit('contabilidad/poliza/UPDATE_POLIZA', data);
+                        let id = this.id
+                        this.$router.push({ name: 'poliza-show', params: { id }})
                     })
             },
 
@@ -341,14 +342,34 @@
             },
 
             remove(movimiento) {
-                if(!movimiento.id) {
-                    this.original.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
-                        return JSON.stringify(movimiento) != JSON.stringify(m)
-                    })
-                }
-                this.poliza.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
-                    return JSON.stringify(movimiento) != JSON.stringify(m)
+                swal({
+                    title: "Quitar Movimiento",
+                    text: "¿Estás seguro de que deseas quitar el movimiento de la Prepóliza?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Quitar',
+                            closeModal: true,
+                        }
+                    },
+                    dangerMode: true,
                 })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            if(!movimiento.id) {
+                                this.original.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
+                                    return JSON.stringify(movimiento) != JSON.stringify(m)
+                                })
+                            }
+                            this.poliza.movimientos.data = this.poliza.movimientos.data.filter(function (m) {
+                                return JSON.stringify(movimiento) != JSON.stringify(m)
+                            })
+                        }
+                    });
             },
 
             validate() {

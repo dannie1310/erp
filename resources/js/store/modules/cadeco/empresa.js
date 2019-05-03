@@ -17,6 +17,14 @@ export default {
             state.currentEmpresa = data;
         },
 
+        SET_CUENTA_EMPRESA(state, data) {
+            state.empresas.forEach(e => {
+                if(e.id == data.empresa.id) {
+                    e.cuentasEmpresa.data.push(data);
+                }
+            });
+        },
+
         SET_META(state, data) {
             state.meta = data;
         }

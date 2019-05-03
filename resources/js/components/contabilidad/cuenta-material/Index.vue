@@ -49,8 +49,8 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Material', field: 'descripcion', sortable: true },
                     { title: 'Número de Parte', field: 'numero_parte', sortable: true },
-                    { title: 'Tipo de Cuenta', field: 'tipo_cuenta', sortable: true },
-                    { title: 'Cuenta Contable', field: 'cuenta', sortable: true },
+                    { title: 'Tipo de Cuenta', field: 'tipo_cuenta', sortable: false },
+                    { title: 'Cuenta Contable', field: 'cuenta', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -159,7 +159,14 @@
                     });
                 },
                 deep: true
-            }
+            },
+
+            query: {
+                handler() {
+                    this.paginate();
+                },
+                deep: true
+            },
         }
     }
 </script>

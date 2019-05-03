@@ -6,6 +6,7 @@ namespace App\Http\Transformers\CADECO;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaEmpresaTransformer;
 use App\Models\CADECO\Empresa;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 
 class EmpresaTransformer extends TransformerAbstract
 {
@@ -16,7 +17,8 @@ class EmpresaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'cuentasEmpresa',
-        'cuentas'
+        'cuentas',
+        'subcontratos'
     ];
 
     public function transform(Empresa $model)
@@ -40,6 +42,15 @@ class EmpresaTransformer extends TransformerAbstract
         if($cuentas = $model->cuentas)
         {
             return $this->collection($cuentas, new CuentaTransformer);
+        }
+        return null;
+    }
+
+    public function includeSubcontratos(Empresa $model)
+    {
+        if($subcontratos = $model->subcontrato)
+        {
+            return $this->collection($subcontratos, new SubcontratoTransformer);
         }
         return null;
     }

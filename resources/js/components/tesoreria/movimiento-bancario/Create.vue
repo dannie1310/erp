@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_movimiento_bancario')" class="btn btn-app btn-info pull-right">
+        <button @click="init" class="btn btn-app btn-info pull-right">
             <i class="fa fa-plus"></i> Registrar Movimiento
         </button>
 
@@ -209,7 +209,9 @@
                 referencia: '',
                 observaciones: '',
                 cumplimiento: '',
-                fecha: ''
+                fecha: '',
+                tiposMovimiento: [],
+                cuentas: []
             }
         },
 
@@ -235,7 +237,11 @@
             },
 
             getTiposMovimiento() {
-                return this.$store.dispatch('tesoreria/tipo-movimiento/fetch');
+                return this.$store.dispatch('tesoreria/tipo-movimiento/index',{
+                })
+                    .then(data => {
+                        this.tiposMovimiento = data.data;
+                    })
             },
 
             getCuentas() {
@@ -245,6 +251,9 @@
                         scope: 'paraTraspaso'
                     }
                 })
+                    .then(data => {
+                        this.cuentas = data.data;
+                    })
             },
 
             validate() {
@@ -259,18 +268,12 @@
                 return this.$store.dispatch('tesoreria/movimiento-bancario/store', this.$data)
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
+                        this.$emit('created')
                     })
             }
         },
 
         computed: {
-            tiposMovimiento() {
-                return this.$store.getters['tesoreria/tipo-movimiento/tipos']
-            },
-
-            cuentas() {
-                return this.$store.getters['cadeco/cuenta/cuentas']
-            },
             total() {
                 let impuesto = this.impuesto ? parseFloat(this.impuesto) : 0;
                 let importe = this.importe ? parseFloat(this.importe) : 0;
@@ -279,7 +282,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

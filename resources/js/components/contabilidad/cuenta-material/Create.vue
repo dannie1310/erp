@@ -28,7 +28,8 @@
                                                 v-model="id_material"
                                                 :error="errors.has('id_material')"
                                                 scope="sinCuenta"
-                                        >
+                                                ref="selectMaterial"
+                                                :disableBranchNodes="false"
                                         ></material-select>
                                         <div class="error-label" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                     </div>
@@ -67,7 +68,7 @@
                                                 placeholder="Cuenta"
                                                 v-model="cuenta"
                                                 :class="{'is-invalid': errors.has('cuenta')}"
-                                                ref="selectMaterial"
+
                                         >
                                         <div class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                     </div>
@@ -101,15 +102,19 @@
 
         methods: {
             init() {
-                this.cargando = true;
-                $(this.$refs.modal).modal('show');
+                if (!this.datosContables) {
+                    swal('¡Error!', 'No es posible registrar la cuenta debido a que no se ha configurado el formato de cuentas de la obra.', 'error')
+                } else {
+                    this.cargando = true;
+                    $(this.$refs.modal).modal('show');
 
-                this.id_material = '';
-                this.id_tipo_cuenta_material = '';
-                this.cuenta = '';
+                    this.id_material = '';
+                    this.id_tipo_cuenta_material = '';
+                    this.cuenta = '';
 
-                this.$validator.reset()
-                this.cargando = false;
+                    this.$validator.reset()
+                    this.cargando = false;
+                }
             },
 
             store() {

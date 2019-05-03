@@ -81,14 +81,20 @@
         },
         methods: {
             init() {
-                this.getTipos()
+                if (!this.datosContables) {
+                    swal('¡Error!', 'No es posible registrar la cuenta debido a que no se ha configurado el formato de cuentas de la obra.', 'error')
+                } else {
+                    this.getTipos()
+                }
             },
 
             getTipos() {
                 this.cargando = true;
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/index', {
-                    params: {
-                        scope: ['generales', 'sinCuenta']
+                    config: {
+                        params: {
+                            scope: ['generales', 'sinCuenta']
+                        }
                     }
                 })
                     .then(data => {

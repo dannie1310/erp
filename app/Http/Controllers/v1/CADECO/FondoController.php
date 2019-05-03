@@ -50,4 +50,5 @@ class FondoController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
 }

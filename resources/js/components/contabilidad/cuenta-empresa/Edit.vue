@@ -5,12 +5,12 @@
             <i class="fa fa-pencil" v-else></i>
         </button>
 
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="editModal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content" v-if="empresa">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">{{ empresa.razon_social }}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title">{{ empresa.razon_social }}</h5>
+                        <button type="button" class="close" @click="closeModal()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -30,9 +30,14 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <cuenta-empresa-create :id="id" :btnclass="'btn btn-primary pull-right'" @created="created($event)"></cuenta-empresa-create>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -42,9 +47,10 @@
 
 <script>
     import CuentaEmpresaEditForm from "./EditForm";
+    import CuentaEmpresaCreate from "./Create";
     export default {
         name: "cuenta-empresa-edit",
-        components: {CuentaEmpresaEditForm},
+        components: {CuentaEmpresaCreate, CuentaEmpresaEditForm},
         props: ['id'],
         data() {
             return {
@@ -60,6 +66,15 @@
         },
 
         methods: {
+            closeModal() {
+                $(this.$refs.editModal).modal('hide')
+            },
+
+            created(cuenta) {
+                this.empresa.cuentasEmpresa.data.push(cuenta);
+                this.$store.commit('cadeco/empresa/SET_CUENTA_EMPRESA', cuenta)
+            },
+
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/empresa/find', {
@@ -68,7 +83,7 @@
                 })
                     .then(data => {
                         this.empresa = data
-                        $(this.$refs.modal).modal('show')
+                        $(this.$refs.editModal).modal('show')
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -76,7 +91,7 @@
             },
 
             destroy(cuenta) {
-                $(this.$refs.modal).modal('hide')
+                $(this.$refs.editModal).modal('hide')
                 this.empresa.cuentasEmpresa.data = this.empresa.cuentasEmpresa.data.filter((c, i) => {
                     return cuenta.id !== c.id;
                 })

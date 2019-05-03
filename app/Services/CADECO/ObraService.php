@@ -1,9 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Luis Valencia
- * Date: 13/03/2019
- * Time: 11:50 AM
+ * User: jfesquivel
+ * Date: 19/03/19
+ * Time: 06:26 PM
  */
 
 namespace App\Services\CADECO;
@@ -20,22 +20,52 @@ use Illuminate\Support\Facades\DB;
 
 class ObraService
 {
+    /**
+     * @var Repository
+     */
+    protected $repository;
+
+    /**
+     * ObraService constructor.
+     * @param Obra $model
+     */
+    public function __construct(Obra $model)
+    {
+        $this->repository = new Repository($model);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function update($data, $id)
+    {
+        $obra = $this->repository->show($id);
+
+        if (isset($data['configuracion']['id_responsable'])) {
+            $data['responsable'] = \App\Models\IGH\Usuario::query()->find($data['configuracion']['id_responsable'])->nombre_completo;
+        }
+
+        if (isset($data['configuracion']['logotipo_original'])) {
+            $file = request()->file('configuracion')['logotipo_original'];
+            $imageData = unpack("H*", file_get_contents($file->getPathname()));
+            $obra->configuracion()->update([
+                'logotipo_original' => DB::raw("CONVERT(VARBINARY(MAX), '" . $imageData[1] . "')"),
+                'logotipo_reportes' => DB::raw("CONVERT(VARBINARY(MAX), '" . $imageData[1] . "')")
+            ]);
+        }
+
+        $obra->configuracion->fill(array_except($data['configuracion'], 'logotipo_original'));
+        $obra->configuracion->save();
+
+        $obra->update($data);
+
+        return $obra;
+    }
 
     public function authPaginate() {
-
-        $obrasUsuario = new Collection();
-        $basesDatos = Proyecto::query()->orderBy('base_datos')->pluck('base_datos');
-
-        foreach ($basesDatos as $key => $bd) {
-            config()->set('database.connections.cadeco.database', $bd);
-            $usuarioCadeco = $this->getUsuarioCadeco(auth()->user());
-            $obras = $this->getObrasUsuario($usuarioCadeco);
-            foreach ($obras as $obra) {
-                $obra->base_datos = $bd;
-                $obrasUsuario->push($obra);
-            }
-            DB::disconnect('cadeco');
-        }
+        $obrasUsuario = $this->getObrasPorUsuario(auth()->id());
         $perPage     = 10;
         $currentPage = Paginator::resolveCurrentPage();
         $currentPage = $currentPage ? $currentPage : 1;
@@ -46,7 +76,23 @@ class ObraService
             $perPage
         );
         return $paginator;
+    }
 
+    public function getObrasPorUsuario($idusuaio) {
+        $obrasUsuario = new Collection();
+        $basesDatos = Proyecto::query()->withoutGlobalScopes()->orderBy('base_datos')->pluck('base_datos');
+
+        foreach ($basesDatos as $key => $bd) {
+            config()->set('database.connections.cadeco.database', $bd);
+            $usuarioCadeco = $this->getUsuarioCadeco($idusuaio);
+            $obras = $this->getObrasUsuario($usuarioCadeco);
+            foreach ($obras as $obra) {
+                $obra->base_datos = $bd;
+                $obrasUsuario->push($obra);
+            }
+            DB::disconnect('cadeco');
+        }
+        return $obrasUsuario;
     }
 
     /**
@@ -55,9 +101,10 @@ class ObraService
      * @param $idUsuario
      * @return UsuarioCadeco
      */
-    public function getUsuarioCadeco($usuario)
+    public function getUsuarioCadeco($idusuario)
     {
-        return Usuario::where('usuario', $usuario->usuario)->first();
+        $usuario = \App\Models\IGH\Usuario::query()->find($idusuario);
+        return Usuario::where('usuario', '=', $usuario->usuario)->first();
     }
 
     /**

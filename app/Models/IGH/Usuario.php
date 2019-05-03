@@ -9,7 +9,9 @@
 namespace App\Models\IGH;
 
 use App\Facades\Context;
+use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Traits\IghAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -68,6 +70,15 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public $timestamps = false;
 
     /**
+     * @var array
+     */
+    public $searchable = [
+        'usuario',
+        'nombre',
+        'correo'
+    ];
+
+    /**
      * @param $value
      */
     public function setClaveAttribute($value)
@@ -103,7 +114,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     /**
      * Check if user has a permission by its name.
      *
-     * @param string|array $permission Permission string or array of permissions.
+     * @param string/array $permission Permission string or array of permissions.
      * @param bool $requireAll All permissions in the array are required.
      *
      * @return bool
@@ -138,19 +149,62 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function roles()
     {
-        return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
+        $obra =  Obra::query()->find(Context::getIdObra());
+
+        if ($obra->configuracion) {
+            if ($obra->configuracion->esquema_permisos == 1) {
+                // Esquema Global
+                return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
+                    ->withPivot('id_obra', 'id_proyecto')
+                    ->where('id_obra', $obra->getKey())
+                    ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+            } else if ($obra->configuracion->esquema_permisos == 2) {
+                // Esquema Personalizado
+                return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
+            }
+        } else {
+            // Esquema Global
+            return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
+                ->where('id_obra', $obra->getKey())
+                ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+        }
+    }
+
+    public function rolesGlobales()
+    {
+        $obra =  Obra::query()->find(Context::getIdObra());
+
+        if (isset($obra->configuracion) && $obra->configuracion->esquema_permisos == 1) {
+            // Esquema Global
+            return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
+                ->withPivot('id_obra', 'id_proyecto');
+        }
+    }
+
+    public function rolesPersonalizados()
+    {
+        $obra = Obra::query()->find( Context::getIdObra() );
+
+        if (isset( $obra->configuracion ) && $obra->configuracion->esquema_permisos == 2) {
+            // Esquema Personalizado
+            return $this->belongsToMany( Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id' );
+        }
     }
 
     public function permisos()
     {
-        $permisos = new Collection();
+        $permisos = [];
         foreach ($this->roles as $rol) {
             // Validate against the Permission table
             foreach ($rol->permisos as $perm) {
-                $permisos->push($perm);
+                array_push($permisos, $perm->name);
             }
         }
 
         return $permisos;
+    }
+
+    public function getNombreCompletoAttribute(){
+        return $this->nombre." ".$this->apaterno." ".$this->amaterno;
     }
 }

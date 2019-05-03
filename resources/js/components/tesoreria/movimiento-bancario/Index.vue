@@ -1,11 +1,20 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <movimiento-bancario-create></movimiento-bancario-create>
+            <movimiento-bancario-create @created="created()" v-if="$root.can('registrar_movimiento_bancario')"></movimiento-bancario-create>
         </div>
 
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -35,25 +44,46 @@
                     { title: 'Tipo', field: 'tipo', sortable: false },
                     { title: 'Cuenta', field: 'cuenta', sortable: false },
                     { title: 'Referencia', field: 'referencia'},
+                    { title: 'Importe', field: 'importe'},
+                    { title: 'Impuesto', field: 'impuesto'},
                     { title: 'Total', field: 'total'},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                query: {
-                }
+                query: {},
+                search: '',
+                cargando: false
             }
         },
 
         mounted() {
             this.paginate({
-                'include': 'cuenta.empresa,transaccion'
+                'include': 'cuenta.empresa,transaccion',
+                'sort': 'numero_folio',
+                'order': 'DESC'
             })
         },
 
         methods: {
+            created() {
+                this.paginate({
+                    'include': 'cuenta.empresa,transaccion',
+                    'sort': 'numero_folio',
+                    'order': 'DESC'
+                })
+            },
+
             paginate(payload = {}) {
-                return this.$store.dispatch('tesoreria/movimiento-bancario/paginate', payload)
+                this.cargando = true;
+                return this.$store.dispatch('tesoreria/movimiento-bancario/paginate', {params: payload})
+                    .then(data => {
+                        this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTOS', data.data);
+                        this.$store.commit('tesoreria/movimiento-bancario/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             }
         },
         computed: {
@@ -77,6 +107,8 @@
                             tipo: movimiento.tipo.descripcion,
                             cuenta: movimiento.cuenta ? movimiento.cuenta.numero + ' ' + (movimiento.cuenta.abreviatura ? movimiento.cuenta.abreviatura : '') + ' (' + movimiento.cuenta.empresa.razon_social + ')' : '',
                             referencia: movimiento.transaccion ? movimiento.transaccion.referencia : '',
+                            importe: '$ ' + parseFloat(movimiento.importe).formatMoney(2, '.', ','),
+                            impuesto: '$ ' +  parseFloat(movimiento.impuesto).formatMoney(2, '.', ','),
                             total: '$ ' +  (parseFloat(movimiento.importe) + parseFloat(movimiento.impuesto)).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
                                 show: true,
@@ -98,9 +130,30 @@
             },
             query: {
                 handler (query) {
-                    this.paginate({...query, include: 'cuenta.empresa,transaccion'})
+                    this.paginate({...query,
+                        include: 'cuenta.empresa,transaccion',
+                        'sort': 'numero_folio',
+                        'order': 'DESC'
+                    })
                 },
                 deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate({...this.query, include: 'cuenta.empresa,transaccion'})
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
             }
         },
     }

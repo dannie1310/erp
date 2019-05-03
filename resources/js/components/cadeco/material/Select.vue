@@ -1,33 +1,53 @@
 <template>
     <span>
-        <div v-if="disabled" class="form-control loading">
-            <i class="fa fa-spin fa-spinner"></i>
-        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <select class="form-control" v-model="tipo_material">
+                    <option disabled value>-- Tipo de Material --</option>
+                    <option v-for="tipo in tipos" :value="tipo.id">{{ tipo.descripcion }}</option>
+                </select>
+            </div>
 
-        <treeselect v-else
-                :class="{error: error}"
-                :instanceId="id"
-                :multiple="multiple"
-                loadingText="Cargando..."
-                noOptionsText="No hay opciones disponibles"
-                :options="rootNodes"
-                :load-options="loadOptions"
-                placeholder="-- Material --"
-                :disableBranchNodes="true"
-                v-model="val"
-        />
+            <div class="col-md-6">
+                <div v-if="cargando" class="form-control loading">
+                    <i class="fa fa-spin fa-spinner"></i>
+                </div>
+                <treeselect v-else
+                        :disabled="!tipo_material"
+                        :class="{error: error}"
+                        :instanceId="id"
+                        :multiple="multiple"
+                        loadingText="Cargando..."
+                        noOptionsText="No hay opciones disponibles"
+                        :options="rootNodes"
+                        :load-options="loadOptions"
+                        placeholder="-- Material --"
+                        :disableBranchNodes="this.disableBranchNodes"
+                        v-model="val"
+                />
+
+            </div>
+        </div>
     </span>
 </template>
 
 <script>
     export default {
-        props: ['value','id', 'multiple', 'error', 'scope'],
+        props: ['value','id', 'multiple', 'error', 'scope', 'disableBranchNodes'],
         name: "material-select",
         data() {
             return {
                 val: null,
                 rootNodes: [],
-                disabled: true
+                disabled: true,
+                tipo_material: '',
+                tipos: [
+                    {id: 1, descripcion: 'Materiales'},
+                    {id: 2, descripcion: 'Mano de Obra y Servicios'},
+                    {id: 4, descripcion: 'Herramienta y Equipo'},
+                    {id: 8, descripcion: 'Maquinaria'}
+                ],
+                cargando: false
             }
         },
 
@@ -39,18 +59,29 @@
                 if(!value) {
                     this.val = null;
                 }
+            },
+            tipo_material(tipo) {
+                if(tipo) {
+                    this.val = null
+                    this.getRootNodes()
+                        .finally(() => {
+                            this.$validator.reset()
+                        });
+                }
             }
-        },
-
-        mounted() {
-            this.getRootNodes();
         },
 
         methods: {
             getRootNodes() {
                 let self = this
+                self.rootNodes = [];
+                this.cargando = true;
                 return self.$store.dispatch('cadeco/material/index', {
-                    params: { scope: this.scp }
+                    params: {
+                        scope: this.scp,
+                        sort: 'descripcion',
+                        order: 'ASC'
+                    }
                 })
                     .then(data => {
                         self.rootNodes = data.data.map(material => ({
@@ -59,6 +90,9 @@
                             label: material.descripcion,
                         }));
                         self.disabled = false;
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             },
 
@@ -86,9 +120,9 @@
         computed: {
             scp() {
                 if (this.scope) {
-                    return Array.isArray(this.scope) ? [...this.scope, 'roots'] : [this.scope, 'roots']
+                    return Array.isArray(this.scope) ? [...this.scope, 'roots', `tipo:${this.tipo_material}`] : [this.scope, 'roots', `tipo:${this.tipo_material}`]
                 } else {
-                    return 'roots'
+                    return ['roots', `tipo:${this.tipo_material}`]
                 }
             }
         }

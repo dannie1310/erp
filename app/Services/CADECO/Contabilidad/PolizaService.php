@@ -36,8 +36,8 @@ class PolizaService
             $poliza = $poliza->where([['fecha', '<=', $data['endDate']]]);
         }
 
-        if (isset($data['id_tipo_poliza_contpaq'])) {
-            $poliza = $poliza->where([['id_tipo_poliza_contpaq', '=', $data['id_tipo_poliza_contpaq']]]);
+        if (isset($data['id_tipo_poliza_interfaz'])) {
+            $poliza = $poliza->where([['id_tipo_poliza_interfaz', '=', $data['id_tipo_poliza_interfaz']]]);
         }
 
         if (isset($data['estatus'])) {

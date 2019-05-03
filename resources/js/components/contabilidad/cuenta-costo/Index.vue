@@ -97,6 +97,7 @@
                         cuenta: cuenta.cuenta,
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_cuenta_costo') ? true : undefined,
+                            delete: self.$root.can('eliminar_cuenta_costo') ? true : undefined,
                             id: cuenta.id
                         })
                     }));
