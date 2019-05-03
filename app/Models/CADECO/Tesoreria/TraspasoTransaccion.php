@@ -2,7 +2,8 @@
 
 namespace App\Models\CADECO\Tesoreria;
 
-use App\Models\CADECO\Transaccion;
+use App\Models\CADECO\Credito;
+use App\Models\CADECO\Debito;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -20,11 +21,13 @@ class TraspasoTransaccion extends Model
         'tipo_transaccion',
     ];
 
-    public function transaccion_debito() {
-        return $this->belongsTo(Transaccion::class, 'id_transaccion', 'id_transaccion');
+    public function debito()
+    {
+        return $this->belongsTo(Debito::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function transaccion_credito() {
-        return $this->belongsTo(Transaccion::class, 'id_transaccion', 'id_transaccion');
+    public function credito()
+    {
+        return $this->belongsTo(Credito::class, 'id_transaccion', 'id_transaccion');
     }
 }

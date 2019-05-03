@@ -22,7 +22,8 @@ class TraspasoCuentasTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'cuentaOrigen',
-        'cuentaDestino'
+        'cuentaDestino',
+        'traspasoTransaccion'
     ];
 
     /**
@@ -30,7 +31,11 @@ class TraspasoCuentasTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $defaultIncludes = [];
+    protected $defaultIncludes = [
+        'cuentaOrigen',
+        'cuentaDestino',
+        'traspasoTransaccion'
+    ];
 
     public function transform(TraspasoCuentas $model) {
         return $model->toArray();
@@ -46,5 +51,11 @@ class TraspasoCuentasTransformer extends TransformerAbstract
     {
         $cuenta_destino = $model->cuentaDestino;
         return $this->item($cuenta_destino, new CuentaTransformer);
+    }
+
+    public function includeTraspasoTransaccion(TraspasoCuentas $model)
+    {
+        $transaccion = $model->traspasoTransaccion;
+        return $this->item($transaccion, new TraspasoTransaccionTransformer);
     }
 }

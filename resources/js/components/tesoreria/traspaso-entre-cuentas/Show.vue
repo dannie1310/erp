@@ -8,56 +8,51 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Detalles del Movimiento</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Detalles del Traspaso</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="table-responsive">
-                            <table v-if="movimiento" class="table">
+                            <table v-if="traspaso" class="table">
                                 <tbody>
                                 <tr>
                                     <th style="text-align: right">Número de Folio</th>
-                                    <td>{{ movimiento.numero_folio}}</td>
+                                    <td>{{ traspaso.numero_folio}}</td>
                                 </tr>
+
                                 <tr>
-                                    <th style="text-align: right">Tipo de Movimiento</th>
-                                    <td>{{ movimiento.tipo.descripcion }}</td>
+                                    <th style="text-align: right">Cuenta Origen</th>
+                                    <td>{{ traspaso.cuentaOrigen ? traspaso.cuentaOrigen.numero + ' ' + (traspaso.cuentaOrigen.abreviatura ? traspaso.cuentaOrigen.abreviatura : '') + ' (' + traspaso.cuentaOrigen.empresa.razon_social + ')' : '' }}</td>
                                 </tr>
-                                <tr>
-                                    <th style="text-align: right">Cuenta</th>
-                                    <td>{{ movimiento.cuenta ? movimiento.cuenta.numero : '' }}</td>
+
+                                 <tr>
+                                    <th style="text-align: right">Cuenta Destino</th>
+                                    <td>{{ traspaso.cuentaDestino ? traspaso.cuentaDestino.numero + ' ' + (traspaso.cuentaDestino.abreviatura ? traspaso.cuentaDestino.abreviatura : '') + ' (' + traspaso.cuentaDestino.empresa.razon_social + ')' : '' }}</td>
                                 </tr>
-                                <tr>
-                                    <th style="text-align: right">Referencia</th>
-                                    <td>{{ movimiento.transaccion ? movimiento.transaccion.referencia : '' }}</td>
-                                </tr>
-                                <tr>
+                                 <tr>
                                     <th style="text-align: right">Fecha</th>
-                                    <td>{{ movimiento.fecha }}</td>
+                                    <td>{{ traspaso.fecha }}</td>
                                 </tr>
                                 <tr>
                                     <th style="text-align: right">Cumplimiento</th>
-                                    <td>{{ movimiento.transaccion ? movimiento.transaccion.cumplimiento : '' }}</td>
+                                    <td>{{ traspaso.traspasoTransaccion.debito ? traspaso.traspasoTransaccion.debito.cumplimiento : traspaso.traspasoTransaccion.credito.cumplimiento }}</td>
                                 </tr>
-                                <tr>
+                                  <tr>
                                     <th style="text-align: right">Importe</th>
-                                    <td>$ {{ parseFloat(movimiento.importe).formatMoney(2, '.', ',') }}</td>
+                                    <td>$ {{ parseFloat(traspaso.importe).formatMoney(2, '.', ',') }}</td>
                                 </tr>
                                 <tr>
-                                    <th style="text-align: right">Impuesto</th>
-                                    <td>$ {{ parseFloat(movimiento.impuesto).formatMoney(2, '.', ',') }}</td>
+                                    <th style="text-align: right">Referencia</th>
+                                    <td>{{ traspaso.traspasoTransaccion.debito ? traspaso.traspasoTransaccion.debito.referencia : traspaso.traspasoTransaccion.credito.cumplimiento }}</td>
                                 </tr>
-                                <tr>
-                                    <th style="text-align: right">Total</th>
-                                    <th>$ {{ (parseFloat(movimiento.importe) + parseFloat(movimiento.impuesto)).formatMoney(2, '.', ',') }}</th>
-                                </tr>
+
                                 </tbody>
                             </table>
-                            <div class="form-group" v-if="movimiento">
+                            <div class="form-group" v-if="traspaso">
                                 <label>Observaciones</label>
-                                <p>{{ movimiento.observaciones }}</p>
+                                <p>{{ traspaso.observaciones }}</p>
                             </div>
                         </div>
                     </div>
@@ -69,24 +64,24 @@
 
 <script>
     export default {
-        name: "movimiento-bancario-show",
+        name: "traspaso-entre-cuentas-show",
         props: ['id'],
         methods: {
             find(id) {
-                this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', null);
-                return this.$store.dispatch('tesoreria/movimiento-bancario/find', {
+                this.$store.commit('tesoreria/traspaso-entre-cuentas/SET_TRASPASO', null);
+                return this.$store.dispatch('tesoreria/traspaso-entre-cuentas/find', {
                     id: id,
-                    params: { include: 'cuenta.empresa,transaccion' }
+                    params: { include: 'cuentaOrigen.empresa,cuentaDestino.empresa' }
                 }).then(data => {
-                    this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTO', data);
+                    this.$store.commit('tesoreria/traspaso-entre-cuentas/SET_TRASPASO', data);
                     $(this.$refs.modal).modal('show')
                 })
             }
         },
 
         computed: {
-            movimiento() {
-                return this.$store.getters['tesoreria/movimiento-bancario/currentMovimiento']
+            traspaso() {
+                return this.$store.getters['tesoreria/traspaso-entre-cuentas/currentTraspaso']
             }
         }
     }

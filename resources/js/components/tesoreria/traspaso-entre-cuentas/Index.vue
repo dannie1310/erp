@@ -100,7 +100,7 @@
                             fecha: traspaso.fecha,
                             cuenta_origen: traspaso.cuentaOrigen ? traspaso.cuentaOrigen.numero + ' ' + (traspaso.cuentaOrigen.abreviatura ? traspaso.cuentaOrigen.abreviatura : '') + ' (' + traspaso.cuentaOrigen.empresa.razon_social + ')' : '',
                             cuenta_destino: traspaso.cuentaDestino ? traspaso.cuentaDestino.numero + ' ' + (traspaso.cuentaDestino.abreviatura ? traspaso.cuentaDestino.abreviatura : '') + ' (' + traspaso.cuentaDestino.empresa.razon_social + ')' : '',
-                            referencia: traspaso.observaciones,
+                            referencia: traspaso.traspasoTransaccion.debito ? traspaso.traspasoTransaccion.debito.referencia : traspaso.traspasoTransaccion.credito.referencia,
                             importe: '$ ' + parseFloat(traspaso.importe).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
                                 show: true,
