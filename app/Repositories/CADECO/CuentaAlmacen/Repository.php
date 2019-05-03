@@ -9,6 +9,7 @@
 namespace App\Repositories\CADECO\CuentaAlmacen;
 
 use App\Models\CADECO\Contabilidad\CuentaAlmacen as Model;
+use App\Models\CADECO\Contabilidad\CuentaAlmacen;
 
 class Repository implements RepositoryInterface
 {
@@ -118,8 +119,9 @@ class Repository implements RepositoryInterface
     {
         if (request()->has('search'))
         {
+            $this->almacen = new CuentaAlmacen();
             $this->model = $this->model->where(function($query) {
-                foreach ($this->model->searchable as $col)
+                foreach ($this->almacen->searchable as $col)
                 {
                     $explode = explode('.', $col);
 
