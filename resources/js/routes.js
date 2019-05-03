@@ -286,6 +286,53 @@ export const routes = [
             },
         ]
     },
+
+    {
+        path: '/contratos/fondo-garantia',
+        components: {
+            default: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
+            menu: require('./components/contratos/fondo-garantia/partials/Menu.vue')
+        },
+        meta: {
+            middleware: [auth, context]
+        },
+        children: [
+            {
+                path: '/',
+                name: 'fondo-garantia',
+                component: require('./components/contratos/fondo-garantia/Index'),
+                meta: {
+                    title: 'Fondos de Garantía',
+                    breadcrumb: {parent: 'contratos', name: 'FONDOS DE GARANTÍA'},
+                    middleware: [auth, context]
+                }
+            }
+        ]
+    },
+
+    {
+        path: '/contratos/fondo-garantia/solicitud-movimiento',
+        components: {
+            default: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Layout.vue'),
+            menu: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Menu.vue')
+        },
+        meta: {
+            middleware: [auth, context]
+        },
+        children: [
+            {
+                path: '/',
+                name: 'solicitud-movimiento-fg',
+                component: require('./components/contratos/fondo-garantia/solicitud-movimiento/Index'),
+                meta: {
+                    title: 'Solicitudes de Movimiento a Fondo de Garantia',
+                    breadcrumb: {parent: 'fondo-garantia', name: 'SOLICITUDES DE MOVIMIENTO'},
+                    middleware: [auth, context]
+                }
+            }
+        ]
+    },
+
     {
         path: '/sao/formatos',
         components: {

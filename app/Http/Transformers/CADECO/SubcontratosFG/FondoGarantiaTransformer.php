@@ -9,7 +9,7 @@
 namespace App\Http\Transformers\CADECO\SubcontratosFG;
 
 
-use App\Http\Transformers\CADECO\Subcontratos\SubcontratoTransformer;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use League\Fractal\TransformerAbstract;
