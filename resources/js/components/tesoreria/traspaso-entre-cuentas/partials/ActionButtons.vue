@@ -1,27 +1,25 @@
 <template>
     <div class="btn-group">
-        <movimiento-bancario-show :id="value.id" v-if="value.show"></movimiento-bancario-show>
-        <movimiento-bancario-edit :id="value.id" v-if="value.edit"></movimiento-bancario-edit>
-        <button @click="destroy"  v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fa fa-trash"></i></button>
+        <traspaso-entre-cuentas-show :id="value.id" v-if="value.show"></traspaso-entre-cuentas-show>
+        <traspaso-entre-cuentas-edit :id="value.id" v-if="value.edit"></traspaso-entre-cuentas-edit>
+        <button @click="destroy" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fa fa-trash"></i></button>
     </div>
 </template>
 
 <script>
-    import MovimientoBancarioShow from "../Show";
-    import MovimientoBancarioEdit from "../Edit";
+
+    import TraspasoEntreCuentasShow from "../Show";
+    import TraspasoEntreCuentasEdit from "../Edit";
     export default {
         name: "action-buttons",
-        components: {MovimientoBancarioEdit, MovimientoBancarioShow},
+        components: {TraspasoEntreCuentasEdit, TraspasoEntreCuentasShow},
         props: ['value'],
         methods: {
             destroy() {
-                return this.$store.dispatch('tesoreria/movimiento-bancario/delete', this.value.id)
+                return this.$store.dispatch('tesoreria/traspaso-entre-cuentas/delete', this.value.id)
                     .then(() => {
-                        this.$store.commit('tesoreria/movimiento-bancario/DELETE_MOVIMIENTO', this.value.id);
+                        this.$store.commit('tesoreria/traspaso-entre-cuentas/DELETE_TRASPASO', this.value.id);
                     })
-            },
-            show() {
-                this.$router.push({name: 'movimiento-bancario-show', params: {id: this.value.id}});
             }
         }
     }

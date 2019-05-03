@@ -209,7 +209,7 @@
 
 <script>
     export default {
-        name: "movimiento-bancario-edit",
+        name: "traspaso-entre-cuentas-edit",
         props: ['id'],
         data() {
             return {
