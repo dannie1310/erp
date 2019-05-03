@@ -12,7 +12,7 @@ namespace App\Services\CADECO\Contabilidad;
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaAlmacen;
 use App\Models\CADECO\Obra;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\CuentaAlmacen\Repository;
 
 class CuentaAlmacenService
 {
@@ -32,7 +32,20 @@ class CuentaAlmacenService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $fondo = $this->repository;
+        if (isset($data['almacen__tipo_almacen'])) {
+            $fondo = $fondo->where([['almacen.tipo_almacen', 'LIKE', '%' . $data['almacen__tipo_almacen'] . '%']]);
+        }
+
+        if (isset($data['id_almacen'])) {
+            $fondo= $fondo->where([['almacen.id_almacen', 'LIKE', '%' . $data['id_almacen'] . '%']]);
+        }
+
+        if (isset($data['cuentas_almacenes__cuenta'])) {
+            $fondo = $fondo->where([['cuentas_almacenes.cuenta', 'LIKE', '%' . $data['cuentas_almacenes__cuenta'] . '%']]);
+        }
+
+        return $fondo->paginate($data);
     }
 
     public function show($id)
@@ -55,7 +68,7 @@ class CuentaAlmacenService
                     return $this->repository->create($data);
                 }
             }
-            throw new \Exception("No es posible registrar la cuaenta debido a que no se ha configurado el formato de cuentas de la obra.", 400);
+            throw new \Exception("No es posible registrar la cuenta debido a que no se ha configurado el formato de cuentas de la obra.", 400);
         } catch (\Exception $e) {
             abort($e->getCode(), $e->getMessage());
         }
