@@ -45,16 +45,6 @@ class TraspasoEntreCuentasService
         return $this->repository->show($id);
     }
 
-    public function delete($data, $id)
-    {
-        $this->repository->delete($data, $id);
-    }
-
-    public function create($data)
-    {
-        return $this->repository->create($data);
-    }
-
     /**
      * @param $data
      * @return mixed
@@ -168,5 +158,40 @@ class TraspasoEntreCuentasService
             abort($e->getCode(), $e->getMessage());
         }
         return $item;
+    }
+
+    public function delete($data, $id)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+            $this->repository->delete($data, $id);
+
+            // Obtener el id de las transacciones a eliminar
+            $transacciones = TraspasoTransaccion::where('id_traspaso', '=', $id)->get();
+
+            foreach ($transacciones as $tr)
+            {
+                //Debito
+                if ($tr->tipo_transaccion == 84) {
+                    $debito = Debito::query()->find($tr->id_transaccion);
+                    $debito->estado = -2;
+                    $debito->save();
+
+                    //Crédito
+                } else if ($tr->tipo_transaccion == 83) {
+                    $credito = Credito::query()->find($tr->id_transaccion);
+                    $credito->estado = -2;
+                    $credito->save();
+                }
+            }
+
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort($e->getCode(), $e->getMessage());
+        }
+
+        return true;
     }
 }

@@ -26,7 +26,7 @@ export default {
             state.traspasos = state.traspasos.filter((t) => {
                 return t.id_traspaso !== id;
             })
-            if (state.currentTraspaso && state.currentTraspaso.id === id) {
+            if (state.currentTraspaso && state.currentTraspaso.id_traspaso === id) {
                 state.currentTraspaso = null;
             }
         },
