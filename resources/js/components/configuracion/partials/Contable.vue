@@ -101,7 +101,7 @@
                 <label for="BDContPaq" class="col-sm-2 col-form-label">Base de Datos CONTPAQ</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" id="BDContPaq" v-model="form.BDContPaq" :disabled="guardadosPreviamente"
-                           v-validate="{ max: 255, alpha_num: true }"
+                           v-validate="{ max: 255 }"
                            name="BDContPaq"
                            data-vv-as="Base de Datos CONTPAQ"
                            :class="{'is-invalid': errors.has('BDContPaq')}"
