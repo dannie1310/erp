@@ -38,9 +38,9 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Cuenta', field: 'cuenta', sortable: true },
+                    { title: 'Cuenta', field: 'cuentas_almacenes__cuenta', sortable: true },
                     { title: 'Almacén', field: 'id_almacen', sortable: true },
-                    { title: 'Tipo de Almacén', field: 'tipo_almacen', sortable: false },
+                    { title: 'Tipo de Almacén', field: 'almacen__tipo_almacen', sortable: true },
                     { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -93,8 +93,8 @@
                     self.$data.data = cuentas.map((cuenta, i) => ({
                         index: (i + 1) + self.query.offset,
                         id_almacen: cuenta.almacen.descripcion,
-                        tipo_almacen: cuenta.almacen.tipo,
-                        cuenta: cuenta.cuenta,
+                        almacen__tipo_almacen: cuenta.almacen.tipo,
+                        cuentas_almacenes__cuenta: cuenta.cuenta,
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_cuenta_almacen') ? true : undefined,
                             id: cuenta.id,
