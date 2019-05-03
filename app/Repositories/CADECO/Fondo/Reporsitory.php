@@ -9,6 +9,7 @@
 namespace App\Repositories\CADECO\Fondo;
 
 use App\Models\CADECO\Fondo as Model;
+use App\Models\CADECO\Fondo;
 
 
 class Reporsitory implements RepositoryInterface
@@ -125,13 +126,10 @@ class Reporsitory implements RepositoryInterface
     {
         if (request()->has('search'))
         {
-
-
+            $this->fondo = new  Fondo ();
             $this->model = $this->model->where(function($query) {
-                foreach ($this->model->searchable as $col)
+                foreach ($this->fondo->searchable as $col)
                 {
-
-                    dd(request()->has('search'), $data,$this->model->searchable);
                     $explode = explode('.', $col);
 
                     if (isset($explode[1])) {
