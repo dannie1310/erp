@@ -396,6 +396,23 @@ export const routes = [
                         }
                     }
                 ]
+            },
+            {
+                path: 'traspaso-entre-cuentas',
+                component: require('./components/tesoreria/traspaso-entre-cuentas/Layout.vue'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'traspaso-entre-cuentas',
+                        component: require('./components/tesoreria/traspaso-entre-cuentas/Index'),
+                        meta: {
+                            title: 'Traspasos entre Cuentas',
+                            breadcrumb: {parent: 'tesoreria', name: 'TRASPASOS ENTRE CUENTAS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_traspaso_cuenta'
+                        }
+                    }
+                ]
             }
         ]
     },

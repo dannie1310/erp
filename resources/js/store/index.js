@@ -42,6 +42,7 @@ import subcontrato from './modules/contratos/subcontrato';
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
 import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
+import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
 
 //SEGURIDAD
 import permiso from './modules/seguridad/permiso';
@@ -97,6 +98,7 @@ export default new Vuex.Store({
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
+        'tesoreria/traspaso-entre-cuentas': traspaso,
 
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
