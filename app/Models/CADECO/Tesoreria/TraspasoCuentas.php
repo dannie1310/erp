@@ -69,4 +69,9 @@ class TraspasoCuentas extends Model
     {
         return $this->belongsTo(TraspasoTransaccion::class, 'id_traspaso', 'id_traspaso');
     }
+
+    public function transacciones()
+    {
+        return $this->hasMany(TraspasoTransaccion::class, 'id_traspaso', 'id_traspaso');
+    }
 }

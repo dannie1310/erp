@@ -133,6 +133,40 @@ class TraspasoEntreCuentasService
 
     public function update($data, $id)
     {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $item = $this->repository->update($data, $id);
+            foreach ($item->transacciones as $transaccion) {
+                //Debito
+                if ($transaccion->tipo_transaccion == 84) {
+                    $debito = Debito::query()->find($transaccion->id_transaccion);
+                    $debito->referencia = $data['referencia'];
+                    $debito->fecha = $data['fecha'];
+                    $debito->cumplimiento = $data['cumplimiento'];
+                    $debito->vencimiento = $data['cumplimiento'];
+                    $debito->monto = (float)  ($data['importe'] * -1);
+                    $debito->id_cuenta = $data['id_cuenta_origen'];
+                    $debito->observaciones = $data['observaciones'];
+                    $debito->save();
+                    //Crédito
+                } else if ($transaccion->tipo_transaccion == 83) {
+                    $credito = Credito::query()->find($transaccion->id_transaccion);
+                    $credito->referencia = $data['referencia'];
+                    $credito->fecha = $data['fecha'];
+                    $credito->cumplimiento = $data['cumplimiento'];
+                    $credito->vencimiento = $data['cumplimiento'];
+                    $credito->monto = $data['importe'];
+                    $credito->id_cuenta = $data['id_cuenta_destino'];
+                    $credito->observaciones = $data['observaciones'];
+                    $credito->save();
+                }
+            }
+            DB::connection('cadeco')->commit();
 
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort($e->getCode(), $e->getMessage());
+        }
+        return $item;
     }
 }

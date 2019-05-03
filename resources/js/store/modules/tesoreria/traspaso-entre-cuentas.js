@@ -37,7 +37,7 @@ export default {
 
         UPDATE_TRASPASO(state, data) {
             state.traspasos = state.traspasos.map(traspaso => {
-                if (traspaso.id === data.id) {
+                if (traspaso.id_traspaso === data.id_traspaso) {
                     return Object.assign({}, traspaso, data)
                 }
                 return traspaso

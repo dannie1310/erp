@@ -219,11 +219,12 @@
                         referencia: this.traspaso.referencia,
                         observaciones: this.traspaso.observaciones
                     },
-                    params: { include: 'cuentaOrigen.empresa, cuentaDestino.empresa' }
+                    params: { include: 'cuentaOrigen.empresa,cuentaDestino.empresa' }
                 })
                     .then(data => {
                         this.traspaso = data;
                         $(this.$refs.modal).modal('hide');
+                        this.$store.commit('tesoreria/traspaso-entre-cuentas/UPDATE_TRASPASO', data);
                     })
             },
 
@@ -239,13 +240,13 @@
         computed: {
             cuentasDestino() {
                 return this.cuentas.filter(cuenta => {
-                    return cuenta.id != this.id_cuenta_origen;
+                    return cuenta.id != this.traspaso.id_cuenta_origen;
                 })
             },
 
             cuentasOrigen() {
                 return this.cuentas.filter(cuenta => {
-                    return cuenta.id != this.id_cuenta_destino;
+                    return cuenta.id != this.traspaso.id_cuenta_destino;
                 })
             },
         }
