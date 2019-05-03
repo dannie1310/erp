@@ -110,16 +110,22 @@
             },
 
             init() {
-                if (this.id) { this.getTipos() }
-                this.cargando = true;
-                $(this.$refs.createModal).modal('show');
+                if (!this.datosContables) {
+                    swal('¡Error!', 'No es posible registrar la cuaenta debido a que no se ha configurado el formato de cuentas de la obra.', 'error')
+                } else {
+                    if (this.id) {
+                        this.getTipos()
+                    }
+                    this.cargando = true;
+                    $(this.$refs.createModal).modal('show');
 
-                this.id_empresa = this.id;
-                this.cuenta = '';
-                this.id_tipo_cuenta_empresa = '';
+                    this.id_empresa = this.id;
+                    this.cuenta = '';
+                    this.id_tipo_cuenta_empresa = '';
 
-                this.$validator.reset()
-                this.cargando = false;
+                    this.$validator.reset()
+                    this.cargando = false;
+                }
             },
 
             getTipos() {
