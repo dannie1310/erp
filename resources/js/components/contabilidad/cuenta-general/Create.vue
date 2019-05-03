@@ -81,7 +81,11 @@
         },
         methods: {
             init() {
-                this.getTipos()
+                if (!this.datosContables) {
+                    swal('¡Error!', 'No es posible registrar la cuaenta debido a que no se ha configurado el formato de cuentas de la obra.', 'error')
+                } else {
+                    this.getTipos()
+                }
             },
 
             getTipos() {
