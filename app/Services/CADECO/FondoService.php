@@ -10,12 +10,12 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Fondo;
-use App\Repositories\CADECO\Fondo\Reporsitory;
+use App\Repositories\CADECO\Fondo\Repository;
 
 class FondoService
 {
     /**
-     * @var Reporsitory
+     * @var Repository
      */
     protected $repository;
 
@@ -26,7 +26,7 @@ class FondoService
      */
     public function __construct(Fondo $model)
     {
-        $this->repository = new Reporsitory($model);
+        $this->repository = new Repository($model);
     }
 
     public function all()

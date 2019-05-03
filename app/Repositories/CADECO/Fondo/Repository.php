@@ -9,10 +9,9 @@
 namespace App\Repositories\CADECO\Fondo;
 
 use App\Models\CADECO\Fondo as Model;
-use App\Models\CADECO\Fondo;
 
 
-class Reporsitory implements RepositoryInterface
+class Repository implements RepositoryInterface
 {
     /**
      * @var Model
@@ -26,15 +25,7 @@ class Reporsitory implements RepositoryInterface
      */
     public function __construct(Model $model)
     {
-        $this->model = $model::select([
-            'fondos.id_fondo',
-            'fondos.saldo',
-            'fondos.descripcion',
-            'fondos.id_obra',
-            'cuentaFondo.id',
-            'cuentaFondo.cuenta'
-        ])
-            ->join('Contabilidad.cuentas_fondos as cuentaFondo','cuentaFondo.id_fondo', 'fondos.id_fondo');
+        $this->model = $model;
     }
 
     public function show($id)
@@ -52,6 +43,17 @@ class Reporsitory implements RepositoryInterface
 
     public function paginate($data)
     {
+
+        $this->model = $this->model::select([
+           'fondos.id_fondo',
+           'fondos.saldo',
+           'fondos.descripcion',
+           'fondos.id_obra',
+           'cuentaFondo.id',
+           'cuentaFondo.cuenta'
+       ])
+        ->join('Contabilidad.cuentas_fondos as cuentaFondo','cuentaFondo.id_fondo', 'fondos.id_fondo');
+
         $this->search($data);
        // $this->scope();
        // $this->sort();
@@ -126,7 +128,7 @@ class Reporsitory implements RepositoryInterface
     {
         if (request()->has('search'))
         {
-            $this->fondo = new  Fondo ();
+            $this->fondo = new  Model ();
             $this->model = $this->model->where(function($query) {
                 foreach ($this->fondo->searchable as $col)
                 {

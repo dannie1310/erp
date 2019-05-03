@@ -9,7 +9,6 @@
 namespace App\Repositories\CADECO\CuentaAlmacen;
 
 use App\Models\CADECO\Contabilidad\CuentaAlmacen as Model;
-use App\Models\CADECO\Contabilidad\CuentaAlmacen;
 
 class Repository implements RepositoryInterface
 {
@@ -25,14 +24,7 @@ class Repository implements RepositoryInterface
      */
     public function __construct(Model $model)
     {
-        $this->model = $model::select([
-            'almacen.id_almacen',
-            'cuentas_almacenes.id',
-            'cuentas_almacenes.cuenta',
-            'almacen.descripcion',
-            'almacen.tipo_almacen'
-        ])
-            ->join('dbo.almacenes as almacen','cuentas_almacenes.id_almacen', 'almacen.id_almacen');
+        $this->model = $model;
     }
 
     public function show($id)
@@ -50,6 +42,15 @@ class Repository implements RepositoryInterface
 
     public function paginate($data)
     {
+        $this->model = $this->model::select([
+            'almacen.id_almacen',
+            'cuentas_almacenes.id',
+            'cuentas_almacenes.cuenta',
+            'almacen.descripcion',
+            'almacen.tipo_almacen'
+        ])
+            ->join('dbo.almacenes as almacen','cuentas_almacenes.id_almacen', 'almacen.id_almacen');
+
         $this->search();
         // $this->scope();
         // $this->sort();
@@ -119,7 +120,7 @@ class Repository implements RepositoryInterface
     {
         if (request()->has('search'))
         {
-            $this->almacen = new CuentaAlmacen();
+            $this->almacen = new Model();
             $this->model = $this->model->where(function($query) {
                 foreach ($this->almacen->searchable as $col)
                 {
