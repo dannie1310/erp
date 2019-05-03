@@ -52,6 +52,7 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
 //IGH
 import usuario from "./modules/igh/usuario";
+import aplicacion from "./modules/igh/aplicacion";
 
 Vue.use(Vuex);
 
@@ -92,6 +93,7 @@ export default new Vuex.Store({
         'contabilidad/transaccion-interfaz': transaccionInterfaz,
 
         'igh/usuario': usuario,
+        'igh/aplicacion': aplicacion,
 
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
