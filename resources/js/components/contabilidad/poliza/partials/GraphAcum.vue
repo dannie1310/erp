@@ -45,7 +45,7 @@
                         var activePoints = dona.getElementAtEvent(e);
                         if( activePoints[0]) {
                             var estatu = activePoints[0]._chart.config.data.estatus;
-                            var url = '/contabilidad/poliza?estatus=' + estatu[activePoints[0]._index];
+                            var url = '/sao/contabilidad/poliza?estatus=' + estatu[activePoints[0]._index];
                             self.$router.push(url);
                         }
                     })
