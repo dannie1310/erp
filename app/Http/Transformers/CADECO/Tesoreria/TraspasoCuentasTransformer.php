@@ -30,10 +30,7 @@ class TraspasoCuentasTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $defaultIncludes = [
-        'cuentaOrigen',
-        'cuentaDestino'
-    ];
+    protected $defaultIncludes = [];
 
     public function transform(TraspasoCuentas $model) {
         return $model->toArray();

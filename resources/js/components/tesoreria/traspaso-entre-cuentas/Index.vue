@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <movimiento-bancario-create @created="created()" v-if="$root.can('registrar_movimiento_bancario')"></movimiento-bancario-create>
+            <!--<movimiento-bancario-create @created="created()" v-if="$root.can('registrar_movimiento_bancario')"></movimiento-bancario-create>-->
         </div>
 
         <div class="col-12">
@@ -30,10 +30,8 @@
 </template>
 
 <script>
-    import MovimientoBancarioCreate from "./Create";
     export default {
-        name: "movimiento-bancario-index",
-        components: {MovimientoBancarioCreate},
+        name: "traspaso-entre-cuentas-index",
         data() {
             return {
                 HeaderSettings: false,
@@ -41,12 +39,10 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Número de Folio', field: 'numero_folio', sortable: true },
                     { title: 'Fecha', field: 'fecha', sortable: true },
-                    { title: 'Tipo', field: 'tipo', sortable: false },
-                    { title: 'Cuenta', field: 'cuenta', sortable: false },
+                    { title: 'Cuenta Origen', field: 'cuenta_origen', sortable: false },
+                    { title: 'Cuenta Destino', field: 'cuenta_destino', sortable: false },
+                    { title: 'Importe', field: 'importe', sortable: true},
                     { title: 'Referencia', field: 'referencia'},
-                    { title: 'Importe', field: 'importe'},
-                    { title: 'Impuesto', field: 'impuesto'},
-                    { title: 'Total', field: 'total'},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -59,27 +55,23 @@
 
         mounted() {
             this.paginate({
-                'include': 'cuenta.empresa,transaccion',
-                'sort': 'numero_folio',
-                'order': 'DESC'
+                'include': 'cuentaOrigen.empresa,cuentaDestino.empresa',
             })
         },
 
         methods: {
             created() {
                 this.paginate({
-                    'include': 'cuenta.empresa,transaccion',
-                    'sort': 'numero_folio',
-                    'order': 'DESC'
+                    'include': 'cuentaOrigen.empresa,cuentaDestino.empresa',
                 })
             },
 
             paginate(payload = {}) {
                 this.cargando = true;
-                return this.$store.dispatch('tesoreria/movimiento-bancario/paginate', {params: payload})
+                return this.$store.dispatch('tesoreria/traspaso-entre-cuentas/paginate', {params: payload})
                     .then(data => {
-                        this.$store.commit('tesoreria/movimiento-bancario/SET_MOVIMIENTOS', data.data);
-                        this.$store.commit('tesoreria/movimiento-bancario/SET_META', data.meta);
+                        this.$store.commit('tesoreria/traspaso-entre-cuentas/SET_TRASPASOS', data.data);
+                        this.$store.commit('tesoreria/traspaso-entre-cuentas/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -88,10 +80,10 @@
         },
         computed: {
             traspasos(){
-                return this.$store.getters['tesoreria/traspaso-entra-cuentas/traspasos'];
+                return this.$store.getters['tesoreria/traspaso-entre-cuentas/traspasos'];
             },
             meta(){
-                return this.$store.getters['tesoreria/traspaso-entra-cuentas/meta'];
+                return this.$store.getters['tesoreria/traspaso-entre-cuentas/meta'];
             },
         },
         watch: {
@@ -104,15 +96,15 @@
                             index: (i + 1) + self.query.offset,
                             numero_folio: traspaso.numero_folio,
                             fecha: traspaso.fecha,
-                            cuenta_origen: traspaso.cuenta_origen ? traspaso.cuenta_origen.numero + ' ' + (traspaso.cuenta_origen.abreviatura ? traspaso.cuenta_origen.abreviatura : '') + ' (' + traspaso.cuenta_origen.empresa.razon_social + ')' : '',
-                            cuenta_destino: traspaso.cuenta_destino ? traspaso.cuenta_destino.numero + ' ' + (traspaso.cuenta_destino.abreviatura ? traspaso.cuenta_destino.abreviatura : '') + ' (' + traspaso.cuenta_destino.empresa.razon_social + ')' : '',
-                            referencia: traspaso.transaccion ? traspaso.transaccion.referencia : '',
+                            cuenta_origen: traspaso.cuentaOrigen ? traspaso.cuentaOrigen.numero + ' ' + (traspaso.cuentaOrigen.abreviatura ? traspaso.cuentaOrigen.abreviatura : '') + ' (' + traspaso.cuentaOrigen.empresa.razon_social + ')' : '',
+                            cuenta_destino: traspaso.cuentaDestino ? traspaso.cuentaDestino.numero + ' ' + (traspaso.cuentaDestino.abreviatura ? traspaso.cuentaDestino.abreviatura : '') + ' (' + traspaso.cuentaDestino.empresa.razon_social + ')' : '',
+                            referencia: traspaso.observaciones,
                             importe: '$ ' + parseFloat(traspaso.importe).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: self.$root.can('editar_traspaso_cuenta') ? true : undefined,
                                 delete: self.$root.can('eliminar_traspaso_cuenta') ? true : undefined,
-                                id: traspaso.id,
+                                id: traspaso.id_traspaso,
                             })
                         })
                     });
@@ -129,9 +121,7 @@
             query: {
                 handler (query) {
                     this.paginate({...query,
-                        include: 'cuenta.empresa,transaccion',
-                        'sort': 'numero_folio',
-                        'order': 'DESC'
+                        'include': 'cuentaOrigen.empresa,cuentaDestino.empresa'
                     })
                 },
                 deep: true
@@ -144,7 +134,7 @@
                 this.timer = setTimeout(() => {
                     this.query.search = val;
                     this.query.offset = 0;
-                    this.paginate({...this.query, include: 'cuenta.empresa,transaccion'})
+                    this.paginate({...this.query, include: 'cuentaOrigen.empresa,cuentaDestino.empresa'})
                 }, 500);
             },
             cargando(val) {

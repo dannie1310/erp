@@ -11,6 +11,13 @@
                     <p>Movimientos Bancarios</p>
                 </router-link>
             </li>
+
+            <li class="nav-item">
+                <router-link :to="{name: 'traspaso-entre-cuentas'}" class="nav-link">
+                    <i class="fa fa-file-text nav-icon"></i>
+                    <p>Traspasos Entre Cuentas</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->

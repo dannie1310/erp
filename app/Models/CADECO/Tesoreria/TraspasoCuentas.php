@@ -30,6 +30,14 @@ class TraspasoCuentas extends Model
         'fecha',
     ];
 
+    public $searchable = [
+        'cuentaDestino.numero',
+        'cuentaDestino.abreviatura',
+        'cuentaOrigen.numero',
+        'cuentaOrigen.abreviatura',
+        'observaciones'
+    ];
+
     protected static function boot()
     {
         parent::boot();
