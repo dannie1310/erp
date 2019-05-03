@@ -51,7 +51,7 @@ class Reporsitory implements RepositoryInterface
 
     public function paginate($data)
     {
-        $this->search();
+        $this->search($data);
        // $this->scope();
        // $this->sort();
 
@@ -121,13 +121,17 @@ class Reporsitory implements RepositoryInterface
         // TODO: Implement create() method.
     }
 
-    public function search()
+    public function search($data)
     {
         if (request()->has('search'))
         {
+
+
             $this->model = $this->model->where(function($query) {
                 foreach ($this->model->searchable as $col)
                 {
+
+                    dd(request()->has('search'), $data,$this->model->searchable);
                     $explode = explode('.', $col);
 
                     if (isset($explode[1])) {
