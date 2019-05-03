@@ -73,7 +73,7 @@
                         this.$session.set('user', res.user);
 
                         this.$store.commit("auth/loginSuccess", res);
-                        this.$router.push({name: 'obras'});
+                        this.$router.push({name: 'portal'});
                     })
                     .catch(error => {
                         this.$store.commit("auth/loginFailed", {error});

@@ -2,7 +2,7 @@
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
         <!-- Left navbar links -->
-        <ul class="navbar-nav">
+        <ul class="navbar-nav" v-if="$router.currentRoute.name != 'portal'">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
             </li>
@@ -23,7 +23,7 @@
                      <i class="fa fa-sign-out"></i>
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="$router.currentRoute.name != 'portal'">
                 <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"><i class="fa fa-th-large"></i></a>
             </li>
         </ul>

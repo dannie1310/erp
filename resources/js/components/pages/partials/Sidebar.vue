@@ -2,7 +2,7 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <router-link :to="{name: 'home'}" class="brand-link">
+        <router-link :to="{name: 'home'}" class="brand-link" v-if="$router.currentRoute.name != 'portal'">
             <img src="../../../../img/company-icon.png"
                  alt="Sao Logo"
                  class="brand-image img-circle elevation-3"
@@ -11,7 +11,7 @@
         </router-link>
 
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" v-if="$router.currentRoute.name != 'portal'">
             <router-view name="menu"></router-view>
         </div>
         <!-- /.sidebar -->
