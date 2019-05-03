@@ -46,7 +46,7 @@ class CuentaCostoService
                     return $this->repository->create($data);
                 }
             }
-            throw new \Exception("No es posible registrar la cuaenta debido a que no se ha configurado el formato de cuentas de la obra.", 400);
+            throw new \Exception("No es posible registrar la cuenta debido a que no se ha configurado el formato de cuentas de la obra.", 400);
         } catch (\Exception $e) {
             abort($e->getCode(), $e->getMessage());
         }
