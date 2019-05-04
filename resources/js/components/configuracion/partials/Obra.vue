@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="card-body" v-if="form">
-            <h5 id="identificacion">Identificaicón</h5>
+            <h5 id="identificacion">Identificación</h5>
             <div class="form-group row">
                 <label for="logotipo_original" class="col-lg-2 col-form-label">Logotipo</label>
                 <div :class="{'col-lg-5': logo, 'col-lg-10': !logo}">
