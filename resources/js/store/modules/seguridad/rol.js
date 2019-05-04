@@ -102,7 +102,7 @@ export default {
         asignarPermisos(context, payload = {}) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Asignar Permisos",
+                    title: "Asignar/Desasignar Permisos",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     closeOnClickOutside: false,
@@ -112,7 +112,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Asignar',
+                            text: 'Si, Continuar',
                             closeModal: false,
                         }
                     }
@@ -123,7 +123,7 @@ export default {
                                 .post(URI + 'asignacion-permisos', payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("La asignación de permisos ha sido aplicada exitosamente", {
+                                    swal("La acción fue aplicada con éxito", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
