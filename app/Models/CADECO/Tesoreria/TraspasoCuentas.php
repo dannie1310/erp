@@ -35,8 +35,9 @@ class TraspasoCuentas extends Model
         'cuentaDestino.abreviatura',
         'cuentaOrigen.numero',
         'cuentaOrigen.abreviatura',
-        'observaciones'
-    ];
+        'observaciones',
+        'traspasoTransaccion.debito.referencia'
+        ];
 
     protected static function boot()
     {
