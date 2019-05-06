@@ -33,12 +33,12 @@ class StoreCuentaFondoRequest extends FormRequest
             $regex = "";
         }
 
-        Validator::extend('sin_cuenta', function ($attribute, $value, $parameters, $validator) {
+        /*Validator::extend('sin_cuenta', function ($attribute, $value, $parameters, $validator) {
             return ! CuentaFondo::query()->where('id_fondo', '=', $value)->first();
-        });
+        });*/
 
         return [
-            'id_fondo' => ['required', 'integer', 'exists:cadeco.fondos,id_fondo,id_obra,' . Context::getIdObra(), 'sin_cuenta'],
+            'id_fondo' => ['required', 'integer', 'exists:cadeco.fondos,id_fondo,id_obra,' . Context::getIdObra(), /*'sin_cuenta'*/],
             'cuenta' => ['required', "regex:'{$regex}'"]
         ];
     }
