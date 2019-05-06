@@ -38,7 +38,9 @@ class TraspasoCuentasTransformer extends TransformerAbstract
     ];
 
     public function transform(TraspasoCuentas $model) {
-        return $model->toArray();
+        $array = $model->toArray();
+        $array['importe'] = round($array['importe'], 2);
+        return $array;
     }
 
     public function includeCuentaOrigen(TraspasoCuentas $model)
