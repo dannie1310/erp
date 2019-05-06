@@ -48,6 +48,9 @@ class CuentaFondoService
     public function store(array $data)
     {
         try {
+            if(CuentaFondo::query()->where('id_fondo', '=', $data['id_fondo'])->first()) {
+                throw new \Exception('El fondo seleccionado ya tiene una cuenta asociada', '400');
+            }
             $obra = Obra::query()->find(Context::getIdObra());
 
             if ($obra->datosContables) {
