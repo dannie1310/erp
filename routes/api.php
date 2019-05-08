@@ -276,6 +276,20 @@ $api->version('v1', function ($api) {
             });
         });
     });
+
+    /**
+     * FINANZAS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {
+
+        /**
+         * SOLICITUD DE PAGO ANTICIPADO
+         */
+        $api->group(['prefix' => 'pago_anticipado'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
+        });
+    });
+
     /**
      * PERSONALIZADO
      */
