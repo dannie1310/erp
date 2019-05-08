@@ -285,7 +285,7 @@ $api->version('v1', function ($api) {
         /**
          * SOLICITUD DE PAGO ANTICIPADO
          */
-        $api->group(['prefix' => 'pago_anticipado'], function ($api) {
+        $api->group(['prefix' => 'solicitud-pago-anticipado'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
         });
     });
