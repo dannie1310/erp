@@ -9,6 +9,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Finanzas\TransaccionRubro;
+
 class SolicitudPagoAnticipado extends Transaccion
 {
     protected static function boot()
@@ -20,5 +22,14 @@ class SolicitudPagoAnticipado extends Transaccion
                 ->where('opciones', '=', 327681)
                 ->where('estado', '!=', -2);
         });
+
+        self::creating(function ($solicitud) { // agregar los nuevos campos
+            $solicitud->tipo_transaccion = 72;
+            $solicitud->opciones = 327681;
+        });
+    }
+
+    public function transaccion_rubro(){
+        return $this->hasOne(TransaccionRubro::class, 'id_transaccion', 'id_transaccion');
     }
 }
