@@ -63,6 +63,8 @@
 
         methods: {
             created() {
+                this.query.sort = 'numero_folio';
+                this.query.order = 'DESC';
                 this.paginate({
                     'include': 'cuentaOrigen.empresa,cuentaDestino.empresa',
                 })
