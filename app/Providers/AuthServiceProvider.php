@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -30,5 +31,7 @@ class AuthServiceProvider extends ServiceProvider
         Auth::provider('igh', function ($app, array $config) use ($model) {
             return new IghUserProvider($model);
         });
+
+        Passport::routes();
     }
 }
