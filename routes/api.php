@@ -235,6 +235,20 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * COMPRAS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'compras'], function ($api) {
+
+        /**
+         * ORDEN DE COMPRA
+         */
+        $api->group(['prefix' => 'orden-compra'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@show')->where(['id' => '[0-9]+']);
+        });
+    });
+
+    /**
      * CONTRATOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
@@ -285,7 +299,7 @@ $api->version('v1', function ($api) {
         /**
          * SOLICITUD DE PAGO ANTICIPADO
          */
-        $api->group(['prefix' => 'pago_anticipado'], function ($api) {
+        $api->group(['prefix' => 'solicitud-pago-anticipado'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
         });
     });

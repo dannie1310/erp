@@ -35,9 +35,20 @@ class OrdenCompraTransformer extends TransformerAbstract
     public function transform(OrdenCompra $model)
     {
         return [
-            'id' => $model->getKey(),
-            'numero_folio' => $model->numero_folio,
-            'observaciones' => $model->observaciones
+            'id' => (int)$model->getKey(),
+            'fecha_format' => (string)$model->fecha_format,
+            'numero_folio_format'=>(string)$model->numero_folio_format,
+            'subtotal'=>(float)$model->subtotal,
+            'subtotal_format'=>(string) '$ '.number_format(($model->subtotal),2,".",","),
+            'impuesto'=>(float)$model->impuesto,
+            'impuesto_format'=>(string) '$ '.number_format($model->impuesto,2,".",","),
+            'monto'=>(float)$model->monto,
+            'total_format'=>(string)$model->monto_format,
+            'monto_format'=>(string)$model->monto_format,
+            'referencia'=>(string)$model->referencia,
+            'retencion'=>(float)$model->retencion,
+            'anticipo'=>(float)$model->anticipo,
+            'observaciones'=>(string)$model->observaciones,
         ];
     }
 }
