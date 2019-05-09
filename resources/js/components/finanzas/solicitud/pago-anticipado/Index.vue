@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <create @created="paginate()"></create>
+            <create></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -29,7 +29,6 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'id', sortable: false },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
@@ -40,11 +39,7 @@
         },
 
         mounted() {
-            this.$Progress.start();
-            this.paginate()
-                .finally(() => {
-                    this.$Progress.finish();
-                })
+
         },
 
         methods: {
@@ -52,28 +47,6 @@
         },
         computed: {
 
-        },
-        watch: {
-
-            meta: {
-                handler (meta) {
-                    let total = meta.pagination.total
-                    this.$data.total = total
-                },
-                deep: true
-            },
-            query: {
-                handler (query) {
-                    this.paginate(query)
-                },
-                deep: true
-            },
-            cargando(val) {
-                $('tbody').css({
-                    '-webkit-filter': val ? 'blur(2px)' : '',
-                    'pointer-events': val ? 'none' : ''
-                });
-            }
         },
     }
 </script>

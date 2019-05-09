@@ -287,7 +287,7 @@ export const routes = [
         ]
     },
 
-    {
+    /*{
         path: '/contratos/fondo-garantia',
         components: {
             default: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
@@ -331,7 +331,7 @@ export const routes = [
                 }
             }
         ]
-    },
+    },*/
     {
         path: '/sao/finanzas',
         components: {
@@ -374,8 +374,8 @@ export const routes = [
                                 parent: 'solicitud',
                                 name: 'PAGO ANTICIPADO'
                             },
-                            // middleware: [auth, context, permission],
-                            // permission: 'consultar_formato_orden_pago_estimacion'
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_pago_anticipado'
                         }
                     },
                 ]
