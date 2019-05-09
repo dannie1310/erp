@@ -287,7 +287,7 @@ export const routes = [
         ]
     },
 
-    {
+    /*{
         path: '/contratos/fondo-garantia',
         components: {
             default: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
@@ -331,8 +331,57 @@ export const routes = [
                 }
             }
         ]
-    },
+    },*/
+    {
+        path: '/sao/finanzas',
+        components: {
+            default: require('./components/finanzas/partials/Layout.vue'),
+            menu: require('./components/finanzas/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'finanzas',
+                component: require('./components/finanzas/Index'),
+                meta: {
+                    title: 'Finanzas',
+                    breadcrumb: {parent:'home', name: 'FINANZAS'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'solicitud',
+                component: require('./components/finanzas/solicitud/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud',
+                        component: require('./components/finanzas/solicitud/Index'),
+                        meta: {
+                            title: 'Solicitudes de Pago',
+                            breadcrumb: {parent: 'finanzas', name: 'SOLICITUDES DE PAGO'},
+                            middleware: [auth, context],
 
+                        }
+                    },
+                    {
+                        path: 'pago-anticipado',
+                        name: 'pago-anticipado',
+                        component: require('./components/finanzas/solicitud/pago-anticipado/Index'),
+                        meta: {
+                            title: 'Solicitud de Pago Anticipado',
+                            breadcrumb: {
+                                parent: 'solicitud',
+                                name: 'PAGO ANTICIPADO'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_pago_anticipado'
+                        }
+                    },
+                ]
+            },
+        ]
+    },
     {
         path: '/sao/formatos',
         components: {
