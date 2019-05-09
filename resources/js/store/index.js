@@ -13,8 +13,11 @@ import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 
+//COMPRAS
+import ordenCompra from './modules/compras/orden-compra';
+
 //CONTABILIDAD
-import cierrePeriodo from './modules/contabilidad/cierre-periodo'
+import cierrePeriodo from './modules/contabilidad/cierre-periodo';
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
 import cuentaBanco from './modules/contabilidad/cuenta-banco';
 import cuentaConcepto from './modules/contabilidad/cuenta-concepto';
@@ -69,6 +72,8 @@ export default new Vuex.Store({
         'cadeco/fondo': fondo,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
+
+        'compras/orden-compra' : ordenCompra,
 
         'contratos/fondo-garantia': fondoGarantia,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
