@@ -4,10 +4,9 @@
 namespace App\Models\SEGURIDAD_ERP;
 
 
-use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\Passport;
 
-class Token extends Model
+class Token extends \Laravel\Passport\Token
 {
     /**
      * The connection used by the model.

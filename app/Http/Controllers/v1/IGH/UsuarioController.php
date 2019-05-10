@@ -29,7 +29,7 @@ class UsuarioController extends Controller
 
     public function __construct(Manager $fractal, UsuarioService $service, UsuarioTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->fractal = $fractal;

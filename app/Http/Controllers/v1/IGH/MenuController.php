@@ -29,7 +29,7 @@ class MenuController extends Controller
 
     public function __construct(Manager $fractal, MenuService $service, MenuTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
 
         $this->fractal = $fractal;
         $this->service = $service;

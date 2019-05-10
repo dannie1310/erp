@@ -9,7 +9,6 @@ use App\Models\SEGURIDAD_ERP\Token;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
-use Mockery\Generator\StringManipulation\Pass\Pass;
 
 class AuthServiceProvider extends ServiceProvider
 {

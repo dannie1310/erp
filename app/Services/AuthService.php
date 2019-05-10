@@ -10,11 +10,7 @@ namespace App\Services;
 
 
 use App\Contracts\Context;
-use App\Models\CADECO\Obra;
-use App\Models\CADECO\Usuario;
-use App\Models\SEGURIDAD_ERP\Proyecto;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AuthService
@@ -35,16 +31,5 @@ class AuthService
 
     public function setContext(array $data) {
         return $this->context->setContext($data['database'], $data['id_obra']);
-    }
-
-    public function login(array $credentials) {
-        try {
-            if(! $token = auth()->attempt($credentials)) {
-                throw new UnprocessableEntityHttpException('Unauthorized');
-            }
-            return $token;
-        } catch (\Exception $e) {
-            throw $e;
-        }
     }
 }

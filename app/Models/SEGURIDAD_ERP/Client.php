@@ -3,11 +3,9 @@
 
 namespace App\Models\SEGURIDAD_ERP;
 
-
-use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\Passport;
 
-class Client extends Model
+class Client extends \Laravel\Passport\Client
 {
     /**
      * The connection used by the model.
