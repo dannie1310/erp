@@ -48,14 +48,47 @@
         },
 
         mounted() {
-
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
 
         methods: {
-
+            paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('finanzas/solicitud-pago-anticipado/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUDES', data.data);
+                        this.$store.commit('finanzas/solicitud-pago-anticipado/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
+            }
         },
         computed: {
 
         },
+        meta: {
+            handler(meta) {
+                let total = meta.pagination.total
+                this.$data.total = total
+            },
+            deep: true
+        },
+        query: {
+            handler(query) {
+                this.paginate(query)
+            },
+            deep: true
+        },
+        cargando(val) {
+            $('tbody').css({
+                '-webkit-filter': val ? 'blur(2px)' : '',
+                'pointer-events': val ? 'none' : ''
+            });
+        }
     }
 </script>

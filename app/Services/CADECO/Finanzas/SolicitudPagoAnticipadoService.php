@@ -36,4 +36,9 @@ class SolicitudPagoAnticipadoService
         $data['id_obra'] = $this->id_obra;*/
         return $this->repository->create($data);
     }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
 }
