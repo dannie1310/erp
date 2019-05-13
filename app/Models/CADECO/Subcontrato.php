@@ -12,6 +12,7 @@ use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 class Subcontrato extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 49;
+    public const TIPO_NAME = 'SUBCONTRATO';
 
     protected $fillable = [
         'id_antecedente',

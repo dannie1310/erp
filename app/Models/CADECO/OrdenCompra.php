@@ -11,6 +11,8 @@ namespace App\Models\CADECO;
 
 class OrdenCompra extends Transaccion
 {
+    public const TIPO_NAME = 'ORDEN DE COMPRA';
+
     protected static function boot()
     {
         parent::boot();

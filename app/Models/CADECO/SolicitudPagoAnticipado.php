@@ -34,6 +34,10 @@ class SolicitudPagoAnticipado extends Transaccion
     }
 
     public function orden_compra(){
-        return $this->
+        return $this->hasOne(OrdenCompra::class, 'id_transaccion', 'id_antecedente');
+    }
+
+    public function subcontrato(){
+        return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente');
     }
 }
