@@ -21,4 +21,9 @@ class OrdenCompra extends Transaccion
                 ->where('estado', '!=', -2);
         });
     }
+
+    public function empresa()
+    {
+        return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
+    }
 }

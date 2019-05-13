@@ -29,6 +29,7 @@ class SolicitudPagoAnticipadoService
     }
 
     public function store(array $data){
+        dd($data);
       /*  $data['id_usuario'] = $this->id_usuario;
         $data['usuario_registra'] = $this->id_usuario;
         $data['usuario'] = $this->usuario;
