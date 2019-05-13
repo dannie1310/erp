@@ -287,8 +287,8 @@ export const routes = [
         ]
     },
 
-    /*{
-        path: '/contratos/fondo-garantia',
+    {
+        path: '/sao/contratos/fondo-garantia',
         components: {
             default: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
             menu: require('./components/contratos/fondo-garantia/partials/Menu.vue')
@@ -311,7 +311,7 @@ export const routes = [
     },
 
     {
-        path: '/contratos/fondo-garantia/solicitud-movimiento',
+        path: '/sao/contratos/fondo-garantia/solicitud-movimiento',
         components: {
             default: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Layout.vue'),
             menu: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Menu.vue')
@@ -331,7 +331,7 @@ export const routes = [
                 }
             }
         ]
-    },*/
+    },
     {
         path: '/sao/finanzas',
         components: {
