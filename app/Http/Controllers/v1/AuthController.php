@@ -93,7 +93,7 @@ class AuthController extends Controller
      */
     public function setContext(SetContextRequest $request)
     {
-        $new_token = $this->auth->setContext($request->only(['database', 'id_obra']));
+        $this->auth->setContext($request->only(['db', 'id_obra']));
         $obra = Obra::query()->find($request->id_obra);
 
         if (! $obra->datosContables) {
@@ -101,11 +101,9 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'access_token' => $new_token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
             'obra' => Obra::with(['datosContables', 'configuracion'])->find($request->id_obra),
-            'permisos' => auth()->user()->permisos()
+            'permisos' => auth()->user()->permisos(),
+            'user'         => request()->user()
         ]);
     }
 

@@ -43,7 +43,7 @@ class TipoCuentaMaterialController extends Controller
      */
     public function __construct(TipoCuentaMaterialService $service, Manager $fractal, TipoCuentaMaterialTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

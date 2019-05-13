@@ -33,7 +33,7 @@ class TipoPolizaContpaqController extends Controller
      */
     public function __construct(TipoPolizaContpaqService $service, Manager $fractal)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

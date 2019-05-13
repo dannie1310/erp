@@ -20,15 +20,13 @@ export default {
             state.loading = true;
             state.auth_error = null;
         },
-        loginSuccess(state, payload){
+        loginSuccess(state, payload) {
             state.auth_error = null;
             state.isLoggedin = true;
             state.loading = false;
             state.currentUser = Object.assign({}, payload.user);
             state.jwt = payload.access_token;
-
-            window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + payload.access_token;
-            },
+        },
         loginFailed(state, payload) {
             state.loading = false;
             state.auth_error = payload.error;

@@ -10,8 +10,6 @@ namespace App\Services;
 
 
 use App\Contracts\Context;
-use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AuthService
 {
@@ -30,6 +28,6 @@ class AuthService
     }
 
     public function setContext(array $data) {
-        return $this->context->setContext($data['database'], $data['id_obra']);
+        $this->context->setContext($data['db'], $data['id_obra']);
     }
 }

@@ -49,7 +49,7 @@ class CuentaBancoController extends Controller
      */
     public function __construct(CuentaBancoService $service, Manager $fractal, CuentaBancoTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

@@ -47,7 +47,7 @@ class CuentaEmpresaController extends Controller
      */
     public function __construct(CuentaEmpresaService $service, Manager $fractal, CuentaEmpresaTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

@@ -36,7 +36,7 @@ class ConceptoController extends Controller
      */
     public function __construct(Manager $fractal, ConceptoService $service, ConceptoTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->fractal = $fractal;

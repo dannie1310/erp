@@ -47,7 +47,7 @@ class TipoCuentaContableController extends Controller
      */
     public function __construct(TipoCuentaContableService $service, Manager $fractal, TipoCuentaContableTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;
