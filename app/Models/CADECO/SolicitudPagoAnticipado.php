@@ -32,4 +32,8 @@ class SolicitudPagoAnticipado extends Transaccion
     public function transaccion_rubro(){
         return $this->hasOne(TransaccionRubro::class, 'id_transaccion', 'id_transaccion');
     }
+
+    public function orden_compra(){
+        return $this->
+    }
 }
