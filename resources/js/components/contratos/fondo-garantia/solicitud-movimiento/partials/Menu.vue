@@ -7,7 +7,7 @@
             <li class="nav-header">FONDO DE GARANTÍA</li>
             <li class="nav-item" v-if="$root.can('consultar_solicitud_movimiento_fondo_garantia')">
                 <a href="#" class="nav-link" >
-                <router-link :to="{name: 'solicitud-movimiento-fg'}" class="nav-link" :class="{active: this.$route.name == 'contratos'}">
+                <router-link :to="{name: 'solicitud-movimiento-fg'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-movimiento-fg'}">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Solicitudes de Movimiento</p>
                 </router-link>

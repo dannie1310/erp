@@ -5,17 +5,7 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" >
-                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
-                        <i class="nav-icon fa fa-users"></i>
-                        <p>
-                            Asignación de Contratistas
 
-                        </p>
-                    </router-link>
-                </a>
-            </li>
             <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-signal"></i>
@@ -53,44 +43,6 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
-                        <i class="nav-icon fa fa-sitemap"></i>
-                        <p>
-                            Contratos Proyectados
-
-                        </p>
-                    </router-link>
-                </a>
-
-            </li>
-
-            <li class="nav-item">
-                <a href="#" class="nav-link" >
-                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
-                        <i class="nav-icon fa fa-copy"></i>
-                        <p>
-                            Presupuestos
-
-                        </p>
-                    </router-link>
-                </a>
-
-            </li>
-
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'estimaciones'}">
-                        <i class="nav-icon fa fa-file-text"></i>
-                        <p>
-                            Subcontratos
-
-                        </p>
-                    </router-link>
-                </a>
-
-            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
