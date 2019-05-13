@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Compra;
 
 
+use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
 
@@ -20,7 +21,7 @@ class OrdenCompraTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'empresa',
     ];
 
     /**
@@ -50,5 +51,18 @@ class OrdenCompraTransformer extends TransformerAbstract
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
         ];
+    }
+
+    /**
+     * Include Empresa
+     *
+     * @param OrdenCompra $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeEmpresa(OrdenCompra $model) {
+        if ($empresa = $model->empresa) {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
     }
 }
