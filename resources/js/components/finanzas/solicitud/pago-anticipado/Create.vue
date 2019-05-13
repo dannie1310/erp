@@ -60,7 +60,7 @@
                                                 v-model="tipo_transaccion"
                                                 :class="{'is-invalid': errors.has('tipo_transaccion')}"
                                         >
-                                            <option value>&#45;&#45; Tipo de Transacción &#45;&#45;</option>
+                                            <option value>--- Tipo de Transacción ---</option>
                                             <option value="19">Orden de Compra</option>
                                             <option value="51">Subcontrato</option>
                                         </select>
@@ -100,7 +100,7 @@
                                                 <h6 align="right">Fecha: {{ transaccion.fecha_format }}</h6>
                                             </div>
                                         </div>
-                                        <form role="form" @submit.prevent="validate">
+                                        <form role="form" @submit.prevent="validate" >
                                             <div class="row">
                                                 <div class="table-responsive col-md-12">
                                                     <table class="table table-striped">
@@ -189,11 +189,13 @@
 
 <script>
     import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale'
     export default {
         name: "solicitud-pago-anticipado-create",
         components: {Datepicker},
         data() {
             return {
+                es: es,
                 fecha_solicitud: '',
                 fecha_limite: '',
                 tipo_transaccion: 0,
@@ -244,6 +246,7 @@
                 })
             },
             getTransaccion(){
+                this.transaccion = [];
                 if(this.tipo_transaccion == 19)
                 {
                     return this.$store.dispatch('compras/orden-compra/find', {
@@ -263,9 +266,26 @@
                         })
                 }
             },
+            store() {
+                return this.$store.dispatch('finanzas/solicitud-pago-anticipado/store', this.$data)
+                    .then(data => {
+                        $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data)
+                    });
+            },
+
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store()
+                    }
+                });
+            },
         },
         watch: {
             tipo_transaccion(value){
+                this.transacciones = [];
+                this.transaccion = [];
                 if(value){
                     if(value == 19){
                         this.getOrdenes();
@@ -279,7 +299,15 @@
                 if(value){
                     this.getTransaccion();
                 }
+            },
+            fecha_limite(value){
+                if(value){
+                    if(value < this.fecha_solicitud){
+                        swal('¡Error!', 'La fecha limite no puede ser antes de la fecha de solicitud.', 'error')
+                    }
+                }
             }
+
         }
     }
 </script>
