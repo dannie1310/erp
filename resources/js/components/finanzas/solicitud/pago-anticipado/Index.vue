@@ -30,7 +30,6 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: '# Folio', field: 'numero_folio', sortable: true },
-                    { title: 'Tipo de Solicitud', field: 'tipo_solicitud', sortable: false },
                     { title: 'Rubro', field: 'rubro', sortable: false },
                     { title: 'Transacción Antecedente', field: 'antecedente', sortable: false },
                     { title: 'Monto', field: 'monto', sortable: false },
@@ -94,7 +93,6 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             numero_folio: '# ' + solicitud.numero_folio,
-                            tipo_solicitud: solicitud.tipo_solicitud,
                             rubro: self.$data.rubro,
                             antecedente: solicitud.orden_compra,
                             monto: solicitud.monto_format,
