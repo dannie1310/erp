@@ -25,9 +25,10 @@ class SolicitudPagoAnticipado extends Transaccion
                 ->where('estado', '!=', -2);
         });
 
-        self::creating(function ($solicitud) { // agregar los nuevos campos
+        self::creating(function ($solicitud) {
             $solicitud->tipo_transaccion = 72;
             $solicitud->opciones = 327681;
+            $solicitud->estatus = 0;
         });
     }
 

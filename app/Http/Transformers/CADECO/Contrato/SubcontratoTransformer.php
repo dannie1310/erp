@@ -57,6 +57,9 @@ class SubcontratoTransformer extends TransformerAbstract
             'retencion'=>(float)$model->retencion,
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
+            'id_moneda' =>(int)$model->id_moneda,
+            'destino' =>(string)$model->destino,
+            'saldo'=>(float)$model->saldo
         ];
     }
     /**

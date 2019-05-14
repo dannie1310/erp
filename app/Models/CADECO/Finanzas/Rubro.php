@@ -12,12 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rubro extends Model
 {
-    use SoftDeletes;
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.rubros';
 
 
     public function tipo_rubro (){
-        return $this->belongsTo(TipoRubro::class, 'id', 'id_tipo');
+        return $this->belongsTo(TipoRubro::class, 'id_tipo', 'id');
     }
 }

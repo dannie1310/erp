@@ -40,11 +40,10 @@ class StoreSolicitudPagoAnticipadoRequest extends FormRequest
         }
 
         return [
-            'fecha_limite' => ['required', 'date_format:"Y-m-d"'],
-            'fecha_solicitud' => ['required', 'date_format:"Y-m-d"'],
+            'vencimiento' => ['required', 'date_format:"Y-m-d"'],
+            'cumplimiento' => ['required', 'date_format:"Y-m-d"'],
             'id_antecedente' => ['required', 'exists:cadeco.dbo.transacciones,id_transaccion'],
-            'observaciones' => ['required', 'string'],
-            'tipo_transaccion' => ['required', 'int'],
+            'observaciones' => ['required', 'string']
         ];
     }
 

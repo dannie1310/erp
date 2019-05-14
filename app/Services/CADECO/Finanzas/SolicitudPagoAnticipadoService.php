@@ -29,11 +29,15 @@ class SolicitudPagoAnticipadoService
     }
 
     public function store(array $data){
+
         dd($data);
-      /*  $data['id_usuario'] = $this->id_usuario;
-        $data['usuario_registra'] = $this->id_usuario;
-        $data['usuario'] = $this->usuario;
-        $data['id_obra'] = $this->id_obra;*/
+
+     /*   $data['monto'] = $this->transaccion->monto;
+        $data['saldo'] = $this->transaccion->saldo;
+        $data['id_empresa'] = $this->transaccion->empresa->id_empresa;
+        $data['id_moneda'] = $this->transaccion->id_moneda;
+        $data['destino'] = $this->transaccion->destino;*/
+        dd($data);
         return $this->repository->create($data);
     }
 

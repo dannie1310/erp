@@ -85,11 +85,17 @@
                     let self = this
                     self.$data.data = []
                     solicitudes.forEach(function (solicitud, i) {
+                        if(solicitud.transaccion_rubro){
+                            self.$data.rubro = solicitud.transaccion_rubro.rubro.descripcion;
+                        }else{
+                            self.$data.rubro = '';
+                        }
+
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             numero_folio: '# ' + solicitud.numero_folio,
                             tipo_solicitud: solicitud.tipo_solicitud,
-                            rubro: solicitud.transaccion_rubro,
+                            rubro: self.$data.rubro,
                             antecedente: solicitud.orden_compra,
                             monto: solicitud.monto_format,
                             beneficiario: solicitud.usuario,

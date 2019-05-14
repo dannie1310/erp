@@ -32,6 +32,14 @@ class TransaccionRubroTransformer extends TransformerAbstract
         'rubro'
     ];
 
+    public function transform(TransaccionRubro $model)
+    {
+
+        return [
+
+        ];
+    }
+
     public function includeRubro(TransaccionRubro $model)
     {
         if ($rubro = $model->rubro) {

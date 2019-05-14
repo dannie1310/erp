@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class TipoRubro extends Model
 {
-    use SoftDeletes;
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.tipos_rubros';
 }

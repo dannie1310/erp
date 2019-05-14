@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Models\CADECO\Finanzas\TipoRubro;
 use League\Fractal\TransformerAbstract;
 
 class TipoRubroTransformer extends TransformerAbstract
@@ -29,7 +30,7 @@ class TipoRubroTransformer extends TransformerAbstract
     protected $defaultIncludes = [
     ];
 
-    public function transform(Rubro $model)
+    public function transform(TipoRubro $model)
     {
         return [
             'id' => $model->getKey(),

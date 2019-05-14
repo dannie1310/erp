@@ -204,14 +204,14 @@
                 es: es,
                 fecha_solicitud_1: '',
                 fecha_limite_1: '',
-                fecha_solicitud: '',
-                fecha_limite: '',
+                cumplimiento: '',
+                vencimiento: '',
                 tipo_transaccion: 0,
                 transacciones: [],
                 id_antecedente: '',
                 cargando: false,
                 transaccion: [],
-                observaciones: ''
+                observaciones: '',
             }
         },
         computed: {
@@ -228,8 +228,8 @@
                     $(this.$refs.modal).modal('show');
                     this.fecha_solicitud_1 = '';
                     this.fecha_limite_1 = '';
-                    this.fecha_solicitud = '';
-                    this.fecha_limite = '';
+                    this.cumplimiento = '';
+                    this.vencimiento = '';
                     this.tipo_transaccion = 0;
                     this.transacciones = [];
                     this.id_antecedente = '';
@@ -301,9 +301,6 @@
                        if(this.fecha_limite < this.fecha_solicitud){
                             swal('¡Error!', 'La fecha limite no puede ser antes de la fecha de solicitud.', 'error')
                         }else {
-                           this.transacciones = [];
-                           this.fecha_solicitud_1 = '';
-                           this.fecha_limite_1 = '';
                            this.store()
                        }
                     }
@@ -346,7 +343,7 @@
                         if (m < 10) {
                             m = '0' + m;
                         }
-                        this.fecha_limite = y+'-'+ m+'-'+d;
+                        this.vencimiento = y+'-'+ m+'-'+d;
                     }
                 }
             },
@@ -366,7 +363,7 @@
                     if (m < 10) {
                         m = '0' + m;
                     }
-                    this.fecha_solicitud = y+'-'+ m+'-'+d;
+                    this.cumplimiento = y+'-'+ m+'-'+d;
                 }
             },
 
