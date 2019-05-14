@@ -53,7 +53,9 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
             'referencia'=>(string)$model->referencia,
             'retencion'=>(float)$model->retencion,
             'anticipo'=>(float)$model->anticipo,
-            'observaciones'=>(string)$model->observaciones
+            'observaciones'=>(string)$model->observaciones,
+            'tipo_solicitud'=>(int) $model->tipo_transaccion,
+            'fecha_format' => (string)$model->fecha_format,
         ];
     }
 
@@ -69,7 +71,10 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
         return null;
     }
 
-
+    /**
+     * @param SolicitudPagoAnticipado $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeOrdenCompra(SolicitudPagoAnticipado $model)
     {
         if ($orden = $model->orden_compra) {
@@ -78,6 +83,10 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param SolicitudPagoAnticipado $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeSubcontrato(SolicitudPagoAnticipado $model)
     {
         if ($subcontrato = $model->subcontrato) {
