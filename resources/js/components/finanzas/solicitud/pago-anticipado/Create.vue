@@ -55,29 +55,29 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group error-content">
-                                        <label for="tipo_transaccion">Tipo de Cuenta</label>
+                                        <label for="tipo">Tipo de Cuenta</label>
                                         <select
                                                 type="text"
-                                                name="tipo_transaccion"
+                                                name="tipo"
                                                 data-vv-as="Tipo Transacción"
                                                 v-validate="{required: true}"
                                                 class="form-control"
-                                                id="tipo_transaccion"
-                                                v-model="tipo_transaccion"
-                                                :class="{'is-invalid': errors.has('tipo_transaccion')}"
+                                                id="tipo"
+                                                v-model="tipo"
+                                                :class="{'is-invalid': errors.has('tipo')}"
                                         >
                                             <option value>--- Tipo de Transacción ---</option>
                                             <option value="19">Orden de Compra</option>
                                             <option value="51">Subcontrato</option>
                                         </select>
-                                        <div class="invalid-feedback" v-show="errors.has('tipo_transaccion')">{{ errors.first('tipo_transaccion') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="form-group error-content">
                                         <label for="id_antecedente">Transacción</label>
                                         <select
-                                                :disabled="!tipo_transaccion"
+                                                :disabled="!tipo"
                                                 type="text"
                                                 name="id_antecedente"
                                                 data-vv-as="Transacción"
@@ -206,7 +206,7 @@
                 fecha_limite_1: '',
                 cumplimiento: '',
                 vencimiento: '',
-                tipo_transaccion: 0,
+                tipo: 0,
                 transacciones: [],
                 id_antecedente: '',
                 cargando: false,
@@ -230,7 +230,7 @@
                     this.fecha_limite_1 = '';
                     this.cumplimiento = '';
                     this.vencimiento = '';
-                    this.tipo_transaccion = 0;
+                    this.tipo = 0;
                     this.transacciones = [];
                     this.id_antecedente = '';
                     this.transaccion = [];
@@ -262,7 +262,7 @@
             },
             getTransaccion(){
                 this.transaccion = [];
-                if(this.tipo_transaccion == 19)
+                if(this.tipo == 19)
                 {
                     return this.$store.dispatch('compras/orden-compra/find', {
                         id: this.id_antecedente,
@@ -274,7 +274,7 @@
                             this.transaccion = data;
                         })
                 }
-                if(this.tipo_transaccion == 51)
+                if(this.tipo == 51)
                 {
                     return this.$store.dispatch('contratos/subcontrato/find', {
                         id: this.id_antecedente,
@@ -308,7 +308,7 @@
             },
         },
         watch: {
-            tipo_transaccion(value){
+            tipo(value){
                 this.transacciones = [];
                 this.transaccion = [];
                 if(value){

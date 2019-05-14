@@ -11,6 +11,7 @@ namespace App\Services\CADECO\Finanzas;
 
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudPagoAnticipadoService
 {
@@ -28,17 +29,20 @@ class SolicitudPagoAnticipadoService
         $this->repository = new Repository($model);
     }
 
-    public function store(array $data){
+    public function store(array $data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
 
-        dd($data);
+            $pago = $this->repository->create($data);
 
-     /*   $data['monto'] = $this->transaccion->monto;
-        $data['saldo'] = $this->transaccion->saldo;
-        $data['id_empresa'] = $this->transaccion->empresa->id_empresa;
-        $data['id_moneda'] = $this->transaccion->id_moneda;
-        $data['destino'] = $this->transaccion->destino;*/
-        dd($data);
-        return $this->repository->create($data);
+            DB::connection('cadeco')->commit();
+            return $pago;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollback();
+            dd("AQUI", $e->getMessage());
+            abort($e->getCode(), $e->getMessage());
+        }
     }
 
     public function paginate($data)
