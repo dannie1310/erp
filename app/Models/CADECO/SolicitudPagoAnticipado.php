@@ -13,6 +13,8 @@ use App\Models\CADECO\Finanzas\TransaccionRubro;
 
 class SolicitudPagoAnticipado extends Transaccion
 {
+    public const TIPO_NAME = 'SOLICITUD PAGO ANTICIPADO';
+
     protected static function boot()
     {
         parent::boot();

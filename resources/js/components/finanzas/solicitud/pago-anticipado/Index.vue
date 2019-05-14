@@ -28,10 +28,10 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'id', sortable: false },
+                    { title: '#', field: 'index', sortable: false },
                     { title: '# Folio', field: 'numero_folio', sortable: true },
                     { title: 'Tipo de Solicitud', field: 'tipo_solicitud', sortable: false },
-                    { title: 'Rubro', field: 'tipo_solicitud', sortable: false },
+                    { title: 'Rubro', field: 'rubro', sortable: false },
                     { title: 'Transacción Antecedente', field: 'antecedente', sortable: false },
                     { title: 'Monto', field: 'monto', sortable: false },
                     { title: 'Beneficiario', field: 'beneficiario', sortable: false },
@@ -41,7 +41,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {include: ['transaccion_rubro', 'orden_compra', 'subcontrato']},
                 estado: "",
                 cargando: false
             }
@@ -69,26 +69,63 @@
             }
         },
         computed: {
+            solicitudes(){
+                return this.$store.getters['finanzas/solicitud-pago-anticipado/solicitudes'];
+            },
+            meta(){
+                return this.$store.getters['finanzas/solicitud-pago-anticipado/meta'];
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
+        },
+        watch: {
+            solicitudes: {
+                handler(solicitudes) {
+                    let self = this
+                    self.$data.data = []
+                    solicitudes.forEach(function (solicitud, i) {
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            numero_folio: '# ' + solicitud.numero_folio,
+                            tipo_solicitud: solicitud.tipo_solicitud,
+                            rubro: solicitud.transaccion_rubro,
+                            antecedente: solicitud.orden_compra,
+                            monto: solicitud.monto_format,
+                            beneficiario: solicitud.usuario,
+                            fecha_registro: solicitud.fecha_format,
+                            observaciones: solicitud.observaciones,
+                            buttons: $.extend({}, {
+                                show: true,
+                                edit: self.$root.can('editar_solicitud_pago_anticipado') ? true : undefined,
+                                cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : undefined,
+                                id: solicitud.id
+                            })
+                        })
+                    });
+                },
+                deep: true
+            },
 
-        },
-        meta: {
-            handler(meta) {
-                let total = meta.pagination.total
-                this.$data.total = total
+            meta: {
+                handler(meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
             },
-            deep: true
-        },
-        query: {
-            handler(query) {
-                this.paginate(query)
+            query: {
+                handler(query) {
+                    this.paginate(query)
+                },
+                deep: true
             },
-            deep: true
-        },
-        cargando(val) {
-            $('tbody').css({
-                '-webkit-filter': val ? 'blur(2px)' : '',
-                'pointer-events': val ? 'none' : ''
-            });
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
         }
     }
 </script>
