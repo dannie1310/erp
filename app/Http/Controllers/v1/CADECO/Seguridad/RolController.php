@@ -37,7 +37,7 @@ class RolController extends Controller
      */
     public function __construct(Manager $fractal, RolService $service, RolTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('esquemaPersonalizado');
         $this->middleware('permiso:asignar_roles')->only(['asignacionPersonalizada', 'desasignacionPersonalizada']);

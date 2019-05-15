@@ -49,7 +49,7 @@ class FondoGarantiaController extends Controller
      */
     public function __construct(FondoGarantiaService $service, Manager $fractal, FondoGarantiaTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

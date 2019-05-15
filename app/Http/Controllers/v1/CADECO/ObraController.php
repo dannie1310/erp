@@ -46,7 +46,7 @@ class ObraController extends Controller
      */
     public function __construct(Manager $fractal, ObraService $service, ObraTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context', ['except' => ['authPaginate']]);
 
         $this->fractal = $fractal;

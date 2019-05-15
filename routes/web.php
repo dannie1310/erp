@@ -11,6 +11,15 @@
 |
 */
 
+
+Route::get('/', function () {
+    return view('welcome');
+})->middleware('auth');
+
+Auth::routes(['register' => false]);
+
 Route::get('{any}', function () {
     return view('welcome');
-})->where('any', '.*');
+})
+    ->middleware('auth')
+    ->where('any', '.*');

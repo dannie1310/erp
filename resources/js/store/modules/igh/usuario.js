@@ -40,6 +40,20 @@ export default {
                         reject(error);
                     })
             });
+        },
+
+        currentUser(context, payload = {}) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'currentUser', payload.config)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
         }
     },
 

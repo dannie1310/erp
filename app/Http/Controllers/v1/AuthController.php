@@ -9,8 +9,10 @@ use App\Http\Requests\SetContextRequest;
 use App\Models\CADECO\Obra;
 use App\Services\AuthService;
 use App\Traits\AuthenticatesIghUsers;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -42,11 +44,18 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        $credentials = $request->only(['usuario', 'clave']);
+        $credentials = request(['usuario', 'clave']);
+        if (!Auth::attempt($credentials)) {
+            return response()->json([
+                'message' => 'Unauthorized'], 401);
+        }
 
-        $token = $this->auth->login($credentials);
+        $user = $request->user();
+        $tokenResult = $user->createToken('Personal Access Token');
+        $token = $tokenResult->token;
+        $token->save();
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($tokenResult);
     }
 
     /**
@@ -54,9 +63,9 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout(Request $request)
     {
-        auth()->logout();
+        $request->user()->token()->revoke();
 
         return response()->json(['message' => 'Successfully logged out']);
     }
@@ -68,13 +77,13 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token)
+    protected function respondWithToken($tokenResult)
     {
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
+            'access_token' => $tokenResult->accessToken,
+            'token_type'   => 'Bearer',
+            'expires_in'   => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString(),
+            'user'         => request()->user()
         ]);
     }
 
@@ -84,7 +93,7 @@ class AuthController extends Controller
      */
     public function setContext(SetContextRequest $request)
     {
-        $new_token = $this->auth->setContext($request->only(['database', 'id_obra']));
+        $this->auth->setContext($request->only(['db', 'id_obra']));
         $obra = Obra::query()->find($request->id_obra);
 
         if (! $obra->datosContables) {
@@ -92,11 +101,9 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'access_token' => $new_token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
             'obra' => Obra::with(['datosContables', 'configuracion'])->find($request->id_obra),
-            'permisos' => auth()->user()->permisos()
+            'permisos' => auth()->user()->permisos(),
+            'user'         => request()->user()
         ]);
     }
 

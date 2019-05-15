@@ -48,7 +48,7 @@ class CuentaFondoController extends Controller
      */
     public function __construct(CuentaFondoService $service, Manager $fractal, CuentaFondoTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

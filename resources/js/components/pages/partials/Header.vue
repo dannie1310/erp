@@ -47,12 +47,19 @@
                         if (success) {
                             this.$store.dispatch('auth/logout')
                                 .then(() => {
-                                    this.$session.destroy();
-                                    this.$router.push({ name: 'login' });
+                                    axios.post('/logout')
+                                        .then(() => {
+                                            this.$session.destroy();
+                                            window.location.replace('/login');
+                                        })
+
                                 })
                                 .catch(error => {
-                                    this.$session.destroy();
-                                    this.$router.push({ name: 'login' });
+                                    axios.post('/logout')
+                                        .then(() => {
+                                            this.$session.destroy();
+                                            window.location.replace('/login');
+                                        })
                                 })
                         }
                     });

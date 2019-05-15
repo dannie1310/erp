@@ -1,100 +1,42 @@
 <template>
-    <div id="content">
-        <div class="login-box">
 
-            <div class="login-logo">
-                <img src="../../../img/logo_hc.png" class="img-responsive img-rounded" width="100%">
-            </div>
-
-            <div v-if="authError" class="alert alert-danger">
-                <p>{{ authError }}</p>
-            </div>
-
-            <div class="card">
-                <div class="card-body login-card-body">
-                    <p class="login-box-msg">Iniciar Sesión</p>
-
-                    <form @submit.prevent="authenticate">
-                        <div class="input-group mb-3">
-                            <input required type="text" ref="usuario" name="usuario" class="form-control" placeholder="Usuario" v-model="formLogin.usuario">
-                            <div class="input-group-append">
-                                <span class="fa fa-user input-group-text"></span>
-                            </div>
-                        </div>
-                        <div class="input-group mb-3">
-                            <input required type="password" name="clave" class="form-control" placeholder="Contraseña" v-model="formLogin.clave">
-                            <div class="input-group-append">
-                                <span class="fa fa-lock input-group-text"></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-block btn-flat" v-bind:disabled="isLoading">Entrar</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 </template>
 
 <script>
     export default {
         data(){
-            return {
-                formLogin: {
-                    usuario: '',
-                    clave: ''
-                },
-                error: null
-            }
+            return {}
         },
 
         mounted() {
-            this.$refs.usuario.focus()
-        },
-
-        methods:{
-            authenticate(){
-                this.$store.dispatch('auth/login');
-                return new Promise((res, rej) => {
-                    axios.post('/api/auth/login', this.$data.formLogin)
-                        .then(response => {
-                            res(response.data);
-                        })
-                        .catch(err => {
-                            rej('Usuario o Contraseña inválidos.');
-                        });
-                })
+            let code = this.$route.query.code;
+            if (!code) {
+                window.location.replace('/oauth/authorize?client_id=' + process.env.MIX_CLIENT_ID + '&response_type=code&redirect_uri=' + process.env.MIX_REDIRECT_URI);
+            } else {
+                axios
+                    .post('/oauth/token', {
+                        client_id: process.env.MIX_CLIENT_ID,
+                        grant_type: 'authorization_code',
+                        client_secret: process.env.MIX_CLIENT_SECRET,
+                        redirect_uri: process.env.MIX_REDIRECT_URI,
+                        code: code
+                    })
+                    .then(r => r.data)
                     .then(res => {
                         this.$session.start();
                         this.$session.set('jwt', res.access_token);
-                        this.$session.set('user', res.user);
-
-                        this.$store.commit("auth/loginSuccess", res);
-                        this.$router.push({name: 'portal'});
+                        window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token;
+                        this.$store.dispatch('igh/usuario/currentUser')
+                            .then(data => {
+                                this.$session.set('user', data.user);
+                                this.$store.commit("auth/loginSuccess", {user: data.user, access_token: res.access_token});
+                                this.$router.push({name: 'portal'});
+                            })
                     })
                     .catch(error => {
                         this.$store.commit("auth/loginFailed", {error});
                     })
             }
-        },
-        computed:{
-            authError(){
-                return this.$store.getters['auth/authError'];
-            },
-            isLoading(){
-                return this.$store.getters['auth/isLoading'];
-            }
         }
     }
 </script>
-
-<style scoped>
-    #content {
-        width: 100%; height: 100%;
-        background-color: #d2d6de;
-        position: absolute; top: 0; left: 0;
-    }
-</style>

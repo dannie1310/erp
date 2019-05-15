@@ -85,7 +85,7 @@
             setContext(database, id_obra) {
                 this.loading = true;
                 return new Promise((res, rej) => {
-                    axios.post('/api/auth/setContext', {database: database, id_obra: id_obra})
+                    axios.post('/api/auth/setContext', {db: database, id_obra: id_obra})
                         .then(r => r.data)
                         .then(response => {
                             res(response);
@@ -95,8 +95,9 @@
                         })
                 })
                     .then(res => {
-                        this.$session.set('jwt', res.access_token)
                         this.$session.set('obra', res.obra)
+                        this.$session.set('db', database)
+                        this.$session.set('id_obra', id_obra)
                         this.$session.set('permisos', res.permisos)
                         this.$store.commit("auth/setPermisos", res)
                         this.$store.commit("auth/setObra", res)
