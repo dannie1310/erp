@@ -17,6 +17,7 @@ class Menu extends Model
         parent::boot();
         self::addGlobalScope(function ($query) {
             return $query->where('menu_estado', '=', 1)
+                ->where('estado_portal', '=', 1)
                 ->where('ruta', 'LIKE', 'http%');
         });
     }
