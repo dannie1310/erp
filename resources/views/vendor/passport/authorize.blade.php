@@ -47,7 +47,7 @@
                     </div>
                     <div class="card-body">
                         <!-- Introduction -->
-                        <p><strong>{{ $client->name }}</strong> está solicitando permiso para acceder a su cuenta.</p>
+                        <p>¿Autoriza a la aplicación <strong>{{ $client->name }}</strong> utilizar sus datos de acceso para iniciar sesión?</p>
 
                         <div class="buttons">
                             <!-- Authorize Button -->
@@ -66,7 +66,7 @@
 
                                 <input type="hidden" name="state" value="{{ $request->state }}">
                                 <input type="hidden" name="client_id" value="{{ $client->id }}">
-                                <button class="btn btn-danger">Cancelar</button>
+                                <button class="btn btn-danger">No autorizar</button>
                             </form>
                         </div>
                     </div>
