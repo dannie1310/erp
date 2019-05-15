@@ -9,7 +9,10 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
+use App\Models\CADECO\Transaccion;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 
@@ -31,17 +34,35 @@ class SolicitudPagoAnticipadoService
 
     public function store(array $data)
     {
+        $obra = Obra::query()->find(Context::getIdObra());
         try {
             DB::connection('cadeco')->beginTransaction();
+            $antecedente = Transaccion::query()->find($data['id_antecedente']);
 
-            $pago = $this->repository->create($data);
+            $datos = [
+                'id_antecedente' => $data['id_antecedente'],
+                'id_obra' => $obra->id_obra,
+                'id_empresa' => $antecedente->id_empresa,
+                'id_moneda' => $antecedente->id_moneda,
+                'cumplimiento' => $data['cumplimiento'],
+                'vencimiento' => $data['vencimiento'],
+                'monto' => $antecedente->monto,
+                'saldo' => $antecedente->saldo,
+                'destino' => $antecedente->destino,
+                'observaciones' => $data['observaciones'],
+                'fecha' => $data['cumplimiento']
+
+            ];
+
+           $solicitud = SolicitudPagoAnticipado::query()->create($datos);
 
             DB::connection('cadeco')->commit();
-            return $pago;
+
+            return $solicitud ;
         } catch (\Exception $e) {
-            DB::connection('cadeco')->rollback();
-            dd("AQUI", $e->getMessage());
-            abort($e->getCode(), $e->getMessage());
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
         }
     }
 

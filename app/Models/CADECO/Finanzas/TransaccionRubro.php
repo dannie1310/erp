@@ -18,6 +18,10 @@ class TransaccionRubro extends Model
     protected $table = 'Finanzas.transacciones_rubros';
     public $timestamps = false;
 
+    protected $fillable = [
+        'id_transaccion',
+        'id_rubro'
+    ];
 
     public function pagoAnticipado()
     {

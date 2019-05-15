@@ -101,8 +101,8 @@
                             observaciones: solicitud.observaciones,
                             buttons: $.extend({}, {
                                 show: true,
-                                edit: self.$root.can('editar_solicitud_pago_anticipado') ? true : undefined,
-                                cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : undefined,
+                                edit: self.$root.can('editar_solicitud_pago_anticipado') ? true : true,
+                                cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : true,
                                 id: solicitud.id
                             })
                         })
