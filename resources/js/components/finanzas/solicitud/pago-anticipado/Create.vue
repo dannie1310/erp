@@ -270,7 +270,9 @@
             getOrdenes() {
                 return this.$store.dispatch('compras/orden-compra/index',{
                     config: {
-                        params: {}
+                        params: {
+                            scope: 'sinPagoAnticipado'
+                        }
                     }
                 }).then(data => {
                         this.transacciones = data;
@@ -279,7 +281,9 @@
             getSubcontratos() {
                 return this.$store.dispatch('contratos/subcontrato/index',{
                     config: {
-                        params: {}
+                        params: {
+                            scope: 'sinPagoAnticipado'
+                        }
                     }
                 }).then(data => {
                         this.transacciones = data;

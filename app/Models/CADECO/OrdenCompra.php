@@ -28,4 +28,13 @@ class OrdenCompra extends Transaccion
     {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
+
+    public function pago_anticipado(){
+        return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
+    }
+
+    public function scopeSinPagoAnticipado($query)
+    {
+        return $query->whereDoesntHave('pago_anticipado');
+    }
 }
