@@ -10,12 +10,18 @@ namespace App\Http\Controllers\v1\CADECO\Finanzas;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreSolicitudPagoAnticipadoRequest;
 use App\Http\Transformers\CADECO\Finanzas\SolicitudPagoAnticipadoTransformer;
 use App\Services\CADECO\Finanzas\SolicitudPagoAnticipadoService;
 use League\Fractal\Manager;
+use App\Traits\ControllerTrait;
 
 class SolicitudPagoAnticipadoController extends Controller
 {
+    use ControllerTrait {
+        store as protected traitStore;
+    }
+
     /**
      * @var SolicitudPagoAnticipadoService
      */
@@ -39,8 +45,17 @@ class SolicitudPagoAnticipadoController extends Controller
      */
     public function __construct(SolicitudPagoAnticipadoService $service, Manager $fractal, SolicitudPagoAnticipadoTransformer $transformer)
     {
+        $this->middleware('auth');
+        $this->middleware('context');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
+
+    public function store(StoreSolicitudPagoAnticipadoRequest $request)
+    {
+        return $this->traitStore($request);
+    }
+
 }

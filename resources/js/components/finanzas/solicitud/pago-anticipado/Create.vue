@@ -21,13 +21,16 @@
                                     <div class="form-group error-content">
                                         <div class="form-group">
                                             <label><b>Fecha de Solicitud</b></label>
-                                                <datepicker v-model = "fecha_solicitud"
-                                                            name = "fecha_solicitud"
+                                                <datepicker v-model = "fecha_solicitud_1"
+                                                            name = "fecha_solicitud_1"
                                                             :language = "es"
                                                             :format = "formatoFecha"
                                                             :bootstrap-styling = "true"
                                                             class = "form-control"
+                                                            v-validate="{required: true}"
+                                                            :class="{'is-invalid': errors.has('fecha_solicitud_1')}"
                                                 ></datepicker>
+                                             <div class="invalid-feedback" v-show="errors.has('fecha_solicitud_1')">{{ errors.first('fecha_solicitud_1') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -35,13 +38,16 @@
                                     <div class="form-group error-content">
                                         <div class="form-group">
                                             <label><b>Fecha Limite de Pago</b></label>
-                                                <datepicker v-model = "fecha_limite"
-                                                            name = "fecha_limite"
+                                                <datepicker v-model = "fecha_limite_1"
+                                                            name = "fecha_limite_1"
                                                             :language = "es"
                                                             :format = "formatoFecha"
                                                             :bootstrap-styling = "true"
                                                             class = "form-control"
+                                                            v-validate="{required: true}"
+                                                            :class="{'is-invalid': errors.has('fecha_limite_1')}"
                                                 ></datepicker>
+                                             <div class="invalid-feedback" v-show="errors.has('fecha_limite_1')">{{ errors.first('fecha_limite_1') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -49,42 +55,42 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group error-content">
-                                        <label for="tipo_transaccion">Tipo de Cuenta</label>
+                                        <label for="tipo">Tipo de Cuenta</label>
                                         <select
                                                 type="text"
-                                                name="tipo_transaccion"
+                                                name="tipo"
                                                 data-vv-as="Tipo Transacción"
                                                 v-validate="{required: true}"
                                                 class="form-control"
-                                                id="tipo_transaccion"
-                                                v-model="tipo_transaccion"
-                                                :class="{'is-invalid': errors.has('tipo_transaccion')}"
+                                                id="tipo"
+                                                v-model="tipo"
+                                                :class="{'is-invalid': errors.has('tipo')}"
                                         >
-                                            <option value>&#45;&#45; Tipo de Transacción &#45;&#45;</option>
+                                            <option value>--- Tipo de Transacción ---</option>
                                             <option value="19">Orden de Compra</option>
                                             <option value="51">Subcontrato</option>
                                         </select>
-                                        <div class="invalid-feedback" v-show="errors.has('tipo_transaccion')">{{ errors.first('tipo_transaccion') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="form-group error-content">
-                                        <label for="id_transaccion">Transacción</label>
+                                        <label for="id_antecedente">Transacción</label>
                                         <select
-                                                :disabled="!tipo_transaccion"
+                                                :disabled="!tipo"
                                                 type="text"
-                                                name="id_transaccion"
+                                                name="id_antecedente"
                                                 data-vv-as="Transacción"
                                                 v-validate="{required: true}"
                                                 class="form-control"
-                                                id="id_transaccion"
-                                                v-model="id_transaccion"
-                                                :class="{'is-invalid': errors.has('id_transaccion')}"
+                                                id="id_antecedente"
+                                                v-model="id_antecedente"
+                                                :class="{'is-invalid': errors.has('id_antecedente')}"
                                         >
                                             <option value>-- Seleccione Transacción --</option>
                                             <option v-for="tran in transacciones" :value="tran.id">{{ tran.numero_folio_format }}--({{ tran.referencia }}-)</option>
                                         </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_transaccion')">{{ errors.first('id_transaccion') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('id_antecedente')">{{ errors.first('id_antecedente') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -114,10 +120,10 @@
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="bg-gray-light"><b>Empresa</b><br>
-                                                              5555
+                                                            <td class="bg-gray-light" v-if="transaccion.empresa"><b>Empresa</b><br>
+                                                                {{ transaccion.empresa.razon_social }}
                                                             </td>
-                                                            <td class="bg-gray-light"><b>Referencia</b><br>$
+                                                            <td class="bg-gray-light"><b>Referencia</b><br>
                                                                {{ transaccion.referencia}}
                                                             </td>
                                                         </tr>
@@ -189,19 +195,23 @@
 
 <script>
     import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale'
     export default {
         name: "solicitud-pago-anticipado-create",
         components: {Datepicker},
         data() {
             return {
-                fecha_solicitud: '',
-                fecha_limite: '',
-                tipo_transaccion: 0,
+                es: es,
+                fecha_solicitud_1: '',
+                fecha_limite_1: '',
+                cumplimiento: '',
+                vencimiento: '',
+                tipo: 0,
                 transacciones: [],
-                id_transaccion: '',
+                id_antecedente: '',
                 cargando: false,
                 transaccion: [],
-                observaciones: ''
+                observaciones: '',
             }
         },
         computed: {
@@ -216,8 +226,15 @@
                 } else {
                     this.cargando = true;
                     $(this.$refs.modal).modal('show');
-
-
+                    this.fecha_solicitud_1 = '';
+                    this.fecha_limite_1 = '';
+                    this.cumplimiento = '';
+                    this.vencimiento = '';
+                    this.tipo = 0;
+                    this.transacciones = [];
+                    this.id_antecedente = '';
+                    this.transaccion = [];
+                    this.observaciones = '';
                     this.$validator.reset()
                     this.cargando = false;
                 }
@@ -244,28 +261,56 @@
                 })
             },
             getTransaccion(){
-                if(this.tipo_transaccion == 19)
+                this.transaccion = [];
+                if(this.tipo == 19)
                 {
                     return this.$store.dispatch('compras/orden-compra/find', {
-                        id: this.id_transaccion,
+                        id: this.id_antecedente,
+                        params: {
+                            include: ['empresa']
+                        }
                     })
                         .then(data => {
                             this.transaccion = data;
                         })
                 }
-                if(this.tipo_transaccion == 51)
+                if(this.tipo == 51)
                 {
                     return this.$store.dispatch('contratos/subcontrato/find', {
-                        id: this.id_transaccion,
+                        id: this.id_antecedente,
+                        params: {
+                            include: ['empresa']
+                        }
                     })
                         .then(data => {
                             this.transaccion = data;
                         })
                 }
             },
+            store() {
+                return this.$store.dispatch('finanzas/solicitud-pago-anticipado/store', this.$data)
+                    .then(data => {
+                        $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data)
+                    });
+            },
+
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                       if(this.fecha_limite < this.fecha_solicitud){
+                            swal('¡Error!', 'La fecha limite no puede ser antes de la fecha de solicitud.', 'error')
+                        }else {
+                           this.store()
+                       }
+                    }
+                });
+            },
         },
         watch: {
-            tipo_transaccion(value){
+            tipo(value){
+                this.transacciones = [];
+                this.transaccion = [];
                 if(value){
                     if(value == 19){
                         this.getOrdenes();
@@ -275,11 +320,54 @@
                     }
                 }
             },
-            id_transaccion(value){
+            id_antecedente(value){
                 if(value){
                     this.getTransaccion();
                 }
-            }
+            },
+            fecha_limite_1(value){
+                var d = 0;
+                var m = 0;
+                var y = 0;
+                if(value){
+                    if(value < this.fecha_solicitud_1){
+                        swal('¡Error!', 'La fecha limite no puede ser antes de la fecha de solicitud.', 'error')
+                    }else{
+                        var date =  new Date (value);
+                        d = date.getDate();
+                        m = date.getMonth() + 1;
+                        y = date.getFullYear();
+                        if (d < 10) {
+                            d = '0' + d;
+                        }
+                        if (m < 10) {
+                            m = '0' + m;
+                        }
+                        this.vencimiento = y+'-'+ m+'-'+d;
+                    }
+                }
+            },
+            fecha_solicitud_1(value) {
+                var d = 0;
+                var m = 0;
+                var y = 0;
+
+                if(value){
+                   var date =  new Date (value);
+                   d = date.getDate();
+                   m = date.getMonth() + 1;
+                   y = date.getFullYear();
+                    if (d < 10) {
+                        d = '0' + d;
+                    }
+                    if (m < 10) {
+                        m = '0' + m;
+                    }
+                    this.cumplimiento = y+'-'+ m+'-'+d;
+                }
+            },
+
+
         }
     }
 </script>

@@ -11,6 +11,8 @@ namespace App\Models\CADECO;
 
 class OrdenCompra extends Transaccion
 {
+    public const TIPO_NAME = 'ORDEN DE COMPRA';
+
     protected static function boot()
     {
         parent::boot();
@@ -20,5 +22,10 @@ class OrdenCompra extends Transaccion
                 ->where('opciones', '=', 1)
                 ->where('estado', '!=', -2);
         });
+    }
+
+    public function empresa()
+    {
+        return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 }

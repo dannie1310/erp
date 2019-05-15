@@ -9,6 +9,8 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\CADECO\Compra\OrdenCompraTransformer;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use League\Fractal\TransformerAbstract;
 
@@ -21,7 +23,10 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'transaccion_rubro'
+        'transaccion_rubro',
+        'orden_compra',
+        'subcontrato',
+        'usuario'
     ];
 
     /**
@@ -38,7 +43,6 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
-            'observaciones' => $model->observaciones,
             'subtotal'=>(float)$model->subtotal,
             'subtotal_format'=>(string) '$ '.number_format(($model->subtotal),2,".",","),
             'impuesto'=>(float)$model->impuesto,
@@ -50,13 +54,43 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
             'retencion'=>(float)$model->retencion,
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
+            'tipo_solicitud'=>(int) $model->tipo_transaccion,
+            'fecha_format' => (string)$model->fecha_format
         ];
     }
 
+    /**
+     * @param SolicitudPagoAnticipado $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeTransaccionRubro(SolicitudPagoAnticipado $model)
     {
         if ($rubro = $model->transaccion_rubro) {
             return $this->item($rubro, new TransaccionRubroTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param SolicitudPagoAnticipado $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeOrdenCompra(SolicitudPagoAnticipado $model)
+    {
+        if ($orden = $model->orden_compra) {
+            return $this->item($orden, new OrdenCompraTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param SolicitudPagoAnticipado $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSubcontrato(SolicitudPagoAnticipado $model)
+    {
+        if ($subcontrato = $model->subcontrato) {
+            return $this->item($subcontrato, new SubcontratoTransformer);
         }
         return null;
     }

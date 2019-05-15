@@ -26,6 +26,6 @@ class TransaccionRubro extends Model
 
     public function rubro()
     {
-        return $this->hasOne(Rubro::class, 'id_rubro', 'id');
+        return $this->hasOne(Rubro::class, 'id', 'id_rubro');
     }
 }
