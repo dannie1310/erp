@@ -50,7 +50,8 @@ class SolicitudPagoAnticipadoService
                 'saldo' => $antecedente->saldo,
                 'destino' => $antecedente->destino,
                 'observaciones' => $data['observaciones'],
-                'fecha' => $data['cumplimiento']
+                'fecha' => $data['cumplimiento'],
+                'id_costo' => $data['id_costo']
 
             ];
 

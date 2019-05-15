@@ -179,6 +179,27 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <!-- Costos -->
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_costo" class="col-sm-2 col-form-label">Costos</label>
+                                        <div class="col-sm-10">
+                                            <costo-select
+                                                    name="id_costo"
+                                                    data-vv-as="Costo"
+                                                    v-validate="{required: true}"
+                                                    id="id_costo"
+                                                    v-model="id_costo"
+                                                    :error="errors.has('id_costo')"
+                                                    ref="costoSelect"
+                                                    :disableBranchNodes="false"
+                                            ></costo-select>
+                                            <div class="error-label" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
 
                         </div>
@@ -196,9 +217,10 @@
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale'
+    import CostoSelect from "../../../cadeco/costo/Select";
     export default {
         name: "solicitud-pago-anticipado-create",
-        components: {Datepicker},
+        components: {CostoSelect, Datepicker},
         data() {
             return {
                 es: es,
@@ -212,6 +234,7 @@
                 cargando: false,
                 transaccion: [],
                 observaciones: '',
+                id_costo: '',
             }
         },
         computed: {
@@ -234,6 +257,7 @@
                     this.transacciones = [];
                     this.id_antecedente = '';
                     this.transaccion = [];
+                    this.id_costo = '';
                     this.observaciones = '';
                     this.$validator.reset()
                     this.cargando = false;
