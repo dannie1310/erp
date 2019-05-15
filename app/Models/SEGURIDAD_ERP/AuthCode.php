@@ -4,10 +4,9 @@
 namespace App\Models\SEGURIDAD_ERP;
 
 
-use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\Passport;
 
-class AuthCode extends Model
+class AuthCode extends \Laravel\Passport\AuthCode
 {
     /**
      * The connection used by the model.
