@@ -353,6 +353,7 @@ $api->version('v1', function ($api) {
     /** IGH */
     $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
         $api->group(['prefix' => 'usuario'], function ($api) {
+            $api->get('currentUser', 'App\Http\Controllers\v1\IGH\UsuarioController@currentUser');
             $api->get('/', 'App\Http\Controllers\v1\IGH\UsuarioController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\IGH\UsuarioController@show')->where(['id' => '[0-9]+']);
         });

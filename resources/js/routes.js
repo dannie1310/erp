@@ -48,7 +48,7 @@ export const routes = [
         }
     },
     {
-        path: '/login',
+        path: '/auth',
         name: 'login',
         component: require('./components/pages/Login.vue'),
         meta: {
