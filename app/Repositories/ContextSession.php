@@ -58,8 +58,8 @@ class ContextSession implements Context
      */
     public function getIdObra()
     {
-        if(request()->header('id_obra')) {
-            return request()->header('id_obra');
+        if(request()->header('idobra')) {
+            return request()->header('idobra');
         } else {
             try {
                 return session()->get('id_obra');

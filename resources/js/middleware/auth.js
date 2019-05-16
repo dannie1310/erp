@@ -8,7 +8,7 @@ export default function auth({ next, router }) {
 
     if (router.app.$session.get('db') != undefined && router.app.$session.get('id_obra') != undefined) {
         window.axios.defaults.headers.common['db'] = router.app.$session.get('db');
-        window.axios.defaults.headers.common['id_obra'] = router.app.$session.get('id_obra');
+        window.axios.defaults.headers.common['idobra'] = router.app.$session.get('id_obra');
     }
 
     if (router.app.$session.get('db') != undefined && router.app.$session.get('id_obra') != undefined) {
