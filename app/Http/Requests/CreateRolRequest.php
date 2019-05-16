@@ -24,7 +24,7 @@ class CreateRolRequest extends FormRequest
     public function rules()
     {
         return [
-            'display_name' => ['required', 'string', 'max:255', 'unique:seguridad.roles,display_name'],
+            'display_name' => ['required', 'string', 'max:255',/* 'unique:seguridad.roles,display_name'*/],
             'description' => ['required', 'string', 'max:255'],
             'permission_id' => ['array']
         ];

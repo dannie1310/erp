@@ -29,7 +29,7 @@
                 this.pdf()
             },
             pdf(){
-               var url = '/api/contratos/estimacion/' + this.id +'/formato-orden-pago?token='+this.$session.get('jwt');
+               var url = '/formatos/estimacion/' + this.id +'/orden-pago?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Orden de Pago Estimación</iframe>');
                 $(this.$refs.modal).modal('show');
             }
