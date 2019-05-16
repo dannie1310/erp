@@ -47,7 +47,6 @@ class SolicitudPagoAnticipado extends Transaccion
         });
 
         self::creating(function ($solicitud) {
-            $solicitud->validarAntecedente();
             $solicitud->tipo_transaccion = 72;
             $solicitud->opciones = 327681;
             $solicitud->estado = 0;
@@ -82,22 +81,4 @@ class SolicitudPagoAnticipado extends Transaccion
         $this->refresh();
     }
 
-    private function validarAntecedente(){
-        $solicitud = SolicitudPagoAnticipado::query()->where('id_antecedente', '=', $this->id_antecedente)->limit(1);
-        if($solicitud != null){
-            throw New \Exception('Existe una solicitud de pago anticipada para esta transacción antecedente: ');
-        }
-
-        $transaccion_antecedente = Transaccion::query()->find($this->id_antecedente);
-        if($transaccion_antecedente != null){
-            if($transaccion_antecedente->tipo_transaccion == 19){
-                $orden = OrdenCompra::query()->find($transaccion_antecedente->id_transaccion);
-                dd($orden);
-            }
-        }
-
-
-        dd($this->id_antecedente );
-
-    }
 }
