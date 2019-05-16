@@ -11,8 +11,6 @@ namespace App\Models\CADECO;
 
 class OrdenCompra extends Transaccion
 {
-    public const TIPO_NAME = 'ORDEN DE COMPRA';
-
     protected static function boot()
     {
         parent::boot();
@@ -40,5 +38,9 @@ class OrdenCompra extends Transaccion
 
     public function entradas_material(){
         return $this->hasMany(EntradaMaterial::class, 'id_antecedente','id_transaccion');
+    }
+
+    public function getNombre(){
+        return 'ORDEN DE COMPRA';
     }
 }

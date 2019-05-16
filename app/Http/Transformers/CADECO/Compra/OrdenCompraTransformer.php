@@ -52,7 +52,8 @@ class OrdenCompraTransformer extends TransformerAbstract
             'observaciones'=>(string)$model->observaciones,
             'id_moneda'=>(int)$model->id_moneda,
             'destino'=>(string)$model->destino,
-            'saldo'=>(float)$model->saldo
+            'saldo'=>(float)$model->saldo,
+            'tipo_nombre'=>(string)$model->getNombre()
         ];
     }
 

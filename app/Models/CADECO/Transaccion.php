@@ -96,4 +96,12 @@ class Transaccion extends Model
     {
         return substr($cumplimiento, 0, 10);
     }
+
+
+    public function getFechaHoraRegistroFormatAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"Y-m-d h:i:s a");
+
+    }
 }
