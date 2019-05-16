@@ -38,11 +38,10 @@ class StoreSolicitudPagoAnticipadoRequest extends FormRequest
         } catch (\Exception $e) {
             $regex = "";
         }
-
+//'id_antecedente' => ['required', 'exists:cadeco.dbo.transacciones,id_transaccion'],
         return [
             'vencimiento' => ['required', 'date_format:"Y-m-d"'],
             'cumplimiento' => ['required', 'date_format:"Y-m-d"'],
-            'id_antecedente' => ['required', 'exists:cadeco.dbo.transacciones,id_transaccion'],
             'observaciones' => ['required', 'string']
         ];
     }

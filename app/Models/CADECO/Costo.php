@@ -63,4 +63,12 @@ class Costo extends Model
         return $this->hasMany(self::class, 'id_obra', 'id_obra')
             ->where('nivel', 'LIKE', $this->nivel . '___.');
     }
+
+    public function scopeCostoFinanza($query)
+    {
+        return $query->whereRaw(" (descripcion like '5%' or
+                                  descripcion like '6%' or
+                                  descripcion like '7%' )");
+    }
+
 }

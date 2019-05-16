@@ -14,9 +14,11 @@ use App\Models\CADECO\Finanzas\TransaccionRubro;
 class SolicitudPagoAnticipado extends Transaccion
 {
     public const TIPO_NAME = 'SOLICITUD PAGO ANTICIPADO';
+    public const TIPO_ANTECEDENTE = null;
 
     protected $fillable = [
         'id_antecedente',
+        'tipo_transaccion',
         'id_obra',
         'estado',
         'id_empresa',
@@ -31,7 +33,8 @@ class SolicitudPagoAnticipado extends Transaccion
         'observaciones',
         'FechaHoraRegistro',
         'opciones',
-        'tipo_transaccion',
+        'fecha',
+        'id_costo'
     ];
 
     protected static function boot()
@@ -45,17 +48,10 @@ class SolicitudPagoAnticipado extends Transaccion
         });
 
         self::creating(function ($solicitud) {
-            $antecedente = Transaccion::find($solicitud->id_antecedente);
+            $solicitud->validarAntecedente();
             $solicitud->tipo_transaccion = 72;
             $solicitud->opciones = 327681;
-            $solicitud->estatus = 0;
-
-            $solicitud->monto = $antecedente->monto;
-            $solicitud->saldo = $antecedente->saldo;
-            $solicitud->id_empresa = $antecedente->id_empresa;
-            $solicitud->id_moneda = $antecedente->id_moneda;
-            $solicitud->destino = $antecedente->destino;
-
+            $solicitud->estado = 0;
         });
 
         self::created(function($query)
@@ -80,10 +76,29 @@ class SolicitudPagoAnticipado extends Transaccion
     {
         TransaccionRubro::create(
             [
-                'id_transaccion'=>$this->id_transaccion,
-                'id_rubro'=>12
+                'id_transaccion' => $this->id_transaccion,
+                'id_rubro' => 12
             ]
         );
         $this->refresh();
+    }
+
+    private function validarAntecedente(){
+        $solicitud = SolicitudPagoAnticipado::query()->where('id_antecedente', '=', $this->id_antecedente)->limit(1);
+        if($solicitud != null){
+            throw New \Exception('Existe una solicitud de pago anticipada para esta transacción antecedente: ');
+        }
+
+        $transaccion_antecedente = Transaccion::query()->find($this->id_antecedente);
+        if($transaccion_antecedente != null){
+            if($transaccion_antecedente->tipo_transaccion == 19){
+                $orden = OrdenCompra::query()->find($transaccion_antecedente->id_transaccion);
+                dd($orden);
+            }
+        }
+
+
+        dd($this->id_antecedente );
+
     }
 }

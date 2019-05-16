@@ -120,4 +120,13 @@ class Subcontrato extends Transaccion
     {
         return $this->monto - $this->impuesto;
     }
+
+    public function pago_anticipado(){
+        return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
+    }
+
+    public function scopeSinPagoAnticipado($query)
+    {
+        return $query->whereDoesntHave('pago_anticipado');
+    }
 }
