@@ -13,6 +13,7 @@
   border-radius: 50%;
   background-color: #009688;
   vertical-align: middle;
+  horiz-align: center;
   text-decoration: none;
   text-align: center;
   transition: 0.2s ease-out;
