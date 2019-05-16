@@ -54,7 +54,7 @@ class SolicitudPagoAnticipadoService
 
             ];
 
-            $solicitud = SolicitudPagoAnticipado::query()->create($datos);
+            $solicitud = $this->repository->create($datos);
 
             DB::connection('cadeco')->commit();
 
