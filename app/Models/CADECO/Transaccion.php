@@ -76,7 +76,6 @@ class Transaccion extends Model
     }
 
     protected function validaTipoAntecedente(){
-        dd("AQUI:");
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
             $antecedente = Transaccion::withoutGlobalScope('tipo')->find($this->id_antecedente);
