@@ -60,6 +60,8 @@ class ContextSession implements Context
     {
         if(request()->header('idobra')) {
             return request()->header('idobra');
+        } else if (request()->get('idobra')) {
+            return request()->get('idobra');
         } else {
             try {
                 return session()->get('id_obra');
@@ -77,7 +79,9 @@ class ContextSession implements Context
     public function getDatabase()
     {
         if (request()->header('db')) {
-            return  request()->header('db');
+            return request()->header('db');
+        } else if (request()->get('db')) {
+            return request()->get('db');
         } else {
             try {
                 return session()->get('db');

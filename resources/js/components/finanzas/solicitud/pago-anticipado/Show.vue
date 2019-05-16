@@ -21,6 +21,10 @@
                                     <td>{{ pagoAnticipado.numero_folio}}</td>
                                 </tr>
                                 <tr>
+                                    <th style="text-align: right">Rubro</th>
+                                    <td>{{ pagoAnticipado.transaccion_rubro.rubro.descripcion}}</td>
+                                </tr>
+                                <tr>
                                     <th style="text-align: right">Transacción Antecedente</th>
                                     <td>{{ pagoAnticipado.antecedente}}</td>
                                 </tr>
@@ -60,7 +64,7 @@
                 this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', null);
                 return this.$store.dispatch('finanzas/solicitud-pago-anticipado/find', {
                     id: id,
-                    params: { include: 'cuenta.empresa,transaccion' }
+                    params: { include: ['cuenta.empresa,transaccion','transaccion_rubro','rubro'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', data);
                     $(this.$refs.modal).modal('show')
