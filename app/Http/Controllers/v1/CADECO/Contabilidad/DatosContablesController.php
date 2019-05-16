@@ -42,7 +42,7 @@ class DatosContablesController extends Controller
      */
     public function __construct(DatosContablesService $service, Manager $fractal, DatosContablesTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

@@ -34,7 +34,7 @@ class EstatusPrepolizaController extends Controller
      */
     public function __construct(EstatusPrepolizaService $service, Manager $fractal)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

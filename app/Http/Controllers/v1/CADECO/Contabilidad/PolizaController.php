@@ -46,7 +46,7 @@ class PolizaController extends Controller
      */
     public function __construct(PolizaService $service, Manager $fractal, PolizaTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

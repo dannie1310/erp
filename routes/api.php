@@ -302,6 +302,8 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'solicitud-pago-anticipado'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
+
         });
     });
 
@@ -382,6 +384,7 @@ $api->version('v1', function ($api) {
     /** IGH */
     $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
         $api->group(['prefix' => 'usuario'], function ($api) {
+            $api->get('currentUser', 'App\Http\Controllers\v1\IGH\UsuarioController@currentUser');
             $api->get('/', 'App\Http\Controllers\v1\IGH\UsuarioController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\IGH\UsuarioController@show')->where(['id' => '[0-9]+']);
         });

@@ -54,7 +54,7 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
      */
     public function __construct(SolicitudMovimientoFondoGarantiaService $service, Manager $fractal, SolicitudMovimientoFondoGarantiaTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

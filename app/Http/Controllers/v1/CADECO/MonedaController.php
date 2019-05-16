@@ -42,7 +42,7 @@ class MonedaController extends Controller
      */
     public function __construct(Manager $fractal, MonedaService $service, MonedaTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->fractal = $fractal;

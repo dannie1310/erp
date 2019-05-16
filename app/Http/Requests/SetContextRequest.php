@@ -29,7 +29,7 @@ class SetContextRequest extends FormRequest
     {
         Validator::extend('obra_exists', function ($attribute, $value, $parameters, $validator) {
             try {
-                config()->set('database.connections.cadeco.database', $validator->getData()['database']);
+                config()->set('database.connections.cadeco.database', $validator->getData()['db']);
                 $query = DB::connection('cadeco')->table('obras')->select('*')->where($attribute, '=',  $value)->value($attribute);
                 return $query == $value;
             } catch (\Exception $e) {
@@ -38,7 +38,7 @@ class SetContextRequest extends FormRequest
         });
 
         return [
-            'database' => ['required', 'string', 'exists:seguridad.proyectos,base_datos'],
+            'db' => ['required', 'string', 'exists:seguridad.proyectos,base_datos'],
             'id_obra' => ['required', 'numeric', 'obra_exists']
         ];
     }

@@ -42,7 +42,7 @@ class TipoCuentaEmpresaController extends Controller
      */
     public function __construct(TipoCuentaEmpresaService $service, Manager $fractal, TipoCuentaEmpresaTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

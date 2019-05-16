@@ -42,7 +42,7 @@ class TransaccionInterfazController extends Controller
      */
     public function __construct(TransaccionInterfazService $service, Manager $fractal, TransaccionInterfazTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

@@ -47,7 +47,7 @@ class CuentaGeneralController extends Controller
      */
     public function __construct(CuentaGeneralService $service, Manager $fractal, CuentaGeneralTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;
