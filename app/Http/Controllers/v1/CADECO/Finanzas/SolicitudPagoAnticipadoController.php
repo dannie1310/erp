@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSolicitudPagoAnticipadoRequest;
 use App\Http\Transformers\CADECO\Finanzas\SolicitudPagoAnticipadoTransformer;
 use App\Services\CADECO\Finanzas\SolicitudPagoAnticipadoService;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
 
@@ -48,6 +49,7 @@ class SolicitudPagoAnticipadoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
@@ -56,6 +58,11 @@ class SolicitudPagoAnticipadoController extends Controller
     public function store(StoreSolicitudPagoAnticipadoRequest $request)
     {
         return $this->traitStore($request);
+    }
+
+    public function cancelar(Request $request, $id)
+    {
+        return $this->service->cancelar($request->all(), $id);
     }
 
 }
