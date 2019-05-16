@@ -21,6 +21,9 @@
             destroy() {
 
             },
+            show() {
+                this.$router.push({name: 'solicitud-pago-anticipado-show', params: {id: this.value.id}});
+            }
         },
         mounted() {
         }
