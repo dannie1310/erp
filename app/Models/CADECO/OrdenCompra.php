@@ -37,4 +37,8 @@ class OrdenCompra extends Transaccion
     {
         return $query->whereDoesntHave('pago_anticipado');
     }
+
+    public function entradas_material(){
+        return $this->hasMany(EntradaMaterial::class, 'id_antecedente','id_transaccion');
+    }
 }
