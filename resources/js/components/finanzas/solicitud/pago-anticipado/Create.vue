@@ -55,7 +55,7 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group error-content">
-                                        <label for="tipo">Tipo de Cuenta</label>
+                                        <label for="tipo">Tipo de Transacción</label>
                                         <select
                                                 type="text"
                                                 name="tipo"
@@ -115,14 +115,13 @@
                                                             <td class="bg-gray-light"><b>Número de Folio</b><br>
                                                                 {{ transaccion.numero_folio_format}}
                                                             </td>
-                                                            <td class="bg-gray-light"><b>Requisición</b><br>
-                                                                {{ transaccion.referencia}}
-                                                            </td>
                                                         </tr>
                                                         <tr>
                                                             <td class="bg-gray-light" v-if="transaccion.empresa"><b>Empresa</b><br>
                                                                 {{ transaccion.empresa.razon_social }}
                                                             </td>
+                                                        </tr>
+                                                        <tr>
                                                             <td class="bg-gray-light"><b>Referencia</b><br>
                                                                {{ transaccion.referencia}}
                                                             </td>
