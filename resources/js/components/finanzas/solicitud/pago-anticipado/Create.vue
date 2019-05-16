@@ -55,7 +55,7 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group error-content">
-                                        <label for="tipo">Tipo de Cuenta</label>
+                                        <label for="tipo">Tipo de Transacción</label>
                                         <select
                                                 type="text"
                                                 name="tipo"
