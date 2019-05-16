@@ -30,11 +30,11 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: '# Folio', field: 'numero_folio', sortable: true },
-                    { title: 'Transacción Antecedente', field: 'antecedente', sortable: false },
-                    { title: 'Monto', field: 'monto', sortable: false },
-                    { title: 'Beneficiario', field: 'beneficiario', sortable: false },
-                    { title: 'Fecha y Hora de Registro', field: 'fecha_registro', sortable: false },
-                    { title: 'Observaciones', field: 'observaciones', sortable: false },
+                    { title: 'Transacción Antecedente', field: 'id_antecedente', sortable: true },
+                    { title: 'Monto', field: 'monto', sortable: true },
+                    { title: 'Beneficiario', field: 'id_empresa', sortable: true },
+                    { title: 'Fecha y Hora de Registro', field: 'FechaHoraRegistro', sortable: true },
+                    { title: 'Observaciones', field: 'observaciones', sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -85,30 +85,30 @@
                     solicitudes.forEach(function (solicitud, i) {
 
                         if(solicitud.subcontrato){
-                            self.$data.antecedente = '('+solicitud.subcontrato.tipo_nombre+') '+solicitud.subcontrato.numero_folio_format;
+                            self.$data.id_antecedente = '('+solicitud.subcontrato.tipo_nombre+') '+solicitud.subcontrato.numero_folio_format;
                             if(solicitud.subcontrato.referencia!=""){
-                                self.$data.antecedente = self.$data.antecedente+' ('+solicitud.subcontrato.referencia+')';
+                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.subcontrato.referencia+')';
                             }else{
-                                self.$data.antecedente = self.$data.antecedente+' ---';
+                                self.$data.id_antecedente = self.$data.id_antecedente+' ---';
                             }
                         }else if(solicitud.orden_compra){
-                            self.$data.antecedente = '('+solicitud.orden_compra.tipo_nombre+') '+solicitud.orden_compra.numero_folio_format;
+                            self.$data.id_antecedente = '('+solicitud.orden_compra.tipo_nombre+') '+solicitud.orden_compra.numero_folio_format;
                             if(solicitud.orden_compra.referencia!=""){
-                                self.$data.antecedente = self.$data.antecedente+' ('+solicitud.orden_compra.referencia+')';
+                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.orden_compra.referencia+')';
                             }else{
-                                self.$data.antecedente = self.$data.antecedente+'---';
+                                self.$data.id_antecedente = self.$data.id_antecedente+'---';
                             }
                         }else{
-                            self.$data.antecedente = '';
+                            self.$data.id_antecedente = '';
                         }
 
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             numero_folio: '# ' + solicitud.numero_folio,
-                            antecedente: self.$data.antecedente,
+                            id_antecedente: self.$data.id_antecedente,
                             monto: solicitud.monto_format,
-                            beneficiario: solicitud.empresa.razon_social,
-                            fecha_registro: solicitud.fecha_format,
+                            id_empresa: solicitud.empresa.razon_social,
+                            FechaHoraRegistro: solicitud.fecha_format,
                             observaciones: solicitud.observaciones,
                             buttons: $.extend({}, {
                                 show: true,
