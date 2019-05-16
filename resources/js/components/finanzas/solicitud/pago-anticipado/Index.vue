@@ -30,7 +30,6 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: '# Folio', field: 'numero_folio', sortable: true },
-                    { title: 'Rubro', field: 'rubro', sortable: false },
                     { title: 'Transacción Antecedente', field: 'antecedente', sortable: false },
                     { title: 'Monto', field: 'monto', sortable: false },
                     { title: 'Beneficiario', field: 'beneficiario', sortable: false },
@@ -40,7 +39,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['transaccion_rubro', 'orden_compra', 'subcontrato','empresa']},
+                query: {include: ['orden_compra', 'subcontrato','empresa'], sort: 'id_transaccion', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -84,11 +83,6 @@
                     let self = this
                     self.$data.data = []
                     solicitudes.forEach(function (solicitud, i) {
-                        if(solicitud.transaccion_rubro){
-                            self.$data.rubro = solicitud.transaccion_rubro.rubro.descripcion;
-                        }else{
-                            self.$data.rubro = '';
-                        }
 
                         if(solicitud.subcontrato){
                             self.$data.antecedente = '('+solicitud.subcontrato.tipo_nombre+') '+solicitud.subcontrato.numero_folio_format;
@@ -111,7 +105,6 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             numero_folio: '# ' + solicitud.numero_folio,
-                            rubro: self.$data.rubro,
                             antecedente: self.$data.antecedente,
                             monto: solicitud.monto_format,
                             beneficiario: solicitud.empresa.razon_social,

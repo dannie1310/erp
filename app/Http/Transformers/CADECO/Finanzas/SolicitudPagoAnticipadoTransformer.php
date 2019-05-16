@@ -57,7 +57,7 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
-            'fecha_format' => (string)$model->fecha_format
+            'fecha_format' => (string)$model->fecha_hora_registro_format
         ];
     }
 
