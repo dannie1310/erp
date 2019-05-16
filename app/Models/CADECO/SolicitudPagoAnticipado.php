@@ -83,21 +83,57 @@ class SolicitudPagoAnticipado extends Transaccion
     }
 
     private function validarAntecedente(){
-        $solicitud = SolicitudPagoAnticipado::query()->where('id_antecedente', '=', $this->id_antecedente)->limit(1);
-        if($solicitud != null){
-            throw New \Exception('Existe una solicitud de pago anticipada para esta transacción antecedente: ');
+        $solicitud = SolicitudPagoAnticipado::query()->where('id_antecedente', '=', $this->id_antecedente)->first();
+
+        if($solicitud){
+            throw New \Exception('Existe una solicitud de pago anticipada para esta transacción antecedente');
         }
 
-        $transaccion_antecedente = Transaccion::query()->find($this->id_antecedente);
-        if($transaccion_antecedente != null){
-            if($transaccion_antecedente->tipo_transaccion == 19){
-                $orden = OrdenCompra::query()->find($transaccion_antecedente->id_transaccion);
-                dd($orden);
+        $orden = OrdenCompra::query()->find($this->id_antecedente);
+        if($orden != null){
+            if($orden->tipo_transaccion == 19){
+                $entrada = EntradaMaterial::query()->where('id_antecedente', '=', $orden->id_transaccion)->first();
+                /**
+                 * Se revisa si existe una entrada de material a la orden de compra, la cual impide tener una solicitud de pago anticipado
+                 */
+                if($entrada){
+                    throw New \Exception('Existe una entrada de material para esta orden de compra seleccionada');
+                }
+
+                $item_facturado = Item::query()->where('id_antecedente','=', $orden->id_transaccion)->first();
+                /**
+                 * Se revisa si existe una factura de algun item de la orden de compra, la cual impide tener una solicitud de pago anticipado
+                 */
+                if($item_facturado){
+                    $factura = Factura::query()->where('id_transaccion', '=', $item_facturado->id_transaccion)->first();
+                    if($factura){
+                        throw New \Exception('Existe una factura para alguno de los items de la orden de compra seleccionada');
+                    }
+                }
+            }else{
+                $subcontrato = Subcontrato::query()->find($this->id_antecedente);
+                if($subcontrato != null) {
+                    $item_facturado = Item::query()->where('id_antecedente', '=', $subcontrato->id_transaccion)->first();
+                    /**
+                     * Se revisa si existe una factura de algun item de subcontrato, la cual impide tener una solicitud de pago anticipado
+                     */
+                    if ($item_facturado) {
+                        $factura = Factura::query()->where('id_transaccion', '=', $item_facturado->id_transaccion)->first();
+                        if ($factura) {
+                            throw New \Exception('Existe una factura para alguno de los items del Subcontrato seleccionado');
+                        }
+                    }
+
+                    /**
+                     * Se revisa si existe una estimacion registrada con el subcontrato seleccionado, lo cual impide tener una solicitud de pago anticipado
+                     */
+                    $estimacion = Estimacion::query()->where('id_antecedente', '=', $subcontrato->id_transaccion)->first();
+
+                    if($estimacion){
+                        throw New \Exception('Existe una estimación para este subcontrato seleccionado');
+                    }
+                }
             }
         }
-
-
-        dd($this->id_antecedente );
-
     }
 }

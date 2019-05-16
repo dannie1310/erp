@@ -42,10 +42,12 @@ class OrdenCompraController extends Controller
      */
     public function __construct(OrdenCompraService $service, Manager $fractal, OrdenCompraTransformer $transformer)
     {
+        $this->middleware('auth:api');
+        $this->middleware('context');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
-
 
 }
