@@ -50,7 +50,7 @@
         </aside>
         <!-- /.control-sidebar -->
         <div class="zoom" v-if="$router.currentRoute.name != 'portal'">
-            <router-link :to="{name: 'portal'}" class="zoom-fab zoom-btn-large zoom-btn-igh" id="zoomBtn">PORTAL</router-link>
+            <router-link :to="{name: 'portal'}" class="zoom-fab zoom-btn-large zoom-btn-igh" id="zoomBtn"><i class="fa fa-th-large"></i> </router-link>
         </div>
     </div>
     <div v-else>
