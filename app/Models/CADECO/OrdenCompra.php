@@ -11,11 +11,13 @@ namespace App\Models\CADECO;
 
 class OrdenCompra extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = 17;
+
     protected static function boot()
     {
         parent::boot();
 
-        self::addGlobalScope(function ($query) {
+        self::addGlobalScope('tipo',function ($query) {
             return $query->where('tipo_transaccion', '=', 19)
                 ->where('opciones', '=', 1)
                 ->where('estado', '!=', -2);

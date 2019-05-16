@@ -9,7 +9,6 @@
 namespace App\Models\CADECO;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
 
 class SolicitudPagoAnticipado extends Transaccion
@@ -48,12 +47,7 @@ class SolicitudPagoAnticipado extends Transaccion
         });
 
         self::creating(function ($solicitud) {
-           // $solicitud->validarAntecedente();
-            $obra = Obra::query()->find(Context::getIdObra());
-
-            $transaccion_antecedente = Transaccion::query()->where('id_transaccion','=',$solicitud->id_antecedente)->first();
-            dd('id_transaccion= ', $transaccion_antecedente);
-            $solicitud->id_obra = $obra->id_obra;
+            $solicitud->validarAntecedente();
             $solicitud->tipo_transaccion = 72;
             $solicitud->opciones = 327681;
             $solicitud->estado = 0;

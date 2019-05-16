@@ -34,17 +34,38 @@ class SolicitudPagoAnticipadoService
 
     public function store(array $data)
     {
-        $datos = [
-            'id_antecedente' => $data['id_antecedente'],
-            'cumplimiento' => $data['cumplimiento'],
-            'vencimiento' => $data['vencimiento'],
-            'observaciones' => $data['observaciones'],
-            'fecha' => $data['cumplimiento'],
-            'id_costo' => $data['id_costo']
-        ];
-        return $this->repository->create($datos);
-    }
+        $obra = Obra::query()->find(Context::getIdObra());
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $antecedente = Transaccion::query()->find($data['id_antecedente']);
 
+            $datos = [
+                'id_antecedente' => $data['id_antecedente'],
+                'id_obra' => $obra->id_obra,
+                'id_empresa' => $antecedente->id_empresa,
+                'id_moneda' => $antecedente->id_moneda,
+                'cumplimiento' => $data['cumplimiento'],
+                'vencimiento' => $data['vencimiento'],
+                'monto' => $antecedente->monto,
+                'saldo' => $antecedente->saldo,
+                'destino' => $antecedente->destino,
+                'observaciones' => $data['observaciones'],
+                'fecha' => $data['cumplimiento'],
+                'id_costo' => $data['id_costo']
+
+            ];
+
+           $solicitud = SolicitudPagoAnticipado::query()->create($datos);
+
+            DB::connection('cadeco')->commit();
+
+            return $solicitud ;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
 
     public function paginate($data)
     {
