@@ -18,6 +18,8 @@ Route::get('/', function () {
 
 Auth::routes(['register' => false]);
 
+Route::get('formatos/estimacion/{id}/orden-pago', 'v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
+
 Route::get('{any}', function () {
     return view('welcome');
 })
