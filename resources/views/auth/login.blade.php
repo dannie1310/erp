@@ -21,7 +21,7 @@
 <div id="content">
     <div class="login-box">
         <div class="login-logo">
-            <img src="{{URL::asset('/images/logo_hc.png')}}" class="img-responsive img-rounded" width="100%">
+            <img src="{{URL::asset('/img/logo_hc.png')}}" class="img-responsive img-rounded" width="100%">
         </div>
 
         <div class="card">

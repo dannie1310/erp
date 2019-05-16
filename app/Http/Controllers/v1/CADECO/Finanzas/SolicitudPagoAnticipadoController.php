@@ -45,7 +45,7 @@ class SolicitudPagoAnticipadoController extends Controller
      */
     public function __construct(SolicitudPagoAnticipadoService $service, Manager $fractal, SolicitudPagoAnticipadoTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;
