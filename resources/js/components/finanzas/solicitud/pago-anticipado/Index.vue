@@ -30,17 +30,16 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: '# Folio', field: 'numero_folio', sortable: true },
-                    { title: 'Rubro', field: 'rubro', sortable: false },
-                    { title: 'Transacción Antecedente', field: 'antecedente', sortable: false },
-                    { title: 'Monto', field: 'monto', sortable: false },
-                    { title: 'Beneficiario', field: 'beneficiario', sortable: false },
-                    { title: 'Fecha y Hora de Registro', field: 'fecha_registro', sortable: false },
-                    { title: 'Observaciones', field: 'observaciones', sortable: false },
+                    { title: 'Transacción Antecedente', field: 'id_antecedente', sortable: true },
+                    { title: 'Monto', field: 'monto', sortable: true },
+                    { title: 'Beneficiario', field: 'id_empresa', sortable: true },
+                    { title: 'Fecha y Hora de Registro', field: 'FechaHoraRegistro', sortable: true },
+                    { title: 'Observaciones', field: 'observaciones', sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['transaccion_rubro', 'orden_compra', 'subcontrato']},
+                query: {include: ['orden_compra', 'subcontrato','empresa'], sort: 'id_transaccion', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -84,20 +83,32 @@
                     let self = this
                     self.$data.data = []
                     solicitudes.forEach(function (solicitud, i) {
-                        if(solicitud.transaccion_rubro){
-                            self.$data.rubro = solicitud.transaccion_rubro.rubro.descripcion;
+
+                        if(solicitud.subcontrato){
+                            self.$data.id_antecedente = '('+solicitud.subcontrato.tipo_nombre+') '+solicitud.subcontrato.numero_folio_format;
+                            if(solicitud.subcontrato.referencia!=""){
+                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.subcontrato.referencia+')';
+                            }else{
+                                self.$data.id_antecedente = self.$data.id_antecedente+' ---';
+                            }
+                        }else if(solicitud.orden_compra){
+                            self.$data.id_antecedente = '('+solicitud.orden_compra.tipo_nombre+') '+solicitud.orden_compra.numero_folio_format;
+                            if(solicitud.orden_compra.referencia!=""){
+                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.orden_compra.referencia+')';
+                            }else{
+                                self.$data.id_antecedente = self.$data.id_antecedente+'---';
+                            }
                         }else{
-                            self.$data.rubro = '';
+                            self.$data.id_antecedente = '';
                         }
 
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             numero_folio: '# ' + solicitud.numero_folio,
-                            rubro: self.$data.rubro,
-                            antecedente: solicitud.orden_compra,
+                            id_antecedente: self.$data.id_antecedente,
                             monto: solicitud.monto_format,
-                            beneficiario: solicitud.usuario,
-                            fecha_registro: solicitud.fecha_format,
+                            id_empresa: solicitud.empresa.razon_social,
+                            FechaHoraRegistro: solicitud.fecha_format,
                             observaciones: solicitud.observaciones,
                             buttons: $.extend({}, {
                                 show: true,
