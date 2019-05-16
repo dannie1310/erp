@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['transaccion_rubro', 'orden_compra', 'subcontrato']},
+                query: {include: ['transaccion_rubro', 'orden_compra', 'subcontrato','empresa']},
                 estado: "",
                 cargando: false
             }
@@ -90,13 +90,31 @@
                             self.$data.rubro = '';
                         }
 
+                        if(solicitud.subcontrato){
+                            self.$data.antecedente = '('+solicitud.subcontrato.tipo_nombre+') '+solicitud.subcontrato.numero_folio_format;
+                            if(solicitud.subcontrato.referencia!=""){
+                                self.$data.antecedente = self.$data.antecedente+' ('+solicitud.subcontrato.referencia+')';
+                            }else{
+                                self.$data.antecedente = self.$data.antecedente+' ---';
+                            }
+                        }else if(solicitud.orden_compra){
+                            self.$data.antecedente = '('+solicitud.orden_compra.tipo_nombre+') '+solicitud.orden_compra.numero_folio_format;
+                            if(solicitud.orden_compra.referencia!=""){
+                                self.$data.antecedente = self.$data.antecedente+' ('+solicitud.orden_compra.referencia+')';
+                            }else{
+                                self.$data.antecedente = self.$data.antecedente+'---';
+                            }
+                        }else{
+                            self.$data.antecedente = '';
+                        }
+
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             numero_folio: '# ' + solicitud.numero_folio,
                             rubro: self.$data.rubro,
-                            antecedente: solicitud.orden_compra,
+                            antecedente: self.$data.antecedente,
                             monto: solicitud.monto_format,
-                            beneficiario: solicitud.usuario,
+                            beneficiario: solicitud.empresa.razon_social,
                             fecha_registro: solicitud.fecha_format,
                             observaciones: solicitud.observaciones,
                             buttons: $.extend({}, {

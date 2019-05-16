@@ -11,6 +11,7 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 
 use App\Http\Transformers\CADECO\Compra\OrdenCompraTransformer;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use League\Fractal\TransformerAbstract;
 
@@ -26,7 +27,8 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
         'transaccion_rubro',
         'orden_compra',
         'subcontrato',
-        'usuario'
+        'usuario',
+        'empresa'
     ];
 
     /**
@@ -91,6 +93,19 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
     {
         if ($subcontrato = $model->subcontrato) {
             return $this->item($subcontrato, new SubcontratoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Empresa
+     *
+     * @param SolicitudPagoAnticipado $model
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeEmpresa(SolicitudPagoAnticipado $model) {
+        if ($empresa = $model->empresa) {
+            return $this->item($empresa, new EmpresaTransformer);
         }
         return null;
     }
