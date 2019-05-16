@@ -43,6 +43,7 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
+            'antecedente' => $model->id_antecedente,
             'subtotal'=>(float)$model->subtotal,
             'subtotal_format'=>(string) '$ '.number_format(($model->subtotal),2,".",","),
             'impuesto'=>(float)$model->impuesto,
@@ -55,7 +56,8 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
-            'fecha_format' => (string)$model->fecha_format
+            'fecha_format' => (string)$model->fecha_format,
+            'estado' => (int)$model->estado
         ];
     }
 
