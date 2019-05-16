@@ -13,7 +13,6 @@ use App\Models\CADECO\Finanzas\TransaccionRubro;
 
 class SolicitudPagoAnticipado extends Transaccion
 {
-    public const TIPO_NAME = 'SOLICITUD PAGO ANTICIPADO';
     public const TIPO_ANTECEDENTE = null;
 
     protected $fillable = [
