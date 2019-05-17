@@ -51,7 +51,39 @@
                                 <label>Observaciones</label>
                                 <p>{{ pagoAnticipado.observaciones }}</p>
                             </div>
+
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <table v-if="pagoAnticipado" class="table">
+                            <h5 class="modal-title">Transacción Antecedente</h5>
+                            <h6 align="left">Fecha: {{ pagoAnticipado.subcontrato.fecha_format}}</h6>
+                            <tbody>
+                                <tr>
+                                    <th style="text-align: right">Número de Folio</th>
+                                    <td>{{ pagoAnticipado.subcontrato.numero_folio_format}}</td>
+                                    <th style="text-align: right">Tipo de Transacción</th>
+                                    <td>{{ pagoAnticipado.subcontrato.tipo_nombre}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right">Referencia</th>
+                                    <td>{{ pagoAnticipado.subcontrato.referencia}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right">Subtotal:</th>
+                                    <td>{{ pagoAnticipado.subcontrato.subtotal_format}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right">IVA:</th>
+                                    <td>{{ pagoAnticipado.subcontrato.impuesto_format}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right">Total:</th>
+                                    <td>{{ pagoAnticipado.subcontrato.total_format}}</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -68,7 +100,7 @@
                 this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', null);
                 return this.$store.dispatch('finanzas/solicitud-pago-anticipado/find', {
                     id: id,
-                    params: { include: ['cuenta.empresa,transaccion','transaccion_rubro','rubro','usuario'] }
+                    params: { include: ['orden_compra', 'subcontrato','empresa','usuario'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', data);
                     $(this.$refs.modal).modal('show')
