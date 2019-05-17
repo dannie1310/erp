@@ -3,8 +3,8 @@
         <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </button>
-        <div ref="modal" class="modal fade" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div ref="modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Detalles de Solicitud de Pago Anticipado</h5>
@@ -18,16 +18,31 @@
                                 <tbody>
                                 <tr>
                                     <th style="text-align: right">Número de Folio</th>
-                                    <td># {{ pagoAnticipado.numero_folio}}</td>
-                                     <th style="text-align: right">Beneficiario</th>
-                                    <td>{{ pagoAnticipado.empresa.razon_social}}</td>
-
+                                    <td>{{ pagoAnticipado.numero_folio}}</td>
                                 </tr>
                                 <tr>
-                                     <th style="text-align: right">Monto</th>
+                                    <th style="text-align: right">Rubro</th>
+                                    <td>{{ pagoAnticipado.transaccion_rubro.rubro.descripcion}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right">Transacción Antecedente</th>
+                                    <td>{{ pagoAnticipado.antecedente}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right">Monto</th>
                                     <td>{{ pagoAnticipado.monto_format}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right">Beneficiario</th>
+                                    <td>{{ pagoAnticipado.beneficiario}}</td>
+                                </tr>
+                                <tr>
                                     <th style="text-align: right">Fecha y Hora de Registro</th>
                                     <td>{{ pagoAnticipado.fecha_format}}</td>
+                                </tr>
+                                <tr>
+                                    <th style="text-align: right">Registro</th>
+                                    <td>{{ pagoAnticipado.usuario.nombre}}</td>
                                 </tr>
 
                                 </tbody>
@@ -85,7 +100,7 @@
                 this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', null);
                 return this.$store.dispatch('finanzas/solicitud-pago-anticipado/find', {
                     id: id,
-                    params: { include: ['orden_compra', 'subcontrato','empresa'] }
+                    params: { include: ['orden_compra', 'subcontrato','empresa','usuario'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', data);
                     $(this.$refs.modal).modal('show')
