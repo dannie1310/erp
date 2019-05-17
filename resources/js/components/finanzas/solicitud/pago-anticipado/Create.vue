@@ -77,7 +77,7 @@
                                     <div class="form-group error-content">
                                         <label for="id_antecedente">Transacción </label>
                                         <select
-                                                :disabled="!tipo"
+                                                :disabled="!bandera_transaccion"
                                                 type="text"
                                                 name="id_antecedente"
                                                 data-vv-as="Transacción"
@@ -235,6 +235,7 @@
                 transaccion: [],
                 observaciones: '',
                 id_costo: '',
+                bandera_transaccion: 0
             }
         },
         computed: {
@@ -259,7 +260,7 @@
                     this.transaccion = [];
                     this.id_costo = '';
                     this.observaciones = '';
-                    this.$validator.reset()
+                    this.$validator.reset();
                     this.cargando = false;
                 }
             },
@@ -274,8 +275,9 @@
                         }
                     }
                 }).then(data => {
-                        this.transacciones = data;
-                    })
+                    this.transacciones = data;
+                    this.bandera_transaccion = 1;
+                })
             },
             getSubcontratos() {
                 return this.$store.dispatch('contratos/subcontrato/index',{
@@ -285,7 +287,8 @@
                         }
                     }
                 }).then(data => {
-                        this.transacciones = data;
+                    this.transacciones = data;
+                    this.bandera_transaccion = 1;
                 })
             },
             getTransaccion(){
@@ -326,11 +329,11 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                       if(this.fecha_limite < this.fecha_solicitud){
+                        if(this.fecha_limite < this.fecha_solicitud){
                             swal('¡Error!', 'La fecha limite no puede ser antes de la fecha de solicitud.', 'error')
                         }else {
-                           this.store()
-                       }
+                            this.store()
+                        }
                     }
                 });
             },
@@ -381,10 +384,10 @@
                 var y = 0;
 
                 if(value){
-                   var date =  new Date (value);
-                   d = date.getDate();
-                   m = date.getMonth() + 1;
-                   y = date.getFullYear();
+                    var date =  new Date (value);
+                    d = date.getDate();
+                    m = date.getMonth() + 1;
+                    y = date.getFullYear();
                     if (d < 10) {
                         d = '0' + d;
                     }
