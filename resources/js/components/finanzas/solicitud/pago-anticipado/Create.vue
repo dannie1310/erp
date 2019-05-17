@@ -139,15 +139,15 @@
                                                                 <tbody>
                                                                     <tr>
                                                                         <th style="width:50%" class="bg-gray-light">Subtotal:</th>
-                                                                        <td class="bg-gray-light">{{ transaccion.subtotal_format}}</td>
+                                                                        <td class="bg-gray-light" align="right">{{ transaccion.subtotal_format}}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>IVA:</th>
-                                                                        <td>{{ transaccion.impuesto_format }}</td>
+                                                                        <td align="right">{{ transaccion.impuesto_format }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th class="bg-gray-light">Total:</th>
-                                                                        <td class="bg-gray-light">{{ transaccion.total_format }}</td>
+                                                                        <td class="bg-gray-light" align="right">{{ transaccion.total_format }}</td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
