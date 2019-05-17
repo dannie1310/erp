@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="form-group error-content">
-                                        <label for="id_antecedente">Transacción</label>
+                                        <label for="id_antecedente">Transacción </label>
                                         <select
                                                 :disabled="!tipo"
                                                 type="text"
@@ -88,7 +88,7 @@
                                                 :class="{'is-invalid': errors.has('id_antecedente')}"
                                         >
                                             <option value>-- Seleccione Transacción --</option>
-                                            <option v-for="tran in transacciones" :value="tran.id">{{ tran.numero_folio_format }}--({{ tran.referencia }}-)</option>
+                                            <option v-for="tran in transacciones" :value="tran.id">{{ tran.numero_folio_format }} ({{ tran.dato_transaccion }})</option>
                                         </select>
                                         <div class="invalid-feedback" v-show="errors.has('id_antecedente')">{{ errors.first('id_antecedente') }}</div>
                                     </div>
