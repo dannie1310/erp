@@ -29,12 +29,12 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', sortable: true },
+                    { title: 'Número de Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true },
                     { title: 'Transacción Antecedente', field: 'id_antecedente', sortable: true },
                     { title: 'Monto', field: 'monto', sortable: true },
-                    { title: 'Empresa', field: 'id_empresa', sortable: true },
+                    { title: 'Empresa', field: 'id_empresa', thComp: require('../../../globals/th-Filter'), sortable: true },
                     { title: 'Fecha y Hora de Registro', field: 'FechaHoraRegistro', sortable: true },
-                    { title: 'Observaciones', field: 'observaciones', sortable: true },
+                    { title: 'Observaciones', field: 'observaciones', thComp: require('../../../globals/th-Filter'), sortable: true },
                     { title: 'Estatus', field: 'estado', tdComp: require('./partials/SolicitudEstatus')},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
@@ -88,14 +88,14 @@
                         if(solicitud.subcontrato){
                             self.$data.id_antecedente = '('+solicitud.subcontrato.tipo_nombre+') '+solicitud.subcontrato.numero_folio_format;
                             if(solicitud.subcontrato.referencia!=""){
-                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.subcontrato.referencia+')';
+                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.subcontrato.dato_transaccion+')';
                             }else{
                                 self.$data.id_antecedente = self.$data.id_antecedente+' ---';
                             }
                         }else if(solicitud.orden_compra){
                             self.$data.id_antecedente = '('+solicitud.orden_compra.tipo_nombre+') '+solicitud.orden_compra.numero_folio_format;
                             if(solicitud.orden_compra.referencia!=""){
-                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.orden_compra.referencia+')';
+                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.orden_compra.dato_transaccion+')';
                             }else{
                                 self.$data.id_antecedente = self.$data.id_antecedente+'---';
                             }
