@@ -1,7 +1,8 @@
-import {getLoggedinUser, getObra } from './partials/auth';
+import {getLoggedinUser, getObra, getPermisos } from './partials/auth';
 
 const user = getLoggedinUser();
 const obra = getObra();
+const perms = getPermisos();
 
 export default {
     namespaced: true,
@@ -9,7 +10,7 @@ export default {
     state: {
         currentUser: user,
         currentObra: obra,
-        permisos: [],
+        permisos: perms,
         jwt: null,
         isLoggedIn: false,
         loading: false,
@@ -42,7 +43,7 @@ export default {
             this._vm.$session.set('obra', payload.obra);
         },
         setPermisos(state, payload) {
-                state.permisos = Object.assign({}, payload.permisos);
+                state.permisos = payload.permisos;
         }
     },
 
