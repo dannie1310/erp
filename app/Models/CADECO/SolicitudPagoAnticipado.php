@@ -33,7 +33,8 @@ class SolicitudPagoAnticipado extends Transaccion
         'FechaHoraRegistro',
         'opciones',
         'fecha',
-        'id_costo'
+        'id_costo',
+        'id_usuario'
     ];
 
     protected static function boot()
@@ -51,6 +52,7 @@ class SolicitudPagoAnticipado extends Transaccion
             $solicitud->tipo_transaccion = 72;
             $solicitud->opciones = 327681;
             $solicitud->estado = 0;
+            $solicitud->id_usuario = auth()->id();
         });
 
         self::created(function($query)

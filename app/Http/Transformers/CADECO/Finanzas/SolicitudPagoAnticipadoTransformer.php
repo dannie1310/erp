@@ -12,6 +12,7 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 use App\Http\Transformers\CADECO\Compra\OrdenCompraTransformer;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use League\Fractal\TransformerAbstract;
 
@@ -108,6 +109,17 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
     public function includeEmpresa(SolicitudPagoAnticipado $model) {
         if ($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param SolicitudPagoAnticipado $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuario(SolicitudPagoAnticipado $model){
+        if($usuario = $model->usuario){
+            return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }

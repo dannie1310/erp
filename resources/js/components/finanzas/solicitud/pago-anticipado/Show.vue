@@ -40,6 +40,10 @@
                                     <th style="text-align: right">Fecha y Hora de Registro</th>
                                     <td>{{ pagoAnticipado.fecha_format}}</td>
                                 </tr>
+                                <tr>
+                                    <th style="text-align: right">Registro</th>
+                                    <td>{{ pagoAnticipado.usuario.nombre}}</td>
+                                </tr>
 
                                 </tbody>
                             </table>
@@ -64,7 +68,7 @@
                 this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', null);
                 return this.$store.dispatch('finanzas/solicitud-pago-anticipado/find', {
                     id: id,
-                    params: { include: ['cuenta.empresa,transaccion','transaccion_rubro','rubro'] }
+                    params: { include: ['cuenta.empresa,transaccion','transaccion_rubro','rubro','usuario'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', data);
                     $(this.$refs.modal).modal('show')
