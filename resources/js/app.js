@@ -40,7 +40,7 @@ const app = new Vue({
     },
     methods: {
         can(permiso) {
-            let permisos = this.$session.get('permisos');
+            let permisos = this.$store.getters['auth/permisos'];
 
             if (permisos) {
                 if (Array.isArray(permiso)) {

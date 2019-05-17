@@ -18,3 +18,13 @@ export function getObra() {
 
     return JSON.parse(session).obra;
 }
+
+export function getPermisos() {
+    const session = localStorage.getItem('vue-session-key')
+
+    if(!session){
+        return null
+    }
+
+    return JSON.parse(session).permisos;
+}

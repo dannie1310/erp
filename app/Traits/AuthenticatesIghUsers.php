@@ -18,7 +18,7 @@ trait AuthenticatesIghUsers
      */
     public function redirectPath()
     {
-        return '/';
+        return '/auth';
     }
 
     /**
