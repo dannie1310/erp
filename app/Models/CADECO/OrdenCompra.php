@@ -45,4 +45,12 @@ class OrdenCompra extends Transaccion
     public function getNombre(){
         return 'ORDEN DE COMPRA';
     }
+
+    public function getEncabezadoReferencia(){
+        if (strlen($this->observaciones) > 100) {
+           return utf8_encode(substr($this->observaciones, 0, 100));
+        } else {
+            return utf8_encode($this->observaciones);
+        }
+    }
 }
