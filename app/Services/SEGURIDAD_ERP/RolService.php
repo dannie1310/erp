@@ -152,7 +152,7 @@ class RolService
 
     public function store($data)
     {
-        if (Rol::query()->where('display_name', '=', $data['display_name'])->get())
+        if (Rol::query()->where('display_name', '=', $data['display_name'])->first())
         {
             throw new \Exception('Ya existe un rol registrado con el nombre seleccionado.', 404);
         }
