@@ -29,10 +29,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: '# Folio', field: 'numero_folio', sortable: true },
+                    { title: 'Número de Folio', field: 'numero_folio', sortable: true },
                     { title: 'Transacción Antecedente', field: 'id_antecedente', sortable: true },
                     { title: 'Monto', field: 'monto', sortable: true },
-                    { title: 'Beneficiario', field: 'id_empresa', sortable: true },
+                    { title: 'Empresa', field: 'id_empresa', sortable: true },
                     { title: 'Fecha y Hora de Registro', field: 'FechaHoraRegistro', sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
