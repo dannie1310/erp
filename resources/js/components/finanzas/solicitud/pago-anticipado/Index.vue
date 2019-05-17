@@ -35,6 +35,7 @@
                     { title: 'Empresa', field: 'id_empresa', sortable: true },
                     { title: 'Fecha y Hora de Registro', field: 'FechaHoraRegistro', sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
+                    { title: 'Estatus', field: 'estado', tdComp: require('./partials/SolicitudEstatus')},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -110,10 +111,11 @@
                             id_empresa: solicitud.empresa.razon_social,
                             FechaHoraRegistro: solicitud.fecha_format,
                             observaciones: solicitud.observaciones,
+                            estado: solicitud.estado,
                             buttons: $.extend({}, {
                                 show: true,
-                                edit: self.$root.can('editar_solicitud_pago_anticipado') ? true : true,
-                                cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : true,
+                                edit: self.$root.can('editar_solicitud_pago_anticipado') ? true : false,
+                                cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : false,
                                 id: solicitud.id
                             })
                         })

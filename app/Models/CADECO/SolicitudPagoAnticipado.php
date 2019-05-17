@@ -43,8 +43,7 @@ class SolicitudPagoAnticipado extends Transaccion
 
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 72)
-                ->where('opciones', '=', 327681)
-                ->where('estado', '!=', -2);
+                ->where('opciones', '=', 327681);
         });
 
         self::creating(function ($solicitud) {
