@@ -10,6 +10,7 @@ namespace App\Services\CADECO\Finanzas;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\Transaccion;
@@ -69,7 +70,24 @@ class SolicitudPagoAnticipadoService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $solicitudes = $this->repository;
+
+        if(isset($data['numero_folio'])){
+            $solicitudes = $solicitudes->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+        }
+
+        if(isset($data['id_empresa'])){
+            $empresa = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['id_empresa'].'%']])->get();
+            foreach ($empresa as $e){
+                $solicitudes = $solicitudes->whereOr([['id_empresa', '=', $e->id_empresa]]);
+            }
+        }
+
+        if(isset($data['observaciones'])){
+            $solicitudes = $solicitudes->where([['observaciones', 'LIKE', '%'.$data['observaciones'].'%']]);
+        }
+
+        return $solicitudes->paginate($data);
     }
     public function show($id)
     {

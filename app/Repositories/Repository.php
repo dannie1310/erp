@@ -87,6 +87,12 @@ class Repository implements RepositoryInterface
         return $this;
     }
 
+    public function whereOr($where)
+    {
+        $this->model = $this->model->orWhere($where);
+        return $this;
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);
