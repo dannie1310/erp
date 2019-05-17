@@ -4,9 +4,9 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">MÓDULOS</li>
+            <li class="nav-header" v-if="modulos">MÓDULOS</li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="modulos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-signal"></i>
                     <p>
@@ -15,7 +15,7 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item">
+                    <li class="nav-item" v-if="$root.can('consultar_solicitud_pago_anticipado')">
                         <router-link :to="{name: 'pago-anticipado'}" class="nav-link" :class="{active: this.$route.name == 'pago-anticipado'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Pago Anticipado</p>
@@ -32,6 +32,13 @@
     export default {
         name: "contratos-menu",
 
+        computed:{
+            modulos() {
+                return this.$root.can([
+                    'consultar_solicitud_pago_anticipado'
+                ])
+            }
+        },
         methods: {
             mostrarMenu(event) {
                 event.stopPropagation();
