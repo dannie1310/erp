@@ -109,4 +109,9 @@ class Transaccion extends Model
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
+
+    public function getSubtotalAttribute()
+    {
+        return $this->monto - $this->impuesto;
+    }
 }
