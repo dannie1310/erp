@@ -20,7 +20,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <div class="form-group">
-                                            <label><b>Fecha de Solicitud</b></label>
+                                            <label><b>Fecha de Solicitud:</b></label>
                                                 <datepicker v-model = "fecha_solicitud_1"
                                                             name = "fecha_solicitud_1"
                                                             :language = "es"
@@ -37,7 +37,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <div class="form-group">
-                                            <label><b>Fecha Limite de Pago</b></label>
+                                            <label><b>Fecha Limite de Pago:</b></label>
                                                 <datepicker v-model = "fecha_limite_1"
                                                             name = "fecha_limite_1"
                                                             :language = "es"
@@ -55,7 +55,7 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group error-content">
-                                        <label for="tipo">Tipo de Transacción</label>
+                                        <label for="tipo">Tipo de Transacción:</label>
                                         <select
                                                 type="text"
                                                 name="tipo"
@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="form-group error-content">
-                                        <label for="id_antecedente">Transacción </label>
+                                        <label for="id_antecedente">Transacción: </label>
                                         <select
                                                 :disabled="!bandera_transaccion"
                                                 type="text"
@@ -112,17 +112,17 @@
                                                     <table class="table table-striped">
                                                         <tbody>
                                                         <tr>
-                                                            <td class="bg-gray-light"><b>Número de Folio</b><br>
+                                                            <td class="bg-gray-light"><b>Número de Folio:</b><br>
                                                                 {{ transaccion.numero_folio_format}}
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="bg-gray-light" v-if="transaccion.empresa"><b>Empresa</b><br>
+                                                            <td class="bg-gray-light" v-if="transaccion.empresa"><b>Empresa:</b><br>
                                                                 {{ transaccion.empresa.razon_social }}
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="bg-gray-light"><b>Referencia</b><br>
+                                                            <td class="bg-gray-light"><b>Referencia:</b><br>
                                                                {{ transaccion.referencia}}
                                                             </td>
                                                         </tr>
@@ -164,7 +164,7 @@
                                 <!-- Observaciones -->
                                 <div class="col-md-12">
                                     <div class="form-group error-content">
-                                        <label for="observaciones">Observaciones</label>
+                                        <label for="observaciones">Observaciones:</label>
                                         <textarea
                                                 name="observaciones"
                                                 id="observaciones"
@@ -182,7 +182,7 @@
                                 <!-- Costos -->
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="id_costo" class="col-sm-2 col-form-label">Costos</label>
+                                        <label for="id_costo" class="col-sm-2 col-form-label">Costos:</label>
                                         <div class="col-sm-10">
                                             <costo-select
                                                     name="id_costo"

@@ -64,8 +64,8 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
             'fecha_format' => (string)$model->fecha_hora_registro_format,
             'estado' => (int)$model->estado,
-            'cumplimiento' => (string)$model->cumplimiento,
-            'vencimiento' => (string)$model->vencimiento,
+            'cumplimiento' => (string)$model->cumplimiento_form,
+            'vencimiento' => $model->vencimiento_form,
         ];
     }
 
