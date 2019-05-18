@@ -62,7 +62,8 @@ class SolicitudPagoAnticipadoController extends Controller
 
     public function cancelar(Request $request, $id)
     {
-        return $this->service->cancelar($request->all(), $id);
+        $item = $this->service->cancelar($request->all(), $id);
+        return $this->respondWithItem($item);
     }
 
 }

@@ -93,17 +93,9 @@ class SolicitudPagoAnticipadoService
     {
         return $this->repository->show($id);
     }
-    public function cancelar($data, $id){
-        try{
-            DB::connection('cadeco')->beginTransaction();
-            $solicitud = SolicitudPagoAnticipado::query()->find($id);
-            $solicitud->estado = -2;
-            $solicitud->save();
-            DB::connection('cadeco')->commit();
-            return $solicitud;
-        }catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            throw $e;
-        }
+    public function cancelar(array $data, $id){
+        $solicitud = $this->repository;
+        $solicitud = $solicitud->cancelar($id);
+        return $solicitud;
     }
 }

@@ -20,13 +20,17 @@ export default {
         SET_SOLICITUD(state, data) {
             state.currentSolicitud = data
         },
-        DELETE_SOLICITUD(state, id){
-            state.solicitudes = state.solicitudes.filter(solicitud => {
-                return solicitud.id != id;
-            });
-            state.meta.pagination.count = parseInt(state.meta.pagination.count) - 1;
-            state.meta.pagination.total = parseInt(state.meta.pagination.total) - 1;
-            state.meta.pagination.total_pages = parseInt(state.meta.pagination.total) / parseInt(state.meta.pagination.per_page);
+        DELETE_SOLICITUD(state, data){
+                state.currentSolicitud = data
+        },
+        UPDATE_SOLICITUD(state, data) {
+            state.solicitudes = state.solicitudes.map(solicitud => {
+                if (solicitud.id === data.id) {
+                    return Object.assign({}, solicitud, data)
+                }
+                return solicitud
+            })
+            state.currentSolicitud != null ? data : null;
         }
     },
 
@@ -57,7 +61,7 @@ export default {
                     })
             });
         },
-        cancel(context, id) {
+        cancel(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cancelar solicitud de pago anticipado",
@@ -78,7 +82,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI+ id +'/cancelar')
+                                .patch(URI+ payload.id +'/cancelar',{id:payload.id}, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Solicitud cancelada correctamente", {
@@ -86,6 +90,7 @@ export default {
                                         timer: 1500,
                                         buttons: false
                                     }).then(() => {
+                                        context.commit('UPDATE_SOLICITUD', data);
                                         resolve(data);
                                     })
                                 })
