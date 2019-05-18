@@ -208,11 +208,11 @@
                                     <div class="form-group error-content">
                                         <div class="form-group" v-if="pagoAnticipado.estado === 0">
                                             <label><b>Estado:</b></label>
-                                            REGISTRADO
+                                            Registrada
                                         </div>
                                         <div class="form-group" v-if="pagoAnticipado.estado === 2 || pagoAnticipado.estado === -2 ">
                                             <label><b>Estado:</b></label>
-                                            CANCELADO
+                                            Cancelada
                                         </div>
                                     </div>
                                 </div>

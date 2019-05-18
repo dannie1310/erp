@@ -16,9 +16,12 @@
         props: ['value'],
         methods: {
             cancelar() {
-                return this.$store.dispatch('finanzas/solicitud-pago-anticipado/cancel', this.value.id)
+                return this.$store.dispatch('finanzas/solicitud-pago-anticipado/cancel', {id: this.value.id})
+                    // .then(() => {
+                    //     this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', this.value);
+                    // })
                     .then(() => {
-                        this.$store.commit('finanzas/solicitud-pago-anticipado/DELETE_SOLICITUD', this.value.id);
+                        this.$emit('success')
                     })
             },
             destroy() {

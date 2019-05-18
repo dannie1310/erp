@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Finanzas\TransaccionRubro;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudPagoAnticipado extends Transaccion
 {
@@ -70,6 +71,16 @@ class SolicitudPagoAnticipado extends Transaccion
 
     public function subcontrato(){
         return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente');
+    }
+    public function cancelar($id){
+
+        $solicitud = SolicitudPagoAnticipado::find($id);
+        if($solicitud->estado != 0){
+            throw New \Exception('La solicitud de pago anticipado no puede ser cancelada, porque no tiene el estatus "registrada" ');
+        }
+        $solicitud->estado = -2;
+        $solicitud->save();
+        return $solicitud;
     }
 
     private function generaTransaccionRubro()
