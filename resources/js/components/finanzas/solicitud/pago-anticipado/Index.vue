@@ -116,7 +116,8 @@
                                 show: true,
                                 edit: self.$root.can('editar_solicitud_pago_anticipado') ? true : false,
                                 cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : false,
-                                id: solicitud.id
+                                id: solicitud.id,
+                                estado: solicitud.estado
                             })
                         })
                     });
