@@ -23,6 +23,7 @@ class SistemaTransformer extends TransformerAbstract
             'url' => (string) $model->url,
             'icon' => (string) $model->icon,
             'color' => (string) $model->color,
+            'externo' => (bool) $model->externo
         ];
     }
 

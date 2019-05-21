@@ -6,13 +6,16 @@
 
                 <div class="info-box-content">
                     <span class="info-box-number">{{sistema.name.toUpperCase()}}</span>
-                    <router-link :to="{name:sistema.url}">
+                    <router-link :to="{name:sistema.url}" v-if="!sistema.externo">
                         <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
                     </router-link>
+
+                    <a :href="sistema.url" target="_blank" v-else>
+                        <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
+                    </a>
                 </div>
                 <!-- /.info-box-content -->
             </div>
-
             <!-- /.info-box -->
         </div>
     </div>

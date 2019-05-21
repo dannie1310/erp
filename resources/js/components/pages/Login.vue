@@ -13,6 +13,7 @@
             if (!code) {
                 window.location.replace('/oauth/authorize?client_id=' + process.env.MIX_CLIENT_ID + '&response_type=code&redirect_uri=' + process.env.MIX_REDIRECT_URI);
             } else {
+                this.$session.destroy();
                 axios
                     .post('/oauth/token', {
                         client_id: process.env.MIX_CLIENT_ID,
