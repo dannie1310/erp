@@ -10,7 +10,7 @@
                         <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
                     </router-link>
 
-                    <a :href="sistema.url" target="_blank" v-else>
+                    <a :href="`${sistema.url}?origen=${url}`" target="_blank" v-else>
                         <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
                     </a>
                 </div>
@@ -54,6 +54,9 @@
             },
             sistemas() {
                 return this.$store.getters['seguridad/sistema/sistemas']
+            },
+            url() {
+                return process.env.MIX_APP_URL;
             }
         }
     }
