@@ -18,8 +18,6 @@ $api->version('v1', function ($api) {
         $api->post('login', 'App\Http\Controllers\v1\AuthController@login');
         $api->post('logout', 'App\Http\Controllers\v1\AuthController@logout');
         $api->post('setContext', 'App\Http\Controllers\v1\AuthController@setContext');
-        $api->post('getContext', 'App\Http\Controllers\v1\AuthController@getContext');
-        $api->post('refresh', 'App\Http\Controllers\v1\AuthController@refresh');
       /*  $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');*/
         $api->get('obras/paginate', 'App\Http\Controllers\v1\CADECO\ObraController@authPaginate');
         $api->get('obras/por-usuario/{id_usuario}', 'App\Http\Controllers\v1\CADECO\ObraController@porUsuario')->where(['id_usuario' => '[0-9]+']);
