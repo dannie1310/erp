@@ -225,6 +225,7 @@
                 return this.$store.dispatch('contratos/solicitud-movimiento-fg/store', this.$data)
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data);
                     })
             }
         },

@@ -34,23 +34,26 @@ class Repository implements RepositoryInterface
 
     public function all($data = null)
     {
-        if (isset($data['scope'])) {
-            $this->scope($data['scope']);
-        }
+        $this->search();
+        $this->scope();
+        $this->sort();
+        $this->limit();
+
         return $this->model->get();
     }
 
     public function paginate($data)
     {
-        $this->model = $this->model::select([
-            'solicitudes.*',
-            'transacciones.numero_folio',
-            'ctg_tipos_mov_sol.estado_resultante_desc',
-            'ctg_tipos_solicitud.descripcion'
-        ])
+        $this->model = $this->model
             ->join('transacciones','transacciones.id_transaccion', 'solicitudes.id_fondo_garantia')
             ->join('SubcontratosFG.ctg_tipos_mov_sol','ctg_tipos_mov_sol.estado_resultante', 'solicitudes.estado')
             ->join('SubcontratosFG.ctg_tipos_solicitud', 'ctg_tipos_solicitud.id', 'solicitudes.id_tipo_solicitud')
+            ->select([
+                'solicitudes.*',
+                'transacciones.numero_folio',
+                'ctg_tipos_mov_sol.estado_resultante_desc',
+                'ctg_tipos_solicitud.descripcion'
+            ])
         ;
 
         if (count($data)) {
@@ -116,20 +119,48 @@ class Repository implements RepositoryInterface
         $this->model = $this->model->with($relations);
         return $this;
     }
-
-    public function scope($scope)
+    public function search()
     {
-        if (is_string($scope)) {
-            $scope = func_get_args();
-        }
+        if (request()->has('search'))
+        {
+            $this->model = $this->model->where(function($query) {
+                foreach ($this->model->searchable as $col)
+                {
+                    $explode = explode('.', $col);
 
-        foreach ($scope as $s) {
-            $explode = explode(':', $s);
-            $fn = $explode[0];
-            $params = isset($explode[1]) ? $explode[1] : null;
-            $this->model = $this->model->$fn($params);
+                    if (isset($explode[1])) {
+                        $query->orWhereHas($explode[0], function ($q) use ($explode) {
+                            if (isset($explode[2])) {
+                                return $q->whereHas($explode[1], function ($q2) use ($explode) {
+                                    return $q2->where($explode[2], 'LIKE', '%' . request('search') . '%');
+                                });
+                            } else {
+                                return $q->where($explode[1], 'LIKE', '%' . request('search') . '%');
+                            }
+                        });
+                    } else {
+                        $query->orWhere($col, 'LIKE', '%' . request('search') . '%');
+                    }
+                }
+            });
         }
-        return $this;
+    }
+    public function scope()
+    {
+        if (request('scope')) {
+            $scope = request('scope');
+
+            if (is_string($scope)) {
+                $scope = [$scope];
+            }
+
+            foreach ($scope as $s) {
+                $explode = explode(':', $s);
+                $fn = $explode[0];
+                $params = isset($explode[1]) ? $explode[1] : null;
+                $this->model = $this->model->$fn($params);
+            }
+        }
     }
 
     public function where($where)
@@ -143,6 +174,19 @@ class Repository implements RepositoryInterface
         return $this->model->create($data);
     }
 
+    private function limit()
+    {
+        if (request()->has('limit')) {
+            $this->model = $this->model->limit(request('limit'));
+        }
+    }
+
+    public function sort()
+    {
+        if (request('sort')) {
+            $this->model = $this->model->orderBy(request('sort'), request('order'));
+        }
+    }
 
     public function show($id)
     {
