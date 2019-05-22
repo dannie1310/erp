@@ -38,14 +38,16 @@ export default {
 
     actions: {
         paginate(context, payload) {
-            context.commit('SET_FONDOS_GARANTIA', [])
-            axios
-                .get(URI + 'paginate', {params: payload})
-                .then(r => r.data)
-                .then(data => {
-                    context.commit('SET_FONDOS_GARANTIA', data.data)
-                    context.commit('SET_META', data.meta)
-                })
+            return new Promise((resolve, reject) => {
+                axios.get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                       resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
         },
         fetch(context, payload) {
             axios.get(URI, { params: payload })
@@ -97,7 +99,6 @@ export default {
                                         timer: 3000,
                                         buttons: false
                                     }).then(() => {
-                                        context.commit('UPDATE_FONDO_GARANTIA', data);
                                         resolve(data);
                                     })
                                 })

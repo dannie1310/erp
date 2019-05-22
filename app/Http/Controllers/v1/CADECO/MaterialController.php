@@ -42,7 +42,7 @@ class MaterialController extends Controller
      */
     public function __construct(Manager $fractal, MaterialService $service, MaterialTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->fractal = $fractal;

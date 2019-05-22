@@ -44,6 +44,7 @@ class Subcontrato extends Transaccion
         parent::boot();
         self::addGlobalScope('tipo',function ($query) {
             return $query->where('tipo_transaccion', '=', 51)
+                ->where('opciones', '=', 2)
                 ->where('estado', '!=', -2);
         });
         self::creating(function ($subcontrato) {
@@ -117,5 +118,18 @@ class Subcontrato extends Transaccion
     public function getMontoSubcontratoAttribute()
     {
         return $this->monto - $this->impuesto;
+    }
+
+    public function pago_anticipado(){
+        return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
+    }
+
+    public function scopeSinPagoAnticipado($query)
+    {
+        return $query->whereDoesntHave('pago_anticipado');
+    }
+
+    public function getNombre(){
+        return 'SUBCONTRATO';
     }
 }

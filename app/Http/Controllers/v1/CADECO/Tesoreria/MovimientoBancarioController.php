@@ -47,7 +47,7 @@ class MovimientoBancarioController extends Controller
      */
     public function __construct(Manager $fractal, MovimientoBancarioService $service, MovimientoBancarioTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->fractal = $fractal;

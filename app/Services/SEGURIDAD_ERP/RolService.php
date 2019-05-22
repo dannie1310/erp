@@ -152,6 +152,10 @@ class RolService
 
     public function store($data)
     {
+        if (Rol::query()->where('display_name', '=', $data['display_name'])->first())
+        {
+            throw new \Exception('Ya existe un rol registrado con el nombre seleccionado.', 404);
+        }
         $rol = $this->repository->create($data);
 
         if (isset($data['permission_id'])) {

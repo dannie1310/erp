@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\v1;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Almacen;
 use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contabilidad\EstatusPrepoliza;
@@ -68,6 +69,7 @@ class ChartController extends Controller
             $resp = collect( DB::connection('cadeco')->table(DB::raw('Contabilidad.int_polizas WITH (NOLOCK)'))->select(DB::raw("FORMAT(fecha, 'yyyy/MM/dd') as fecha_"), DB::raw(" COUNT(1) AS count"))
                 ->whereBetween('Contabilidad.int_polizas.fecha', [$fechas[0], $fechas[count($fechas)-1]])
                 ->where('Contabilidad.int_polizas.estatus', '=', $estatus->estatus)
+                ->where('Contabilidad.int_polizas.id_obra_cadeco', '=', Context::getIdObra())
                 ->groupBy('Contabilidad.int_polizas.fecha')->get());
 
             if(count($resp) > 0) {

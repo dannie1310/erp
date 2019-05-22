@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Services\IGH\UsuarioService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class UsuarioController extends Controller
@@ -29,11 +30,15 @@ class UsuarioController extends Controller
 
     public function __construct(Manager $fractal, UsuarioService $service, UsuarioTransformer $transformer)
     {
-        $this->middleware('auth');
-        $this->middleware('context');
+        $this->middleware('auth:api');
+        $this->middleware('context')->except('currentUser');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function currentUser(Request $request ) {
+        return response()->json(['user' => $request->user()]);
     }
 }

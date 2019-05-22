@@ -13,8 +13,11 @@ import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 
+//COMPRAS
+import ordenCompra from './modules/compras/orden-compra';
+
 //CONTABILIDAD
-import cierrePeriodo from './modules/contabilidad/cierre-periodo'
+import cierrePeriodo from './modules/contabilidad/cierre-periodo';
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
 import cuentaBanco from './modules/contabilidad/cuenta-banco';
 import cuentaConcepto from './modules/contabilidad/cuenta-concepto';
@@ -38,6 +41,9 @@ import estimacion from './modules/contratos/estimacion';
 import fondoGarantia from './modules/contratos/fondo-garantia';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
+
+//FINANZAS
+import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
@@ -70,9 +76,14 @@ export default new Vuex.Store({
         'cadeco/material': material,
         'cadeco/moneda': moneda,
 
+        'compras/orden-compra' : ordenCompra,
+
+        'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
+
+        'finanzas/solicitud-pago-anticipado': pago_anticipado,
 
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,

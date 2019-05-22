@@ -235,6 +235,20 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * COMPRAS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'compras'], function ($api) {
+
+        /**
+         * ORDEN DE COMPRA
+         */
+        $api->group(['prefix' => 'orden-compra'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@show')->where(['id' => '[0-9]+']);
+        });
+    });
+
+    /**
      * CONTRATOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
@@ -276,6 +290,25 @@ $api->version('v1', function ($api) {
             });
         });
     });
+
+    /**
+     * FINANZAS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {
+
+        /**
+         * SOLICITUD DE PAGO ANTICIPADO
+         */
+        $api->group(['prefix' => 'solicitud-pago-anticipado'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
+
+
+        });
+    });
+
     /**
      * PERSONALIZADO
      */
@@ -353,6 +386,7 @@ $api->version('v1', function ($api) {
     /** IGH */
     $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
         $api->group(['prefix' => 'usuario'], function ($api) {
+            $api->get('currentUser', 'App\Http\Controllers\v1\IGH\UsuarioController@currentUser');
             $api->get('/', 'App\Http\Controllers\v1\IGH\UsuarioController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\IGH\UsuarioController@show')->where(['id' => '[0-9]+']);
         });

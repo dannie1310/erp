@@ -12,6 +12,7 @@ namespace App\Models\CADECO;
 use App\Facades\Context;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\IGH\Usuario;
 
 class Transaccion extends Model
 {
@@ -95,5 +96,38 @@ class Transaccion extends Model
     public function getCumplimientoAttribute($cumplimiento)
     {
         return substr($cumplimiento, 0, 10);
+    }
+
+
+    public function getFechaHoraRegistroFormatAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"Y-m-d h:i:s a");
+
+    }
+    public function getCumplimientoFormAttribute()
+    {
+        $date = date_create($this->cumplimiento);
+        return date_format($date,"Y-m-d");
+
+    }
+    public function getVencimientoFormAttribute()
+    {
+        $date = date_create($this->vencimiento);
+        return date_format($date,"Y-m-d");
+
+    }
+
+    public  function costo(){
+        return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
+    }
+
+    public function usuario(){
+        return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
+    }
+
+    public function getSubtotalAttribute()
+    {
+        return $this->monto - $this->impuesto;
     }
 }

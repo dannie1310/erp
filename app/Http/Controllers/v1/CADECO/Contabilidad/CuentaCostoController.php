@@ -45,7 +45,7 @@ class CuentaCostoController extends Controller
      */
     public function __construct(CuentaCostoService $service, Manager $fractal, CuentaCostoTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

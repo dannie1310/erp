@@ -15,7 +15,7 @@ use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Traits\IghAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Collection;
+use Laravel\Passport\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -28,7 +28,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     AuthorizableContract,
     CanResetPasswordContract
 {
-    use Notifiable, IghAuthenticatable, Authorizable, CanResetPassword, MustVerifyEmail;
+    use Notifiable, IghAuthenticatable, Authorizable, CanResetPassword, MustVerifyEmail, HasApiTokens;
 
 
     /**

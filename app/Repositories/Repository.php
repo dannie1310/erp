@@ -87,6 +87,12 @@ class Repository implements RepositoryInterface
         return $this;
     }
 
+    public function whereOr($where)
+    {
+        $this->model = $this->model->orWhere($where);
+        return $this;
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);
@@ -95,6 +101,10 @@ class Repository implements RepositoryInterface
     public function delete(array $data, $id)
     {
         $this->model->destroy($id);
+    }
+    public function cancelar($id){
+        return $this->model->cancelar($id);
+
     }
 
     public function show($id)

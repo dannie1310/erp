@@ -2,7 +2,7 @@
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
         <!-- Left navbar links -->
-        <ul class="navbar-nav" v-if="$router.currentRoute.name != 'portal'">
+        <ul class="navbar-nav" v-if="$route.name != 'portal'">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
             </li>
@@ -23,8 +23,8 @@
                      <i class="fa fa-sign-out"></i>
                 </a>
             </li>
-            <li class="nav-item" v-if="$router.currentRoute.name != 'portal'">
-                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"><i class="fa fa-th-large"></i></a>
+            <li class="nav-item" v-if="$route.name != 'portal'">
+                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"><i class="fa fa-bars"></i></a>
             </li>
         </ul>
     </nav>
@@ -47,12 +47,19 @@
                         if (success) {
                             this.$store.dispatch('auth/logout')
                                 .then(() => {
-                                    this.$session.destroy();
-                                    this.$router.push({ name: 'login' });
+                                    axios.post('/logout')
+                                        .then(() => {
+                                            this.$session.destroy();
+                                            window.location.replace('/login');
+                                        })
+
                                 })
                                 .catch(error => {
-                                    this.$session.destroy();
-                                    this.$router.push({ name: 'login' });
+                                    axios.post('/ logout')
+                                        .then(() => {
+                                            this.$session.destroy();
+                                            window.location.replace('/login');
+                                        })
                                 })
                         }
                     });

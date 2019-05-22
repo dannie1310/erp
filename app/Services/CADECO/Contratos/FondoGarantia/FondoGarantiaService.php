@@ -19,15 +19,11 @@ class FondoGarantiaService
      * @var Repository
      */
     protected $repository;
-    private $id_usuario;
-    private $usuario;
     private $id_obra;
 
     public function __construct(FondoGarantia $model)
     {
         $this->repository = new Repository($model);
-        $this->id_usuario = auth()->id();
-        $this->usuario = (auth()->user())?auth()->user()->usuario:null;
         $this->id_obra = Context::getIdObra();
     }
 
@@ -55,16 +51,16 @@ class FondoGarantiaService
 
     public function store($data)
     {
-        $data['id_usuario'] = $this->id_usuario;
-        $data['usuario'] = $this->usuario;
+        $data['id_usuario'] = auth()->id();
+        $data['usuario'] = (auth()->user())?auth()->user()->usuario:null;
         $data['id_obra'] = $this->id_obra;
         return $this->repository->create($data);
     }
 
     public function ajustarSaldo(array $data, $id)
     {
-        $data['id_usuario'] = $this->id_usuario;
-        $data['usuario'] = $this->usuario;
+        $data['id_usuario'] = auth()->id();
+        $data['usuario'] = (auth()->user())?auth()->user()->usuario:null;
         $data['id_obra'] = $this->id_obra;
         return $this->repository->ajustarSaldo($data, $id);
     }

@@ -11,6 +11,17 @@
 |
 */
 
+
+Route::get('/', function () {
+    return view('welcome');
+})->middleware('auth');
+
+Auth::routes(['register' => false]);
+
+Route::get('formatos/estimacion/{id}/orden-pago', 'v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
+
 Route::get('{any}', function () {
     return view('welcome');
-})->where('any', '.*');
+})
+    ->middleware('auth')
+    ->where('any', '.*');

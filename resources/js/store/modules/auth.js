@@ -1,7 +1,8 @@
-import {getLoggedinUser, getObra } from './partials/auth';
+import {getLoggedinUser, getObra, getPermisos } from './partials/auth';
 
 const user = getLoggedinUser();
 const obra = getObra();
+const perms = getPermisos();
 
 export default {
     namespaced: true,
@@ -9,7 +10,7 @@ export default {
     state: {
         currentUser: user,
         currentObra: obra,
-        permisos: [],
+        permisos: perms,
         jwt: null,
         isLoggedIn: false,
         loading: false,
@@ -20,15 +21,13 @@ export default {
             state.loading = true;
             state.auth_error = null;
         },
-        loginSuccess(state, payload){
+        loginSuccess(state, payload) {
             state.auth_error = null;
             state.isLoggedin = true;
             state.loading = false;
             state.currentUser = Object.assign({}, payload.user);
             state.jwt = payload.access_token;
-
-            window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + payload.access_token;
-            },
+        },
         loginFailed(state, payload) {
             state.loading = false;
             state.auth_error = payload.error;
@@ -44,7 +43,7 @@ export default {
             this._vm.$session.set('obra', payload.obra);
         },
         setPermisos(state, payload) {
-                state.permisos = Object.assign({}, payload.permisos);
+                state.permisos = payload.permisos;
         }
     },
 

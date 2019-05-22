@@ -41,7 +41,7 @@ class CuentaConceptoController extends Controller
 
     public function __construct(CuentaConceptoService $service, Manager $fractal, CuentaConceptoTransformer $transformer)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
         $this->middleware('context');
 
         $this->service = $service;

@@ -41,11 +41,8 @@ class ContextSession implements Context
             }
 
             if($obras->where('obras.id_obra', '=', $id_obra)->first()) {
-
                 session()->put('db', $database);
                 session()->put('id_obra', $id_obra);
-
-                return $this->auth->claims(['db' => $database, 'obra' => $id_obra])->refresh();
             } else {
                 abort('403', 'Forbidden');
             }
@@ -61,9 +58,11 @@ class ContextSession implements Context
      */
     public function getIdObra()
     {
-        try {
-            return $this->auth->payload()->get('obra');
-        } catch (\Exception $e) {
+        if(request()->header('idobra')) {
+            return request()->header('idobra');
+        } else if (request()->get('idobra')) {
+            return request()->get('idobra');
+        } else {
             try {
                 return session()->get('id_obra');
             } catch (\Exception $e) {
@@ -79,9 +78,11 @@ class ContextSession implements Context
      */
     public function getDatabase()
     {
-        try {
-            return $this->auth->payload()->get('db');
-        } catch (\Exception $e) {
+        if (request()->header('db')) {
+            return request()->header('db');
+        } else if (request()->get('db')) {
+            return request()->get('db');
+        } else {
             try {
                 return session()->get('db');
             } catch (\Exception $e) {
