@@ -128,6 +128,7 @@
                 return this.$store.dispatch('contratos/fondo-garantia/store', {id_subcontrato:this.id_subcontrato})
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data);
                     })
             }
         },

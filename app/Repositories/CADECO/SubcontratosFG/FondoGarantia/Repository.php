@@ -23,16 +23,7 @@ class Repository implements RepositoryInterface
      */
     public function __construct(Model $model)
     {
-        $this->model = $model::select([
-            'fondos_garantia.id_subcontrato',
-            'fondos_garantia.saldo',
-            'transacciones.numero_folio',
-            'transacciones.monto',
-            'empresas.razon_social',
-            'transacciones.referencia'
-        ])
-        ->join('transacciones','transacciones.id_transaccion', 'fondos_garantia.id_subcontrato')
-        ->join('empresas','transacciones.id_empresa', 'empresas.id_empresa');
+        $this->model = $model;
     }
 
     public function create(array $data)
@@ -45,16 +36,35 @@ class Repository implements RepositoryInterface
         return $this->model->find($id);
     }
 
-    public function all($data = null)
+    /*public function all($data = null)
     {
         if (isset($data['scope'])) {
             $this->scope($data['scope']);
         }
         return $this->model->get();
-    }
+    }*/
+    public function all()
+    {
+        $this->search();
+        $this->scope();
+        $this->sort();
+        $this->limit();
 
+        return $this->model->get();
+    }
     public function paginate($data)
     {
+        $this->model = $this->model
+            ->join('transacciones','transacciones.id_transaccion', 'fondos_garantia.id_subcontrato')
+            ->join('empresas','transacciones.id_empresa', 'empresas.id_empresa')
+            ->select([
+                'fondos_garantia.id_subcontrato',
+                'fondos_garantia.saldo',
+                'transacciones.numero_folio',
+                'transacciones.monto',
+                'empresas.razon_social',
+                'transacciones.referencia'
+            ]);
         if (count($data)) {
             #validar si $data['sort'] viene con doble guión __
             $doble_guion = strpos($data['sort'], '__');
@@ -94,20 +104,49 @@ class Repository implements RepositoryInterface
         $this->model = $this->model->with($relations);
         return $this;
     }
-
-    public function scope($scope)
+    public function search()
     {
-        if (is_string($scope)) {
-            $scope = func_get_args();
-        }
+        if (request()->has('search'))
+        {
+            $this->model = $this->model->where(function($query) {
+                foreach ($this->model->searchable as $col)
+                {
+                    $explode = explode('.', $col);
 
-        foreach ($scope as $s) {
-            $explode = explode(':', $s);
-            $fn = $explode[0];
-            $params = isset($explode[1]) ? $explode[1] : null;
-            $this->model = $this->model->$fn($params);
+                    if (isset($explode[1])) {
+                        $query->orWhereHas($explode[0], function ($q) use ($explode) {
+                            if (isset($explode[2])) {
+                                return $q->whereHas($explode[1], function ($q2) use ($explode) {
+                                    return $q2->where($explode[2], 'LIKE', '%' . request('search') . '%');
+                                });
+                            } else {
+                                return $q->where($explode[1], 'LIKE', '%' . request('search') . '%');
+                            }
+                        });
+                    } else {
+                        $query->orWhere($col, 'LIKE', '%' . request('search') . '%');
+                    }
+                }
+            });
         }
-        return $this;
+    }
+
+    public function scope()
+    {
+        if (request('scope')) {
+            $scope = request('scope');
+
+            if (is_string($scope)) {
+                $scope = [$scope];
+            }
+
+            foreach ($scope as $s) {
+                $explode = explode(':', $s);
+                $fn = $explode[0];
+                $params = isset($explode[1]) ? $explode[1] : null;
+                $this->model = $this->model->$fn($params);
+            }
+        }
     }
 
     public function where($where)
@@ -121,6 +160,19 @@ class Repository implements RepositoryInterface
         $item = $this->show($id);
         $item->ajustarSaldo($data);
         return $item;
+    }
+    private function limit()
+    {
+        if (request()->has('limit')) {
+            $this->model = $this->model->limit(request('limit'));
+        }
+    }
+
+    public function sort()
+    {
+        if (request('sort')) {
+            $this->model = $this->model->orderBy(request('sort'), request('order'));
+        }
     }
 
 }

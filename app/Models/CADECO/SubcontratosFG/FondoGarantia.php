@@ -34,6 +34,15 @@ class FondoGarantia extends Model
             if(!(float) $subcontrato->retencion>0){
                 throw New \Exception('La retención de fondo de garantía establecida en el subcontrato no es mayor a 0, el fondo de garantía no puede generarse');
             }
+
+            /*
+             * se valida que no exista un fondo de garantía registrado previamente para el subcontrato
+             * */
+            $fondo_previo = Subcontrato::find($fondo->id_subcontrato)->fondo_garantia;
+            if($fondo_previo){
+                throw New \Exception('El subcontrato selecciondo ya tiene un fondo de garantía generado');
+            }
+
             $fondo->created_at = date('Y-m-d h:i:s');
             $fondo->usuario_registra = $subcontrato->usuario_registra;
         });
