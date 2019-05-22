@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <solicitud-movimiento-fondo-garantia-create :tipo_boton="1"></solicitud-movimiento-fondo-garantia-create>
+            <solicitud-movimiento-fondo-garantia-create :tipo_boton="1" @created="paginate()"></solicitud-movimiento-fondo-garantia-create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -42,15 +42,29 @@
                 ],
                 data: [],
                 total: 0,
-                query: {
-                }
+                query: {},
+                cargando: false
             }
         },
         mounted() {
+            this.query.include = 'subcontrato.empresa';
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
         methods: {
-            paginate(payload = {}) {
-                return this.$store.dispatch('contratos/solicitud-movimiento-fg/paginate', payload)
+            paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('contratos/solicitud-movimiento-fg/paginate', {
+                    params: this.query
+                }).then(data => {
+                    this.$store.commit('contratos/solicitud-movimiento-fg/SET_SOLICITUDES', data.data);
+                    this.$store.commit('contratos/solicitud-movimiento-fg/SET_META', data.meta);
+                }).finally(() => {
+                    this.cargando = false;
+                })
             }
         },
         computed: {
@@ -60,6 +74,9 @@
             meta(){
                 return this.$store.getters['contratos/solicitud-movimiento-fg/meta'];
             },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
         },
         watch: {
             solicitudes: {
@@ -98,10 +115,16 @@
                 deep: true
             },
             query: {
-                handler (query) {
-                    this.paginate(query)
+                handler () {
+                    this.paginate()
                 },
                 deep: true
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
             }
         },
     }

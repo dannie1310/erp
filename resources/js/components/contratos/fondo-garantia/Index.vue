@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <fondo-garantia-create></fondo-garantia-create>
+            <fondo-garantia-create @created="paginate()"></fondo-garantia-create>
         </div>
 
         <div class="col-12">
@@ -43,16 +43,31 @@
                 ],
                 data: [],
                 total: 0,
-                query: {
-                }
+                query: {},
+                cargando: false
             }
         },
         mounted() {
-
+            this.query.include = 'subcontrato.empresa';
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
         methods: {
-            paginate(payload = {}) {
-                return this.$store.dispatch('contratos/fondo-garantia/paginate', payload)
+            paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('contratos/fondo-garantia/paginate', {
+                    params: this.query
+                })
+                    .then(data => {
+                        this.$store.commit('contratos/fondo-garantia/SET_FONDOS_GARANTIA', data.data);
+                        this.$store.commit('contratos/fondo-garantia/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             }
         },
         computed: {
@@ -62,6 +77,10 @@
             meta(){
                 return this.$store.getters['contratos/fondo-garantia/meta'];
             },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
+
         },
         watch: {
             fondosGarantia: {
@@ -98,10 +117,16 @@
                 deep: true
             },
             query: {
-                handler (query) {
-                    this.paginate({...query, include: 'subcontrato.empresa'})
+                handler () {
+                    this.paginate()
                 },
                 deep: true
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
             }
         },
     }

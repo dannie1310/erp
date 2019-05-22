@@ -143,6 +143,7 @@
                      })
                 * */
                 this.find({id: this.id}).then(data=>{
+                    this.id_fondo_garantia=data.id
                     this.fondo_garantia = data
                     this.saldo_resultante= data.saldo
                     $(this.$refs.modal).modal('show');
@@ -169,9 +170,10 @@
                     params: {include : 'subcontrato.empresa,subcontrato.moneda'}
                 })
                     .then((data) => {
+                        this.$store.commit('contratos/fondo-garantia/UPDATE_FONDO_GARANTIA', data);
                         $(this.$refs.modal).modal('hide');
                     })
-            }
+            },
         },
 
         computed: {
