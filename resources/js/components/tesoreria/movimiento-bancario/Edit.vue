@@ -150,7 +150,7 @@
                                                 class="form-control"
                                                 :value="movimiento.fecha"
                                                 @input="updateAttribute"
-                                                v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
+                                                v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                 data-vv-as="Fecha"
                                                 :class="{'is-invalid': errors.has('fecha')}"
                                         >
@@ -169,7 +169,7 @@
                                                 class="form-control"
                                                 :value="movimiento.transaccion.cumplimiento"
                                                 @input="updateAttribute"
-                                                v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
+                                                v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                 data-vv-as="Cumplimiento"
                                                 :class="{'is-invalid': errors.has('cumplimiento')}"
                                         >

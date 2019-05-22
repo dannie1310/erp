@@ -35,7 +35,7 @@
                                                 id="fecha"
                                                 class="form-control"
                                                 v-model="fecha"
-                                                v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
+                                                v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                 data-vv-as="Fecha"
                                                 :class="{'is-invalid': errors.has('fecha')}"
                                         >
