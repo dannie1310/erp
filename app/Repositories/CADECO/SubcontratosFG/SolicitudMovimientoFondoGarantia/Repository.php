@@ -28,16 +28,7 @@ class Repository implements RepositoryInterface
          * NO PUEDE HABER DOS CAMPOS CON EL MISMO NOMBRE PORQUE NO PERMITE CAMBIAR DE PÁGINA
          * @todo
          * */
-        $this->model = $model::select([
-            'solicitudes.*',
-            'transacciones.numero_folio',
-            'ctg_tipos_mov_sol.estado_resultante_desc',
-            'ctg_tipos_solicitud.descripcion'
-        ])
-            ->join('transacciones','transacciones.id_transaccion', 'solicitudes.id_fondo_garantia')
-            ->join('SubcontratosFG.ctg_tipos_mov_sol','ctg_tipos_mov_sol.estado_resultante', 'solicitudes.estado')
-            ->join('SubcontratosFG.ctg_tipos_solicitud', 'ctg_tipos_solicitud.id', 'solicitudes.id_tipo_solicitud')
-            ;
+        $this->model = $model;
 
     }
 
@@ -51,6 +42,16 @@ class Repository implements RepositoryInterface
 
     public function paginate($data)
     {
+        $this->model = $this->model::select([
+            'solicitudes.*',
+            'transacciones.numero_folio',
+            'ctg_tipos_mov_sol.estado_resultante_desc',
+            'ctg_tipos_solicitud.descripcion'
+        ])
+            ->join('transacciones','transacciones.id_transaccion', 'solicitudes.id_fondo_garantia')
+            ->join('SubcontratosFG.ctg_tipos_mov_sol','ctg_tipos_mov_sol.estado_resultante', 'solicitudes.estado')
+            ->join('SubcontratosFG.ctg_tipos_solicitud', 'ctg_tipos_solicitud.id', 'solicitudes.id_tipo_solicitud')
+        ;
 
         if (count($data)) {
             #validar si $data['sort'] viene con doble guión __
