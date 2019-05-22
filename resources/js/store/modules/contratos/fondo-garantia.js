@@ -99,7 +99,6 @@ export default {
                                         timer: 3000,
                                         buttons: false
                                     }).then(() => {
-                                        context.commit('UPDATE_FONDO_GARANTIA', data);
                                         resolve(data);
                                     })
                                 })
