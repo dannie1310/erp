@@ -286,7 +286,7 @@ export const routes = [
             },
 
             {
-                path: '/sao/contratos/fondo-garantia',
+                path: 'fondo-garantia',
                 component: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
                 meta: {
                     middleware: [auth, context]
@@ -308,7 +308,7 @@ export const routes = [
             },
 
             {
-                path: '/sao/contratos/fondo-garantia/solicitud-movimiento',
+                path: 'solicitud-movimiento',
                 components: {
                     default: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Layout.vue'),
                 },
