@@ -31,7 +31,9 @@
                 </ul>
             </li>
 
-            <li class="nav-item" v-if="$root.can('consultar_fondo_garantia')">
+            <li class="nav-item" v-if="$root.can('consultar_solicitud_movimiento_fondo_garantia') || $root.can('registrar_solicitud_movimiento_fondo_garantia') || $root.can('cancelar_solicitud_movimiento_fondo_garantia')
+            || $root.can('autorizar_solicitud_movimiento_fondo_garantia') || $root.can('rechazar_solicitud_movimiento_fondo_garantia') || $root.can('revertir_autorizacion_solicitud_movimiento_fondo_garantia') || $root.can('consultar_detalle_fondo_garantia') || $root.can('generar_fondo_garantia') || $root.can('consultar_detalle_fondo_garantia')
+            || $root.can('registrar_solicitud_movimiento_fondo_garantia')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>
                         Gestión de Fondos de Garantía
@@ -39,7 +41,8 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" >
+                    <li class="nav-item" v-if="$root.can('consultar_detalle_fondo_garantia') || $root.can('generar_fondo_garantia') || $root.can('consultar_detalle_fondo_garantia')
+            || $root.can('registrar_solicitud_movimiento_fondo_garantia')">
                         <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'fondo-garantia'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Fondos de Garantía</p>
