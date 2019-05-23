@@ -39,12 +39,19 @@
                 <h5>Acceso Rápido</h5>
                 <hr class="mb-2">
                 <div class="d-block"   v-for="(sistema, i) in sistemas">
-                    <router-link :to="{name: sistema.url}" class="d-flex flex-wrap mb-3">
+                    <router-link :to="{name: sistema.url}" class="d-flex flex-wrap mb-3" v-if="!sistema.externo">
                         <div :class="sistema.color+' elevation-2 text-center'" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
                             <i :class="sistema.icon"></i>
                         </div>
                         {{sistema.name}}
                     </router-link>
+
+                    <a :href="`${sistema.url}?origen=${url}`" target="_blank" class="d-flex flex-wrap mb-3" v-else>
+                        <div :class="sistema.color+' elevation-2 text-center'" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
+                            <i :class="sistema.icon"></i>
+                        </div>
+                        {{sistema.name}}
+                    </a>
                 </div>
             </div>
         </aside>
@@ -86,6 +93,9 @@
             },
             sistemas() {
                 return this.$store.getters['seguridad/sistema/sistemas']
+            },
+            url() {
+                return process.env.MIX_APP_URL;
             }
         }
     }

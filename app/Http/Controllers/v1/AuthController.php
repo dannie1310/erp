@@ -29,7 +29,7 @@ class AuthController extends Controller
      */
     public function __construct(AuthService $auth)
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'setContext']]);
         $this->middleware('context', ['except' => ['login', 'logout', 'setContext', 'refresh', 'obras']]);
 
         $this->auth = $auth;
@@ -93,6 +93,7 @@ class AuthController extends Controller
      */
     public function setContext(SetContextRequest $request)
     {
+        //dd($request->all());
         $this->auth->setContext($request->only(['db', 'id_obra']));
         $obra = Obra::query()->find($request->id_obra);
 
