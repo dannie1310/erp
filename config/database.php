@@ -61,6 +61,18 @@ return [
             'engine' => null,
         ],
 
+        'modulosao' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_MODULOSAO', 'localhost'),
+            'port' => env('DB_PORT_MODULOSAO', '1433'),
+            'database' => env('DB_DATABASE_MODULOSAO', 'forge'),
+            'username' => env('DB_USERNAME_MODULOSAO', 'forge'),
+            'password' => env('DB_PASSWORD_MODULOSAO', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
         'seguridad' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST_SEGURIDAD', 'localhost'),
