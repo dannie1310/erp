@@ -74,7 +74,7 @@ class DistribucionRecursoRemesaPartidaTransformer extends TransformerAbstract
     public function includeEstado(DistribucionRecursoRemesaPartida $model)
     {
         if($estado = $model->estado){
-            return $this->item($estado, new )
+            return $this->item($estado, new CtgEstadoDistribucionPartidaTransformer);
         }
         return null;
     }
