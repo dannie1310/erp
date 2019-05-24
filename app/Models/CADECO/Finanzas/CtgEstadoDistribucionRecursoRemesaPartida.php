@@ -15,5 +15,4 @@ class CtgEstadoDistribucionRecursoRemesaPartida extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.ctg_estado_distribucion_recursos_rem_partidas';
-    protected $primaryKey = 'id';
 }

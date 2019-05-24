@@ -16,14 +16,17 @@ class DistribucionRecursoRemesaPartida extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.distribucion_recursos_rem_partidas';
-    protected $primaryKey = 'id';
     public $timestamps = false;
 
     public function distribucionRecurso(){
         return $this->hasMany(DistribucionRecursoRemesa::class, 'id', 'id_distribucion_recurso');
     }
 
-    public function documentos(){
+    public function documentoLiberado(){
         return $this->belongsTo(DocumentoLiberado::class, 'id_documento', 'IDDocumento');
+    }
+
+    public function estado(){
+        return $this->belongsTo(CtgEstadoDistribucionRecursoRemesaPartida::class, 'estado', 'id');
     }
 }
