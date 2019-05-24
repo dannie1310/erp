@@ -21,4 +21,9 @@ class Documento extends Model
     public function remesa(){
         return $this->hasMany(Remesa::class, 'IDRemesa', 'IDRemesa');
     }
+
+    public function documentoLiberado()
+    {
+        return $this->belongsTo(DocumentoLiberado::class, 'IDDocumento', 'IDDocumento');
+    }
 }

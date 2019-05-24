@@ -9,6 +9,7 @@
 namespace App\Models\MODULOSSAO\BaseDatos;
 
 
+use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
 
 class BaseDato extends Model
@@ -17,4 +18,13 @@ class BaseDato extends Model
     protected $table = 'BaseDatos.BaseDatos';
     protected $primaryKey = 'IDBaseDatos';
     public $timestamps = false;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->where('Nombre', '=', Context::getDatabase());
+        });
+    }
 }
