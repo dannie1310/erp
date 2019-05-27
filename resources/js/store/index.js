@@ -43,6 +43,7 @@ import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
 
 //FINANZAS
+import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
 
 //TESORERIA
@@ -83,6 +84,7 @@ export default new Vuex.Store({
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
 
+        'finanzas/distribuir_recurso_remesa': distribuir_recurso_remesa,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
 
         'contabilidad/cierre-periodo': cierrePeriodo,

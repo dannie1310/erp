@@ -384,6 +384,17 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'distribuir-recursos-remesa',
+                name: 'distribuir-recursos-remesa',
+                component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
+                meta: {
+                    title: 'Distribuir Recursos Autorizados de Remesa',
+                    breadcrumb: {name: 'DISTRIBUIR RECURSOS AUTORIZADOS DE REMESA', parent: 'finanzas'},
+                    middleware: [auth, context],
+                    // permission: 'consultar_cierre_periodo'
+                }
+            },
         ]
     },
     {
