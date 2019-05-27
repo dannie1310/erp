@@ -302,8 +302,14 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
+        });
 
-
+        /**
+         * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
+         */
+        $api->group(['prefix' => 'distribuir-recursos-remesa'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
         });
     });
 

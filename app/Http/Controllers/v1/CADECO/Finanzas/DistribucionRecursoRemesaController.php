@@ -17,7 +17,9 @@ use League\Fractal\Manager;
 
 class DistribucionRecursoRemesaController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        store as protected traitStore;
+    }
 
     /**
      * @var DistribucionRecursoRemesaService
@@ -48,5 +50,10 @@ class DistribucionRecursoRemesaController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function store(StoreDistribucionRecursoRemesaRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

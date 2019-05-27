@@ -27,4 +27,10 @@ class DistribucionRecursoRemesaService
     {
         $this->repository = new Repository($model);
     }
+
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
+    }
+
 }

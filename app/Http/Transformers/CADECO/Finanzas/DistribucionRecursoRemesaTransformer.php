@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Http\Transformers\MODULOSSAO\ControlRemesas\RemesaLiberadaTransformer;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use League\Fractal\TransformerAbstract;
@@ -45,6 +46,10 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param DistribucionRecursoRemesa $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeRemesaLiberada(DistribucionRecursoRemesa $model)
     {
         if($remesa = $model->remesaLiberada){
@@ -53,4 +58,25 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param DistribucionRecursoRemesa $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuarioRegistro(DistribucionRecursoRemesa $model){
+        if($usuario = $model->usuarioRegistro){
+            return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param DistribucionRecursoRemesa $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuarioCancelo(DistribucionRecursoRemesa $model){
+        if($usuario = $model->usuarioCancelo){
+            return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
 }
