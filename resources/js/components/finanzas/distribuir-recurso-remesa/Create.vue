@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_solicitud_pago_anticipado')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button  @click="init" v-if="$root.can('registrar_solicitud_pago_anticipado')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Distribuir
@@ -15,6 +15,30 @@
                         </button>
                     </div>
                     <form role="form" @submit.prevent="validate">
+
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group error-content">
+                                        <label for="id_remesa">Remesas Autorizada: </label>
+                                        <select
+                                                type="text"
+                                                name="id_remesa"
+                                                data-vv-as="Remesa Autorizada"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="id_remesa"
+                                                v-model="id_remesa"
+                                                :class="{'is-invalid': errors.has('id_remesa')}"
+                                        >
+                                            <option value>-- Seleccione una Remesa --</option>
+                                            <option v-for="rem in remesas" :value="rem.id">{{ rem.folio }}</option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_remesa')">{{ errors.first('id_remesa') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -32,14 +56,49 @@
         name: "distribuir-recurso-remesa-create",
         data() {
             return {
-
+                id_remesa : '',
+                remesas : [],
+                cargando: false
             }
         },
         computed: {
-
+            datosContables() {
+                return this.$store.getters['auth/datosContables']
+            }
         },
         methods: {
+            init() {
+                this.cargando = true;
+                $(this.$refs.modal).modal('show');
 
+                this.id_remesa = '';
+                this.remesas = [];
+
+                this.$validator.reset()
+                this.cargando = false;
+
+            },
+
+            getRemesa() {
+                this.cargando = true;
+                return this.$store.dispatch('finanzas/remesa/index', {
+                    params: {}
+                })
+                    .then(data => {
+                        this.remesas = data;
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
+            },
+
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store()
+                    }
+                });
+            },
         },
         watch: {
 

@@ -311,6 +311,13 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
         });
+
+        /**
+         * REMESA AUTORIZADA
+         */
+        $api->group(['prefix' => 'remesa'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\MODULOSSAO\RemesaLiberadaController@index');
+        });
     });
 
     /**

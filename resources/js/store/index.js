@@ -45,6 +45,7 @@ import subcontrato from './modules/contratos/subcontrato';
 //FINANZAS
 import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
+import remesa from './modules/finanzas/remesa';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
@@ -86,6 +87,7 @@ export default new Vuex.Store({
 
         'finanzas/distribuir_recurso_remesa': distribuir_recurso_remesa,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
+        'finanzas/remesa': remesa,
 
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
