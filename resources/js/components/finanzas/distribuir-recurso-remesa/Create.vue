@@ -58,6 +58,7 @@
             return {
                 id_remesa : '',
                 remesas : [],
+                documentos : [],
                 cargando: false
             }
         },
@@ -76,6 +77,7 @@
 
                     this.id_remesa = '';
                     this.remesas = [];
+                    this.documentos = [];
 
                     this.$validator.reset()
                     this.cargando = false;
@@ -94,6 +96,27 @@
                     .then(data => {
                         this.remesas = data.data;
                     })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
+            },
+
+            getDocumentos(){
+                this.documentos = [];
+                this.cargando = true;
+                let self = this
+                return self.$store.dispatch('finanzas/remesa/find',{
+                    id: this.id_remesa,
+                    params: {
+                        include: 'documento'
+                    }
+                })
+                    .then(data => {
+                        this.documentos = data;
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
             },
 
             validate() {
@@ -105,7 +128,11 @@
             },
         },
         watch: {
-
+            id_remesa(value){
+                if(value){
+                    this.getDocumentos();
+                }
+            }
         }
     }
 </script>
