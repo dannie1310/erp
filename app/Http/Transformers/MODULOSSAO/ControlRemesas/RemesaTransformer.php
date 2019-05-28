@@ -37,6 +37,9 @@ class RemesaTransformer extends TransformerAbstract
     public function transform(Remesa $model){
         return [
             'id' => $model->getKey(),
+            'año' => $model->Anio,
+            'semana' => $model->NumeroSemana,
+            'tipo' => $model->getTipoAttibute(),
             'folio' => $model->Folio
         ];
     }

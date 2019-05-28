@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 class BaseDato extends Model
 {
     protected $connection = 'modulosao';
-    protected $table = 'BaseDatos.BaseDatos';
+    protected $table = 'BasesDatos.BasesDatos';
     protected $primaryKey = 'IDBaseDatos';
     public $timestamps = false;
 

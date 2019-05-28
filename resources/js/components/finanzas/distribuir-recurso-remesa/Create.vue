@@ -32,7 +32,7 @@
                                                 :class="{'is-invalid': errors.has('id_remesa')}"
                                         >
                                             <option value>-- Seleccione una Remesa --</option>
-                                            <option v-for="rem in remesas" :value="rem.id">{{ rem.folio }}</option>
+                                            <option v-for="rem in remesas" :value="rem.id">Año {{rem.remesa.año}}, Semana {{rem.remesa.semana}} Remesa {{rem.remesa.tipo}} ({{ rem.remesa.folio }})</option>
                                         </select>
                                         <div class="invalid-feedback" v-show="errors.has('id_remesa')">{{ errors.first('id_remesa') }}</div>
                                     </div>
@@ -64,7 +64,7 @@
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
-            }
+            },
         },
         methods: {
             init() {
@@ -79,21 +79,21 @@
 
                     this.$validator.reset()
                     this.cargando = false;
+                    this.getRemesas();
                 }
             },
 
-            getRemesa() {
+            getRemesas() {
                 this.cargando = true;
                 let self = this
                 return self.$store.dispatch('finanzas/remesa/index', {
-                    params: {}
+                    params: {
+                        include : 'remesa'
+                    }
                 })
                     .then(data => {
-                        this.remesas = data;
+                        this.remesas = data.data;
                     })
-                    .finally(() => {
-                        this.cargando = false;
-                    });
             },
 
             validate() {
