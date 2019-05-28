@@ -17,14 +17,13 @@ export default {
     },
 
     actions: {
-        index(context, payload = {}) {
+        index(context, payload) {
             return new Promise((resolve, reject) => {
-
                 axios
-                    .get(URI, payload.config)
+                    .get(URI, { params: payload.params })
                     .then(r => r.data)
                     .then((data) => {
-                        resolve(data.data);
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error)
@@ -35,10 +34,10 @@ export default {
 
     getters: {
         remesas(state) {
-            return state.remesas
+            return state.remesas;
         },
         currentRemesa(state) {
-            return state.currentRemesa
+            return state.currentRemesa;
         }
     }
 }
