@@ -86,6 +86,10 @@
                 this.loading = true;
                 this.$session.set('permisos', [])
                 this.$store.commit("auth/setPermisos", [])
+
+                delete window.axios.defaults.headers.common['db'];
+                delete window.axios.defaults.headers.common['idobra'];
+
                 return new Promise((res, rej) => {
                     axios.post('/auth/setContext', {db: database, id_obra: id_obra})
                         .then(r => r.data)
