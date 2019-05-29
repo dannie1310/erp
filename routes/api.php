@@ -313,10 +313,11 @@ $api->version('v1', function ($api) {
         });
 
         /**
-         * REMESA AUTORIZADA
+         * REMESA
          */
         $api->group(['prefix' => 'remesa'], function ($api){
-            $api->get('/', 'App\Http\Controllers\v1\MODULOSSAO\RemesaLiberadaController@index');
+            $api->get('/', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@show')->where(['id' => '[0-9]+']);
         });
     });
 

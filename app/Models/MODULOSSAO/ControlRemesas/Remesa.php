@@ -41,6 +41,16 @@ class Remesa extends Model
         return $this->belongsTo(Proyecto::class, 'IDProyecto', 'IDProyecto');
     }
 
+    public function remesaLiberada()
+    {
+        return $this->belongsTo(RemesaLiberada::class, 'IDRemesa', 'IDRemesa');
+    }
+
+    public function scopeLiberada($query)
+    {
+        return $query->has('remesaLiberada');
+    }
+
     public function getTipoAttibute(){
         if($this->IDTipoRemesa == 1){
             return 'Ordinaria';

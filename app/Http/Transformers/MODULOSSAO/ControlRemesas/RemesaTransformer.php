@@ -8,8 +8,6 @@
 
 namespace App\Http\Transformers\MODULOSSAO\ControlRemesas;
 
-
-use App\Http\Transformers\MODULOSSAO\Proyectos\ProyectosTransformer;
 use App\Models\MODULOSSAO\ControlRemesas\Remesa;
 use League\Fractal\TransformerAbstract;
 
@@ -21,8 +19,7 @@ class RemesaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'documento',
-        'proyecto'
+        'documento'
     ];
 
     /**
@@ -40,7 +37,8 @@ class RemesaTransformer extends TransformerAbstract
             'año' => $model->Anio,
             'semana' => $model->NumeroSemana,
             'tipo' => $model->getTipoAttibute(),
-            'folio' => $model->Folio
+            'folio' => $model->Folio,
+            'proyecto' => $model->IDProyecto
         ];
     }
 
@@ -52,18 +50,6 @@ class RemesaTransformer extends TransformerAbstract
     {
         if($documento = $model->documento){
             return $this->collection($documento, new DocumentoTransformer);
-        }
-        return null;
-    }
-
-    /**
-     * @param Remesa $model
-     * @return \League\Fractal\Resource\Item|null
-     */
-    public function includeProyecto(Remesa $model)
-    {
-        if($proyecto = $model->proyecto){
-            return $this->item($proyecto, new ProyectosTransformer);
         }
         return null;
     }

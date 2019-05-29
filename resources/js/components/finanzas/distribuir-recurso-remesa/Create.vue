@@ -32,7 +32,7 @@
                                                 :class="{'is-invalid': errors.has('id_remesa')}"
                                         >
                                             <option value>-- Seleccione una Remesa --</option>
-                                            <option v-for="rem in remesas" :value="rem.id">Año {{rem.remesa.año}}, Semana {{rem.remesa.semana}} Remesa {{rem.remesa.tipo}} ({{ rem.remesa.folio }})</option>
+                                            <option v-for="rem in remesas" :value="rem.id">Año {{rem.año}}, Semana {{rem.semana}} Remesa {{rem.tipo}} ({{ rem.folio }})</option>
                                         </select>
                                         <div class="invalid-feedback" v-show="errors.has('id_remesa')">{{ errors.first('id_remesa') }}</div>
                                     </div>
@@ -90,7 +90,9 @@
                 let self = this
                 return self.$store.dispatch('finanzas/remesa/index', {
                     params: {
-                        include : 'remesa'
+                        scope: 'liberada',
+                        sort: 'FechaHoraRegistro',
+                        order: 'DESC'
                     }
                 })
                     .then(data => {
@@ -106,13 +108,13 @@
                 this.cargando = true;
                 let self = this
                 return self.$store.dispatch('finanzas/remesa/find',{
-                    id: this.id_remesa,
+                    id: self.id_remesa,
                     params: {
                         include: 'documento'
                     }
                 })
                     .then(data => {
-                        this.documentos = data;
+                        this.documentos = data.documento.data;
                     })
                     .finally(() => {
                         this.cargando = false;
