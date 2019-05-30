@@ -386,14 +386,31 @@ export const routes = [
             },
             {
                 path: 'distribuir-recursos-remesa',
-                name: 'distribuir-recursos-remesa',
-                component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
-                meta: {
-                    title: 'Distribuir Recursos Autorizados de Remesa',
-                    breadcrumb: {name: 'DISTRIBUIR RECURSOS AUTORIZADOS DE REMESA', parent: 'finanzas'},
-                    middleware: [auth, context],
-                    // permission: 'consultar_cierre_periodo'
-                }
+                component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue'),
+                children: [
+                    {
+                        path: 'distribuir-recursos-remesa',
+                        name: 'distribuir-recursos-remesa',
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
+                        meta: {
+                            title: 'Distribuir Recursos Autorizados de Remesa',
+                            breadcrumb: {name: 'DISTRIBUIR RECURSOS DE REMESA', parent: 'finanzas'},
+                            middleware: [auth, context],
+                            // permission: 'consultar_cierre_periodo'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'distribuir-recurso-remesa-create',
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
+                        meta: {
+                            title: 'Registrar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recursos-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_solicitud_pago_anticipado'
+                        }
+                    }
+                ]
             },
         ]
     },

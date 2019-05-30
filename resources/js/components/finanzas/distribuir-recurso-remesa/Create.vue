@@ -1,18 +1,14 @@
 <template>
     <span>
-        <button  @click="init" v-if="$root.can('registrar_solicitud_pago_anticipado')" class="btn btn-app btn-info pull-right" :disabled="cargando">
-            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-plus" v-else></i>
-            Registrar Distribuir
-        </button>
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR DISTRIBUCIÓN DE RECURSOS AUTORIZADOS DE REMESA</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+        <div class="row">
+            <div class="col-12">
+                <div class="invoice p-3 mb-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>
+                                <i class="fa fa-list"></i> Recursos Autorizados
+                            </h4>
+                        </div>
                     </div>
                     <form role="form" @submit.prevent="validate">
 
@@ -38,6 +34,77 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="invoice p-3 mb-3">
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <h3>Documentos Liberados de la Remesa</h3>
+                                            </div>
+                                            <div class="col-3">
+                                                <h6 align="right">Total: 15</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                <div  class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Número Folio</th>
+                                                <th>Referencia</th>
+                                                <th>Importe</th>
+                                                <th>Tipo Cambio</th>
+                                                <th>Moneda</th>
+                                                <th>Tipo Cambio Actual</th>
+                                                <th>Importe Pesos</th>
+                                                <th>Seleccionar</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(doc, key) in documentos">
+                                                    <td>{{key+1}}</td>
+                                                    <td>{{doc.numero_folio}}</td>
+                                                    <td>{{doc.referencia}}</td>
+                                                    <td>{{doc.monto_total}}</td>
+                                                    <td>{{doc.tipo_cambio}}</td>
+                                                    <td>{{doc.moneda}}</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td><input type="checkbox" :value="doc.id" v-model="checkedDocumentos"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                                        <form role="form" @submit.prevent="validate">
+                                            <div class="row" align="right">
+                                                <div class="table-responsive col-md-12">
+                                                    <div class="col-6">
+                                                        <div class="table-responsive">
+                                                            <table class="table">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th style="width:50%" class="bg-gray-light">Monto Total Remesa:</th>
+                                                                        <td class="bg-gray-light" align="right">10000</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Documentos Seleccionados:</th>
+                                                                        <td align="right">0 <span>Checked names: {{ checkedDocumentos }}</span></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="modal-footer">
@@ -59,8 +126,12 @@
                 id_remesa : '',
                 remesas : [],
                 documentos : [],
+                checkedDocumentos: [],
                 cargando: false
             }
+        },
+        mounted() {
+            this.getRemesas();
         },
         computed: {
             datosContables() {
