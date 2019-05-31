@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\CADECO\BancoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Models\CADECO\Finanzas\CuentaBancariaProveedor;
 use League\Fractal\TransformerAbstract;
@@ -43,6 +44,10 @@ class CuentaBancariaProveedorTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param CuentaBancariaProveedor $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeEmpresa(CuentaBancariaProveedor $model)
     {
         if ($empresa = $model->empresa) {
@@ -51,10 +56,14 @@ class CuentaBancariaProveedorTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param CuentaBancariaProveedor $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeBanco(CuentaBancariaProveedor $model)
     {
         if ($empresa = $model->banco) {
-            return $this->item($empresa, new EmpresaTransformer);
+            return $this->item($empresa, new BancoTransformer);
         }
         return null;
     }

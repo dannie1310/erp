@@ -77,8 +77,7 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td>
-                                                        <select
-                                                              class="form-control"
+                                                        <select class="form-control"
                                                               :name="`id_cuenta_abono[${i}]`"
                                                               v-model="doc.id_cuenta_abono"
                                                               v-validate="{required: true}"
@@ -86,7 +85,7 @@
                                                               :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
                                                         >
                                                              <option value>-- Selecciona una cuenta --</option>
-                                                             <option v-for="cuenta in doc.empresa.cuentasBancariasProveedor.data" :value="cuenta.id">{{ cuenta }} </option>
+                                                             <option v-for="cuenta in doc.empresa.cuentasBancariasProveedor.data" :value="cuenta.id">{{cuenta.banco.complemento.nombre_corto}} {{ cuenta.cuenta }}</option>
                                                         </select>
                                                         <div class="invalid-feedback"
                                                             v-show="errors.has(`id_cuenta[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
@@ -218,7 +217,7 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor']
+                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco']
                     }
                 })
                     .then(data => {

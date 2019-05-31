@@ -21,7 +21,7 @@ class CuentaBancariaProveedor extends Model
 
     public function banco()
     {
-        return $this->hasMany(Banco::class, 'id_empresa', 'id_banco');
+        return $this->belongsTo(Banco::class, 'id_banco', 'id_empresa');
     }
 
     public function empresa()

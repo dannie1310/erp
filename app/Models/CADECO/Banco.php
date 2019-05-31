@@ -8,8 +8,7 @@
 
 namespace App\Models\CADECO;
 
-
-use App\Facades\Context;
+use App\Models\CADECO\Finanzas\BancoComplemento;
 
 class Banco extends Empresa
 {
@@ -18,8 +17,11 @@ class Banco extends Empresa
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra())
-                         ->where('tipo_empresa', '=', 8);
+            return $query->where('tipo_empresa', '=', 8);
         });
+    }
+
+    public function complemento(){
+        return $this->belongsTo(BancoComplemento::class, 'id_empresa','id_empresa');
     }
 }
