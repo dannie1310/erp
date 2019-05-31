@@ -9,6 +9,7 @@
 namespace App\Models\MODULOSSAO\ControlRemesas;
 
 
+use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Empresa;
 use Illuminate\Database\Eloquent\Model;
 
@@ -40,5 +41,10 @@ class Documento extends Model
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
+    }
+
+    public function tipoCambio()
+    {
+        return $this->belongsTo(Cambio::class, 'IDMoneda', 'id_moneda');
     }
 }

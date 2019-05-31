@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\MODULOSSAO\ControlRemesas;
 
 
+use App\Http\Transformers\CADECO\CambioTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use League\Fractal\TransformerAbstract;
@@ -22,8 +23,9 @@ class DocumentoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'remesa',
-        'documento_liberado',
-        'empresa'
+        'documentoLiberado',
+        'empresa',
+        'tipoCambioActual'
     ];
 
     /**
@@ -87,6 +89,20 @@ class DocumentoTransformer extends TransformerAbstract
         if($empresa = $model->empresa)
         {
             return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+
+    /**
+     * @param Documento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipoCambioActual(Documento $model)
+    {
+        if($tipo = $model->tipoCambio)
+        {
+            return $this->item($tipo, new CambioTransformer);
         }
         return null;
     }

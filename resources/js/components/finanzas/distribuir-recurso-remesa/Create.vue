@@ -215,7 +215,7 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco']
+                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco', 'documento.tipo_cambio_actual']
                     }
                 })
                     .then(data => {
