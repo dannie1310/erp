@@ -61,7 +61,6 @@
                                                 <th>Tipo Cambio Actual</th>
                                                 <th>Importe Pesos</th>
                                                 <th>Cuenta Abono</th>
-                                                <th>Banco Receptor</th>
                                                 <th>Cuenta Cargo</th>
                                                 <th>Seleccionar</th>
                                             </tr>
@@ -91,7 +90,6 @@
                                                             v-show="errors.has(`id_cuenta[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
                                                         </div>
                                                     </td>
-                                                    <td></td>
                                                      <td>
                                                         <select
                                                                 class="form-control"
