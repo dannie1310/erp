@@ -86,7 +86,7 @@
                                                               :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
                                                         >
                                                              <option value>-- Selecciona una cuenta --</option>
-                                                             <option v-for="cuenta in cuenta_abono" :value="cuenta.id">{{ cuenta.abreviatura }} ({{cuenta.numero}})</option>
+                                                             <option v-for="cuenta in doc.empresa.cuentasBancariasProveedor.data" :value="cuenta.id">{{ cuenta }} </option>
                                                         </select>
                                                         <div class="invalid-feedback"
                                                             v-show="errors.has(`id_cuenta[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
@@ -165,7 +165,6 @@
                 original : null,
                 documentos : null,
                 cuenta_cargo: [],
-                cuenta_abono: [],
                 cargando: false
             }
         },
@@ -196,21 +195,6 @@
                     });
             },
 
-            getCuentaAbono() {
-                this.cargando = true;
-                let self = this
-                return self.$store.dispatch('finanzas/cuenta-bancaria-proveedor/index', {
-                    params: {
-                    }
-                })
-                    .then(data => {
-                        this.cuenta_abono = data.data;
-                    })
-                    .finally(() => {
-                        this.cargando = false;
-                    });
-            },
-
             getCuentaCargo() {
                 this.cargando = true;
                 let self = this
@@ -234,7 +218,7 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documento', 'documento.empresa']
+                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor']
                     }
                 })
                     .then(data => {
@@ -244,7 +228,6 @@
                     .finally(() => {
                         this.cargando = false;
                         this.getCuentaCargo();
-                        this.getCuentaAbono();
                     });
             },
 

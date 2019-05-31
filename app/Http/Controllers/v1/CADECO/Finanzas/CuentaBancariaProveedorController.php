@@ -12,10 +12,12 @@ namespace App\Http\Controllers\v1\CADECO\Finanzas;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Finanzas\CuentaBancariaProveedorTransformer;
 use App\Services\CADECO\Finanzas\CuentaBancariaProveedorService;
+use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
 
 class CuentaBancariaProveedorController extends Controller
 {
+    use ControllerTrait;
     /**
      * @var CuentaBancariaProveedorService
      */
