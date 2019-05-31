@@ -9,6 +9,7 @@
 namespace App\Models\MODULOSSAO\ControlRemesas;
 
 
+use App\Models\CADECO\Empresa;
 use Illuminate\Database\Eloquent\Model;
 
 class Documento extends Model
@@ -34,5 +35,10 @@ class Documento extends Model
     public function documentoLiberado()
     {
         return $this->belongsTo(DocumentoLiberado::class, 'IDDocumento', 'IDDocumento');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
     }
 }

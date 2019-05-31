@@ -43,6 +43,7 @@ import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
 
 //FINANZAS
+import cuenta_bancaria_proveedor from './modules/finanzas/cuenta-bancaria-proveedor';
 import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
 import remesa from './modules/finanzas/remesa';
@@ -85,6 +86,7 @@ export default new Vuex.Store({
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
 
+        'finanzas/cuenta-bancaria-proveedor': cuenta_bancaria_proveedor,
         'finanzas/distribuir_recurso_remesa': distribuir_recurso_remesa,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
         'finanzas/remesa': remesa,

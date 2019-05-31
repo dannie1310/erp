@@ -10,6 +10,7 @@ namespace App\Models\CADECO\Finanzas;
 
 
 use App\Models\CADECO\Banco;
+use App\Models\CADECO\Empresa;
 use Illuminate\Database\Eloquent\Model;
 
 class CuentaBancariaProveedor extends Model
@@ -18,7 +19,13 @@ class CuentaBancariaProveedor extends Model
     protected $table = 'Finanzas.cuentas_bancarias_proveedores';
     public $timestamps = false;
 
-    public function banco(){
+    public function banco()
+    {
         return $this->hasMany(Banco::class, 'id_empresa', 'id_banco');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 }

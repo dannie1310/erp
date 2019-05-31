@@ -53,27 +53,64 @@
                                             <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Número Folio</th>
-                                                <th>Referencia</th>
+                                                <th>Concepto</th>
+                                                <th>Beneficiario</th>
                                                 <th>Importe</th>
                                                 <th>Tipo Cambio</th>
-                                                <th>Moneda</th>
+                                                <th>Importe con TC</th>
                                                 <th>Tipo Cambio Actual</th>
                                                 <th>Importe Pesos</th>
+                                                <th>Cuenta Abono</th>
+                                                <th>Banco Receptor</th>
+                                                <th>Cuenta Cargo</th>
                                                 <th>Seleccionar</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-for="(doc, key) in documentos">
-                                                    <td>{{key+1}}</td>
-                                                    <td>{{doc.numero_folio}}</td>
-                                                    <td>{{doc.referencia}}</td>
-                                                    <td>{{doc.monto_total}}</td>
+                                                <tr v-for="(doc, i) in documentos">
+                                                    <td>{{i+1}}</td>
+                                                    <td>{{doc.concepto}}</td>
+                                                    <td>{{doc.empresa.razon_social}}</td>
+                                                    <td>{{doc.monto_total_format}}</td>
                                                     <td>{{doc.tipo_cambio}}</td>
                                                     <td>{{doc.moneda}}</td>
                                                     <td></td>
                                                     <td></td>
-                                                    <td><input type="checkbox" :value="doc.id" v-model="checkedDocumentos"></td>
+                                                    <td>
+                                                        <select
+                                                              class="form-control"
+                                                              :name="`id_cuenta_abono[${i}]`"
+                                                              v-model="doc.id_cuenta_abono"
+                                                              v-validate="{required: true}"
+                                                              data-vv-as="Cuenta"
+                                                              :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
+                                                        >
+                                                             <option value>-- Selecciona una cuenta --</option>
+                                                             <option v-for="cuenta in cuenta_abono" :value="cuenta.id">{{ cuenta.abreviatura }} ({{cuenta.numero}})</option>
+                                                        </select>
+                                                        <div class="invalid-feedback"
+                                                            v-show="errors.has(`id_cuenta[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                     <td>
+                                                        <select
+                                                                class="form-control"
+                                                                :name="`id_cuenta_cargo[${i}]`"
+                                                                v-model="doc.id_cuenta_cargo"
+                                                                v-validate="{required: true}"
+                                                                data-vv-as="Cuenta"
+                                                                :class="{'is-invalid': errors.has(`id_cuenta_cargo[${i}]`)}"
+                                                        >
+                                                             <option value>-- Selecciona una cuenta --</option>
+                                                             <option v-for="cuenta in cuenta_cargo" :value="cuenta.id">{{ cuenta.abreviatura }} ({{cuenta.numero}})</option>
+                                                        </select>
+                                                        <div class="invalid-feedback"
+                                                             v-show="errors.has(`id_cuenta_cargo[${i}]`)">{{ errors.first(`id_cuenta_cargo[${i}]`) }}
+                                                        </div>
+                                                    </td>
+
+                                                    <td><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -93,7 +130,7 @@
                                                                     </tr>
                                                                     <tr>
                                                                         <th>Documentos Seleccionados:</th>
-                                                                        <td align="right">0 <span>Checked names: {{ checkedDocumentos }}</span></td>
+                                                                        <td align="right">0 <span>Checked names: </span></td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
@@ -125,8 +162,10 @@
             return {
                 id_remesa : '',
                 remesas : [],
-                documentos : [],
-                checkedDocumentos: [],
+                original : null,
+                documentos : null,
+                cuenta_cargo: [],
+                cuenta_abono: [],
                 cargando: false
             }
         },
@@ -139,23 +178,6 @@
             },
         },
         methods: {
-            init() {
-                if (!this.datosContables) {
-                    swal('¡Error!', 'No es posible registrar la cuenta debido a que no se ha configurado el formato de cuentas de la obra.', 'error')
-                } else {
-                    this.cargando = true;
-                    $(this.$refs.modal).modal('show');
-
-                    this.id_remesa = '';
-                    this.remesas = [];
-                    this.documentos = [];
-
-                    this.$validator.reset()
-                    this.cargando = false;
-                    this.getRemesas();
-                }
-            },
-
             getRemesas() {
                 this.cargando = true;
                 let self = this
@@ -174,6 +196,37 @@
                     });
             },
 
+            getCuentaAbono() {
+                this.cargando = true;
+                let self = this
+                return self.$store.dispatch('finanzas/cuenta-bancaria-proveedor/index', {
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.cuenta_abono = data.data;
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
+            },
+
+            getCuentaCargo() {
+                this.cargando = true;
+                let self = this
+                return self.$store.dispatch('cadeco/cuenta/index', {
+                    params: {
+                        scope: 'paraTraspaso'
+                    }
+                })
+                    .then(data => {
+                        this.cuenta_cargo = data.data;
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
+            },
+
             getDocumentos(){
                 this.documentos = [];
                 this.cargando = true;
@@ -181,14 +234,17 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: 'documento'
+                        include: ['documento', 'documento.empresa']
                     }
                 })
                     .then(data => {
-                        this.documentos = data.documento.data;
+                        this.original = JSON.parse(JSON.stringify(data.documento.data));
+                        this.documentos = JSON.parse(JSON.stringify(data.documento.data));
                     })
                     .finally(() => {
                         this.cargando = false;
+                        this.getCuentaCargo();
+                        this.getCuentaAbono();
                     });
             },
 

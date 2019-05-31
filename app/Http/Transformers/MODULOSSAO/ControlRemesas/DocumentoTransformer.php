@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\MODULOSSAO\ControlRemesas;
 
 
+use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use League\Fractal\TransformerAbstract;
 
@@ -21,7 +22,8 @@ class DocumentoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'remesa',
-        'documento_liberado'
+        'documento_liberado',
+        'empresa'
     ];
 
     /**
@@ -39,6 +41,7 @@ class DocumentoTransformer extends TransformerAbstract
             'referencia' => $model->Referencia,
             'numero_folio' => $model->NumeroFolio,
             'concepto' => $model->Concepto,
+            'monto_total_format' => (string) '$'.number_format(($model->MontoTotal),2,".",","),
             'monto_total' => $model->MontoTotal,
             'saldo' => $model->Saldo,
             'moneda' => $model->IDMoneda,
@@ -71,6 +74,19 @@ class DocumentoTransformer extends TransformerAbstract
         if($documento = $model->documentoLiberado)
         {
             return $this->item($documento, new DocumentoLiberadoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Documento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEmpresa(Documento $model)
+    {
+        if($empresa = $model->empresa)
+        {
+            return $this->item($empresa, new EmpresaTransformer);
         }
         return null;
     }
