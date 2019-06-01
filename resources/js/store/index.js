@@ -16,6 +16,9 @@ import moneda from './modules/cadeco/moneda';
 //COMPRAS
 import ordenCompra from './modules/compras/orden-compra';
 
+//CONFIGURACION
+import areaSubcontratante from './modules/configuracion/area-subcontratante';
+
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo';
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
@@ -77,6 +80,8 @@ export default new Vuex.Store({
         'cadeco/moneda': moneda,
 
         'compras/orden-compra' : ordenCompra,
+
+        'configuracion/area-subcontratante' : areaSubcontratante,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,

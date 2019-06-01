@@ -11,7 +11,9 @@ namespace App\Models\IGH;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
+use App\Models\SEGURIDAD_ERP\AreaSubcontratante;
 use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Traits\IghAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -189,6 +191,12 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
             // Esquema Personalizado
             return $this->belongsToMany( Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id' );
         }
+    }
+
+    public function areasSubcontratantes()
+    {
+        return $this->belongsToMany( TipoAreaSubcontratante::class, 'dbo.usuarios_areas_subcontratantes', 'id_usuario', 'id_area_subcontratante' );
+
     }
 
     public function permisos()
