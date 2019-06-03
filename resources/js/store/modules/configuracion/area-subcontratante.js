@@ -60,50 +60,7 @@ export default {
         asignacionMasiva(context, payload = {}) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Asignar Roles",
-                    text: "¿Estás seguro/a de que la información es correcta?",
-                    icon: "info",
-                    closeOnClickOutside: false,
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Asignar',
-                            closeModal: false,
-                        }
-                    }
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .post(URI + 'asignacion-masiva', payload)
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("La asignación de roles ha sido aplicada exitosamente", {
-                                        icon: "success",
-                                        timer: 2000,
-                                        buttons: false
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
-                                })
-                                .catch(error =>  {
-                                    reject(error);
-                                });
-                        }else{
-                            reject();
-
-                        }
-                    });
-            });
-        },
-
-        asignarPermisos(context, payload = {}) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "Asignar/Desasignar Permisos",
+                    title: "Asignar Areas Subcontratantes",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     closeOnClickOutside: false,
@@ -121,10 +78,10 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .post(URI + 'asignacion-permisos', payload)
+                                .post(URI + 'asignacion-masiva', payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("La acción fue aplicada con éxito", {
+                                    swal("La acción ha sido aplicada con éxito", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
@@ -137,89 +94,6 @@ export default {
                                 });
                         }else{
                             reject();
-
-                        }
-                    });
-            });
-        },
-
-        desasignacionMasiva(context, payload = {}) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "Desasignar Roles",
-                    text: "¿Estás seguro/a de que la información es correcta?",
-                    icon: "info",
-                    closeOnClickOutside: false,
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Desasignar',
-                            closeModal: false,
-                        }
-                    }
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .post(URI + 'desasignacion-masiva', payload)
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("La desasignación de roles ha sido aplicada exitosamente", {
-                                        icon: "success",
-                                        timer: 2000,
-                                        buttons: false
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
-                                })
-                                .catch(error =>  {
-                                    reject(error);
-                                });
-                        }else{
-                            reject();
-
-                        }
-                    });
-            });
-        },
-
-        store(context, payload) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "Crear Rol",
-                    text: "¿Estás seguro/a de que la información es correcta?",
-                    icon: "info",
-                    buttons: ['No, cancelar',
-                        {
-                            text: "Si, Crear",
-                            closeModal: false,
-                        }
-                    ]
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .post(URI, payload)
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal({
-                                        title: "Rol creado exitosamente",
-                                        text: " ",
-                                        icon: "success",
-                                        timer: 3000,
-                                        buttons: false
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
-                                })
-                                .catch(error => {
-                                    reject(error);
-                                });
-                        }else{
-                            reject()
 
                         }
                     });

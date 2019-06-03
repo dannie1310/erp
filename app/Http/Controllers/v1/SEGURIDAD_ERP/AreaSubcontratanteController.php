@@ -34,7 +34,7 @@ class AreaSubcontratanteController extends Controller
     public function __construct(Manager $fractal, AreaSubcontratanteService $service, TipoAreaSubcontratanteTransformer $transformer){
 
         $this->middleware('auth:api');
-        $this->middleware('context');
+//        $this->middleware('context');
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -50,6 +50,11 @@ class AreaSubcontratanteController extends Controller
     {
         $areas = $this->service->porUsuario($request->all(), $user_id);
         return $this->respondWithCollection($areas);
+    }
+
+    public function asignacionAreas(Request $request){
+        $response = $this->service->asignacionAreas($request->all());
+        return response()->json($response, 200);
     }
 
 }

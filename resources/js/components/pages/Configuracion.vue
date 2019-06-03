@@ -36,7 +36,7 @@
                             <div class="container col-sm-2">
                                 <div class="vertical-center align-content-center">
                                     <button class="btn col-xs-12 btn-default" @click="agregar" title="Agregar"><i class="fa fa-long-arrow-left"></i></button>
-                                    <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>
+<!--                                    <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>-->
                                 </div>
                             </div>
 
@@ -78,6 +78,14 @@
                                     <td>
                                         <ul>
                                             <li v-for="area in areas_nuevos_asignados">{{ area.descripcion }}</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr v-if="areas_desasignados.length">
+                                    <th>Areas Subcontratantes a Desasignar:</th>
+                                    <td>
+                                        <ul>
+                                            <li v-for="area in areas_desasignados">{{ area.descripcion }}</li>
                                         </ul>
                                     </td>
                                 </tr>
@@ -185,9 +193,9 @@
 
             asignar() {
                 this.guardando = true;
-                return this.$store.dispatch('seguridad/rol-personalizado/asignacionMasiva', {
+                return this.$store.dispatch('configuracion/area-subcontratante/asignacionMasiva', {
                     user_id: this.form.user_id,
-                    area_id: this.areas_asignados.map(area => (
+                    area_id: this.areas_nuevos_asignados.map(area => (
                         area.id
                     ))
                 })
