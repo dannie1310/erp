@@ -69,13 +69,14 @@
                                                 <tr v-for="(doc, i) in documentos">
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
-                                                    <td>{{doc.empresa.razon_social}}</td>
+                                                    <td>{{doc.empresa ? doc.empresa.razon_social : ''}}</td>
                                                     <td>{{doc.monto_total_format}}</td>
-                                                    <td>{{doc.tipo_cambio}}</td>
-                                                    <td>{{doc.moneda}}</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>
+                                                    <td>{{parseFloat(doc.tipo_cambio).formatMoney(2, '.', ',') }}</td>
+                                                    <td>{{doc.saldo_moneda_nacional_format}}</td>
+                                                    <td>{{doc.tipoCambioActual ? parseFloat(doc.tipoCambioActual.cambio).formatMoney(2, '.', ',') : '1.00'}}</td>
+                                                    <td v-if="doc.tipoCambioActual" v-model="doc.importe_total" :name="`importe_total[${i}]`" :value="doc.tipoCambioActual.cambio * doc.monto_total">${{ parseFloat(doc.tipoCambioActual.cambio * doc.monto_total).formatMoney(2, '.', ',') }}</td>
+                                                    <td v-else v-model="doc.importe_total" :name="`importe_total[${i}]`" :value="doc.monto_total_format">{{doc.monto_total_format}}</td>
+                                                    <td v-if = "doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 ">
                                                         <select class="form-control"
                                                               :name="`id_cuenta_abono[${i}]`"
                                                               v-model="doc.id_cuenta_abono"
@@ -90,7 +91,9 @@
                                                             v-show="errors.has(`id_cuenta[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
                                                         </div>
                                                     </td>
-                                                     <td>
+                                                    <td v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">No tiene cuentas bancarias proveedor</td>
+                                                    <td v-else>No Cuenta Con Empresa en CADECO</td>
+                                                    <td>
                                                         <select
                                                                 class="form-control"
                                                                 :name="`id_cuenta_cargo[${i}]`"
@@ -107,35 +110,38 @@
                                                         </div>
                                                     </td>
 
-                                                    <td><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                                    <td v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                                    <td v-else></td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
-                                        <form role="form" @submit.prevent="validate">
-                                            <div class="row" align="right">
-                                                <div class="table-responsive col-md-12">
-                                                    <div class="col-6">
-                                                        <div class="table-responsive">
-                                                            <table class="table">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <th style="width:50%" class="bg-gray-light">Monto Total Remesa:</th>
-                                                                        <td class="bg-gray-light" align="right">10000</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Documentos Seleccionados:</th>
-                                                                        <td align="right">0 <span>Checked names: </span></td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
+                                        <div  v-if="documentos">
+                                            <form role="form" @submit.prevent="validate">
+                                                <div class="row" align="right">
+                                                    <div class="table-responsive col-md-12">
+                                                        <div class="col-6">
+                                                            <div class="table-responsive">
+                                                                <table class="table">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th style="width:50%" class="bg-gray-light">Monto Total Remesa:</th>
+                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Monto Documentos Seleccionados:</th>
+                                                                            <td align="right"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -171,6 +177,27 @@
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
+            },
+            sumaImporteTotal() {
+                let result = 0;
+                this.documentos.forEach(function (doc, i) {
+                       result += parseFloat(doc.monto_total);
+                    //result += parseFloat(doc.monto_total * doc.tipoCambioActual.cambio);
+                })
+                return result
+            },
+            sumaSeleccionImportes() {
+                let result = 0;
+                this.documentos.forEach(function (doc, i) {
+                    if(doc.selected == true) {
+                        if (doc.tipo_cambio == 1.0) {
+                            result += parseFloat(doc.monto_total);
+                        } else {
+                            result += parseFloat(doc.monto_total * doc.tipoCambioActual.cambio);
+                        }
+                    }
+                })
+                return result
             },
         },
         methods: {
@@ -215,7 +242,7 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco', 'documento.tipo_cambio_actual']
+                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco', 'documento.tipoCambioActual']
                     }
                 })
                     .then(data => {

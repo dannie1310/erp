@@ -35,6 +35,7 @@ class CambioTransformer extends TransformerAbstract
     public function transform(Cambio $model){
         return [
             'id' => $model->getKey(),
+            'fecha' => $model->fecha,
             'cambio' => $model->cambio
         ];
     }

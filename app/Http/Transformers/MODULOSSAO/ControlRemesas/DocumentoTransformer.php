@@ -49,6 +49,7 @@ class DocumentoTransformer extends TransformerAbstract
             'moneda' => $model->IDMoneda,
             'tipo_cambio' => $model->TipoCambio,
             'saldo_moneda_nacional' => $model->SaldoMonedaNacional,
+            'saldo_moneda_nacional_format' => (string) '$'.number_format(($model->SaldoMonedaNacional),2,".",","),
             'monto_total_solicitado' => $model->MontoTotalSolicitado,
             'observaciones' => $model->Observaciones,
             'destinatario' => $model->Destinatario
