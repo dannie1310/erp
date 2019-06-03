@@ -43,7 +43,7 @@
                                                 <h3>Documentos Liberados de la Remesa</h3>
                                             </div>
                                             <div class="col-3">
-                                                <h6 align="right">Total: 15</h6>
+                                                <h6 align="right">Total: q</h6>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -74,13 +74,12 @@
                                                     <td>{{parseFloat(doc.tipo_cambio).formatMoney(2, '.', ',') }}</td>
                                                     <td>{{doc.saldo_moneda_nacional_format}}</td>
                                                     <td>{{doc.tipoCambioActual ? parseFloat(doc.tipoCambioActual.cambio).formatMoney(2, '.', ',') : '1.00'}}</td>
-                                                    <td v-if="doc.tipoCambioActual" v-model="doc.importe_total" :name="`importe_total[${i}]`" :value="doc.tipoCambioActual.cambio * doc.monto_total">${{ parseFloat(doc.tipoCambioActual.cambio * doc.monto_total).formatMoney(2, '.', ',') }}</td>
-                                                    <td v-else v-model="doc.importe_total" :name="`importe_total[${i}]`" :value="doc.monto_total_format">{{doc.monto_total_format}}</td>
+                                                    <td>${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
                                                     <td v-if = "doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 ">
                                                         <select class="form-control"
                                                               :name="`id_cuenta_abono[${i}]`"
                                                               v-model="doc.id_cuenta_abono"
-                                                              v-validate="{required: true}"
+                                                              v-validate="{required: doc.selected == true ? true:false}"
                                                               data-vv-as="Cuenta"
                                                               :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
                                                         >
@@ -93,12 +92,12 @@
                                                     </td>
                                                     <td v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">No tiene cuentas bancarias proveedor</td>
                                                     <td v-else>No Cuenta Con Empresa en CADECO</td>
-                                                    <td>
+                                                    <td >
                                                         <select
                                                                 class="form-control"
                                                                 :name="`id_cuenta_cargo[${i}]`"
                                                                 v-model="doc.id_cuenta_cargo"
-                                                                v-validate="{required: true}"
+                                                                v-validate="{required: doc.selected == true ? true : false}"
                                                                 data-vv-as="Cuenta"
                                                                 :class="{'is-invalid': errors.has(`id_cuenta_cargo[${i}]`)}"
                                                         >
@@ -127,11 +126,11 @@
                                                                 <table class="table">
                                                                     <tbody>
                                                                         <tr>
-                                                                            <th style="width:50%" class="bg-gray-light">Monto Total Remesa:</th>
+                                                                            <th style="width:50%" class="bg-gray-light">Total Remesa:</th>
                                                                             <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th>Monto Documentos Seleccionados:</th>
+                                                                            <th>Documentos Seleccionados:</th>
                                                                             <td align="right"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                     </tbody>
@@ -149,7 +148,7 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Registrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || !cambio">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -181,8 +180,7 @@
             sumaImporteTotal() {
                 let result = 0;
                 this.documentos.forEach(function (doc, i) {
-                       result += parseFloat(doc.monto_total);
-                    //result += parseFloat(doc.monto_total * doc.tipoCambioActual.cambio);
+                       result += parseFloat(doc.importe_total);
                 })
                 return result
             },
@@ -190,14 +188,24 @@
                 let result = 0;
                 this.documentos.forEach(function (doc, i) {
                     if(doc.selected == true) {
-                        if (doc.tipo_cambio == 1.0) {
-                            result += parseFloat(doc.monto_total);
-                        } else {
-                            result += parseFloat(doc.monto_total * doc.tipoCambioActual.cambio);
-                        }
+                        result += parseFloat(doc.importe_total);
                     }
                 })
                 return result
+            },
+
+            diff() {
+                return diff(this.documentos, this.original)
+            },
+
+            cambio() {
+                return JSON.stringify(this.documentos) != JSON.stringify(this.original) || this.nuevosMovimientos
+            },
+
+            nuevosDistribucion() {
+                return !!this.original.documentos.find(doc => {
+                    return !doc .id
+                })
             },
         },
         methods: {
@@ -235,6 +243,19 @@
                     });
             },
 
+            getImporte() {
+                let result = 0;
+                this.documentos.forEach(function (doc, i) {
+                    doc.importe_total = 0
+                    if (doc.tipo_cambio == 1.0) {
+                        doc.importe_total = parseFloat(doc.monto_total);
+                    } else {
+                        doc.importe_total = parseFloat(doc.monto_total * doc.tipoCambioActual.cambio);
+                    }
+                })
+                return result
+            },
+
             getDocumentos(){
                 this.documentos = [];
                 this.cargando = true;
@@ -248,10 +269,19 @@
                     .then(data => {
                         this.original = JSON.parse(JSON.stringify(data.documento.data));
                         this.documentos = JSON.parse(JSON.stringify(data.documento.data));
+                        this.getImporte();
                     })
                     .finally(() => {
                         this.cargando = false;
                         this.getCuentaCargo();
+                    });
+            },
+
+            store() {
+                return this.$store.dispatch('finanzas/distribuir-recurso-remesa/store', this.$data)
+                    .then((data) => {
+                       // $(this.$refs.modal).modal('hide');
+                      //  this.$emit('created', data)
                     });
             },
 

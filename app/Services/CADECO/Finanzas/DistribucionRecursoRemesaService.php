@@ -30,6 +30,7 @@ class DistribucionRecursoRemesaService
 
     public function store(array $data)
     {
+        dd($data);
         return $this->repository->create($data);
     }
 

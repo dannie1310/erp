@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Finanzas;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Finanzas\StoreDistribucionRecursoRemesaRequest;
 use App\Http\Transformers\CADECO\Finanzas\DistribucionRecursoRemesaTransformer;
 use App\Services\CADECO\Finanzas\DistribucionRecursoRemesaService;
 use App\Traits\ControllerTrait;
