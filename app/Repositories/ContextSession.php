@@ -100,4 +100,14 @@ class ContextSession implements Context
     {
         return $this->getDatabase() && $this->getIdObra();
     }
+
+    /**
+     * Borra la información del contexto guardado en la sesión
+     * @return mixed
+     */
+    public function clearContext()
+    {
+        session()->remove('db');
+        session()->remove('id_obra');
+    }
 }

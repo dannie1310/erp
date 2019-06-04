@@ -262,8 +262,8 @@ export const routes = [
                         name: 'estimacion',
                         component: require('./components/contratos/estimacion/Index'),
                         meta: {
-                            title: 'Estimacion',
-                            breadcrumb: {parent: 'contratos', name: 'ESTIMACION'},
+                            title: 'Estimaciones',
+                            breadcrumb: {parent: 'contratos', name: 'ESTIMACIONES'},
                             middleware: [auth, context],
 
                         }
@@ -276,7 +276,7 @@ export const routes = [
                             title: 'Formato Orden Pago Estimación',
                             breadcrumb: {
                                 parent: 'estimacion',
-                                name: 'FORMATO'
+                                name: 'FORMATO DE ORDEN DE PAGO'
                             },
                             middleware: [auth, context, permission],
                             permission: 'consultar_formato_orden_pago_estimacion'
@@ -284,52 +284,56 @@ export const routes = [
                     },
                 ]
             },
-        ]
-    },
 
-    {
-        path: '/sao/contratos/fondo-garantia',
-        components: {
-            default: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
-            menu: require('./components/contratos/fondo-garantia/partials/Menu.vue')
-        },
-        meta: {
-            middleware: [auth, context]
-        },
-        children: [
             {
-                path: '/',
-                name: 'fondo-garantia',
-                component: require('./components/contratos/fondo-garantia/Index'),
+                path: '/sao/contratos/fondo-garantia',
+                component: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
                 meta: {
-                    title: 'Fondos de Garantía',
-                    breadcrumb: {parent: 'contratos', name: 'FONDOS DE GARANTÍA'},
                     middleware: [auth, context]
-                }
-            }
-        ]
-    },
+                },
+                children: [
+                    {
+                        path: '/',
+                        name: 'fondo-garantia',
+                        component: require('./components/contratos/fondo-garantia/Index'),
+                        meta: {
+                            title: 'Fondos de Garantía',
+                            breadcrumb: {parent: 'contratos', name: 'FONDOS DE GARANTÍA'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_fondo_garantia','generar_fondo_garantia','ajustar_saldo_fondo_garantia' +
+                            'consultar_detalle_fondo_garantia']
+                        }
+                    }
+                ]
+            },
 
-    {
-        path: '/sao/contratos/fondo-garantia/solicitud-movimiento',
-        components: {
-            default: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Layout.vue'),
-            menu: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Menu.vue')
-        },
-        meta: {
-            middleware: [auth, context]
-        },
-        children: [
             {
-                path: '/',
-                name: 'solicitud-movimiento-fg',
-                component: require('./components/contratos/fondo-garantia/solicitud-movimiento/Index'),
+                path: '/sao/contratos/fondo-garantia/solicitud-movimiento',
+                components: {
+                    default: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Layout.vue'),
+                },
                 meta: {
-                    title: 'Solicitudes de Movimiento a Fondo de Garantia',
-                    breadcrumb: {parent: 'fondo-garantia', name: 'SOLICITUDES DE MOVIMIENTO'},
                     middleware: [auth, context]
-                }
-            }
+                },
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-movimiento-fg',
+                        component: require('./components/contratos/fondo-garantia/solicitud-movimiento/Index'),
+                        meta: {
+                            title: 'Solicitudes de Movimiento a Fondo de Garantía',
+                            breadcrumb: {parent: 'fondo-garantia', name: 'SOLICITUDES DE MOVIMIENTO'},
+                            middleware: [auth, context, permission],
+                            permission: ['autorizar_solicitud_movimiento_fondo_garantia',
+                                'cancelar_solicitud_movimiento_fondo_garantia',
+                                'consultar_solicitud_movimiento_fondo_garantia',
+                                'rechazar_solicitud_movimiento_fondo_garantia',
+                                'registrar_solicitud_movimiento_fondo_garantia',
+                                'revertir_autorizacion_solicitud_movimiento_fondo_garantia']
+                        }
+                    }
+                ]
+            },
         ]
     },
     {

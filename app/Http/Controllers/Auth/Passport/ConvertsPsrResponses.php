@@ -17,7 +17,7 @@ trait ConvertsPsrResponses
     public function convertResponse($psrResponse)
     {
         $headers = $psrResponse->getHeaders();
-        if (Context::isEstablished() && request()->get('context'))
+        if (Context::isEstablished() && isset($headers['Location'][0]))
             $headers['Location'][0] .= '&db=' . Context::getDatabase() . '&id=' . Context::getIdObra();
 
         return new Response(
