@@ -1,30 +1,37 @@
 <template>
-    <div class="row">
-        <div class="col-12 col-sm-6 col-md-3" v-for="(sistema, i) in sistemas">
-            <div class="info-box">
-                <span :class="'info-box-icon '+sistema.color+' elevation-1'"><i :class="sistema.icon"></i></span>
+    <span>
+        <div class="row">
+            <div class="col-12 col-sm-6 col-md-3" v-for="(sistema, i) in sistemas">
+                <div class="info-box">
+                    <span :class="'info-box-icon '+sistema.color+' elevation-1'"><i :class="sistema.icon"></i></span>
 
-                <div class="info-box-content">
-                    <span class="info-box-number">{{sistema.name.toUpperCase()}}</span>
-                    <router-link :to="{name:sistema.url}" v-if="!sistema.externo">
-                        <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
-                    </router-link>
+                    <div class="info-box-content">
+                        <span class="info-box-number">{{sistema.name.toUpperCase()}}</span>
+                        <router-link :to="{name:sistema.url}" v-if="!sistema.externo">
+                            <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
+                        </router-link>
 
-                    <a :href="`${sistema.url}?origen=${url}`" target="_blank" v-else>
-                        <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
-                    </a>
+                        <a :href="`${sistema.url}?origen=${url}`" target="_blank" v-else>
+                            <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right"></i> </span>
+                        </a>
+                    </div>
+                    <!-- /.info-box-content -->
                 </div>
-                <!-- /.info-box-content -->
+                <!-- /.info-box -->
             </div>
-            <!-- /.info-box -->
         </div>
-    </div>
+
+        <google-2fa-activate></google-2fa-activate>
+    </span>
+
 </template>
 
 <script>
+    import Google2faActivate from "../seguridad/google2fa/activate";
     export default {
 
         name: "home",
+        components: {Google2faActivate},
         data() {
             return {
                 loading: false

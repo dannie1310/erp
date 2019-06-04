@@ -7,12 +7,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SetContextRequest;
 use App\Models\CADECO\Obra;
+use App\Models\SEGURIDAD_ERP\Google2faSecret;
 use App\Services\AuthService;
 use App\Traits\AuthenticatesIghUsers;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Sonata\GoogleAuthenticator\GoogleAuthenticator;
 
 class AuthController extends Controller
 {
@@ -93,7 +95,6 @@ class AuthController extends Controller
      */
     public function setContext(SetContextRequest $request)
     {
-        //dd($request->all());
         $this->auth->setContext($request->only(['db', 'id_obra']));
         $obra = Obra::query()->find($request->id_obra);
 
@@ -101,10 +102,17 @@ class AuthController extends Controller
             $obra->datosContables()->create();
         }
 
+        if (! auth()->user()->google2faSecret) {
+            $g = new GoogleAuthenticator();
+            $secret = $g->generateSecret();
+            Google2faSecret::query()->create([
+                'secret' => $secret,
+                'id_user' => auth()->id()
+            ]);
+        }
         return response()->json([
             'obra' => Obra::with(['datosContables', 'configuracion'])->find($request->id_obra),
-            'permisos' => auth()->user()->permisos(),
-            'user'         => request()->user()
+            'permisos' => auth()->user()->permisos()
         ]);
     }
 
