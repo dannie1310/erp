@@ -29,9 +29,9 @@ class Google2faController extends Controller
     {
         $g = new GoogleAuthenticator();
         if ($g->checkCode(auth()->user()->google2faSecret->secret, $request->code)) {
-            dd(1);
+            return response()->json(['message' => 'success'], 200);
         } else {
-            dd(2);
+            return response()->json(['message' => 'Code Invalid'], 400);
         }
     }
 }
