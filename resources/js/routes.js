@@ -36,8 +36,8 @@ export const routes = [
         component: require('./components/pages/Configuracion.vue'),
         meta: {
             title: 'CONFIGURACION',
-            middleware: [auth],
-            // permission: 'administracion_configuracion_obra'
+            middleware: [auth, access],
+            permission: 'administracion_configuracion_obra'
         }
     },
     {

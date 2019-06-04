@@ -193,7 +193,7 @@
 
             asignar() {
                 this.guardando = true;
-                return this.$store.dispatch('configuracion/area-subcontratante/asignacionMasiva', {
+                return this.$store.dispatch('configuracion/area-subcontratante/asignacionAreasSubcontratantes', {
                     user_id: this.form.user_id,
                     area_id: this.areas_nuevos_asignados.map(area => (
                         area.id

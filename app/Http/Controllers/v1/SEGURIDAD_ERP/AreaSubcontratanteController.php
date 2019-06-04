@@ -34,7 +34,6 @@ class AreaSubcontratanteController extends Controller
     public function __construct(Manager $fractal, AreaSubcontratanteService $service, TipoAreaSubcontratanteTransformer $transformer){
 
         $this->middleware('auth:api');
-//        $this->middleware('context');
 
         $this->fractal = $fractal;
         $this->service = $service;

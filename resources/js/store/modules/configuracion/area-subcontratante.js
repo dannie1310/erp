@@ -29,10 +29,10 @@ export default {
             });
         },
 
-        find(context, payload) {
+        find(payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id, payload.config)
+                    .get(URI + payload.id)
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -43,7 +43,7 @@ export default {
             });
         },
 
-        getAreasUsuario(context, user_id) {
+        getAreasUsuario(user_id) {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'por-usuario/' + user_id)
@@ -57,7 +57,7 @@ export default {
             });
         },
 
-        asignacionMasiva(context, payload = {}) {
+        asignacionAreasSubcontratantes(payload = {}) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Asignar Areas Subcontratantes",
@@ -78,7 +78,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .post(URI + 'asignacion-masiva', payload)
+                                .post(URI + 'asignacion-areas-subcontratantes', payload)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("La acción ha sido aplicada con éxito", {
