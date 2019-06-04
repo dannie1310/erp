@@ -19,7 +19,6 @@ Route::get('/', function () {
 Auth::routes(['register' => false]);
 Route::post('auth/setContext', 'v1\AuthController@setContext')->middleware('auth');
 Route::get('formatos/estimacion/{id}/orden-pago', 'v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
-Route::get('SEGURIDAD_ERP/google-2fa/qr', 'v1\SEGURIDAD_ERP\Google2faController@generateQR');
 
 Route::get('{any}', function () {
     return view('welcome');

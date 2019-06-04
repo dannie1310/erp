@@ -20,18 +20,12 @@
                 <!-- /.info-box -->
             </div>
         </div>
-
-        <google-2fa-activate></google-2fa-activate>
     </span>
-
 </template>
 
 <script>
-    import Google2faActivate from "../seguridad/google2fa/activate";
     export default {
-
         name: "home",
-        components: {Google2faActivate},
         data() {
             return {
                 loading: false

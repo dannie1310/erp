@@ -16,13 +16,9 @@ class CreateGoogle2faSecretTable extends Migration
         Schema::create('google_2fa_secret', function (Blueprint $table) {
             $table->increments('id');
             $table->string('secret');
-            $table->integer('id_user');
-            $table->integer('id_obra');
-            $table->string('base_datos')->unsigned();
+            $table->integer('id_user')->unique();
             $table->boolean('verified')->default(false);
             $table->timestamps();
-
-            $table->foreign('base_datos')->references('base_datos')->on('proyectos');
         });
     }
 

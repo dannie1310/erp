@@ -40,6 +40,6 @@ class UsuarioController extends Controller
     }
 
     public function currentUser(Request $request ) {
-        return response()->json(['user' => Usuario::query()->with('google2faSecret')->find(auth()->id())]);
+        return response()->json(['user' => Usuario::query()->find(auth()->id())]);
     }
 }
