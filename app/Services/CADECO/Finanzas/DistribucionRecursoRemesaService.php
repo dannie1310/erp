@@ -33,7 +33,7 @@ class DistribucionRecursoRemesaService
     public function store(array $data)
     {
         $documentos = $data['documentos'];
-
+        $partida = [];
         try {
             DB::connection('cadeco')->beginTransaction();
 
@@ -45,17 +45,19 @@ class DistribucionRecursoRemesaService
 
             foreach ($documentos as $documento) {
                 if (!empty($documento['selected']) && $documento['selected'] == true) {
-
-                    $partida = [
-                        'id_distribucion_recurso' => $d->id,
-                        'id_documento' => $documento['id'],
-                        'id_cuenta_abono' => $documento['id_cuenta_abono'],
-                        'id_cuenta_cargo' => $documento['id_cuenta_cargo'],
-                        'id_moneda' => $documento['moneda']
-                    ];
+                    if(DistribucionRecursoRemesaPartida::query()->where('id_documento', '=',  $documento['id'])->where('estado', '!=', 3)->get()->toArray() == []) {
+                        $partida = [
+                            'id_distribucion_recurso' => $d->id,
+                            'id_documento' => $documento['id'],
+                            'id_cuenta_abono' => $documento['id_cuenta_abono'],
+                            'id_cuenta_cargo' => $documento['id_cuenta_cargo'],
+                            'id_moneda' => $documento['moneda']
+                        ];
+                        $partidas = DistribucionRecursoRemesaPartida::query()->create($partida);
+                    }
                 }
             }
-            $partidas = DistribucionRecursoRemesaPartida::query()->create($partida);
+
             DB::connection('cadeco')->commit();
 
             return $d;

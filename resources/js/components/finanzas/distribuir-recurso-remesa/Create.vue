@@ -282,8 +282,7 @@
             store() {
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/store', this.$data)
                     .then((data) => {
-                        $(this.$refs.modal).modal('hide');
-                        this.$emit('created', data)
+                        this.$router.push({name: 'distribuir-recursos-remesa'});
                     });
             },
 
