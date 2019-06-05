@@ -33,10 +33,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio', sortable: false },
+                    { title: 'Folio', field: 'folio', sortable: true },
                     { title: 'Remesa Liberada', field: 'remesa', sortable: false },
-                    { title: 'Monto Distribuido', field: 'monto_autorizado', sortable: false },
-                    { title: 'Estatus', field: 'estado', tdComp: require('./partials/DistribuirEstatus') },
+                    { title: 'Monto Liberado', field: 'monto_liberado', sortable: true },
+                    { title: 'Monto Distribuido', field: 'monto_autorizado', sortable: true },
+                    { title: 'Estatus', field: 'estado', tdComp: require('./partials/DistribuirEstatus'), sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons') },
                 ],
                 data: [],
@@ -93,6 +94,7 @@
                             index: (i + 1) + self.query.offset,
                             folio: 'REM-'+distribucion.folio,
                             remesa: 'Año: '+distribucion.remesa_liberada.remesa.año+' Semana: '+distribucion.remesa_liberada.remesa.semana+' Remesa: '+distribucion.remesa_liberada.remesa.tipo+' ('+distribucion.remesa_liberada.remesa.folio+')',
+                            monto_liberado:  '$'+(parseFloat(distribucion.monto_liberado)).formatMoney(2,'.',','),
                             monto_autorizado: '$'+(parseFloat(distribucion.monto_autorizado)).formatMoney(2,'.',','),
                             estado: distribucion.estado,
                             buttons: $.extend({}, {
