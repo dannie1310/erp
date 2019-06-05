@@ -53,7 +53,8 @@ class DocumentoTransformer extends TransformerAbstract
             'saldo_moneda_nacional_format' => (string) '$'.number_format(($model->SaldoMonedaNacional),2,".",","),
             'monto_total_solicitado' => $model->MontoTotalSolicitado,
             'observaciones' => $model->Observaciones,
-            'destinatario' => $model->Destinatario
+            'destinatario' => $model->Destinatario,
+            'disponible' => $model->getDisponibleAttribute()
         ];
     }
 

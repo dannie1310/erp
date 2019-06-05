@@ -59,7 +59,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cuenta registrada correctamente", {
+                                    swal("Distribución de recurso registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false

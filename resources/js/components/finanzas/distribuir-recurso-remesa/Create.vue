@@ -66,7 +66,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-for="(doc, i) in documentos">
+                                                <tr v-for="(doc, i) in documentos" v-if="doc.disponible == 1">
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
                                                     <td>{{doc.empresa ? doc.empresa.razon_social : ''}}</td>
@@ -282,9 +282,8 @@
             store() {
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/store', this.$data)
                     .then((data) => {
-                        console.log("AQUI CREANDO")
-                       // $(this.$refs.modal).modal('hide');
-                      //  this.$emit('created', data)
+                        $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data)
                     });
             },
 
