@@ -54,7 +54,7 @@ class DistribucionRecursoRemesa extends Model
     }
 
     public function remesaLiberada(){
-        return $this->belongsTo(RemesaLiberada::class, 'IDRemesa', 'id_remesa');
+        return $this->belongsTo(RemesaLiberada::class,  'id_remesa', 'IDRemesa');
     }
 
     public function usuarioRegistro(){

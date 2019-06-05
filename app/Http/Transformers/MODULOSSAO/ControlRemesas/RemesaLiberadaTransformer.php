@@ -29,7 +29,7 @@ class RemesaLiberadaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'remesa'
     ];
 
     public function transform(RemesaLiberada $model){
