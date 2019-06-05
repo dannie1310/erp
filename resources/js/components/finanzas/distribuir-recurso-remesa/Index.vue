@@ -33,6 +33,12 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
+                    { title: 'Folio', field: 'folio', sortable: false },
+                    { title: 'Remesa Liberada', field: 'remesa', sortable: false },
+                    { title: 'Monto Liberado', field: 'monto_liberado', sortable: false },
+                    { title: 'Monto Distribuido', field: 'monto_autorizado', sortable: false },
+                    { title: 'Estatus', field: 'estado', tdComp: require('./partials/Estatus') },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons') },
                 ],
                 data: [],
                 total: 0,
@@ -52,17 +58,54 @@
 
         methods: {
             paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('finanzas/distribuir-recurso-remesa/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCIONES', data.data);
+                        this.$store.commit('finanzas/distribuir-recurso-remesa/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             },
             create() {
                 this.$router.push({name: 'distribuir-recurso-remesa-create'});
             },
         },
         computed: {
+            distribuciones(){
+                return this.$store.getters['finanzas/distribuir-recurso-remesa/distribuciones'];
+            },
+            meta(){
+                return this.$store.getters['finanzas/distribuir-recurso-remesa/meta'];
+            },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
+            distribuciones: {
+                handler(distribuciones) {
+                    let self = this
+                    self.$data.data = []
+                    distribuciones.forEach(function (distribucion, i) {
+
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            folio: distribucion.folio,
+                            remesa: distribucion,
+                            monto_liberado: distribucion.monto_liberado,
+                            monto_autorizado: '$'+(parseFloat(distribucion.monto_autorizado)).formatMoney(2,'.',','),
+                            estado: distribucion.estado,
+                            buttons: $.extend({}, {
+                                id: distribucion.id,
+                                estado: distribucion.estado
+                            })
+                        })
+                    });
+                },
+                deep: true
+            },
 
             meta: {
                 handler(meta) {

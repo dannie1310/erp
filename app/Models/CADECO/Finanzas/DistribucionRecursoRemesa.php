@@ -54,7 +54,7 @@ class DistribucionRecursoRemesa extends Model
     }
 
     public function remesaLiberada(){
-        return $this->hasMany(RemesaLiberada::class, 'IDRemesa', 'id_remesa');
+        return $this->belongsTo(RemesaLiberada::class, 'IDRemesa', 'id_remesa');
     }
 
     public function usuarioRegistro(){
@@ -65,7 +65,7 @@ class DistribucionRecursoRemesa extends Model
         return $this->belongsTo(Usuario::class, 'usuario_cancelo', 'id_usuario');
     }
 
-    public function estado(){
+    public function estatus(){
         return $this->belongsTo(CtgEstadoDistribucionRecursoRemesa::class, 'estado', 'id');
     }
 

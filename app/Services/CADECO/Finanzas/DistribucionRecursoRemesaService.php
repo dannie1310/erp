@@ -30,6 +30,11 @@ class DistribucionRecursoRemesaService
         $this->repository = new Repository($model);
     }
 
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
+
     public function store(array $data)
     {
         $documentos = $data['documentos'];
