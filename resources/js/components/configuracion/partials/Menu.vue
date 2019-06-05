@@ -40,6 +40,14 @@
                 </a>
             </li>
 
+            <li class="nav-header"><a href="#configuracion-sistema">CONFIGURACIÓN SISTEMAS</a></li>
+            <li class="nav-item">
+                <a href="#configuracion-sistema" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Asignar Sistemas</p>
+                </a>
+            </li>
+
             <li class="nav-header" v-if="$root.can('editar_configuracion_contable')"><a href="#configuracion-contable">CONFIGURACIÓN CONTABLE</a></li>
             <li class="nav-item" v-if="$root.can('editar_configuracion_contable')">
                 <a href="#contpaq" class="nav-link">
