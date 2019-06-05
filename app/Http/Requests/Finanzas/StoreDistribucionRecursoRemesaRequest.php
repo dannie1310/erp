@@ -22,7 +22,7 @@ class StoreDistribucionRecursoRemesaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('');
+       return auth()->user()->can('registrar_solicitud_pago_anticipado');
     }
 
     /**
@@ -39,7 +39,7 @@ class StoreDistribucionRecursoRemesaRequest extends FormRequest
         }
 
         return [
-
+            'id_remesa' => ['required', 'exists:modulosao.ControlRemesas.Remesas,IDRemesa'],
         ];
     }
 

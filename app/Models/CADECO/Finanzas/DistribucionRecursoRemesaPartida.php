@@ -18,6 +18,34 @@ class DistribucionRecursoRemesaPartida extends Model
     protected $table = 'Finanzas.distribucion_recursos_rem_partidas';
     public $timestamps = false;
 
+    protected $fillable = [
+        'id_distribucion_recurso',
+        'id_documento',
+        'fecha_registro',
+        'id_cuenta_abono',
+        'id_cuenta_cargo',
+        'id_moneda',
+        'estado'
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+        });
+
+        self::creating(function ($model) {
+            $model->fecha_registro = date('Y-m-d h:i:s');
+            $model->estado = 1;
+        });
+
+        self::created(function($query)
+        {
+
+        });
+    }
+
     public function distribucionRecurso(){
         return $this->hasMany(DistribucionRecursoRemesa::class, 'id', 'id_distribucion_recurso');
     }

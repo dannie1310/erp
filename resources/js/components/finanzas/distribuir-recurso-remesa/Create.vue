@@ -167,6 +167,7 @@
                 original : null,
                 documentos : null,
                 cuenta_cargo: [],
+                total_selecionado: 0,
                 cargando: false
             }
         },
@@ -191,6 +192,7 @@
                         result += parseFloat(doc.importe_total);
                     }
                 })
+                this.total_selecionado = result;
                 return result
             },
 
@@ -280,6 +282,7 @@
             store() {
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/store', this.$data)
                     .then((data) => {
+                        console.log("AQUI CREANDO")
                        // $(this.$refs.modal).modal('hide');
                       //  this.$emit('created', data)
                     });

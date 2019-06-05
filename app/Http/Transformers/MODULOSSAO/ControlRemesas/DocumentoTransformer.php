@@ -40,6 +40,7 @@ class DocumentoTransformer extends TransformerAbstract
     public function transform(Documento $model){
         return [
             'id' => $model->getKey(),
+            'id_remesa' => $model->IDRemesa,
             'referencia' => $model->Referencia,
             'numero_folio' => $model->NumeroFolio,
             'concepto' => $model->Concepto,

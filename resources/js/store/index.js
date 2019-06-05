@@ -87,7 +87,7 @@ export default new Vuex.Store({
         'contratos/subcontrato': subcontrato,
 
         'finanzas/cuenta-bancaria-proveedor': cuenta_bancaria_proveedor,
-        'finanzas/distribuir_recurso_remesa': distribuir_recurso_remesa,
+        'finanzas/distribuir-recurso-remesa': distribuir_recurso_remesa,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
         'finanzas/remesa': remesa,
 

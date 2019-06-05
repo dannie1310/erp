@@ -10,7 +10,9 @@ namespace App\Services\CADECO\Finanzas;
 
 
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\DB;
 
 class DistribucionRecursoRemesaService
 {
@@ -30,8 +32,38 @@ class DistribucionRecursoRemesaService
 
     public function store(array $data)
     {
-        dd($data);
-        return $this->repository->create($data);
+        $documentos = $data['documentos'];
+
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+            $distribucion = [
+                'id_remesa' => $data['id_remesa'],
+                'monto_autorizado' => $data['total_selecionado']
+            ];
+            $d = DistribucionRecursoRemesa::query()->create($distribucion);
+
+            foreach ($documentos as $documento) {
+                if (!empty($documento['selected']) && $documento['selected'] == true) {
+
+                    $partida = [
+                        'id_distribucion_recurso' => $d->id,
+                        'id_documento' => $documento['id'],
+                        'id_cuenta_abono' => $documento['id_cuenta_abono'],
+                        'id_cuenta_cargo' => $documento['id_cuenta_cargo'],
+                        'id_moneda' => $documento['moneda']
+                    ];
+                }
+            }
+            $partidas = DistribucionRecursoRemesaPartida::query()->create($partida);
+            DB::connection('cadeco')->commit();
+
+            return $d;
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 
 }
