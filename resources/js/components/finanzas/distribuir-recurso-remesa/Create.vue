@@ -43,7 +43,7 @@
                                                 <h3>Documentos Liberados de la Remesa</h3>
                                             </div>
                                             <div class="col-3">
-                                                <h6 align="right">Total: q</h6>
+                                                <h6 align="right">Total: {{count}}</h6>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -168,6 +168,8 @@
                 documentos : null,
                 cuenta_cargo: [],
                 total_selecionado: 0,
+                total: 0,
+                count:0,
                 cargando: false
             }
         },
@@ -180,9 +182,15 @@
             },
             sumaImporteTotal() {
                 let result = 0;
+                let count = 0;
                 this.documentos.forEach(function (doc, i) {
                        result += parseFloat(doc.importe_total);
+                       if(doc.disponible == 1) {
+                           count += 1;
+                       }
                 })
+                this.total = result;
+                this.count = count;
                 return result
             },
             sumaSeleccionImportes() {

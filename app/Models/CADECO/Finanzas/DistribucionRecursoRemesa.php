@@ -26,6 +26,7 @@ class DistribucionRecursoRemesa extends Model
             'folio',
             'fecha_hora_registro',
             'monto_autorizado',
+            'monto_distribuido',
             'usuario_registro',
             'estado'
     ];

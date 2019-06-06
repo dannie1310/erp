@@ -44,6 +44,7 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
             'folio' => $model->folio,
             'fecha_registro' => $model->fecha_hora_registro,
             'monto_autorizado' => $model->monto_autorizado,
+            'monto_distribuido' => $model->monto_distribuido,
             'estado' => $model->estado
         ];
     }

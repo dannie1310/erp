@@ -44,7 +44,8 @@ class DistribucionRecursoRemesaService
 
             $distribucion = [
                 'id_remesa' => $data['id_remesa'],
-                'monto_autorizado' => $data['total_selecionado']
+                'monto_autorizado' => $data['total'],
+                'monto_distribuido' => $data['total_selecionado']
             ];
             $d = DistribucionRecursoRemesa::query()->create($distribucion);
 
