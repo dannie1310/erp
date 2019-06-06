@@ -74,4 +74,8 @@ class DistribucionRecursoRemesaService
         }
     }
 
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }
