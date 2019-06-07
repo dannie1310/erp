@@ -71,7 +71,7 @@ class DistribucionRecursoRemesa extends Model
     }
 
     public function partida(){
-        return $this->belongsTo(DistribucionRecursoRemesaPartida::class, 'id', 'id_distribucion_recurso');
+        return $this->hasMany(DistribucionRecursoRemesaPartida::class, 'id_distribucion_recurso','id');
     }
 
     public function obra(){

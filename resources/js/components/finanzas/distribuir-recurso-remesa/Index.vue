@@ -42,7 +42,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {include: ['remesa_liberada'], sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false
             }

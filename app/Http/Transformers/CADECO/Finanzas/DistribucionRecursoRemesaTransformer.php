@@ -25,7 +25,8 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
         'remesa_liberada',
         'usuario_registro',
         'usuario_cancelo',
-        'estado'
+        'estado',
+        'partidas'
     ];
 
     /**
@@ -34,8 +35,7 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'estado',
-        'remesa_liberada',
+        'estado'
     ];
 
     public function transform(DistribucionRecursoRemesa $model){
@@ -93,6 +93,14 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
     {
         if($estado = $model->estatus){
             return $this->item($estado, new CtgEstadoDistribucionTransformer);
+        }
+        return null;
+    }
+
+    public function includePartidas(DistribucionRecursoRemesa $model)
+    {
+        if($partida = $model->partida){
+            return $this->collection($partida, new DistribucionRecursoRemesaPartidaTransformer);
         }
         return null;
     }
