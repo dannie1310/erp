@@ -1,7 +1,8 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-            <i class="fa fa-eye"></i>
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver" :disabled="cargando">
+            <i class="fa fa-eye" v-if="!cargando"></i>
+            <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
          <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -110,17 +111,20 @@
                                         <td>{{doc.documento.monto_total_format}}</td>
                                         <td>{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
                                         <td>{{doc.documento.saldo_moneda_nacional_format}}</td>
-                                        <td>{{doc.tipoCambioActual ? parseFloat(doc.tipoCambioActual.cambio).formatMoney(2, '.', ',') : '1.00'}}</td>
-                                        <td>${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
-                                        <!--<td>{{doc.cuentaAbono}}{cuenta.banco.complemento.nombre_corto}} {{ cuenta.cuenta }}</td>-->
-                                        <!--<td >{{ cuenta.abreviatura }} ({{cuenta.numero}})</td>-->
-                                        <td></td>
+                                        <td>{{doc.tipo_cambio_usado ? parseFloat(doc.tipo_cambio_usado).formatMoney(2, '.', ',') : '1.00'}}</td>
+                                        <td>${{parseFloat((doc.documento.monto_total * doc.tipo_cambio_usado)).formatMoney(2, '.', ',') }}</td>
+                                        <td>{{doc.cuentaAbono.banco.complemento.nombre_corto}} {{doc.cuentaAbono.cuenta}}</td>
+                                        <td >{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
+                                        <td><partida-estatus :value="doc.estado"></partida-estatus></td>
                                     </tr>
                                  </tbody>
                              </table>
                          </div>
                      </div>
-                        </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                     </div>
+                  </div>
                 </div>
             </div>
          </div>
@@ -128,11 +132,17 @@
 </template>
 
 <script>
+    import PartidaEstatus from './partials/PartidaEstatus';
     import EstatusLabel from "./partials/DistribuirEstatus";
     export default {
         name: "distribuir-recurso-remesa-show",
-        components: {EstatusLabel},
+        components: {EstatusLabel, PartidaEstatus},
         props: ['id'],
+        data() {
+            return {
+                cargando: false,
+            }
+        },
         methods: {
             find(id) {
                 this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
@@ -142,6 +152,8 @@
                 }).then(data => {
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);
                     $(this.$refs.modal).modal('show')
+                }) .finally(() => {
+                    this.cargando = false;
                 })
             }
         },
