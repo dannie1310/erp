@@ -385,7 +385,7 @@ export const routes = [
                 ]
             },
             {
-                path: 'distribuir-recursos-remesa',
+                path: '/',
                 component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue'),
                 children: [
                     {
