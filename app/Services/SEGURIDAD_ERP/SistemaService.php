@@ -27,4 +27,9 @@ class SistemaService
     {
         return $this->repository->all($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }
