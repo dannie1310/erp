@@ -55,7 +55,6 @@ import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
 import sistema from './modules/seguridad/sistema';
-import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
 //IGH
@@ -116,7 +115,6 @@ export default new Vuex.Store({
         'seguridad/rol': rol,
         'seguridad/rol-personalizado': rolPersonalizado,
         'seguridad/sistema': sistema,
-        'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
     },
     strict: process.env.NODE_ENV !== 'production'
