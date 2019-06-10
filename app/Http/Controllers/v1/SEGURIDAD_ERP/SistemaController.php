@@ -11,7 +11,6 @@ namespace App\Http\Controllers\v1\SEGURIDAD_ERP;
 
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\SistemaTransformer;
-use App\Model\SEGURIDAD_ERP\Sistema;
 use App\Services\SEGURIDAD_ERP\SistemaService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;

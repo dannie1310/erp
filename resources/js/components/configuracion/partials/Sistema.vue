@@ -11,8 +11,8 @@
                             <div class="col-sm-5">
                                 <div class="form-group">
                                     <label for="from">SISTEMAS HABILITADOS</label>
-                                    <select multiple id="from" size="10" class="form-control">
-                                        <option></option>
+                                   <select multiple id="from" size="10" class="form-control" v-model="form.sistemas_id" :disabled="cargando">
+                                        <option v-for="sistema in sistemas_asignados_ordered" :value="sistema.id">{{ sistema.name }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -26,9 +26,9 @@
 
                             <div class="col-sm-5">
                                 <div class="form-group">
-                                    <label for="to">SISTEMAS DISPONIBLES </label>
-                                    <select multiple id="to" size="10" class="form-control" >
-                                        <option></option>
+                                   <label for="to">SISTEMAS DISPONIBLES</label>
+                                    <select multiple id="to" size="10" class="form-control" v-model="selected">
+                                        <option v-for="sistema in sistemas_disponibles_ordered" :value="sistema.id">{{ sistema.name }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -96,8 +96,84 @@
 
 <script>
     export default {
-        name: "configuracion-sistema"
-    }
+        name: "configuracion-sistema",
+
+        data() {
+            return {
+                form: {
+                    sistema_id: []
+                },
+                sistemas_disponibles: [],
+                sistemas_asignados: [],
+                sistemas_originales: [],
+                // rol_seleccionado: '',
+                cargando: false,
+                guardando: false,
+                selected: []
+            }
+        },
+
+        mounted() {
+            this.getSistemas();
+        },
+        methods: {
+
+            getSistemas() {
+                this.sistemas_disponibles = [];
+                return this.$store.dispatch('seguridad/sistema-obra/index')
+                    .then(data => {
+                        this.sistemas_disponibles = data.sort((a, b) => (a.name > b.name) ? 1 : -1);
+                    });
+            },
+            getSistemasObra() {
+                this.sistemas_originales = []
+                this.sistemas_disponibles = this.sistemas_disponibles.concat(this.sistemas_asignados);
+                return this.$store.dispatch('seguridad/sistema-obra/getSistemasObras')
+                    .then(data => {
+                        data.data.forEach(perm=> {
+                            this.sistemas_originales.push(perm.id);
+                        })
+
+                        this.sistemas_asignados = data.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
+                        this.sistemas_disponibles = this.sistemas_disponibles.diff(this.sistemas_asignados);
+                    });
+            },
+        },
+        computed:{
+            sistemas_asignados_ordered() {
+                return this.sistemas_asignados.sort((a,b) => {
+                    return (a.name<b.name?-1:(a.name>b.name?1:0));
+                });
+            },
+            sistemas_disponibles_ordered() {
+                return this.sistemas_disponibles.sort((a,b) => {
+                    return (a.name<b.name?-1:(a.name>b.name?1:0));
+                });
+            },
+            sistemas_desasignados() {
+                return this.sistemas_disponibles.filter(sistemas => {
+                    return $.inArray(sistemas.id, this.sistemas_originales) > -1;
+                })
+            },
+            currentObra() {
+                return this.$store.getters['auth/currentObra']
+            }
+        },
+        watch: {
+            'form.user_id'(id) {
+                this.$validator.reset()
+                if (id) {
+                    this.cargando = true;
+                    this.getSistemasObra(id)
+                        .finally(() => {
+                            this.cargando = false;
+                        });
+                }
+            }
+
+        },
+
+        }
 </script>
 
 <style>
