@@ -35,7 +35,8 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'estado'
+        'estado',
+        'usuario_registro',
     ];
 
     public function transform(DistribucionRecursoRemesa $model){
@@ -97,6 +98,10 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param DistribucionRecursoRemesa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includePartidas(DistribucionRecursoRemesa $model)
     {
         if($partida = $model->partida){

@@ -22,22 +22,16 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2" class="bg-gray-light">
-                                    <b>Usuario de Registro:</b>
-                                    <br>DFGD
-                                </td>
-                                <td colspan="2" class="bg-gray-light"><b>Estado:</b><br>
+                                <td colspan="1" class="bg-gray-light"><b>Estado:</b><br>
                                     <estatus-label :value="distribucion.estado"></estatus-label>
                                 </td>
-                            </tr>
-                            <tr v-if="distribucion.estado.estado == -1">
-                                <td colspan="2" class="bg-gray-light"><b>Usuario de Cancelación</b><br>
-                                    FFFFF
-                                </td>
-                                <td colspan="2" class="bg-gray-light">
+                                <td v-if="distribucion.estado.estado != -1"  colspan="2" class="bg-gray-light">
                                     <b>Usuario de Registro:</b>
-                                    <br>
-                                    DFGD
+                                    <br>{{distribucion.usuario_registro.nombre}}
+                                </td>
+                                <td v-if="distribucion.estado.estado == -1" colspan="1" class="bg-gray-light">
+                                    <b>Usuario de Cancelación</b>
+                                    <br>{{distribucion.usuario_cancelo.nombre}}
                                 </td>
                             </tr>
                             <tr>
@@ -78,6 +72,7 @@
                                 <th>Importe Pesos</th>
                                 <th>Cuenta Abono</th>
                                 <th>Cuenta Cargo</th>
+                                <th>Transaccion de Pago</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
@@ -92,7 +87,9 @@
                                 <td>{{doc.tipo_cambio_usado ? parseFloat(doc.tipo_cambio_usado).formatMoney(2, '.', ',') : '1.00'}}</td>
                                 <td>${{parseFloat((doc.documento.monto_total * doc.tipo_cambio_usado)).formatMoney(2, '.', ',') }}</td>
                                 <td>{{doc.cuentaAbono.banco.complemento.nombre_corto}} {{doc.cuentaAbono.cuenta}}</td>
-                                <td >{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
+                                <td>{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
+                                <td v-if="doc.transaccion"> {{doc.transaccion.tipo.descripcion}} {{doc.transaccion.tipo_transaccion}} {{doc.transaccion}}</td>
+                                <td v-else></td>
                                 <td><partida-estatus :value="doc.estado"></partida-estatus></td>
                             </tr>
                             </tbody>
@@ -131,7 +128,7 @@
                 this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/find', {
                     id: id,
-                    params: { include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa','partidas.cuentaAbono.banco'] }
+                    params: { include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa','partidas.cuentaAbono.banco', 'partidas.transaccion', 'usuario_cancelo'] }
                 }).then(data => {
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);
                 }) .finally(() => {

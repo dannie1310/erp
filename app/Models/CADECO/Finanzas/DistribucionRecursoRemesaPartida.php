@@ -12,6 +12,7 @@ namespace App\Models\CADECO\Finanzas;
 use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Moneda;
+use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\MODULOSSAO\ControlRemesas\DocumentoLiberado;
 use Illuminate\Database\Eloquent\Model;
@@ -83,6 +84,10 @@ class DistribucionRecursoRemesaPartida extends Model
     public function moneda()
     {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function transaccion(){
+        return $this->belongsTo(Transaccion::class, 'id_transaccion_pago','id_transaccion');
     }
 
     public function getTipoCambioAttribute(){

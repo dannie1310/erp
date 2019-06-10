@@ -12,6 +12,7 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 use App\Http\Transformers\CADECO\CuentaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoTransformer;
+use App\Http\Transformers\TransaccionTransformer;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use League\Fractal\TransformerAbstract;
 
@@ -28,7 +29,8 @@ class DistribucionRecursoRemesaPartidaTransformer extends TransformerAbstract
         'estado',
         'cuentaAbono',
         'cuentaCargo',
-        'moneda'
+        'moneda',
+        'transaccion'
     ];
 
     /**
@@ -120,6 +122,18 @@ class DistribucionRecursoRemesaPartidaTransformer extends TransformerAbstract
     {
         if($moneda = $model->moneda){
             return $this->item($moneda, new MonedaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param DistribucionRecursoRemesaPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTransaccion(DistribucionRecursoRemesaPartida $model)
+    {
+        if($transaccion = $model->transaccion){
+            return $this->item($transaccion, new TransaccionTransformer);
         }
         return null;
     }
