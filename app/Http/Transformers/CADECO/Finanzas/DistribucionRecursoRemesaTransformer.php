@@ -24,8 +24,9 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'remesa_liberada',
         'usuario_registro',
-        'usuario_cancelo'
-
+        'usuario_cancelo',
+        'estado',
+        'partidas'
     ];
 
     /**
@@ -34,7 +35,8 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'estado',
+        'usuario_registro',
     ];
 
     public function transform(DistribucionRecursoRemesa $model){
@@ -42,7 +44,9 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'folio' => $model->folio,
             'fecha_registro' => $model->fecha_hora_registro,
-            'monto_autorizado' => $model->monto_autorizado
+            'monto_autorizado' => $model->monto_autorizado,
+            'monto_distribuido' => $model->monto_distribuido,
+            'estado' => $model->estado
         ];
     }
 
@@ -62,7 +66,8 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
      * @param DistribucionRecursoRemesa $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeUsuarioRegistro(DistribucionRecursoRemesa $model){
+    public function includeUsuarioRegistro(DistribucionRecursoRemesa $model)
+    {
         if($usuario = $model->usuarioRegistro){
             return $this->item($usuario, new UsuarioTransformer);
         }
@@ -73,9 +78,34 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
      * @param DistribucionRecursoRemesa $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeUsuarioCancelo(DistribucionRecursoRemesa $model){
+    public function includeUsuarioCancelo(DistribucionRecursoRemesa $model)
+    {
         if($usuario = $model->usuarioCancelo){
             return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param DistribucionRecursoRemesa $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEstado(DistribucionRecursoRemesa $model)
+    {
+        if($estado = $model->estatus){
+            return $this->item($estado, new CtgEstadoDistribucionTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param DistribucionRecursoRemesa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(DistribucionRecursoRemesa $model)
+    {
+        if($partida = $model->partida){
+            return $this->collection($partida, new DistribucionRecursoRemesaPartidaTransformer);
         }
         return null;
     }

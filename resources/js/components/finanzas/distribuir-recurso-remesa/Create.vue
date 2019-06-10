@@ -43,7 +43,7 @@
                                                 <h3>Documentos Liberados de la Remesa</h3>
                                             </div>
                                             <div class="col-3">
-                                                <h6 align="right">Total: q</h6>
+                                                <h6 align="right">Total: {{count}}</h6>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -66,7 +66,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-for="(doc, i) in documentos">
+                                                <tr v-for="(doc, i) in documentos" v-if="doc.disponible == 1">
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
                                                     <td>{{doc.empresa ? doc.empresa.razon_social : ''}}</td>
@@ -167,6 +167,9 @@
                 original : null,
                 documentos : null,
                 cuenta_cargo: [],
+                total_selecionado: 0,
+                total: 0,
+                count:0,
                 cargando: false
             }
         },
@@ -179,9 +182,15 @@
             },
             sumaImporteTotal() {
                 let result = 0;
+                let count = 0;
                 this.documentos.forEach(function (doc, i) {
                        result += parseFloat(doc.importe_total);
+                       if(doc.disponible == 1) {
+                           count += 1;
+                       }
                 })
+                this.total = result;
+                this.count = count;
                 return result
             },
             sumaSeleccionImportes() {
@@ -191,6 +200,7 @@
                         result += parseFloat(doc.importe_total);
                     }
                 })
+                this.total_selecionado = result;
                 return result
             },
 
@@ -280,8 +290,7 @@
             store() {
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/store', this.$data)
                     .then((data) => {
-                       // $(this.$refs.modal).modal('hide');
-                      //  this.$emit('created', data)
+                        this.$router.push({name: 'distribuir-recursos-remesa'});
                     });
             },
 

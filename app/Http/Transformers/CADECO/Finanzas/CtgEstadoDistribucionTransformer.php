@@ -2,17 +2,17 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 24/05/2019
- * Time: 06:22 PM
+ * Date: 05/06/2019
+ * Time: 05:23 PM
  */
 
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
-use App\Models\CADECO\Finanzas\CtgEstadoDistribucionRecursoRemesaPartida;
+use App\Models\CADECO\Finanzas\CtgEstadoDistribucionRecursoRemesa;
 use League\Fractal\TransformerAbstract;
 
-class CtgEstadoDistribucionPartidaTransformer extends TransformerAbstract
+class CtgEstadoDistribucionTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -32,11 +32,11 @@ class CtgEstadoDistribucionPartidaTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(CtgEstadoDistribucionRecursoRemesaPartida $model){
+    public function transform(CtgEstadoDistribucionRecursoRemesa $model){
         return [
             'id' => $model->getKey(),
-            'estado' => $model->estado,
-            'descripcion' => $model->descripcion
+            'estado' => (int) $model->estado,
+            'descripcion' => (string) $model->descripcion
         ];
     }
 }

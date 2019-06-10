@@ -311,6 +311,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayout');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@show')->where(['id' => '[0-9]+']);
         });
 
         /**

@@ -9,7 +9,10 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\CADECO\CuentaTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoTransformer;
+use App\Http\Transformers\TransaccionTransformer;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use League\Fractal\TransformerAbstract;
 
@@ -22,8 +25,12 @@ class DistribucionRecursoRemesaPartidaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'distribucion_recurso',
-        'documento_liberado',
-        'estado'
+        'documento',
+        'estado',
+        'cuentaAbono',
+        'cuentaCargo',
+        'moneda',
+        'transaccion'
     ];
 
     /**
@@ -32,14 +39,18 @@ class DistribucionRecursoRemesaPartidaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'estado',
+        'cuentaAbono',
+        'cuentaCargo',
+        'moneda'
     ];
 
     public function transform(DistribucionRecursoRemesaPartida $model){
         return [
             'id' => $model->getKey(),
             'fecha' => $model->fecha_registro,
-            'folio_banco' => $model->folio_partida_bancaria
+            'folio_banco' => $model->folio_partida_bancaria,
+            'tipo_cambio_usado' => $model->getTipoCambioAttribute()
         ];
     }
 
@@ -59,9 +70,9 @@ class DistribucionRecursoRemesaPartidaTransformer extends TransformerAbstract
      * @param DistribucionRecursoRemesaPartida $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeDocumentoLiberado(DistribucionRecursoRemesaPartida $model)
+    public function includeDocumento(DistribucionRecursoRemesaPartida $model)
     {
-        if($documento = $model->documentoLiberado){
+        if($documento = $model->documento){
             return $this->item($documento, new DocumentoTransformer);
         }
         return null;
@@ -73,8 +84,56 @@ class DistribucionRecursoRemesaPartidaTransformer extends TransformerAbstract
      */
     public function includeEstado(DistribucionRecursoRemesaPartida $model)
     {
-        if($estado = $model->estado){
+        if($estado = $model->estatus){
             return $this->item($estado, new CtgEstadoDistribucionPartidaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param DistribucionRecursoRemesaPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeCuentaCargo(DistribucionRecursoRemesaPartida $model)
+    {
+        if($cuenta = $model->cuentaCargo){
+            return $this->item($cuenta, new CuentaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param DistribucionRecursoRemesaPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeCuentaAbono(DistribucionRecursoRemesaPartida $model)
+    {
+        if($cuenta = $model->cuentaAbono){
+            return $this->item($cuenta, new CuentaBancariaProveedorTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param DistribucionRecursoRemesaPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMoneda(DistribucionRecursoRemesaPartida $model)
+    {
+        if($moneda = $model->moneda){
+            return $this->item($moneda, new MonedaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param DistribucionRecursoRemesaPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTransaccion(DistribucionRecursoRemesaPartida $model)
+    {
+        if($transaccion = $model->transaccion){
+            return $this->item($transaccion, new TransaccionTransformer);
         }
         return null;
     }

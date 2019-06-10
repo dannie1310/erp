@@ -33,10 +33,16 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
+                    { title: 'Folio', field: 'folio', sortable: true },
+                    { title: 'Remesa Liberada', field: 'remesa', sortable: false },
+                    { title: 'Monto Remesa', field: 'monto_autorizado', sortable: true },
+                    { title: 'Monto Distribuido', field: 'monto_distribuido', sortable: true },
+                    { title: 'Estatus', field: 'estado', tdComp: require('./partials/DistribuirEstatus'), sortable: true},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons') },
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {include: ['remesa_liberada'], sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -52,17 +58,54 @@
 
         methods: {
             paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('finanzas/distribuir-recurso-remesa/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCIONES', data.data);
+                        this.$store.commit('finanzas/distribuir-recurso-remesa/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             },
             create() {
                 this.$router.push({name: 'distribuir-recurso-remesa-create'});
             },
         },
         computed: {
+            distribuciones(){
+                return this.$store.getters['finanzas/distribuir-recurso-remesa/distribuciones'];
+            },
+            meta(){
+                return this.$store.getters['finanzas/distribuir-recurso-remesa/meta'];
+            },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
+            distribuciones: {
+                handler(distribuciones) {
+                    let self = this
+                    self.$data.data = []
+                    distribuciones.forEach(function (distribucion, i) {
+
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            folio: 'REM-'+distribucion.folio,
+                            remesa: 'Año: '+distribucion.remesa_liberada.remesa.año+' Semana: '+distribucion.remesa_liberada.remesa.semana+' Remesa: '+distribucion.remesa_liberada.remesa.tipo+' ('+distribucion.remesa_liberada.remesa.folio+')',
+                            monto_autorizado: '$'+(parseFloat(distribucion.monto_autorizado)).formatMoney(2,'.',','),
+                            monto_distribuido:  '$'+(parseFloat(distribucion.monto_distribuido)).formatMoney(2,'.',','),
+                            estado: distribucion.estado,
+                            buttons: $.extend({}, {
+                                show: true,
+                                id: distribucion.id
+                            })
+                        })
+                    });
+                },
+                deep: true
+            },
 
             meta: {
                 handler(meta) {

@@ -11,6 +11,7 @@ namespace App\Models\MODULOSSAO\ControlRemesas;
 
 use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use Illuminate\Database\Eloquent\Model;
 
 class Documento extends Model
@@ -19,6 +20,8 @@ class Documento extends Model
     protected $table = 'ControlRemesas.Documentos';
     protected $primaryKey = 'IDDocumento';
     public $timestamps = false;
+
+    protected $hidden = ['disponible'];
 
     protected static function boot()
     {
@@ -38,6 +41,10 @@ class Documento extends Model
         return $this->belongsTo(DocumentoLiberado::class, 'IDDocumento', 'IDDocumento');
     }
 
+    public function partidas(){
+        return $this->belongsTo(DistribucionRecursoRemesaPartida::class, 'IDDocumento', 'id_documento');
+    }
+
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
@@ -46,5 +53,16 @@ class Documento extends Model
     public function tipoCambio()
     {
         return $this->belongsTo(Cambio::class, 'IDMoneda', 'id_moneda');
+    }
+
+    public function getDisponibleAttribute()
+    {
+        $existente = DistribucionRecursoRemesaPartida::query()->select('id_documento')->where('id_documento', '=', $this->IDDocumento)->where('estado', '!=', 3)->get()->toArray();
+
+        if ($existente != []) {
+            return 0;
+        }else{
+            return 1;
+        }
     }
 }
