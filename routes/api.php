@@ -310,6 +310,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'distribuir-recurso-remesa'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayout');
         });
 
         /**

@@ -34,4 +34,10 @@ class DistribucionRecursoRemesaService
         return $this->repository->create($data);
     }
 
+    public function layoutDistribucionRemesa($id)
+    {
+        $layout = new \App\LAYOUT\DistribucionRecursoRemesa($id);
+        return $layout;
+    }
+
 }

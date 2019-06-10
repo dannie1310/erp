@@ -57,4 +57,9 @@ class DistribucionRecursoRemesaController extends Controller
     {
         return $this->traitStore($request);
     }
+
+    public function descargaLayout($id){
+        return $this->service->layoutDistribucionRemesa($id)->create();
+    }
+
 }
