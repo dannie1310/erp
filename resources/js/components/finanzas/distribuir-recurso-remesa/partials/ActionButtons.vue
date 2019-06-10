@@ -1,17 +1,15 @@
 <template>
     <div class="btn-group">
-        <DistribuirRecursoRemesaShow v-if="value.show" v-bind:id="value.id" />
+        <button @click="show" v-if="value.show" type="button" class="btn btn-sm btn-outline-secondary" title="Ver"><i class="fa fa-eye"></i></button>
         <!--<DistribuirRecursoRemesaEdit v-if="value.edit" v-bind:id="value.id" />-->
         <!--<button @click="cancelar"  v-if="value.cancelar && value.estado === 0" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar"><i class="fa fa-ban"></i></button>-->
     </div>
 </template>
 
 <script>
-    import DistribuirRecursoRemesaShow from "../Show";
-    // import DistribuirRecursoRemesaEdit from "../Edit";
     export default {
         name: "action-buttons",
-        components: {DistribuirRecursoRemesaShow},
+        components: {},
         props: ['value'],
         methods: {
             cancelar() {
