@@ -4,12 +4,15 @@
 namespace App\LAYOUT;
 
 use Chumper\Zipper\Zipper;
+use Illuminate\Filesystem\Filesystem;
 
 class DistribucionRecursoRemesa
 {
     protected $data = array();
+    protected $id;
     public function __construct($id)
     {
+        $this->id = $id;
         $remesa = \App\Models\CADECO\Finanzas\DistribucionRecursoRemesa::with('partida')->where('id', '=', $id)->first();
 
         foreach ($remesa->partida as $key => $partida){
@@ -30,23 +33,27 @@ class DistribucionRecursoRemesa
     }
 
     function create(){
+        $llave = str_pad($this->id, 5, 0, STR_PAD_LEFT);
         $a = "";
         $b = "";
         foreach ($this->data as $dat){$a .= $dat . "\n";}
         foreach ($this->data as $dat){$b .= $dat . "\n";}
 
-        $fp_i = fopen("layouts/files/layout_inter.txt","wb");
+        $fp_i = fopen("layouts/files/#$llave-i-santander.txt","wb");
         fwrite($fp_i,$a);
         fclose($fp_i);
-        $fp_m = fopen("layouts/files/layout_mismo.txt","wb");
+        $fp_m = fopen("layouts/files/#$llave-m-santander.txt","wb");
         fwrite($fp_m,$b);
         fclose($fp_m);
 
         $zipper = new Zipper;
         $files = glob('layouts/files/*');
-        $zipper->make('layouts/zip/santander.zip')->add($files)->close();
+        $zipper->make('layouts/zip/' .$llave .'-santander.zip')->add($files)->close();
 
-        return response()->download('layouts/zip/santander.zip');
+        $file = new Filesystem;
+        $file->cleanDirectory('layouts/files');
+
+        return response()->download('layouts/zip/' .$llave .'-santander.zip');
 
     }
 }
