@@ -14,6 +14,8 @@ use App\Http\Transformers\SEGURIDAD_ERP\SistemaTransformer;
 use App\Services\SEGURIDAD_ERP\SistemaService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
+
 
 class SistemaController extends Controller
 {
@@ -50,4 +52,10 @@ class SistemaController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+    public function porObra()
+    {
+        $sistemas = $this->service->porObra();
+        return $this->respondWithCollection($sistemas);
+    }
+
 }

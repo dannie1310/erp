@@ -19,8 +19,8 @@
 
                             <div class="container col-sm-2">
                                 <div class="vertical-center align-content-center">
-                                    <button class="btn col-xs-12 btn-default" title="Agregar" ><i class="fa fa-long-arrow-left"></i></button>
-                                    <button class="btn col-xs-12 btn-default" title="Quitar" ><i class="fa fa-long-arrow-right"></i></button>
+                                    <button class="btn col-xs-12 btn-default" title="Agregar" @click="agregar"><i class="fa fa-long-arrow-left"></i></button>
+                                    <button class="btn col-xs-12 btn-default" title="Quitar" @click="quitar"><i class="fa fa-long-arrow-right"></i></button>
                                 </div>
                             </div>
 
@@ -35,6 +35,7 @@
                         </div>
                     </div>
                 </div>
+                    <button class="btn btn-outline-success pull-right" :disabled="!sistemas_desasignados.length && !sistemas_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
                 <div>
                  </div>
             </div>
@@ -114,12 +115,14 @@
         },
 
         mounted() {
+            this.getSistemasObra();
             this.getSistemas();
         },
         methods: {
 
             getSistemas() {
                 this.sistemas_disponibles = [];
+                this.sistemas_originales = this.sistemas_originales.concat(this.sistemas_disponibles);
                 return this.$store.dispatch('seguridad/sistema-obra/index')
                     .then(data => {
                         this.sistemas_disponibles = data.sort((a, b) => (a.name > b.name) ? 1 : -1);
@@ -128,7 +131,7 @@
             getSistemasObra() {
                 this.sistemas_originales = []
                 this.sistemas_disponibles = this.sistemas_disponibles.concat(this.sistemas_asignados);
-                return this.$store.dispatch('seguridad/sistema-obra/getSistemasObras')
+                return this.$store.dispatch('seguridad/sistema-obra/getSistemasObra')
                     .then(data => {
                         data.data.forEach(perm=> {
                             this.sistemas_originales.push(perm.id);
@@ -137,6 +140,38 @@
                         this.sistemas_asignados = data.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
                         this.sistemas_disponibles = this.sistemas_disponibles.diff(this.sistemas_asignados);
                     });
+            },
+            agregar() {
+                this.selected.forEach(permiso => {
+                    this.sistemas_disponibles.forEach(r => {
+                        if(r.id == permiso) {
+                            this.sistemas_asignados.push(r)
+                            this.sistemas_disponibles = this.sistemas_disponibles.filter(perm => {
+                                return perm.id != r.id;
+                            });
+                        }
+                    })
+                })
+            },
+
+            quitar() {
+                this.form.sistemas_id.forEach(sistema => {
+                    this.sistemas_asignados.forEach(r => {
+                        if(r.id == sistema) {
+                            this.sistemas_disponibles.push(r)
+                            this.sistemas_asignados = this.sistemas_asignados.filter(perm => {
+                                return perm.id != r.id;
+                            });
+                        }
+                    })
+                })
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.save();
+                    }
+                });
             },
         },
         computed:{
@@ -153,6 +188,11 @@
             sistemas_desasignados() {
                 return this.sistemas_disponibles.filter(sistemas => {
                     return $.inArray(sistemas.id, this.sistemas_originales) > -1;
+                })
+            },
+            sistemas_nuevos_asignados() {
+                return this.sistemas_asignados.filter(sistemas => {
+                    return $.inArray(sistemas.id, this.sistemas_originales) == -1;
                 })
             },
             currentObra() {
