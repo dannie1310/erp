@@ -52,7 +52,7 @@ class SistemaService
 ////            if($permiso->reservado &&  ! auth()->user()->can('asignar_permisos_reservados')) {
 ////                throw new \Exception('No es posible asignar el permiso "' . $permiso->display_name. '" porque se trata de un permiso reservado, favor de solicitar la asignación al administrador del sistema.', 403);
 ////            }
-        }
+        } 
 //        dd($sistemas);
         $sistemas_originales = $proyecto->sistemas()->pluck('id_sistema')->toArray();
         dd($sistemas_originales);
