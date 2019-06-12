@@ -52,9 +52,9 @@ class SistemaController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
-    public function porObra()
+    public function porObra(Request $request)
     {
-        $sistemas = $this->service->porObra();
+        $sistemas = $this->service->porObra($request->all());
         return $this->respondWithCollection($sistemas);
     }
     public function asignacionSistemas(Request $request)

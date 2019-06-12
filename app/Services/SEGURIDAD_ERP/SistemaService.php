@@ -43,8 +43,8 @@ class SistemaService
     }
     public function asignacionSistemas($data)
     {
-        $proyecto = Proyecto::query()->find(10);
-//        dd($proyecto);
+        $proyecto = Proyecto::query()->sistemas()->where('z','=',Context::getIdObra())->get('id');
+        dd($proyecto);
 //
         foreach ($data['sistema_id'] as $sist) {
             $sistemas = Sistema::find($sist);
