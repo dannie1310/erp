@@ -55,22 +55,22 @@
                         <div class="table-responsive">
                             <table class="table">
                                 <tr>
-                                    <th>Rol:</th>
-                                    <td></td>
+                                    <th>Sistema:</th>
+                                    <td>{{ sistemas_seleccionado }}</td>
                                 </tr>
-                                <tr>
-                                    <th>Permisos a Asignar:</th>
+                                <tr v-if="sistemas_nuevos_asignados.length">
+                                    <th>Sistemas a Asignar:</th>
                                     <td>
                                         <ul>
-                                            <li ></li>
+                                            <li v-for="sistema in sistemas_nuevos_asignados">{{ sistema.name }}</li>
                                         </ul>
                                     </td>
                                 </tr>
-                                <tr >
-                                    <th>Permisos a Desasignar:</th>
+                                <tr v-if="sistemas_desasignados.length">
+                                    <th>Sistemas a Desasignar:</th>
                                     <td>
                                         <ul>
-                                            <li </li>
+                                            <li v-for="sistema in sistemas_desasignados">{{ sistema.name }}</li>
                                         </ul>
                                     </td>
                                 </tr>
@@ -79,7 +79,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" >
+                        <button type="button" class="btn btn-primary" @click="guardar" :disabled="guardando">
                             <span v-if="guardando">
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
@@ -107,7 +107,7 @@
                 sistemas_disponibles: [],
                 sistemas_asignados: [],
                 sistemas_originales: [],
-                // rol_seleccionado: '',
+                sistemas_seleccionado: '',
                 cargando: false,
                 guardando: false,
                 selected: []
@@ -173,6 +173,34 @@
                     }
                 });
             },
+            save() {
+                this.$store.dispatch('seguridad/sistema-obra/find', {
+                    id: this.form.sistema_id
+                })
+                    .then(data => {
+                        this.sistemas_seleccionado = data.display_name;
+                        $(this.$refs.modal).modal('show');
+                    })
+            },
+            guardar() {
+                this.guardando = true;
+                return this.$store.dispatch('seguridad/sistema-obra/asignarSistemas', {
+                    sistema_id: this.sistemas_asignados.map(sistema => (
+                        sistema.id
+                    ))
+                })
+                    .then(data => {
+                        this.sistemas_originales = this.sistemas_asignados.map(perm => (
+                            perm.id
+                        ))
+                    } )
+                    .finally(() => {
+                        $(this.$refs.modal).modal('hide');
+                        this.$validator.reset()
+                        this.guardando = false;
+
+                    });
+            }
         },
         computed:{
             sistemas_asignados_ordered() {
@@ -198,20 +226,7 @@
             currentObra() {
                 return this.$store.getters['auth/currentObra']
             }
-        },
-        watch: {
-            'form.user_id'(id) {
-                this.$validator.reset()
-                if (id) {
-                    this.cargando = true;
-                    this.getSistemasObra(id)
-                        .finally(() => {
-                            this.cargando = false;
-                        });
-                }
-            }
-
-        },
+        }
 
         }
 </script>

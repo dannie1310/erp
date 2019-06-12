@@ -25,6 +25,19 @@ export default {
                     })
             });
         },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, payload.config)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         getSistemasObra(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -35,6 +48,48 @@ export default {
                     })
                     .catch(error => {
                         reject(error);
+                    });
+            });
+        },
+        asignarSistemas(context, payload = {}) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Asignar/Desasignar Sistemas",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Continuar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'asignacion-sistemas', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("La acción fue aplicada con éxito", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        }else{
+                            reject();
+
+                        }
                     });
             });
         },

@@ -57,5 +57,10 @@ class SistemaController extends Controller
         $sistemas = $this->service->porObra();
         return $this->respondWithCollection($sistemas);
     }
+    public function asignacionSistemas(Request $request)
+    {
+        $response = $this->service->asignacionSistemas($request->all());
+        return response()->json($response, 200);
+    }
 
 }
