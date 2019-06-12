@@ -14,6 +14,7 @@ use App\Http\Requests\Finanzas\StoreDistribucionRecursoRemesaRequest;
 use App\Http\Transformers\CADECO\Finanzas\DistribucionRecursoRemesaTransformer;
 use App\Services\CADECO\Finanzas\DistribucionRecursoRemesaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class DistribucionRecursoRemesaController extends Controller
@@ -60,6 +61,11 @@ class DistribucionRecursoRemesaController extends Controller
 
     public function descargaLayout($id){
         return $this->service->layoutDistribucionRemesa($id)->create();
+    }
+
+    public function cargarLayout(Request $request, $id){
+        $respuesta =  $this->service->cargaLayout($request, $id);
+        return response()->json($respuesta, 200);
     }
 
 }
