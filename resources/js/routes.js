@@ -409,6 +409,17 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'registrar_solicitud_pago_anticipado'
                         }
+                    },
+                    {
+                        path: 'show',
+                        name: 'distribuir-recurso-remesa-show',
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Show'),
+                        meta: {
+                            title: 'Consultar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'CONSULTAR', parent: 'distribuir-recursos-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_pago_anticipado'
+                        }
                     }
                 ]
             },

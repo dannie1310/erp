@@ -59,11 +59,11 @@ class DistribucionRecursoRemesa extends Model
     }
 
     public function usuarioRegistro(){
-        return $this->belongsTo(Usuario::class, 'usuario_registro','id_usuario');
+        return $this->belongsTo(Usuario::class, 'usuario_registro','idusuario');
     }
 
     public function usuarioCancelo() {
-        return $this->belongsTo(Usuario::class, 'usuario_cancelo', 'id_usuario');
+        return $this->belongsTo(Usuario::class, 'usuario_cancelo', 'idusuario');
     }
 
     public function estatus(){
