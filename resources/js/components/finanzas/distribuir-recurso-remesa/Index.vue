@@ -89,7 +89,6 @@
                     let self = this
                     self.$data.data = []
                     distribuciones.forEach(function (distribucion, i) {
-
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             folio: 'REM-'+distribucion.folio,
