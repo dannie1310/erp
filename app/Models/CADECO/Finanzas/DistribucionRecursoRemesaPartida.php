@@ -42,7 +42,7 @@ class DistribucionRecursoRemesaPartida extends Model
 
         self::creating(function ($model) {
             $model->fecha_registro = date('Y-m-d h:i:s');
-            $model->estado = 1;
+            $model->estado = 0;
         });
 
         self::created(function($query)
@@ -68,7 +68,7 @@ class DistribucionRecursoRemesaPartida extends Model
 
     public function estatus()
     {
-        return $this->belongsTo(CtgEstadoDistribucionRecursoRemesaPartida::class, 'estado', 'id');
+        return $this->belongsTo(CtgEstadoDistribucionRecursoRemesaPartida::class, 'estado', 'estado');
     }
 
     public function cuentaCargo()

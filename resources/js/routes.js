@@ -385,18 +385,18 @@ export const routes = [
                 ]
             },
             {
-                path: '/',
+                path: 'distribuir-recurso-remesa',
                 component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue'),
                 children: [
                     {
-                        path: 'distribuir-recursos-remesa',
-                        name: 'distribuir-recursos-remesa',
+                        path: '/',
+                        name: 'distribuir-recurso-remesa',
                         component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
                         meta: {
                             title: 'Distribuir Recursos Autorizados de Remesa',
                             breadcrumb: {name: 'DISTRIBUIR RECURSOS DE REMESA', parent: 'finanzas'},
-                            middleware: [auth, context],
-                            // permission: 'consultar_cierre_periodo'
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_cierre_periodo'
                         }
                     },
                     {
@@ -405,9 +405,21 @@ export const routes = [
                         component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
                         meta: {
                             title: 'Registrar Distribución de Recursos Autorizados',
-                            breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recursos-remesa'},
+                            breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_solicitud_pago_anticipado'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'distribuir-recurso-remesa-show',
+                        props: true,
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Show'),
+                        meta: {
+                            title: 'Consultar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_pago_anticipado'
                         }
                     }
                 ]

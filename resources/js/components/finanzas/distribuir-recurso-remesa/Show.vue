@@ -22,16 +22,22 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="bg-gray-light"><b>Estado:</b><br>
-                                    <estatus-label :value="distribucion.estado"></estatus-label>
-                                </td>
-                                <td v-if="distribucion.estado.estado != -1"  colspan="2" class="bg-gray-light">
+                                <td colspan="1" class="bg-gray-light"><b>Estado:</b><br> </td>
+                                <td colspan="1" class="bg-gray-light"><estatus-label :value="distribucion.estado"></estatus-label></td>
+
+                                <td colspan="1" class="bg-gray-light">
                                     <b>Usuario de Registro:</b>
-                                    <br>{{distribucion.usuario_registro.nombre}}
                                 </td>
-                                <td v-if="distribucion.estado.estado == -1" colspan="1" class="bg-gray-light">
+                                <td colspan="1" class="bg-gray-light">
+                                   {{distribucion.usuario_registro.nombre}}
+                                </td>
+                            </tr>
+                            <tr v-if="distribucion.estado.estado == -1">
+                                <td colspan="2" class="bg-gray-light">
                                     <b>Usuario de Cancelación</b>
-                                    <br>{{distribucion.usuario_cancelo.nombre}}
+                                </td>
+                                <td colspan="2" class="bg-gray-light">
+                                    {{distribucion.usuario_cancelo.nombre}}
                                 </td>
                             </tr>
                             <tr>
@@ -88,16 +94,13 @@
                                 <td>${{parseFloat((doc.documento.monto_total * doc.tipo_cambio_usado)).formatMoney(2, '.', ',') }}</td>
                                 <td>{{doc.cuentaAbono.banco.complemento.nombre_corto}} {{doc.cuentaAbono.cuenta}}</td>
                                 <td>{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
-                                <td v-if="doc.transaccion"> {{doc.transaccion.tipo.descripcion}} {{doc.transaccion.tipo_transaccion}} {{doc.transaccion}}</td>
+                                <td v-if="doc.transaccion"> [ {{doc.transaccion.tipo.descripcion}} ], #{{doc.transaccion.numero_folio}}</td>
                                 <td v-else></td>
                                 <td><partida-estatus :value="doc.estado"></partida-estatus></td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -124,10 +127,10 @@
                 })
         },
         methods: {
-            find(id) {
+            find() {
                 this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/find', {
-                    id: id,
+                    id: this.id,
                     params: { include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa','partidas.cuentaAbono.banco', 'partidas.transaccion', 'usuario_cancelo'] }
                 }).then(data => {
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);

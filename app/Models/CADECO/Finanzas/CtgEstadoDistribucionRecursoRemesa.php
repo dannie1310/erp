@@ -15,10 +15,4 @@ class CtgEstadoDistribucionRecursoRemesa extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.ctg_estado_distribucion_recursos_rem';
-    protected $primaryKey = 'id';
-
-    protected $fillable = [
-                    'estado',
-                    'descripcion'
-                    ];
 }

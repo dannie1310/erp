@@ -24,7 +24,7 @@
                 </ul>
             </li>
             <li class="nav-item" v-if="modulos">
-                <router-link :to="{name: 'distribuir-recursos-remesa'}" class="nav-link">
+                <router-link :to="{name: 'distribuir-recurso-remesa'}" class="nav-link">
                     <i class="fa fa-list-alt nav-icon"></i>
                     <p>Distribuir Recursos de Remesa</p>
                 </router-link>

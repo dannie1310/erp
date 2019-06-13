@@ -290,7 +290,7 @@
             store() {
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/store', this.$data)
                     .then((data) => {
-                        this.$router.push({name: 'distribuir-recursos-remesa'});
+                        this.$router.push({name: 'distribuir-recurso-remesa-index'});
                     });
             },
 
