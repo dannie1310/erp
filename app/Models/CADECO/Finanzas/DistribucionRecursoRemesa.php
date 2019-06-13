@@ -45,7 +45,7 @@ class DistribucionRecursoRemesa extends Model
             $model->folio = $count +1;
             $model->usuario_registro = auth()->id();
             $model->fecha_hora_registro = date('Y-m-d h:i:s');
-            $model->estado = 1;
+            $model->estado = 0;
         });
 
         self::created(function($query)
@@ -67,7 +67,7 @@ class DistribucionRecursoRemesa extends Model
     }
 
     public function estatus(){
-        return $this->belongsTo(CtgEstadoDistribucionRecursoRemesa::class, 'estado', 'id');
+        return $this->belongsTo(CtgEstadoDistribucionRecursoRemesa::class, 'estado', 'estado');
     }
 
     public function partida(){
