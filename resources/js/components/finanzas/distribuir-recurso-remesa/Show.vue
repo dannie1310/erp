@@ -94,7 +94,7 @@
                                 <td>${{parseFloat((doc.documento.monto_total * doc.tipo_cambio_usado)).formatMoney(2, '.', ',') }}</td>
                                 <td>{{doc.cuentaAbono.banco.complemento.nombre_corto}} {{doc.cuentaAbono.cuenta}}</td>
                                 <td>{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
-                                <td v-if="doc.transaccion"> Tipo {{doc.transaccion.tipo.descripcion}}, Folio: {{doc.transaccion.numero_folio}}</td>
+                                <td v-if="doc.transaccion"> [ {{doc.transaccion.tipo.descripcion}} ], #{{doc.transaccion.numero_folio}}</td>
                                 <td v-else></td>
                                 <td><partida-estatus :value="doc.estado"></partida-estatus></td>
                             </tr>
