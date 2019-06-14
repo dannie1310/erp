@@ -14,6 +14,7 @@ use App\Http\Requests\Finanzas\StoreDistribucionRecursoRemesaRequest;
 use App\Http\Transformers\CADECO\Finanzas\DistribucionRecursoRemesaTransformer;
 use App\Services\CADECO\Finanzas\DistribucionRecursoRemesaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class DistribucionRecursoRemesaController extends Controller
@@ -56,5 +57,10 @@ class DistribucionRecursoRemesaController extends Controller
     public function store(StoreDistribucionRecursoRemesaRequest $request)
     {
         return $this->traitStore($request);
+    }
+    public function cancelar(Request $request, $id)
+    {
+        $item = $this->service->cancelar($request->all(), $id);
+        return $this->respondWithItem($item);
     }
 }
