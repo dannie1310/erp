@@ -54,10 +54,6 @@
                     <div class="modal-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <tr>
-                                    <th>Sistema:</th>
-                                    <td>{{ sistemas_seleccionado }}</td>
-                                </tr>
                                 <tr v-if="sistemas_nuevos_asignados.length">
                                     <th>Sistemas a Asignar:</th>
                                     <td>
@@ -115,8 +111,9 @@
         },
 
         mounted() {
-            this.getSistemasObra();
             this.getSistemas();
+            this.getSistemasObra();
+
         },
         methods: {
 

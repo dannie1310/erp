@@ -37,53 +37,35 @@ class SistemaService
 
     public function porObra()
     {
-        $sistema = Proyecto::query()->find(10);
-        return $sistema->sistemas()->where('id_obra','=',Context::getIdObra())
+        $sistema = Proyecto::where('base_datos','=',Context::getDatabase())->get();
+        return $sistema[0]->sistemas()->where('id_obra','=',Context::getIdObra())
             ->get();
     }
     public function asignacionSistemas($data)
     {
-        $proyecto = Proyecto::query()->sistemas()->where('z','=',Context::getIdObra())->get('id');
-        dd($proyecto);
-//
-        foreach ($data['sistema_id'] as $sist) {
-            $sistemas = Sistema::find($sist);
-////
-////            if($permiso->reservado &&  ! auth()->user()->can('asignar_permisos_reservados')) {
-////                throw new \Exception('No es posible asignar el permiso "' . $permiso->display_name. '" porque se trata de un permiso reservado, favor de solicitar la asignación al administrador del sistema.', 403);
-////            }
-        } 
-//        dd($sistemas);
-        $sistemas_originales = $proyecto->sistemas()->pluck('id_sistema')->toArray();
-        dd($sistemas_originales);
 
-//
-//        foreach ($data['permission_id'] as $id) {
-//            // ASIGNACIÓN
-//            if (! in_array($id, $permisos_originales)) {
-//                \App\Models\CADECO\Seguridad\AuditoriaPermisoRol::query()->create([
-//                    'role_id' => $data['role_id'],
-//                    'permission_id' => $id,
-//                    'action' => 'Registro'
-//                ]);
-//            }
-//        }
-//
-        $proyecto->sistemas()->detach($proyecto->sistemas()->pluck('id_sistema')->toArray());
-        $proyecto->sistemas()->sync($data['sistema_id'], false);
-//
-        $sistemas_actualizados = $proyecto->sistemas()->pluck('id_sistema')->toArray();
-//        dd($sistemas_actualizados);
-//        foreach ($permisos_originales as $id) {
-//            // DESASIGNACIÓN
-//            if (! in_array($id, $permisos_actualizados)) {
-//                \App\Models\CADECO\Seguridad\AuditoriaPermisoRol::query()->create([
-//                    'role_id' => $data['role_id'],
-//                    'permission_id' => $id,
-//                    'action' => 'Eliminación'
-//                ]);
-//            }
-//        }
+        $sistema = Proyecto::where('base_datos','=',Context::getDatabase())->get();
+        $sistema[0]->sistemas()->where('id_obra','=',Context::getIdObra())->get();
+
+        if(!auth()->user()->can('asignar_permisos_reservados')) {
+            throw new \Exception('No es posible asignar el sistema porque no cuenta con el permiso, favor de solicitar la asignación al administrador del sistema.', 403);
+        }
+
+        foreach ($data['sistema_id'] as $sistema_id) {
+            try {
+                $sistema[0]->sistemas()
+                    ->wherePivot('id_obra', '=', Context::getIdObra())
+                    ->wherePivot('id_proyecto', '=', $sistema[0]->id)
+                    ->detach();
+
+            } catch (\Exception $e) {}
+        }
+        foreach ($data['sistema_id'] as $sistema_id) {
+            try {
+                $sistema[0]->sistemas()->attach([$sistema_id => ['id_obra' => Context::getIdObra(), 'id_proyecto' => $sistema[0]->id]]);
+            } catch (\Exception $e) {}
+        }
+
         return true;
     }
 
