@@ -10,7 +10,9 @@ namespace App\Services\CADECO\Finanzas;
 
 
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
+use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Repositories\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -91,63 +93,95 @@ class DistribucionRecursoRemesaService
         $data = array();
         $file = $request->file('file');
         $nombre = $request->file('file')->getClientOriginalName();
-        dd($nombre);
-        switch (pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_EXTENSION)){
-            case 'doc':
-                $data = $this->getDocData($file);
-                break;
-            case 'csv':
-                $data = $this->getCsvData($file);
-                break;
+        if(pathinfo($nombre, PATHINFO_EXTENSION) != 'out'){
+            abort(400, 'Archivo Invalido');
         }
+        $split = explode('.', $nombre);
+
+
+            $data = $this->getOutData($file);
+
+            if(count($data) <= 2){
+                abort(400, 'Archivo sin partidas');
+            }
+
+            $this->procesarCargLayout($data);
+
+
+
         dd($data);
-        dd(pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_EXTENSION), $request->file('file')->getClientOriginalName());
     }
 
-    public function getDocData($docFile){
+    public function procesarCargLayout($data){
+        $sentido = substr($data[0], 14, 1);
+        $val_bloque = substr($data[0], 33, 2);
+        $id_distribucion = substr($data[1], 422, 30);
+        if($sentido != 'S'){
+            abort(400, 'Archivo de entrada no valido valido');
+        }
+        $dist_recurso = DistribucionRecursoRemesa::find($id_distribucion);
+        switch ($dist_recurso->estado){
+            case 0:
+                abort(400, 'Archivo de distribución de recurso no ha sido descargado.');
+                break;
+            case 2:
+                abort(400, 'Archivo procesado previamente.');
+                break;
+            case -1:
+                abort(400, 'La distribucion de recursos esta cancelada');
+                break;
+        }
+        if($val_bloque != '00'){
+            abort(400, 'Archivo de entrada rechazado por el banco');
+        }
+
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            /** @var  $dist_layout_registro, Actualizacion del registro del layout */
+            $dist_layout_registro = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $id_distribucion)->first();
+            $dist_layout_registro->usuario_carga = auth()->id();
+            $dist_layout_registro->fecha_hora_carga = date('Y-m-d h:i:s');
+            $dist_layout_registro->folio_confirmacion_bancaria = $val_bloque;
+            $dist_layout_registro->save();
+
+            for ($i = 1; $i < count($data) -1; $i++){
+                $id_documento = substr($data[$i], 228, 40);
+                $val_partida = substr($data[$i], 400, 2);
+
+                if($val_partida== 0){
+                    $documento = Documento::where('IDRemesa', '=', $dist_recurso->id_remesa)->where('IDDocumento', '=', $id_documento)->first();
+                }
+                $documento = Documento::where('IDRemesa', '=', $dist_recurso->id_remesa)->where('IDDocumento', '=', $id_documento)->first();
+                dd();
+            }
+
+
+
+
+
+            dd($dist_recurso, $sentido, $val_bloque, $id_distribucion);
+            dd('stop');
+            DB::connection('cadeco')->commit();
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+
+
+
+    }
+
+    public function getOutData($docFile){
         $myfile = fopen($docFile, "r") or die("Unable to open file!");
         $content = array();
         while(!feof($myfile)) {
             $linea = str_replace("\n","",fgets($myfile));
-            $content[] = array(
-                "cuenta_cargo"      => substr($linea, 0, 16),
-                "cuenta_abono"      => substr($linea, 17, 19),
-                "nombre_corto"      => substr($linea, 36, 5),
-                "razon_social"      => substr($linea, 41, 40),
-                "monto"             => substr($linea, 81, 19),
-                "clave"             => substr($linea, 101, 4),
-                "concepto"          => substr($linea, 105, 120),
-                "control"           => substr($linea, 225, 7),
-                "control2"          => substr($linea, 232, 8),
-            );
+            $content[] = $linea;
         }
         fclose($myfile);
-
         return $content;
     }
 
-    public function getCsvData($csvFile){
-
-        $file =  fopen($csvFile, "r") or die("Unable to open file!");
-        $all_data = array();
-        $encabezados = 0;
-        while ( $data = fgetcsv($file, 2, ",") ){
-            if($encabezados > 0){
-                $all_data[] = array(
-                    "cuenta_cargo" => str_replace("\t","",$data[0]),
-                    "cuenta_abono" => str_replace("\t","",$data[1]),
-                    "nombre_corto" => '',
-                    "razon_social" => '',
-                    "monto" => str_replace("\t","",$data[2].$data[3]),
-                    "clave" => str_replace("\t","",$data[7]),
-                    "concepto" => str_replace("\t","",$data[5]),
-                    "fecha_aplicacion" => str_replace("\t","",$data[4])
-                );
-            }
-            $encabezados++;
-        }
-        fclose($file);
-        return $all_data;
-    }
 
 }
