@@ -43,7 +43,6 @@ class SistemaService
     }
     public function asignacionSistemas($data)
     {
-
         $sistema = Proyecto::where('base_datos','=',Context::getDatabase())->get();
         $sistema[0]->sistemas()->where('id_obra','=',Context::getIdObra())->get();
 
@@ -62,7 +61,7 @@ class SistemaService
         }
         foreach ($data['sistema_id'] as $sistema_id) {
             try {
-                $sistema[0]->sistemas()->attach([$sistema_id => ['id_obra' => Context::getIdObra(), 'id_proyecto' => $sistema[0]->id]]);
+                $sistema[0]->sistemas()->attach([$sistema_id => ['id_obra' => Context::getIdObra(), 'id_proyecto' => $sistema[0]->id,'created_at' => date('Y-m-d h:i:s')]]);
             } catch (\Exception $e) {}
         }
 
