@@ -50,7 +50,7 @@
             getRootNodes() {
                 let self = this
                 return self.$store.dispatch('cadeco/costo/index', {
-                    params: { scope: this.scp }
+                    params: { scope: this.scp, sort: 'descripcion', order: 'ASC'}
                 })
                     .then(data => {
                         self.rootNodes = data.data.map(costo => ({
