@@ -18,4 +18,9 @@ class Estimacion extends Model
     protected $table = 'SubcontratosEstimaciones.Estimaciones';
     protected $primaryKey = 'IDEstimacion';
     public $timestamps = false;
+
+    protected $fillable = [
+        'IDEstimacion',
+        'NumeroFolioConsecutivo',
+    ];
 }

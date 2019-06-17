@@ -9,9 +9,11 @@
 namespace App\Models\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
+use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
+use Illuminate\Support\Facades\DB;
 
 class Estimacion extends Transaccion
 {
@@ -40,19 +42,87 @@ class Estimacion extends Transaccion
         });
 
         self::creating(function ($estimacion) {
-            $subcontrato = Subcontrato::find($estimacion->id_antecedente);
+            $subcontrato = Subcontrato::query()->find($estimacion->id_antecedente);
+
             $estimacion->tipo_transaccion = 52;
             $estimacion->id_empresa = $subcontrato->id_empresa;
             $estimacion->id_moneda = $subcontrato->id_moneda;
-            $estimacion->opciones = 0;
             $estimacion->saldo = $estimacion->monto;
             $estimacion->retencion = $subcontrato->retencion;
+            $estimacion->fecha = date('Y-m-d');
+            $estimacion->numero_folio = self::calcularFolio();
         });
         self::created(function ($estimacion) {
             if ($estimacion->retencion > 0) {
                 $estimacion->generaRetencion();
             }
+            $estimacion->creaSubcontratoEstimacion();
         });
+    }
+
+    public function creaSubcontratoEstimacion()
+    {
+        \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->create([
+            'IDEstimacion' => $this->id_transaccion,
+			'NumeroFolioConsecutivo' => $this->generaFolioConsecutivo()
+        ]);
+    }
+
+    private static function calcularFolio()
+    {
+        $est = self::orderBy('numero_folio', 'DESC')->first();
+        return $est ? $est->numero_folio + 1 : 1;
+    }
+
+    public function generaFolioConsecutivo()
+    {
+        $folio = FolioPorSubcontrato::query()
+            ->where('IDSubcontrato', '=', $this->id_antecedente)
+            ->first();
+
+        if($folio) {
+            $folio->UltimoFolio += 1;
+            $folio->save();
+        } else {
+            $folio = FolioPorSubcontrato::query()->create([
+                'IDSubcontrato' => $this->id_antecedente
+            ]);
+        }
+        return $folio->UltimoFolio;
+    }
+
+    public function calculaImportes()
+    {
+        // Calculo del importe de amortizacion de anticipo
+        $amortizacion_anticipo = ($this->subcontrato->anticipo / 100) * $this->sumaImportes;
+
+        // Calculo del importe de fondo de garantia
+        $fondo_garantia = ($this->subcontrato->retencion / 100) * $this->sumaImportes;
+
+        // Calculo del subtotal
+        $subtotal = $this->sumaImportes;
+
+        // Descuento de amortizacion de anticipo antes de iva
+        $subtotal -= $amortizacion_anticipo;
+
+        // Se calcula el iva y total
+        $iva = $subtotal * ($this->subcontrato->impuesto / ($this->subcontrato->monto - $this->subcontrato->impuesto));
+        $total = $subtotal + $iva;
+
+        $this->impuesto = $iva;
+        $this->monto = $total;
+        $this->saldo = $total;
+        $this->retencion = ($this->subcontrato->retencion / 100) * 100;
+        $this->anticipo = ($this->subcontrato->anticipo / 100);
+        $this->save();
+
+        $subcontratoEstimacion = \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()
+            ->where('IDEstimacion', '=', $this->id_transaccion)
+            ->first();
+
+        $subcontratoEstimacion->PorcentajeFondoGarantia = ($this->subcontrato->retencion / 100);
+        $subcontratoEstimacion-> ImporteFondoGarantia = $fondo_garantia;
+        $subcontratoEstimacion->save();
     }
 
     public function retencion_fondo_garantia()

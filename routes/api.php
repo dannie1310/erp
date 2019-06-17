@@ -255,10 +255,11 @@ $api->version('v1', function ($api) {
          * ESTIMACIÓN
          */
         $api->group(['prefix' => 'estimacion'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@store');
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION
              */
-                $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
 
@@ -268,6 +269,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'subcontrato'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getConceptosNuevaEstimacion', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@getConceptosNuevaEstimacion')->where(['id' => '[0-9]+']);
         });
         //FONDO DE GARANTÍA
         $api->group(['prefix' => 'fondo-garantia'], function ($api) {

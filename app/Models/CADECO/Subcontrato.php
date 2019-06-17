@@ -45,7 +45,7 @@ class Subcontrato extends Transaccion
         self::addGlobalScope('tipo',function ($query) {
             return $query->where('tipo_transaccion', '=', 51)
                 ->where('opciones', '=', 2)
-                ->where('estado', '!=', -2);
+                ->whereIn('estado', [0, 1]);
         });
         self::creating(function ($subcontrato) {
 
