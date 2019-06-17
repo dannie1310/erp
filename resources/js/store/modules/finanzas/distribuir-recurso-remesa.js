@@ -19,6 +19,15 @@ export default {
 
         SET_DISTRIBUCION(state, data) {
             state.currentDistribucion = data
+        },
+        UPDATE_DISTRIBUCION(state, data) {
+            state.distribuciones = state.distribuciones.map(distribucion => {
+                if (distribucion.id === data.id) {
+                    return Object.assign({}, distribucion, data)
+                }
+                return distribucion
+            })
+            state.currentDistribucion != null ? data : null;
         }
     },
 
@@ -70,6 +79,46 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 });
+                        }
+                    });
+            });
+        },
+        cancel(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cancelar distribucion de recurso autorizado de remesa",
+                    text: "¿Estás seguro/a de que deseas cancelar esta solicitud?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cancelar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI+ payload.id +'/cancelar',{id:payload.id}, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Distribucion cancelada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_DISTRIBUCION', data);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
                         }
                     });
             });
