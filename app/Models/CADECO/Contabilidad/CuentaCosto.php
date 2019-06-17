@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\Contabilidad;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Costo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,6 +35,10 @@ class CuentaCosto extends Model
     protected static function boot()
     {
         parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->has('costo');
+        });
 
         self::creating(function ($model) {
             $model->registro = auth()->id();
