@@ -195,18 +195,20 @@
                 this.guardando = true;
                 return this.$store.dispatch('configuracion/area-subcontratante/asignacionAreasSubcontratantes', {
                     user_id: this.form.user_id,
-                    area_id: this.areas_nuevos_asignados.map(area => (
+                    area_id: this.areas_asignados.map(area => (
                         area.id
                     ))
                 })
                     .then(data => {
+                        if (this.currentUser.idusuario == this.form.user_id) {
+                            this.$session.set('permisos', data)
+                        }
                         this.areas_originales = this.areas_asignados.map(area => (
                             area.id
                         ))
                     } )
                     .finally(() => {
                         $(this.$refs.modal).modal('hide');
-                        this.$validator.reset()
                         this.guardando = false;
 
                     });

@@ -57,7 +57,7 @@ export default {
             });
         },
 
-        asignacionAreasSubcontratantes(payload = {}) {
+        asignacionAreasSubcontratantes(context, payload = {}) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Asignar Areas Subcontratantes",

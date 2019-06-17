@@ -35,9 +35,14 @@ class AreaSubcontratanteService
 
     public function asignacionAreas($data)
     {
-        dd($data);
         $usuario = Usuario::query()->find($data['user_id']);
 
+        foreach ($data['area_id'] as $area_id) {
+            try {
+                AreaSubcontratante::query()->where('id_usuario',$data['user_id'])->delete();
+                DB::connection( 'seguridad' )->commit();
+            } catch (\Exception $e) {}
+        }
         foreach ($data['area_id'] as $area_id) {
             try {
                 DB::connection( 'seguridad' )->beginTransaction();
