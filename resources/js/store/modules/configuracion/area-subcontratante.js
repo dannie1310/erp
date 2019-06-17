@@ -43,7 +43,7 @@ export default {
             });
         },
 
-        getAreasUsuario(user_id) {
+        getAreasUsuario(context,user_id) {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'por-usuario/' + user_id)

@@ -36,7 +36,7 @@
                             <div class="container col-sm-2">
                                 <div class="vertical-center align-content-center">
                                     <button class="btn col-xs-12 btn-default" @click="agregar" title="Agregar"><i class="fa fa-long-arrow-left"></i></button>
-<!--                                    <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>-->
+                                    <button class="btn col-xs-12 btn-default" @click="quitar" title="Quitar"><i class="fa fa-long-arrow-right"></i></button>
                                 </div>
                             </div>
 
@@ -200,15 +200,13 @@
                     ))
                 })
                     .then(data => {
-                        if (this.currentUser.idusuario == this.form.user_id) {
-                            this.$session.set('permisos', data)
-                        }
                         this.areas_originales = this.areas_asignados.map(area => (
                             area.id
                         ))
                     } )
                     .finally(() => {
                         $(this.$refs.modal).modal('hide');
+                        this.$validator.reset()
                         this.guardando = false;
 
                     });

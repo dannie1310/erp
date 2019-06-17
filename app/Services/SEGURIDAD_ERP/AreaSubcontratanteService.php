@@ -35,6 +35,7 @@ class AreaSubcontratanteService
 
     public function asignacionAreas($data)
     {
+        dd($data);
         $usuario = Usuario::query()->find($data['user_id']);
 
         foreach ($data['area_id'] as $area_id) {
