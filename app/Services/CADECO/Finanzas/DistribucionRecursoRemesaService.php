@@ -51,7 +51,7 @@ class DistribucionRecursoRemesaService
 
             foreach ($documentos as $documento) {
                 if (!empty($documento['selected']) && $documento['selected'] == true) {
-                    if(DistribucionRecursoRemesaPartida::query()->where('id_documento', '=',  $documento['id'])->where('estado', '!=', 3)->get()->toArray() == []) {
+                    if(DistribucionRecursoRemesaPartida::query()->where('id_documento', '=',  $documento['id'])->where('estado', '!=', -1)->get()->toArray() == []) {
                         $partida = [
                             'id_distribucion_recurso' => $d->id,
                             'id_documento' => $documento['id'],

@@ -29,10 +29,10 @@ class ProyectoUnificado extends Model
     }
 
     public function proyectos(){
-        return $this->hasMany(Proyecto::class, 'IDProyecto', 'IDProyecto');
+        return $this->belongsTo(Proyecto::class, 'IDProyecto', 'IDProyecto');
     }
 
     public function base(){
-        return $this->hasMany(BaseDato::class, 'IDBaseDatos', 'IDBaseDatos');
+        return $this->belongsTo(BaseDato::class, 'IDBaseDatos', 'IDBaseDatos');
     }
 }
