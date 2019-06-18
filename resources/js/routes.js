@@ -35,7 +35,7 @@ export const routes = [
         name: 'configuracion_',
         component: require('./components/pages/Configuracion.vue'),
         meta: {
-            title: 'CONFIGURACION',
+            title: 'CONFIGURACIÓN',
             middleware: [auth, access],
             permission: 'asignar_areas_subcontratantes'
         }

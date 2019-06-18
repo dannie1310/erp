@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" id="asignacion">
+        <div class="card" id="Configuracion">
             <div class="card-header">
                 <h3 class="card-title">Asignación de Áreas Subcontratantes</h3>
             </div>
