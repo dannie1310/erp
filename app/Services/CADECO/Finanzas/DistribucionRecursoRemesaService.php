@@ -179,9 +179,7 @@ class DistribucionRecursoRemesaService
         return $content;
     }
 
-    public function cancelar(array $data, $id){
-        $distribucion = $this->repository;
-        $distribucion = $distribucion->cancelar($id);
-        return $distribucion;
+    public function cancelar($id){
+        return $this->repository->show($id)->cancelar();
     }
 }

@@ -70,7 +70,7 @@ class DistribucionRecursoRemesaController extends Controller
 
     public function cancelar(Request $request, $id)
     {
-        $item = $this->service->cancelar($request->all(), $id);
+        $item = $this->service->cancelar($id);
         return $this->respondWithItem($item);
     }
 }
