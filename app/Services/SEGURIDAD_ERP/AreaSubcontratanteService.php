@@ -37,9 +37,9 @@ class AreaSubcontratanteService
     {
         $usuario = Usuario::query()->find($data['user_id']);
 
-        if(!auth()->user()->can('asignar_areas_subcontratantes')) {
-            throw new \Exception('No es posible asignar las areas subcontratantes porque no cuenta con el permiso, favor de solicitar la asignación al administrador del sistema.', 403);
-        }
+//        if(!auth()->user()->can('asignar_areas_subcontratantes')) {
+//            throw new \Exception('No es posible asignar las areas subcontratantes porque no cuenta con el permiso, favor de solicitar la asignación al administrador del sistema.', 403);
+//        }
 
         foreach ($data['area_id'] as $area_id) {
             try {
