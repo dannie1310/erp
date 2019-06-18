@@ -63,7 +63,6 @@ class EstimacionController extends Controller
 
     public function store(StoreEstimacionRequest $request)
     {
-        dd($request->all());
         return $this->traitStore($request);
     }
 }
