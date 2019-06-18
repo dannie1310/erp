@@ -68,4 +68,9 @@ class DistribucionRecursoRemesaController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function cancelar(Request $request, $id)
+    {
+        $item = $this->service->cancelar($request->all(), $id);
+        return $this->respondWithItem($item);
+    }
 }

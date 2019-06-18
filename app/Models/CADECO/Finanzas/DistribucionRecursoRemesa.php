@@ -53,6 +53,24 @@ class DistribucionRecursoRemesa extends Model
 
         });
     }
+    public function cancelar($id){
+        $distribucion = DistribucionRecursoRemesa::find($id);
+
+        if($distribucion->estado != 0 && $distribucion->estado != 1){
+            throw New \Exception('La distribucion de recurso autorizado de remesa no puede ser cancelada, porque no tiene el estatus "generada" ');
+        }else{
+            $partida = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso',$id)->get();
+
+            foreach($partida as $part){
+                if($part->estado != 0){
+                    throw New \Exception('La distribucion de recurso autorizado de remesa no puede ser cancelada, porque alguna de sus partidas no tiene el estatus "generada" ');
+                }
+            }
+            $distribucion->estado = -1;
+            $distribucion->save();
+            return $distribucion;
+        }
+    }
 
     public function remesaLiberada(){
         return $this->belongsTo(RemesaLiberada::class,  'id_remesa', 'IDRemesa');
