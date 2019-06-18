@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-12"  v-if="$root.can('registrar_solicitud_pago_anticipado')" :disabled="cargando">
+        <div class="col-12"  v-if="$root.can('registrar_distribucion_recursos_remesa')" :disabled="cargando">
             <button  @click="create" title="Crear" class="btn btn-app btn-info pull-right" >
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
@@ -98,7 +98,7 @@
                             estado: distribucion.estado,
                             buttons: $.extend({}, {
                                 show: true,
-                                cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : false,
+                                cancelar: self.$root.can('cancelar_distribucion_recursos_remesa') ? true : false,
                                 id: distribucion.id,
                                 estado: distribucion.estado.estado
 
