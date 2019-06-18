@@ -33,7 +33,10 @@ export const routes = [
     {
         path: '/configuracion',
         name: 'configuracion_',
-        component: require('./components/pages/Configuracion.vue'),
+        components:  {
+            default: require('./components/pages/Configuracion.vue'),
+            menu: require('./components/pages/partials/MenuConfiguracion.vue')
+        },
         meta: {
             title: 'CONFIGURACIÓN',
             middleware: [auth, access],
