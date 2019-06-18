@@ -77,4 +77,20 @@ class DistribucionRecursoRemesa extends Model
     public function obra(){
         return $this->hasMany(Obra::class, 'id_obra', 'id_obra');
     }
+
+    public function remesaValidaEstado(){
+        switch ($this->estado){
+            case 0:
+                abort(400, 'Archivo de distribución de recurso no ha sido descargado.');
+                break;
+            case 2:
+                abort(400, 'Archivo procesado previamente.');
+                break;
+            case -1:
+                abort(400, 'La distribución de recursos esta cancelada');
+                break;
+        }
+        return $this;
+
+    }
 }

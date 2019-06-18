@@ -53,7 +53,7 @@ class DistribucionRecursoRemesaPartida extends Model
 
     public function distribucionRecurso()
     {
-        return $this->hasMany(DistribucionRecursoRemesa::class, 'id', 'id_distribucion_recurso');
+        return $this->belongsTo(DistribucionRecursoRemesa::class, 'id', 'id_distribucion_recurso');
     }
 
     public function documentoLiberado()
@@ -99,5 +99,17 @@ class DistribucionRecursoRemesaPartida extends Model
         }else{
             return 1;
         }
+    }
+
+    public function partidaValidaEstado(){
+        switch ($this->estado){
+            case 0:
+                return $this;
+                break;
+            default:
+                abort(400, 'La remesa contiene documentos validados previamente.');
+                break;
+        }
+        return $this;
     }
 }

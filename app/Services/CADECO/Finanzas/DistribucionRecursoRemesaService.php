@@ -12,6 +12,7 @@ namespace App\Services\CADECO\Finanzas;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
+use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Repositories\Repository;
 use Illuminate\Http\Request;
@@ -98,16 +99,13 @@ class DistribucionRecursoRemesaService
         }
         $split = explode('.', $nombre);
 
+        $data = $this->getOutData($file);
 
-            $data = $this->getOutData($file);
+        if(count($data) <= 2){
+            abort(400, 'Archivo sin partidas');
+        }
 
-            if(count($data) <= 2){
-                abort(400, 'Archivo sin partidas');
-            }
-
-            $this->procesarCargLayout($data);
-
-
+        $this->procesarCargLayout($data);
 
         dd($data);
     }
@@ -117,47 +115,45 @@ class DistribucionRecursoRemesaService
         $val_bloque = substr($data[0], 33, 2);
         $id_distribucion = substr($data[1], 422, 30);
         if($sentido != 'S'){
-            abort(400, 'Archivo de entrada no valido valido');
+            abort(400, 'Archivo de entrada no valido.');
         }
-        $dist_recurso = DistribucionRecursoRemesa::find($id_distribucion);
-        switch ($dist_recurso->estado){
-            case 0:
-                abort(400, 'Archivo de distribución de recurso no ha sido descargado.');
-                break;
-            case 2:
-                abort(400, 'Archivo procesado previamente.');
-                break;
-            case -1:
-                abort(400, 'La distribucion de recursos esta cancelada');
-                break;
-        }
+
         if($val_bloque != '00'){
             abort(400, 'Archivo de entrada rechazado por el banco');
         }
 
+        $dist_recurso = DistribucionRecursoRemesa::find($id_distribucion)->remesaValidaEstado();
+
         try{
             DB::connection('cadeco')->beginTransaction();
+
+            for ($i = 1; $i < count($data) -1; $i++){
+                $id_documento = substr($data[$i], 228, 40);
+                $val_partida= substr($data[$i], 400, 2);
+
+                $dist_recurso_partida = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $dist_recurso->id)->where('id_documento', '=', $id_documento)->first()->partidaValidaEstado();
+
+                if($val_partida== 0){
+                    $documento = Documento::with('tipoDocumento')->where('IDRemesa', '=', $dist_recurso->id_remesa)->where('IDDocumento', '=', $id_documento)->first();
+                    $transaccion = Transaccion::find($documento->IDTransaccionCDC);
+                    if($transaccion){
+
+                    }
+
+                    dd($transaccion);
+                }
+                dd($val_partida== 0);
+            }
+
+
+
+
             /** @var  $dist_layout_registro, Actualizacion del registro del layout */
             $dist_layout_registro = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $id_distribucion)->first();
             $dist_layout_registro->usuario_carga = auth()->id();
             $dist_layout_registro->fecha_hora_carga = date('Y-m-d h:i:s');
             $dist_layout_registro->folio_confirmacion_bancaria = $val_bloque;
             $dist_layout_registro->save();
-
-            for ($i = 1; $i < count($data) -1; $i++){
-                $id_documento = substr($data[$i], 228, 40);
-                $val_partida = substr($data[$i], 400, 2);
-
-                if($val_partida== 0){
-                    $documento = Documento::where('IDRemesa', '=', $dist_recurso->id_remesa)->where('IDDocumento', '=', $id_documento)->first();
-                }
-                $documento = Documento::where('IDRemesa', '=', $dist_recurso->id_remesa)->where('IDDocumento', '=', $id_documento)->first();
-                dd();
-            }
-
-
-
-
 
             dd($dist_recurso, $sentido, $val_bloque, $id_distribucion);
             dd('stop');
