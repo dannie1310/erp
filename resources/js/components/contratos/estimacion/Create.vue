@@ -13,27 +13,47 @@
 						<h3 class="card-title">Subcontrato</h3>
 					</div>
 					<div class="card-body">
-						<table>
-							<tr>
-								<th >Objeto</th>
-								<td>{{ subcontrato.referencia }}</td>
-							</tr>
-							<tr v-if="subcontrato.empresa">
-								<th>Contratista</th>
-								<td>{{ subcontrato.empresa.razon_social }}</td>
-							</tr>
-							<tr>
-								<th>Observaciones</th>
-								<td>
+						<form>
+							<div class="form-group row">
+								<label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+								<div class="col-sm-10">
+									<input
+											name="fecha"
+											v-validate="{required: true}"
+											data-vv-as="Fecha"
+											:class="{'is-invalid': errors.has('fecha')}"
+											v-model="fecha"
+											type="date"
+											class="form-control"
+											id="fecha"
+											placeholder="Fecha">
+									<div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="staticEmail" class="col-sm-2 col-form-label">Objeto</label>
+								<div class="col-sm-10">
+									{{ subcontrato.referencia }}
+								</div>
+							</div>
+							<div class="form-group row" v-if="subcontrato.empresa">
+								<label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+								<div class="col-sm-10">
+									{{ subcontrato.empresa.razon_social }}
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="inputPassword" class="col-sm-2 col-form-label">Observaciones</label>
+								<div class="col-sm-10">
 									<textarea
 											name="observaciones"
 											id="observaciones"
 											class="form-control"
 											v-model="observaciones"
 									></textarea>
-								</td>
-							</tr>
-						</table>
+								</div>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -212,13 +232,15 @@
 				columnas: [],
 				fecha_inicio: '',
 				fecha_fin: '',
-				observaciones: ''
+				observaciones: '',
+                fecha: ''
             }
         },
 
 		mounted() {
         	this.fecha_inicio = new Date().toDate()
         	this.fecha_fin = new Date().toDate()
+        	this.fecha = new Date().toDate()
         },
 
 		methods: {
@@ -250,13 +272,14 @@
         		if(conceptos.length > 0) {
 					return this.$store.dispatch('contratos/estimacion/store', {
 						id_antecedente: this.id_subcontrato,
+                        fecha: this.fecha,
 						cumplimiento: this.fecha_inicio,
 						vencimiento: this.fecha_fin,
 						observaciones: this.observaciones,
 						conceptos: conceptos
 					});
 				} else {
-        			alert('no hay conceptos por estimar');
+        		    swal('','Debe estimar al menos un concepto','warning');
 				}
 
 			},

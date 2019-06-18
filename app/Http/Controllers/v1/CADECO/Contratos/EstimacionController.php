@@ -10,14 +10,18 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreEstimacionRequest;
 use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
 use App\Services\CADECO\EstimacionService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class EstimacionController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait {
+        store as protected traitStore;
+    }
 
     /**
      * @var EstimacionService
@@ -55,5 +59,11 @@ class EstimacionController extends Controller
     public function pdfOrdenPago($id)
     {
         return $this->service->pdfOrdenPago($id)->create();
+    }
+
+    public function store(StoreEstimacionRequest $request)
+    {
+        dd($request->all());
+        return $this->traitStore($request);
     }
 }
