@@ -44,7 +44,7 @@
             <li class="nav-item">
                 <a href="#configuracion-sistema" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
-                    <p>Asignar Sistemas</p>
+                    <p>Habilitar Sistemas</p>
                 </a>
             </li>
 

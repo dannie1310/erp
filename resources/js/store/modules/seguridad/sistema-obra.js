@@ -54,7 +54,7 @@ export default {
         asignarSistemas(context, payload = {}) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Asignar/Desasignar Sistemas",
+                    title: "Habilitar/Deshabilitar Sistemas",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     closeOnClickOutside: false,
