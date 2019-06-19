@@ -12,6 +12,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Models\SEGURIDAD_ERP\AreaSubcontratante;
+use App\Models\SEGURIDAD_ERP\Google2faSecret;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Traits\IghAuthenticatable;
@@ -212,7 +213,13 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $permisos;
     }
 
-    public function getNombreCompletoAttribute(){
+    public function getNombreCompletoAttribute()
+    {
         return $this->nombre." ".$this->apaterno." ".$this->amaterno;
+    }
+
+    public function google2faSecret()
+    {
+        return $this->hasOne(Google2faSecret::class, 'id_user', 'idusuario');
     }
 }
