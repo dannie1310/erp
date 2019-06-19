@@ -208,6 +208,17 @@ class Estimacion extends Transaccion
         return $this;
     }
 
+    public function revertirAprobacion()
+    {
+        if ($this->estado == 2) {
+            throw new \Exception('La transacción no puede modificarse por que esta aprobada o revisada.');
+        }
+
+        DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
+        
+        return $this;
+    }
+
     public function getImporteRetencionAttribute()
     {
         return $this->monto*$this->retencion /100;

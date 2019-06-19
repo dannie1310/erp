@@ -25,7 +25,13 @@ export default {
         },
 
         REVERTIR_APROBACION(state, id) {
-
+            console.log('entro');
+            state.estimaciones.forEach(estimacion => {
+                if(estimacion.id == id) {
+                    console.log('encontrata')
+                    estimacion.estado = 0;
+                }
+            })
         }
     },
 
@@ -153,6 +159,8 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 })
+                        } else {
+                            reject();
                         }
                     });
             });
@@ -193,6 +201,8 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 })
+                        } else {
+                            reject();
                         }
                     });
             });

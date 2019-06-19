@@ -135,6 +135,16 @@ class EstimacionService
 
     public function revertirAprobacion($id)
     {
-
+        $estimacion = $this->repository->show($id);
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $estimacion->revertirAprobacion();
+            DB::connection('cadeco')->commit();
+            $estimacion->refresh();
+            return $estimacion;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
     }
 }

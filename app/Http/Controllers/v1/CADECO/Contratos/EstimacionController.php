@@ -11,6 +11,7 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AprobarEstimacionRequest;
+use App\Http\Requests\RevertirAprobacionEstimacionRequest;
 use App\Http\Requests\StoreEstimacionRequest;
 use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
 use App\Services\CADECO\EstimacionService;
@@ -85,6 +86,11 @@ class EstimacionController extends Controller
     {
         $estimacion = $this->service->aprobar($id);
         return $this->respondWithItem($estimacion);
+    }
 
+    public function revertirAprobacion(RevertirAprobacionEstimacionRequest $request, $id)
+    {
+        $estimacion = $this->service->revertirAprobacion($id);
+        return $this->respondWithItem($estimacion);
     }
 }
