@@ -65,7 +65,7 @@
             loadOptions({ action, parentNode, callback }) {
                 return this.$store.dispatch('cadeco/costo/find',{
                     id: parentNode.id,
-                    params: { include: 'hijos', scope: this.scope }
+                    params: { include: 'hijos', scope: this.scope, sort: 'descripcion', order: 'ASC' }
                 })
                     .then(data => {
                         parentNode.children = data.hijos.data.map(costo => ({
