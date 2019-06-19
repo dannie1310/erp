@@ -51,7 +51,10 @@ class PagoAnticipado extends Rotation
         $this->fecha_solicitud=$this->pagoAnticipado->cumplimiento;
 
         $this->empresa_razon=$this->pagoAnticipado->destino;
+        $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+
         $this->observaciones=$this->pagoAnticipado->observaciones;
+
         $this->referencia=$this->pagoAnticipado->referencia;
 
 
@@ -222,7 +225,7 @@ RFC: ' . $this->rfc), '', 'J');
 
 
     function fechas(){
-        $this->Ln(1);
+        $this->Ln(.3);
         $this->setX(12.5);
         $this->SetWidths(array( 4, 4));
         $this->SetFont('Arial', '', 6);
@@ -256,7 +259,7 @@ RFC: ' . $this->rfc), '', 'J');
 
         if(!empty($this->referencia)){
 
-            $this->Ln(1);
+            $this->Ln(.8);
             $this->SetWidths(array(9.75,9.75));
             $this->SetRounds(array('1','2'));
             $this->SetRadius(array(0.2,0.2));
@@ -378,38 +381,38 @@ RFC: ' . $this->rfc), '', 'J');
             $this->Row(array(""));
         }
     }
-    function estatus()
+    function antecedente()
     {
-        $this->Ln(.8);
-        $this->SetWidths(array(19.5));
-        $this->SetRounds(array('12'));
-        $this->SetRadius(array(0.2));
-        $this->SetFills(array('180,180,180'));
-        $this->SetTextColors(array('0,0,0'));
-        $this->SetStyles(array('DF'));
-        $this->SetHeights(array(0.5));
-        $this->SetFont('Arial', '', 6);
-        $this->SetAligns(array('C'));
-        $this->Row(array("Estatus"));
-        $this->SetRounds(array('34'));
-        $this->SetRadius(array(0.2));
-        $this->SetAligns(array('C'));
-        $this->SetStyles(array('DF'));
-        $this->SetFills(array('255,255,255'));
-        $this->SetTextColors(array('0,0,0'));
-        $this->SetHeights(array(0.5));
-        $this->SetFont('Arial', '', 6);
 
-        if ($this->estado== -2 || $this->estado ==2) {
-            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '',  "Cancelada"))));
-        }else{
-            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '',  "Registrada"))));
+        if(!empty($this->id_antecedente)){
+            $this->Ln(.8);
+            $this->SetWidths(array(19.5));
+            $this->SetRounds(array('12'));
+            $this->SetRadius(array(0.2));
+            $this->SetFills(array('180,180,180'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetStyles(array('DF'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+            $this->SetAligns(array('C'));
+            $this->Row(array(utf8_decode('Transacción Antecedente')));
+            $this->SetRounds(array('34'));
+            $this->SetRadius(array(0.2));
+            $this->SetAligns(array('C'));
+            $this->SetStyles(array('DF'));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+
+            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '',  $this->id_antecedente))));
         }
-        $this->Ln(.8);
+
     }
 
 
     function costos(){
+        $this->Ln(.8);
         $this->setX(12.5);
         $this->SetWidths(array( 4, 4));
         $this->SetFont('Arial', '', 6);
@@ -450,12 +453,13 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetHeights(array(0.5));
         $this->SetAligns(array('C',  'C'));
         $this->Row(array("Total", $this->total_format));
-        $this->Ln(.8);
+        $this->Ln(.5);
     }
 
 
     function firmas() {
-        $this->SetY(23.9);
+
+        $this->SetY(-3.5);
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
@@ -523,7 +527,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'GERENTE DE AREA', 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'ADMINISTRACION', 'TRLB', 0, 'C', 1);
-            $this->Ln();
+
             $this->CellFitScale(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Ing. Guadalupe Moreno Hernandez'), 'TRLB', 0, 'C', 1);
             $this->CellFitScale(0.73);
             $this->CellFitScale(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Ing. Martin Morales Sanchez o Ing. Lazaro Romero Zamora'), 'TRLB', 0, 'C', 1);
@@ -535,6 +539,7 @@ RFC: ' . $this->rfc), '', 'J');
 
         else
         {
+
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
@@ -542,6 +547,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Recibió'), 'TRLB', 1, 'C', 1);
+
 
             $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 0, 'C');
             $this->Cell(0.73);
@@ -551,6 +557,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 1, 'C');
 
+
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'RESPONSABLE DE AREA', 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'GERENCIA DE AREA', 'TRLB', 0, 'C', 1);
@@ -558,18 +565,16 @@ RFC: ' . $this->rfc), '', 'J');
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'DIRECCION DE AREA', 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'ADMINISTRACION', 'TRLB', 0, 'C', 1);
+
         }
+
+
     }
 
     function Footer(){
-
-        $this->SetY($this->GetPageHeight() - 5);
-
-        $this->SetY(24);
-        $this->setX(5.0);
+        $this->firmas();
+        $this->SetY($this->GetPageHeight() - 1);
         $this->SetFont('Arial', '', 6);
-        $this->SetY(27.5);
-        $this->setX(5.0);
 
         $this->SetFont('Arial', 'B', 6);
         $this->SetTextColor('100,100,100');
@@ -596,10 +601,17 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetAutoPageBreak(true,3.75);
         $this->fechas();
         $this->EmpresaPagoAnticipado();
+        $this->antecedente();
         $this->observaciones();
-        $this->estatus();
+        if($this->y > 17.05) {
+            $this->AddPage();
+            $this->Ln(.8);
+        }
         $this->costos();
-        $this->firmas();
+
+
+
+
 
         try {
             $this->Output('I', 'Formato - Pago Anticipado.pdf', 1);
