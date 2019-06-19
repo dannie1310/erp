@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AprobarEstimacionRequest;
 use App\Http\Requests\StoreEstimacionRequest;
 use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
 use App\Services\CADECO\EstimacionService;
@@ -73,5 +74,17 @@ class EstimacionController extends Controller
         $conceptos = DB::connection('cadeco')
             ->select(DB::raw("EXEC [SubcontratosEstimaciones].[uspConceptosEstimacion] {$estimacion->id_antecedente}, {$id_estimacion}, 0, 0"));
         return response()->json($conceptos);
+    }
+
+    /**
+     * @param AprobarEstimacionRequest $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function aprobar(AprobarEstimacionRequest $request, $id)
+    {
+        $estimacion = $this->service->aprobar($id);
+        return $this->respondWithItem($estimacion);
+
     }
 }

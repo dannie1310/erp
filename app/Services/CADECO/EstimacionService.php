@@ -112,4 +112,25 @@ class EstimacionService
     {
         return $this->repository->paginate();
     }
+
+    /**
+     * @param $id
+     * @return mixed
+     * @throws \Exception
+     */
+    public  function aprobar($id)
+    {
+        $estimacion = $this->repository->show($id);
+        try {
+            $estimacion->aprobar();
+            return $estimacion;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function revertirAprobacion($id)
+    {
+
+    }
 }

@@ -58,6 +58,7 @@ class Estimacion extends Transaccion
             $estimacion->fecha = date('Y-m-d');
             $estimacion->numero_folio = self::calcularFolio();
         });
+
         self::created(function ($estimacion) {
             if ($estimacion->retencion > 0) {
                 $estimacion->generaRetencion();
@@ -65,6 +66,10 @@ class Estimacion extends Transaccion
             $estimacion->creaSubcontratoEstimacion();
         });
     }
+
+    /**
+     * Relaciones Eloquent
+     */
 
     public function creaSubcontratoEstimacion()
     {
@@ -80,7 +85,7 @@ class Estimacion extends Transaccion
         return $est ? $est->numero_folio + 1 : 1;
     }
 
-    public function generaFolioConsecutivo()
+    private function generaFolioConsecutivo()
     {
         $folio = FolioPorSubcontrato::query()
             ->where('IDSubcontrato', '=', $this->id_antecedente)
@@ -244,5 +249,24 @@ class Estimacion extends Transaccion
             + $this->liberaciones->sum('importe')
             + ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar : 0)
         );
+    }
+
+    public function aprobar()
+    {
+        if ($this->sumaImportes == 0) {
+            throw new \Exception('La estimacion no tiene importe');
+        }
+        if ($this->estado > 0) {
+            throw new \Exception('La estimacion se encuentra aprobada.');
+        }
+
+        $fecha = date("d/m/Y H:i");
+        $usuario = auth()->user()->usuario;
+        $this->comentario = $this->comentario . "A;{$fecha};{$usuario}|";
+        $this->impreso = 1;
+        $this->saldo = $this->monto;
+        $this->save();
+        $this->refresh();
+
     }
 }
