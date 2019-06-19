@@ -396,7 +396,7 @@ export const routes = [
                             title: 'Distribuir Recursos Autorizados de Remesa',
                             breadcrumb: {name: 'DISTRIBUIR RECURSOS DE REMESA', parent: 'finanzas'},
                             middleware: [auth, context, permission],
-                            permission: 'consultar_cierre_periodo'
+                            permission: 'consultar_distribucion_recursos_remesa'
                         }
                     },
                     {
@@ -407,7 +407,7 @@ export const routes = [
                             title: 'Registrar Distribución de Recursos Autorizados',
                             breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
-                            permission: 'registrar_solicitud_pago_anticipado'
+                            permission: 'registrar_distribucion_recursos_remesa'
                         }
                     },
                     {
@@ -419,7 +419,7 @@ export const routes = [
                             title: 'Consultar Distribución de Recursos Autorizados',
                             breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_pago_anticipado'
+                            permission: 'consultar_distribucion_recursos_remesa'
                         }
                     }
                 ]
