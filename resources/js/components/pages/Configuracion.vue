@@ -61,7 +61,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Detalle de Asignación</h5>
+                        <h5 class="modal-title">Detalle de Asignación/Desasignación</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -99,7 +99,7 @@
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
                             <span v-else>
-                                <i class="fa fa-save"></i> Asignar
+                                <i class="fa fa-save"></i> Aplicar
                             </span>
                         </button>
                     </div>
