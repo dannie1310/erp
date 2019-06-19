@@ -93,7 +93,6 @@ class AuthController extends Controller
      */
     public function setContext(SetContextRequest $request)
     {
-        //dd($request->all());
         $this->auth->setContext($request->only(['db', 'id_obra']));
         $obra = Obra::query()->find($request->id_obra);
 
@@ -103,8 +102,7 @@ class AuthController extends Controller
 
         return response()->json([
             'obra' => Obra::with(['datosContables', 'configuracion'])->find($request->id_obra),
-            'permisos' => auth()->user()->permisos(),
-            'user'         => request()->user()
+            'permisos' => auth()->user()->permisos()
         ]);
     }
 
@@ -141,5 +139,4 @@ class AuthController extends Controller
         return response()->json($obras, 200);
 
     }
-
 }

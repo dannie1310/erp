@@ -8,7 +8,6 @@
 
 namespace App\Http\Transformers\IGH;
 
-
 use App\Models\IGH\Usuario;
 use League\Fractal\TransformerAbstract;
 
@@ -21,5 +20,4 @@ class UsuarioTransformer extends TransformerAbstract
             'nombre' => $model->getNombreCompletoAttribute()
         ];
     }
-
 }
