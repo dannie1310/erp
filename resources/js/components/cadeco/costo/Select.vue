@@ -73,8 +73,7 @@
                             children: costo.tiene_hijos != 0 ? null : undefined,
                             label: `${costo.descripcion} ${costo.observaciones ? '(' + costo.observaciones + ')' : ''}`,
                         }))
-                        parentNode.children = _.sortBy(parentNode.children, 'descripcion');
-
+                        parentNode.children = _.sortBy(parentNode.children, 'label');
                     })
                     .then(() => {
                         callback();
