@@ -15,6 +15,7 @@ use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
 use App\Services\CADECO\EstimacionService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use League\Fractal\Manager;
 
 class EstimacionController extends Controller
@@ -64,5 +65,13 @@ class EstimacionController extends Controller
     public function store(StoreEstimacionRequest $request)
     {
         return $this->traitStore($request);
+    }
+
+    public function getConceptos(Request $request, $id_estimacion)
+    {
+        $estimacion = $this->service->show($id_estimacion);
+        $conceptos = DB::connection('cadeco')
+            ->select(DB::raw("EXEC [SubcontratosEstimaciones].[uspConceptosEstimacion] {$estimacion->id_antecedente}, {$id_estimacion}, 0, 0"));
+        return response()->json($conceptos);
     }
 }

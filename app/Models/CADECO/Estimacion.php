@@ -32,6 +32,13 @@ class Estimacion extends Transaccion
         'tipo_transaccion'
     ];
 
+    public $searchable = [
+        'numero_folio',
+        'observaciones',
+        'subcontrato.empresa.razon_social',
+        'subcontrato.referencia'
+    ];
+
     protected static function boot()
     {
         parent::boot();

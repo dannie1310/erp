@@ -277,11 +277,13 @@
 						vencimiento: this.fecha_fin,
 						observaciones: this.observaciones,
 						conceptos: conceptos
-					});
+					})
+							.then(data=> {
+								this.$router.push({name: 'estimacion-index'});
+							})
 				} else {
         		    swal('','Debe estimar al menos un concepto','warning');
 				}
-
 			},
 
 			getConceptos() {

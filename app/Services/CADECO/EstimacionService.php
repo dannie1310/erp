@@ -102,4 +102,14 @@ class EstimacionService
         }
         return $suma;
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function paginate()
+    {
+        return $this->repository->paginate();
+    }
 }
