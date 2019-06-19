@@ -26,7 +26,7 @@
 
                             <div class="col-sm-5">
                                 <div class="form-group">
-                                   <label for="to">SISTEMAS DISPONIBLES</label>
+                                   <label for="to">SISTEMAS DESHABILITADOS</label>
                                     <select multiple id="to" size="10" class="form-control" v-model="selected">
                                         <option v-for="sistema in sistemas_disponibles_ordered" :value="sistema.id">{{ sistema.name }}</option>
                                     </select>
@@ -46,7 +46,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Detalle de Asignación</h5>
+                        <h5 class="modal-title">Detalle de Habilitación/Deshabilitación</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -55,7 +55,7 @@
                         <div class="table-responsive">
                             <table class="table">
                                 <tr v-if="sistemas_nuevos_asignados.length">
-                                    <th>Sistemas a Asignar:</th>
+                                    <th>Sistemas a Habilitar:</th>
                                     <td>
                                         <ul>
                                             <li v-for="sistema in sistemas_nuevos_asignados">{{ sistema.name }}</li>
@@ -63,7 +63,7 @@
                                     </td>
                                 </tr>
                                 <tr v-if="sistemas_desasignados.length">
-                                    <th>Sistemas a Desasignar:</th>
+                                    <th>Sistemas a Deshabilitar:</th>
                                     <td>
                                         <ul>
                                             <li v-for="sistema in sistemas_desasignados">{{ sistema.name }}</li>
