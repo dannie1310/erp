@@ -14,6 +14,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\Transaccion;
+use App\PDF\PagoAnticipado;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 
@@ -97,5 +98,11 @@ class SolicitudPagoAnticipadoService
         $solicitud = $this->repository;
         $solicitud = $solicitud->cancelar($id);
         return $solicitud;
+    }
+
+    public function pdfPagoAnticipado($id){
+        $pdf = new PagoAnticipado($id);
+        return $pdf;
+
     }
 }

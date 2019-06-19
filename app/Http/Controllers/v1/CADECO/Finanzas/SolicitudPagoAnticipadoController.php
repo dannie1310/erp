@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSolicitudPagoAnticipadoRequest;
 use App\Http\Transformers\CADECO\Finanzas\SolicitudPagoAnticipadoTransformer;
 use App\Services\CADECO\Finanzas\SolicitudPagoAnticipadoService;
+use App\PDF\PagoAnticipado;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
@@ -64,6 +65,11 @@ class SolicitudPagoAnticipadoController extends Controller
     {
         $item = $this->service->cancelar($request->all(), $id);
         return $this->respondWithItem($item);
+    }
+
+    public function pdfPagoAnticipado($id){
+
+        return $this->service->pdfPagoAnticipado($id)->create();
     }
 
 }
