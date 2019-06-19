@@ -60,7 +60,8 @@ class DistribucionRecursoRemesaController extends Controller
     }
 
     public function descargaLayout($id){
-        return $this->service->layoutDistribucionRemesa($id)->create();
+        $item = $this->service->layoutDistribucionRemesa($id)->create();
+        return $this->respondWithItem($item);
     }
 
     public function cargarLayout(Request $request, $id){

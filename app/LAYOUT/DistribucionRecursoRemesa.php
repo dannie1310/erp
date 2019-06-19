@@ -4,8 +4,6 @@
 namespace App\LAYOUT;
 
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
-use Chumper\Zipper\Zipper;
-use Illuminate\Filesystem\Filesystem;
 
 class DistribucionRecursoRemesa
 {
@@ -24,29 +22,20 @@ class DistribucionRecursoRemesa
         $this->encabezado();
         $this->detalle();
         $this->sumario();
-        $file_nombre = 'tran' . date('dmYhm') . '_' . 'nemonico';
+        $file_nombre = 'tran' . date('dmYhi'). '_' . 'nemonico';
         $a = "";
         foreach ($this->data as $dat){$a .= $dat . "\n";}
-
-        $fp_i = fopen("layouts/files/$file_nombre.in","wb");
+        $path = "layouts/files/$file_nombre.in";
+        $fp_i = fopen($path,"wb");
         fwrite($fp_i,$a);
         fclose($fp_i);
 
-//        $zipper = new Zipper;
-//        $files = glob('layouts/files/*');
-//        $zipper->make('layouts/zip/' .$llave .'-santander.zip')->add($files)->close();
-
-//        $file = new Filesystem;
-//        $file->cleanDirectory('layouts/files');
-
         $reg_layout = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $this->id)->first();
+
         if($reg_layout){
             $reg_layout->contador_descarga = $reg_layout->contador_descarga + 1;
             $reg_layout->save();
 
-            $dist_recurso = \App\Models\CADECO\Finanzas\DistribucionRecursoRemesa::find($this->id);
-            $dist_recurso->estado = 1;
-            $dist_recurso->save();
         }else{
             $reg_layout = new DistribucionRecursoRemesaLayout();
             $reg_layout->id_distrubucion_recurso =$this->id;
@@ -54,9 +43,12 @@ class DistribucionRecursoRemesa
             $reg_layout->contador_descarga = 1;
             $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
             $reg_layout->save();
+
+            $this->remesa->estado = 1;
+            $this->remesa->save();
         }
 
-        return response()->download('layouts/files/'.$file_nombre.'.in');
+        return $this->remesa;
 
     }
 
@@ -180,6 +172,10 @@ class DistribucionRecursoRemesa
             str_pad('', 40, ' ') .
             str_pad('', 399, ' ')
             ;
+
+    }
+
+    function enviarRepositorioFtp(){
 
     }
 }

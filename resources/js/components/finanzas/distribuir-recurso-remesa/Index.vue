@@ -98,6 +98,7 @@
                             estado: distribucion.estado,
                             buttons: $.extend({}, {
                                 show: true,
+                                pagar: self.$root.can('cancelar_solicitud_pago_anticipado')?true:false,
                                 cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : false,
                                 id: distribucion.id,
                                 estado: distribucion.estado.estado

@@ -105,12 +105,12 @@ class DistribucionRecursoRemesaService
             abort(400, 'Archivo sin partidas');
         }
 
-        $this->procesarCargLayout($data);
+        $this->procesarCargaLayout($data);
 
         dd($data);
     }
 
-    public function procesarCargLayout($data){
+    public function procesarCargaLayout($data){
         $sentido = substr($data[0], 14, 1);
         $val_bloque = substr($data[0], 33, 2);
         $id_distribucion = substr($data[1], 422, 30);
