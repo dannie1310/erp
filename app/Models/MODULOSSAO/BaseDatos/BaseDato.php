@@ -24,7 +24,7 @@ class BaseDato extends Model
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('Nombre', '=', "'".Context::getDatabase()."'");
+            return $query->where('Nombre', '=', Context::getDatabase());
         });
     }
 }
