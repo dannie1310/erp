@@ -13,6 +13,7 @@ use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
+use Illuminate\Support\Facades\DB;
 
 class Estimacion extends Transaccion
 {
@@ -70,7 +71,40 @@ class Estimacion extends Transaccion
     /**
      * Relaciones Eloquent
      */
+    public function retencion_fondo_garantia()
+    {
+        return $this->hasOne(RetencionFondoGarantia::class,'id_estimacion','id_transaccion');
+    }
 
+    public function subcontrato()
+    {
+        # return $this->belongsTo(Subcontrato::class,'id_transaccion', 'id_antecedente');
+        return $this->hasOne(Subcontrato::class, 'id_transaccion', 'id_antecedente');
+    }
+
+    public function descuentos()
+    {
+        return $this->hasMany(Descuento::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function liberaciones()
+    {
+        return $this->hasMany(Liberacion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function subcontratoEstimacion()
+    {
+        return $this->hasOne(\App\Models\CADECO\SubcontratosEstimaciones\Estimacion::class, 'IDEstimacion', 'id_transaccion');
+    }
+
+    public function retenciones()
+    {
+        return $this->hasMany(Retencion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    /**
+     * Acciones
+     */
     public function creaSubcontratoEstimacion()
     {
         \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->create([
@@ -136,11 +170,6 @@ class Estimacion extends Transaccion
         $subcontratoEstimacion->save();
     }
 
-    public function retencion_fondo_garantia()
-    {
-        return $this->hasOne(RetencionFondoGarantia::class,'id_estimacion','id_transaccion');
-    }
-
     public function generaRetencion()
     {
         if(is_null($this->retencion_fondo_garantia))
@@ -158,35 +187,30 @@ class Estimacion extends Transaccion
         }
     }
 
-    public function subcontrato()
+    public function aprobar()
     {
-        # return $this->belongsTo(Subcontrato::class,'id_transaccion', 'id_antecedente');
-        return $this->hasOne(Subcontrato::class, 'id_transaccion', 'id_antecedente');
-    }
+        if ($this->sumaImportes == 0) {
+            throw new \Exception('La estimacion no tiene importe');
+        }
+        if ($this->estado > 0) {
+            throw new \Exception('La estimacion se encuentra aprobada.');
+        }
 
-    public function descuentos()
-    {
-        return $this->hasMany(Descuento::class, 'id_transaccion', 'id_transaccion');
-    }
+        $fecha = date("d/m/Y H:i");
+        $usuario = auth()->user()->usuario;
+        $this->comentario = $this->comentario . "A;{$fecha};{$usuario}|";
+        $this->impreso = 1;
+        $this->saldo = $this->monto;
+        $this->save();
 
-    public function liberaciones()
-    {
-        return $this->hasMany(Liberacion::class, 'id_transaccion', 'id_transaccion');
+        DB::connection('cadeco')->update("EXEC [dbo].[sp_aprobar_transaccion] {$this->id_transaccion}");
+
+        return $this;
     }
 
     public function getImporteRetencionAttribute()
     {
         return $this->monto*$this->retencion /100;
-    }
-
-    public function subcontratoEstimacion()
-    {
-        return $this->hasOne(\App\Models\CADECO\SubcontratosEstimaciones\Estimacion::class, 'IDEstimacion', 'id_transaccion');
-    }
-
-    public function retenciones()
-    {
-        return $this->hasMany(Retencion::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function getSumaImportesAttribute()
@@ -249,24 +273,5 @@ class Estimacion extends Transaccion
             + $this->liberaciones->sum('importe')
             + ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar : 0)
         );
-    }
-
-    public function aprobar()
-    {
-        if ($this->sumaImportes == 0) {
-            throw new \Exception('La estimacion no tiene importe');
-        }
-        if ($this->estado > 0) {
-            throw new \Exception('La estimacion se encuentra aprobada.');
-        }
-
-        $fecha = date("d/m/Y H:i");
-        $usuario = auth()->user()->usuario;
-        $this->comentario = $this->comentario . "A;{$fecha};{$usuario}|";
-        $this->impreso = 1;
-        $this->saldo = $this->monto;
-        $this->save();
-        $this->refresh();
-
     }
 }

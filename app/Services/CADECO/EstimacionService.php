@@ -122,9 +122,13 @@ class EstimacionService
     {
         $estimacion = $this->repository->show($id);
         try {
+            DB::connection('cadeco')->beginTransaction();
             $estimacion->aprobar();
+            DB::connection('cadeco')->commit();
+            $estimacion->refresh();
             return $estimacion;
         } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
             throw $e;
         }
     }
