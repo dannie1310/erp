@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" class="btn btn-app btn-info pull-right">
+        <button @click="init" v-if="$root.can('registrar_tipo_cuenta_contable')" class="btn btn-app btn-info pull-right">
             <i class="fa fa-plus"></i> Registrar Tipo de Cuenta Contable
         </button>
 

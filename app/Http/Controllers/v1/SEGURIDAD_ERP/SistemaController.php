@@ -11,10 +11,11 @@ namespace App\Http\Controllers\v1\SEGURIDAD_ERP;
 
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\SistemaTransformer;
-use App\Model\SEGURIDAD_ERP\Sistema;
 use App\Services\SEGURIDAD_ERP\SistemaService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
+
 
 class SistemaController extends Controller
 {
@@ -51,4 +52,15 @@ class SistemaController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+    public function porObra(Request $request)
+    {
+        $sistemas = $this->service->porObra($request->all());
+        return $this->respondWithCollection($sistemas);
+    }
+    public function asignacionSistemas(Request $request)
+    {
+        $response = $this->service->asignacionSistemas($request->all());
+        return response()->json($response, 200);
+    }
+
 }

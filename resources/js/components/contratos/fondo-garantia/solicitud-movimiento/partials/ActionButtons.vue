@@ -32,7 +32,8 @@
                     id: this.value.id,
                     /*params: { include: 'transaccionAntecedente,movimientos,traspaso' }*/
                 })
-                    .then(() => {
+                    .then((data) => {
+                        this.$store.commit('contratos/solicitud-movimiento-fg/UPDATE_SOLICITUD', data);
                         this.$emit('success')
                     });
             },
@@ -41,7 +42,8 @@
                     id: this.value.id,
                     /*params: { include: 'transaccionAntecedente,movimientos,traspaso' }*/
                 })
-                    .then(() => {
+                    .then((data) => {
+                        this.$store.commit('contratos/solicitud-movimiento-fg/UPDATE_SOLICITUD', data);
                         this.$emit('success')
                     })
             },
@@ -50,7 +52,8 @@
                     id: this.value.id,
                     /*params: { include: 'transaccionAntecedente,movimientos,traspaso' }*/
                 })
-                    .then(() => {
+                    .then((data) => {
+                        this.$store.commit('contratos/solicitud-movimiento-fg/UPDATE_SOLICITUD', data);
                         this.$emit('success')
                     })
             },
@@ -59,7 +62,8 @@
                     id: this.value.id,
                     /*params: { include: 'transaccionAntecedente,movimientos,traspaso' }*/
                 })
-                    .then(() => {
+                    .then((data) => {
+                        this.$store.commit('contratos/solicitud-movimiento-fg/UPDATE_SOLICITUD', data);
                         this.$emit('success')
                     })
             }

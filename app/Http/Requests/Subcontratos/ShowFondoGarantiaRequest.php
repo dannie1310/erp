@@ -20,7 +20,7 @@ class ShowFondoGarantiaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('consultar_fondo_garantia');
+        return auth()->user()->can('consultar_detalle_fondo_garantia');
     }
 
     /**

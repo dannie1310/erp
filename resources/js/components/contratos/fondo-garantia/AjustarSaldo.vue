@@ -170,7 +170,7 @@
                     params: {include : 'subcontrato.empresa,subcontrato.moneda'}
                 })
                     .then((data) => {
-                        this.$store.commit('contratos/fondo-garantia/UPDATE_FONDO_GARANTIA', data)
+                        this.$store.commit('contratos/fondo-garantia/UPDATE_FONDO_GARANTIA', data);
                         $(this.$refs.modal).modal('hide');
                     })
             },

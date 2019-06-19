@@ -58,16 +58,10 @@ class ContextSession implements Context
      */
     public function getIdObra()
     {
-        if(request()->header('idobra')) {
-            return request()->header('idobra');
-        } else if (request()->get('idobra')) {
-            return request()->get('idobra');
-        } else {
-            try {
-                return session()->get('id_obra');
-            } catch (\Exception $e) {
-                return config()->get('app.id_obra');
-            }
+        try {
+            return session()->get('id_obra');
+        } catch (\Exception $e) {
+            return config()->get('app.id_obra');
         }
     }
 
@@ -78,16 +72,10 @@ class ContextSession implements Context
      */
     public function getDatabase()
     {
-        if (request()->header('db')) {
-            return request()->header('db');
-        } else if (request()->get('db')) {
-            return request()->get('db');
-        } else {
-            try {
-                return session()->get('db');
-            } catch (\Exception $e) {
-                return config()->get('database.connections.cadeco.database');
-            }
+        try {
+            return session()->get('db');
+        } catch (\Exception $e) {
+            return config()->get('database.connections.cadeco.database');
         }
     }
 
@@ -99,5 +87,15 @@ class ContextSession implements Context
     public function isEstablished(): bool
     {
         return $this->getDatabase() && $this->getIdObra();
+    }
+
+    /**
+     * Borra la información del contexto guardado en la sesión
+     * @return mixed
+     */
+    public function clearContext()
+    {
+        session()->remove('db');
+        session()->remove('id_obra');
     }
 }

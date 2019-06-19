@@ -57,7 +57,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('contabilidad/tipo-cuenta-contable/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('contabilidad/tipo-cuenta-contable/SET_SOLICITUDES', data.data);
+                        this.$store.commit('contabilidad/tipo-cuenta-contable/SET_TIPOS', data.data);
                         this.$store.commit('contabilidad/tipo-cuenta-contable/SET_META', data.meta);
                     })
                     .finally(() => {
