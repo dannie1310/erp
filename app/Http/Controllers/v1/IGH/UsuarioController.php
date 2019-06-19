@@ -32,7 +32,7 @@ class UsuarioController extends Controller
     public function __construct(Manager $fractal, UsuarioService $service, UsuarioTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except('currentUser');
+        //$this->middleware('context')->except(['currentUser','index', 'show']);
 
         $this->fractal = $fractal;
         $this->service = $service;

@@ -31,6 +31,19 @@ export const routes = [
         }
     },
     {
+        path: '/configuracion',
+        name: 'configuracion_',
+        components:  {
+            default: require('./components/pages/Configuracion.vue'),
+            menu: require('./components/pages/partials/MenuConfiguracion.vue')
+        },
+        meta: {
+            title: 'CONFIGURACIÓN',
+            middleware: [auth, access],
+            permission: 'asignar_areas_subcontratantes'
+        }
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {
