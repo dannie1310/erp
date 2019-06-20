@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-lg-10 offset-lg-1" v-if="obra">
            <configuracion-obra :obra="obra"></configuracion-obra>
-            <configuracion-sistema></configuracion-sistema>
+            <configuracion-sistema  v-if="$root.can('habilitar_deshabilitar_sistema')"></configuracion-sistema>
             <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>
             <!-- ESTE COMPONENTE CONTIENE LAS ASIGNACIONES PARA EL ESQUEMA GLOBAL, PARA EL ESQUEMA PERSONALIZADO SE DEBERÁ CREAR EL CORRESPONDIENTE COMPONENTE -->
             <configuracion-seguridad v-if="obra.configuracion.esquema_permisos == 1"></configuracion-seguridad>
