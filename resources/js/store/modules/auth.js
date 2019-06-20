@@ -1,8 +1,9 @@
-import {getLoggedinUser, getObra, getPermisos } from './partials/auth';
+import {getLoggedinUser, getObra, getPermisos, getPermisosGenerales } from './partials/auth';
 
 const user = getLoggedinUser();
 const obra = getObra();
 const perms = getPermisos();
+const permsGenerales = getPermisosGenerales();
 
 export default {
     namespaced: true,
@@ -11,6 +12,7 @@ export default {
         currentUser: user,
         currentObra: obra,
         permisos: perms,
+        permisosGenerales: permsGenerales,
         jwt: null,
         isLoggedIn: false,
         loading: false,
@@ -68,6 +70,9 @@ export default {
         },
         permisos(state){
             return state.permisos;
+        },
+        permisosGenerales(state){
+            return state.permisosGenerales;
         }
     },
 

@@ -14,7 +14,7 @@
 
 <script>
     export default {
-        name: "configuracion-menu"
+        name: "menu-configuracion"
     }
 </script>
 

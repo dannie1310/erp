@@ -50,7 +50,7 @@
             getRootNodes() {
                 let self = this
                 return self.$store.dispatch('cadeco/costo/index', {
-                    params: { scope: this.scp }
+                    params: { scope: this.scp, sort: 'descripcion', order: 'ASC'}
                 })
                     .then(data => {
                         self.rootNodes = data.data.map(costo => ({
@@ -65,7 +65,7 @@
             loadOptions({ action, parentNode, callback }) {
                 return this.$store.dispatch('cadeco/costo/find',{
                     id: parentNode.id,
-                    params: { include: 'hijos', scope: this.scope }
+                    params: { include: 'hijos', scope: this.scope, sort: 'descripcion', order: 'ASC' }
                 })
                     .then(data => {
                         parentNode.children = data.hijos.data.map(costo => ({
@@ -73,10 +73,12 @@
                             children: costo.tiene_hijos != 0 ? null : undefined,
                             label: `${costo.descripcion} ${costo.observaciones ? '(' + costo.observaciones + ')' : ''}`,
                         }))
+                        parentNode.children = _.sortBy(parentNode.children, 'label');
                     })
                     .then(() => {
                         callback();
                     })
+
                     .catch(error => {
                         callback(new Error('Failed to load options: network error.'))
                     });

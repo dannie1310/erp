@@ -9,6 +9,10 @@
         },
 
         mounted() {
+            if(this.$session.exists()) {
+                this.$session.destroy();
+            }
+
             let code = this.$route.query.code;
             if (!code) {
                 window.location.replace('/oauth/authorize?client_id=' + process.env.MIX_CLIENT_ID + '&response_type=code&redirect_uri=' + process.env.MIX_REDIRECT_URI);
@@ -30,6 +34,7 @@
                         this.$store.dispatch('igh/usuario/currentUser')
                             .then(data => {
                                 this.$session.set('user', data.user);
+                                this.$session.set('permisos_generales', data.permisos_generales);
                                 this.$store.commit("auth/loginSuccess", {user: data.user, access_token: res.access_token});
                                 this.$router.push({name: 'portal'});
                             })
