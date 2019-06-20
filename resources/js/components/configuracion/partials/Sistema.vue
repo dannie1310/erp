@@ -111,9 +111,10 @@
         },
 
         mounted() {
-            this.getSistemas();
-            this.getSistemasObra();
-
+            this.getSistemas()
+                .finally(() => {
+                    this.getSistemasObra();
+                })
         },
         methods: {
 
