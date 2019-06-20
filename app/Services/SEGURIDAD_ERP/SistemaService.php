@@ -46,7 +46,7 @@ class SistemaService
         $sistema = Proyecto::where('base_datos','=',Context::getDatabase())->get();
         $sistema[0]->sistemas()->where('id_obra','=',Context::getIdObra())->get();
 
-        if(!auth()->user()->can('habilitar_sistema')) {
+        if(!auth()->user()->can('habilitar_deshabilitar_sistema')) {
             throw new \Exception('No es posible asignar el sistema porque no cuenta con el permiso, favor de solicitar la asignación al administrador del sistema.', 403);
         }
 

@@ -40,8 +40,8 @@
                 </a>
             </li>
 
-            <li class="nav-header" v-if="$root.can('habilitar_sistema')"><a href="#configuracion-sistema">CONFIGURACIÓN SISTEMAS</a></li>
-            <li class="nav-item" v-if="$root.can('habilitar_sistema')">
+            <li class="nav-header" v-if="$root.can('habilitar_deshabilitar_sistema')"><a href="#configuracion-sistema">CONFIGURACIÓN SISTEMAS</a></li>
+            <li class="nav-item" v-if="$root.can('habilitar_deshabilitar_sistema')">
                 <a href="#configuracion-sistema" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Habilitar Sistemas</p>
