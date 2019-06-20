@@ -229,7 +229,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function rolesGenerales()
     {
-        return $this->belongsToMany(RolGeneral::class, 'dbo.rol_general_usuario', 'id_usuario', 'id_rol_general');
+        return $this->belongsToMany(Rol::class, 'dbo.role_user_global', 'user_id', 'role_id');
     }
 
     public function getNombreCompletoAttribute()
