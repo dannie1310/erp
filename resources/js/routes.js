@@ -39,8 +39,9 @@ export const routes = [
         },
         meta: {
             title: 'CONFIGURACIÓN',
-            middleware: [auth, access],
-            permission: 'asignar_areas_subcontratantes'
+            middleware: [auth, permission],
+            permission: 'asignar_areas_subcontratantes',
+            general: true
         }
     },
     {
