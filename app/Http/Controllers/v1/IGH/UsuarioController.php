@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\v1\IGH;
 
+use App\Facades\Context;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\IGH\Usuario;
@@ -40,6 +41,11 @@ class UsuarioController extends Controller
     }
 
     public function currentUser(Request $request ) {
-        return response()->json(['user' => Usuario::query()->find(auth()->id())]);
+        $usuario = Usuario::query()->find(auth()->id());
+        return response()->json([
+            'user' => $usuario,
+            'permisos_generales' => $usuario->permisosGenerales(),
+            'permisos' => Context::isEstablished() ? $usuario->permisos() : []
+        ]);
     }
 }
