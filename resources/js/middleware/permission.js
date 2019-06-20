@@ -1,5 +1,5 @@
 export default function permission({from, next, router }) {
-    let permisos = router.app.$session.get('permisos');
+    let permisos = router.currentRoute.meta.general ? router.app.$session.get('permisos_generales') : router.app.$session.get('permisos')
 
     if (permisos) {
         if (Array.isArray(router.currentRoute.meta.permission)) {

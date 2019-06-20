@@ -14,6 +14,7 @@ use App\Models\CADECO\Seguridad\Rol;
 use App\Models\SEGURIDAD_ERP\AreaSubcontratante;
 use App\Models\SEGURIDAD_ERP\Google2faSecret;
 use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\Models\SEGURIDAD_ERP\RolGeneral;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Traits\IghAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -211,6 +212,24 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         }
 
         return $permisos;
+    }
+
+    public function permisosGenerales()
+    {
+        $permisos = [];
+        foreach ($this->rolesGenerales as $rol) {
+            // Validate against the Permission table
+            foreach ($rol->permisos as $perm) {
+                array_push($permisos, $perm->name);
+            }
+        }
+
+        return $permisos;
+    }
+
+    public function rolesGenerales()
+    {
+        return $this->belongsToMany(Rol::class, 'dbo.role_user_global', 'user_id', 'role_id');
     }
 
     public function getNombreCompletoAttribute()

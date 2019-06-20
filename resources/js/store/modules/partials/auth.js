@@ -28,3 +28,13 @@ export function getPermisos() {
 
     return JSON.parse(session).permisos;
 }
+
+export function getPermisosGenerales() {
+    const session = localStorage.getItem('vue-session-key')
+
+    if(!session){
+        return null
+    }
+
+    return JSON.parse(session).permisos_generales;
+}

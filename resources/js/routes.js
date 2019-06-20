@@ -39,8 +39,9 @@ export const routes = [
         },
         meta: {
             title: 'CONFIGURACIÓN',
-            middleware: [auth, access],
-            permission: 'asignar_areas_subcontratantes'
+            middleware: [auth, permission],
+            permission: 'asignar_areas_subcontratantes',
+            general: true
         }
     },
     {
@@ -275,10 +276,21 @@ export const routes = [
                         name: 'estimacion',
                         component: require('./components/contratos/estimacion/Index'),
                         meta: {
-                            title: 'Estimaciones',
+                            title: 'ESTIMACIONES',
                             breadcrumb: {parent: 'contratos', name: 'ESTIMACIONES'},
                             middleware: [auth, context],
 
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'estimacion-create',
+                        component: require('./components/contratos/estimacion/Create'),
+                        meta: {
+                            title: 'ESTIMACIONES',
+                            breadcrumb: {parent: 'estimacion', name: 'NUEVA'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_estimacion_subcontrato'
                         }
                     },
                     {
