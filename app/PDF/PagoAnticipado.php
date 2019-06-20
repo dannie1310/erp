@@ -52,11 +52,13 @@ class PagoAnticipado extends Rotation
 
         $this->empresa_razon=$this->pagoAnticipado->destino;
         $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+        $this->id_antecedente=751;
+
 
         $this->observaciones=$this->pagoAnticipado->observaciones;
 
         $this->referencia=$this->pagoAnticipado->referencia;
-
+        $this->referencia="ref ejemplo";
 
         $this->total=doubleval(substr($this->pagoAnticipado->monto_format,1,strlen($this->pagoAnticipado->monto_format)))*1000;
         $this->total_format=$this->pagoAnticipado->monto_format;
@@ -257,7 +259,7 @@ RFC: ' . $this->rfc), '', 'J');
     function EmpresaPagoAnticipado(){
 
 
-        if(!empty($this->referencia)){
+      /*  if(!empty($this->referencia)){
 
             $this->Ln(.8);
             $this->SetWidths(array(9.75,9.75));
@@ -286,7 +288,7 @@ RFC: ' . $this->rfc), '', 'J');
 
 
 
-        }else {
+        }else {*/
 
             $this->Ln(1);
             $this->SetWidths(array(19.5));
@@ -308,7 +310,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
             $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', $this->empresa_razon))));
-        }
+
 
     }
     function detallesSolicitudPagoAnticipado($x)
@@ -364,7 +366,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFont('Arial', '', 6);
         $this->SetAligns(array('C'));
         $this->encola = "observaciones_encabezado";
-        $this->Row(array(utf8_decode("Observaciones")));
+        $this->Row(array(utf8_decode("Observaciones solicitud")));
         $this->SetRounds(array('34'));
         $this->SetRadius(array(0.2));
         $this->SetAligns(array('C'));
@@ -386,6 +388,39 @@ RFC: ' . $this->rfc), '', 'J');
 
         if(!empty($this->id_antecedente)){
             $this->Ln(.8);
+            $this->SetFont('Arial', '', 10);
+            $this->Cell(9.5, .7, utf8_decode('TRANSACCIÓN ANTECEDENTE'), 0, 0, 'L');
+            $this->Ln(.8);
+
+            $this->SetWidths(array(4,3,4,8.5));
+            $this->SetRounds(array('1','','','2',));
+            $this->SetRadius(array(0.2,0,0,0.2));
+            $this->SetFills(array('180,180,180','180,180,180','180,180,180','180,180,180'));
+            $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0'));
+            $this->SetStyles(array('DF','DF','DF','DF'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+            $this->SetAligns(array('C','C','C','C'));
+            $this->Row(array("Tipo","Folio","Fecha","Referencia"));
+
+
+
+
+            $this->SetRounds(array('4','','','3'));
+            $this->SetRadius(array(0.2,0,0,0.2));
+            $this->SetAligns(array('C','C','C','C'));
+            $this->SetStyles(array('DF','DF','DF','DF'));
+            $this->SetFills(array('255,255,255','255,255,255','255,255,255','255,255,255'));
+            $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+
+            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '',  $this->id_antecedente)),"2","3","4"));
+
+
+
+
+            $this->Ln(1);
             $this->SetWidths(array(19.5));
             $this->SetRounds(array('12'));
             $this->SetRadius(array(0.2));
@@ -395,7 +430,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
             $this->SetAligns(array('C'));
-            $this->Row(array(utf8_decode('Transacción Antecedente')));
+            $this->Row(array(utf8_decode("Observaciones transacción antecedente")));
             $this->SetRounds(array('34'));
             $this->SetRadius(array(0.2));
             $this->SetAligns(array('C'));
@@ -404,8 +439,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->SetTextColors(array('0,0,0'));
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
-
-            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '',  $this->id_antecedente))));
+            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', $this->empresa_razon))));
         }
 
     }
@@ -423,8 +457,8 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFills(array('180,180,180',  '255,255,255'));
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C',  'C'));
-        $this->Row(array("Subtotal", "$".(string)$this->subtotal));
+        $this->SetAligns(array('C',  'R'));
+        $this->Row(array("Subtotal:", "$ ".(string)$this->subtotal));
 
 
         $this->setX(12.5);
@@ -437,8 +471,8 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFills(array('180,180,180',  '255,255,255'));
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C',  'C'));
-        $this->Row(array("IVA", "$".(string)$this->iva));
+        $this->SetAligns(array('C',  'R'));
+        $this->Row(array("IVA:", "$ ".(string)$this->iva));
 
 
         $this->setX(12.5);
@@ -451,8 +485,8 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFills(array('180,180,180',  '255,255,255'));
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C',  'C'));
-        $this->Row(array("Total", $this->total_format));
+        $this->SetAligns(array('C',  'R'));
+        $this->Row(array("Total:", $this->total_format));
         $this->Ln(.5);
     }
 
@@ -603,7 +637,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->EmpresaPagoAnticipado();
         $this->antecedente();
         $this->observaciones();
-        if($this->y > 17.05) {
+        if($this->y > 15.05) {
             $this->AddPage();
             $this->Ln(.8);
         }
