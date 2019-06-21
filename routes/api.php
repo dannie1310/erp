@@ -324,6 +324,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}','App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id'=>'[0-9]+']);
+        });
 
         /**
          * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
