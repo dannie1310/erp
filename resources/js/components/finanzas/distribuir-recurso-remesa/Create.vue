@@ -90,7 +90,7 @@
                                                             v-show="errors.has(`id_cuenta[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
                                                         </div>
                                                     </td>
-                                                    <td v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">No tiene cuentas bancarias proveedor</td>
+                                                    <td v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">Proveedor sin cuentas bancarias registradas</td>
                                                     <td v-else>No Cuenta Con Empresa en CADECO</td>
                                                     <td >
                                                         <select
