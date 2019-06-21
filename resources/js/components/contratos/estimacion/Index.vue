@@ -57,6 +57,9 @@
         },
         mounted() {
             this.query.include = 'subcontrato';
+            this.query.sort = 'numero_folio';
+            this.query.order = 'DESC';
+
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
