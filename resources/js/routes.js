@@ -39,8 +39,9 @@ export const routes = [
         },
         meta: {
             title: 'CONFIGURACIÓN',
-            middleware: [auth, access],
-            permission: 'asignar_areas_subcontratantes'
+            middleware: [auth, permission],
+            permission: 'asignar_areas_subcontratantes',
+            general: true
         }
     },
     {
@@ -292,10 +293,21 @@ export const routes = [
                         name: 'estimacion',
                         component: require('./components/contratos/estimacion/Index'),
                         meta: {
-                            title: 'Estimaciones',
+                            title: 'ESTIMACIONES',
                             breadcrumb: {parent: 'contratos', name: 'ESTIMACIONES'},
                             middleware: [auth, context],
 
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'estimacion-create',
+                        component: require('./components/contratos/estimacion/Create'),
+                        meta: {
+                            title: 'ESTIMACIONES',
+                            breadcrumb: {parent: 'estimacion', name: 'NUEVA'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_estimacion_subcontrato'
                         }
                     },
                     {
@@ -316,7 +328,7 @@ export const routes = [
             },
 
             {
-                path: '/sao/contratos/fondo-garantia',
+                path: 'fondo-garantia',
                 component: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
                 meta: {
                     middleware: [auth, context]
@@ -338,7 +350,7 @@ export const routes = [
             },
 
             {
-                path: '/sao/contratos/fondo-garantia/solicitud-movimiento',
+                path: 'solicitud-movimiento',
                 components: {
                     default: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Layout.vue'),
                 },
@@ -412,6 +424,46 @@ export const routes = [
                             permission: 'consultar_solicitud_pago_anticipado'
                         }
                     },
+                ]
+            },
+            {
+                path: 'distribuir-recurso-remesa',
+                component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'distribuir-recurso-remesa',
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
+                        meta: {
+                            title: 'Distribuir Recursos Autorizados de Remesa',
+                            breadcrumb: {name: 'DISTRIBUIR RECURSOS DE REMESA', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'distribuir-recurso-remesa-create',
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
+                        meta: {
+                            title: 'Registrar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'distribuir-recurso-remesa-show',
+                        props: true,
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Show'),
+                        meta: {
+                            title: 'Consultar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_distribucion_recursos_remesa'
+                        }
+                    }
                 ]
             },
         ]

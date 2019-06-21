@@ -50,6 +50,11 @@
         },
 
         mounted() {
+            this.$store.commit('auth/setObra', { obra: null });
+            this.$session.remove('permisos');
+            this.$session.remove('db');
+            this.$session.remove('id_obra');
+            this.$session.remove('sistemas');
             this.fetch();
         },
 
@@ -103,7 +108,6 @@
                     .then(res => {
                         this.$session.set('permisos', res.permisos)
                         this.$store.commit("auth/setPermisos", res)
-                        this.$session.set('obra', res.obra)
                         this.$session.set('db', database)
                         this.$session.set('id_obra', id_obra)
                         this.$store.commit("auth/setObra", res)

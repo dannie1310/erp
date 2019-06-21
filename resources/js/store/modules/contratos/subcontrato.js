@@ -44,6 +44,20 @@ export default {
                         reject(error)
                     })
             });
+        },
+
+        getConceptosNuevaEstimacion(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/getConceptosNuevaEstimacion')
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
         }
     },
 

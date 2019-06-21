@@ -276,10 +276,17 @@ $api->version('v1', function ($api) {
          * ESTIMACIÓN
          */
         $api->group(['prefix' => 'estimacion'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@aprobar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/revertirAprobacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@revertirAprobacion')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@getConceptos')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@paginate');
+
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION
              */
-                $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
 
@@ -289,6 +296,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'subcontrato'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getConceptosNuevaEstimacion', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@getConceptosNuevaEstimacion')->where(['id' => '[0-9]+']);
         });
         //FONDO DE GARANTÍA
         $api->group(['prefix' => 'fondo-garantia'], function ($api) {
@@ -324,9 +332,32 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}','App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id'=>'[0-9]+']);
-
-
         });
+
+        /**
+         * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
+         */
+        $api->group(['prefix' => 'distribuir-recurso-remesa'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@cancelar')->where(['id' => '[0-9]+']);
+        });
+
+        /**
+         * REMESA
+         */
+        $api->group(['prefix' => 'remesa'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@show')->where(['id' => '[0-9]+']);
+        });
+
+       /**
+        * CUENTA BANCARIA PROVEEDOR
+        */
+       $api->group(['prefix' => 'cuenta-bancaria-proveedor'], function ($api){
+          $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaProveedorController@index');
+       });
     });
 
     /**

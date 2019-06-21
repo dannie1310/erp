@@ -47,7 +47,10 @@ import subcontrato from './modules/contratos/subcontrato';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
 
 //FINANZAS
+import cuenta_bancaria_proveedor from './modules/finanzas/cuenta-bancaria-proveedor';
+import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
+import remesa from './modules/finanzas/remesa';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
@@ -91,7 +94,10 @@ export default new Vuex.Store({
         'contratos/subcontrato': subcontrato,
         'contratos/contrato-proyectado': contratoProyectado,
 
+        'finanzas/cuenta-bancaria-proveedor': cuenta_bancaria_proveedor,
+        'finanzas/distribuir-recurso-remesa': distribuir_recurso_remesa,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
+        'finanzas/remesa': remesa,
 
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,

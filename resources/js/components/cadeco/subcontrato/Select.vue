@@ -24,10 +24,12 @@
         methods: {
             loadOptions({ action, searchQuery, callback }) {
                 return this.$store.dispatch('contratos/subcontrato/index', {
-                    params: {
-                        search: searchQuery,
-                        scope: this.scope,
-                        limit: 15
+                    config: {
+                        params: {
+                            search: searchQuery,
+                            scope: this.scope,
+                            limit: 15
+                        }
                     }
                 })
                     .then(data => {
