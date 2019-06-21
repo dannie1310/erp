@@ -3,43 +3,33 @@ const URI = '/api/contratos/contrato-proyectado/';
 export default {
     namespaced: true,
     state: {
-        fondosGarantia: [],
-        currentFondoGarantia: null,
-        meta: {},
+        contratoProyectado: [],
+        meta: {}
     },
 
     mutations: {
-        SET_FONDOS_GARANTIA(state, data) {
-            state.fondosGarantia = data
-        },
-
-        SET_FONDO_GARANTIA(state, data) {
-            state.currentFondoGarantia = data
+        SET_CONTRATO_PROYECTADO(state, data) {
+            state.contratoProyectado = data
         },
 
         SET_META(state, data) {
             state.meta = data
         },
 
-        UPDATE_ATTRIBUTE(state, data) {
-            _.set(state.currentFondoGarantia, data.attribute, data.value);
-        },
-
-        UPDATE_FONDO_GARANTIA(state, data) {
-            state.fondosGarantia = state.fondosGarantia.map(fondoGarantia => {
-                if (fondoGarantia.id === data.id) {
-                    return Object.assign({}, fondoGarantia, data)
+        APROBAR_ESTIMACION(state, id) {
+            state.contratoProyectado.forEach(contProyectado => {
+                if(contProyectado.id == id) {
+                    contProyectado.estado = 1;
                 }
-                return fondoGarantia
             })
-            state.currentFondoGarantia = data;
         }
     },
 
     actions: {
-        paginate(context, payload) {
+       paginate (context, payload){
             return new Promise((resolve, reject) => {
-                axios.get(URI + 'paginate', { params: payload.params })
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -49,116 +39,56 @@ export default {
                     })
             });
         },
-        fetch(context, payload) {
-            axios.get(URI, { params: payload })
-                .then(r => r.data)
-                .then((data) => {
-                    context.commit('SET_FONDOS_GARANTIA', data.data)
-                })
-        },
-        /*limpia(context){
-            context.commit('SET_FONDO_GARANTIA', null);
-        },*/
-        find(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + payload.id, {params: payload.params})
-                    .then(r => r.data)
-                    .then((data) => {
-                        /*context.commit('SET_FONDO_GARANTIA', data)*/
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
-        },
-        ajustar_saldo(context, payload) {
+
+        aprobar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Ajustar saldo de fondo de garantía",
-                    text: "¿Estás seguro/a de que la información es correcta?",
-                    icon: "info",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Ajustar",
+                    title: "¿Estás seguro?",
+                    text: "Aprobar Estimación",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Aprobar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
                         if (value) {
                             axios
-                                .post(URI + payload.id+'/ajustar_saldo', payload.data,{ params: payload.params })
+                                .patch(URI + payload.id + '/aprobar')
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal({
-                                        title: "Ajuste exitoso",
-                                        text: " ",
+                                    swal("Estimación aprobada correctamente", {
                                         icon: "success",
-                                        timer: 3000,
+                                        timer: 1500,
                                         buttons: false
-                                    }).then(() => {
-                                        resolve(data);
                                     })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
                                 })
                                 .catch(error => {
                                     reject(error);
-                                });
-                        }
-                    });
-            });
-        },
-        store(context, payload) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "Generar fondo de garantía",
-                    text: "¿Estás seguro/a de que la información es correcta?",
-                    icon: "info",
-                    buttons: ['Cancelar',
-                        {
-                            text: "Si, Generar",
-                            closeModal: false,
-                        }
-                    ]
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .post(URI, payload)
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal({
-                                        title: "Generación exitosa",
-                                        text: " ",
-                                        icon: "success",
-                                        timer: 3000,
-                                        buttons: false
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
                                 })
-                                .catch(error => {
-                                    reject(error);
-                                });
+                        } else {
+                            reject();
                         }
                     });
             });
         },
     },
-
-
     getters: {
-        fondosGarantia(state) {
-            return state.fondosGarantia
+        contratoProyectado(state) {
+            return state.contratoProyectado
         },
 
         meta(state) {
             return state.meta
-        },
-
-        currentFondoGarantia(state) {
-            return state.currentFondoGarantia
         }
     }
 }

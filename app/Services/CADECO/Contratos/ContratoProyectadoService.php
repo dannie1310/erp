@@ -1,11 +1,17 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * User: DBenitezc
+ * Date: 06/03/2019
+ * Time: 03:21 PM
+ */
 
 namespace App\Services\CADECO\Contratos;
 
 
 use App\Models\CADECO\ContratoProyectado;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\DB;
 
 class ContratoProyectadoService
 {
@@ -15,18 +21,21 @@ class ContratoProyectadoService
     protected $repository;
 
     /**
-     * ContratoProyectadoService constructor.
-     * @param ContratoProyectado $model
+     * EstimacionService constructor.
      */
-    public function __construct(ContratoProyectado $model){
+    public function __construct(ContratoProyectado $model)
+    {
         $this->repository = new Repository($model);
     }
 
-    public function paginate($data)
+    public function index($data)
     {
-        $solicitudes = $this->repository;
+        return $this->repository->all($data);
+    }
 
-        return $solicitudes->paginate($data);
+    public function find($id)
+    {
+        return $this->repository->where('id_transaccion', '=', $id);
     }
 
     public function show($id)
@@ -34,9 +43,29 @@ class ContratoProyectadoService
         return $this->repository->show($id);
     }
 
-    public function index()
+    public function paginate()
     {
-        return $this->repository->all();
+        return $this->repository->paginate();
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     * @throws \Exception
+     */
+    public  function aprobar($id)
+    {
+        $estimacion = $this->repository->show($id);
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $estimacion->aprobar();
+            DB::connection('cadeco')->commit();
+            $estimacion->refresh();
+            return $estimacion;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
     }
 
 }
