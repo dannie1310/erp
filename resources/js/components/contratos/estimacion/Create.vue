@@ -31,19 +31,19 @@
 								</div>
 							</div>
 							<div class="form-group row">
-								<label for="staticEmail" class="col-sm-2 col-form-label">Objeto</label>
+								<label class="col-sm-2 col-form-label">Objeto</label>
 								<div class="col-sm-10">
 									{{ subcontrato.referencia }}
 								</div>
 							</div>
 							<div class="form-group row" v-if="subcontrato.empresa">
-								<label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+								<label class="col-sm-2 col-form-label">Contratista</label>
 								<div class="col-sm-10">
 									{{ subcontrato.empresa.razon_social }}
 								</div>
 							</div>
 							<div class="form-group row">
-								<label for="inputPassword" class="col-sm-2 col-form-label">Observaciones</label>
+								<label class="col-sm-2 col-form-label">Observaciones</label>
 								<div class="col-sm-10">
 									<textarea
 											name="observaciones"
@@ -428,5 +428,9 @@
 
 	.text.is-invalid {
 		color: #dc3545;
+	}
+
+	table tbody td input.text {
+		text-align: right;
 	}
 </style>

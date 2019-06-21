@@ -55,10 +55,6 @@
                 </div>
             </div>
         </aside>
-        <!-- /.control-sidebar -->
-        <div class="zoom" v-if="$router.currentRoute.name != 'portal'">
-            <router-link :to="{name: 'portal'}" class="zoom-fab zoom-btn-large zoom-btn-igh" id="zoomBtn"><i class="fa fa-th-large fa-2x" style="padding-top: 16px"></i> </router-link>
-        </div>
     </div>
     <div v-else>
         <router-view></router-view>

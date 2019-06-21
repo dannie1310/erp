@@ -19,6 +19,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <router-link :to="{name: 'portal'}" class="nav-link" @click="logout" data-slide="true" href="#" title="Ir al Portal">
+                     <i class="fa fa-th-large"></i>
+                </router-link>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" @click="logout" data-slide="true" href="#" title="Cerrar Sesión">
                      <i class="fa fa-sign-out"></i>
                 </a>
