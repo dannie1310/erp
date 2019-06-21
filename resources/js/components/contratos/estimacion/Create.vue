@@ -280,6 +280,8 @@
 					})
 							.then(data=> {
 								this.$router.push({name: 'estimacion-index'});
+								this.$router.push({name: 'estimacion'});
+
 							})
 				} else {
         		    swal('','Debe estimar al menos un concepto','warning');
