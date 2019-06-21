@@ -325,8 +325,30 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}','App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id'=>'[0-9]+']);
 
-
+        /**
+         * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
+         */
+        $api->group(['prefix' => 'distribuir-recurso-remesa'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@cancelar')->where(['id' => '[0-9]+']);
         });
+
+        /**
+         * REMESA
+         */
+        $api->group(['prefix' => 'remesa'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@show')->where(['id' => '[0-9]+']);
+        });
+
+       /**
+        * CUENTA BANCARIA PROVEEDOR
+        */
+       $api->group(['prefix' => 'cuenta-bancaria-proveedor'], function ($api){
+          $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaProveedorController@index');
+       });
     });
 
     /**
