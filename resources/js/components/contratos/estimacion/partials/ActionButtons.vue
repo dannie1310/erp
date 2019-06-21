@@ -1,14 +1,85 @@
 <template>
-    <div class="btn-group">
-        <button title="Aprobar" @click="aprobar" v-if="value.aprobar" type="button" class="btn btn-sm btn-outline-success" :disabled="aprobando">
-            <i v-if="aprobando" class="fa fa-spin fa-spinner"></i>
-            <i v-else class="fa fa-thumbs-o-up"></i>
-        </button>
-        <button title="Revertir Aprobación" @click="desaprobar"  v-if="value.desaprobar" type="button" class="btn btn-sm btn-outline-danger" :disabled="revirtiendo">
-            <i v-if="revirtiendo" class="fa fa-spin fa-spinner"></i>
-            <i v-else class="fa fa-thumbs-down"></i>
-        </button>
-    </div>
+    <span>
+        <div class="btn-group">
+            <button title="Aprobar" @click="resumen('aprobar')" v-if="value.aprobar" type="button"
+                    class="btn btn-sm btn-outline-success" :disabled="aprobando">
+                <i v-if="aprobando" class="fa fa-spin fa-spinner"></i>
+                <i v-else class="fa fa-thumbs-o-up"></i>
+            </button>
+            <button title="Revertir Aprobación" @click="resumen('revertir')" v-if="value.desaprobar" type="button"
+                    class="btn btn-sm btn-outline-danger" :disabled="revirtiendo">
+                <i v-if="revirtiendo" class="fa fa-spin fa-spinner"></i>
+                <i v-else class="fa fa-thumbs-down"></i>
+            </button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" ref="resumen" tabindex="-1" role="dialog" aria-labelledby="resumenLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resumenLabel">Resumen de Estimación</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table style="width: 100%" class="table table-stripped small">
+                                <tbody>
+                                <tr>
+                                    <th colspan="2">Suma de Importes</th>
+                                    <td style="text-align: right">{{ `$ ${(parseFloat(value.estimacion.monto) + parseFloat(value.estimacion.impuesto)).formatMoney(2)}` }}</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">Deductivas</th>
+                                    <td style="text-align: right">$ 0</td>
+                                </tr>
+                                <tr>
+                                    <th>Amortización de Anticipo</th>
+                                    <td>0%</td>
+                                    <th style="text-align: right">$ 0</th>
+                                </tr>
+                                <tr>
+                                    <th>Fondo de Garantia</th>
+                                    <td>0%</td>
+                                    <th style="text-align: right">$ 0</th>
+                                </tr>
+                                 <tr>
+                                    <th colspan="2">Penalizaciones sin IVA</th>
+                                    <td style="text-align: right">$ 0</td>
+                                </tr>
+                                 <tr>
+                                    <th colspan="2">Subtotal</th>
+                                    <td style="text-align: right">{{ `$ ${parseFloat(value.estimacion.monto).formatMoney(2)}` }}</td>
+                                </tr>
+                                 <tr>
+                                    <th colspan="2">I.V.A.</th>
+                                    <td style="text-align: right">{{ `$ ${parseFloat(value.estimacion.impuesto).formatMoney(2)}` }}</td>
+                                </tr>
+                                 <tr>
+                                    <th colspan="2">Total</th>
+                                    <th style="text-align: right">{{ `$ ${(parseFloat(value.estimacion.monto) + parseFloat(value.estimacion.impuesto)).formatMoney(2)}` }}</th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button @click="aprobando ? aprobar() : desaprobar()" type="button" class="btn btn-primary" :disabled="guardando">
+                            <span v-if="guardando">
+                                <i class="fa fa-spin fa-spinner"></i>
+                            </span>
+                            <span v-else>
+                                {{ aprobando ? 'Aprobar' : 'Revertir Aprobación' }}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </span>
 </template>
 
 <script>
@@ -18,29 +89,46 @@
         data() {
             return {
                 aprobando: false,
-                revirtiendo: false
+                revirtiendo: false,
+                guardando: false
             }
         },
+
+        mounted() {
+            $(this.$refs.resumen).on('hidden.bs.modal', () => {
+                this.aprobando = false;
+                this.revirtiendo = false;
+            })
+        },
+
         methods: {
+            resumen(opcion) {
+                if (opcion == 'aprobar') {this.aprobando = true;}
+                else {this.revirtiendo = true;}
+                $(this.$refs.resumen).modal('show');
+            },
+
             aprobar() {
-                this.aprobando = true;
+                this.guardando = true;
                 return this.$store.dispatch('contratos/estimacion/aprobar' ,{ id: this.value.id })
                     .then(() => {
                         this.$store.commit('contratos/estimacion/APROBAR_ESTIMACION', this.value.id);
                     })
                     .finally(() => {
-                        this.aprobando = false;
+                        this.guardando = false;
+                        $(this.$refs.resumen).modal('hide');
                     })
             },
 
             desaprobar() {
-                this.revirtiendo = true;
-                return this.$store.dispatch('contratos/estimacion/revertirAprobacion', { id: this.value.id })
+                this.guardando = true;
+                return this.$store.dispatch('contratos/estimacion/revertirAprobacion', {id: this.value.id})
                     .then(() => {
                         this.$store.commit('contratos/estimacion/REVERTIR_APROBACION', this.value.id);
                     })
                     .finally(() => {
-                        this.revirtiendo = false;
+                        this.guardando = false;
+                        $(this.$refs.resumen).modal('hide');
                     })
             }
         }
