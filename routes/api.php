@@ -263,6 +263,14 @@ $api->version('v1', function ($api) {
      * CONTRATOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
+        /**
+         * PROYECTADO
+         */
+        $api->group(['prefix' => 'contrato-proyectado'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\FondoGarantiaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@show')->where(['id' => '[0-9]+']);
+        });
 
         /**
          * ESTIMACIÓN

@@ -44,6 +44,7 @@ import estimacion from './modules/contratos/estimacion';
 import fondoGarantia from './modules/contratos/fondo-garantia';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
+import contratoProyectado from './modules/contratos/contrato-proyectado';
 
 //FINANZAS
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
@@ -88,6 +89,7 @@ export default new Vuex.Store({
         'contratos/fondo-garantia': fondoGarantia,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
+        'contratos/contrato-proyectado': contratoProyectado,
 
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
 

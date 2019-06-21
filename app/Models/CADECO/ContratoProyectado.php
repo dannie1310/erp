@@ -13,13 +13,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContratoProyectado extends Transaccion
 {
+    protected $fillable = [
+        'id_antecedente',
+        'fecha',
+        'id_obra',
+        'cumplimiento',
+        'vencimiento',
+        'monto',
+        'impuesto',
+        'anticipo',
+        'referencia',
+        'observaciones',
+        'tipo_transaccion'
+    ];
     protected static function boot()
     {
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 49)
-                ->where('estado', '!=', -2);
+            return $query->where('tipo_transaccion', '=', 49);
         });
     }
 }

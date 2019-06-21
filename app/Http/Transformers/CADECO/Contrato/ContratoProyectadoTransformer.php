@@ -18,7 +18,8 @@ class ContratoProyectadoTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'numeroFolio' => $model->numero_folio
+            'numeroFolio' => $model->numero_folio,
+            'referencia' => (string)$model->referencia
         ];
     }
 }
