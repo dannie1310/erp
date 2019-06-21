@@ -237,6 +237,16 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->nombre." ".$this->apaterno." ".$this->amaterno;
     }
 
+    public static function getProyectoModuloSAO()
+    {
+        if (Context::getDatabase() && Context::getIdObra()) {
+            $obra = Obra::where('id_obra','=',Context::getIdObra())->get();
+            // $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where('Nombre', '=', "'".$obra[0]->nombre."'")->get();
+            $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where('Nombre', '=', "PISTA 3 NAICM")->get();
+            return $proyecto[0]->IDProyecto;
+        }
+    }
+
     public function google2faSecret()
     {
         return $this->hasOne(Google2faSecret::class, 'id_user', 'idusuario');
