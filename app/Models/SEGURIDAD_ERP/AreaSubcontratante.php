@@ -25,9 +25,5 @@ class AreaSubcontratante extends Model
             $model->registro = auth()->id();
             $model->timestamp_registro = date('Y-m-d h:i:s');
         });
-
-        self::delete(function ($model){
-        });
-
     }
 }
