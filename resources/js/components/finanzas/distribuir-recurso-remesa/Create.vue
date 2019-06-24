@@ -13,10 +13,11 @@
                     <form role="form" @submit.prevent="validate">
 
                         <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-12">
+                            <div class="row justify-content-between">
+                                <div class="col-md-8">
                                     <div class="form-group error-content">
                                         <label for="id_remesa">Remesas Autorizada: </label>
+
                                         <select
                                                 type="text"
                                                 name="id_remesa"
@@ -33,6 +34,13 @@
                                         <div class="invalid-feedback" v-show="errors.has('id_remesa')">{{ errors.first('id_remesa') }}</div>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Tipos de Cambio</label>
+                                        <h5>{{tiposCambio}}</h5>
+                                    </div>
+                                </div>
+
                             </div>
 
                             <div class="row">
@@ -55,11 +63,13 @@
                                                 <th>#</th>
                                                 <th>Concepto</th>
                                                 <th>Beneficiario</th>
-                                                <th>Importe</th>
-                                                <th>Tipo Cambio</th>
-                                                <th>Importe con TC</th>
-                                                <th>Tipo Cambio Actual</th>
-                                                <th>Importe Pesos</th>
+                                                <th>Importe Moneda Original</th>
+                                                <th>Moneda</th>
+<!--                                                <th>Tipo Cambio</th>-->
+                                                <th>Importe en Pesos</th>
+<!--                                                <th>Tipo Cambio Actual</th>-->
+                                                <th>Importe a Pagar</th>
+                                                <th>Importe a Pagar en Pesos</th>
                                                 <th>Cuenta Abono</th>
                                                 <th>Cuenta Cargo</th>
                                                 <th>Seleccionar</th>
@@ -70,11 +80,13 @@
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
                                                     <td>{{doc.empresa ? doc.empresa.razon_social : ''}}</td>
-                                                    <td>{{doc.monto_total_format}}</td>
-                                                    <td>{{parseFloat(doc.tipo_cambio).formatMoney(2, '.', ',') }}</td>
-                                                    <td>{{doc.saldo_moneda_nacional_format}}</td>
-                                                    <td>{{doc.tipoCambioActual ? parseFloat(doc.tipoCambioActual.cambio).formatMoney(2, '.', ',') : '1.00'}}</td>
-                                                    <td>${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
+                                                    <td class="text-right">{{doc.monto_total_format}}</td>
+                                                    <td>{{doc.moneda.abreviatura}}</td>
+<!--                                                    <td>{{parseFloat(doc.tipo_cambio).formatMoney(2, '.', ',') }}</td>-->
+                                                    <td class="text-right">{{doc.saldo_moneda_nacional_format}}</td>
+<!--                                                    <td>{{doc.tipoCambioActual ? parseFloat(doc.tipoCambioActual.cambio).formatMoney(2, '.', ',') : '1.00'}}</td>-->
+                                                    <td class="text-right">{{doc.monto_total_format}}</td>
+                                                    <td class="text-right">${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
                                                     <td v-if = "doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 ">
                                                         <select class="form-control"
                                                               :name="`id_cuenta_abono[${i}]`"
@@ -125,6 +137,15 @@
                                                             <div class="table-responsive">
                                                                 <table class="table">
                                                                     <tbody>
+                                                                        <tr v-for="(moneda) in monedas">
+                                                                            <th style="width:50%" class="bg-gray-light">Total Remesa ({{ moneda.abreviatura.replace(' ', '')}}):</th>
+                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(0)).formatMoney(2,'.',',')}}</b></td>
+                                                                        </tr>
+
+                                                                        <tr>
+                                                                            <th style="width:50%" class="bg-gray-light">Total Remesa (MXP):</th>
+                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
+                                                                        </tr>
                                                                         <tr>
                                                                             <th style="width:50%" class="bg-gray-light">Total Remesa:</th>
                                                                             <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
@@ -164,6 +185,7 @@
             return {
                 id_remesa : '',
                 remesas : [],
+                monedas : [],
                 original : null,
                 documentos : null,
                 cuenta_cargo: [],
@@ -175,6 +197,7 @@
         },
         mounted() {
             this.getRemesas();
+            this.getMonedas();
         },
         computed: {
             datosContables() {
@@ -212,6 +235,14 @@
                 return JSON.stringify(this.documentos) != JSON.stringify(this.original) || this.nuevosMovimientos
             },
 
+            tiposCambio(){
+                let txt = "";
+                this.monedas.forEach(function (mon, i) {
+                    txt += mon.abreviatura + " : $" + parseFloat(mon.tipo_cambio).formatMoney(2, '.', ',') + "   ";
+                });
+                return txt;
+            },
+
             nuevosDistribucion() {
                 return !!this.original.documentos.find(doc => {
                     return !doc .id
@@ -231,6 +262,22 @@
                 })
                     .then(data => {
                         this.remesas = data.data;
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
+            },
+
+            getMonedas(){
+                this.cargando = true;
+                let self = this
+                return self.$store.dispatch('cadeco/moneda/index', {
+                    params: {
+                        scope: 'monedaExtranjera'
+                    }
+                })
+                    .then(data => {
+                        this.monedas = data.data;
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -273,7 +320,7 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco', 'documento.tipoCambioActual']
+                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco', 'documento.tipoCambioActual', 'documento.moneda']
                     }
                 })
                     .then(data => {

@@ -22,4 +22,19 @@ class Moneda extends Model
         'nombre',
         'abreviatura',
     ];
+
+    public function cambio()
+    {
+        return $this->hasOne(Cambio::class, 'id_moneda', 'id_moneda')->orderByDesc('fecha');
+    }
+
+    public function scopeMonedaExtranjera($query)
+    {
+        return $query->where('tipo', '=', 0);
+    }
+
+    public function getTipoCambioAttribute()
+    {
+        return $this->cambio ? $this->cambio->cambio : null;
+    }
 }
