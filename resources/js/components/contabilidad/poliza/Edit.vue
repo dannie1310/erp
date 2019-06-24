@@ -34,7 +34,7 @@
                                                         class="form-control"
                                                         name="fecha"
                                                         v-model="poliza.fecha"
-                                                        v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
+                                                        v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
                                                         data-vv-as="Fecha de Prepóliza"
                                                         :class="{'is-invalid': errors.has('fecha')}"
                                                 />

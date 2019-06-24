@@ -40,6 +40,14 @@
                 </a>
             </li>
 
+            <li class="nav-header" v-if="$root.can('habilitar_deshabilitar_sistema')"><a href="#configuracion-sistema">CONFIGURACIÓN SISTEMAS</a></li>
+            <li class="nav-item" v-if="$root.can('habilitar_deshabilitar_sistema')">
+                <a href="#configuracion-sistema" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Habilitar Sistemas</p>
+                </a>
+            </li>
+
             <li class="nav-header" v-if="$root.can('editar_configuracion_contable')"><a href="#configuracion-contable">CONFIGURACIÓN CONTABLE</a></li>
             <li class="nav-item" v-if="$root.can('editar_configuracion_contable')">
                 <a href="#contpaq" class="nav-link">
@@ -48,7 +56,7 @@
                 </a>
             </li>
 
-            <li class="nav-header" v-if="$root.can(['asignar_roles'],['registrar_roles'],['asignar_permisos'])">
+            <li class="nav-header" v-if="$root.can(['asignar_roles','registrar_roles','asignar_permisos'])">
                 <a href="#configuracion-seguridad">ROLES Y PERMISOS</a></li>
             <li class="nav-item" v-if="$root.can('asignar_roles')">
                 <a href="#asignacion"  class="nav-link" >

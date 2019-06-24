@@ -50,6 +50,11 @@
         },
 
         mounted() {
+            this.$store.commit('auth/setObra', { obra: null });
+            this.$session.remove('permisos');
+            this.$session.remove('db');
+            this.$session.remove('id_obra');
+            this.$session.remove('sistemas');
             this.fetch();
         },
 
@@ -86,6 +91,10 @@
                 this.loading = true;
                 this.$session.set('permisos', [])
                 this.$store.commit("auth/setPermisos", [])
+
+                delete window.axios.defaults.headers.common['db'];
+                delete window.axios.defaults.headers.common['idobra'];
+
                 return new Promise((res, rej) => {
                     axios.post('/auth/setContext', {db: database, id_obra: id_obra})
                         .then(r => r.data)
@@ -99,7 +108,6 @@
                     .then(res => {
                         this.$session.set('permisos', res.permisos)
                         this.$store.commit("auth/setPermisos", res)
-                        this.$session.set('obra', res.obra)
                         this.$session.set('db', database)
                         this.$session.set('id_obra', id_obra)
                         this.$store.commit("auth/setObra", res)

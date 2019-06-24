@@ -31,6 +31,20 @@ export const routes = [
         }
     },
     {
+        path: '/configuracion',
+        name: 'configuracion_',
+        components:  {
+            default: require('./components/pages/Configuracion.vue'),
+            menu: require('./components/pages/partials/MenuConfiguracion.vue')
+        },
+        meta: {
+            title: 'CONFIGURACIÓN',
+            middleware: [auth, permission],
+            permission: 'asignar_areas_subcontratantes',
+            general: true
+        }
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {
@@ -262,10 +276,21 @@ export const routes = [
                         name: 'estimacion',
                         component: require('./components/contratos/estimacion/Index'),
                         meta: {
-                            title: 'Estimaciones',
+                            title: 'ESTIMACIONES',
                             breadcrumb: {parent: 'contratos', name: 'ESTIMACIONES'},
                             middleware: [auth, context],
 
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'estimacion-create',
+                        component: require('./components/contratos/estimacion/Create'),
+                        meta: {
+                            title: 'ESTIMACIONES',
+                            breadcrumb: {parent: 'estimacion', name: 'NUEVA'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_estimacion_subcontrato'
                         }
                     },
                     {

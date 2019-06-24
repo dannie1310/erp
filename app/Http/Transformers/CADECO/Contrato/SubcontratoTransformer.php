@@ -32,9 +32,7 @@ class SubcontratoTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $defaultIncludes = [
-
-    ];
+    protected $defaultIncludes = [];
 
     /**
      * @param Subcontrato $model

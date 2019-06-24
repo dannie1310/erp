@@ -14,6 +14,7 @@ use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use App\Services\CADECO\Contratos\SubcontratoService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use League\Fractal\Manager;
 
 class SubcontratoController extends Controller
@@ -49,5 +50,12 @@ class SubcontratoController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function getConceptosNuevaEstimacion(Request $request, $id_subcontrato)
+    {
+        $conceptos = DB::connection('cadeco')
+            ->select(DB::raw("EXEC [SubcontratosEstimaciones].[uspConceptosEstimacion] {$id_subcontrato}, null, 0, 0"));
+        return response()->json($conceptos);
     }
 }

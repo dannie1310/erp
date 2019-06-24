@@ -16,6 +16,9 @@ import moneda from './modules/cadeco/moneda';
 //COMPRAS
 import ordenCompra from './modules/compras/orden-compra';
 
+//CONFIGURACION
+import areaSubcontratante from './modules/configuracion/area-subcontratante';
+
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo';
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
@@ -58,6 +61,7 @@ import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
 import sistema from './modules/seguridad/sistema';
+import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
 //IGH
@@ -80,6 +84,8 @@ export default new Vuex.Store({
         'cadeco/moneda': moneda,
 
         'compras/orden-compra' : ordenCompra,
+
+        'configuracion/area-subcontratante' : areaSubcontratante,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
@@ -121,6 +127,7 @@ export default new Vuex.Store({
         'seguridad/rol': rol,
         'seguridad/rol-personalizado': rolPersonalizado,
         'seguridad/sistema': sistema,
+        'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
     },
     strict: process.env.NODE_ENV !== 'production'
