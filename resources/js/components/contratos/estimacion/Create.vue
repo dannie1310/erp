@@ -183,20 +183,20 @@
 						<td style="display: none" class="numerico saldo">{{ concepto.EsActividad == '1' ? concepto.CantidadSaldo : '' }}</td>
 						<td style="display: none" class="numerico saldo">{{ concepto.EsActividad == '1' ? parseFloat(concepto.MontoSaldo).formatMoney(2) : '' }}</td>
 						<td class="editable-cell numerico">
-							<input v-on:change="changeCantidad(concepto)" class="text ip" v-if="concepto.EsActividad == '1'" v-model="concepto.CantidadEstimada"
+							<input v-on:change="changeCantidad(concepto)" class="text" v-if="concepto.EsActividad == '1'" v-model="concepto.CantidadEstimada"
 								   :name="'CantidadEstimada' + i"
 								   v-validate="{max_value: parseFloat(concepto.CantidadSaldo), min_value: 0}"
 								   :class="{'is-invalid': errors.has('CantidadEstimada' + i)}"
 							>
 							<p v-else></p></td>
 						<td class="editable-cell numerico">
-							<input v-on:change="changePorcentaje(concepto)" class="text ip" v-if="concepto.EsActividad == '1'" v-model="concepto.PctEstimado"
+							<input v-on:change="changePorcentaje(concepto)" class="text" v-if="concepto.EsActividad == '1'" v-model="concepto.PctEstimado"
 
 							>
 							<p v-else>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></td>
 						<td class="numerico">{{ concepto.EsActividad == '1' ? parseFloat(concepto.PrecioUnitario).formatMoney(4) : '' }}</td>
 						<td class="editable-cell numerico">
-							<input v-on:change="changeImporte(concepto)" class="text ip" v-if="concepto.EsActividad == '1'" v-model="concepto.ImporteEstimado"
+							<input v-on:change="changeImporte(concepto)" class="text" v-if="concepto.EsActividad == '1'" v-model="concepto.ImporteEstimado"
 
 							>
 							<p v-else></p></td>
