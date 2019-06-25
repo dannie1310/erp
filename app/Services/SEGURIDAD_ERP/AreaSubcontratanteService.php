@@ -35,18 +35,14 @@ class AreaSubcontratanteService
 
     public function asignacionAreas($data)
     {
+        $usuarioArea = Usuario::query()->find($data['user_id']);
         $usuario = Usuario::query()->find($data['user_id']);
 
 //        if(!auth()->user()->can('asignar_areas_subcontratantes')) {
 //            throw new \Exception('No es posible asignar las areas subcontratantes porque no cuenta con el permiso, favor de solicitar la asignación al administrador del sistema.', 403);
 //        }
 
-        foreach ($data['area_id'] as $area_id) {
-            try {
-                UsuarioAreaSubcontratante::query()->where('id_usuario',$data['user_id'])->delete();
-                DB::connection( 'seguridad' )->commit();
-            } catch (\Exception $e) {}
-        }
+        $usuarioArea->areasSubcontratantes()->detach($usuarioArea->areasSubcontratantes()->pluck('id_area_subcontratante')->toArray());
         foreach ($data['area_id'] as $area_id) {
             try {
                 DB::connection( 'seguridad' )->beginTransaction();

@@ -63,7 +63,6 @@ class ContratoProyectadoService
             $solicitud = ContratoProyectado\AreasSubcontratantes::find($id);
             $solicitud = $solicitud->actualiza($id, $data['id_area']);
             $transaccion->refresh();
-
             return $transaccion;
 
         }else{

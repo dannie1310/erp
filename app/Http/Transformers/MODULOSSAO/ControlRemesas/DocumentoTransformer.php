@@ -11,6 +11,7 @@ namespace App\Http\Transformers\MODULOSSAO\ControlRemesas;
 
 use App\Http\Transformers\CADECO\CambioTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use League\Fractal\TransformerAbstract;
 
@@ -25,7 +26,8 @@ class DocumentoTransformer extends TransformerAbstract
         'remesa',
         'documentoLiberado',
         'empresa',
-        'tipoCambioActual'
+        'tipoCambioActual',
+        'moneda'
     ];
 
     /**
@@ -47,7 +49,8 @@ class DocumentoTransformer extends TransformerAbstract
             'monto_total_format' => (string) '$'.number_format(($model->MontoTotal),2,".",","),
             'monto_total' => $model->MontoTotal,
             'saldo' => $model->Saldo,
-            'moneda' => $model->IDMoneda,
+            'id_moneda' => $model->IDMoneda,
+            'moneda_nombre' => $model->Moneda,
             'tipo_cambio' => $model->TipoCambio,
             'saldo_moneda_nacional' => $model->SaldoMonedaNacional,
             'saldo_moneda_nacional_format' => (string) '$'.number_format(($model->SaldoMonedaNacional),2,".",","),
@@ -106,6 +109,14 @@ class DocumentoTransformer extends TransformerAbstract
         if($tipo = $model->tipoCambio)
         {
             return $this->item($tipo, new CambioTransformer);
+        }
+        return null;
+    }
+
+    public function includeMoneda(Documento $model)
+    {
+        if($moneda = $model->moneda) {
+            return $this->item($moneda, new MonedaTransformer);
         }
         return null;
     }

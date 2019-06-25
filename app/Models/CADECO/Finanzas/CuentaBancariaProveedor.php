@@ -28,4 +28,8 @@ class CuentaBancariaProveedor extends Model
     {
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
+
+    public function complemento(){
+        return $this->hasOne(BancoComplemento::class, 'id_empresa', 'id_banco');
+    }
 }
