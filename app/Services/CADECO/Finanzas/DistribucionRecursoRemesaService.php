@@ -87,7 +87,7 @@ class DistribucionRecursoRemesaService
     public function layoutDistribucionRemesa($id)
     {
         $layout = new \App\LAYOUT\DistribucionRecursoRemesa($id);
-        return $layout;
+        return $layout->create();
     }
 
     public function cargaLayout(Request $request, $id){

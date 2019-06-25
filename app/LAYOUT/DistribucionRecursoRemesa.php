@@ -35,7 +35,6 @@ class DistribucionRecursoRemesa
         if($reg_layout){
             $reg_layout->contador_descarga = $reg_layout->contador_descarga + 1;
             $reg_layout->save();
-
         }else{
             $reg_layout = new DistribucionRecursoRemesaLayout();
             $reg_layout->id_distrubucion_recurso =$this->id;
@@ -47,9 +46,8 @@ class DistribucionRecursoRemesa
             $this->remesa->estado = 1;
             $this->remesa->save();
         }
-
-        return $this->remesa;
-
+        return response()->download('layouts/files/'.$file_nombre.'.in');
+        // return $this->>remesa;
     }
 
     function encabezado(){
