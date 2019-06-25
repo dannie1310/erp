@@ -43,51 +43,66 @@ class PagoAnticipado extends Rotation
         parent::__construct('P', 'cm', 'A4');
 
         $this->obra = Obra::find(Context::getIdObra());
-        $this->pagoAnticipado=SolicitudPagoAnticipado::with("subcontrato", "empresa", "usuario","orden_compra")->find($id);
+        $this->pagoAnticipado = SolicitudPagoAnticipado::with("subcontrato", "empresa", "usuario", "orden_compra")->find($id);
 
 
         /*Header*/
-        $this->folio= $this->pagoAnticipado->numero_folio;
-        $this->fechaCompleta=str_replace("/","-",substr($this->pagoAnticipado->fecha_format, 0,10));
-        $this->hora=substr($this->pagoAnticipado->FechaHoraRegistro,11,18);
-        $this->fecha_limite=substr($this->pagoAnticipado->vencimiento,0,10);
-        $this->fecha_solicitud=$this->pagoAnticipado->cumplimiento;
-        $this->empresa_razon=$this->pagoAnticipado->empresa->razon_social;
-        $this->observaciones=$this->pagoAnticipado->observaciones;
+        $this->folio = $this->pagoAnticipado->numero_folio;
+        $this->fechaCompleta = str_replace("/", "-", substr($this->pagoAnticipado->fecha_format, 0, 10));
+        $this->hora = substr($this->pagoAnticipado->FechaHoraRegistro, 11, 18);
+        $this->fecha_limite = substr($this->pagoAnticipado->vencimiento, 0, 10);
+        $this->fecha_solicitud = $this->pagoAnticipado->cumplimiento;
+        $this->empresa_razon = $this->pagoAnticipado->empresa->razon_social;
+        $this->observaciones = $this->pagoAnticipado->observaciones;
+        
+
+        if (!empty($this->pagoAnticipado->subcontrato)){
+
+            $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+            $this->aux=$this->pagoAnticipado->subcontrato->tipo_transaccion;
+            $this->id_tipoAntecedente=TipoTransaccion::where("Tipo_Transaccion",$this->pagoAnticipado->subcontrato->tipo_transaccion)->get();
+            $this->transaccion_antecedente=$this->id_tipoAntecedente[0]->Descripcion;
+            $this->folio_antecedente=str_pad($this->pagoAnticipado->subcontrato->numero_folio, 5, "0", STR_PAD_LEFT);
+            $this->fecha_antecedente=substr($this->pagoAnticipado->subcontrato->fecha,0,10);
+            $this->observaciones_antecedente=$this->pagoAnticipado->subcontrato->observaciones;
+            $this->referencia=$this->pagoAnticipado->subcontrato->referencia;
+            $this->iva=number_format( $this->pagoAnticipado->subcontrato->impuesto,2,'.',',');
+            $this->monto= number_format( $this->pagoAnticipado->subcontrato->monto,2,'.',',');
+            $this->subtotal=number_format(doubleval(str_replace(",","",$this->monto))-doubleval(str_replace(",","",$this->iva)),2,".",",");
+
+
+            $this->total_format="$ ".$this->monto;
+
+        }
+
+
+        if(!empty($this->pagoAnticipado->orden_compra)){
+            $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+            $this->aux=$this->pagoAnticipado->tipo_transaccion;
+            $this->id_tipoAntecedente=TipoTransaccion::where("Tipo_Transaccion",$this->pagoAnticipado->tipo_transaccion)->get();
+            $this->transaccion_antecedente=$this->id_tipoAntecedente[0]->Descripcion;
 
 
 
-//
-//        $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+            $this->folio_antecedente=str_pad($this->pagoAnticipado->orden_compra->numero_folio, 5, "0", STR_PAD_LEFT);
+            $this->fecha_antecedente=substr($this->pagoAnticipado->orden_compra->fecha,0,10);
+            $this->observaciones_antecedente=$this->pagoAnticipado->orden_compra->observaciones;
+            $this->referencia=$this->pagoAnticipado->orden_compra->referencia;
 
+            $this->iva=number_format($this->pagoAnticipado->orden_compra->impuesto,2,".",",");
+            $this->monto=$this->pagoAnticipado->orden_compra->monto;
+            $this->subtotal=number_format($this->monto-$this->iva,2,".",",");
 
+            $this->total_format="$ ".number_format($this->monto,2,".", ",");
 
-       // $this->aux=$this->pagoAnticipado->subcontrato->tipo_transaccion;
-//        $this->id_tipoAntecedente=TipoTransaccion::where("Tipo_Transaccion",$this->pagoAnticipado->subcontrato->tipo_transaccion)->get();
-//        $this->transaccion_antecedente=$this->id_tipoAntecedente[0]->Descripcion;
-       // print_r($this->id_tipoAntecedente[0]->Descripcion);
-//        $this->folio_antecedente=str_pad($this->pagoAnticipado->subcontrato->numero_folio, 5, "0", STR_PAD_LEFT);
-//        $this->fecha_antecedente=substr($this->pagoAnticipado->subcontrato->fecha,0,10);
-//        $this->observaciones_antecedente=$this->pagoAnticipado->subcontrato->observaciones;
+        }
 
-        //$this->fechaCompleta=str_replace("-","/",substr($this->pagoAnticipado->fecha_format, 0,10));
-
-
-
-
-
-
-        //  $this->referencia=$this->pagoAnticipado->subcontrato->referencia;
-       // $this->total=doubleval(substr($this->pagoAnticipado->monto_format,1,strlen($this->pagoAnticipado->monto_format)))*1000;
-
-        //print_r($this->monto);
 
         /*Costos*/
         $this->monto=$this->pagoAnticipado->monto;
         $this->total_format=$this->pagoAnticipado->monto_format;
-        $this->subtotal=number_format( ceil(doubleval($this->monto)*0.8620689655),2,'.',',');
-        $this->iva=number_format(ceil(doubleval($this->monto)*0.1379310345)-1,2,'.',',');
-
+        $this->subtotal=number_format( ceil(doubleval($this->monto)*0.84),2,'.',',');
+        $this->iva=number_format(ceil(doubleval($this->monto)*0.6),2,'.',',');
 
         $this->encabezado_pdf = utf8_decode('Solicitud de Pago Anticipado');
 
@@ -280,37 +295,6 @@ RFC: ' . $this->rfc), '', 'J');
 
     function EmpresaPagoAnticipado(){
 
-
-      /*  if(!empty($this->referencia)){
-
-            $this->Ln(.8);
-            $this->SetWidths(array(9.75,9.75));
-            $this->SetRounds(array('1','2'));
-            $this->SetRadius(array(0.2,0.2));
-            $this->SetFills(array('180,180,180','180,180,180'));
-            $this->SetTextColors(array('0,0,0','0,0,0'));
-            $this->SetStyles(array('DF','DF'));
-            $this->SetHeights(array(0.5));
-            $this->SetFont('Arial', '', 6);
-            $this->SetAligns(array('C','C'));
-            $this->Row(array("Empresa", "Referencia"));
-
-
-            $this->SetFont('Arial', '', 6);
-            $this->SetWidths(array(9.75,9.75));
-            $this->SetRounds(array('4', '3'));
-            $this->SetRadius(array(0.2, 0.2));
-            $this->SetFills(array('255,255,255', '255,255,255'));
-            $this->SetTextColors(array('0,0,0', '0,0,0'));
-            $this->SetHeights(array(0.5));
-            $this->SetAligns(array('C', 'C'));
-
-            $this->Row(array($this->empresa_razon,$this->referencia));
-
-
-
-
-        }else {*/
 
             $this->Ln(1);
             $this->SetWidths(array(19.5));
@@ -586,7 +570,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->EmpresaPagoAnticipado();
         $this->antecedente();
         $this->observaciones();
-        if($this->y > 15.05) {
+        if($this->y > 18.05) {
             $this->AddPage();
             $this->Ln(.8);
         }
