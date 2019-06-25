@@ -194,7 +194,7 @@
 
 							>
 							<p v-else>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></td>
-						<td class="numerico">{{ concepto.EsActividad == '1' ? parseFloat(concepto.PrecioUnitario).formatMoney(2) : '' }}</td>
+						<td class="numerico">{{ concepto.EsActividad == '1' ? parseFloat(concepto.PrecioUnitario).formatMoney(4) : '' }}</td>
 						<td class="editable-cell numerico">
 							<input v-on:change="changeImporte(concepto)" class="text" v-if="concepto.EsActividad == '1'" v-model="concepto.ImporteEstimado"
 
@@ -245,18 +245,18 @@
 
 		methods: {
         	changeCantidad(concepto) {
-				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100);
-				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario);
+				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100).toFixed(2);
+				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario).toFixed(4);
 			},
 
 			changePorcentaje(concepto) {
-				concepto.CantidadEstimada = ((concepto.CantidadSubcontratada * concepto.PctEstimado) / 100);
-				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario);
+				concepto.CantidadEstimada = ((concepto.CantidadSubcontratada * concepto.PctEstimado) / 100).toFixed(2);
+				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario).toFixed(4);
 			},
 
 			changeImporte(concepto) {
-				concepto.CantidadEstimada = (concepto.ImporteEstimado / concepto.PrecioUnitario);
-				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100);
+				concepto.CantidadEstimada = (concepto.ImporteEstimado / concepto.PrecioUnitario).toFixed(2);
+				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100).toFixed(2);
 			},
 
 			validate() {
@@ -350,6 +350,14 @@
             	val.forEach(v => {
             		$('.' + v).removeAttr('style')
 				})
+			},
+			conceptos: {
+            	handler() {
+            		setTimeout(() => {
+						this.$validator.validate()
+					}, 500);
+				},
+				deep: true
 			}
         }
     }

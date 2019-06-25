@@ -14,6 +14,9 @@ class FolioPorSubcontrato extends Model
     protected $primaryKey = 'IDSubcontrato';
     public $incrementing = false;
     public $timestamps = false;
+    protected $fillable = [
+        'IDSubcontrato'
+    ];
 
     protected static function boot()
     {
