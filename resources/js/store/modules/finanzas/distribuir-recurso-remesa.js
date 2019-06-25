@@ -86,8 +86,8 @@ export default {
         cancel(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Cancelar distribucion de recurso autorizado de remesa",
-                    text: "¿Estás seguro/a de que deseas cancelar esta solicitud?",
+                    title: "Cancelar distribución de recurso autorizado de remesa",
+                    text: "¿Está seguro/a de que desea cancelar esta distribución?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -107,7 +107,7 @@ export default {
                                 .patch(URI+ payload.id +'/cancelar',{id:payload.id}, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Distribucion cancelada correctamente", {
+                                    swal("Distribución cancelada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

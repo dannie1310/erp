@@ -138,20 +138,20 @@
                                                                 <table class="table">
                                                                     <tbody>
                                                                         <tr v-for="(moneda) in monedas">
-                                                                            <th style="width:50%" class="bg-gray-light">Total Remesa ({{ moneda.abreviatura.replace(' ', '')}}):</th>
-                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(0)).formatMoney(2,'.',',')}}</b></td>
+                                                                            <th style="width:50%" class="bg-gray-light">Subtotal Remesa ({{ moneda.abreviatura.replace(' ', '')}}):</th>
+                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(subtotal_x_moneda[moneda.id])).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
 
+                                                                        <tr>
+                                                                            <th style="width:50%" class="bg-gray-light">Subtotal Remesa (MXP):</th>
+                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(subtotal_x_moneda[1])).formatMoney(2,'.',',')}}</b></td>
+                                                                        </tr>
                                                                         <tr>
                                                                             <th style="width:50%" class="bg-gray-light">Total Remesa (MXP):</th>
                                                                             <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th style="width:50%" class="bg-gray-light">Total Remesa:</th>
-                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>Documentos Seleccionados:</th>
+                                                                            <th>Documentos Seleccionados a Pagar (MXP):</th>
                                                                             <td align="right"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                     </tbody>
@@ -186,6 +186,7 @@
                 id_remesa : '',
                 remesas : [],
                 monedas : [],
+                subtotal_x_moneda : [],
                 original : null,
                 documentos : null,
                 cuenta_cargo: [],
@@ -207,7 +208,7 @@
                 let result = 0;
                 let count = 0;
                 this.documentos.forEach(function (doc, i) {
-                       result += parseFloat(doc.importe_total);
+                       result += parseFloat(doc.monto_total_solicitado);
                        if(doc.disponible == 1) {
                            count += 1;
                        }
@@ -270,14 +271,18 @@
 
             getMonedas(){
                 this.cargando = true;
-                let self = this
+                let self = this;
                 return self.$store.dispatch('cadeco/moneda/index', {
                     params: {
                         scope: 'monedaExtranjera'
                     }
                 })
                     .then(data => {
-                        this.monedas = data.data;
+                        self.monedas = data.data;
+                        self.subtotal_x_moneda[1] = 0;
+                        self.monedas.forEach(function (moneda, i) {
+                            self.subtotal_x_moneda[moneda.id] = 0;
+                        });
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -331,6 +336,7 @@
                     .finally(() => {
                         this.cargando = false;
                         this.getCuentaCargo();
+                        this.sumaSubtotalPorMoneda();
                     });
             },
 
@@ -348,6 +354,12 @@
                     }
                 });
             },
+            sumaSubtotalPorMoneda(){
+                let self = this;
+                self.documentos.forEach(function (doc, i) {
+                    self.subtotal_x_moneda[doc.id_moneda] += parseFloat(doc.monto_total_solicitado);
+                })
+            }
         },
         watch: {
             id_remesa(value){
