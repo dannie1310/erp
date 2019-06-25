@@ -46,7 +46,9 @@ class DistribucionRecursoRemesaController extends Controller
      */
     public function __construct(DistribucionRecursoRemesaService $service, Manager $fractal, DistribucionRecursoRemesaTransformer $transformer)
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth')->only('descargaLayout');
+        $this->middleware('auth:api')->except('descargaLayout');
+
         $this->middleware('context');
 
         $this->service = $service;
@@ -58,9 +60,21 @@ class DistribucionRecursoRemesaController extends Controller
     {
         return $this->traitStore($request);
     }
+
+    public function descargaLayout($id){
+        return $this->service->layoutDistribucionRemesa($id);
+//        $item = $this->service->layoutDistribucionRemesa($id)->create();
+//        return $this->respondWithItem($item);
+    }
+
+    public function cargarLayout(Request $request, $id){
+        $respuesta =  $this->service->cargaLayout($request, $id);
+        return response()->json($respuesta, 200);
+    }
+
     public function cancelar(Request $request, $id)
     {
-        $item = $this->service->cancelar($request->all(), $id);
+        $item = $this->service->cancelar($id);
         return $this->respondWithItem($item);
     }
 }

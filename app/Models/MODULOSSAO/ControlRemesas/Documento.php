@@ -12,6 +12,7 @@ namespace App\Models\MODULOSSAO\ControlRemesas;
 use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
+use App\Models\CADECO\Moneda;
 use Illuminate\Database\Eloquent\Model;
 
 class Documento extends Model
@@ -30,6 +31,10 @@ class Documento extends Model
         self::addGlobalScope(function ($query){
             return $query->has('documentoLiberado');
         });
+    }
+
+    public function moneda(){
+        return $this->belongsTo(Moneda::class, 'IDMoneda', 'id_moneda');
     }
 
     public function remesa(){
@@ -64,5 +69,9 @@ class Documento extends Model
         }else{
             return 1;
         }
+    }
+
+    public function tipoDocumento(){
+        return $this->belongsTo(TipoDocumento::class, 'IDTipoDocumento', 'IDTipoDocumento');
     }
 }

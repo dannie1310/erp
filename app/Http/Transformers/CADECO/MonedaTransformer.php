@@ -23,11 +23,13 @@ class MonedaTransformer extends TransformerAbstract
      */
     public function transform(Moneda $model)
     {
+
         return [
             'id' => (int)$model->getKey(),
             'nombre'=>(string)$model->nombre,
             'tipo' => $model->tipo,
             'abreviatura'=>(string)$model->abreviatura,
+            'tipo_cambio' => $model->tipoCambio,
         ];
     }
 }
