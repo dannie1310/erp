@@ -14,6 +14,9 @@ class FolioPorSubcontrato extends Model
     protected $primaryKey = 'IDSubcontrato';
     public $incrementing = false;
     public $timestamps = false;
+    protected $fillable = [
+        'IDSubcontrato'
+    ];
 
     protected static function boot()
     {
@@ -21,6 +24,10 @@ class FolioPorSubcontrato extends Model
 
         self::addGlobalScope(function ($query) {
             return $query->where('IDObra', '=', Context::getIdObra());
+        });
+
+        self::creating(function($model) {
+            $model->IDObra = Context::getIdObra();
         });
     }
 }

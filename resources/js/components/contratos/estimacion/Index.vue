@@ -42,6 +42,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Número de Folio', field: 'numero_folio', sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
+                    { title: 'Contratista', field: 'contratista', sortable: false },
                     { title: 'Subtotal', field: 'monto', tdClass: 'money', thClass: 'th_money', sortable: true },
                     { title: 'IVA', field: 'impuesto', tdClass: 'money', thClass: 'th_money', sortable: true },
                     { title: 'Total', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: false },
@@ -56,7 +57,7 @@
             }
         },
         mounted() {
-            this.query.include = 'subcontrato';
+            this.query.include = 'subcontrato.empresa';
             this.query.sort = 'numero_folio';
             this.query.order = 'DESC';
 
@@ -127,6 +128,7 @@
                         index: (i + 1) + self.query.offset,
                         numero_folio: `# ${estimacion.numero_folio}`,
                         observaciones: estimacion.observaciones,
+                        contratista: estimacion.subcontrato.empresa.razon_social,
                         estado: this.getEstado(estimacion.estado),
                         monto: `$ ${parseFloat(estimacion.monto).formatMoney(2)}`,
                         impuesto: `$ ${parseFloat(estimacion.impuesto).formatMoney(2)}`,
@@ -134,7 +136,8 @@
                         buttons: $.extend({}, {
                             aprobar: (this.$root.can('aprobar_estimacion_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
                             desaprobar: (this.$root.can('revertir_aprobacion_estimacion_subcontrato') && estimacion.estado == 1 ) ? true : undefined ,
-                            id: estimacion.id
+                            id: estimacion.id,
+                            estimacion: estimacion
                         })
                     }));
                 },
@@ -174,7 +177,8 @@
     }
 </script>
 
-<style scoped>
+
+<style>
     .money
     {
         text-align: right;

@@ -50,7 +50,7 @@ class EstimacionController extends Controller
     public function __construct(EstimacionService $service, Manager $fractal, EstimacionTransformer $transformer)
     {
         $this->middleware('auth')->only('pdfOrdenPago');
-        $this->middleware('auth:api');
+        $this->middleware('auth:api')->except('pdfOrdenPago');
 
         $this->middleware('context');
 
