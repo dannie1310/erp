@@ -54,8 +54,8 @@ class DistribucionRecursoRemesa extends Model
         });
     }
     public function cancelar(){
-        if($this->estado != 0 && $this->estado != 1){
-            throw New \Exception('La distribucion de recurso autorizado de remesa no puede ser cancelada, porque no tiene el estatus "generada" ');
+        if($this->estado != 0 ){
+            throw New \Exception('La distribución de recurso autorizado de remesa no puede ser cancelada, porque no tiene el estatus "generada" ');
         }else{
             $partidas = $this->partida()->get();
             foreach($partidas as $partida){

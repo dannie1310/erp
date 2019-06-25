@@ -180,6 +180,15 @@ class DistribucionRecursoRemesaService
     }
 
     public function cancelar($id){
-        return $this->repository->show($id)->cancelar();
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $resp = $this->repository->show($id)->cancelar();
+            DB::connection('cadeco')->commit();
+            return $resp;
+            }catch (\Exception $e){
+        DB::connection('cadeco')->rollBack();
+        abort(400, $e->getMessage());
+        throw $e;
+        }
     }
 }

@@ -26,7 +26,10 @@ class DistribucionRecursoRemesa
         $a = "";
         foreach ($this->data as $dat){$a .= $dat . "\n";}
         $path = "layouts/files/$file_nombre.in";
-        $fp_i = fopen($path,"wb");
+        if(file_exists($path)){
+            unlink($path);
+        }
+        $fp_i = fopen($path,"w+");
         fwrite($fp_i,$a);
         fclose($fp_i);
 
