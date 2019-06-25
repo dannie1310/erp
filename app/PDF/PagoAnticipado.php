@@ -10,6 +10,7 @@ namespace App\PDF;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\TipoTransaccion;
 use Ghidev\Fpdf\Rotation;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 
@@ -42,28 +43,65 @@ class PagoAnticipado extends Rotation
         parent::__construct('P', 'cm', 'A4');
 
         $this->obra = Obra::find(Context::getIdObra());
-        $this->pagoAnticipado=SolicitudPagoAnticipado::with("subcontrato", "empresa", "usuario","orden_compra")->find($id);
+        $this->pagoAnticipado = SolicitudPagoAnticipado::with("subcontrato", "empresa", "usuario", "orden_compra")->find($id);
 
-        $this->folio= $this->pagoAnticipado->numero_folio;
-        $this->fechaCompleta=str_replace("/","-",substr($this->pagoAnticipado->fecha_format, 0,10));
-        $this->hora=substr($this->pagoAnticipado->FechaHoraRegistro,11,18);
-        $this->fecha_limite=substr($this->pagoAnticipado->vencimiento,0,10);
-        $this->fecha_solicitud=$this->pagoAnticipado->cumplimiento;
+        /*Header*/
+        $this->folio = $this->pagoAnticipado->numero_folio;
+        $this->fechaCompleta = str_replace("/", "-", substr($this->pagoAnticipado->fecha_format, 0, 10));
+        $this->hora = substr($this->pagoAnticipado->FechaHoraRegistro, 11, 18);
+        $this->fecha_limite = substr($this->pagoAnticipado->vencimiento, 0, 10);
+        $this->fecha_solicitud = $this->pagoAnticipado->cumplimiento;
+        $this->empresa_razon = $this->pagoAnticipado->empresa->razon_social;
+        $this->observaciones = $this->pagoAnticipado->observaciones;
+        
 
-        $this->empresa_razon=$this->pagoAnticipado->destino;
-        $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+        if (!empty($this->pagoAnticipado->subcontrato)){
 
-        $this->observaciones=$this->pagoAnticipado->observaciones;
+            $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+            $this->aux=$this->pagoAnticipado->subcontrato->tipo_transaccion;
+            $this->id_tipoAntecedente=TipoTransaccion::where("Tipo_Transaccion",$this->pagoAnticipado->subcontrato->tipo_transaccion)->get();
+            $this->transaccion_antecedente=$this->id_tipoAntecedente[0]->Descripcion;
+            $this->folio_antecedente=str_pad($this->pagoAnticipado->subcontrato->numero_folio, 5, "0", STR_PAD_LEFT);
+            $this->fecha_antecedente=substr($this->pagoAnticipado->subcontrato->fecha,0,10);
+            $this->observaciones_antecedente=$this->pagoAnticipado->subcontrato->observaciones;
+            $this->referencia=$this->pagoAnticipado->subcontrato->referencia;
+            $this->iva=number_format( $this->pagoAnticipado->subcontrato->impuesto,2,'.',',');
+            $this->monto= number_format( $this->pagoAnticipado->subcontrato->monto,2,'.',',');
+            $this->subtotal=number_format(doubleval(str_replace(",","",$this->monto))-doubleval(str_replace(",","",$this->iva)),2,".",",");
 
-        $this->referencia=$this->pagoAnticipado->referencia;
+
+            $this->total_format="$ ".$this->monto;
+
+        }
 
 
-        $this->total=doubleval(substr($this->pagoAnticipado->monto_format,1,strlen($this->pagoAnticipado->monto_format)))*1000;
+        if(!empty($this->pagoAnticipado->orden_compra)){
+            $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+            $this->aux=$this->pagoAnticipado->tipo_transaccion;
+            $this->id_tipoAntecedente=TipoTransaccion::where("Tipo_Transaccion",$this->pagoAnticipado->tipo_transaccion)->get();
+            $this->transaccion_antecedente=$this->id_tipoAntecedente[0]->Descripcion;
+
+
+
+            $this->folio_antecedente=str_pad($this->pagoAnticipado->orden_compra->numero_folio, 5, "0", STR_PAD_LEFT);
+            $this->fecha_antecedente=substr($this->pagoAnticipado->orden_compra->fecha,0,10);
+            $this->observaciones_antecedente=$this->pagoAnticipado->orden_compra->observaciones;
+            $this->referencia=$this->pagoAnticipado->orden_compra->referencia;
+
+            $this->iva=number_format($this->pagoAnticipado->orden_compra->impuesto,2,".",",");
+            $this->monto=$this->pagoAnticipado->orden_compra->monto;
+            $this->subtotal=number_format($this->monto-$this->iva,2,".",",");
+
+            $this->total_format="$ ".number_format($this->monto,2,".", ",");
+
+        }
+
+
+        /*Costos*/
+        $this->monto=$this->pagoAnticipado->monto;
         $this->total_format=$this->pagoAnticipado->monto_format;
-        $this->estado=$this->pagoAnticipado->estado;
-        $this->subtotal=number_format(doubleval($this->total)*0.84,2,'.',',');
-        $this->iva=number_format(doubleval($this->total)*0.16,2,'.',',');
-
+        $this->subtotal=number_format( doubleval($this->monto)*0.84,2,'.',',');
+        $this->iva=number_format(doubleval($this->monto)*0.16,2,'.',',');
 
         $this->encabezado_pdf = utf8_decode('Solicitud de Pago Anticipado');
 
@@ -257,37 +295,6 @@ RFC: ' . $this->rfc), '', 'J');
     function EmpresaPagoAnticipado(){
 
 
-        if(!empty($this->referencia)){
-
-            $this->Ln(.8);
-            $this->SetWidths(array(9.75,9.75));
-            $this->SetRounds(array('1','2'));
-            $this->SetRadius(array(0.2,0.2));
-            $this->SetFills(array('180,180,180','180,180,180'));
-            $this->SetTextColors(array('0,0,0','0,0,0'));
-            $this->SetStyles(array('DF','DF'));
-            $this->SetHeights(array(0.5));
-            $this->SetFont('Arial', '', 6);
-            $this->SetAligns(array('C','C'));
-            $this->Row(array("Empresa", "Referencia"));
-
-
-            $this->SetFont('Arial', '', 6);
-            $this->SetWidths(array(9.75,9.75));
-            $this->SetRounds(array('4', '3'));
-            $this->SetRadius(array(0.2, 0.2));
-            $this->SetFills(array('255,255,255', '255,255,255'));
-            $this->SetTextColors(array('0,0,0', '0,0,0'));
-            $this->SetHeights(array(0.5));
-            $this->SetAligns(array('C', 'C'));
-
-            $this->Row(array($this->empresa_razon,$this->referencia));
-
-
-
-
-        }else {
-
             $this->Ln(1);
             $this->SetWidths(array(19.5));
             $this->SetRounds(array('12'));
@@ -308,7 +315,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
             $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', $this->empresa_razon))));
-        }
+
 
     }
     function detallesSolicitudPagoAnticipado($x)
@@ -364,7 +371,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFont('Arial', '', 6);
         $this->SetAligns(array('C'));
         $this->encola = "observaciones_encabezado";
-        $this->Row(array(utf8_decode("Observaciones")));
+        $this->Row(array(utf8_decode("Observaciones solicitud")));
         $this->SetRounds(array('34'));
         $this->SetRadius(array(0.2));
         $this->SetAligns(array('C'));
@@ -384,8 +391,41 @@ RFC: ' . $this->rfc), '', 'J');
     function antecedente()
     {
 
-        if(!empty($this->id_antecedente)){
+        if(!empty($this->id_tipoAntecedente)){
             $this->Ln(.8);
+            $this->SetFont('Arial', '', 10);
+            $this->Cell(9.5, .7, utf8_decode('TRANSACCIÓN ANTECEDENTE'), 0, 0, 'L');
+            $this->Ln(.8);
+
+            $this->SetWidths(array(3,2,2,12.5));
+            $this->SetRounds(array('1','','','2',));
+            $this->SetRadius(array(0.2,0,0,0.2));
+            $this->SetFills(array('180,180,180','180,180,180','180,180,180','180,180,180'));
+            $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0'));
+            $this->SetStyles(array('DF','DF','DF','DF'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+            $this->SetAligns(array('L','L','L','L'));
+            $this->Row(array("Tipo","Folio","Fecha","Referencia"));
+
+
+
+
+            $this->SetRounds(array('4','','','3'));
+            $this->SetRadius(array(0.2,0,0,0.2));
+            $this->SetAligns(array('L','L','L','L'));
+            $this->SetStyles(array('DF','DF','DF','DF'));
+            $this->SetFills(array('255,255,255','255,255,255','255,255,255','255,255,255'));
+            $this->SetTextColors(array('0,0,0','0,0,0','0,0,0','0,0,0'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+
+            $this->Row(array(utf8_decode($this->transaccion_antecedente),"# ".$this->folio_antecedente,date("d-m-Y",strtotime($this->fecha_antecedente)),utf8_decode($this->referencia)));
+
+
+
+
+            $this->Ln(1);
             $this->SetWidths(array(19.5));
             $this->SetRounds(array('12'));
             $this->SetRadius(array(0.2));
@@ -394,18 +434,17 @@ RFC: ' . $this->rfc), '', 'J');
             $this->SetStyles(array('DF'));
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
-            $this->SetAligns(array('C'));
-            $this->Row(array(utf8_decode('Transacción Antecedente')));
+            $this->SetAligns(array('L'));
+            $this->Row(array(utf8_decode("Observaciones transacción antecedente")));
             $this->SetRounds(array('34'));
             $this->SetRadius(array(0.2));
-            $this->SetAligns(array('C'));
+            $this->SetAligns(array('L'));
             $this->SetStyles(array('DF'));
             $this->SetFills(array('255,255,255'));
             $this->SetTextColors(array('0,0,0'));
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
-
-            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '',  $this->id_antecedente))));
+            $this->Row(array(utf8_decode($this->observaciones_antecedente)));
         }
 
     }
@@ -423,8 +462,8 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFills(array('180,180,180',  '255,255,255'));
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C',  'C'));
-        $this->Row(array("Subtotal", "$".(string)$this->subtotal));
+        $this->SetAligns(array('C',  'R'));
+        $this->Row(array("Subtotal:", "$ ".(string)$this->subtotal));
 
 
         $this->setX(12.5);
@@ -437,8 +476,8 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFills(array('180,180,180',  '255,255,255'));
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C',  'C'));
-        $this->Row(array("IVA", "$".(string)$this->iva));
+        $this->SetAligns(array('C',  'R'));
+        $this->Row(array("IVA:", "$ ".(string)$this->iva));
 
 
         $this->setX(12.5);
@@ -451,8 +490,8 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFills(array('180,180,180',  '255,255,255'));
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C',  'C'));
-        $this->Row(array("Total", $this->total_format));
+        $this->SetAligns(array('C',  'R'));
+        $this->Row(array("Total:", $this->total_format));
         $this->Ln(.5);
     }
 
@@ -464,81 +503,8 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
 
-        // Firmas específicas para la pista
-        if (Context::getDatabase() == "SAO1814_PISTA_AEROPUERTO")
-        {
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
 
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Recibió'), 'TRLB', 1, 'C', 1);
 
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.6, '', 'RL', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.6, '', 'RL', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.6, '', 'RL', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.6, '', 'RL', 1, 'C');
-
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.6, '', 'RL', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.6, utf8_decode('C.P. Eleazar Ortega Valerio'), 'RL', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.6, utf8_decode('Ing. Victor Manuel Orozco Muñoz'), 'RL', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.6, utf8_decode('C.P. Miguel Ángel. Figueroa Vidal'), 'RL', 1, 'C');
-
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('RESPONSABLE DE AREA'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('ADMINISTRADOR'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('GERENTE DE PROYECTO'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('TESORERO'), 'TRLB', 0, 'C', 1);
-        }
-
-        // Firmas para tunel drenaje profundo.
-        if (Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO")
-        {
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Recibió'), 'TRLB', 1, 'C', 1);
-
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 1, 'C');
-
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'RESPONSABLE DE AREA', 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'SUPERINTENDENTE DE AREA', 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'GERENTE DE AREA', 'TRLB', 0, 'C', 1);
-            $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'ADMINISTRACION', 'TRLB', 0, 'C', 1);
-
-            $this->CellFitScale(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Ing. Guadalupe Moreno Hernandez'), 'TRLB', 0, 'C', 1);
-            $this->CellFitScale(0.73);
-            $this->CellFitScale(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Ing. Martin Morales Sanchez o Ing. Lazaro Romero Zamora'), 'TRLB', 0, 'C', 1);
-            $this->CellFitScale(0.73);
-            $this->CellFitScale(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Ing. Francisco Javier Bay Ortuzar'), 'TRLB', 0, 'C', 1);
-            $this->CellFitScale(0.73);
-            $this->CellFitScale(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('C.P. Andres Moreno Ayala'), 'TRLB', 0, 'C', 1);
-        }
-
-        else
-        {
 
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, utf8_decode('Realizó'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
@@ -566,7 +532,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'ADMINISTRACION', 'TRLB', 0, 'C', 1);
 
-        }
+
 
 
     }
@@ -603,7 +569,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->EmpresaPagoAnticipado();
         $this->antecedente();
         $this->observaciones();
-        if($this->y > 17.05) {
+        if($this->y > 18.05) {
             $this->AddPage();
             $this->Ln(.8);
         }
