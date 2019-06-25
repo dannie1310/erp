@@ -4,12 +4,17 @@ export default {
     namespaced: true,
     state: {
         contratoProyectado: [],
+        currentContratos: null,
         meta: {}
     },
 
     mutations: {
         SET_CONTRATO_PROYECTADO(state, data) {
             state.contratoProyectado = data
+        },
+
+        SET_CONTRATO_PROYECTADOS(state, data) {
+            state.currentContratos = data
         },
 
         SET_META(state, data) {
@@ -39,12 +44,39 @@ export default {
                     })
             });
         },
+        find (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        getArea(payload = {}) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'getArea', { params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
 
-        aprobar(context, payload) {
+                        resolve(data.data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
+        actualiza(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Estás seguro?",
-                    text: "Aprobar Estimación",
+                    text: "Actualizar Contrato Proyectado",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -52,7 +84,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Aprobar',
+                            text: 'Si, Actualizar',
                             closeModal: false,
                         }
                     }
@@ -60,10 +92,10 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id + '/aprobar')
+                                .patch(URI + payload.id + '/actualizar', payload.data)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Estimación aprobada correctamente", {
+                                    swal("Contrato Proyectado actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -89,6 +121,9 @@ export default {
 
         meta(state) {
             return state.meta
+        },
+        currentContratos(state) {
+            return state.currentContratos
         }
     }
 }

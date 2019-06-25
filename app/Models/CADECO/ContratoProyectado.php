@@ -9,6 +9,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
+use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use Illuminate\Database\Eloquent\Model;
 
 class ContratoProyectado extends Transaccion
@@ -33,6 +35,12 @@ class ContratoProyectado extends Transaccion
         'subcontrato.empresa.razon_social',
         'subcontrato.referencia'
     ];
+
+    public function areas_subcontratantes()
+    {
+        return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante');
+    }
+
     protected static function boot()
     {
         parent::boot();

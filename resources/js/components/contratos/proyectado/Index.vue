@@ -26,6 +26,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Número de Folio', field: 'numero_folio', sortable: true },
+                    { title: 'Area Subcontratante', field: 'numero_folio', sortable: true },
                     { title: 'Fecha Contrato Proyectado', field: 'fecha', sortable: true },
                     { title: 'Referencia Contrato Proyectado', field: 'referencia', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
@@ -86,6 +87,9 @@
                         buttons: $.extend({}, {
                             cambiaAreaSubcontratante: (this.$root.can('aprobar_estimacion_subcontrato')) ? true : undefined,
                             id: contratoProyectado.id,
+                            numero_folio: `# ${contratoProyectado.numeroFolio}`,
+                            fecha: contratoProyectado.fecha,
+                            referencia: contratoProyectado.referencia,
                             contratoProyectado: contratoProyectado
                         })
                     }));

@@ -1,6 +1,6 @@
 <template>
     <div class="btn-group">
-        <cambiar-area-subcontratante></cambiar-area-subcontratante>
+        <cambiar-area-subcontratante :id="value.id" :value="value"></cambiar-area-subcontratante>
 
     </div>
 </template>
@@ -13,8 +13,8 @@
         components: {CambiarAreaSubcontratante},
         props: ['value'],
         methods: {
-            ajustar_saldo() {
-                this.$router.push({name: 'fondo-garantia-ajustar-saldo', params: {id: this.value.id}});
+            cambiar_area() {
+                this.$router.push({name: 'cambiar-area-subcontratante', params: {id: this.value.id}});
             }
         }
     }

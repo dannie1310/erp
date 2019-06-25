@@ -14,6 +14,7 @@ use App\Http\Requests\AprobarEstimacionRequest;
 use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
 use App\Services\CADECO\Contratos\ContratoProyectadoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class ContratoProyectadoController extends Controller
@@ -60,9 +61,9 @@ class ContratoProyectadoController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function aprobar(AprobarEstimacionRequest $request, $id)
+    public function actualiza(Request $request, $id)
     {
-        $estimacion = $this->service->aprobar($id);
-        return $this->respondWithItem($estimacion);
+        $contrato_proyectado = $this->service->actualiza($request->all(), $id);
+        return $this->respondWithItem($contrato_proyectado);
     }
 }
