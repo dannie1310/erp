@@ -45,7 +45,6 @@ class PagoAnticipado extends Rotation
         $this->obra = Obra::find(Context::getIdObra());
         $this->pagoAnticipado = SolicitudPagoAnticipado::with("subcontrato", "empresa", "usuario", "orden_compra")->find($id);
 
-
         /*Header*/
         $this->folio = $this->pagoAnticipado->numero_folio;
         $this->fechaCompleta = str_replace("/", "-", substr($this->pagoAnticipado->fecha_format, 0, 10));
@@ -101,8 +100,8 @@ class PagoAnticipado extends Rotation
         /*Costos*/
         $this->monto=$this->pagoAnticipado->monto;
         $this->total_format=$this->pagoAnticipado->monto_format;
-        $this->subtotal=number_format( ceil(doubleval($this->monto)*0.84),2,'.',',');
-        $this->iva=number_format(ceil(doubleval($this->monto)*0.6),2,'.',',');
+        $this->subtotal=number_format( doubleval($this->monto)*0.84,2,'.',',');
+        $this->iva=number_format(doubleval($this->monto)*0.16,2,'.',',');
 
         $this->encabezado_pdf = utf8_decode('Solicitud de Pago Anticipado');
 
