@@ -530,13 +530,13 @@ RFC: ' . $this->rfc), '', 'J');
             $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 1, 'C');
 
 
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'RESPONSABLE DE AREA', 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('RESPONSABLE DE ÁREA'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'GERENCIA DE AREA', 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('GERENCIA DE ÁREA'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'DIRECCION DE AREA', 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('DIRECCION DE ÁREA'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'ADMINISTRACION', 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
 
 
 
