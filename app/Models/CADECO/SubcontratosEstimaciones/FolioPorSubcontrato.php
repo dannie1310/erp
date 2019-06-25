@@ -15,7 +15,8 @@ class FolioPorSubcontrato extends Model
     public $incrementing = false;
     public $timestamps = false;
     protected $fillable = [
-        'IDSubcontrato'
+        'IDSubcontrato',
+        'UltimoFolio'
     ];
 
     protected static function boot()

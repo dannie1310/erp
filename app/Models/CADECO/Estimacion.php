@@ -130,7 +130,8 @@ class Estimacion extends Transaccion
             $folio->save();
         } else {
             $folio = FolioPorSubcontrato::query()->create([
-                'IDSubcontrato' => $this->id_antecedente
+                'IDSubcontrato' => $this->id_antecedente,
+                'UltimoFolio' => 1
             ]);
         }
         return $folio->UltimoFolio;
