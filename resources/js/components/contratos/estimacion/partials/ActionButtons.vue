@@ -28,37 +28,37 @@
                             <table style="width: 100%" class="table table-stripped small">
                                 <tbody>
                                 <tr>
-                                    <th colspan="2">Suma de Importes</th>
+                                    <th style="text-align: left" colspan="2">Suma de Importes</th>
                                     <td style="text-align: right">{{ `$ ${(parseFloat(value.estimacion.monto) + parseFloat(value.estimacion.impuesto)).formatMoney(2)}` }}</td>
                                 </tr>
                                 <tr>
-                                    <th colspan="2">Deductivas</th>
+                                    <th style="text-align: left" colspan="2">Deductivas</th>
                                     <td style="text-align: right">$ 0</td>
                                 </tr>
                                 <tr>
-                                    <th>Amortización de Anticipo</th>
+                                    <th style="text-align: left">Amortización de Anticipo</th>
                                     <td>0%</td>
                                     <th style="text-align: right">$ 0</th>
                                 </tr>
                                 <tr>
-                                    <th>Fondo de Garantia</th>
+                                    <th style="text-align: left">Fondo de Garantia</th>
                                     <td>0%</td>
                                     <th style="text-align: right">$ 0</th>
                                 </tr>
                                  <tr>
-                                    <th colspan="2">Penalizaciones sin IVA</th>
+                                    <th style="text-align: left" colspan="2">Penalizaciones sin IVA</th>
                                     <td style="text-align: right">$ 0</td>
                                 </tr>
                                  <tr>
-                                    <th colspan="2">Subtotal</th>
+                                    <th style="text-align: left" colspan="2">Subtotal</th>
                                     <td style="text-align: right">{{ `$ ${parseFloat(value.estimacion.monto).formatMoney(2)}` }}</td>
                                 </tr>
                                  <tr>
-                                    <th colspan="2">I.V.A.</th>
+                                    <th style="text-align: left" colspan="2">I.V.A.</th>
                                     <td style="text-align: right">{{ `$ ${parseFloat(value.estimacion.impuesto).formatMoney(2)}` }}</td>
                                 </tr>
                                  <tr>
-                                    <th colspan="2">Total</th>
+                                    <th style="text-align: left" colspan="2">Total</th>
                                     <th style="text-align: right">{{ `$ ${(parseFloat(value.estimacion.monto) + parseFloat(value.estimacion.impuesto)).formatMoney(2)}` }}</th>
                                 </tr>
                                 </tbody>
