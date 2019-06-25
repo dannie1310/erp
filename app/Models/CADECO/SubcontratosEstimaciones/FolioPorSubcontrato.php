@@ -25,5 +25,9 @@ class FolioPorSubcontrato extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('IDObra', '=', Context::getIdObra());
         });
+
+        self::creating(function($model) {
+            $model->IDObra = Context::getIdObra();
+        });
     }
 }
