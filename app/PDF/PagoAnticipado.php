@@ -380,7 +380,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->Row(array(utf8_decode("Observaciones solicitud")));
         $this->SetRounds(array('34'));
         $this->SetRadius(array(0.2));
-        $this->SetAligns(array('C'));
+        $this->SetAligns(array('J'));
         $this->SetStyles(array('DF'));
         $this->SetFills(array('255,255,255'));
         $this->SetTextColors(array('0,0,0'));
@@ -534,7 +534,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('GERENCIA DE ÁREA'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('DIRECCION DE ÁREA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('DIRECCIÓN DE ÁREA'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
 
