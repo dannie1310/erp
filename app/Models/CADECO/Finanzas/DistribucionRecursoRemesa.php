@@ -53,24 +53,18 @@ class DistribucionRecursoRemesa extends Model
 
         });
     }
-    public function cancelar($id){
-        $distribucion = DistribucionRecursoRemesa::find($id);
-
-        if($distribucion->estado != 0 && $distribucion->estado != 1){
+    public function cancelar(){
+        if($this->estado != 0 && $this->estado != 1){
             throw New \Exception('La distribucion de recurso autorizado de remesa no puede ser cancelada, porque no tiene el estatus "generada" ');
         }else{
-            $partida = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso',$id)->get();
-
-            foreach($partida as $part){
-                if($part->estado != 0){
-                    throw New \Exception('La distribucion de recurso autorizado de remesa no puede ser cancelada, porque alguna de sus partidas no tiene el estatus "generada" ');
-                }
-                $part->estado = -1;
-                $part->save();
+            $partidas = $this->partida()->get();
+            foreach($partidas as $partida){
+                $partida->cancelar();
             }
-            $distribucion->estado = -1;
-            $distribucion->save();
-            return $distribucion;
+            $this->usuario_cancelo = auth()->id();
+            $this->estado = -1;
+            $this->save();
+            return $this;
         }
     }
 
@@ -96,5 +90,21 @@ class DistribucionRecursoRemesa extends Model
 
     public function obra(){
         return $this->hasMany(Obra::class, 'id_obra', 'id_obra');
+    }
+
+    public function remesaValidaEstado(){
+        switch ($this->estado){
+            case 0:
+                abort(400, 'Archivo de distribución de recurso no ha sido descargado.');
+                break;
+            case 2:
+                abort(400, 'Archivo procesado previamente.');
+                break;
+            case -1:
+                abort(400, 'La distribución de recursos esta cancelada');
+                break;
+        }
+        return $this;
+
     }
 }

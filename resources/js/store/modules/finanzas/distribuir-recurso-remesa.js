@@ -136,6 +136,27 @@ export default {
                     })
             });
         },
+        layout(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/layout')
+                    .then(r => r.data)
+                    .then(data => {
+                        swal("Layout de pago de distribucion de remesa fue generado en el repositorio remosor correctamente", {
+                            icon: "success",
+                            timer: 1500,
+                            buttons: false
+                        }).then(() => {
+                            context.commit('UPDATE_DISTRIBUCION', data);
+                            resolve(data);
+                        })
+
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
     },
 
     getters: {
