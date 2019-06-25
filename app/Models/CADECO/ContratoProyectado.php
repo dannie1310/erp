@@ -36,7 +36,7 @@ class ContratoProyectado extends Transaccion
         'subcontrato.referencia'
     ];
 
-    public function areas_subcontratantes()
+    public function areasSubcontratantes()
     {
         return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante');
     }
@@ -46,7 +46,19 @@ class ContratoProyectado extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 49);
+            return $query
+                ->where('tipo_transaccion', '=', 49)
+                ->where(function ($q3) {
+                    return $q3
+                        ->whereHas('areasSubcontratantes', function ($q) {
+                                return $q
+                                    ->whereHas('usuariosAreasSubcontratantes', function ($q2) {
+                                        return $q2
+                                            ->where('id_usuario', '=', auth()->id());
+                                    });
+                        })
+                        ->orHas('areasSubcontratantes', '=', 0);
+                });
         });
     }
 }

@@ -21,12 +21,14 @@ export default {
             state.meta = data
         },
 
-        APROBAR_ESTIMACION(state, id) {
-            state.contratoProyectado.forEach(contProyectado => {
-                if(contProyectado.id == id) {
-                    contProyectado.estado = 1;
+        UPDATE_CONTRATO_PROYECTADOS(state, data) {
+            state.contratoProyectado = state.contratoProyectado.map(contrato => {
+                if (contrato.id === data.id) {
+                    return Object.assign({}, contrato, data)
                 }
+                return contrato
             })
+            state.currentContratos != null ? data : null;
         }
     },
 
@@ -92,15 +94,16 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id + '/actualizar', payload.data)
+                                .patch(URI + payload.id + '/actualizar', payload.data, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Contrato Proyectado actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
-                                    })
-                                        .then(() => {
+                                    }).then(() => {
+                                        console.log(data);
+                                            context.commit('UPDATE_CONTRATO_PROYECTADOS',data);
                                             resolve(data);
                                         })
                                 })

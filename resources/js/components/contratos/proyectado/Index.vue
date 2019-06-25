@@ -26,14 +26,14 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Número de Folio', field: 'numero_folio', sortable: true },
-                    { title: 'Area Subcontratante', field: 'numero_folio', sortable: true },
+                    { title: 'Area Subcontratante', field: 'area', sortable: true },
                     { title: 'Fecha Contrato Proyectado', field: 'fecha', sortable: true },
                     { title: 'Referencia Contrato Proyectado', field: 'referencia', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {include:'areasSubcontratantes'},
                 search: '',
                 cargando: false
             }
@@ -41,7 +41,6 @@
         mounted() {
             this.query.sort = 'numero_folio';
             this.query.order = 'DESC';
-
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -82,6 +81,7 @@
                     self.$data.data = contratosProyectados.map((contratoProyectado, i) => ({
                         index: (i + 1) + self.query.offset,
                         numero_folio: `# ${contratoProyectado.numeroFolio}`,
+                        area:contratoProyectado.areasSubcontratantes.data.length ? contratoProyectado.areasSubcontratantes.data[0].descripcion : 'Sin Área Subcontratante Asignada',
                         fecha: contratoProyectado.fecha,
                         referencia: contratoProyectado.referencia,
                         buttons: $.extend({}, {
@@ -90,6 +90,7 @@
                             numero_folio: `# ${contratoProyectado.numeroFolio}`,
                             fecha: contratoProyectado.fecha,
                             referencia: contratoProyectado.referencia,
+                            area:contratoProyectado.areasSubcontratantes.data[0],
                             contratoProyectado: contratoProyectado
                         })
                     }));

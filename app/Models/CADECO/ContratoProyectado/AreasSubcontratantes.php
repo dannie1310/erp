@@ -19,6 +19,7 @@ class AreasSubcontratantes extends Model
     ];
 
 
+
    protected static function boot()
     {
         parent::boot();
@@ -41,8 +42,4 @@ class AreasSubcontratantes extends Model
         return $contrato;
     }
 
-    public function permisos()
-    {
-        return $this->belongsToMany(Permiso::class, Context::getDatabase() . '.Seguridad.permission_role', 'role_id', 'permission_id');
-    }
 }

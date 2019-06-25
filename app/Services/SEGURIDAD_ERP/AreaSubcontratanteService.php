@@ -5,7 +5,7 @@ namespace App\Services\SEGURIDAD_ERP;
 
 
 use App\Models\IGH\Usuario;
-use App\Models\SEGURIDAD_ERP\AreaSubcontratante;
+use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Repositories\Repository;
@@ -43,7 +43,7 @@ class AreaSubcontratanteService
 
         foreach ($data['area_id'] as $area_id) {
             try {
-                AreaSubcontratante::query()->where('id_usuario',$data['user_id'])->delete();
+                UsuarioAreaSubcontratante::query()->where('id_usuario',$data['user_id'])->delete();
                 DB::connection( 'seguridad' )->commit();
             } catch (\Exception $e) {}
         }
@@ -55,7 +55,7 @@ class AreaSubcontratanteService
                     'id_area_subcontratante' => $area_id
                 ];
 
-                AreaSubcontratante::query()->create( $datos );
+                UsuarioAreaSubcontratante::query()->create( $datos );
 
                 DB::connection( 'seguridad' )->commit();
 

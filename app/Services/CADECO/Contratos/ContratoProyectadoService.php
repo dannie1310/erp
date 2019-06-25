@@ -58,10 +58,12 @@ class ContratoProyectadoService
         $area =  $data['id_area'];
 
         $transaccion = $this->repository->show($id);
-        $transaccion_area = $transaccion->areas_subcontratantes()->get();
+        $transaccion_area = $transaccion->areasSubcontratantes;
         if(count($transaccion_area) > 0){
             $solicitud = ContratoProyectado\AreasSubcontratantes::find($id);
             $solicitud = $solicitud->actualiza($id, $data['id_area']);
+            $transaccion->refresh();
+
             return $transaccion;
 
         }else{
@@ -74,7 +76,7 @@ class ContratoProyectadoService
                 $solicitud = ContratoProyectado\AreasSubcontratantes::query()->create($datos);
 
                 DB::connection('cadeco')->commit();
-
+                $transaccion->refresh();
                 return $transaccion ;
             } catch (\Exception $e) {
                 DB::connection('cadeco')->rollBack();

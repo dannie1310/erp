@@ -29,8 +29,9 @@
                                         v-model="id_area"
                                         :class="{'is-invalid': errors.has('id_area')}"
                                 >
-                                <option v-if="areas_disponibles.id">{{areas_disponibles.descripcion}}</option>
-                                <option v-else>--Área Subcontratante sin Asignar--</option>
+                                <option v-if="value.area != null" value>{{value.area.descripcion}}</option>
+<!--                                <option selected>&#45;&#45;Área Subcontratante sin Asignar&#45;&#45;</option>-->
+                                <option v-else value>--- Área Subcontratante sin Asignar ---</option>
                                 <option v-for="area in areas_disponibles" :value="area.id">{{ `${area.descripcion} ` }}</option>
                                 </select>
                                 <div class="invalid-feedback" v-show="errors.has('id_area')">{{ errors.first('id_area') }}</div>
@@ -103,7 +104,8 @@
                     id: this.id,
                     data: {
                         id_area: this.id_area
-                    }
+                    },
+                    params:{include:"areasSubcontratantes"}
                 })
                     .then(data => {
                         $(this.$refs.modal).modal('hide');

@@ -9,5 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 class TipoAreaSubcontratante extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'dbo.ctg_areas_subcontratantes';
+    protected $table = 'SEGURIDAD_ERP.dbo.ctg_areas_subcontratantes';
+
+    public function usuariosAreasSubcontratantes()
+    {
+        return $this->hasMany(UsuarioAreaSubcontratante::class, 'id_area_subcontratante');
+    }
 }

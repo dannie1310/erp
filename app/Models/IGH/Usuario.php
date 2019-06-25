@@ -11,7 +11,7 @@ namespace App\Models\IGH;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
-use App\Models\SEGURIDAD_ERP\AreaSubcontratante;
+use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Models\SEGURIDAD_ERP\Google2faSecret;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\RolGeneral;
