@@ -53,6 +53,7 @@ class PagoAnticipado extends Rotation
         $this->fecha_solicitud = $this->pagoAnticipado->cumplimiento;
         $this->empresa_razon = $this->pagoAnticipado->empresa->razon_social;
         $this->observaciones = $this->pagoAnticipado->observaciones;
+
         
 
         if (!empty($this->pagoAnticipado->subcontrato)){
@@ -90,7 +91,7 @@ class PagoAnticipado extends Rotation
 
             $this->iva=number_format($this->pagoAnticipado->orden_compra->impuesto,2,".",",");
             $this->monto=$this->pagoAnticipado->orden_compra->monto;
-            $this->subtotal=number_format($this->monto-$this->iva,2,".",",");
+            $this->subtotal=number_format(doubleval($this->monto)-doubleval($this->iva),2,".",",");
 
             $this->total_format="$ ".number_format($this->monto,2,".", ",");
 
@@ -361,6 +362,11 @@ RFC: ' . $this->rfc), '', 'J');
 
     function observaciones()
     {
+
+        if(strlen($this->observaciones)>2000){
+            $this->AddPage();
+            $this->Ln(.8);
+        }
         $this->Ln(.8);
         $this->SetWidths(array(19.5));
         $this->SetRounds(array('12'));
@@ -405,7 +411,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->SetStyles(array('DF','DF','DF','DF'));
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
-            $this->SetAligns(array('L','L','L','L'));
+            $this->SetAligns(array('C','C','C','C'));
             $this->Row(array("Tipo","Folio","Fecha","Referencia"));
 
 
@@ -434,7 +440,7 @@ RFC: ' . $this->rfc), '', 'J');
             $this->SetStyles(array('DF'));
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
-            $this->SetAligns(array('L'));
+            $this->SetAligns(array('C'));
             $this->Row(array(utf8_decode("Observaciones transacción antecedente")));
             $this->SetRounds(array('34'));
             $this->SetRadius(array(0.2));
@@ -462,7 +468,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFills(array('180,180,180',  '255,255,255'));
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C',  'R'));
+        $this->SetAligns(array('R',  'R'));
         $this->Row(array("Subtotal:", "$ ".(string)$this->subtotal));
 
 
@@ -476,7 +482,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFills(array('180,180,180',  '255,255,255'));
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C',  'R'));
+        $this->SetAligns(array('R',  'R'));
         $this->Row(array("IVA:", "$ ".(string)$this->iva));
 
 
@@ -490,7 +496,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFills(array('180,180,180',  '255,255,255'));
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
-        $this->SetAligns(array('C',  'R'));
+        $this->SetAligns(array('R',  'R'));
         $this->Row(array("Total:", $this->total_format));
         $this->Ln(.5);
     }
@@ -524,13 +530,13 @@ RFC: ' . $this->rfc), '', 'J');
             $this->Cell(($this->GetPageWidth() - 4) / 4, 1.2, '', 'TRLB', 1, 'C');
 
 
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'RESPONSABLE DE AREA', 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('RESPONSABLE DE ÁREA'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'GERENCIA DE AREA', 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('GERENCIA DE ÁREA'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'DIRECCION DE AREA', 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('DIRECCION DE ÁREA'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.73);
-            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4, 'ADMINISTRACION', 'TRLB', 0, 'C', 1);
+            $this->Cell(($this->GetPageWidth() - 4) / 4, 0.4,  utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
 
 
 
