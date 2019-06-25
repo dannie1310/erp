@@ -268,6 +268,23 @@ export const routes = [
                 }
             },
             {
+                path: 'proyectado',
+                component: require('./components/contratos/proyectado/partials/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'proyectado',
+                        component: require('./components/contratos/proyectado/Index'),
+                        meta: {
+                            title: 'Contratos Proyectados',
+                            breadcrumb: {parent: 'contratos', name: 'PROYECTADOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'estimacion',
                 component: require('./components/contratos/estimacion/Layout'),
                 children: [

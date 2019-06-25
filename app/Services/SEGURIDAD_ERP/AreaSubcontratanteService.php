@@ -5,7 +5,7 @@ namespace App\Services\SEGURIDAD_ERP;
 
 
 use App\Models\IGH\Usuario;
-use App\Models\SEGURIDAD_ERP\AreaSubcontratante;
+use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Repositories\Repository;
@@ -37,6 +37,7 @@ class AreaSubcontratanteService
     {
         $usuarioArea = Usuario::query()->find($data['user_id']);
         $usuario = Usuario::query()->find($data['user_id']);
+
 //        if(!auth()->user()->can('asignar_areas_subcontratantes')) {
 //            throw new \Exception('No es posible asignar las areas subcontratantes porque no cuenta con el permiso, favor de solicitar la asignación al administrador del sistema.', 403);
 //        }
@@ -50,7 +51,7 @@ class AreaSubcontratanteService
                     'id_area_subcontratante' => $area_id
                 ];
 
-                AreaSubcontratante::query()->create( $datos );
+                UsuarioAreaSubcontratante::query()->create( $datos );
 
                 DB::connection( 'seguridad' )->commit();
 

@@ -9,6 +9,23 @@
             <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>
+                        Gestión de Contratos Proyectados
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item"  v-if="$root.can('consultar_formato_orden_pago_estimacion')">
+                        <router-link :to="{name: 'proyectado'}" class="nav-link" :class="{active: this.$route.name == 'proyectado'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Contrato Proyectado</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <p>
                        Gestión de Estimaciones
                         <i class="right fa fa-angle-left"></i>
                     </p>
