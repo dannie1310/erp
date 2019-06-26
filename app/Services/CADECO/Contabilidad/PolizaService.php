@@ -141,7 +141,12 @@ class PolizaService
             if (!in_array($poliza->estatus, [0, -2])) {
                 throw new \Exception("No se puede validar la prepóliza ya que su estatus es {$poliza->estatusPrepoliza->descripcion}", 400);
             }
-            $data = ['estatus' => 1];
+
+            $data = [
+                'estatus' => 1,
+                'lanzable' => true
+            ];
+
             $poliza = $this->repository->update($data, $id);
             $poliza->valido()->create(['valido' => auth()->id()]);
 
