@@ -279,10 +279,6 @@
                 })
                     .then(data => {
                         self.monedas = data.data;
-                        self.subtotal_x_moneda[1] = 0;
-                        self.monedas.forEach(function (moneda, i) {
-                            self.subtotal_x_moneda[moneda.id] = 0;
-                        });
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -356,6 +352,11 @@
             },
             sumaSubtotalPorMoneda(){
                 let self = this;
+                self.subtotal_x_moneda =[];
+                self.subtotal_x_moneda[1] = 0;
+                self.monedas.forEach(function (moneda, i) {
+                    self.subtotal_x_moneda[moneda.id] = 0;
+                });
                 self.documentos.forEach(function (doc, i) {
                     self.subtotal_x_moneda[doc.id_moneda] += parseFloat(doc.monto_total_solicitado);
                 })
