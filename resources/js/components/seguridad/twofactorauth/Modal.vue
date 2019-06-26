@@ -1,51 +1,38 @@
 <template>
-    <span>
-        <!-- Button trigger modal -->
-        <button type="button" @click="init" class="btn btn-primary" :disabled="cargando">
-            <span v-if="cargando">
-                <i class="fa fa-spin fa-spinner"></i>
-            </span>
-            <span v-else>
-                Autenticación de 2 Pasos
-            </span>
-        </button>
-
-        <!-- Modal -->
-        <div class="modal fade" ref="modal2fa" tabindex="-1" role="dialog" aria-labelledby="2faModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="2faModalLabel">Autenticación de 2 pasos</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <ul>
-                            <li>Descarga la APP desde <b><a target="_blank" href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google Authenticator</a></b></li>
-                            <li>Dentro la APP selecciona <b>COMENZAR</b></li>
-                            <li>Seleccione <b>Escanear código de barras</b> y escanee el siguiente código: </li>
-                        </ul>
-                        <br>
-                        <center>
-                            <img :src="'/api/SEGURIDAD_ERP/google-2fa/qr?access_token=' + this.$session.get('jwt')" class="img-thumbnail">
-                        </center>
-                        <br>
-                        <ul>
-                            <li>Una vez escaneado, ingrese el <b>código de verificación</b> que le proporcionó la APP</li>
-                        </ul>
-                        <br>
-                        <center>
-                            <input type="text" ref="codeInput">
-                        </center>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    </div>
+    <div class="modal fade" ref="modal2fa" tabindex="-1" role="dialog" aria-labelledby="2faModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="2faModalLabel">Autenticación de 2 pasos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>Descarga la APP desde <b><a target="_blank" href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google Authenticator</a></b></li>
+                        <li>Dentro la APP selecciona <b>COMENZAR</b></li>
+                        <li>Seleccione <b>Escanear código de barras</b> y escanee el siguiente código: </li>
+                    </ul>
+                    <br>
+                    <center>
+                        <img :src="'/api/SEGURIDAD_ERP/google-2fa/qr?access_token=' + this.$session.get('jwt')" class="img-thumbnail">
+                    </center>
+                    <br>
+                    <ul>
+                        <li>Una vez escaneado, ingrese el <b>código de verificación</b> que le proporcionó la APP</li>
+                    </ul>
+                    <br>
+                    <center>
+                        <input type="text" ref="codeInput">
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
-    </span>
+    </div>
 </template>
 
 <script>
