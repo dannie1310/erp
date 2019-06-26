@@ -21,7 +21,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <img :src="qr" class="img-thumbnail">
+                        <img :src="'/api/SEGURIDAD_ERP/google-2fa/qr?access_token=' + this.$session.get('jwt')" class="img-thumbnail">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -43,10 +43,17 @@
             }
         },
 
+        mounted() {
+            $(this.$refs.modal2fa).on('hidden.bs.modal', () => {
+                this.cargando = false;
+            });
+        },
+
         methods: {
             init() {
-                this.cargando = true;
-                axios
+                //  this.cargando = true;
+                $(this.$refs.modal2fa).modal('show');
+                /*axios
                     .get('/api/SEGURIDAD_ERP/google-2fa/isVerified')
                     .then(r => r.data)
                     .then(data => {
@@ -61,12 +68,8 @@
                         } else {
                             alert('not verified')
                         }
-                    })
+                    })*/
             }
         }
     }
 </script>
-
-<style scoped>
-
-</style>

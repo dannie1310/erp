@@ -13,6 +13,7 @@ class Google2faController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('addAccessToken')->only('qr');
         $this->middleware('auth:api');
     }
 
