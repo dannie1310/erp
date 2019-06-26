@@ -1,27 +1,34 @@
 <template>
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12 col-sm-6 col-md-3" v-for="(aplicacion, i) in aplicaciones">
-                    <div class="info-box">
-                        <span :class="`${aplicacion.color}`" class="info-box-icon elevation-1" ><i :class="`${aplicacion.icon}`"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-number">{{aplicacion.menu}}</span>
+    <span>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-3" v-for="(aplicacion, i) in aplicaciones">
+                        <div class="info-box">
+                            <span :class="`${aplicacion.color}`" class="info-box-icon elevation-1" ><i :class="`${aplicacion.icon}`"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number">{{aplicacion.menu}}</span>
 
-                            <a :href="`${aplicacion.ruta}?origen=${url}`" target="_blank">
-                                <span class="info-box-text">IR <i class="fa fa-arrow-circle-o-right"></i> </span>
-                            </a>
+                                <a :href="`${aplicacion.ruta}?origen=${url}`" target="_blank">
+                                    <span class="info-box-text">IR <i class="fa fa-arrow-circle-o-right"></i> </span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <two-factor-auth-modal></two-factor-auth-modal>
+    </span>
+
 </template>
 
 <script>
+    import TwoFactorAuthModal from "../seguridad/twofactorauth/Modal";
     export default {
         name: "portal",
+        components: {TwoFactorAuthModal},
         mounted() {
             this.index();
         },
