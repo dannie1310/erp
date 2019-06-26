@@ -60,10 +60,13 @@
                 contrato_proyectado : null,
                 cargando: false,
                 areas_disponibles: [],
+                areas_asignadas: [],
             }
         },
         computed:{
-
+            currentUser(){
+                return this.$store.getters['auth/currentUser']
+            }
         },
         methods: {
             init(){
@@ -109,8 +112,19 @@
                 })
                     .then(data => {
                         $(this.$refs.modal).modal('hide');
-                        this.$emit('created', data);
-                    });
+                        this.$store.dispatch('configuracion/area-subcontratante/getAreasUsuario', this.currentUser.idusuario)
+                            .then(data_a => {
+                                var areas = [];
+                                data_a.data.forEach(area => {
+                                    areas.push(area.id);
+                                });
+
+                                if($.inArray(data.areasSubcontratantes.data[0].id, areas) == -1) {
+                                    this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO_PROYECTADO', this.id);
+                                }
+
+                            })
+                    })
             },
 
         }

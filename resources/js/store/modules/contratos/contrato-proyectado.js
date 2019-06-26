@@ -20,6 +20,15 @@ export default {
         SET_META(state, data) {
             state.meta = data
         },
+        DELETE_CONTRATO_PROYECTADO(state, id) {
+            state.contratoProyectado = state.contratoProyectado.filter((cp) => {
+                return cp.id !== id;
+            })
+            if (state.currentContratos && state.currentContratos.id === id) {
+                state.currentContratos = null;
+            }
+        },
+
 
         UPDATE_CONTRATO_PROYECTADOS(state, data) {
             state.contratoProyectado = state.contratoProyectado.map(contrato => {
@@ -59,6 +68,7 @@ export default {
                     })
             });
         },
+
         getArea(payload = {}) {
             return new Promise((resolve, reject) => {
                 axios
@@ -102,7 +112,6 @@ export default {
                                         timer: 1500,
                                         buttons: false
                                     }).then(() => {
-                                        console.log(data);
                                             context.commit('UPDATE_CONTRATO_PROYECTADOS',data);
                                             resolve(data);
                                         })
