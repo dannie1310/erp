@@ -18,8 +18,6 @@
                 </div>
             </div>
         </div>
-
-        <two-factor-auth-modal></two-factor-auth-modal>
     </span>
 
 </template>

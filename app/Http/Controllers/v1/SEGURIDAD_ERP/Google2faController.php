@@ -13,24 +13,29 @@ class Google2faController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('addAccessToken')->only('qr');
         $this->middleware('auth:api');
     }
 
     public function qr()
     {
         return redirect(GoogleQrUrl::generate(auth()->user()->usuario, auth()->user()->google2faSecret->secret, 'SAO-ERP'));
-        $image = file_get_contents($url);
-        return response()->json(['qr' => base64_encode($image)]);
     }
 
     public function check(Request $request)
     {
         $g = new GoogleAuthenticator();
         if ($g->checkCode(auth()->user()->google2faSecret->secret, $request->code)) {
-            return response()->json(['message' => 'success'], 200);
+            auth()->user()->google2faSecret->verified = true;
+            auth()->user()->google2faSecret->save();
+            return response()->json([
+                'message' => 'Código Válido',
+                'valid' => true
+            ], 200);
         } else {
-            return response()->json(['message' => 'Code Invalid'], 400);
+            return response()->json([
+                'message' => 'Código Inválido',
+                'valid' => false
+            ], 200);
         }
     }
     
@@ -46,7 +51,7 @@ class Google2faController extends Controller
             else {
                 return response()->json([
                     'message' => 'Not verified',
-                    'verified' => true,
+                    'verified' => false,
                     'status_code' => 200,
                 ]);
             }
@@ -57,5 +62,11 @@ class Google2faController extends Controller
             'verified' => true,
             'status_code' => 200,
         ]);
+    }
+
+    public function code(Request $request)
+    {
+        $g = new GoogleAuthenticator();
+        return response()->json(['code' => $g->getCode(auth()->user()->google2faSecret->secret)]);
     }
 }
