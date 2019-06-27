@@ -9,6 +9,10 @@
         },
 
         mounted() {
+            setTimeout(() => {
+                localStorage.clear();
+            }, 100);
+
             let code = this.$route.query.code;
             if (!code) {
                 window.location.replace('/oauth/authorize?client_id=' + process.env.MIX_CLIENT_ID + '&response_type=code&redirect_uri=' + process.env.MIX_REDIRECT_URI);

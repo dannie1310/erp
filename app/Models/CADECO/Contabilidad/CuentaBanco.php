@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\Contabilidad;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Cuenta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -23,7 +24,8 @@ class CuentaBanco extends Model
     protected $fillable = [
         'id_cuenta',
         'id_tipo_cuenta_contable',
-        'cuenta'
+        'cuenta',
+        'id_obra'
     ];
 
 
@@ -31,9 +33,14 @@ class CuentaBanco extends Model
     {
         parent::boot();
 
+        self::addGlobalScope(function ($query) {
+            return $query->where('id_obra', '=', Context::getIdObra());
+        });
+
         self::creating(function ($model) {
             $model->estatus = 1;
             $model->registro = auth()->id();
+            $model->id_obra = Context::getIdObra();
         });
     }
 

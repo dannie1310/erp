@@ -20,6 +20,11 @@ interface Context
     public function setContext(string $database, int $id_obra);
 
     /**
+     * Borra la información del contexto guardado en la sesión
+     * @return mixed
+     */
+    public function clearContext();
+    /**
      * Devuelve el id de la obra sobre la que se está trabajando
      *
      * @return mixed

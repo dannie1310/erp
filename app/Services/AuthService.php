@@ -30,4 +30,12 @@ class AuthService
     public function setContext(array $data) {
         $this->context->setContext($data['db'], $data['id_obra']);
     }
+
+    public function clearContext()
+    {
+        if ($this->context->isEstablished())
+        {
+            $this->context->clearContext();
+        }
+    }
 }
