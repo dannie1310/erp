@@ -34,14 +34,16 @@ class ConfiguracionObra extends Model
         parent::boot();
 
         // Global Scope para proyecto
-        self::addGlobalScope(function ($query) {
-            return $query->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
-        });
+        if(Context::getDatabase()){
+            self::addGlobalScope(function ($query) {
+                return $query->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+            });
 
-        // Global Scope para obra
-        self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
-        });
+            // Global Scope para obra
+            self::addGlobalScope(function ($query) {
+                return $query->where('id_obra', '=', Context::getIdObra());
+            });
+        }
 
         static::creating(function ($model) {
             $model->id_user =  auth()->id();

@@ -2,6 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import auth from './modules/auth';
 
+//AUDITORIA
+import asignacionPermiso from './modules/auditoria/asignacion-permisos';
+
 //CADECO
 import obras from './modules/cadeco/obras';
 import almacen from './modules/cadeco/almacen';
@@ -74,6 +77,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
+        'auditoria/asignacion-permisos': asignacionPermiso,
+
         'cadeco/obras': obras,
         'cadeco/almacen': almacen,
         'cadeco/concepto': concepto,

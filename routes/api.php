@@ -99,6 +99,20 @@ $api->version('v1', function ($api) {
     /**
      * CONFIGURACION
      */
+    $api->group(['middleware' => 'api', 'prefix' => 'AUDITORIA'], function ($api) {
+        $api->group(['prefix' => 'asignacion-permisos'], function ($api) {
+            $api->get('obras', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AuditoriaPermisosController@index');
+//            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@show')->where(['id' => '[0-9]+']);
+//            $api->get('por-usuario/{user_id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@porUsuario')->where(['user_id' => '[0-9]+']);
+//            $api->post('asignacion-areas-subcontratantes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@asignacionAreas');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AuditoriaPermisosController@paginate');
+
+        });
+    });
+
+    /**
+     * CONFIGURACION
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'CONFIGURACION'], function ($api) {
         $api->group(['prefix' => 'area-subcontratante'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@store');

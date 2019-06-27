@@ -28,6 +28,11 @@ class PermisoService
         return $this->repository->all($data);
     }
 
+    public function paginate()
+    {
+        return $this->repository->paginate();
+    }
+
     public function porUsuario($id)
     {
         return Usuario::query()->find($id)->permisos();
