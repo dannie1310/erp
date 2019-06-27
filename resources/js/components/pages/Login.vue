@@ -9,9 +9,9 @@
         },
 
         mounted() {
-            if(this.$session.exists()) {
-                this.$session.destroy();
-            }
+            setTimeout(() => {
+                localStorage.clear();
+            }, 100);
 
             let code = this.$route.query.code;
             if (!code) {
