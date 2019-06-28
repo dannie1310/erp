@@ -48,8 +48,8 @@ export const routes = [
         path: '/auditoria',
         name: 'auditoria',
         components:  {
-            default: require('./components/pages/auditoria/Index.vue'),
-            menu: require('./components/pages/auditoria/partials/Menu.vue')
+            default: require('./components/auditoria/Index.vue'),
+            menu: require('./components/auditoria/partials/Menu.vue')
         },
         meta: {
             title: 'AUDITORIA',

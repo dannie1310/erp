@@ -2,9 +2,6 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import auth from './modules/auth';
 
-//AUDITORIA
-import asignacionPermiso from './modules/auditoria/asignacion-permisos';
-
 //CADECO
 import obras from './modules/cadeco/obras';
 import almacen from './modules/cadeco/almacen';
@@ -61,6 +58,7 @@ import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
 
 //SEGURIDAD
+import configuracionObra from './modules/seguridad/configuracion-obra';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -77,8 +75,6 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
-        'auditoria/asignacion-permisos': asignacionPermiso,
-
         'cadeco/obras': obras,
         'cadeco/almacen': almacen,
         'cadeco/concepto': concepto,
@@ -130,6 +126,7 @@ export default new Vuex.Store({
         'tesoreria/tipo-movimiento': tipoMovimiento,
         'tesoreria/traspaso-entre-cuentas': traspaso,
 
+        'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/rol-personalizado': rolPersonalizado,

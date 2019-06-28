@@ -13,6 +13,8 @@ class ProyectoTransformer extends TransformerAbstract
         return [
             'id' => (int) $model->getKey(),
             'base_datos' => (string) $model->base_datos,
+            'id_obras' =>$model->id_obra,
+            'nombre_obra' =>(string)$model->nombre,
         ];
     }
 
