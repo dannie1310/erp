@@ -14,6 +14,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
+   //     \App\Http\Middleware\TwoFactorAuth::class,
         \App\Http\Middleware\AddHeaderAccessToken::class,
         \App\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
@@ -66,6 +67,7 @@ class Kernel extends HttpKernel
         'esquemaGlobal' => \App\Http\Middleware\EsquemaGlobal::class,
         'esquemaPersonalizado' => \App\Http\Middleware\EsquemaPersonalizado::class,
         'addAccessToken' => \App\Http\Middleware\AddHeaderAccessToken::class,
+        'googleAuth' => \App\Http\Middleware\TwoFactorAuth::class,
     ];
 
     /**

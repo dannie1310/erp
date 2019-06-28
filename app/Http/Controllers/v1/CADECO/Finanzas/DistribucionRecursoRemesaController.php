@@ -46,6 +46,7 @@ class DistribucionRecursoRemesaController extends Controller
      */
     public function __construct(DistribucionRecursoRemesaService $service, Manager $fractal, DistribucionRecursoRemesaTransformer $transformer)
     {
+        $this->middleware('googleAuth')->only('show');
         $this->middleware('auth')->only('descargaLayout');
         $this->middleware('auth:api')->except('descargaLayout');
 
