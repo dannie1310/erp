@@ -1,6 +1,7 @@
 <template>
     <div class="btn-group">
         <button @click="show" v-if="value.show" type="button" class="btn btn-sm btn-outline-secondary" title="Ver"><i class="fa fa-eye"></i></button>
+        <button @click="autorizar" v-if="value.autorizar" type="button" class="btn btn-sm btn-outline-secondary" title="Autorizar"><i class="fa fa-user-times"></i></button>
         <a :href="url" target="_blank" v-if="value.pagar && (value.estado === 0)" type="button" class="btn btn-sm btn-outline-primary" title="Pagar"><i class="fa fa-money"></i></a>
         <a :href="urlmanual" target="_blank" v-if="value.pagar && (value.estado === 0)" type="button" class="btn btn-sm btn-outline-info" title="Layout"><i class="fa fa-user-secret"></i></a>
         <!--<DistribuirRecursoRemesaEdit v-if="value.edit" v-bind:id="value.id" />-->
@@ -25,6 +26,9 @@
             },
             show() {
                 this.$router.push({name: 'distribuir-recurso-remesa-show', params: {id: this.value.id}});
+            },
+            autorizar() {
+                this.$router.push({name: 'distribuir-recurso-remesa-autorizar', params: {id: this.value.id}});
             }
         },
         computed: {

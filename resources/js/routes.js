@@ -463,6 +463,18 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_distribucion_recursos_remesa'
                         }
+                    },
+                    {
+                        path: ':id/autorizar',
+                        name: 'distribuir-recurso-remesa-autorizar',
+                        props: true,
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Autorizar'),
+                        meta: {
+                            title: 'Autorizar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'AUTORIZAR', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_distribucion_recursos_remesa'
+                        }
                     }
                 ]
             },
