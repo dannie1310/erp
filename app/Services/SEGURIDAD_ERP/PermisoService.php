@@ -43,6 +43,7 @@ class PermisoService
 
     public function porObra($id)
     {
+//        dd($data[0]);
 
         $query = DB::select('SELECT configuracion_obra.nombre AS nombre_obra,
       proyectos.base_datos,
@@ -52,7 +53,7 @@ class PermisoService
       vwUsuariosIntranet.usuario,
       vwUsuariosIntranet.nombre_completo AS nombre_completo_usuario,
       Subquery.usuario_asigno,
-      Subquery.fecha_hora_asignacion,
+     FORMAT (Subquery.fecha_hora_asignacion,\'dd/MM/yyyy hh:mm:ss \') as fecha_hora_asignacion,
       configuracion_obra.id
         FROM (((((((((SEGURIDAD_ERP.dbo.proyectos proyectos
                INNER JOIN SEGURIDAD_ERP.dbo.proyectos_sistemas proyectos_sistemas

@@ -83,6 +83,8 @@
 
         mounted() {
             this.$Progress.start();
+            this.query.sort = 'permiso';
+            this.query.order = 'desc';
             this.getConfiguraciones()
                 .finally(() => {
                     this.$Progress.finish();
@@ -174,7 +176,7 @@
                 deep: true
             },
             query: {
-                handler() {
+                handler(query) {
                     this.paginate()
                 },
                 deep: true
