@@ -43,7 +43,11 @@ class PermisoService
 
     public function porObra($id)
     {
-//        dd($data[0]);
+        $permiso_request = request('permiso');
+        $rol_request = request('rol');
+        $sistema_request = request('sistema');
+        $usuario_request = request('usuario');
+        $asigno_request = request('asigno');
 
         $query = DB::select('SELECT configuracion_obra.nombre AS nombre_obra,
       proyectos.base_datos,
@@ -85,41 +89,45 @@ class PermisoService
        											INNER JOIN SEGURIDAD_ERP.dbo.vwUsuariosIntranet vwUsuariosIntranet
           											ON (role_user.[user_id] = vwUsuariosIntranet.idusuario))
       
-												      INNER JOIN (SELECT MAX (auditoria_role_user.id) AS id,
-																              auditoria_role_user.[user_id],
-																              auditoria_role_user.role_id,
-																              auditoria_role_user.id_proyecto,
-																              auditoria_role_user.id_obra,
-																              MAX (auditoria_role_user.created_at) AS fecha_hora_asignacion,
-																              auditoria_role_user.[action],
-																              vwUsuariosIntranet.nombre_completo AS usuario_asigno,
-																              configuracion_obra.id AS id_configuracion_obra
-																         
-																         FROM (SEGURIDAD_ERP.dbo.auditoria_role_user auditoria_role_user
-																               
-																               INNER JOIN SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
-																                  ON     (auditoria_role_user.id_proyecto = configuracion_obra.id_proyecto)
-																                     AND (auditoria_role_user.id_obra = configuracion_obra.id_obra))
-																              
-																              		INNER JOIN SEGURIDAD_ERP.dbo.vwUsuariosIntranet vwUsuariosIntranet
-																                 		ON (vwUsuariosIntranet.idusuario = auditoria_role_user.usuario_registro)
-																        
-																        WHERE     (auditoria_role_user.[action] = \'Registro\') AND (configuracion_obra.id = '.$id.')
+												      INNER JOIN (SELECT MAX (
+												          auditoria_role_user.id) AS id,
+                                                          auditoria_role_user.[user_id],
+                                                          auditoria_role_user.role_id,
+                                                          auditoria_role_user.id_proyecto,
+                                                          auditoria_role_user.id_obra,
+                                                          MAX (auditoria_role_user.created_at) AS fecha_hora_asignacion,
+                                                          auditoria_role_user.[action],
+                                                          vwUsuariosIntranet.nombre_completo AS usuario_asigno,
+                                                          configuracion_obra.id AS id_configuracion_obra
+                                                     
+                                                     FROM (SEGURIDAD_ERP.dbo.auditoria_role_user auditoria_role_user
+                                                           
+                                                           INNER JOIN SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+                                                              ON     (auditoria_role_user.id_proyecto = configuracion_obra.id_proyecto)
+                                                                 AND (auditoria_role_user.id_obra = configuracion_obra.id_obra))
+                                                          
+                                                                INNER JOIN SEGURIDAD_ERP.dbo.vwUsuariosIntranet vwUsuariosIntranet
+                                                                    ON (vwUsuariosIntranet.idusuario = auditoria_role_user.usuario_registro)
+                                                    
+                                                    WHERE     (auditoria_role_user.[action] = \'Registro\') AND (configuracion_obra.id = '.$id.')
 
-																       GROUP BY auditoria_role_user.[user_id],
-																                auditoria_role_user.role_id,
-																                auditoria_role_user.id_proyecto,
-																                auditoria_role_user.id_obra,
-																                auditoria_role_user.[action],
-																                vwUsuariosIntranet.nombre_completo,
-																                configuracion_obra.id) 
-																      Subquery
-																         ON     (role_user.[user_id] = Subquery.[user_id])
-																            AND (role_user.role_id = Subquery.role_id)
-																            AND (role_user.id_proyecto = Subquery.id_proyecto)
-																            AND (role_user.id_obra = Subquery.id_obra)
+                                                   GROUP BY auditoria_role_user.[user_id],
+                                                            auditoria_role_user.role_id,
+                                                            auditoria_role_user.id_proyecto,
+                                                            auditoria_role_user.id_obra,
+                                                            auditoria_role_user.[action],
+                                                            vwUsuariosIntranet.nombre_completo,
+                                                            configuracion_obra.id) 
+                                                  Subquery
+                                                     ON     (role_user.[user_id] = Subquery.[user_id])
+                                                        AND (role_user.role_id = Subquery.role_id)
+                                                        AND (role_user.id_proyecto = Subquery.id_proyecto)
+                                                        AND (role_user.id_obra = Subquery.id_obra)
 
-	                                                                        WHERE (configuracion_obra.id = '.$id.' )', [1]);
+                                                        WHERE (configuracion_obra.id = '.$id.' AND ([permissions].display_name LIKE \'%'.$permiso_request.'%\')
+                                                         AND (roles.display_name LIKE \'%'.$rol_request.'%\') AND (sistemas.[name] LIKE \'%'.$sistema_request.'%\')
+                                                         AND (vwUsuariosIntranet.usuario LIKE \'%'.$usuario_request.'%\') AND (Subquery.usuario_asigno LIKE \'%'.$asigno_request.'%\')
+                                                        )', [1]);
 
         $permisos = collect($query);
         $perPage     = 10;
