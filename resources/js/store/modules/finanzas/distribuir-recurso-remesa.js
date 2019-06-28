@@ -136,6 +136,31 @@ export default {
                     })
             });
         },
+        salir(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cerrar distribución de recurso autorizado de remesa",
+                    text: "¿Está seguro/a de que desea cerrar esta distribución? Perderá los cambios no guardados.",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Salir',
+                            closeModal: true,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            resolve(null);
+                        }
+                    });
+            });
+        },
         layout(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

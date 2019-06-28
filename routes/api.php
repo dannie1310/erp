@@ -448,6 +448,13 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'tipo-proyecto'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\TipoProyectoController@index');
         });
+
+        $api->group(['prefix' => 'google-2fa'], function ($api) {
+            $api->get('qr', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@qr');
+            $api->get('code', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@code');
+            $api->post('check', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@check');
+            $api->get('isVerified', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@isVerified');
+        });
     });
 
     /** IGH */
