@@ -168,8 +168,8 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || !cambio">Registrar</button>
+                            <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || !cambio || sumaSeleccionImportes == 0">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -339,7 +339,7 @@
             store() {
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/store', this.$data)
                     .then((data) => {
-                        this.$router.push({name: 'distribuir-recurso-remesa-index'});
+                        this.$router.push({name: 'distribuir-recurso-remesa'});
                     });
             },
 
@@ -360,6 +360,12 @@
                 self.documentos.forEach(function (doc, i) {
                     self.subtotal_x_moneda[doc.id_moneda] += parseFloat(doc.monto_total_solicitado);
                 })
+            },
+            salir(){
+                return this.$store.dispatch('finanzas/distribuir-recurso-remesa/salir')
+                    .then(() => {
+                        this.$router.push({name: 'distribuir-recurso-remesa'});
+                    });
             }
         },
         watch: {
