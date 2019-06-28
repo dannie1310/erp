@@ -8,9 +8,8 @@
 
 namespace App\Models\SEGURIDAD_ERP;
 
-use App\Facades\Context;
+
 use Illuminate\Database\Eloquent\Model;
-use App\Models\SEGURIDAD_ERP\Sistema;
 
 
 class Proyecto extends Model
@@ -21,6 +20,12 @@ class Proyecto extends Model
 
     public function sistemas()
     {
-        return $this->belongsToMany(Sistema::class,  'dbo.proyectos_sistemas', 'id_proyecto', 'id_sistema');
+        return $this->belongsToMany( Sistema::class, 'dbo.proyectos_sistemas', 'id_proyecto', 'id_sistema' );
     }
+
+    public function configuracionObra()
+    {
+        return $this->belongsTo(ConfiguracionObra::class, 'id_proyecto');
+    }
+
 }

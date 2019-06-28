@@ -19,3 +19,4 @@ yarn-error.log
 /public/images
 /public/mix-manifest.json
 /public/layouts/files
+/public/layouts/zip
