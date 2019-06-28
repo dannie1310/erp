@@ -62,7 +62,7 @@ class DistribucionRecursoRemesaService
                             'id_documento' => $documento['id'],
                             'id_cuenta_abono' => $documento['id_cuenta_abono'],
                             'id_cuenta_cargo' => $documento['id_cuenta_cargo'],
-                            'id_moneda' => $documento['moneda']
+                            'id_moneda' => $documento['moneda']['id']
                         ];
                         $partidas = DistribucionRecursoRemesaPartida::query()->create($partida);
                     }

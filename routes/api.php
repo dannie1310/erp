@@ -412,9 +412,20 @@ $api->version('v1', function ($api) {
 
     /** SEGURIDAD ERP */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
+
+        $api->group(['prefix' => 'configuracion-obra'], function($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@index');
+        });
+
+        $api->group(['prefix' => 'google-2fa'], function ($api) {
+            $api->get('qr', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@qr');
+            $api->post('check', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@check');
+        });
+
         $api->group(['prefix' => 'permiso'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@index');
             $api->get('por-usuario/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@porUsuario')->where(['id' => '[0-9]+']);
+            $api->get('por-obra/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@porObra')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'rol'], function ($api) {
@@ -440,7 +451,9 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'google-2fa'], function ($api) {
             $api->get('qr', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@qr');
+            $api->get('code', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@code');
             $api->post('check', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@check');
+            $api->get('isVerified', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@isVerified');
         });
     });
 

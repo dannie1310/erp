@@ -58,6 +58,7 @@ import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
 
 //SEGURIDAD
+import configuracionObra from './modules/seguridad/configuracion-obra';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -125,6 +126,7 @@ export default new Vuex.Store({
         'tesoreria/tipo-movimiento': tipoMovimiento,
         'tesoreria/traspaso-entre-cuentas': traspaso,
 
+        'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/rol-personalizado': rolPersonalizado,
