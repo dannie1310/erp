@@ -33,7 +33,7 @@
         },
         computed: {
             url(){
-                return '/finanzas/distribuir-recurso-remesa/' + this.value.id +'/layout?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra');
+                return '/api/finanzas/distribuir-recurso-remesa/' + this.value.id +'/layout?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra') + '&access_token=' + this.$session.get('jwt'); //access_token=' + this.$session.get('jwt')
 
             },
             urlmanual(){
