@@ -72,7 +72,7 @@ export const routes = [
                 component: require('./components/auditoria/Index'),
                 meta: {
                     title: 'PERMISOS',
-                    breadcrumb: {parent: 'home', name: 'PERMISOS OBRA'},
+                    breadcrumb: {parent: 'auditoria', name: 'PERMISOS ASIGNADOS'},
                     middleware: [auth]
                 }
             },
@@ -86,7 +86,7 @@ export const routes = [
                         component: require('./components/auditoria/por-obra/Index'),
                         meta: {
                             title: 'Permisos Asignados por Obra',
-                            breadcrumb: {parent: 'permisos-obra', name: 'PROYECTADOS'},
+                            breadcrumb: {parent: 'permisos-obra', name: 'POR OBRA'},
                             middleware: [auth],
 
                         }
