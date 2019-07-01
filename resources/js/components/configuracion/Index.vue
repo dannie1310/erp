@@ -45,7 +45,7 @@
             getObra() {
                 return this.$store.dispatch('cadeco/obras/find', {
                     id: this.currentObra.id_obra,
-                    params: { include: ['configuracion', 'datosContables'] }
+                    params: { include: ['configuracion', 'datosContables'], 'logo' : true }
                 })
             }
         },

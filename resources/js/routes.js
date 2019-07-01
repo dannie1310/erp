@@ -45,6 +45,57 @@ export const routes = [
         }
     },
     {
+        path: '/auditoria',
+        name: 'auditoria',
+        components:  {
+            default: require('./components/auditoria/Index.vue'),
+            menu: require('./components/auditoria/partials/Menu.vue')
+        },
+        meta: {
+            title: 'AUDITORIA',
+            middleware: [auth, permission],
+            permission: 'asignar_areas_subcontratantes',
+            general: true,
+
+        }
+    },
+    {
+        path: '/auditoria/permisos',
+        components: {
+            default: require('./components/auditoria/partials/Layout.vue'),
+            menu: require('./components/auditoria/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'permisos-obra',
+                component: require('./components/auditoria/Index'),
+                meta: {
+                    title: 'PERMISOS',
+                    breadcrumb: {parent: 'auditoria', name: 'PERMISOS ASIGNADOS'},
+                    middleware: [auth]
+                }
+            },
+            {
+                path: 'por-obra',
+                component: require('./components/auditoria/por-obra/partials/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'por-obra',
+                        component: require('./components/auditoria/por-obra/Index'),
+                        meta: {
+                            title: 'Permisos Asignados por Obra',
+                            breadcrumb: {parent: 'permisos-obra', name: 'POR OBRA'},
+                            middleware: [auth],
+
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {
