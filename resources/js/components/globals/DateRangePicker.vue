@@ -11,7 +11,7 @@
             $('input[name="daterange"]').daterangepicker({
                 opens: 'left',
                 locale: {
-                    format: 'yyyy-MM-dd',
+                    format: 'YYYY-MM-DD',
                     applyLabel: 'Aplicar',
                     cancelLabel: 'Cancelar',
                     fromLabel: 'DE',
@@ -24,7 +24,7 @@
 
         watch: {
             value: function (value) {
-                $('input[name="daterange"]').val(value.startDate.format('yyyy-MM-dd') + ' - ' + value.endDate.format('yyyy-MM-dd'));
+                $('input[name="daterange"]').val(value.startDate.format('YYYY-MM-DD') + ' - ' + value.endDate.format('YYYY-MM-DD'));
             }
         },
 
