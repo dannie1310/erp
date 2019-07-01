@@ -45,6 +45,20 @@ export const routes = [
         }
     },
     {
+        path: '/auditoria',
+        name: 'auditoria',
+        components:  {
+            default: require('./components/auditoria/Index.vue'),
+            menu: require('./components/auditoria/partials/Menu.vue')
+        },
+        meta: {
+            title: 'AUDITORIA',
+            middleware: [auth, permission],
+            permission: 'asignar_areas_subcontratantes',
+            general: true
+        }
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {

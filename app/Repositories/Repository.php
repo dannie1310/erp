@@ -153,4 +153,10 @@ class Repository implements RepositoryInterface
             $this->model = $this->model->orderBy(request('sort'), request('order'));
         }
     }
+
+    public function withoutGlobalScopes()
+    {
+        $this->model = $this->model->withoutGlobalScopes();
+        return $this;
+    }
 }
