@@ -22,7 +22,7 @@ class StoreDistribucionRecursoRemesaRequest extends FormRequest
      */
     public function authorize()
     {
-       return auth()->user()->can('registrar_solicitud_pago_anticipado');
+       return auth()->user()->can('registrar_distribucion_recursos_remesa');
     }
 
     /**
