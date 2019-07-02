@@ -43,6 +43,7 @@ class PermisoService
 
     public function porObra($id)
     {
+//        para ordenamiento
         $permiso_request = request('permiso');
         $rol_request = request('rol');
         $sistema_request = request('sistema');
@@ -124,10 +125,10 @@ class PermisoService
                                                         AND (role_user.id_proyecto = Subquery.id_proyecto)
                                                         AND (role_user.id_obra = Subquery.id_obra)
 
-                                                        WHERE (configuracion_obra.id = '.$id.' AND ([permissions].display_name LIKE \'%'.$permiso_request.'%\')
-                                                         AND (roles.display_name LIKE \'%'.$rol_request.'%\') AND (sistemas.[name] LIKE \'%'.$sistema_request.'%\')
-                                                         AND (vwUsuariosIntranet.usuario LIKE \'%'.$usuario_request.'%\') AND (Subquery.usuario_asigno LIKE \'%'.$asigno_request.'%\')
-                                                        )', [1]);
+	                                                                        WHERE (configuracion_obra.id = '.$id.' AND ([permissions].display_name LIKE \'%'.$permiso_request.'%\')
+	                                                                         AND (roles.display_name LIKE \'%'.$rol_request.'%\') AND (sistemas.[name] LIKE \'%'.$sistema_request.'%\')
+	                                                                         AND (vwUsuariosIntranet.usuario LIKE \'%'.$usuario_request.'%\') AND (Subquery.usuario_asigno LIKE \'%'.$asigno_request.'%\')
+	                                                                        )', [1]);
 
         $permisos = collect($query);
         $perPage     = 10;

@@ -40,7 +40,7 @@ export const routes = [
         meta: {
             title: 'CONFIGURACIÓN',
             middleware: [auth, permission],
-            permission: 'asignar_areas_subcontratantes',
+            permission: 'consultar_permisos',
             general: true
         }
     },
@@ -54,7 +54,7 @@ export const routes = [
         meta: {
             title: 'AUDITORIA',
             middleware: [auth, permission],
-            permission: 'asignar_areas_subcontratantes',
+            permission: 'consultar_permisos',
             general: true,
 
         }
@@ -72,8 +72,9 @@ export const routes = [
                 component: require('./components/auditoria/Index'),
                 meta: {
                     title: 'PERMISOS',
-                    breadcrumb: {parent: 'auditoria', name: 'PERMISOS ASIGNADOS'},
-                    middleware: [auth]
+                    breadcrumb: {parent: 'auditoria', name: 'PERMISOS ÁSIGNADOS'},
+                    middleware: [auth, permission],
+                    permission: 'consultar_permisos'
                 }
             },
             {
@@ -85,8 +86,8 @@ export const routes = [
                         name: 'por-obra',
                         component: require('./components/auditoria/por-obra/Index'),
                         meta: {
-                            title: 'Permisos Asignados por Obra',
-                            breadcrumb: {parent: 'permisos-obra', name: 'POR OBRA'},
+                            title: 'Permisos Ásignados por Obra',
+                            breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR OBRA'},
                             middleware: [auth],
 
                         }

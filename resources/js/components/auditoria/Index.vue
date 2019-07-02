@@ -4,6 +4,6 @@
 
 <script>
     export default {
-        name: "auditoria_permiso-index",
+        name: "auditoria-index",
     }
 </script>
