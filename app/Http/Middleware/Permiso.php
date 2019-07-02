@@ -24,19 +24,26 @@ class Permiso
     }
 
     /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * @param $request
+     * @param Closure $next
+     * @param $permisos
+     * @return mixed|\Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function handle($request, Closure $next, $permisos)
     {
         if (!is_array($permisos)) {
             $permisos = explode(self::DELIMITER, $permisos);
-    }
+        }
+
         if ($this->auth->guest() || !$request->user()->can($permisos)) {
             abort(403, 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+        }
+
+        if ($google_auth = \App\Models\SEGURIDAD_ERP\Permiso::query()->whereIn('name', $permisos)->where('requiere_autorizacion', '=', true)->first()) {
+            return app(TwoFactorAuth::class)->handle($request, function ($request) use ($next) {
+                return $next($request);
+            });
         }
         return $next($request);
     }
