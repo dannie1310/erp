@@ -54,6 +54,8 @@
             this.checkVerified()
                 .finally(() => {
                     this.init();
+                    $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
+
                 });
 
             $(this.$refs.modal)
@@ -95,7 +97,6 @@
                     }
                 });
                 $(this.$refs.modal).modal('show');
-                $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
             },
 
             checkCode(code) {

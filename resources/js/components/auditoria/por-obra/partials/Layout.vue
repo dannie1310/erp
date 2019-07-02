@@ -1,5 +1,7 @@
 <template>
-    <router-view>lay fg</router-view>
+    <span>
+        <router-view></router-view>
+    </span>
 </template>
 
 <script>
