@@ -43,6 +43,12 @@ class PermisoService
 
     public function porObra($id)
     {
+//        para ordenamiento
+        $permiso_request = request('permiso');
+        $rol_request = request('rol');
+        $sistema_request = request('sistema');
+        $usuario_request = request('usuario');
+        $asigno_request = request('asigno');
 
         $query = DB::select('SELECT configuracion_obra.nombre AS nombre_obra,
       proyectos.base_datos,
@@ -52,7 +58,7 @@ class PermisoService
       vwUsuariosIntranet.usuario,
       vwUsuariosIntranet.nombre_completo AS nombre_completo_usuario,
       Subquery.usuario_asigno,
-      Subquery.fecha_hora_asignacion,
+     FORMAT (Subquery.fecha_hora_asignacion,\'dd/MM/yyyy hh:mm:ss \') as fecha_hora_asignacion,
       configuracion_obra.id
         FROM (((((((((SEGURIDAD_ERP.dbo.proyectos proyectos
                INNER JOIN SEGURIDAD_ERP.dbo.proyectos_sistemas proyectos_sistemas
@@ -118,7 +124,10 @@ class PermisoService
 																            AND (role_user.id_proyecto = Subquery.id_proyecto)
 																            AND (role_user.id_obra = Subquery.id_obra)
 
-	                                                                        WHERE (configuracion_obra.id = '.$id.' )', [1]);
+	                                                                        WHERE (configuracion_obra.id = '.$id.' AND ([permissions].display_name LIKE \'%'.$permiso_request.'%\')
+	                                                                         AND (roles.display_name LIKE \'%'.$rol_request.'%\') AND (sistemas.[name] LIKE \'%'.$sistema_request.'%\')
+	                                                                         AND (vwUsuariosIntranet.usuario LIKE \'%'.$usuario_request.'%\') AND (Subquery.usuario_asigno LIKE \'%'.$asigno_request.'%\')
+	                                                                        )', [1]);
 
         $permisos = collect($query);
         $perPage     = 10;

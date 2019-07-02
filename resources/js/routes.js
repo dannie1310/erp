@@ -40,7 +40,7 @@ export const routes = [
         meta: {
             title: 'CONFIGURACIÓN',
             middleware: [auth, permission],
-            permission: 'asignar_areas_subcontratantes',
+            permission: 'consultar_permisos',
             general: true
         }
     },
@@ -54,9 +54,47 @@ export const routes = [
         meta: {
             title: 'AUDITORIA',
             middleware: [auth, permission],
-            permission: 'asignar_areas_subcontratantes',
-            general: true
+            permission: 'consultar_permisos',
+            general: true,
+
         }
+    },
+    {
+        path: '/auditoria/permisos',
+        components: {
+            default: require('./components/auditoria/partials/Layout.vue'),
+            menu: require('./components/auditoria/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'permisos-obra',
+                component: require('./components/auditoria/Index'),
+                meta: {
+                    title: 'PERMISOS',
+                    breadcrumb: {parent: 'auditoria', name: 'PERMISOS ÁSIGNADOS'},
+                    middleware: [auth, permission],
+                    permission: 'consultar_permisos'
+                }
+            },
+            {
+                path: 'por-obra',
+                component: require('./components/auditoria/por-obra/partials/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'por-obra',
+                        component: require('./components/auditoria/por-obra/Index'),
+                        meta: {
+                            title: 'Permisos Ásignados por Obra',
+                            breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR OBRA'},
+                            middleware: [auth],
+
+                        }
+                    },
+                ]
+            },
+        ]
     },
     {
         path: '/sao/configuracion',
