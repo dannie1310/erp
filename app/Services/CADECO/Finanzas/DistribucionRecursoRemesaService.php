@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\LAYOUT\DistribucionRecursoRemesaManual;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
@@ -17,7 +18,6 @@ use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Repositories\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use PhpOffice\PhpWord\IOFactory;
 
 class DistribucionRecursoRemesaService
 {
@@ -87,6 +87,11 @@ class DistribucionRecursoRemesaService
     public function layoutDistribucionRemesa($id)
     {
         $layout = new \App\LAYOUT\DistribucionRecursoRemesa($id);
+        return $layout->create();
+    }
+
+    public function layoutDistribucionRemesaManual($id){
+        $layout = new DistribucionRecursoRemesaManual($id);
         return $layout->create();
     }
 
