@@ -62,7 +62,7 @@ class Documento extends Model
 
     public function getDisponibleAttribute()
     {
-        $existente = DistribucionRecursoRemesaPartida::query()->select('id_documento')->where('id_documento', '=', $this->IDDocumento)->where('estado', '!=', 3)->get()->toArray();
+        $existente = DistribucionRecursoRemesaPartida::query()->select('id_documento')->where('id_documento', '=', $this->IDDocumento)->whereNotIn('estado', [-1,-2])->get()->toArray();
 
         if ($existente != []) {
             return 0;
