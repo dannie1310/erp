@@ -16,6 +16,7 @@ try {
     window.Chart = require('chart.js')
     window.VueTreeselect = require('@riophae/vue-treeselect');
     window.LOAD_CHILDREN_OPTIONS = require('@riophae/vue-treeselect');
+    require('bootstrap-pincode-input');
 } catch (e) {}
 
 window.axios = require('axios');

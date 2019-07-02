@@ -97,6 +97,19 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * CONFIGURACION
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'CONFIGURACION'], function ($api) {
+        $api->group(['prefix' => 'area-subcontratante'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@store');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@show')->where(['id' => '[0-9]+']);
+            $api->get('por-usuario/{user_id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@porUsuario')->where(['user_id' => '[0-9]+']);
+            $api->post('asignacion-areas-subcontratantes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@asignacionAreas');
+        });
+    });
+
+    /**
      * CONTABILIDAD
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
@@ -253,15 +266,31 @@ $api->version('v1', function ($api) {
      * CONTRATOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {
+        /**
+         * PROYECTADO
+         */
+        $api->group(['prefix' => 'contrato-proyectado'], function ($api){
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@show')->where(['id' => '[0-9]+']);
+            $api->get('getArea', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@getArea');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@paginate');
+            $api->patch('{id}/actualizar', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@actualiza');
+        });
 
         /**
          * ESTIMACIÓN
          */
         $api->group(['prefix' => 'estimacion'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@aprobar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/revertirAprobacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@revertirAprobacion')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@getConceptos')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@paginate');
+
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION
              */
-                $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
 
@@ -271,6 +300,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'subcontrato'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getConceptosNuevaEstimacion', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@getConceptosNuevaEstimacion')->where(['id' => '[0-9]+']);
         });
         //FONDO DE GARANTÍA
         $api->group(['prefix' => 'fondo-garantia'], function ($api) {
@@ -305,9 +335,35 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
-
-
+            $api->get('pdf/{id}','App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id'=>'[0-9]+']);
         });
+
+        /**
+         * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
+         */
+        $api->group(['prefix' => 'distribuir-recurso-remesa'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
+            $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayout')->where(['id' => '[0-9]+']);
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@cancelar')->where(['id' => '[0-9]+']);
+            $api->post('{id}/cargaLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@cargarLayout')->where(['id' => '[0-9]+']);
+        });
+
+        /**
+         * REMESA
+         */
+        $api->group(['prefix' => 'remesa'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@show')->where(['id' => '[0-9]+']);
+        });
+
+       /**
+        * CUENTA BANCARIA PROVEEDOR
+        */
+       $api->group(['prefix' => 'cuenta-bancaria-proveedor'], function ($api){
+          $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaProveedorController@index');
+       });
     });
 
     /**
@@ -359,9 +415,20 @@ $api->version('v1', function ($api) {
 
     /** SEGURIDAD ERP */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
+
+        $api->group(['prefix' => 'configuracion-obra'], function($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@index');
+        });
+
+        $api->group(['prefix' => 'google-2fa'], function ($api) {
+            $api->get('qr', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@qr');
+            $api->post('check', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@check');
+        });
+
         $api->group(['prefix' => 'permiso'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@index');
             $api->get('por-usuario/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@porUsuario')->where(['id' => '[0-9]+']);
+            $api->get('por-obra/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@porObra')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'rol'], function ($api) {
@@ -377,10 +444,19 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'sistema'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@index');
+            $api->get('sistemas-obra', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@porObra');
+            $api->post('asignacion-sistemas', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@asignacionSistemas');
         });
 
         $api->group(['prefix' => 'tipo-proyecto'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\TipoProyectoController@index');
+        });
+
+        $api->group(['prefix' => 'google-2fa'], function ($api) {
+            $api->get('qr', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@qr');
+            $api->get('code', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@code');
+            $api->post('check', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@check');
+            $api->get('isVerified', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@isVerified');
         });
     });
 

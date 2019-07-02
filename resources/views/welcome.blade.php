@@ -10,11 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet"/>
-    <link href="{{ asset('assets/floating.css') }}" rel="stylesheet"/>
 </head>
 <div id="app">
     <main-app/>
 </div>
 <script src="{{ asset('js/app.js') }}"></script>
-<script src="{{ asset('assets/floating.js') }}"></script>
 </html>
