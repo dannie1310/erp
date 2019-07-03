@@ -97,14 +97,26 @@ class DistribucionRecursoRemesa extends Model
             case 0:
                 abort(400, 'Archivo de distribución de recurso no ha sido descargado.');
                 break;
-            case 2:
+            case 3:
                 abort(400, 'Archivo procesado previamente.');
                 break;
             case -1:
-                abort(400, 'La distribución de recursos esta cancelada');
+                abort(400, 'La distribución de recursos está cancelada');
+                break;
+            case -2:
+                abort(400, 'La distribución de recursos está rechazada por el banco');
                 break;
         }
         return $this;
+    }
 
+    public function autorizar(){
+        if($this->estado != 0 ){
+            throw New \Exception('La distribución de recurso autorizado de remesa no puede ser autorizada, porque no tiene el estatus "generada" ');
+        }else{
+            $this->estado = 1;
+            $this->save();
+            return $this;
+        }
     }
 }
