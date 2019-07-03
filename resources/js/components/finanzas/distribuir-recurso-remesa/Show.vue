@@ -104,7 +104,7 @@
                 </div>
             </div>
         </div>
-        <google-auth @cancel="authCancel()" @success="this.find" ref="googleAuth"></google-auth>
+        <google-auth @cancel="authCancel()" @success="this.find" ref="googleAuth" ></google-auth>
     </div>
 </template>
 

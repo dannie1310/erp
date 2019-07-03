@@ -1,8 +1,8 @@
 <template>
     <div class="btn-group">
         <button @click="show" v-if="value.show" type="button" class="btn btn-sm btn-outline-secondary" title="Ver"><i class="fa fa-eye"></i></button>
-        <button @click="autorizar" v-if="value.autorizar" type="button" class="btn btn-sm btn-outline-success" title="Autorizar"><i class="fa fa-check-square"></i></button>
-        <a :href="url" target="_blank" v-if="value.pagar && (value.estado === 0)" type="button" class="btn btn-sm btn-outline-primary" title="Pagar"><i class="fa fa-money"></i></a>
+        <button @click="autorizar" v-if="value.autorizar" type="button" class="btn btn-sm btn-outline-primary" title="Autorizar"><i class="fa fa-check-square"></i></button>
+        <a :href="url" target="_blank" v-if="value.pagar && (value.estado === 0)" type="button" class="btn btn-sm btn-outline-info" title="Pagar"><i class="fa fa-money"></i></a>
         <a :href="urlmanual" target="_blank" v-if="value.pagar && (value.estado === 0)" type="button" class="btn btn-sm btn-outline-info" title="Layout"><i class="fa fa-file-excel-o"></i></a>
         <!--<DistribuirRecursoRemesaEdit v-if="value.edit" v-bind:id="value.id" />-->
         <button @click="cancelar" v-if="value.cancelar && (value.estado === 0)" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar"><i class="fa fa-ban"></i></button>
