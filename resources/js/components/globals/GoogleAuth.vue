@@ -51,12 +51,6 @@
         },
 
         mounted() {
-            this.checkVerified()
-                .finally(() => {
-                    this.init();
-                    $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
-
-                });
 
             $(this.$refs.modal)
                 .on('hidden.bs.modal', () => {
@@ -68,35 +62,43 @@
         },
 
         methods: {
+
             init() {
-                $(this.$refs.code).pincodeInput({
-                    inputs : 6,
-                    hidedigits: false,
-                    complete:(value, e, errorElement) => {
-                        this.checkCode(value)
-                            .then(data => {
-                                if (data.valid) {
-                                    this.valid = true;
-                                    $(errorElement).html("");
-                                    swal("Verificación correcta", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    })
-                                        .then(() => {
-                                            $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').clear();
-                                            $(this.$refs.modal).modal('hide');
-                                            this.$emit('success', value);
-                                        })
-                                } else {
-                                    $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').clear();
-                                    $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
-                                    $(errorElement).html("El código que ingresó no es válido");
-                                }
-                            });
-                    }
-                });
+                $('.pincode-input-container').remove();
                 $(this.$refs.modal).modal('show');
+                this.checkVerified()
+                    .finally(() => {
+                        $(this.$refs.code).pincodeInput({
+                            inputs : 6,
+                            hidedigits: false,
+                            complete:(value, e, errorElement) => {
+                                this.checkCode(value)
+                                    .then(data => {
+                                        if (data.valid) {
+                                            this.valid = true;
+                                            $(errorElement).html("");
+                                            swal("Verificación correcta", {
+                                                icon: "success",
+                                                timer: 1500,
+                                                buttons: false
+                                            })
+                                                .then(() => {
+                                                    $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').clear();
+                                                    $(this.$refs.modal).modal('hide');
+                                                    this.$emit('success', value);
+                                                })
+                                        } else {
+                                            $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').clear();
+                                            $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
+                                            $(errorElement).html("El código que ingresó no es válido");
+                                        }
+                                    });
+                            }
+                        });
+                        $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
+
+
+                    });
             },
 
             checkCode(code) {

@@ -29,7 +29,7 @@
                                     <b>Usuario de Registro:</b>
                                 </td>
                                 <td colspan="1" class="bg-gray-light">
-                                   {{distribucion.usuario_registro.nombre}}
+                                    {{distribucion.usuario_registro.nombre}}
                                 </td>
                             </tr>
                             <tr v-if="distribucion.estado.estado == -1">
@@ -104,17 +104,15 @@
                 </div>
             </div>
         </div>
-        <google-auth @cancel="authCancel()" @success="this.find" ref="googleAuth" ></google-auth>
     </div>
 </template>
 
 <script>
     import PartidaEstatus from './partials/PartidaEstatus';
     import EstatusLabel from "./partials/DistribuirEstatus";
-    import GoogleAuth from "../../globals/GoogleAuth";
     export default {
         name: "distribuir-recurso-remesa-show",
-        components: {GoogleAuth, EstatusLabel, PartidaEstatus},
+        components: {EstatusLabel, PartidaEstatus},
         props: ['id'],
         data() {
             return {
@@ -123,18 +121,16 @@
         },
         mounted() {
             this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
-            this.$refs.googleAuth.init();
         },
 
         methods: {
-            find(code) {
+            find() {
                 this.$Progress.start();
                 this.cargando = true;
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/find', {
                     id: this.id,
                     params: {
                         include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa','partidas.cuentaAbono.banco', 'partidas.transaccion', 'usuario_cancelo'],
-                        code: code
                     }
                 }).then(data => {
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);
@@ -142,10 +138,6 @@
                     this.cargando = false;
                     this.$Progress.finish();
                 })
-            },
-
-            authCancel() {
-                this.$router.go(-1);
             }
         },
         computed: {

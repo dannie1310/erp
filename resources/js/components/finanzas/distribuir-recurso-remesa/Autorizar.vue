@@ -108,12 +108,12 @@
                 <div class="modal-footer">
                     <button v-if="cargando==false" type="button" class="btn btn-secondary pull-right" v-on:click="salir">Cerrar</button>
                     <div v-if="$root.can('registrar_distribucion_recursos_remesa')" :disabled="cargando" >
-                        <button v-if="cargando==false" @click="autorizar" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
+                        <button v-if="cargando==false" @click="$refs.googleAuth.init()" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
                     </div>
                 </div>
             </div>
         </div>
-        <google-auth @cancel="authCancel()" @waiting="autorizar"  ref="googleAuth" ></google-auth>
+        <google-auth @success="autorizar"  ref="googleAuth" ></google-auth>
     </div>
 </template>
 
@@ -151,7 +151,6 @@
                 })
             },
             autorizar(code) {
-                this.$refs.googleAuth.init();
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/autorizar', {
                     id: this.id,
                     params: {
@@ -160,10 +159,6 @@
                 }).then(data => {
                     this.$router.push({name: 'distribuir-recurso-remesa'});
                 })
-            },
-
-            authCancel() {
-                this.$router.go(-1);
             },
 
             salir(){
