@@ -138,15 +138,41 @@ export default {
         },
         autorizar(context, payload) {
             return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + payload.id + '/autorizar', { params: payload.params })
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
+                swal({
+                    title: "Autorización de distribución de recurso de remesa",
+                    text: "¿Está seguro/a de que desea autorizar está distribución?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Autorizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id + '/autorizar', {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Distribución autorizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_DISTRIBUCION', data);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
             });
         },
         salir(context, payload){
