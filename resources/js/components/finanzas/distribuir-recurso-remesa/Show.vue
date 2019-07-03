@@ -120,13 +120,17 @@
             }
         },
         mounted() {
-            this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
+            this.$Progress.start();
+            this.find()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
 
         methods: {
             find() {
-                this.$Progress.start();
                 this.cargando = true;
+                this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/find', {
                     id: this.id,
                     params: {
@@ -136,7 +140,6 @@
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);
                 }) .finally(() => {
                     this.cargando = false;
-                    this.$Progress.finish();
                 })
             }
         },
