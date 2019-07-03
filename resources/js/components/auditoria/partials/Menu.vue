@@ -4,7 +4,7 @@
             <li class="nav-item" v-if="$root.can('auditoria_consultar_permisos_por_obra',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>
-                        CONSULTA ASIGNACIÓN DE PERMISOS
+                        CONSULTA DE PERMISOS
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
