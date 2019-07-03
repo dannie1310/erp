@@ -60,7 +60,7 @@ export const routes = [
         }
     },
     {
-        path: '/auditoria/permisos',
+        path: 'permisos',
         components: {
             default: require('./components/auditoria/partials/Layout.vue'),
             menu: require('./components/auditoria/partials/Menu.vue')
@@ -74,7 +74,7 @@ export const routes = [
                     title: 'PERMISOS',
                     breadcrumb: {parent: 'auditoria', name: 'PERMISOS ÁSIGNADOS'},
                     middleware: [auth, permission],
-                    permission: 'consultar_permisos'
+                    permission: 'auditoria_consultar_permisos_por_obra'
                 }
             },
             {
@@ -131,6 +131,42 @@ export const routes = [
             middleware: auth,
             breadcrumb: {name: 'SELECCIONAR OBRA'}
         }
+    },
+    {
+        path: '/sao/compras',
+        components: {
+            default: require('./components/compras/partials/Layout.vue'),
+            menu: require('./components/compras/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'compras',
+                component: require('./components/compras/Index'),
+                meta: {
+                    title: 'Compras',
+                    breadcrumb: {parent:'home', name: 'COMPRAS'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'solicitud-compra',
+                component: require('./components/compras/solicitud-compra/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-compra',
+                        component: require('./components/compras/solicitud-compra/Index'),
+                        meta: {
+                            title: 'SOLICITUDES DE COMPRA',
+                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_compra'
+                        }
+                    }
+                ]
+            },
+        ]
     },
     {
         path: '/sao/contabilidad',

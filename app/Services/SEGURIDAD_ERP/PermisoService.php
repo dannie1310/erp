@@ -43,12 +43,12 @@ class PermisoService
 
     public function porObra($id)
     {
-//        para ordenamiento
         $permiso_request = request('permiso');
         $rol_request = request('rol');
         $sistema_request = request('sistema');
         $usuario_request = request('usuario');
         $asigno_request = request('asigno');
+        $limit_request = request('limit');
 
         $query = DB::select('SELECT configuracion_obra.nombre AS nombre_obra,
       proyectos.base_datos,
@@ -131,7 +131,7 @@ class PermisoService
 	                                                                        )', [1]);
 
         $permisos = collect($query);
-        $perPage     = 10;
+        $perPage     = $limit_request;
         $page = request('limit') && request('offset') != '' ? (request('offset') / request('limit')) + 1 : 1;
         request()->merge(['page' => $page]);
         $currentPage = Paginator::resolveCurrentPage();

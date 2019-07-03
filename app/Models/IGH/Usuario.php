@@ -198,7 +198,6 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function areasSubcontratantes()
     {
         return $this->belongsToMany( TipoAreaSubcontratante::class, 'dbo.usuarios_areas_subcontratantes', 'id_usuario', 'id_area_subcontratante' );
-
     }
 
     public function permisos()
