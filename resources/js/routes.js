@@ -60,7 +60,7 @@ export const routes = [
         }
     },
     {
-        path: 'permisos',
+        path: '/auditoria/permisos',
         components: {
             default: require('./components/auditoria/partials/Layout.vue'),
             menu: require('./components/auditoria/partials/Menu.vue')
@@ -74,7 +74,9 @@ export const routes = [
                     title: 'PERMISOS',
                     breadcrumb: {parent: 'auditoria', name: 'PERMISOS ÁSIGNADOS'},
                     middleware: [auth, permission],
-                    permission: 'auditoria_consultar_permisos_por_obra'
+                    permission: 'auditoria_consultar_permisos_por_obra',
+                    general: true,
+
                 }
             },
             {
