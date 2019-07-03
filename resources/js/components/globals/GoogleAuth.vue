@@ -31,6 +31,7 @@
                         <center>
                             <input type="text" ref="code">
                         </center>
+                         <button type="button" class="btn btn-light pull-right" data-dismiss="modal" >Cancelar</button>
                     </span>
                 </div>
             </div>
