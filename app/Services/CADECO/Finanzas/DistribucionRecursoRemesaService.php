@@ -196,4 +196,89 @@ class DistribucionRecursoRemesaService
         throw $e;
         }
     }
+
+    public function cargaLayoutManual(Request $request, $id){
+        $data = array();
+        $file = $request->file('file');
+        $nombre = $request->file('file')->getClientOriginalName();
+        $id_distribucion = (int)substr($nombre, 1, 5);
+        if($id_distribucion != $id){
+            abort(400, "Archivo de carga no corresponde con esta distribución.");
+        }
+
+        switch (pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_EXTENSION)){
+            case 'doc':
+                $data = $this->getDocData($file);
+                break;
+            case 'csv':
+                $data = $this->getCsvData($file);
+                $this->registrarPagos($data, $id);
+                break;
+        }
+
+        dd(pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_EXTENSION), $request->file('file')->getClientOriginalName());
+    }
+
+    public function registrarPagos($pagos, $id){
+        foreach ($pagos as $pago){
+            $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $id)->where('id_documento', '=', $pago['documento'])->first();
+            dd($partida_remesa->documento);
+            if($transaccion = Transaccion::find($partida_remesa->documento->IDTransaccionCDC)){
+                dd('panda', $partida_remesa);
+            }else{
+                $transaccion->save([
+
+                ]);
+                dd($partida_remesa->documento->tipoDocumento, Transaccion::find($partida_remesa->documento->IDTransaccionCDC));
+            }
+
+        }
+        dd($pagos);
+    }
+
+    public function getDocData($docFile){
+        $myfile = fopen($docFile, "r") or die("Unable to open file!");
+        $content = array();
+        while(!feof($myfile)) {
+            $linea = str_replace("\n","",fgets($myfile));
+            $content[] = array(
+                "cuenta_cargo"      => substr($linea, 0, 16),
+                "cuenta_abono"      => substr($linea, 17, 19),
+                "nombre_corto"      => substr($linea, 36, 5),
+                "razon_social"      => substr($linea, 41, 40),
+                "monto"             => substr($linea, 81, 19),
+                "clave"             => substr($linea, 101, 4),
+                "concepto"          => substr($linea, 105, 120),
+                "control"           => substr($linea, 225, 7),
+                "control2"          => substr($linea, 232, 8),
+            );
+        }
+        fclose($myfile);
+        return $content;
+    }
+
+    public function getCsvData($csvFile){
+
+        $file =  fopen($csvFile, "r") or die("Unable to open file!");
+        $all_data = array();
+        $encabezados = 0;
+        while ( $data = fgetcsv($file, '', ",") ){
+            if($encabezados > 0){
+                $all_data[] = array(
+                    "cuenta_cargo" => str_replace("\t","",$data[0]),
+                    "cuenta_abono" => str_replace("\t","",$data[1]),
+                    "monto" => str_replace("\t","",$data[2].$data[3]),
+                    "fecha_aplicacion" => str_replace("\t","",$data[4]),
+                    "concepto" => str_replace("\t","",$data[5]),
+                    "documento" => substr($data[5], 1, 9),
+                    "clave_bancaria" => str_replace("\t","",$data[7]),
+                    "nombre_corto" => '',
+                    "razon_social" => ''
+                );
+            }
+            $encabezados++;
+        }
+        fclose($file);
+        return $all_data;
+    }
 }

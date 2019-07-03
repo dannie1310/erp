@@ -78,6 +78,11 @@ class DistribucionRecursoRemesaController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function cargarLayoutManual(Request $request, $id){
+        $respuesta =  $this->service->cargaLayoutManual($request, $id);
+        return response()->json($respuesta, 200);
+    }
+
     public function cancelar(Request $request, $id)
     {
         $item = $this->service->cancelar($id);
