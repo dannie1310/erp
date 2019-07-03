@@ -38,7 +38,7 @@ class StoreCuentaGeneralRequest extends FormRequest
         });
 
         return [
-            'id_int_tipo_cuenta_contable' => ['required', 'integer', 'exists:cadeco.Contabilidad.int_tipos_cuentas_contables,id_tipo_cuenta_contable,id_obra,' . Context::getIdObra(), 'sin_cuenta'],
+            'id_int_tipo_cuenta_contable' => ['required', 'integer', 'exists:cadeco.Contabilidad.int_tipos_cuentas_contables,id_tipo_cuenta_contable', 'sin_cuenta'],
             'cuenta_contable' => ['required', "regex:'{$regex}'"]
         ];
     }

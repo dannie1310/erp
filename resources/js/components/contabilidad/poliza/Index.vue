@@ -167,7 +167,7 @@
             },
             'daterange.startDate': {
                 handler(sd) {
-                    this.query.startDate = sd.format('yyyy-MM-dd')
+                    this.query.startDate = sd.format('YYYY-MM-DD')
                     this.query.offset = 0;
                     this.paginate(this.$data.query)
                 },
@@ -175,7 +175,7 @@
             },
             'daterange.endDate': {
                 handler(ed) {
-                    this.query.endDate = ed.format('yyyy-MM-dd')
+                    this.query.endDate = ed.format('YYYY-MM-DD')
                     this.query.offset = 0;
                     this.paginate(this.$data.query)
                 },

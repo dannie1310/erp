@@ -14,6 +14,7 @@ import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 
 //COMPRAS
+import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
 
 //CONFIGURACION
@@ -85,6 +86,7 @@ export default new Vuex.Store({
         'cadeco/material': material,
         'cadeco/moneda': moneda,
 
+        'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
 
         'configuracion/area-subcontratante' : areaSubcontratante,

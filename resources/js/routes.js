@@ -133,6 +133,42 @@ export const routes = [
         }
     },
     {
+        path: '/sao/compras',
+        components: {
+            default: require('./components/compras/partials/Layout.vue'),
+            menu: require('./components/compras/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'compras',
+                component: require('./components/compras/Index'),
+                meta: {
+                    title: 'Compras',
+                    breadcrumb: {parent:'home', name: 'COMPRAS'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'solicitud-compra',
+                component: require('./components/compras/solicitud-compra/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-compra',
+                        component: require('./components/compras/solicitud-compra/Index'),
+                        meta: {
+                            title: 'SOLICITUDES DE COMPRA',
+                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_compra'
+                        }
+                    }
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/contabilidad',
         components: {
             default: require('./components/contabilidad/partials/Layout.vue'),
@@ -512,6 +548,18 @@ export const routes = [
                         meta: {
                             title: 'Consultar Distribución de Recursos Autorizados',
                             breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: ':id/autorizar',
+                        name: 'distribuir-recurso-remesa-autorizar',
+                        props: true,
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Autorizar'),
+                        meta: {
+                            title: 'Autorizar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'AUTORIZAR', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_distribucion_recursos_remesa'
                         }

@@ -6,6 +6,6 @@
 
 <script>
     export default {
-        name: "por-obra-layout"
+        name: "compras-layout"
     }
 </script>

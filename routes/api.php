@@ -250,12 +250,15 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'compras'], function ($api) {
 
-        /**
-         * ORDEN DE COMPRA
-         */
+         // ORDEN DE COMPRA
         $api->group(['prefix' => 'orden-compra'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@show')->where(['id' => '[0-9]+']);
+        });
+
+        // SOLICITUD DE COMPRA
+        $api->group(['prefix' => 'solicitud-compra'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@paginate');
         });
     });
 
@@ -343,6 +346,7 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
             $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayout')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@cancelar')->where(['id' => '[0-9]+']);
             $api->post('{id}/cargaLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@cargarLayout')->where(['id' => '[0-9]+']);
         });
