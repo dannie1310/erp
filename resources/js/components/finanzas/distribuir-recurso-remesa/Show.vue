@@ -12,51 +12,67 @@
                         <table class="table table-striped">
                             <tbody>
                             <tr>
-                                <td class="bg-gray-light"><b>Folio Distribución:</b><br>{{distribucion.folio}}
+                                <td class="bg-gray-light">
+                                    <b>Folio Distribución:</b>
                                 </td>
-                                <td class="bg-gray-light"><b>Fecha de Registro:</b><br>{{distribucion.fecha_registro}}
+                                <td class="bg-gray-light">
+                                   {{distribucion.folio}}
                                 </td>
-                                <td class="bg-gray-light"><b>Monto Total de Remesa:</b><br>$&nbsp; {{(parseFloat(distribucion.monto_autorizado)).formatMoney(2,'.',',')}}
+                                <td class="bg-gray-light">
+                                    <b>Fecha de Registro:</b>
                                 </td>
-                                <td class="bg-gray-light"><b>Monto de Está Distribución:</b><br>$ {{(parseFloat(distribucion.monto_distribuido)).formatMoney(2,'.',',')}}
+                                <td class="bg-gray-light">
+                                   {{distribucion.fecha_registro}}
+                                </td>
+                                <td class="bg-gray-light">
+                                    <b>Monto Total de Remesa:</b>
+                                </td>
+                                <td class="bg-gray-light text-right">
+                                    $&nbsp; {{(parseFloat(distribucion.monto_autorizado)).formatMoney(2,'.',',')}}
+                                </td>
+                                <td class="bg-gray-light">
+                                    <b>Monto de Está Distribución:</b>
+                                </td>
+                                <td class="bg-gray-light text-right">
+                                    $ {{(parseFloat(distribucion.monto_distribuido)).formatMoney(2,'.',',')}}
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="bg-gray-light"><b>Estado:</b><br> </td>
-                                <td colspan="1" class="bg-gray-light"><estatus-label :value="distribucion.estado"></estatus-label></td>
+                                <td colspan="2" class="bg-gray-light"><b>Estado:</b><br> </td>
+                                <td colspan="2" class="bg-gray-light"><estatus-label :value="distribucion.estado"></estatus-label></td>
 
-                                <td colspan="1" class="bg-gray-light">
+                                <td colspan="2" class="bg-gray-light">
                                     <b>Usuario de Registro:</b>
                                 </td>
-                                <td colspan="1" class="bg-gray-light">
+                                <td colspan="2" class="bg-gray-light">
                                     {{distribucion.usuario_registro.nombre}}
                                 </td>
                             </tr>
                             <tr v-if="distribucion.estado.estado == -1">
-                                <td colspan="2" class="bg-gray-light">
+                                <td colspan="4" class="bg-gray-light">
                                     <b>Usuario de Cancelación</b>
                                 </td>
-                                <td colspan="2" class="bg-gray-light">
+                                <td colspan="4" class="bg-gray-light">
                                     {{distribucion.usuario_cancelo.nombre}}
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="bg-gray-light"><b>Información de la Remesa</b></td>
+                                <td colspan="8" class="bg-gray-light"><b>Información de la Remesa</b></td>
                             </tr>
                             <tr>
-                                <td class="bg-gray-light">
+                                <td colspan="2" class="bg-gray-light">
                                     <b>Año:</b><br>
                                     {{distribucion.remesa_liberada.remesa.año}}
                                 </td>
-                                <td class="bg-gray-light">
+                                <td colspan="2" class="bg-gray-light">
                                     <b>Semana:</b><br>
                                     {{distribucion.remesa_liberada.remesa.semana}}
                                 </td>
-                                <td class="bg-gray-light">
+                                <td colspan="2" class="bg-gray-light">
                                     <b>Tipo de Remesa: </b>
                                     <br>{{distribucion.remesa_liberada.remesa.tipo}}
                                 </td>
-                                <td class="bg-gray-light">
+                                <td colspan="2" class="bg-gray-light">
                                     <b>Folio: <br>({{ distribucion.remesa_liberada.remesa.folio }})</b>
                                 </td>
                             </tr>
@@ -88,11 +104,11 @@
                                 <td>{{i+1}}</td>
                                 <td>{{doc.documento.concepto}}</td>
                                 <td>{{doc.documento.empresa ? doc.documento.empresa.razon_social : ''}}</td>
-                                <td>{{doc.documento.monto_total_format}}</td>
-                                <td>{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
-                                <td>{{doc.documento.saldo_moneda_nacional_format}}</td>
-                                <td>{{doc.tipo_cambio_usado ? parseFloat(doc.tipo_cambio_usado).formatMoney(2, '.', ',') : '1.00'}}</td>
-                                <td>${{parseFloat((doc.documento.monto_total * doc.tipo_cambio_usado)).formatMoney(2, '.', ',') }}</td>
+                                <td class="text-right">{{doc.documento.monto_total_format}}</td>
+                                <td class="text-right">{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
+                                <td class="text-right">{{doc.documento.saldo_moneda_nacional_format}}</td>
+                                <td class="text-right">{{doc.tipo_cambio_usado ? parseFloat(doc.tipo_cambio_usado).formatMoney(2, '.', ',') : '1.00'}}</td>
+                                <td class="text-right">${{parseFloat((doc.documento.monto_total * doc.tipo_cambio_usado)).formatMoney(2, '.', ',') }}</td>
                                 <td>{{doc.cuentaAbono.banco.complemento.nombre_corto}} {{doc.cuentaAbono.cuenta}}</td>
                                 <td>{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
                                 <td v-if="doc.transaccion"> [ {{doc.transaccion.tipo.descripcion}} ], #{{doc.transaccion.numero_folio}}</td>
