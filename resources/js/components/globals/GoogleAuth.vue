@@ -131,11 +131,6 @@
                             resolve();
                         })
                 });
-            },
-
-            salir(){
-
-                $(this.$refs.modal).modal('hide');
             }
         }
     }
