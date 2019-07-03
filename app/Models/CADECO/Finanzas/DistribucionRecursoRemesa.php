@@ -31,6 +31,8 @@ class DistribucionRecursoRemesa extends Model
             'estado'
     ];
 
+    protected $dates = ['fecha_hora_registro'];
+
     protected static function boot()
     {
         parent::boot();
@@ -114,6 +116,10 @@ class DistribucionRecursoRemesa extends Model
         if($this->estado != 0 ){
             throw New \Exception('La distribución de recurso autorizado de remesa no puede ser autorizada, porque no tiene el estatus "generada" ');
         }else{
+            $partidas = $this->partida()->get();
+            foreach($partidas as $partida){
+                $partida->autorizar();
+            }
             $this->estado = 1;
             $this->save();
             return $this;
