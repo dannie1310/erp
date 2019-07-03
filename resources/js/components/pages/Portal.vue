@@ -28,7 +28,42 @@
         name: "portal",
         components: {TwoFactorAuthModal},
         mounted() {
-            this.index();
+            var self = this;
+
+            var left = (screen.width/2)-(361/2);
+            var top = (screen.height/2)-(167/2);
+            PromiseWindow.open('/google-2fa', {
+                width: 500      ,
+                height: 500,
+                window: {
+                    scrollbars: 'no',
+                    toolbar: 'no',
+                    resizable: 'no',
+                    top: top,
+                    left: left
+                },
+                windowName: 'Verificación de dos pasos Google Auth'
+            }).then(
+                // Success
+                function(data) {
+                    alert('success')
+                    self.index();
+                    // data.result == 'awesome' (1)
+                },
+
+                // Error
+                function(error) {
+                    switch(error) {
+                        case 'closed':
+                            alert('close')
+                            // window has been closed
+                            break;
+                        case 'my-custom-message':
+                            // 'my-custom-message' postMessage has been sent from target URL (2)
+                            break;
+                    }
+                }
+            );
         },
         methods: {
             index() {

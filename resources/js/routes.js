@@ -21,6 +21,18 @@ export const routes = [
         }
     },
     {
+        path: '/google-2fa',
+        name: 'google-2fa',
+        components: {
+            default: require('./components/globals/GoogleAuth.vue'),
+            menu: null
+        },
+        meta: {
+            title: 'Veri',
+            middleware: [auth]
+        }
+    },
+    {
         path: '/sao',
         name: 'home',
         component: require('./components/pages/Home.vue'),

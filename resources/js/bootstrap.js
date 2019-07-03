@@ -3,7 +3,7 @@ window._ = require('lodash');
 try {
     window.$ = window.jQuery = require('jquery');
     require('jquery-ui/ui/widgets/autocomplete');
-
+    window.PromiseWindow = require('promise-window');
     require('admin-lte/plugins/bootstrap/js/bootstrap');
     require('admin-lte');
     window.swal = require('sweetalert');
