@@ -59,6 +59,8 @@
                 data: [],
                 total: 0,
                 query: {
+                    sort: 'fecha',
+                    order: 'desc'
                 },
                 daterange: null,
                 id_tipo_poliza_interfaz: '',
@@ -69,8 +71,6 @@
 
         mounted() {
             this.$Progress.start();
-            this.query.sort = 'fecha';
-            this.query.order = 'DESC';
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
@@ -82,9 +82,9 @@
         },
 
         methods: {
-            paginate(payload = {}) {
+            paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('contabilidad/poliza/paginate', { params: payload })
+                return this.$store.dispatch('contabilidad/poliza/paginate', { params: this.query })
                     .then(data => {
                         this.$store.commit('contabilidad/poliza/SET_POLIZAS', data.data);
                         this.$store.commit('contabilidad/poliza/SET_META', data.meta);
@@ -163,7 +163,7 @@
             },
             query: {
                 handler () {
-                    this.paginate(this.query)
+                    this.paginate()
                 },
                 deep: true
             },
@@ -171,7 +171,7 @@
                 handler(sd) {
                     this.query.startDate = sd.format('YYYY-MM-DD')
                     this.query.offset = 0;
-                    this.paginate(this.$data.query)
+                    this.paginate()
                 },
                 deep: true
             },
@@ -179,19 +179,19 @@
                 handler(ed) {
                     this.query.endDate = ed.format('YYYY-MM-DD')
                     this.query.offset = 0;
-                    this.paginate(this.$data.query)
+                    this.paginate()
                 },
                 deep: true
             },
             id_tipo_poliza_interfaz(id_tipo) {
                 this.$data.query.id_tipo_poliza_interfaz = id_tipo;
                 this.query.offset = 0;
-                this.paginate(this.$data.query)
+                this.paginate()
             },
             id_estatus(estatus) {
                 this.$data.query.estatus = estatus;
                 this.query.offset = 0;
-                this.paginate(this.$data.query)
+                this.paginate()
             },
             cargando(val) {
                 $('tbody').css({
