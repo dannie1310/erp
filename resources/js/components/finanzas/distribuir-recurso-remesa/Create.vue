@@ -93,14 +93,14 @@
                                                               :name="`id_cuenta_abono[${i}]`"
                                                               v-model="doc.id_cuenta_abono"
                                                               v-validate="{required: doc.selected == true ? true:false}"
-                                                              data-vv-as="Cuenta"
+                                                              data-vv-as="Cuenta Abono"
                                                               :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
                                                         >
                                                              <option value>-- Selecciona una cuenta --</option>
                                                              <option v-for="cuenta in doc.empresa.cuentasBancariasProveedor.data" :value="cuenta.id">{{cuenta.banco.complemento.nombre_corto}} {{ cuenta.cuenta }}</option>
                                                         </select>
                                                         <div class="invalid-feedback"
-                                                            v-show="errors.has(`id_cuenta[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
+                                                            v-show="errors.has(`id_cuenta_abono[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
                                                         </div>
                                                     </td>
                                                     <td class="text-danger" v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">Beneficiario sin cuentas bancarias registradas</td>
@@ -111,7 +111,7 @@
                                                                 :name="`id_cuenta_cargo[${i}]`"
                                                                 v-model="doc.id_cuenta_cargo"
                                                                 v-validate="{required: doc.selected == true ? true : false}"
-                                                                data-vv-as="Cuenta"
+                                                                data-vv-as="Cuenta Cargo"
                                                                 :class="{'is-invalid': errors.has(`id_cuenta_cargo[${i}]`)}"
                                                         >
                                                              <option value>-- Selecciona una cuenta --</option>
