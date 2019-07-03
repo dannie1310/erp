@@ -41,6 +41,55 @@ class PermisoService
         return Usuario::query()->find($id)->permisos();
     }
 
+    public function porCantidad(){
+        $query = DB::select('SELECT vwUsuariosIntranet.usuario,
+                  vwUsuariosIntranet.nombre_completo,
+                  vwUsuariosIntranet.ubicacion,
+                  vwUsuariosIntranet.departamento,
+                  Subquery.cantidad_permisos,
+                  Subquery_1.cantidad_obras,
+                  Subquery_1.cantidad_obras * Subquery.cantidad_permisos AS factor_orden
+                     FROM (SEGURIDAD_ERP.dbo.vwUsuariosIntranet vwUsuariosIntranet
+                           INNER JOIN
+                           (SELECT role_user.[user_id],
+                                   COUNT (DISTINCT configuracion_obra.id) AS cantidad_obras
+                              FROM SEGURIDAD_ERP.dbo.role_user role_user
+                                   INNER JOIN
+                                   SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+                                      ON     (role_user.id_proyecto =
+                                                 configuracion_obra.id_proyecto)
+                                         AND (role_user.id_obra = configuracion_obra.id_obra)
+                            GROUP BY role_user.[user_id]) Subquery_1
+                              ON (vwUsuariosIntranet.idusuario = Subquery_1.[user_id]))
+                          INNER JOIN
+                          (SELECT role_user.[user_id],
+                                  COUNT (DISTINCT permission_role.permission_id)
+                                     AS cantidad_permisos
+                             FROM SEGURIDAD_ERP.dbo.role_user role_user
+                                  INNER JOIN SEGURIDAD_ERP.dbo.permission_role permission_role
+                                     ON (role_user.role_id = permission_role.role_id)
+                           GROUP BY role_user.[user_id]) Subquery
+                             ON (vwUsuariosIntranet.idusuario = Subquery.[user_id])
+                    WHERE (vwUsuariosIntranet.usuario_estado = 2) AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') 
+                    AND (vwUsuariosIntranet.nombre_completo LIKE \'%'.request('nombre_completo').'%\') 
+                    AND (vwUsuariosIntranet.ubicacion LIKE \'%'.request('ubicacion').'%\')
+                    AND (vwUsuariosIntranet.departamento LIKE \'%'.request('depto').'%\')', [1]);
+
+        $permisos = collect($query);
+        $perPage     = request('limit');
+        $page = request('limit') && request('offset') != '' ? (request('offset') / request('limit')) + 1 : 1;
+        request()->merge(['page' => $page]);
+        $currentPage = Paginator::resolveCurrentPage();
+        $currentPage = $currentPage ? $currentPage : 1;
+        $offset      = ($currentPage * $perPage) - $perPage;
+        $paginator = new LengthAwarePaginator(
+            array_slice($permisos->toArray(), $offset, $perPage),
+            count($permisos),
+            $perPage
+        );
+        return $paginator;
+    }
+
     public function porObra($id)
     {
         $permiso_request = request('permiso');
