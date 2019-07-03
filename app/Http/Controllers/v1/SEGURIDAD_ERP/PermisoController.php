@@ -45,7 +45,7 @@ class PermisoController extends Controller
     public function __construct(Manager $fractal, PermisoService $service, PermisoTransformer $transformer)
     {
         $this->middleware( 'auth:api');
-        $this->middleware( 'context' )->except(['paginate','index', 'porObra']);;
+        $this->middleware( 'context' )->except(['paginate','porCantidad','porObra']);;
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -60,5 +60,9 @@ class PermisoController extends Controller
     public function porObra(Request $request, $id)
     {
         return $this->service->porObra($id);
+    }
+    public function porCantidad(Request $request)
+    {
+        return $this->service->porCantidad();
     }
 }

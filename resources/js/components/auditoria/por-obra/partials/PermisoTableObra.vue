@@ -10,30 +10,7 @@
         <!-- /.card-header -->
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table m-0">
-                    <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Nombre de Usuario</th>
-                        <th>Ubicación</th>
-                        <th>Departamento</th>
-                        <th>Cantidad de Permisos</th>
-                        <th>Cantidad de Proyectos</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Call of Duty IV</td>
-                        <td>Call of Duty IV</td>
-                        <td>Call of Duty IV</td>
-                        <td>Call of Duty IV</td>
-                        <td>Call of Duty IV</td>
-                        <td>Call of Duty IV</td>
-                        <td><span class="badge badge-success">Shipped</span></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <datatable v-bind="$data" />
             </div>
             <!-- /.table-responsive -->
         </div>
@@ -43,7 +20,108 @@
 
 <script>
     export default {
-        name: "permiso-table-obra"
+        name: "permiso-table-obra",
+        data() {
+            return {
+                id_configuracion_obra: '',
+                HeaderSettings: false,
+                columns: [
+                    { title: '#', field: 'index', sortable: false },
+                    { title: 'Usuario', field: 'usuario', sortable: false, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Nombre de Usuario', field: 'nombre', sortable: false, thComp: require('../../../globals/th-Filter') },
+                    { title: 'Ubicación', field: 'ubicacion', sortable: false , thComp: require('../../../globals/th-Filter')},
+                    { title: 'Departamento', field: 'depto', sortable: false, thComp: require('../../../globals/th-Filter') },
+                    { title: 'Cantidad de Permisos', field: 'permisos', sortable: false },
+                    { title: 'Cantidad de Proyectos', field: 'obras', sortable: false },
+                    { title: 'Estatus', field: 'estatus', sortable: false }
+                ],
+                data: [],
+                total: 0,
+                query: {},
+                cargando: false
+            }
+        },
+        mounted() {
+            this.paginate();
+        },
+        methods: {
+            paginate() {
+                this.cargando = true;
+
+                return this.$store.dispatch('seguridad/permiso/porCantidad', {
+                    params: this.query
+                })
+                    .then(data => {
+                        this.$store.commit('seguridad/permiso/SET_PERMISOS',data.data);
+                        this.$store.commit('seguridad/permiso/SET_META', {
+                            "pagination": {
+                                "total": data.total,
+                                "count": data.to - data.from + 1,
+                                "per_page": data.per_page,
+                                "current_page": data.current_page,
+                                "total_pages": data.last_page,
+                            }
+                        });
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
+            },
+        },
+        computed: {
+            permisos() {
+                return this.$store.getters['seguridad/permiso/permisos'];
+            },
+
+            meta(){
+                return this.$store.getters['seguridad/permiso/meta'];
+            },
+
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            },
+
+        },
+
+        watch: {
+            permisos: {
+                handler(perms) {
+                    let self = this
+                    self.$data.data = []
+                    self.$data.data = perms.map((permiso, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        usuario: permiso.usuario,
+                        nombre: permiso.nombre_completo,
+                        ubicacion: permiso.ubicacion,
+                        depto: permiso.departamento,
+                        permisos: permiso.cantidad_permisos,
+                        obras: permiso.cantidad_obras,
+                        estatus: permiso.factor_orden
+
+                    }));
+                },
+                deep: true
+            },
+            meta: {
+                handler(meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler(query) {
+                    this.paginate()
+                },
+                deep: true
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
+        }
     }
 </script>
 
