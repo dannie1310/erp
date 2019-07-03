@@ -115,7 +115,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="(movimiento, i) in poliza.movimientos.data"
+                                    <tr v-for="(movimiento, i) in movimientosOrdenados"
                                         :class="{'bg-success': ! movimiento.id}">
                                         <td>{{ i + 1 }}</td>
                                         <td>
@@ -456,6 +456,10 @@
                 return !!this.original.movimientos.data.find(mov => {
                     return !mov.id
                 })
+            },
+
+            movimientosOrdenados() {
+                return _.sortBy(this.poliza.movimientos.data, ['id_tipo_movimiento_poliza', 'concepto'])
             }
         }
     }

@@ -69,6 +69,8 @@
 
         mounted() {
             this.$Progress.start();
+            this.query.sort = 'fecha';
+            this.query.order = 'DESC';
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
