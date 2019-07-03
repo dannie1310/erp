@@ -79,7 +79,8 @@
                                                 <tr v-for="(doc, i) in documentos" v-if="doc.disponible == 1">
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
-                                                    <td>{{doc.empresa ? doc.empresa.razon_social : ''}}</td>
+                                                    <td v-if="doc.empresa">{{doc.empresa.razon_social}}</td>
+                                                    <td class="text-danger" v-else>No registrado en cátalogo de Empresas SAO</td>
                                                     <td class="text-right">{{doc.monto_total_format}}</td>
                                                     <td>{{doc.moneda.abreviatura}}</td>
 <!--                                                    <td>{{parseFloat(doc.tipo_cambio).formatMoney(2, '.', ',') }}</td>-->
@@ -102,8 +103,8 @@
                                                             v-show="errors.has(`id_cuenta[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
                                                         </div>
                                                     </td>
-                                                    <td v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">Proveedor sin cuentas bancarias registradas</td>
-                                                    <td v-else>No Cuenta Con Empresa en CADECO</td>
+                                                    <td class="text-danger" v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">Beneficiario sin cuentas bancarias registradas</td>
+                                                    <td class="text-danger" v-else>Beneficiario no registrado en cátalogo de Empresas SAO</td>
                                                     <td >
                                                         <select
                                                                 class="form-control"
@@ -121,8 +122,8 @@
                                                         </div>
                                                     </td>
 
-                                                    <td v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
-                                                    <td v-else></td>
+                                                    <td class="text-center" v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                                    <td class="text-center" v-else><i class="fa fa-exclamation-triangle" style="color: red" title="No seleccionable por datos faltantes"></i></td>
                                                 </tr>
                                             </tbody>
                                         </table>
