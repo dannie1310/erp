@@ -52,7 +52,7 @@ export const routes = [
             menu: require('./components/auditoria/partials/Menu.vue')
         },
         meta: {
-            title: 'AUDITORIA',
+            title: 'Auditoría',
             middleware: [auth, permission],
             permission: 'consultar_permisos',
             general: true,
@@ -71,7 +71,7 @@ export const routes = [
                 name: 'permisos-obra',
                 component: require('./components/auditoria/Index'),
                 meta: {
-                    title: 'PERMISOS',
+                    title: 'Permisos',
                     breadcrumb: {parent: 'auditoria', name: 'PERMISOS ÁSIGNADOS'},
                     middleware: [auth, permission],
                     permission: 'auditoria_consultar_permisos_por_obra',
@@ -88,7 +88,7 @@ export const routes = [
                         name: 'por-obra',
                         component: require('./components/auditoria/por-obra/Index'),
                         meta: {
-                            title: 'Permisos Ásignados por Obra',
+                            title: 'Permisos Asignados por Obra',
                             breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR OBRA'},
                             middleware: [auth],
 
