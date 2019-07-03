@@ -196,4 +196,17 @@ class DistribucionRecursoRemesaService
         throw $e;
         }
     }
+
+    public function autorizar($id){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $resp = $this->repository->show($id)->autorizar();
+            DB::connection('cadeco')->commit();
+            return $resp;
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
 }

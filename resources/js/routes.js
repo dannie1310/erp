@@ -52,7 +52,7 @@ export const routes = [
         meta: {
             title: 'CONFIGURACIÓN',
             middleware: [auth, permission],
-            permission: 'consultar_permisos',
+            permission: 'asignar_areas_subcontratantes',
             general: true
         }
     },
@@ -66,7 +66,7 @@ export const routes = [
         meta: {
             title: 'AUDITORIA',
             middleware: [auth, permission],
-            permission: 'consultar_permisos',
+            permission: 'auditoria_consultar_permisos_por_obra',
             general: true,
 
         }
@@ -86,7 +86,9 @@ export const routes = [
                     title: 'PERMISOS',
                     breadcrumb: {parent: 'auditoria', name: 'PERMISOS ÁSIGNADOS'},
                     middleware: [auth, permission],
-                    permission: 'consultar_permisos'
+                    permission: 'auditoria_consultar_permisos_por_obra',
+                    general: true,
+
                 }
             },
             {

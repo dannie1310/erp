@@ -7,6 +7,7 @@
                         <h4> <i class="fa fa-list-alt"></i> DISTRIBUCIÓN DE RECURSOS AUTORIZADOS DE LA REMESA </h4>
                     </div>
                 </div>
+                <div class="modal-body">
                 <div v-if="distribucion" class="row">
                     <div class="table-responsive col-12">
                         <table class="table table-striped">
@@ -53,7 +54,8 @@
                                     {{distribucion.remesa_liberada.remesa.semana}}
                                 </td>
                                 <td class="bg-gray-light">
-                                    <b>Remesa <br>{{distribucion.remesa_liberada.remesa.tipo}}</b>
+                                    <b>Tipo de Remesa: </b>
+                                    <br>{{distribucion.remesa_liberada.remesa.tipo}}
                                 </td>
                                 <td class="bg-gray-light">
                                     <b>Folio: <br>({{ distribucion.remesa_liberada.remesa.folio }})</b>
@@ -102,41 +104,66 @@
                         </table>
                     </div>
                 </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button v-if="cargando==false" type="button" class="btn btn-secondary pull-right" v-on:click="salir">Cerrar</button>
+                    <div v-if="$root.can('registrar_distribucion_recursos_remesa')" :disabled="cargando" >
+                        <button v-if="cargando==false" @click="$refs.googleAuth.init()" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
+                    </div>
+                </div>
             </div>
         </div>
+        <google-auth @success="autorizar"  ref="googleAuth" ></google-auth>
     </div>
 </template>
 
 <script>
     import PartidaEstatus from './partials/PartidaEstatus';
     import EstatusLabel from "./partials/DistribuirEstatus";
+    import GoogleAuth from "../../globals/GoogleAuth";
     export default {
         name: "distribuir-recurso-remesa-autorizar",
-        components: {EstatusLabel, PartidaEstatus},
+        components: {GoogleAuth, EstatusLabel, PartidaEstatus},
         props: ['id'],
         data() {
             return {
-                cargando: false,
+                cargando: false
             }
         },
         mounted() {
             this.$Progress.start();
-            this.autorizar()
+            this.find()
                 .finally(() => {
                     this.$Progress.finish();
-                })
+                });
         },
         methods: {
-            autorizar() {
+            find() {
+                this.cargando = true;
                 this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
-                return this.$store.dispatch('finanzas/distribuir-recurso-remesa/autorizar', {
+                return this.$store.dispatch('finanzas/distribuir-recurso-remesa/find', {
                     id: this.id,
-                    params: { include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa','partidas.cuentaAbono.banco', 'partidas.transaccion', 'usuario_cancelo'] }
+                    params: {include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa', 'partidas.cuentaAbono.banco', 'partidas.transaccion', 'usuario_cancelo']}
                 }).then(data => {
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);
-                }) .finally(() => {
+                }).finally(() => {
                     this.cargando = false;
                 })
+            },
+            autorizar(code) {
+                return this.$store.dispatch('finanzas/distribuir-recurso-remesa/autorizar', {
+                    id: this.id,
+                    params: {
+                        code: code
+                    }
+                }).then(data => {
+                    this.$router.push({name: 'distribuir-recurso-remesa'});
+                })
+            },
+
+            salir(){
+                this.$router.push({name: 'distribuir-recurso-remesa'});
             }
         },
         computed: {
