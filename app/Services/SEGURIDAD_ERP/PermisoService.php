@@ -50,7 +50,7 @@ class PermisoService
         $asigno_request = request('asigno');
         $limit_request = request('limit');
 
-        $query = DB::select('SELECT configuracion_obra.nombre AS nombre_obra,
+        $query = DB::select('SELECT DISTINCT configuracion_obra.nombre AS nombre_obra,
       proyectos.base_datos,
       roles.display_name AS rol,
       sistemas.[name] AS sistema,
