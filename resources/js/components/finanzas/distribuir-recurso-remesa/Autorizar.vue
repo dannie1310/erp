@@ -54,7 +54,8 @@
                                     {{distribucion.remesa_liberada.remesa.semana}}
                                 </td>
                                 <td class="bg-gray-light">
-                                    <b>Remesa <br>{{distribucion.remesa_liberada.remesa.tipo}}</b>
+                                    <b>Tipo de Remesa: </b>
+                                    <br>{{distribucion.remesa_liberada.remesa.tipo}}
                                 </td>
                                 <td class="bg-gray-light">
                                     <b>Folio: <br>({{ distribucion.remesa_liberada.remesa.folio }})</b>
