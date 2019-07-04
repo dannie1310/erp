@@ -53,7 +53,7 @@ class PermisoService
        vwUsuariosIntranet.usuario,
        vwUsuariosIntranet.nombre_completo AS nombre_completo_usuario,
        Subquery.usuario_asigno,
-       Subquery.fecha_hora_asignacion,
+       FORMAT (Subquery.fecha_hora_asignacion,\'dd/MM/yyyy hh:mm:ss \') as fecha_hora_asignacion,
        sistemas.id,
        configuracion_obra.id_obra,
         vwUsuariosIntranet.idusuario
@@ -123,7 +123,7 @@ class PermisoService
                  AND ([permissions].display_name LIKE \'%'.request('permiso').'%\')
                  AND (roles.display_name LIKE \'%'.request('rol').'%\') AND (sistemas.[name] LIKE \'%'.request('sistema').'%\')
                  AND (proyectos.base_datos LIKE \'%'.request('proyecto').'%\')  AND (configuracion_obra.nombre LIKE \'%'.request('obra').'%\')
-                ', [1]);
+                 ORDER BY proyectos.base_datos ASC', [1]);
 
         $permisos = collect($query);
         $perPage     = request('limit');
@@ -226,7 +226,7 @@ class PermisoService
        vwUsuariosIntranet.usuario,
        vwUsuariosIntranet.nombre_completo AS nombre_completo_usuario,
        Subquery.usuario_asigno,
-       Subquery.fecha_hora_asignacion,
+       FORMAT (Subquery.fecha_hora_asignacion,\'dd/MM/yyyy hh:mm:ss \') as fecha_hora_asignacion,
        sistemas.id,
        configuracion_obra.id_obra
           FROM (((((((((SEGURIDAD_ERP.dbo.proyectos_sistemas proyectos_sistemas
@@ -295,7 +295,7 @@ class PermisoService
                  AND ([permissions].display_name LIKE \'%'.request('permiso').'%\')
                  AND (roles.display_name LIKE \'%'.request('rol').'%\') AND (sistemas.[name] LIKE \'%'.request('sistema').'%\')
                  AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') AND ( vwUsuariosIntranet.nombre_completo LIKE \'%'.request('nombre').'%\')
-                ', [1]);
+                 ', [1]);
 
         $permisos = collect($query);
         $perPage     = request('limit');
