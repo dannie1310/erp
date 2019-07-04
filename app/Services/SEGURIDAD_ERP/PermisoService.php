@@ -84,7 +84,12 @@ class PermisoService
                     WHERE vwUsuariosIntranet.usuario_estado = 2 AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') 
                     AND (vwUsuariosIntranet.nombre_completo LIKE \'%'.request('nombre_completo').'%\') 
                     AND (vwUsuariosIntranet.ubicacion LIKE \'%'.request('ubicacion').'%\')
-                    AND (vwUsuariosIntranet.departamento LIKE \'%'.request('depto').'%\')', [1]);
+                    AND (vwUsuariosIntranet.departamento LIKE \'%'.request('depto').'%\')
+                    ORDER BY  (Subquery_1.cantidad_obras * Subquery.cantidad_permisos)
+                      * (CASE vwUsuariosIntranet.es_corporativo
+                            WHEN 0 THEN 20000
+                            WHEN 1 THEN 1
+                         END) DESC', [1]);
 
         $permisos = collect($query);
         $perPage     = request('limit');

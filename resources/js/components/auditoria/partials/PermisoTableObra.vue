@@ -1,7 +1,7 @@
 <template>
     <div class="card">
         <div class="card-header border-transparent">
-            <h3 class="card-title">Información cantidad de permisos asignados a usuario por obras</h3>
+            <h3 class="card-title">Informe de permisos</h3>
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
