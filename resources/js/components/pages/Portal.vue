@@ -28,57 +28,32 @@
         name: "portal",
         components: {TwoFactorAuthModal},
         mounted() {
-            var self = this;
-
-            var left = (screen.width/2)-(361/2);
-            var top = (screen.height/2)-(167/2);
-            PromiseWindow.open('/google-2fa', {
-                width: 500      ,
-                height: 500,
-                window: {
-                    scrollbars: 'no',
-                    toolbar: 'no',
-                    resizable: 'no',
-                    top: top,
-                    left: left
-                },
-                windowName: 'Verificación de dos pasos Google Auth'
-            }).then(
-                // Success
-                function(data) {
-                    alert('success')
-                    self.index();
-                    // data.result == 'awesome' (1)
-                },
-
-                // Error
-                function(error) {
-                    switch(error) {
-                        case 'closed':
-                            alert('close')
-                            // window has been closed
-                            break;
-                        case 'my-custom-message':
-                            // 'my-custom-message' postMessage has been sent from target URL (2)
-                            break;
-                    }
-                }
-            );
+            this.$Progress.start()
+            this.index()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
         methods: {
             index() {
-                this.$store.commit('igh/aplicacion/SET_APLICACIONES', []);
+                return new Promise((resilve, reject) => {
+                    this.$store.commit('igh/aplicacion/SET_APLICACIONES', []);
 
-                return this.$store.dispatch('igh/aplicacion/index', {
-                    params: {
-                        scope: 'PorUsuario:' + this.currentUser.idusuario,
-                        sort: 'menu',
-                        order: 'ASC'
-                    }
+                    return this.$store.dispatch('igh/aplicacion/index', {
+                        params: {
+                            scope: 'PorUsuario:' + this.currentUser.idusuario,
+                            sort: 'menu',
+                            order: 'ASC'
+                        }
+                    })
+                        .then(data => {
+                            this.$store.commit('igh/aplicacion/SET_APLICACIONES', data);
+                            resolve();
+                        })
+                        .catch(error => {
+                            reject(error);
+                        })
                 })
-                    .then(data => {
-                        this.$store.commit('igh/aplicacion/SET_APLICACIONES', data);
-                    });
             }
         },
 
