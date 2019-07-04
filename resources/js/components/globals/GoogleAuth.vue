@@ -1,14 +1,9 @@
 <template>
-    <div ref="modal" class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <span v-if="cargando">
-                        <center>
-                            <i class="fa fa-spin fa-2x fa-spinner"></i>
-                        </center>
-                    </span >
-                    <span v-else>
+    <div :style="margin" id="r" class="row justify-content-center">
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div :style="margin" class="card">
+                <div class="card-body">
+                    <span>
                         <span v-if="verified">
                             <h5>Ingrese código de verificación de Google Auth</h5>
                         </span>
@@ -31,75 +26,61 @@
                         <center>
                             <input type="text" ref="code">
                         </center>
-                         <button type="button" class="btn btn-light pull-right" data-dismiss="modal" >Cancelar</button>
+                         <button type="button" @click="closeWindow" class="btn btn-danger pull-right">Cancelar</button>
                     </span>
                 </div>
             </div>
         </div>
     </div>
+
 </template>
 
 <script>
     export default {
         name: "google-auth",
-        props: ['value'],
         data() {
             return {
-                cargando: true,
                 valid: false,
-                verified: null
+                verified: this.$router.currentRoute.query.verified == 'false' ? false : true
             }
         },
 
         mounted() {
-
-            $(this.$refs.modal)
-                .on('hidden.bs.modal', () => {
-                    $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').clear();
-                    if (! this.valid) {
-                        this.$emit('cancel');
-                    }
-                })
+            this.init();
         },
 
         methods: {
-
             init() {
                 $('.pincode-input-container').remove();
-                $(this.$refs.modal).modal('show');
-                this.checkVerified()
-                    .finally(() => {
-                        $(this.$refs.code).pincodeInput({
-                            inputs : 6,
-                            hidedigits: false,
-                            complete:(value, e, errorElement) => {
-                                this.checkCode(value)
-                                    .then(data => {
-                                        if (data.valid) {
-                                            this.valid = true;
-                                            $(errorElement).html("");
-                                            swal("Verificación correcta", {
-                                                icon: "success",
-                                                timer: 1500,
-                                                buttons: false
-                                            })
-                                                .then(() => {
-                                                    $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').clear();
-                                                    $(this.$refs.modal).modal('hide');
-                                                    this.$emit('success', value);
-                                                })
-                                        } else {
+
+                $(this.$refs.code).pincodeInput({
+                    inputs : 6,
+                    hidedigits: false,
+                    complete:(value, e, errorElement) => {
+                        this.checkCode(value)
+                            .then(data => {
+                                if (data.valid) {
+                                    this.valid = true;
+                                    $(errorElement).html("");
+                                    swal("Verificación correcta", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
                                             $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').clear();
-                                            $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
-                                            $(errorElement).html("El código que ingresó no es válido");
-                                        }
-                                    });
-                            }
-                        });
-                        $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
-
-
-                    });
+                                            // report succees
+                                            opener.postMessage({ result: value }, location.origin);
+                                        })
+                                } else {
+                                    $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').clear();
+                                    $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
+                                    $(errorElement).html("El código que ingresó no es válido");
+                                }
+                            });
+                    }
+                });
+                $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').focus();
             },
 
             checkCode(code) {
@@ -117,40 +98,23 @@
                 });
             },
 
-            checkVerified() {
-                this.cargando = true;
-                return new Promise((resolve, reject) => {
-                    axios
-                        .get('/api/SEGURIDAD_ERP/google-2fa/isVerified')
-                        .then(r => r.data)
-                        .then(data => {
-                            this.verified = data.verified;
-                        })
-                        .finally(() => {
-                            this.cargando = false;
-                            resolve();
-                        })
-                });
+            closeWindow() {
+                window.close();
+            }
+        },
+
+        computed: {
+            margin() {
+                return {
+                    'margin-top': this.verified ? '57px' : '0px'
+                }
             }
         }
     }
 </script>
-
 <style scoped>
-    .modal {
-        text-align: center;
+    #r {
+        margin: auto
     }
-    @media screen and (min-width: 768px) {
-        .modal:before {
-            display: inline-block;
-            vertical-align: middle;
-            content: " ";
-            height: 100%;
-        }
-    }
-    .modal-dialog {
-        display: inline-block;
-        text-align: left;
-        vertical-align: middle;
-    }
+
 </style>

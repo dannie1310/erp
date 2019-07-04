@@ -28,22 +28,32 @@
         name: "portal",
         components: {TwoFactorAuthModal},
         mounted() {
-            this.index();
+            this.$Progress.start()
+            this.index()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
         methods: {
             index() {
-                this.$store.commit('igh/aplicacion/SET_APLICACIONES', []);
+                return new Promise((resilve, reject) => {
+                    this.$store.commit('igh/aplicacion/SET_APLICACIONES', []);
 
-                return this.$store.dispatch('igh/aplicacion/index', {
-                    params: {
-                        scope: 'PorUsuario:' + this.currentUser.idusuario,
-                        sort: 'menu',
-                        order: 'ASC'
-                    }
+                    return this.$store.dispatch('igh/aplicacion/index', {
+                        params: {
+                            scope: 'PorUsuario:' + this.currentUser.idusuario,
+                            sort: 'menu',
+                            order: 'ASC'
+                        }
+                    })
+                        .then(data => {
+                            this.$store.commit('igh/aplicacion/SET_APLICACIONES', data);
+                            resolve();
+                        })
+                        .catch(error => {
+                            reject(error);
+                        })
                 })
-                    .then(data => {
-                        this.$store.commit('igh/aplicacion/SET_APLICACIONES', data);
-                    });
             }
         },
 
