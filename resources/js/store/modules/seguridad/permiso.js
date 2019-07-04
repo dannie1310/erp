@@ -32,35 +32,6 @@ export default {
                     });
             });
         },
-
-        porUsuario(context, id) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + 'por-usuario/' + id)
-                    .then(r => r.data)
-                    .then((data) => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error)
-                    });
-            });
-        },
-
-        porObra(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + 'por-obra/' + payload.id, {params: payload.params})
-                    .then(r => r.data)
-                    .then((data) => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error)
-                    });
-            });
-        },
-
         porCantidad(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -74,7 +45,45 @@ export default {
                     });
             });
         },
-
+        porObra(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'por-obra/' + payload.id, {params: payload.params})
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    });
+            });
+        },
+        porUsuarioAuditoria(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'por-usuario-auditoria/' + payload.id, {params: payload.params})
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    });
+            });
+        },
+        porUsuario(context, id) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'por-usuario/' + id)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    });
+            });
+        },
     },
 
     getters: {
