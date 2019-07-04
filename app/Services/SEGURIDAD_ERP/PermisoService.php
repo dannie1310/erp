@@ -42,35 +42,46 @@ class PermisoService
     }
 
     public function porCantidad(){
-        $query = DB::select('SELECT vwUsuariosIntranet.usuario,
-                  vwUsuariosIntranet.nombre_completo,
-                  vwUsuariosIntranet.ubicacion,
-                  vwUsuariosIntranet.departamento,
-                  Subquery.cantidad_permisos,
-                  Subquery_1.cantidad_obras,
-                  Subquery_1.cantidad_obras * Subquery.cantidad_permisos AS factor_orden
+        $query = DB::select('SELECT vwUsuariosIntranet.idusuario,
+                          vwUsuariosIntranet.usuario,
+                          vwUsuariosIntranet.nombre_completo,
+                          vwUsuariosIntranet.ubicacion,
+                          vwUsuariosIntranet.departamento,
+                          CASE vwUsuariosIntranet.es_corporativo
+                             WHEN 0 THEN 20000
+                             WHEN 1 THEN 1
+                          END
+                             AS factor_es_corporativo,
+                          Subquery.cantidad_permisos,
+                          Subquery_1.cantidad_obras,
+                            (Subquery_1.cantidad_obras * Subquery.cantidad_permisos)
+                          * (CASE vwUsuariosIntranet.es_corporativo
+                                WHEN 0 THEN 20000
+                                WHEN 1 THEN 1
+                             END)
+                             AS factor_orden
                      FROM (SEGURIDAD_ERP.dbo.vwUsuariosIntranet vwUsuariosIntranet
                            INNER JOIN
                            (SELECT role_user.[user_id],
-                                   COUNT (DISTINCT configuracion_obra.id) AS cantidad_obras
+                                   COUNT (DISTINCT permission_role.permission_id)
+                                      AS cantidad_permisos
                               FROM SEGURIDAD_ERP.dbo.role_user role_user
-                                   INNER JOIN
-                                   SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
-                                      ON     (role_user.id_proyecto =
-                                                 configuracion_obra.id_proyecto)
-                                         AND (role_user.id_obra = configuracion_obra.id_obra)
-                            GROUP BY role_user.[user_id]) Subquery_1
-                              ON (vwUsuariosIntranet.idusuario = Subquery_1.[user_id]))
+                                   INNER JOIN SEGURIDAD_ERP.dbo.permission_role permission_role
+                                      ON (role_user.role_id = permission_role.role_id)
+                            GROUP BY role_user.[user_id]) Subquery
+                              ON (vwUsuariosIntranet.idusuario = Subquery.[user_id]))
                           INNER JOIN
                           (SELECT role_user.[user_id],
-                                  COUNT (DISTINCT permission_role.permission_id)
-                                     AS cantidad_permisos
+                                  COUNT (DISTINCT configuracion_obra.id) AS cantidad_obras
                              FROM SEGURIDAD_ERP.dbo.role_user role_user
-                                  INNER JOIN SEGURIDAD_ERP.dbo.permission_role permission_role
-                                     ON (role_user.role_id = permission_role.role_id)
-                           GROUP BY role_user.[user_id]) Subquery
-                             ON (vwUsuariosIntranet.idusuario = Subquery.[user_id])
-                    WHERE (vwUsuariosIntranet.usuario_estado = 2) AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') 
+                                  INNER JOIN
+                                  SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+                                     ON     (role_user.id_proyecto =
+                                                configuracion_obra.id_proyecto)
+                                        AND (role_user.id_obra = configuracion_obra.id_obra)
+                           GROUP BY role_user.[user_id]) Subquery_1
+                             ON (vwUsuariosIntranet.idusuario = Subquery_1.[user_id])
+                    WHERE vwUsuariosIntranet.usuario_estado = 2 AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') 
                     AND (vwUsuariosIntranet.nombre_completo LIKE \'%'.request('nombre_completo').'%\') 
                     AND (vwUsuariosIntranet.ubicacion LIKE \'%'.request('ubicacion').'%\')
                     AND (vwUsuariosIntranet.departamento LIKE \'%'.request('depto').'%\')', [1]);

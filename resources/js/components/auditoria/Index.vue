@@ -9,7 +9,7 @@
 </template>
 
 <script>
-    import PermisoTableObra from "./por-obra/partials/PermisoTableObra";
+    import PermisoTableObra from "./partials/PermisoTableObra";
 
     export default {
         name: "auditoria-index",
