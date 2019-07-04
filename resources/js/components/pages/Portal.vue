@@ -36,7 +36,7 @@
         },
         methods: {
             index() {
-                return new Promise((resilve, reject) => {
+                return new Promise((resolve, reject) => {
                     this.$store.commit('igh/aplicacion/SET_APLICACIONES', []);
 
                     return this.$store.dispatch('igh/aplicacion/index', {
