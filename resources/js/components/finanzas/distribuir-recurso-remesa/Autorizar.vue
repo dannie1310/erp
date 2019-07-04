@@ -125,22 +125,21 @@
                 <div class="modal-footer">
                     <button v-if="cargando==false" type="button" class="btn btn-secondary pull-right" v-on:click="salir">Cerrar</button>
                     <div v-if="$root.can('autorizar_distribucion_recursos_remesa')" :disabled="cargando" >
-                        <button v-if="cargando==false" @click="$refs.googleAuth.init()" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
+                        <button v-if="cargando==false" @click="autorizar" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
                     </div>
                 </div>
             </div>
         </div>
-        <google-auth @success="autorizar"  ref="googleAuth" ></google-auth>
     </div>
 </template>
 
 <script>
     import PartidaEstatus from './partials/PartidaEstatus';
     import EstatusLabel from "./partials/DistribuirEstatus";
-    import GoogleAuth from "../../globals/GoogleAuth";
+
     export default {
         name: "distribuir-recurso-remesa-autorizar",
-        components: {GoogleAuth, EstatusLabel, PartidaEstatus},
+        components: { EstatusLabel, PartidaEstatus },
         props: ['id'],
         data() {
             return {
@@ -167,12 +166,9 @@
                     this.cargando = false;
                 })
             },
-            autorizar(code) {
+            autorizar() {
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/autorizar', {
-                    id: this.id,
-                    params: {
-                        code: code
-                    }
+                    id: this.id
                 }).then(data => {
                     this.$router.push({name: 'distribuir-recurso-remesa'});
                 })

@@ -24,13 +24,14 @@ class TwoFactorAuth
      */
     public function handle($request, Closure $next)
     {
-        $code = $request->code;
+        $code = $request->header('verification_code');
+
         if ($code) {
             if($this->google->checkCode(auth()->user()->google2faSecret->secret, $code)) {
                 return $next($request);
             }
             abort(400, 'Código de Verificación no válido');
         }
-        abort(400, 'No se envió el código de verificación');
+        abort(200, 'code_not_send');
     }
 }
