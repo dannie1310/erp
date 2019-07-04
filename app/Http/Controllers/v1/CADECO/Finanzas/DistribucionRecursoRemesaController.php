@@ -51,6 +51,10 @@ class DistribucionRecursoRemesaController extends Controller
         $this->middleware('auth:api')->except(['descargaLayoutManual']);
         $this->middleware('context');
 
+        $this->middleware('permiso:autorizar_distribucion_recursos_remesa')->only(['autorizar']);
+        $this->middleware('permiso:cancelar_distribucion_recursos_remesa')->only(['cancelar']);
+        $this->middleware('permiso:pagar_distribucion_recursos_remesa')->only(['validar']);
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
@@ -76,9 +80,20 @@ class DistribucionRecursoRemesaController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function cargarLayoutManual(Request $request, $id){
+        $respuesta =  $this->service->cargaLayoutManual($request, $id);
+        return response()->json($respuesta, 200);
+    }
+
     public function cancelar(Request $request, $id)
     {
         $item = $this->service->cancelar($id);
+        return $this->respondWithItem($item);
+    }
+
+    public function validar(Request $request, $id)
+    {
+        $item = $this->service->show($id);
         return $this->respondWithItem($item);
     }
 

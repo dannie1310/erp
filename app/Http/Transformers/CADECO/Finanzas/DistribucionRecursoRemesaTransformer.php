@@ -46,7 +46,8 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
             'fecha_registro' => $model->fecha_hora_registro->format('Y-m-d h:i:s'),
             'monto_autorizado' => $model->monto_autorizado,
             'monto_distribuido' => $model->monto_distribuido,
-            'estado' => $model->estado
+            'estado' => $model->estado,
+            'pagable' => $model->remesaPagable()
         ];
     }
 

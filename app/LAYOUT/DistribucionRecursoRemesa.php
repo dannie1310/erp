@@ -19,6 +19,7 @@ class DistribucionRecursoRemesa
     }
 
     function create(){
+        if($this->remesa->estado != 1){return "Layout de distribucion de remesa no disponible.". PHP_EOL . "Estado: " . $this->remesa->estatus->descripcion ;}
         $this->encabezado();
         $this->detalle();
         $this->sumario();
@@ -38,6 +39,10 @@ class DistribucionRecursoRemesa
         if($reg_layout){
             $reg_layout->contador_descarga = $reg_layout->contador_descarga + 1;
             $reg_layout->save();
+
+            $this->remesa->estado = 2;
+            $this->remesa->save();
+
         }else{
             $reg_layout = new DistribucionRecursoRemesaLayout();
             $reg_layout->id_distrubucion_recurso =$this->id;
@@ -46,7 +51,7 @@ class DistribucionRecursoRemesa
             $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
             $reg_layout->save();
 
-            $this->remesa->estado = 1;
+            $this->remesa->estado = 2;
             $this->remesa->save();
         }
         return response()->download('layouts/files/'.$file_nombre.'.in');
@@ -105,53 +110,54 @@ class DistribucionRecursoRemesa
 
     function detalle(){
         foreach ($this->remesa->partida as $key => $partida){
-            $replace = array(",", ".", "-");
-            $razon_social_abono = strlen($partida->cuentaAbono->empresa->razon_social) > 40 ? substr($partida->cuentaAbono->empresa->razon_social, 0, 40):
-                str_pad($partida->cuentaAbono->empresa->razon_social, 40, ' ', STR_PAD_RIGHT);
-            $razon_social_cargo = strlen($partida->cuentaCargo->empresa->razon_social) > 40 ? substr($partida->cuentaCargo->empresa->razon_social, 0, 40):
-                str_pad($partida->cuentaCargo->empresa->razon_social, 40, ' ', STR_PAD_RIGHT);
-            $monto = explode('.', number_format($partida->documento->MontoTotal, '2', '.', ''));
-            $concepto = strlen($partida->documento->Concepto) > 40 ? substr($partida->documento->Concepto, 0, 40):
-                str_pad($partida->documento->Concepto, 40, ' ', STR_PAD_RIGHT);
-            $descripcion_referencia = strlen($partida->documento->Concepto) > 30 ? substr($partida->documento->Concepto, 0, 30):
-                str_pad($partida->documento->Concepto, 30, ' ', STR_PAD_RIGHT);
-            $tipo_operacion = '01';
-            $partida->documento->IDMonda == 2?$tipo_operacion = '09' :'';
-            $partida->cuentaAbono->complemento->id_banco_participante == 014? $tipo_operacion = '98' :'';
-            $tipo_cuenta_receptor = $tipo_operacion == 98? '01':'40';
-            $this->data[] =
-                '02' . /** Detalle del Archivo. Valor Fijo: 02 */
-                str_pad($this->linea, 7, 0, STR_PAD_LEFT) .
-                '60' .
-                str_pad($partida->documento->IDMoneda, 2, 0, STR_PAD_LEFT) .
-                date('Ymd') .
-                '014' .
-                str_pad($partida->cuentaAbono->complemento->id_banco_participante, 3, 0, STR_PAD_LEFT) .
-                str_pad($monto[0]. $monto[1], 15, 0, STR_PAD_LEFT) .
-                str_pad('', 16, ' ', STR_PAD_LEFT) .
-                $tipo_operacion .
-                date('Ymd') .
-                '01' .
-                str_pad($partida->cuentaCargo->numero, 20, 0, STR_PAD_LEFT) .
-                str_pad(strtoupper(str_replace($replace, '',$razon_social_cargo )), 40, ' ', STR_PAD_RIGHT) .
-                str_pad(strtoupper(str_replace($replace, '', $partida->cuentaCargo->empresa->rfc)), '18', ' ', STR_PAD_RIGHT) .
-                $tipo_cuenta_receptor .
-                str_pad($partida->cuentaAbono->cuenta_clabe, 20, 0, STR_PAD_LEFT) .
-                strtoupper(str_replace($replace, '', $razon_social_abono )) .
-                str_pad(strtoupper(str_replace($replace, '', $partida->cuentaAbono->empresa->rfc)), '18', ' ', STR_PAD_RIGHT) .
-                str_pad($partida->documento->IDDocumento, 40, ' ', STR_PAD_RIGHT) .
-                str_pad(strtoupper(str_replace($replace, '', $partida->cuentaCargo->empresa->razon_social)), 40, ' ', STR_PAD_RIGHT) .
-                str_pad(0, 15, 0, STR_PAD_RIGHT) .
-                str_pad(1, 7, 0, STR_PAD_LEFT) .
-                strtoupper(str_replace($replace, '',$concepto )) .
-                str_pad('', 30, ' ', STR_PAD_LEFT) .
-                '00' .
-                date('Ymd') .
-                str_pad('', 12, ' ', STR_PAD_LEFT) .
-                str_pad($this->remesa->id, 30, ' ', STR_PAD_RIGHT) .
-                strtoupper(str_replace($replace, '',$descripcion_referencia ))
-                ;
-            $this->linea++;
+            if($partida->estado == 1) {
+                $replace = array(",", ".", "-");
+                $razon_social_abono = strlen($partida->cuentaAbono->empresa->razon_social) > 40 ? substr($partida->cuentaAbono->empresa->razon_social, 0, 40) :
+                    str_pad($partida->cuentaAbono->empresa->razon_social, 40, ' ', STR_PAD_RIGHT);
+                $razon_social_cargo = strlen($partida->cuentaCargo->empresa->razon_social) > 40 ? substr($partida->cuentaCargo->empresa->razon_social, 0, 40) :
+                    str_pad($partida->cuentaCargo->empresa->razon_social, 40, ' ', STR_PAD_RIGHT);
+                $monto = explode('.', number_format($partida->documento->MontoTotal, '2', '.', ''));
+                $concepto = strlen($partida->documento->Concepto) > 40 ? substr($partida->documento->Concepto, 0, 40) :
+                    str_pad($partida->documento->Concepto, 40, ' ', STR_PAD_RIGHT);
+                $descripcion_referencia = strlen($partida->documento->Concepto) > 30 ? substr($partida->documento->Concepto, 0, 30) :
+                    str_pad($partida->documento->Concepto, 30, ' ', STR_PAD_RIGHT);
+                $tipo_operacion = '01';
+                $partida->documento->IDMonda == 2 ? $tipo_operacion = '09' : '';
+                $partida->cuentaAbono->complemento->id_banco_participante == 014 ? $tipo_operacion = '98' : '';
+                $tipo_cuenta_receptor = $tipo_operacion == 98 ? '01' : '40';
+                $this->data[] =
+                    '02' . /** Detalle del Archivo. Valor Fijo: 02 */
+                    str_pad($this->linea, 7, 0, STR_PAD_LEFT) .
+                    '60' .
+                    str_pad($partida->documento->IDMoneda, 2, 0, STR_PAD_LEFT) .
+                    date('Ymd') .
+                    '014' .
+                    str_pad($partida->cuentaAbono->complemento->id_banco_participante, 3, 0, STR_PAD_LEFT) .
+                    str_pad($monto[0] . $monto[1], 15, 0, STR_PAD_LEFT) .
+                    str_pad('', 16, ' ', STR_PAD_LEFT) .
+                    $tipo_operacion .
+                    date('Ymd') .
+                    '01' .
+                    str_pad($partida->cuentaCargo->numero, 20, 0, STR_PAD_LEFT) .
+                    str_pad(strtoupper(str_replace($replace, '', $razon_social_cargo)), 40, ' ', STR_PAD_RIGHT) .
+                    str_pad(strtoupper(str_replace($replace, '', $partida->cuentaCargo->empresa->rfc)), '18', ' ', STR_PAD_RIGHT) .
+                    $tipo_cuenta_receptor .
+                    str_pad($partida->cuentaAbono->cuenta_clabe, 20, 0, STR_PAD_LEFT) .
+                    strtoupper(str_replace($replace, '', $razon_social_abono)) .
+                    str_pad(strtoupper(str_replace($replace, '', $partida->cuentaAbono->empresa->rfc)), '18', ' ', STR_PAD_RIGHT) .
+                    str_pad($partida->documento->IDDocumento, 40, ' ', STR_PAD_RIGHT) .
+                    str_pad(strtoupper(str_replace($replace, '', $partida->cuentaCargo->empresa->razon_social)), 40, ' ', STR_PAD_RIGHT) .
+                    str_pad(0, 15, 0, STR_PAD_RIGHT) .
+                    str_pad(1, 7, 0, STR_PAD_LEFT) .
+                    strtoupper(str_replace($replace, '', $concepto)) .
+                    str_pad('', 30, ' ', STR_PAD_LEFT) .
+                    '00' .
+                    date('Ymd') .
+                    str_pad('', 12, ' ', STR_PAD_LEFT) .
+                    str_pad($this->remesa->id, 30, ' ', STR_PAD_RIGHT) .
+                    strtoupper(str_replace($replace, '', $descripcion_referencia));
+                $this->linea++;
+            }
         }
     }
 

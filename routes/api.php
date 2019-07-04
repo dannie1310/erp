@@ -347,8 +347,9 @@ $api->version('v1', function ($api) {
             $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayout')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@autorizar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/validar', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@validar')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@cancelar')->where(['id' => '[0-9]+']);
-            $api->post('{id}/cargaLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@cargarLayout')->where(['id' => '[0-9]+']);
+            $api->post('{id}/cargaLayoutManual', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@cargarLayoutManual')->where(['id' => '[0-9]+']);
         });
 
         /**

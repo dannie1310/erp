@@ -221,6 +221,79 @@ export default {
                     })
             });
         },
+        descarga(context, payload) {
+
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/validar', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        if(data.estado.estado === 1){
+                            var URL = '/api/finanzas/distribuir-recurso-remesa/' + payload.id +'/layout?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
+                            var win = window.open(URL, "_blank");
+                            win.onbeforeunload = ()=> {
+                                axios
+                                    .get(URI + payload.id, {params: payload.params})
+                                    .then(r => r.data)
+                                    .then(dat => {
+                                        context.commit('UPDATE_DISTRIBUCION', dat);
+                                        resolve(dat);
+                                    })
+                                    .catch(error => {
+                                        reject(error);
+                                    })
+                            }
+                        }else{
+                            return new Promise((resolve, reject) => {
+                                swal("Layout de distribucion de recurso descargado previemente", {
+                                    icon: "warning",
+                                    timer: 3000,
+                                    buttons: false
+                                })
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        descargaManual(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/validar', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        if(data.estado.estado === 1){
+                            var URL = '/finanzas/distribuir-recurso-remesa/' + payload.id +'/layoutManual?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
+                            var win = window.open(URL, "_blank");
+                            win.onbeforeunload = ()=> {
+                                axios
+                                    .get(URI + payload.id, {params: payload.params})
+                                    .then(r => r.data)
+                                    .then(dat => {
+                                        context.commit('UPDATE_DISTRIBUCION', dat);
+                                        resolve(dat);
+                                    })
+                                    .catch(error => {
+                                        reject(error);
+                                    })
+                            }
+                        }else{
+                            return new Promise((resolve, reject) => {
+                                swal("Layout de distribucion de recurso descargado previemente", {
+                                    icon: "warning",
+                                    timer: 3000,
+                                    buttons: false
+                                })
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
     },
 
     getters: {
