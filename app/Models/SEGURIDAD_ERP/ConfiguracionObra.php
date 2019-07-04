@@ -15,6 +15,7 @@ class ConfiguracionObra extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'dbo.configuracion_obra';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'esquema_permisos',
