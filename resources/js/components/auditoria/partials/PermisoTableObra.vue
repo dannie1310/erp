@@ -1,7 +1,7 @@
 <template>
     <div class="card">
         <div class="card-header border-transparent">
-            <h3 class="card-title">Información cantidad de permisos asignados a usuario por obras</h3>
+            <h3 class="card-title">Informe de permisos</h3>
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -27,13 +27,14 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Usuario', field: 'usuario', sortable: false, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Nombre de Usuario', field: 'nombre', sortable: false, thComp: require('../../../globals/th-Filter') },
-                    { title: 'Ubicación', field: 'ubicacion', sortable: false , thComp: require('../../../globals/th-Filter')},
-                    { title: 'Departamento', field: 'depto', sortable: false, thComp: require('../../../globals/th-Filter') },
-                    { title: 'Cantidad de Permisos', field: 'permisos', sortable: false },
-                    { title: 'Cantidad de Proyectos', field: 'obras', sortable: false },
-                    { title: 'Estatus', field: 'estatus', sortable: false }
+                    { title: 'Usuario', field: 'usuario', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Nombre de Usuario', field: 'nombre_completo', sortable: true, thComp: require('../../globals/th-Filter') },
+                    { title: 'Ubicación', field: 'ubicacion', sortable: true , thComp: require('../../globals/th-Filter')},
+                    { title: 'Departamento', field: 'departamento', sortable: true, thComp: require('../../globals/th-Filter') },
+                    { title: 'Usuario Corporativo', field: 'factor_es_corporativo', sortable: true, tdComp: require('./CorporativoEstatus') },
+                    { title: 'Cantidad de Permisos', field: 'cantidad_permisos', sortable: true },
+                    { title: 'Cantidad de Proyectos', field: 'cantidad_obras', sortable: true },
+                    { title: 'Estatus', field: 'factor_orden', sortable: true, tdComp: require('./SemaforoEstatus') }
                 ],
                 data: [],
                 total: 0,
@@ -91,12 +92,13 @@
                     self.$data.data = perms.map((permiso, i) => ({
                         index: (i + 1) + self.query.offset,
                         usuario: permiso.usuario,
-                        nombre: permiso.nombre_completo,
+                        nombre_completo: permiso.nombre_completo,
                         ubicacion: permiso.ubicacion,
-                        depto: permiso.departamento,
-                        permisos: permiso.cantidad_permisos,
-                        obras: permiso.cantidad_obras,
-                        estatus: permiso.factor_orden
+                        departamento: permiso.departamento,
+                        factor_es_corporativo: permiso.factor_es_corporativo,
+                        cantidad_permisos: permiso.cantidad_permisos,
+                        cantidad_obras: permiso.cantidad_obras,
+                        factor_orden: permiso.factor_orden
 
                     }));
                 },

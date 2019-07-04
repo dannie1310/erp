@@ -49,7 +49,6 @@ class DistribucionRecursoRemesaController extends Controller
         $this->middleware('addAccessToken')->only('descargaLayout');
         $this->middleware('auth')->only(['descargaLayoutManual']);
         $this->middleware('auth:api')->except(['descargaLayoutManual']);
-
         $this->middleware('context');
 
         $this->service = $service;

@@ -2,7 +2,7 @@
     <body class="hold-transition sidebar-mini" :class="$router.currentRoute.name == 'portal' ? 'sidebar-collapse' : ''">
     <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
-    <div v-if="currentUser" class="wrapper">
+    <div v-if="currentUser && $router.currentRoute.name != 'google-2fa'" class="wrapper">
         <AppHeader/>
         <AppSidebar/>
         <!-- Content Wrapper. Contains page content -->
