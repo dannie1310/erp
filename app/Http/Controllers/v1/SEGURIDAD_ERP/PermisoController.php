@@ -57,6 +57,11 @@ class PermisoController extends Controller
         return $this->service->porUsuario($id);
     }
 
+    public function porUsuarioAuditoria(Request $request, $id)
+    {
+        return $this->service->porUsuarioAuditoria($id);
+    }
+
     public function porObra(Request $request, $id)
     {
         return $this->service->porObra($id);

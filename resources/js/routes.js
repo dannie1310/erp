@@ -108,6 +108,23 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'por-usuario',
+                component: require('./components/auditoria/por-usuario/partials/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'por-usuario',
+                        component: require('./components/auditoria/por-usuario/Index'),
+                        meta: {
+                            title: 'Permisos Asignados por Usuario',
+                            breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR USUARIO'},
+                            middleware: [auth],
+
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
