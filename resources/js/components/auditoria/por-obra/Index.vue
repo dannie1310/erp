@@ -70,8 +70,8 @@
                     { title: 'Rol', field: 'rol', sortable: false, thComp: require('../../globals/th-Filter') },
                     { title: 'Sistema', field: 'sistema', sortable: false , thComp: require('../../globals/th-Filter')},
                     { title: 'Usuario', field: 'usuario', sortable: false, thComp: require('../../globals/th-Filter') },
-                    { title: 'Nombre de Usuario', field: 'nombre', sortable: false },
-                    { title: 'Usuario que Asignó', field: 'asigno', sortable: false, thComp: require('../../globals/th-Filter') },
+                    { title: 'Nombre de Usuario', field: 'nombre', sortable: false , thComp: require('../../globals/th-Filter') },
+                    { title: 'Usuario que Asignó', field: 'asigno', sortable: false},
                     { title: 'Fecha de Asignación', field: 'fecha_asigno', sortable: false }
                 ],
                 data: [],

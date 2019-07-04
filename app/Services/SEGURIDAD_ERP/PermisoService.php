@@ -196,7 +196,7 @@ class PermisoService
                  WHERE (configuracion_obra.id_proyecto = '.$obra['id_proyecto'].') AND (configuracion_obra.id_obra = '.$obra['id_obra'].')
                  AND ([permissions].display_name LIKE \'%'.request('permiso').'%\')
                  AND (roles.display_name LIKE \'%'.request('rol').'%\') AND (sistemas.[name] LIKE \'%'.request('sistema').'%\')
-                 AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') AND (Subquery.usuario_asigno LIKE \'%'.request('asigno').'%\')
+                 AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') AND ( vwUsuariosIntranet.nombre_completo LIKE \'%'.request('nombre').'%\')
                 ', [1]);
 
         $permisos = collect($query);
