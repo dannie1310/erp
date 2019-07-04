@@ -3,6 +3,7 @@
 
 namespace App\LAYOUT;
 
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
 use Chumper\Zipper\Zipper;
 use Illuminate\Filesystem\Filesystem;
 
@@ -13,10 +14,12 @@ class DistribucionRecursoRemesaManual
     public function __construct($id)
     {
         $this->id = $id;
-        $this->generar();
+        $this->remesa = \App\Models\CADECO\Finanzas\DistribucionRecursoRemesa::with('partida')->where('id', '=', $this->id)->first();
+
     }
 
     function create(){
+        $this->generar();
         $llave = str_pad($this->id, 5, 0, STR_PAD_LEFT);
         $a = "";
         foreach ($this->data as $dat){$a .= $dat . PHP_EOL;}
@@ -25,13 +28,35 @@ class DistribucionRecursoRemesaManual
         fwrite($fp_i,$a);
         fclose($fp_i);
 
+        $reg_layout = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $this->id)->first();
+
+        if($reg_layout){
+            $reg_layout->contador_descarga = $reg_layout->contador_descarga + 1;
+            $reg_layout->save();
+
+            $this->remesa->estado = 2;
+            $this->remesa->save();
+
+        }else{
+            $reg_layout = new DistribucionRecursoRemesaLayout();
+            $reg_layout->id_distrubucion_recurso =$this->id;
+            $reg_layout->usuario_descarga = auth()->id();
+            $reg_layout->contador_descarga = 1;
+            $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
+            $reg_layout->save();
+
+            $this->remesa->estado = 2;
+            $this->remesa->save();
+        }
+
+
         return response()->download("layouts/files/#$llave-i-santander.txt");
 
     }
 
     public function generar(){
-        $remesa = \App\Models\CADECO\Finanzas\DistribucionRecursoRemesa::with('partida')->where('id', '=', $this->id)->first();
-        foreach ($remesa->partida as $key => $partida){
+        if($this->remesa->estado != 1){ dd("Layout de distribucion de remesa no disponible.". PHP_EOL . "Estado: " . $this->remesa->estatus->descripcion );}
+        foreach ($this->remesa->partida as $key => $partida){
             $razon_social = strlen($partida->cuentaAbono->empresa->razon_social) > 40 ? substr($partida->cuentaAbono->empresa->razon_social, 0, 40):
                 str_pad($partida->cuentaAbono->empresa->razon_social, 40, ' ', STR_PAD_RIGHT);
             $monto = explode('.', $partida->documento->MontoTotal);

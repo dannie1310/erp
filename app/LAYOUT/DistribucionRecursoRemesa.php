@@ -4,7 +4,6 @@
 namespace App\LAYOUT;
 
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
-use mysql_xdevapi\Exception;
 
 class DistribucionRecursoRemesa
 {
@@ -20,6 +19,7 @@ class DistribucionRecursoRemesa
     }
 
     function create(){
+        if($this->remesa->estado != 1){return "Layout de distribucion de remesa no disponible.". PHP_EOL . "Estado: " . $this->remesa->estatus->descripcion ;}
         $this->encabezado();
         $this->detalle();
         $this->sumario();
@@ -39,6 +39,10 @@ class DistribucionRecursoRemesa
         if($reg_layout){
             $reg_layout->contador_descarga = $reg_layout->contador_descarga + 1;
             $reg_layout->save();
+
+            $this->remesa->estado = 2;
+            $this->remesa->save();
+
         }else{
             $reg_layout = new DistribucionRecursoRemesaLayout();
             $reg_layout->id_distrubucion_recurso =$this->id;
@@ -47,7 +51,7 @@ class DistribucionRecursoRemesa
             $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
             $reg_layout->save();
 
-            $this->remesa->estado = 1;
+            $this->remesa->estado = 2;
             $this->remesa->save();
         }
         return response()->download('layouts/files/'.$file_nombre.'.in');
