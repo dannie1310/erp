@@ -4,7 +4,7 @@
             <div :style="margin" class="card">
                 <div class="card-body">
                     <span>
-                        <span v-if="verified">
+                        <span class="text-center" v-if="verified">
                             <h5>Ingrese código de verificación de Google Auth</h5>
                         </span>
                         <span v-else>
@@ -106,7 +106,7 @@
         computed: {
             margin() {
                 return {
-                    'margin-top': this.verified ? '57px' : '0px'
+                    'margin-top': this.verified ? '25px' : '0px'
                 }
             }
         }

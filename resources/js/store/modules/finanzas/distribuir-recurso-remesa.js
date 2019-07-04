@@ -225,7 +225,7 @@ export default {
 
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id, { params: payload.params })
+                    .get(URI + payload.id + '/validar', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         if(data.estado.estado === 1){
@@ -261,7 +261,7 @@ export default {
         descargaManual(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id, { params: payload.params })
+                    .get(URI + payload.id + '/validar', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         if(data.estado.estado === 1){
