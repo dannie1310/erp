@@ -79,7 +79,8 @@
                                                 <tr v-for="(doc, i) in documentos" v-if="doc.disponible == 1">
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
-                                                    <td>{{doc.empresa ? doc.empresa.razon_social : ''}}</td>
+                                                    <td v-if="doc.empresa">{{doc.empresa.razon_social}}</td>
+                                                    <td class="text-danger" v-else>No registrado en cátalogo de Empresas SAO</td>
                                                     <td class="text-right">{{doc.monto_total_format}}</td>
                                                     <td>{{doc.moneda.abreviatura}}</td>
 <!--                                                    <td>{{parseFloat(doc.tipo_cambio).formatMoney(2, '.', ',') }}</td>-->
@@ -92,25 +93,25 @@
                                                               :name="`id_cuenta_abono[${i}]`"
                                                               v-model="doc.id_cuenta_abono"
                                                               v-validate="{required: doc.selected == true ? true:false}"
-                                                              data-vv-as="Cuenta"
+                                                              data-vv-as="Cuenta Abono"
                                                               :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
                                                         >
                                                              <option value>-- Selecciona una cuenta --</option>
                                                              <option v-for="cuenta in doc.empresa.cuentasBancariasProveedor.data" :value="cuenta.id">{{cuenta.banco.complemento.nombre_corto}} {{ cuenta.cuenta }}</option>
                                                         </select>
                                                         <div class="invalid-feedback"
-                                                            v-show="errors.has(`id_cuenta[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
+                                                            v-show="errors.has(`id_cuenta_abono[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
                                                         </div>
                                                     </td>
-                                                    <td v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">Proveedor sin cuentas bancarias registradas</td>
-                                                    <td v-else>No Cuenta Con Empresa en CADECO</td>
+                                                    <td class="text-danger" v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">Beneficiario sin cuentas bancarias registradas</td>
+                                                    <td class="text-danger" v-else>Beneficiario no registrado en cátalogo de Empresas SAO</td>
                                                     <td >
                                                         <select
                                                                 class="form-control"
                                                                 :name="`id_cuenta_cargo[${i}]`"
                                                                 v-model="doc.id_cuenta_cargo"
                                                                 v-validate="{required: doc.selected == true ? true : false}"
-                                                                data-vv-as="Cuenta"
+                                                                data-vv-as="Cuenta Cargo"
                                                                 :class="{'is-invalid': errors.has(`id_cuenta_cargo[${i}]`)}"
                                                         >
                                                              <option value>-- Selecciona una cuenta --</option>
@@ -121,8 +122,8 @@
                                                         </div>
                                                     </td>
 
-                                                    <td v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
-                                                    <td v-else></td>
+                                                    <td class="text-center" v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                                    <td class="text-center" v-else><i class="fa fa-exclamation-triangle" style="color: red" title="No seleccionable por datos faltantes"></i></td>
                                                 </tr>
                                             </tbody>
                                         </table>

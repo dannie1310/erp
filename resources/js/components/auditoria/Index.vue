@@ -1,9 +1,18 @@
 <template>
-    <span></span>
+    <span>
+         <div class="row">
+            <div class="col-md-12">
+                <permiso-table-obra></permiso-table-obra>
+            </div>
+        </div>
+    </span>
 </template>
 
 <script>
+    import PermisoTableObra from "./por-obra/partials/PermisoTableObra";
+
     export default {
         name: "auditoria-index",
+        components:{PermisoTableObra}
     }
 </script>

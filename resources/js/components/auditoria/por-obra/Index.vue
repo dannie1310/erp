@@ -132,7 +132,7 @@
 
         computed: {
             configuracionesObra() {
-                return this.$store.getters['seguridad/configuracion-obra/configuracionesObra'];
+                return  _.sortBy(this.$store.getters['seguridad/configuracion-obra/configuracionesObra'], ['base_datos', 'nombre']);
             },
 
             permisos() {

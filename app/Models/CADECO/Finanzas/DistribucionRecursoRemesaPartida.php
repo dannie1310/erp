@@ -119,4 +119,13 @@ class DistribucionRecursoRemesaPartida extends Model
         $this->save();
         return $this;
     }
+
+    public function autorizar(){
+        if($this->estado != 0){
+            throw New \Exception('La distribución de recurso autorizado de remesa no puede ser cancelada, porque alguna de sus partidas no tiene el estatus "generada" ');
+        }
+        $this->estado = 1;
+        $this->save();
+        return $this;
+    }
 }

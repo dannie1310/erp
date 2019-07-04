@@ -35,8 +35,8 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'folio', sortable: true },
                     { title: 'Remesa Liberada', field: 'remesa', sortable: false },
-                    { title: 'Monto Remesa', field: 'monto_autorizado', sortable: true },
-                    { title: 'Monto Distribuido', field: 'monto_distribuido', sortable: true },
+                    { title: 'Monto Remesa', field: 'monto_autorizado', tdClass: 'money',sortable: true },
+                    { title: 'Monto Distribuido', field: 'monto_distribuido', tdClass: 'money', sortable: true },
                     { title: 'Estatus', field: 'estado', tdComp: require('./partials/DistribuirEstatus'), sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons') },
                 ],
@@ -133,3 +133,9 @@
         }
     }
 </script>
+<style>
+    .money
+    {
+        text-align: right;
+    }
+</style>
