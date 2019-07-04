@@ -124,7 +124,7 @@
 
                 <div class="modal-footer">
                     <button v-if="cargando==false" type="button" class="btn btn-secondary pull-right" v-on:click="salir">Cerrar</button>
-                    <div v-if="$root.can('registrar_distribucion_recursos_remesa')" :disabled="cargando" >
+                    <div v-if="$root.can('autorizar_distribucion_recursos_remesa')" :disabled="cargando" >
                         <button v-if="cargando==false" @click="$refs.googleAuth.init()" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
                     </div>
                 </div>
