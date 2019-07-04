@@ -1,7 +1,7 @@
 <template>
         <span>
+ <button @click="init" type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
 
-  <button @click="init"  type="submit" class="btn btn-primary">Ver Formato</button>
              <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
                  <div class="modal-dialog modal-lg" id="mdialTamanio">
                      <div class="modal-content">
@@ -30,7 +30,6 @@
             },
             pdf(){
                 var url = '/api/compras/orden-compra/' + this.id +'/formato-orden-compra?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
-console.log(""+url);
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Orden de Compra</iframe>');
                 $(this.$refs.modal).modal('show');
             }
