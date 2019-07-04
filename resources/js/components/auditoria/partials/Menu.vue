@@ -16,6 +16,14 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('auditoria_consultar_permisos_por_obra',true)">
+                    <li class="nav-item">
+                        <router-link :to="{name: 'por-usuario'}" class="nav-link" :class="{active: this.$route.name == 'por-usuario'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Permisos por Usuario</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>
