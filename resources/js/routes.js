@@ -575,7 +575,7 @@ export const routes = [
                             title: 'Autorizar Distribución de Recursos Autorizados',
                             breadcrumb: {name: 'AUTORIZAR', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
-                            permission: 'consultar_distribucion_recursos_remesa'
+                            permission: 'autorizar_distribucion_recursos_remesa'
                         }
                     }
                 ]
