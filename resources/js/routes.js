@@ -66,7 +66,7 @@ export const routes = [
         meta: {
             title: 'Auditoría',
             middleware: [auth, permission],
-            permission: 'auditoria_consultar_permisos_por_obra',
+            permission: ['auditoria_consultar_permisos_por_obra','auditoria_consultar_permisos_por_usuario'],
             general: true,
 
         }
@@ -85,9 +85,7 @@ export const routes = [
                 meta: {
                     title: 'Permisos',
                     breadcrumb: {parent: 'auditoria', name: 'PERMISOS ÁSIGNADOS'},
-                    middleware: [auth, permission],
-                    permission: 'auditoria_consultar_permisos_por_obra',
-                    general: true,
+                    middleware: [auth]
 
                 }
             },
@@ -102,7 +100,9 @@ export const routes = [
                         meta: {
                             title: 'Permisos Asignados por Obra',
                             breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR OBRA'},
-                            middleware: [auth],
+                            middleware: [auth, permission],
+                            permission: 'auditoria_consultar_permisos_por_obra',
+                            general: true,
 
                         }
                     },
@@ -119,7 +119,9 @@ export const routes = [
                         meta: {
                             title: 'Permisos Asignados por Usuario',
                             breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR USUARIO'},
-                            middleware: [auth],
+                            middleware: [auth, permission],
+                            permission: 'auditoria_consultar_permisos_por_usuario',
+                            general: true,
 
                         }
                     },
