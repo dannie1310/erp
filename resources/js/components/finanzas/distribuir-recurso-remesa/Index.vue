@@ -99,7 +99,7 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 autorizar: true,
-                                pagar: self.$root.can('pagar_distribucion_recursos_remesa')?true:false,
+                                pagar: self.$root.can('pagar_distribucion_recursos_remesa') && distribucion.pagable ?true:false,
                                 cancelar: self.$root.can('cancelar_distribucion_recursos_remesa') ? true : false,
                                 id: distribucion.id,
                                 estado: distribucion.estado.estado

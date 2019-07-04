@@ -68,6 +68,10 @@ class DistribucionRecursoRemesa extends Model
         }
     }
 
+    public function remesaPagable(){
+        return $this->partida->where('estado', '=', 1)->count() > 0;
+    }
+
     public function remesaLiberada(){
         return $this->belongsTo(RemesaLiberada::class,  'id_remesa', 'IDRemesa');
     }
