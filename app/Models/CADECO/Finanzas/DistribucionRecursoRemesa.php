@@ -31,8 +31,6 @@ class DistribucionRecursoRemesa extends Model
             'estado'
     ];
 
-    protected $dates = ['fecha_hora_registro'];
-
     protected static function boot()
     {
         parent::boot();
