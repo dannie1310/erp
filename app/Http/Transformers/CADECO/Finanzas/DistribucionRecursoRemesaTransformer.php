@@ -43,7 +43,7 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'folio' => $model->folio,
-            'fecha_registro' => $model->fecha_hora_registro->format('Y-m-d h:i:s'),
+            'fecha_registro' => date('Y-m-d h:i:s', strtotime($model->fecha_hora_registro)),
             'monto_autorizado' => $model->monto_autorizado,
             'monto_distribuido' => $model->monto_distribuido,
             'estado' => $model->estado,
