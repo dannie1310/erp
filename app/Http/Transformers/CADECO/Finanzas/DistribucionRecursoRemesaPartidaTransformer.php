@@ -49,8 +49,7 @@ class DistribucionRecursoRemesaPartidaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'fecha' => $model->fecha_registro,
-            'folio_banco' => $model->folio_partida_bancaria,
-            'tipo_cambio_usado' => $model->getTipoCambioAttribute()
+            'folio_banco' => $model->folio_partida_bancaria
         ];
     }
 

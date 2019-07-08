@@ -10,6 +10,7 @@ namespace App\Models\MODULOSSAO\BaseDatos;
 
 
 use App\Facades\Context;
+use App\Models\MODULOSSAO\Proyectos\ProyectoUnificado;
 use Illuminate\Database\Eloquent\Model;
 
 class BaseDato extends Model
@@ -26,5 +27,9 @@ class BaseDato extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('Nombre', '=', Context::getDatabase());
         });
+    }
+
+    public function proyectoUnificado(){
+        return $this->hasOne(ProyectoUnificado::class, 'IDBaseDatos', 'IDBaseDatos');
     }
 }

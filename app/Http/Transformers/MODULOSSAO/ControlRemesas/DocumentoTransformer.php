@@ -26,7 +26,6 @@ class DocumentoTransformer extends TransformerAbstract
         'remesa',
         'documentoLiberado',
         'empresa',
-        'tipoCambioActual',
         'moneda'
     ];
 
@@ -95,20 +94,6 @@ class DocumentoTransformer extends TransformerAbstract
         if($empresa = $model->empresa)
         {
             return $this->item($empresa, new EmpresaTransformer);
-        }
-        return null;
-    }
-
-
-    /**
-     * @param Documento $model
-     * @return \League\Fractal\Resource\Item|null
-     */
-    public function includeTipoCambioActual(Documento $model)
-    {
-        if($tipo = $model->tipoCambio)
-        {
-            return $this->item($tipo, new CambioTransformer);
         }
         return null;
     }
