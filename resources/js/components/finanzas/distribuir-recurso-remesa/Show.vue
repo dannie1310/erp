@@ -95,7 +95,7 @@
                                 <th>Importe Pesos</th>
                                 <th>Cuenta Abono</th>
                                 <th>Cuenta Cargo</th>
-                                <th>Transaccion de Pago</th>
+                                <th v-if="distribucion.estado.estado === 3">Transaccion de Pago</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
@@ -107,12 +107,11 @@
                                 <td class="text-right">{{doc.documento.monto_total_format}}</td>
                                 <td class="text-right">{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
                                 <td class="text-right">{{doc.documento.saldo_moneda_nacional_format}}</td>
-                                <td class="text-right">{{doc.tipo_cambio_usado ? parseFloat(doc.tipo_cambio_usado).formatMoney(2, '.', ',') : '1.00'}}</td>
-                                <td class="text-right">${{parseFloat((doc.documento.monto_total * doc.tipo_cambio_usado)).formatMoney(2, '.', ',') }}</td>
+                                <td class="text-right">{{doc.moneda ? parseFloat(doc.moneda.tipo_cambio).formatMoney(2, '.', ',') : '1.00'}}</td>
+                                <td class="text-right">${{parseFloat((doc.documento.monto_total * doc.moneda.tipo_cambio)).formatMoney(2, '.', ',') }}</td>
                                 <td>{{doc.cuentaAbono.banco.complemento.nombre_corto}} {{doc.cuentaAbono.cuenta}}</td>
                                 <td>{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
-                                <td v-if="doc.transaccion"> [ {{doc.transaccion.tipo.descripcion}} ], #{{doc.transaccion.numero_folio}}</td>
-                                <td v-else></td>
+                                <td v-if="distribucion.estado.estado === 3 && doc.transaccion"> [ {{doc.transaccion.tipo.descripcion}} ], #{{doc.transaccion.numero_folio}}</td>
                                 <td><partida-estatus :value="doc.estado"></partida-estatus></td>
                             </tr>
                             </tbody>

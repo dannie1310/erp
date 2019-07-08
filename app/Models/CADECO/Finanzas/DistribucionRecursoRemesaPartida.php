@@ -90,15 +90,6 @@ class DistribucionRecursoRemesaPartida extends Model
         return $this->belongsTo(Transaccion::class, 'id_transaccion_pago','id_transaccion');
     }
 
-    public function getTipoCambioAttribute(){
-        if($this->id_moneda != 1) {
-            $tipo = Cambio::withoutGlobalScope('fecha')->where('id_moneda', '=', $this->id_moneda)->where('fecha', '=', $this->fecha_registro)->get()->toArray();
-            return $tipo[0]['cambio'];
-        }else{
-            return 1;
-        }
-    }
-
     public function partidaValidaEstado(){
         switch ($this->estado){
             case 0:
