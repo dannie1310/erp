@@ -88,7 +88,7 @@
 <!--                                                    <td>{{doc.tipoCambioActual ? parseFloat(doc.tipoCambioActual.cambio).formatMoney(2, '.', ',') : '1.00'}}</td>-->
                                                     <td class="text-right">{{doc.monto_total_format}}</td>
                                                     <td class="text-right">${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
-                                                    <td v-if = "doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 ">
+                                                    <td v-if = "doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 " style="width: 15%;">
                                                         <select class="form-control"
                                                               :name="`id_cuenta_abono[${i}]`"
                                                               v-model="doc.id_cuenta_abono"
@@ -103,9 +103,9 @@
                                                             v-show="errors.has(`id_cuenta_abono[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
                                                         </div>
                                                     </td>
-                                                    <td class="text-danger" v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">Beneficiario sin cuentas bancarias registradas</td>
-                                                    <td class="text-danger" v-else>Beneficiario no registrado en cátalogo de Empresas SAO</td>
-                                                    <td >
+                                                    <td class="text-danger" style="width: 15%;" v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">Beneficiario sin cuentas bancarias registradas</td>
+                                                    <td class="text-danger"  style="width: 15%;" v-else>Beneficiario no registrado en cátalogo de Empresas SAO</td>
+                                                    <td style="width: 15%;">
                                                         <select
                                                                 class="form-control"
                                                                 :name="`id_cuenta_cargo[${i}]`"
