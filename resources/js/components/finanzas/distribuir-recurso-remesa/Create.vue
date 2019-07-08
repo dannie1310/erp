@@ -65,10 +65,7 @@
                                                 <th>Beneficiario</th>
                                                 <th>Importe Moneda Original</th>
                                                 <th>Moneda</th>
-<!--                                                <th>Tipo Cambio</th>-->
                                                 <th>Importe en Pesos</th>
-<!--                                                <th>Tipo Cambio Actual</th>-->
-                                                <th>Importe a Pagar</th>
                                                 <th>Importe a Pagar en Pesos</th>
                                                 <th>Cuenta Abono</th>
                                                 <th>Cuenta Cargo</th>
@@ -83,10 +80,7 @@
                                                     <td class="text-danger" v-else>No registrado en cátalogo de Empresas SAO</td>
                                                     <td class="text-right">{{doc.monto_total_format}}</td>
                                                     <td>{{doc.moneda.abreviatura}}</td>
-<!--                                                    <td>{{parseFloat(doc.tipo_cambio).formatMoney(2, '.', ',') }}</td>-->
                                                     <td class="text-right">{{doc.saldo_moneda_nacional_format}}</td>
-<!--                                                    <td>{{doc.tipoCambioActual ? parseFloat(doc.tipoCambioActual.cambio).formatMoney(2, '.', ',') : '1.00'}}</td>-->
-                                                    <td class="text-right">{{doc.monto_total_format}}</td>
                                                     <td class="text-right">${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
                                                     <td v-if = "doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 " style="width: 15%;">
                                                         <select class="form-control"
@@ -122,8 +116,9 @@
                                                         </div>
                                                     </td>
 
-                                                    <td class="text-center" v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
-                                                    <td class="text-center" v-else><i class="fa fa-exclamation-triangle" style="color: red" title="No seleccionable por datos faltantes"></i></td>
+                                                    <td class="text-center" v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 && doc.tipo_cambio === 1"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                                    <td class="text-center" v-else-if="doc.tipo_cambio != 1"><i class="fa fa-exclamation-triangle" style="color: orange" title="Partida en moneda extrangera no seleccionable por el momento."></i></td>
+                                                    <td class="text-center" v-else><i class="fa fa-exclamation-triangle" style="color: red" title="No seleccionable por datos faltantes."></i></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -309,7 +304,7 @@
                     if (doc.tipo_cambio == 1.0) {
                         doc.importe_total = parseFloat(doc.monto_total);
                     } else {
-                        doc.importe_total = parseFloat(doc.monto_total * doc.tipoCambioActual.cambio);
+                        doc.importe_total = parseFloat(doc.monto_total *  doc.moneda.tipo_cambio);
                     }
                 })
                 return result
@@ -322,7 +317,7 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco', 'documento.tipoCambioActual', 'documento.moneda']
+                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco', 'documento.moneda']
                     }
                 })
                     .then(data => {

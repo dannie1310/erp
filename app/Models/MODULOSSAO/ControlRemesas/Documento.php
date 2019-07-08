@@ -9,7 +9,6 @@
 namespace App\Models\MODULOSSAO\ControlRemesas;
 
 
-use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Moneda;
@@ -53,11 +52,6 @@ class Documento extends Model
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
-    }
-
-    public function tipoCambio()
-    {
-        return $this->belongsTo(Cambio::class, 'IDMoneda', 'id_moneda');
     }
 
     public function getDisponibleAttribute()
