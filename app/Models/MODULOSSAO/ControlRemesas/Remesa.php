@@ -9,6 +9,7 @@
 namespace App\Models\MODULOSSAO\ControlRemesas;
 
 
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\MODULOSSAO\BaseDatos\BaseDato;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +28,7 @@ class Remesa extends Model
 
         self::addGlobalScope(function ($query){
             $base = BaseDato::query()->with('proyectoUnificado')->first();
-            return $query->where('IDProyecto', '=', $base->proyectoUnificado->IDProyecto);
+            return $base->proyectoUnificado? $query->where('IDProyecto', '=', $base->proyectoUnificado->IDProyecto): abort(403, 'La obra no tiene registro en la tabla de proyectos unificados.');
         });
     }
 
@@ -46,10 +47,20 @@ class Remesa extends Model
         return $this->belongsTo(RemesaLiberada::class, 'IDRemesa', 'IDRemesa');
     }
 
+    public function distribucionRemesa(){
+        return $this->hasMany(DistribucionRecursoRemesa::class, 'id_remesa', 'IDRemesa');
+    }
+
     public function scopeLiberada($query)
     {
         return $query->has('remesaLiberada');
     }
+
+    public function  getdistribucionesAnterioresMonto(){
+        return $this->distribucionRemesa()->where('estado', '>=', 0)->sum('monto_distribuido');
+    }
+
+
 
     public function getTipoAttibute(){
         if($this->IDTipoRemesa == 1){

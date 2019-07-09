@@ -127,28 +127,33 @@
                             </div>
                                         <div  v-if="documentos">
                                             <form role="form" @submit.prevent="validate">
-                                                <div class="row" align="right">
+                                                <div class="row" align="left">
                                                     <div class="table-responsive col-md-12">
-                                                        <div class="col-6">
+                                                        <div class="col-12">
                                                             <div class="table-responsive">
                                                                 <table class="table">
                                                                     <tbody>
-                                                                        <tr v-for="(moneda) in monedas">
-                                                                            <th style="width:50%" class="bg-gray-light">Subtotal Remesa ({{ moneda.abreviatura.replace(' ', '')}}):</th>
-                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(subtotal_x_moneda[moneda.id])).formatMoney(2,'.',',')}}</b></td>
-                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="width:25%" class="bg-gray-light">Remesa Autorizada (MXP):</th>
+                                                                            <td style="width:15%" class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
 
-                                                                        <tr>
-                                                                            <th style="width:50%" class="bg-gray-light">Subtotal Remesa (MXP):</th>
-                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(subtotal_x_moneda[1])).formatMoney(2,'.',',')}}</b></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th style="width:50%" class="bg-gray-light">Total Remesa (MXP):</th>
-                                                                            <td class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
-                                                                        </tr>
-                                                                        <tr>
+                                                                            <th style="width:10%"></th>
+                                                                            <td style="width:10%"></td>
+
                                                                             <th>Documentos Seleccionados a Pagar (MXP):</th>
-                                                                            <td align="right"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
+                                                                            <td style="width:15%" align="right"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="width:20%">Distribuciones Anteriores (MXP):</th>
+                                                                            <td style="width:15%" align="right"><b>$&nbsp; {{(parseFloat(monto_distribuido_anteriormente)).formatMoney(2,'.',',')}}</b></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th class="bg-gray-light">Distribucion Actual (MXP):</th>
+                                                                            <td align="right" class="bg-gray-light"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Restante por Distribuir (MXP):</th>
+                                                                            <td align="right"> <b>$&nbsp;{{(parseFloat(sumaImporteTotal-(sumaSeleccionImportes + monto_distribuido_anteriormente)).formatMoney(2,'.',','))}}</b></td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
@@ -185,6 +190,8 @@
                 subtotal_x_moneda : [],
                 original : null,
                 documentos : null,
+                monto_distribuido_anteriormente : 0,
+                documentos_disponibles: 0,
                 cuenta_cargo: [],
                 total_selecionado: 0,
                 total: 0,
@@ -312,6 +319,7 @@
 
             getDocumentos(){
                 this.documentos = [];
+                this.monto_distribuido_anteriormente = 0;
                 this.cargando = true;
                 let self = this
                 return self.$store.dispatch('finanzas/remesa/find',{
@@ -321,6 +329,7 @@
                     }
                 })
                     .then(data => {
+                        this.monto_distribuido_anteriormente = data.monto_distribuido;
                         this.original = JSON.parse(JSON.stringify(data.documento.data));
                         this.documentos = JSON.parse(JSON.stringify(data.documento.data));
                         this.getImporte();
@@ -350,11 +359,15 @@
                 let self = this;
                 self.subtotal_x_moneda =[];
                 self.subtotal_x_moneda[1] = 0;
+                self.documentos_disponibles = 0;
                 self.monedas.forEach(function (moneda, i) {
                     self.subtotal_x_moneda[moneda.id] = 0;
                 });
                 self.documentos.forEach(function (doc, i) {
-                    self.subtotal_x_moneda[doc.id_moneda] += parseFloat(doc.monto_total_solicitado);
+                    if(doc.disponible == 1) {
+                        self.subtotal_x_moneda[doc.id_moneda] += parseFloat(doc.monto_total_solicitado);
+                        self.documentos_disponibles += 1;
+                    }
                 })
             },
             salir(){
