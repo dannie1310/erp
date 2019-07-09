@@ -17,4 +17,15 @@ class Cambio extends Model
     protected $connection = 'cadeco';
     protected $table = 'cambios';
     protected $primaryKey = 'id_moneda';
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            $fecha = '2019-04-21';
+            //return $query->where('fecha', '=', Carbon::now()->format('Y-m-d'));
+            return $query->where('fecha', '=',$fecha);
+        });
+    }
 }

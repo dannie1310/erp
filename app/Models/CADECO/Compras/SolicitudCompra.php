@@ -14,8 +14,7 @@ class SolicitudCompra extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 17)
-                ->where('opciones', '=', 1);
+            return $query->where('tipo_transaccion', '=', 17);
         });
     }
 

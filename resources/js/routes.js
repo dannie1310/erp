@@ -182,8 +182,8 @@ export const routes = [
                     middleware: [auth, context, access]
                 }
             },
-           /* {
-                path: '/sao/compras/orden-compra',
+            {
+                path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue'),
                 meta: {
                     middleware: [auth, context]
@@ -199,7 +199,7 @@ export const routes = [
                         permission: ['consultar_orden_compra']
                     }
                 }]
-            },*/
+            },
             {
                 path: 'solicitud-compra',
                 component: require('./components/compras/solicitud-compra/Layout'),
