@@ -9,7 +9,7 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
-use App\Http\Transformers\CADECO\Compra\OrdenCompraTransformer;
+use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use App\Http\Transformers\CADECO\CostoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
