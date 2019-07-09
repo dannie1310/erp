@@ -31,7 +31,7 @@
                     { title: 'Folio Orden de Compra', field: 'numero_folio', thComp: require('../../globals/th-Filter'), sortable: true },
                     { title: 'Empresa', field: 'id_empresa', thComp: require('../../globals/th-Filter'), sortable: true },
                     { title: 'Fecha de Registro', field: 'FechaHoraRegistro', sortable: true },
-                    { title: 'Folio Solicitud', field: 'id_antecedente', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Folio Solicitud', field: 'id_antecedente', thComp: require('../../globals/th-Filter'), sortable: false },
                     { title: 'Observaciones', field: 'observaciones', thComp: require('../../globals/th-Filter'), sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],

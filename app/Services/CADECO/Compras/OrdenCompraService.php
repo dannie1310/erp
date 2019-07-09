@@ -45,7 +45,7 @@ class OrdenCompraService
         }
 
         if(isset($data['id_antecedente'])){
-            $solicitud = Solicitud::query()->where([['id_antecedente', 'LIKE', '%'.$data['id_antecedente'].'%']])->get();
+            $solicitud = Solicitud::query()->where([['numero_folio', 'LIKE', '%'.$data['id_antecedente'].'%']])->get();
             foreach ($solicitud as $e){
                 $ordenes = $ordenes->whereOr([['id_antecedente', '=', $e->id_transaccion]]);
             }
