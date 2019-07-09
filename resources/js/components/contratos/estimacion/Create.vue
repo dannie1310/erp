@@ -31,19 +31,19 @@
 								</div>
 							</div>
 							<div class="form-group row">
-								<label for="staticEmail" class="col-sm-2 col-form-label">Objeto</label>
+								<label class="col-sm-2 col-form-label">Objeto</label>
 								<div class="col-sm-10">
 									{{ subcontrato.referencia }}
 								</div>
 							</div>
 							<div class="form-group row" v-if="subcontrato.empresa">
-								<label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+								<label class="col-sm-2 col-form-label">Contratista</label>
 								<div class="col-sm-10">
 									{{ subcontrato.empresa.razon_social }}
 								</div>
 							</div>
 							<div class="form-group row">
-								<label for="inputPassword" class="col-sm-2 col-form-label">Observaciones</label>
+								<label class="col-sm-2 col-form-label">Observaciones</label>
 								<div class="col-sm-10">
 									<textarea
 											name="observaciones"
@@ -194,7 +194,7 @@
 
 							>
 							<p v-else>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></td>
-						<td class="numerico">{{ concepto.EsActividad == '1' ? parseFloat(concepto.PrecioUnitario).formatMoney(2) : '' }}</td>
+						<td class="numerico">{{ concepto.EsActividad == '1' ? parseFloat(concepto.PrecioUnitario).formatMoney(4) : '' }}</td>
 						<td class="editable-cell numerico">
 							<input v-on:change="changeImporte(concepto)" class="text" v-if="concepto.EsActividad == '1'" v-model="concepto.ImporteEstimado"
 
@@ -245,18 +245,18 @@
 
 		methods: {
         	changeCantidad(concepto) {
-				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100);
-				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario);
+				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100).toFixed(2);
+				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario).toFixed(4);
 			},
 
 			changePorcentaje(concepto) {
-				concepto.CantidadEstimada = ((concepto.CantidadSubcontratada * concepto.PctEstimado) / 100);
-				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario);
+				concepto.CantidadEstimada = ((concepto.CantidadSubcontratada * concepto.PctEstimado) / 100).toFixed(2);
+				concepto.ImporteEstimado = (concepto.CantidadEstimada * concepto.PrecioUnitario).toFixed(4);
 			},
 
 			changeImporte(concepto) {
-				concepto.CantidadEstimada = (concepto.ImporteEstimado / concepto.PrecioUnitario);
-				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100);
+				concepto.CantidadEstimada = (concepto.ImporteEstimado / concepto.PrecioUnitario).toFixed(2);
+				concepto.PctEstimado = ((concepto.CantidadEstimada / concepto.CantidadSubcontratada) * 100).toFixed(2);
 			},
 
 			validate() {
@@ -280,6 +280,8 @@
 					})
 							.then(data=> {
 								this.$router.push({name: 'estimacion-index'});
+								this.$router.push({name: 'estimacion'});
+
 							})
 				} else {
         		    swal('','Debe estimar al menos un concepto','warning');
@@ -348,6 +350,14 @@
             	val.forEach(v => {
             		$('.' + v).removeAttr('style')
 				})
+			},
+			conceptos: {
+            	handler() {
+            		setTimeout(() => {
+						this.$validator.validate()
+					}, 500);
+				},
+				deep: true
 			}
         }
     }
@@ -426,5 +436,9 @@
 
 	.text.is-invalid {
 		color: #dc3545;
+	}
+
+	table tbody td input.text {
+		text-align: right;
 	}
 </style>

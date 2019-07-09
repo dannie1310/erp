@@ -4,6 +4,7 @@ namespace App\Http\Transformers\CADECO;
 
 
 use App\Http\Transformers\CADECO\Contabilidad\CuentaEmpresaTransformer;
+use App\Http\Transformers\CADECO\Finanzas\CuentaBancariaProveedorTransformer;
 use App\Models\CADECO\Empresa;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
@@ -18,7 +19,8 @@ class EmpresaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'cuentasEmpresa',
         'cuentas',
-        'subcontratos'
+        'subcontratos',
+        'cuentasBancariasProveedor'
     ];
 
     public function transform(Empresa $model)
@@ -29,6 +31,10 @@ class EmpresaTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeCuentasEmpresa(Empresa $model)
     {
         if ($cuentas = $model->cuentasEmpresa) {
@@ -37,6 +43,10 @@ class EmpresaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeCuentas(Empresa $model)
     {
         if($cuentas = $model->cuentas)
@@ -46,11 +56,26 @@ class EmpresaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeSubcontratos(Empresa $model)
     {
         if($subcontratos = $model->subcontrato)
         {
             return $this->collection($subcontratos, new SubcontratoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeCuentasBancariasProveedor(Empresa $model){
+        if($cuenta = $model->cuentaProveedor){
+            return $this->collection($cuenta, new CuentaBancariaProveedorTransformer);
         }
         return null;
     }

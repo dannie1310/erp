@@ -74,7 +74,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(movimiento, i) in poliza.movimientos.data">
+                            <tr v-for="(movimiento, i) in movimientosOrdenados">
                                 <td>{{ i + 1 }}</td>
                                 <td>{{ movimiento.cuenta_contable }}</td>
                                 <td>{{ movimiento.tipoCuentaContable ? movimiento.tipoCuentaContable.descripcion : 'No registrada'}}</td>
@@ -150,6 +150,10 @@
         },
 
         computed: {
+            movimientosOrdenados() {
+                return _.sortBy(this.poliza.movimientos.data, ['id_tipo_movimiento_poliza', 'concepto'])
+            },
+
             poliza() {
                 return this.$store.getters['contabilidad/poliza/currentPoliza']
             },

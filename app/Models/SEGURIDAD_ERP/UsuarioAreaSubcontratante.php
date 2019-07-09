@@ -6,10 +6,10 @@ namespace App\Models\SEGURIDAD_ERP;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AreaSubcontratante extends Model
+class UsuarioAreaSubcontratante extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'dbo.usuarios_areas_subcontratantes';
+    protected $table = 'SEGURIDAD_ERP.dbo.usuarios_areas_subcontratantes';
 
     public $timestamps = false;
 
@@ -25,9 +25,5 @@ class AreaSubcontratante extends Model
             $model->registro = auth()->id();
             $model->timestamp_registro = date('Y-m-d h:i:s');
         });
-
-        self::delete(function ($model){
-        });
-
     }
 }

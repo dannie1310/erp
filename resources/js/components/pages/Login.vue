@@ -9,9 +9,9 @@
         },
 
         mounted() {
-            if(this.$session.exists()) {
-                this.$session.destroy();
-            }
+            setTimeout(() => {
+                localStorage.clear();
+            }, 100);
 
             let code = this.$route.query.code;
             if (!code) {
@@ -34,6 +34,7 @@
                         this.$store.dispatch('igh/usuario/currentUser')
                             .then(data => {
                                 this.$session.set('user', data.user);
+                                this.$session.set('permisos_generales', data.permisos_generales);
                                 this.$store.commit("auth/loginSuccess", {user: data.user, access_token: res.access_token});
                                 this.$router.push({name: 'portal'});
                             })

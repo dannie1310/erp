@@ -11,8 +11,10 @@ namespace App\Models\IGH;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
-use App\Models\SEGURIDAD_ERP\AreaSubcontratante;
+use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
+use App\Models\SEGURIDAD_ERP\Google2faSecret;
 use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\Models\SEGURIDAD_ERP\RolGeneral;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Traits\IghAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -196,7 +198,6 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function areasSubcontratantes()
     {
         return $this->belongsToMany( TipoAreaSubcontratante::class, 'dbo.usuarios_areas_subcontratantes', 'id_usuario', 'id_area_subcontratante' );
-
     }
 
     public function permisos()
@@ -212,7 +213,31 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $permisos;
     }
 
-    public function getNombreCompletoAttribute(){
+    public function permisosGenerales()
+    {
+        $permisos = [];
+        foreach ($this->rolesGenerales as $rol) {
+            // Validate against the Permission table
+            foreach ($rol->permisos as $perm) {
+                array_push($permisos, $perm->name);
+            }
+        }
+
+        return $permisos;
+    }
+
+    public function rolesGenerales()
+    {
+        return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
+    }
+
+    public function getNombreCompletoAttribute()
+    {
         return $this->nombre." ".$this->apaterno." ".$this->amaterno;
+    }
+
+    public function google2faSecret()
+    {
+        return $this->hasOne(Google2faSecret::class, 'id_user', 'idusuario');
     }
 }

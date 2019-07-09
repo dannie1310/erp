@@ -16,6 +16,9 @@
     RewriteCond %{HTTP:db} ^(.*)
     RewriteRule .* - [E=HTTP_DB:%{HTTP:db}]
 
+    RewriteCond %{HTTP:verification_code} ^(.*)
+    RewriteRule .* - [E=HTTP_VERIFICATION_CODE:%{HTTP:verification_code}]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
