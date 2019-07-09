@@ -73,7 +73,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-for="(doc, i) in documentos" v-if="doc.disponible == 1">
+                                                <tr v-for="(doc, i) in documentos">
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
                                                     <td v-if="doc.empresa">{{doc.empresa.razon_social}}</td>
@@ -135,7 +135,7 @@
                                                                     <tbody>
                                                                         <tr>
                                                                             <th style="width:25%" class="bg-gray-light">Remesa Autorizada (MXP):</th>
-                                                                            <td style="width:15%" class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
+                                                                            <td style="width:15%" class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(monto_total_remesa)).formatMoney(2,'.',',')}}</b></td>
 
                                                                             <th style="width:10%"></th>
                                                                             <td style="width:10%"></td>
@@ -153,7 +153,7 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <th>Restante por Distribuir (MXP):</th>
-                                                                            <td align="right"> <b>$&nbsp;{{(parseFloat(sumaImporteTotal-(sumaSeleccionImportes + monto_distribuido_anteriormente)).formatMoney(2,'.',','))}}</b></td>
+                                                                            <td align="right"> <b>$&nbsp;{{(parseFloat(monto_total_remesa-(sumaSeleccionImportes + monto_distribuido_anteriormente)).formatMoney(2,'.',','))}}</b></td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
@@ -191,6 +191,7 @@
                 original : null,
                 documentos : null,
                 monto_distribuido_anteriormente : 0,
+                monto_total_remesa : 0,
                 documentos_disponibles: 0,
                 cuenta_cargo: [],
                 total_selecionado: 0,
@@ -206,19 +207,6 @@
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
-            },
-            sumaImporteTotal() {
-                let result = 0;
-                let count = 0;
-                this.documentos.forEach(function (doc, i) {
-                       result += parseFloat(doc.monto_total_solicitado);
-                       if(doc.disponible == 1) {
-                           count += 1;
-                       }
-                })
-                this.total = result;
-                this.count = count;
-                return result
             },
             sumaSeleccionImportes() {
                 let result = 0;
@@ -304,35 +292,23 @@
                     });
             },
 
-            getImporte() {
-                let result = 0;
-                this.documentos.forEach(function (doc, i) {
-                    doc.importe_total = 0
-                    if (doc.tipo_cambio == 1.0) {
-                        doc.importe_total = parseFloat(doc.monto_total);
-                    } else {
-                        doc.importe_total = parseFloat(doc.monto_total *  doc.moneda.tipo_cambio);
-                    }
-                })
-                return result
-            },
-
             getDocumentos(){
                 this.documentos = [];
                 this.monto_distribuido_anteriormente = 0;
+                this.monto_total_remesa = 0;
                 this.cargando = true;
                 let self = this
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco', 'documento.moneda']
+                        include: ['documentosDisponibles', 'documentosDisponibles.empresa.cuentasBancariasProveedor.banco', 'documentosDisponibles.moneda', 'remesaLiberada']
                     }
                 })
                     .then(data => {
-                        this.monto_distribuido_anteriormente = data.monto_distribuido;
-                        this.original = JSON.parse(JSON.stringify(data.documento.data));
-                        this.documentos = JSON.parse(JSON.stringify(data.documento.data));
-                        this.getImporte();
+                        this.monto_distribuido_anteriormente = data.remesaLiberada.monto_distribuido;
+                        this.monto_total_remesa = data.remesaLiberada.monto_total_remesa;
+                        this.original = JSON.parse(JSON.stringify(data.documentosDisponibles.data));
+                        this.documentos = JSON.parse(JSON.stringify(data.documentosDisponibles.data));
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -359,15 +335,12 @@
                 let self = this;
                 self.subtotal_x_moneda =[];
                 self.subtotal_x_moneda[1] = 0;
-                self.documentos_disponibles = 0;
                 self.monedas.forEach(function (moneda, i) {
                     self.subtotal_x_moneda[moneda.id] = 0;
                 });
                 self.documentos.forEach(function (doc, i) {
-                    if(doc.disponible == 1) {
-                        self.subtotal_x_moneda[doc.id_moneda] += parseFloat(doc.monto_total_solicitado);
-                        self.documentos_disponibles += 1;
-                    }
+                    self.subtotal_x_moneda[doc.id_moneda] += parseFloat(doc.monto_total_solicitado);
+                    self.documentos_disponibles += 1;
                 })
             },
             salir(){

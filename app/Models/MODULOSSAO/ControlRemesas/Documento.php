@@ -10,6 +10,7 @@ namespace App\Models\MODULOSSAO\ControlRemesas;
 
 
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Moneda;
 use Illuminate\Database\Eloquent\Model;
@@ -54,18 +55,24 @@ class Documento extends Model
         return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
     }
 
-    public function getDisponibleAttribute()
-    {
-        $existente = DistribucionRecursoRemesaPartida::query()->select('id_documento')->where('id_documento', '=', $this->IDDocumento)->whereNotIn('estado', [-1,-2])->get()->toArray();
-
-        if ($existente != []) {
-            return 0;
-        }else{
-            return 1;
-        }
-    }
-
     public function tipoDocumento(){
         return $this->belongsTo(TipoDocumento::class, 'IDTipoDocumento', 'IDTipoDocumento');
+    }
+
+    public function  scopeDisponiblesParaDistribuir($query, $id_remesa){
+
+        $existentes = DistribucionRecursoRemesa::select('id')->where('id_remesa', '=', $id_remesa)->where('estado','>=', 0)->get()->toArray();
+        $documentos = DistribucionRecursoRemesaPartida::select('id_documento')->whereIn('id_distribucion_recurso', $existentes)->where('estado','>=', 0)->get()->toArray();
+
+        return $query->whereNotIn('IDDocumento', $documentos);
+    }
+
+    public function getImporteTotalAttribute(){
+        if($this->IDMoneda != 1) {
+            $moneda = Moneda::with('cambio')->where('id_moneda', '=', $this->IDMoneda)->get()->toArray();
+            return $this->MontoTotal * $moneda[0]['cambio']['cambio'];
+        }else {
+            return $this->MontoTotal;
+        }
     }
 }

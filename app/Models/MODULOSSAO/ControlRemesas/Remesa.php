@@ -56,12 +56,6 @@ class Remesa extends Model
         return $query->has('remesaLiberada');
     }
 
-    public function  getdistribucionesAnterioresMonto(){
-        return $this->distribucionRemesa()->where('estado', '>=', 0)->sum('monto_distribuido');
-    }
-
-
-
     public function getTipoAttibute(){
         if($this->IDTipoRemesa == 1){
             return 'Ordinaria';

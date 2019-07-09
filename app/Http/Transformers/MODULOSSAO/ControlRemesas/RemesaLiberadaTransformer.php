@@ -35,7 +35,9 @@ class RemesaLiberadaTransformer extends TransformerAbstract
     public function transform(RemesaLiberada $model){
         return [
             'id' => $model->getKey(),
-            'fecha' => $model->FechaHoraLiberacion
+            'fecha' => $model->FechaHoraLiberacion,
+            'monto_distribuido' => $model->getdistribucionesAnterioresMonto(),
+            'monto_total_remesa' => $model->getRemesaAutorizadaMonto()
         ];
     }
 
