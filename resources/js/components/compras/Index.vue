@@ -4,6 +4,6 @@
 
 <script>
     export default {
-        name: "solicitud-compra-index",
+        name: "compras-index",
     }
 </script>

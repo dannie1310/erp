@@ -183,6 +183,24 @@ export const routes = [
                 }
             },
             {
+                path: 'orden-compra',
+                component: require('./components/compras/orden-compra/partials/Layout.vue'),
+                meta: {
+                    middleware: [auth, context]
+                },
+                children: [{
+                    path: '/',
+                    name: 'orden-compra',
+                    component: require('./components/compras/orden-compra/Index'),
+                    meta: {
+                        title: 'Ordenes de Compra',
+                        breadcrumb: { parent: 'compras', name: 'ORDENES DE COMPRA' },
+                        middleware: [auth, context, permission],
+                        permission: ['consultar_orden_compra']
+                    }
+                }]
+            },
+            {
                 path: 'solicitud-compra',
                 component: require('./components/compras/solicitud-compra/Layout'),
                 children: [

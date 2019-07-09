@@ -54,6 +54,10 @@ class Transaccion extends Model
 
     }
 
+    public function getNumeroFolioFormatOrdenAttribute(){
+        return '# '. str_pad($this->numero_folio, 5,"0",STR_PAD_LEFT);
+    }
+
     public function getMontoFormatAttribute()
     {
         return '$ ' . number_format($this->monto,2);
@@ -116,6 +120,9 @@ class Transaccion extends Model
         $date = date_create($this->vencimiento);
         return date_format($date,"Y-m-d");
 
+    }
+    public function  getObservacionesFormatAttribute(){
+        return substr($this->observaciones,0,60)."...";
     }
 
     public  function costo(){

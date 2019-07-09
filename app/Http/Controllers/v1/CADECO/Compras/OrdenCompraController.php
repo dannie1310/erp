@@ -44,11 +44,14 @@ class OrdenCompraController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:editar_cuenta_almacen');
+        $this->middleware('permiso:consultar_orden_compra')->only('paginate');
 
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
-
+    public function pdfOrdenCompra($id)
+    {
+        return $this->service->pdfOrdenCompra($id)->create();
+    }
 }
