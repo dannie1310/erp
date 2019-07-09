@@ -67,6 +67,7 @@
                                         $(this.$refs.modal2fa).modal('hide');
                                     })
                             } else {
+                                $(this.$refs.codeInput).pincodeInput().data('plugin_pincodeInput').clear();
                                 $(this.$refs.codeInput).pincodeInput().data('plugin_pincodeInput').focus();
                                 $(errorElement).html("El código que ingresó no es válido");
                             }
