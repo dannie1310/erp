@@ -91,7 +91,7 @@
                                 <th>Importe</th>
                                 <th>Tipo Cambio</th>
                                 <th>Importe con TC</th>
-                                <th>Tipo Cambio Actual!!</th>
+                                <th>Tipo Cambio Actual</th>
                                 <th>Importe Pesos</th>
                                 <th>Cuenta Abono</th>
                                 <th>Cuenta Cargo</th>
