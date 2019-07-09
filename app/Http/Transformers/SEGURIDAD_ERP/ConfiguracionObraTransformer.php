@@ -37,12 +37,16 @@ class ConfiguracionObraTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'logotipo_original' => $this->getImagen($model->logotipo_original),
+            'logotipo_original' => request('logo') ? $this->getImagen($model->logotipo_original) : null,
             'id_obra' => $model->id_obra,
             'esquema_permisos' => $model->esquema_permisos,
             'id_tipo_proyecto' => $model->id_tipo_proyecto,
             'id_responsable' => $model->id_responsable,
-            'id_administrador' => $model->id_administrador
+            'id_administrador' => $model->id_administrador,
+            'nombre' => $model->nombre,
+            'base_datos' => $model->proyecto->base_datos,
+            'id_proyecto' => $model->id_proyecto,
+            'id_obra' => $model->id_obra
         ];
     }
 

@@ -14,7 +14,11 @@ import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 
 //COMPRAS
+import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
+
+//CONFIGURACION
+import areaSubcontratante from './modules/configuracion/area-subcontratante';
 
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo';
@@ -41,9 +45,13 @@ import estimacion from './modules/contratos/estimacion';
 import fondoGarantia from './modules/contratos/fondo-garantia';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
+import contratoProyectado from './modules/contratos/contrato-proyectado';
 
 //FINANZAS
+import cuenta_bancaria_proveedor from './modules/finanzas/cuenta-bancaria-proveedor';
+import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
+import remesa from './modules/finanzas/remesa';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
@@ -51,10 +59,12 @@ import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
 import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
 
 //SEGURIDAD
+import configuracionObra from './modules/seguridad/configuracion-obra';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
 import sistema from './modules/seguridad/sistema';
+import sistemaObra from './modules/seguridad/sistema-obra';
 import tipoProyecto from './modules/seguridad/tipo-proyecto';
 
 //IGH
@@ -76,14 +86,21 @@ export default new Vuex.Store({
         'cadeco/material': material,
         'cadeco/moneda': moneda,
 
+        'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
+
+        'configuracion/area-subcontratante' : areaSubcontratante,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
+        'contratos/contrato-proyectado': contratoProyectado,
 
+        'finanzas/cuenta-bancaria-proveedor': cuenta_bancaria_proveedor,
+        'finanzas/distribuir-recurso-remesa': distribuir_recurso_remesa,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
+        'finanzas/remesa': remesa,
 
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
@@ -111,10 +128,12 @@ export default new Vuex.Store({
         'tesoreria/tipo-movimiento': tipoMovimiento,
         'tesoreria/traspaso-entre-cuentas': traspaso,
 
+        'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/rol-personalizado': rolPersonalizado,
         'seguridad/sistema': sistema,
+        'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
     },
     strict: process.env.NODE_ENV !== 'production'

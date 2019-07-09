@@ -2,7 +2,7 @@
     <body class="hold-transition sidebar-mini" :class="$router.currentRoute.name == 'portal' ? 'sidebar-collapse' : ''">
     <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
-    <div v-if="currentUser" class="wrapper">
+    <div v-if="currentUser && $router.currentRoute.name != 'google-2fa'" class="wrapper">
         <AppHeader/>
         <AppSidebar/>
         <!-- Content Wrapper. Contains page content -->
@@ -55,10 +55,6 @@
                 </div>
             </div>
         </aside>
-        <!-- /.control-sidebar -->
-        <div class="zoom" v-if="$router.currentRoute.name != 'portal'">
-            <router-link :to="{name: 'portal'}" class="zoom-fab zoom-btn-large zoom-btn-igh" id="zoomBtn"><i class="fa fa-th-large fa-2x" style="padding-top: 16px"></i> </router-link>
-        </div>
     </div>
     <div v-else>
         <router-view></router-view>

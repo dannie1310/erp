@@ -139,6 +139,24 @@ export default {
                     });
             });
         },
+        pdf(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'pdf/'+ payload.id, { params: payload.params, responseType:'blob', })
+                    .then(r => r.data)
+                    .then(data => {
+                         const url = window.URL.createObjectURL(new Blob([data],{ type: 'application/pdf' }));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'Formato-Pago Anticipado-'+payload.id+'.pdf');
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
     },
 
     getters: {

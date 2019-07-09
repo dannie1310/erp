@@ -18,6 +18,20 @@ class Item extends Model
     protected $primaryKey = 'id_item';
     public $timestamps = false;
 
+    protected $fillable = [
+        'id_transaccion',
+        'id_antecedente',
+        'item_antecedente',
+        'id_concepto',
+        'cantidad',
+        'cantidad_material',
+        'cantidad_mano_obra',
+        'importe',
+        'precio_unitario',
+        'precio_material',
+        'precio_mano_obra',
+    ];
+
     public function contrato()
     {
         return $this->belongsTo(Contrato::class, 'item_antecedente', 'id_concepto');

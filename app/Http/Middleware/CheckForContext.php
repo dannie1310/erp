@@ -39,9 +39,22 @@ class CheckForContext
      */
     public function handle($request, Closure $next)
     {
-        if (! $this->context->isEstablished()) {
-            throw new BadRequestHttpException('No Context Established');
+        if ($request->ajax()) {
+            if(request()->header('db') && request()->header('idobra')) {
+                session()->put('db', request()->header('db'));
+                session()->put('id_obra', request()->header('idobra'));
+            }
         }
+
+        if (! $this->context->isEstablished()) {
+            if (request()->get('db') && request()->get('idobra')) {
+                session()->put('db', request()->get('db'));
+                session()->put('id_obra', request()->get('idobra'));
+            } else {
+                throw new BadRequestHttpException('No Context Established');
+            }
+        }
+
         $this->setContext();
         return $next($request);
     }
@@ -52,7 +65,5 @@ class CheckForContext
     private function setContext()
     {
         $this->config->set('database.connections.cadeco.database', $this->context->getDatabase());
-        session()->put('db', $this->context->getDatabase());
-        session()->put('id_obra', $this->context->getIdObra());
     }
 }

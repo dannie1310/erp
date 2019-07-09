@@ -21,6 +21,18 @@ export const routes = [
         }
     },
     {
+        path: '/google-2fa',
+        name: 'google-2fa',
+        components: {
+            default: require('./components/globals/GoogleAuth.vue'),
+            menu: null
+        },
+        meta: {
+            title: 'Veri',
+            middleware: [auth]
+        }
+    },
+    {
         path: '/sao',
         name: 'home',
         component: require('./components/pages/Home.vue'),
@@ -29,6 +41,93 @@ export const routes = [
             middleware: [auth, context],
             breadcrumb: {name: 'INICIO'}
         }
+    },
+    {
+        path: '/configuracion',
+        name: 'configuracion_',
+        components:  {
+            default: require('./components/pages/Configuracion.vue'),
+            menu: require('./components/pages/partials/MenuConfiguracion.vue')
+        },
+        meta: {
+            title: 'CONFIGURACIÓN',
+            middleware: [auth, permission],
+            permission: 'asignar_areas_subcontratantes',
+            general: true
+        }
+    },
+    {
+        path: '/auditoria',
+        name: 'auditoria',
+        components:  {
+            default: require('./components/auditoria/Index.vue'),
+            menu: require('./components/auditoria/partials/Menu.vue')
+        },
+        meta: {
+            title: 'Auditoría',
+            middleware: [auth, permission],
+            permission: ['auditoria_consultar_permisos_por_obra','auditoria_consultar_permisos_por_usuario'],
+            general: true,
+
+        }
+    },
+    {
+        path: '/auditoria/permisos',
+        components: {
+            default: require('./components/auditoria/partials/Layout.vue'),
+            menu: require('./components/auditoria/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'permisos-obra',
+                component: require('./components/auditoria/Index'),
+                meta: {
+                    title: 'Permisos',
+                    breadcrumb: {parent: 'auditoria', name: 'PERMISOS ÁSIGNADOS'},
+                    middleware: [auth]
+
+                }
+            },
+            {
+                path: 'por-obra',
+                component: require('./components/auditoria/por-obra/partials/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'por-obra',
+                        component: require('./components/auditoria/por-obra/Index'),
+                        meta: {
+                            title: 'Permisos Asignados por Obra',
+                            breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR OBRA'},
+                            middleware: [auth, permission],
+                            permission: 'auditoria_consultar_permisos_por_obra',
+                            general: true,
+
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'por-usuario',
+                component: require('./components/auditoria/por-usuario/partials/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'por-usuario',
+                        component: require('./components/auditoria/por-usuario/Index'),
+                        meta: {
+                            title: 'Permisos Asignados por Usuario',
+                            breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR USUARIO'},
+                            middleware: [auth, permission],
+                            permission: 'auditoria_consultar_permisos_por_usuario',
+                            general: true,
+
+                        }
+                    },
+                ]
+            },
+        ]
     },
     {
         path: '/sao/configuracion',
@@ -65,6 +164,42 @@ export const routes = [
             middleware: auth,
             breadcrumb: {name: 'SELECCIONAR OBRA'}
         }
+    },
+    {
+        path: '/sao/compras',
+        components: {
+            default: require('./components/compras/partials/Layout.vue'),
+            menu: require('./components/compras/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'compras',
+                component: require('./components/compras/Index'),
+                meta: {
+                    title: 'Compras',
+                    breadcrumb: {parent:'home', name: 'COMPRAS'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'solicitud-compra',
+                component: require('./components/compras/solicitud-compra/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-compra',
+                        component: require('./components/compras/solicitud-compra/Index'),
+                        meta: {
+                            title: 'SOLICITUDES DE COMPRA',
+                            breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_compra'
+                        }
+                    }
+                ]
+            },
+        ]
     },
     {
         path: '/sao/contabilidad',
@@ -254,6 +389,23 @@ export const routes = [
                 }
             },
             {
+                path: 'proyectado',
+                component: require('./components/contratos/proyectado/partials/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'proyectado',
+                        component: require('./components/contratos/proyectado/Index'),
+                        meta: {
+                            title: 'Contratos Proyectados',
+                            breadcrumb: {parent: 'contratos', name: 'PROYECTADOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'estimacion',
                 component: require('./components/contratos/estimacion/Layout'),
                 children: [
@@ -262,10 +414,21 @@ export const routes = [
                         name: 'estimacion',
                         component: require('./components/contratos/estimacion/Index'),
                         meta: {
-                            title: 'Estimaciones',
+                            title: 'ESTIMACIONES',
                             breadcrumb: {parent: 'contratos', name: 'ESTIMACIONES'},
                             middleware: [auth, context],
 
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'estimacion-create',
+                        component: require('./components/contratos/estimacion/Create'),
+                        meta: {
+                            title: 'ESTIMACIONES',
+                            breadcrumb: {parent: 'estimacion', name: 'NUEVA'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_estimacion_subcontrato'
                         }
                     },
                     {
@@ -286,7 +449,7 @@ export const routes = [
             },
 
             {
-                path: '/sao/contratos/fondo-garantia',
+                path: 'fondo-garantia',
                 component: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
                 meta: {
                     middleware: [auth, context]
@@ -308,7 +471,7 @@ export const routes = [
             },
 
             {
-                path: '/sao/contratos/fondo-garantia/solicitud-movimiento',
+                path: 'solicitud-movimiento',
                 components: {
                     default: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Layout.vue'),
                 },
@@ -382,6 +545,58 @@ export const routes = [
                             permission: 'consultar_solicitud_pago_anticipado'
                         }
                     },
+                ]
+            },
+            {
+                path: 'distribuir-recurso-remesa',
+                component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'distribuir-recurso-remesa',
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
+                        meta: {
+                            title: 'Distribuir Recursos Autorizados de Remesa',
+                            breadcrumb: {name: 'DISTRIBUIR RECURSOS DE REMESA', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'distribuir-recurso-remesa-create',
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
+                        meta: {
+                            title: 'Registrar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'distribuir-recurso-remesa-show',
+                        props: true,
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Show'),
+                        meta: {
+                            title: 'Consultar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: ':id/autorizar',
+                        name: 'distribuir-recurso-remesa-autorizar',
+                        props: true,
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Autorizar'),
+                        meta: {
+                            title: 'Autorizar Distribución de Recursos Autorizados',
+                            breadcrumb: {name: 'AUTORIZAR', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'autorizar_distribucion_recursos_remesa'
+                        }
+                    }
                 ]
             },
         ]

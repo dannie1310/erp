@@ -44,6 +44,7 @@ class OrdenCompraController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:editar_cuenta_almacen');
 
         $this->service = $service;
         $this->fractal = $fractal;

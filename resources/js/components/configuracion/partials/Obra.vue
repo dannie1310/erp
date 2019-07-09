@@ -188,7 +188,7 @@
                 <label for="fecha_inicial" class="col-lg-2 col-form-label">Inicio de Obra</label>
                 <div class="col-lg-4">
                     <input type="date" class="form-control" id="fecha_inicial" v-model="form.fecha_inicial"
-                           v-validate="{date_format: 'yyyy-MM-dd'}"
+                           v-validate="{date_format: 'YYYY-MM-DD'}"
                            name="fecha_inicial"
                            data-vv-as="Inicio de Obra"
                            :class="{'is-invalid': errors.has('fecha_inicial')}"
@@ -198,7 +198,7 @@
                 <label for="fecha_final" class="col-lg-2 col-form-label">Fin de Obra</label>
                 <div class="col-lg-4">
                     <input type="date" id="fecha_final" class="form-control" v-model="form.fecha_final"
-                           v-validate="{date_format: 'yyyy-MM-dd'}"
+                           v-validate="{date_format: 'YYYY-MM-DD'}"
                            name="fecha_final"
                            data-vv-as="Fin de Obra"
                            :class="{'is-invalid': errors.has('fecha_final')}"
