@@ -50,8 +50,8 @@
                                             <div class="col-9">
                                                 <h3>Documentos Liberados de la Remesa</h3>
                                             </div>
-                                            <div class="col-3">
-                                                <h6 align="right">Total: {{count}}</h6>
+                                            <div class="col-3" v-if ="documentos">
+                                                <h6 align="right">Total: {{documentos.length}}</h6>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -116,7 +116,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td class="text-center" v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 && doc.tipo_cambio === 1"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                                    <td class="text-center" v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 && doc.tipo_cambio == 1"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                                     <td class="text-center" v-else-if="doc.tipo_cambio != 1"><i class="fa fa-exclamation-triangle" style="color: orange" title="Partida en moneda extranjera no seleccionable por el momento."></i></td>
                                                     <td class="text-center" v-else><i class="fa fa-exclamation-triangle" style="color: red" title="No seleccionable por datos faltantes."></i></td>
                                                 </tr>
@@ -187,16 +187,12 @@
                 id_remesa : '',
                 remesas : [],
                 monedas : [],
-                subtotal_x_moneda : [],
                 original : null,
                 documentos : null,
                 monto_distribuido_anteriormente : 0,
                 monto_total_remesa : 0,
-                documentos_disponibles: 0,
                 cuenta_cargo: [],
                 total_selecionado: 0,
-                total: 0,
-                count:0,
                 cargando: false
             }
         },
@@ -239,7 +235,7 @@
                 return !!this.original.documentos.find(doc => {
                     return !doc .id
                 })
-            },
+            }
         },
         methods: {
             getRemesas() {
@@ -313,7 +309,6 @@
                     .finally(() => {
                         this.cargando = false;
                         this.getCuentaCargo();
-                        this.sumaSubtotalPorMoneda();
                     });
             },
 
@@ -331,18 +326,7 @@
                     }
                 });
             },
-            sumaSubtotalPorMoneda(){
-                let self = this;
-                self.subtotal_x_moneda =[];
-                self.subtotal_x_moneda[1] = 0;
-                self.monedas.forEach(function (moneda, i) {
-                    self.subtotal_x_moneda[moneda.id] = 0;
-                });
-                self.documentos.forEach(function (doc, i) {
-                    self.subtotal_x_moneda[doc.id_moneda] += parseFloat(doc.monto_total_solicitado);
-                    self.documentos_disponibles += 1;
-                })
-            },
+
             salir(){
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/salir')
                     .then(() => {
