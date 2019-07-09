@@ -769,7 +769,7 @@ class OrdenCompraFormato extends Rotation
             }else{
                 if(!empty($this->destino_item[0]->id_almacen)){
                     $item_arr= Almacen::where('id_almacen','=',$this->destino_item[0]->id_almacen)->where('id_obra','=',$this->ordenCompra[0]->obra->id_obra)->get();
-                    $this->obs_item=$item_arr->descripcion;
+                    $this->obs_item=$item_arr[0]->descripcion;
                 }else{
                     $this->obs_item='';
                 }
