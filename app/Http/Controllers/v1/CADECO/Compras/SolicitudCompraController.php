@@ -5,7 +5,7 @@ namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Compra\SolicitudCompraTransformer;
+use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
 use App\Services\CADECO\Compras\SolicitudCompraService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;

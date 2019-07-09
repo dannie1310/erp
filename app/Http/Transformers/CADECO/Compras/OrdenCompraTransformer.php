@@ -6,7 +6,7 @@
  * Time: 01:44 PM
  */
 
-namespace App\Http\Transformers\CADECO\Compra;
+namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;

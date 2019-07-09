@@ -10,7 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Compra\OrdenCompraTransformer;
+use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
 use App\Services\CADECO\Compras\OrdenCompraService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
