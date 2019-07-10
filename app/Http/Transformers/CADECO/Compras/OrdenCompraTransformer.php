@@ -6,12 +6,14 @@
  * Time: 01:44 PM
  */
 
-namespace App\Http\Transformers\CADECO\Compra;
+namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Models\CADECO\OrdenCompra;
+use App\Http\Transformers\CADECO\SolicitudTransformer;
+use App\Models\CADECO\Compras\OrdenCompra;
 use League\Fractal\TransformerAbstract;
+use App\Models\CADECO\Solicitud;
 
 class OrdenCompraTransformer extends TransformerAbstract
 {
@@ -22,6 +24,7 @@ class OrdenCompraTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'empresa',
+        'solicitud'
     ];
 
     /**
@@ -50,6 +53,7 @@ class OrdenCompraTransformer extends TransformerAbstract
             'retencion'=>(float)$model->retencion,
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
+            'observaciones_format'=>(string)$model->observaciones_format,
             'id_moneda'=>(int)$model->id_moneda,
             'destino'=>(string)$model->destino,
             'saldo'=>(float)$model->saldo,
@@ -67,6 +71,12 @@ class OrdenCompraTransformer extends TransformerAbstract
     public function includeEmpresa(OrdenCompra $model) {
         if ($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+    public function includeSolicitud(OrdenCompra $model) {
+        if ($solicitud = $model->solicitud) {
+            return $this->item($solicitud, new SolicitudTransformer());
         }
         return null;
     }

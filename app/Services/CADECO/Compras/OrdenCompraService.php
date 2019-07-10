@@ -7,10 +7,13 @@
  */
 
 namespace App\Services\CADECO\Compras;
-
-
-use App\Models\CADECO\OrdenCompra;
+use App\Models\CADECO\Solicitud;
+use App\Models\CADECO\Compras\SolicitudCompra;
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Compras\OrdenCompra;
+use App\PDF\OrdenCompraFormato;
 use App\Repositories\Repository;
+
 
 class OrdenCompraService
 {
@@ -32,5 +35,38 @@ class OrdenCompraService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+    public function paginate($data)
+    {
+        $ordenes = $this->repository;
+
+        if(isset($data['numero_folio'])){
+            $ordenes = $ordenes->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+        }
+
+        if(isset($data['id_antecedente'])){
+            $solicitud = Solicitud::query()->where([['numero_folio', 'LIKE', '%'.$data['id_antecedente'].'%']])->get();
+            foreach ($solicitud as $e){
+                $ordenes = $ordenes->whereOr([['id_antecedente', '=', $e->id_transaccion]]);
+            }
+        }
+
+        if(isset($data['id_empresa'])){
+            $empresa = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['id_empresa'].'%']])->get();
+            foreach ($empresa as $e){
+                $ordenes = $ordenes->whereOr([['id_empresa', '=', $e->id_empresa]]);
+            }
+        }
+
+        if(isset($data['observaciones'])){
+            $ordenes = $ordenes->where([['observaciones', 'LIKE', '%'.$data['observaciones'].'%']]);
+        }
+
+        return $ordenes->paginate($data);
+    }
+    public function pdfOrdenCompra($id)
+    {
+        $pdf = new OrdenCompraFormato($id);
+        return $pdf;
     }
 }

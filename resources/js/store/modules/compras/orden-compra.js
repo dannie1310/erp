@@ -5,6 +5,7 @@ export default {
     state: {
         ordenes: [],
         currentOrden: null,
+        meta: {}
     },
 
     mutations: {
@@ -13,7 +14,10 @@ export default {
         },
         SET_ORDEN(state, data) {
             state.currentOrden = data;
-        }
+        },
+        SET_META(state, data) {
+            state.meta = data
+        },
     },
 
     actions: {
@@ -28,6 +32,19 @@ export default {
                     })
                     .catch(error => {
                         reject(error)
+                    })
+            });
+        },
+        paginate (context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
                     })
             });
         },
@@ -53,6 +70,9 @@ export default {
         },
         currentOrden(state) {
             return state.currentOrden
-        }
+        },
+        meta(state) {
+            return state.meta
+        },
     }
 }
