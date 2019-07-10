@@ -43,14 +43,14 @@
 
                             </div>
 
-                            <div class="row">
+                            <div class="row" v-if="documentos">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
                                             <div class="col-9">
                                                 <h3>Documentos Liberados de la Remesa</h3>
                                             </div>
-                                            <div class="col-3" v-if ="documentos">
+                                            <div class="col-3">
                                                 <h6 align="right">Total: {{documentos.length}}</h6>
                                             </div>
                                         </div>
@@ -289,7 +289,8 @@
             },
 
             getDocumentos(){
-                this.documentos = [];
+                this.documentos = null;
+                this.original = null;
                 this.monto_distribuido_anteriormente = 0;
                 this.monto_total_remesa = 0;
                 this.cargando = true;
@@ -301,10 +302,23 @@
                     }
                 })
                     .then(data => {
-                        this.monto_distribuido_anteriormente = data.remesaLiberada.monto_distribuido;
-                        this.monto_total_remesa = data.remesaLiberada.monto_total_remesa;
-                        this.original = JSON.parse(JSON.stringify(data.documentosDisponibles.data));
-                        this.documentos = JSON.parse(JSON.stringify(data.documentosDisponibles.data));
+                        if(data.documentosDisponibles.data != 0) {
+                            this.documentos = [];
+                            this.original = [];
+                            this.monto_distribuido_anteriormente = data.remesaLiberada.monto_distribuido;
+                            this.monto_total_remesa = data.remesaLiberada.monto_total_remesa;
+                            this.original = JSON.parse(JSON.stringify(data.documentosDisponibles.data));
+                            this.documentos = JSON.parse(JSON.stringify(data.documentosDisponibles.data));
+                        }else{
+                            swal("La remesa seleccionada no tiene documentos disponibles para generar una distribución de recursos.", {
+                                icon: "warning",
+                                buttons: {
+                                    confirm: {
+                                        text: 'Aceptar'
+                                    }
+                                }
+                            })
+                        }
                     })
                     .finally(() => {
                         this.cargando = false;
