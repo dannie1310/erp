@@ -23,7 +23,7 @@
                 </ul>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can(['consultar_estimacion_subcontrato', 'consultar_formato_orden_pago_estimacion'])">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>
                        Gestión de Estimaciones
@@ -31,7 +31,7 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" >
+                    <li class="nav-item" v-if="$root.can('consultar_estimacion_subcontrato')">
                         <router-link :to="{name: 'estimacion'}" class="nav-link" :class="{active: this.$route.name == 'estimacion'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Estimaciones</p>
@@ -39,7 +39,7 @@
                     </li>
                 </ul>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item"  v-if="$root.can('consultar_formato_orden_pago_estimacion')">
+                    <li class="nav-item" v-if="$root.can('consultar_formato_orden_pago_estimacion')">
                         <router-link :to="{name: 'formato-orden-pago'}" class="nav-link" :class="{active: this.$route.name == 'formato-orden-pago'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Orden de Pago Estimación</p>
