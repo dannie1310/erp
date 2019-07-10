@@ -41,13 +41,12 @@ class DistribucionRecursoRemesaPartida extends Model
         });
 
         self::creating(function ($model) {
-            $model->fecha_registro = date('Y-m-d h:i:s');
-            $model->estado = 0;
-        });
-
-        self::created(function($query)
-        {
-
+            if(DistribucionRecursoRemesaPartida::query()->where('id_documento', '=',  $model->id_documento)->where('estado', '>=', 0)->get()->toArray() == []) {
+                $model->fecha_registro = date('Y-m-d h:i:s');
+                $model->estado = 0;
+            }else {
+                throw New \Exception('Está distribución no puede ser procesada debido a que cuenta con documentos relacionados en otra distribución.');
+            }
         });
     }
 
