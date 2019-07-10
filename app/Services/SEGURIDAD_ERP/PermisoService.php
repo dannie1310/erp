@@ -195,7 +195,7 @@ class PermisoService
                     WHERE vwUsuariosIntranet.usuario_estado = 2 AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') 
                     AND (vwUsuariosIntranet.nombre_completo LIKE \'%'.request('nombre_completo').'%\') 
                     AND (vwUsuariosIntranet.ubicacion LIKE \'%'.request('ubicacion').'%\')
-                    AND (vwUsuariosIntranet.departamento LIKE \'%'.request('depto').'%\')
+                    AND (vwUsuariosIntranet.departamento LIKE \'%'.request('departamento').'%\')
                     ORDER BY  '.$sort.' '.$order.'', [1]);
 
         $permisos = collect($query);
