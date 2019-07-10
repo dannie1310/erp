@@ -10,6 +10,7 @@ namespace App\Services\CADECO\Contratos;
 
 
 use App\Models\CADECO\ContratoProyectado;
+use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 
@@ -43,8 +44,24 @@ class ContratoProyectadoService
         return $this->repository->show($id);
     }
 
-    public function paginate()
+    public function paginate($data)
     {
+        $cp_area = new ContratoProyectado\AreasSubcontratantes();
+        $cp = $this->repository;
+        
+        if(isset($data['id_area_subcontratante'])){
+            $area = TipoAreaSubcontratante::query()->where([['descripcion', 'LIKE', '%'.request('id_area_subcontratante').'%']])->get();
+
+            foreach ($area as $e){
+                if(isset($e->id)){
+                    $cp_areas = $cp_area::query()->where([['id_area_subcontratante', '=', $e->id]])->get();
+                    foreach ($cp_areas as $et){
+                        $cp = $cp->whereOr([['id_transaccion', '=', $et->id_transaccion]]);
+                    }
+                }
+            }
+
+        }
         return $this->repository->paginate();
     }
 
