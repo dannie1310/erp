@@ -19,7 +19,9 @@ class RemesaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'documento'
+        'documentos',
+        'documentosDisponibles',
+        'remesaLiberada'
     ];
 
     /**
@@ -38,8 +40,7 @@ class RemesaTransformer extends TransformerAbstract
             'semana' => $model->NumeroSemana,
             'tipo' => $model->getTipoAttibute(),
             'folio' => $model->Folio,
-            'proyecto' => $model->IDProyecto,
-            'monto_distribuido' => $model->getdistribucionesAnterioresMonto()
+            'proyecto' => $model->IDProyecto
         ];
     }
 
@@ -47,10 +48,34 @@ class RemesaTransformer extends TransformerAbstract
      * @param Remesa $model
      * @return \League\Fractal\Resource\Collection|null
      */
-    public function includeDocumento(Remesa $model)
+    public function includeDocumentos(Remesa $model)
     {
         if($documento = $model->documento){
             return $this->collection($documento, new DocumentoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Remesa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeDocumentosDisponibles(Remesa $model)
+    {
+        if($documento = $model->documento()->disponiblesParaDistribuir($model->getKey())->get()){
+            return $this->collection($documento, new DocumentoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Remesa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeRemesaLiberada(Remesa $model)
+    {
+        if($remesa = $model->remesaLiberada){
+            return $this->item($remesa, new RemesaLiberadaTransformer);
         }
         return null;
     }

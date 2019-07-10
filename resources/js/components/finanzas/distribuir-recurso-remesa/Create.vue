@@ -43,7 +43,7 @@
 
                             </div>
 
-                            <div class="row">
+                            <div class="row" v-if="documentos">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
@@ -51,7 +51,7 @@
                                                 <h3>Documentos Liberados de la Remesa</h3>
                                             </div>
                                             <div class="col-3">
-                                                <h6 align="right">Total: {{count}}</h6>
+                                                <h6 align="right">Total: {{documentos.length}}</h6>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -73,7 +73,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-for="(doc, i) in documentos" v-if="doc.disponible == 1">
+                                                <tr v-for="(doc, i) in documentos">
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
                                                     <td v-if="doc.empresa">{{doc.empresa.razon_social}}</td>
@@ -116,7 +116,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td class="text-center" v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 && doc.tipo_cambio === 1"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                                    <td class="text-center" v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 && doc.tipo_cambio == 1"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                                     <td class="text-center" v-else-if="doc.tipo_cambio != 1"><i class="fa fa-exclamation-triangle" style="color: orange" title="Partida en moneda extranjera no seleccionable por el momento."></i></td>
                                                     <td class="text-center" v-else><i class="fa fa-exclamation-triangle" style="color: red" title="No seleccionable por datos faltantes."></i></td>
                                                 </tr>
@@ -135,7 +135,7 @@
                                                                     <tbody>
                                                                         <tr>
                                                                             <th style="width:25%" class="bg-gray-light">Remesa Autorizada (MXP):</th>
-                                                                            <td style="width:15%" class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(sumaImporteTotal)).formatMoney(2,'.',',')}}</b></td>
+                                                                            <td style="width:15%" class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(monto_total_remesa)).formatMoney(2,'.',',')}}</b></td>
 
                                                                             <th style="width:10%"></th>
                                                                             <td style="width:10%"></td>
@@ -153,7 +153,7 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <th>Restante por Distribuir (MXP):</th>
-                                                                            <td align="right"> <b>$&nbsp;{{(parseFloat(sumaImporteTotal-(sumaSeleccionImportes + monto_distribuido_anteriormente)).formatMoney(2,'.',','))}}</b></td>
+                                                                            <td align="right"> <b>$&nbsp;{{(parseFloat(monto_total_remesa-(sumaSeleccionImportes + monto_distribuido_anteriormente)).formatMoney(2,'.',','))}}</b></td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
@@ -187,15 +187,12 @@
                 id_remesa : '',
                 remesas : [],
                 monedas : [],
-                subtotal_x_moneda : [],
                 original : null,
                 documentos : null,
                 monto_distribuido_anteriormente : 0,
-                documentos_disponibles: 0,
+                monto_total_remesa : 0,
                 cuenta_cargo: [],
                 total_selecionado: 0,
-                total: 0,
-                count:0,
                 cargando: false
             }
         },
@@ -206,19 +203,6 @@
         computed: {
             datosContables() {
                 return this.$store.getters['auth/datosContables']
-            },
-            sumaImporteTotal() {
-                let result = 0;
-                let count = 0;
-                this.documentos.forEach(function (doc, i) {
-                       result += parseFloat(doc.monto_total_solicitado);
-                       if(doc.disponible == 1) {
-                           count += 1;
-                       }
-                })
-                this.total = result;
-                this.count = count;
-                return result
             },
             sumaSeleccionImportes() {
                 let result = 0;
@@ -251,7 +235,7 @@
                 return !!this.original.documentos.find(doc => {
                     return !doc .id
                 })
-            },
+            }
         },
         methods: {
             getRemesas() {
@@ -304,40 +288,41 @@
                     });
             },
 
-            getImporte() {
-                let result = 0;
-                this.documentos.forEach(function (doc, i) {
-                    doc.importe_total = 0
-                    if (doc.tipo_cambio == 1.0) {
-                        doc.importe_total = parseFloat(doc.monto_total);
-                    } else {
-                        doc.importe_total = parseFloat(doc.monto_total *  doc.moneda.tipo_cambio);
-                    }
-                })
-                return result
-            },
-
             getDocumentos(){
-                this.documentos = [];
+                this.documentos = null;
+                this.original = null;
                 this.monto_distribuido_anteriormente = 0;
+                this.monto_total_remesa = 0;
                 this.cargando = true;
                 let self = this
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documento', 'documento.empresa.cuentasBancariasProveedor.banco', 'documento.moneda']
+                        include: ['documentosDisponibles', 'documentosDisponibles.empresa.cuentasBancariasProveedor.banco', 'documentosDisponibles.moneda', 'remesaLiberada']
                     }
                 })
                     .then(data => {
-                        this.monto_distribuido_anteriormente = data.monto_distribuido;
-                        this.original = JSON.parse(JSON.stringify(data.documento.data));
-                        this.documentos = JSON.parse(JSON.stringify(data.documento.data));
-                        this.getImporte();
+                        if(data.documentosDisponibles.data != 0) {
+                            this.documentos = [];
+                            this.original = [];
+                            this.monto_distribuido_anteriormente = data.remesaLiberada.monto_distribuido;
+                            this.monto_total_remesa = data.remesaLiberada.monto_total_remesa;
+                            this.original = JSON.parse(JSON.stringify(data.documentosDisponibles.data));
+                            this.documentos = JSON.parse(JSON.stringify(data.documentosDisponibles.data));
+                        }else{
+                            swal("La remesa seleccionada no tiene documentos disponibles para generar una distribución de recursos.", {
+                                icon: "warning",
+                                buttons: {
+                                    confirm: {
+                                        text: 'Aceptar'
+                                    }
+                                }
+                            })
+                        }
                     })
                     .finally(() => {
                         this.cargando = false;
                         this.getCuentaCargo();
-                        this.sumaSubtotalPorMoneda();
                     });
             },
 
@@ -355,21 +340,7 @@
                     }
                 });
             },
-            sumaSubtotalPorMoneda(){
-                let self = this;
-                self.subtotal_x_moneda =[];
-                self.subtotal_x_moneda[1] = 0;
-                self.documentos_disponibles = 0;
-                self.monedas.forEach(function (moneda, i) {
-                    self.subtotal_x_moneda[moneda.id] = 0;
-                });
-                self.documentos.forEach(function (doc, i) {
-                    if(doc.disponible == 1) {
-                        self.subtotal_x_moneda[doc.id_moneda] += parseFloat(doc.monto_total_solicitado);
-                        self.documentos_disponibles += 1;
-                    }
-                })
-            },
+
             salir(){
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/salir')
                     .then(() => {
