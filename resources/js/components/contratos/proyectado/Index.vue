@@ -26,7 +26,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Número de Folio', field: 'numero_folio', sortable: true },
-                    { title: 'Área Subcontratante', field: 'area', sortable: true },
+                    { title: 'Área Subcontratante', field: 'id_area_subcontratante',thComp: require('../../globals/th-Filter'), sortable: false },
                     { title: 'Fecha Contrato Proyectado', field: 'fecha', sortable: true },
                     { title: 'Referencia Contrato Proyectado', field: 'referencia', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
@@ -81,7 +81,7 @@
                     self.$data.data = contratosProyectados.map((contratoProyectado, i) => ({
                         index: (i + 1) + self.query.offset,
                         numero_folio: `# ${contratoProyectado.numeroFolio}`,
-                        area:contratoProyectado.areasSubcontratantes.data.length ? contratoProyectado.areasSubcontratantes.data[0].descripcion : 'Sin Área Subcontratante Asignada',
+                        id_area_subcontratante:contratoProyectado.areasSubcontratantes.data.length ? contratoProyectado.areasSubcontratantes.data[0].descripcion : 'Sin Área Subcontratante Asignada',
                         fecha: contratoProyectado.fecha,
                         referencia: contratoProyectado.referencia,
                         buttons: $.extend({}, {
