@@ -6,16 +6,15 @@
  * Time: 12:38 PM
  */
 
-namespace App\Models\CADECO\Compras;
+namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
 
-use App\Models\CADECO\Compras\OrdenCompraPartida;
+use App\Models\CADECO\OrdenCompraPartida;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Compras\OrdenCompraComplemento;
-use App\Models\CADECO\Compras\SolicitudCompra;
-use App\Models\CADECO\Solicitud;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\Transaccion;
 use Ghi\Domain\Core\Models\Compras\Cotizacion\CotizacionCompra;
@@ -81,7 +80,7 @@ class OrdenCompra extends Transaccion
 
 
     public function solicitud(){
-        return $this->hasOne(Solicitud::class, 'id_transaccion', 'id_antecedente');
+        return $this->hasOne(SolicitudCompra::class, 'id_transaccion', 'id_antecedente');
     }
 
 

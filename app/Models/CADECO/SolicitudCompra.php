@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Models\CADECO\Compras;
+namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Transaccion;

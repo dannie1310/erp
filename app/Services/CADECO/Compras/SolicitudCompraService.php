@@ -4,7 +4,7 @@
 namespace App\Services\CADECO\Compras;
 
 
-use App\Models\CADECO\Compras\SolicitudCompra;
+use App\Models\CADECO\SolicitudCompra;
 use App\Repositories\Repository;
 
 class SolicitudCompraService
