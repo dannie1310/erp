@@ -11,9 +11,9 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SolicitudTransformer;
-use App\Models\CADECO\Compras\OrdenCompra;
+use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
-use App\Models\CADECO\Solicitud;
+use App\Models\CADECO\SolicitudCompra;
 
 class OrdenCompraTransformer extends TransformerAbstract
 {

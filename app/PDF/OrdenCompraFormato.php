@@ -11,9 +11,9 @@ namespace App\PDF;
 
 
 use App\Models\CADECO\Almacen;
-use App\Models\CADECO\Compras\OrdenCompraPartida;
+use App\Models\CADECO\OrdenCompraPartida;
 use App\Models\CADECO\Compras\OrdenCompraPartidaComplemento;
-use App\Models\CADECO\Compras\SolicitudCompra;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Entrega;
@@ -23,7 +23,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\Sucursal;
 use Carbon\Carbon;
 use App\Facades\Context;
-use App\Models\CADECO\Compras\OrdenCompra;
+use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Cambio;
 use Ghidev\Fpdf\Rotation;

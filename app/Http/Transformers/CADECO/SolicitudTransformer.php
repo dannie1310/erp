@@ -4,7 +4,7 @@
 namespace App\Http\Transformers\CADECO;
 
 
-use App\Models\CADECO\Solicitud;
+use App\Models\CADECO\SolicitudCompra;
 use League\Fractal\TransformerAbstract;
 
 class SolicitudTransformer extends TransformerAbstract
@@ -13,7 +13,7 @@ class SolicitudTransformer extends TransformerAbstract
 
             ];
 
-    public function transform(Solicitud $model)
+    public function transform(SolicitudCompra $model)
     {
                return [
                         'id' => (int)$model->getKey(),

@@ -7,10 +7,9 @@
  */
 
 namespace App\Services\CADECO\Compras;
-use App\Models\CADECO\Solicitud;
-use App\Models\CADECO\Compras\SolicitudCompra;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Compras\OrdenCompra;
+use App\Models\CADECO\OrdenCompra;
 use App\PDF\OrdenCompraFormato;
 use App\Repositories\Repository;
 

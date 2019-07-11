@@ -6,7 +6,7 @@
  * Time: 11:29 AM
  */
 
-namespace App\Models\CADECO\Compras;
+namespace App\Models\CADECO;
 
 use App\Models\CADECO\Item;
 use Ghi\Domain\Core\Models\Almacen;
