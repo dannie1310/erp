@@ -91,7 +91,7 @@
                                                               :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
                                                         >
                                                              <option value>-- Selecciona una cuenta --</option>
-                                                             <option v-for="cuenta in doc.empresa.cuentasBancariasProveedor.data" :value="cuenta.id">{{cuenta.banco.complemento.nombre_corto}} {{ cuenta.cuenta }}</option>
+                                                             <option v-for="cuenta in doc.empresa.cuentasBancariasProveedor.data" :value="cuenta.id">{{getCuentaAbono(cuenta)}}</option>
                                                         </select>
                                                         <div class="invalid-feedback"
                                                             v-show="errors.has(`id_cuenta_abono[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
@@ -324,6 +324,13 @@
                         this.cargando = false;
                         this.getCuentaCargo();
                     });
+            },
+
+            getCuentaAbono(cuenta){
+                if(cuenta.banco.complemento){
+                    return cuenta.banco.complemento.nombre_corto+" "+ cuenta.cuenta;
+                }
+                return  "----- "+ cuenta.cuenta;
             },
 
             store() {
