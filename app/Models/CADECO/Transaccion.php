@@ -122,7 +122,7 @@ class Transaccion extends Model
 
     }
     public function  getObservacionesFormatAttribute(){
-        return substr($this->observaciones,0,60)."...";
+        return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
     }
 
     public  function costo(){

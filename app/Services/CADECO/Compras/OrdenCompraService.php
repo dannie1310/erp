@@ -7,10 +7,9 @@
  */
 
 namespace App\Services\CADECO\Compras;
-use App\Models\CADECO\Solicitud;
-use App\Models\CADECO\Compras\SolicitudCompra;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Compras\OrdenCompra;
+use App\Models\CADECO\OrdenCompra;
 use App\PDF\OrdenCompraFormato;
 use App\Repositories\Repository;
 
@@ -45,7 +44,7 @@ class OrdenCompraService
         }
 
         if(isset($data['id_antecedente'])){
-            $solicitud = Solicitud::query()->where([['numero_folio', 'LIKE', '%'.$data['id_antecedente'].'%']])->get();
+            $solicitud = SolicitudCompra::query()->where([['numero_folio', 'LIKE', '%'.$data['id_antecedente'].'%']])->get();
             foreach ($solicitud as $e){
                 $ordenes = $ordenes->whereOr([['id_antecedente', '=', $e->id_transaccion]]);
             }

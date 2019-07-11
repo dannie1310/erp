@@ -9,7 +9,7 @@
 namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
-use App\Http\Transformers\TransaccionTransformer;
+use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Models\CADECO\Transaccion;
 
 class FacturaTransformer extends TransaccionTransformer

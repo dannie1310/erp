@@ -23,5 +23,4 @@ class OrdenCompraComplemento extends Model
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
     }
-
 }
