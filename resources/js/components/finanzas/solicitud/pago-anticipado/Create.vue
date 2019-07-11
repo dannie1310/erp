@@ -239,15 +239,10 @@
             }
         },
         computed: {
-            datosContables() {
-                return this.$store.getters['auth/datosContables']
-            }
+
         },
         methods: {
             init() {
-                if (!this.datosContables) {
-                    swal('¡Error!', 'No es posible registrar la cuenta debido a que no se ha configurado el formato de cuentas de la obra.', 'error')
-                } else {
                     this.cargando = true;
                     $(this.$refs.modal).modal('show');
                     this.fecha_solicitud_1 = '';
@@ -262,7 +257,6 @@
                     this.observaciones = '';
                     this.$validator.reset();
                     this.cargando = false;
-                }
             },
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
