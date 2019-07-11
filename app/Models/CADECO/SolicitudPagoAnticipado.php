@@ -11,7 +11,6 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
-use Illuminate\Support\Facades\DB;
 
 class SolicitudPagoAnticipado extends Transaccion
 {

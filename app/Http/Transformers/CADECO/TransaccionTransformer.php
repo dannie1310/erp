@@ -6,7 +6,7 @@
  * Time: 07:40 PM
  */
 
-namespace App\Http\Transformers;
+namespace App\Http\Transformers\CADECO;
 
 
 use App\Http\Transformers\CADECO\TipoTransaccionTransformer;

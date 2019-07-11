@@ -8,16 +8,12 @@
 
 namespace App\Models\CADECO;
 
-
-use App\Facades\Context;
-
 use App\Models\CADECO\OrdenCompraPartida;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Compras\OrdenCompraComplemento;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\Transaccion;
-use Ghi\Domain\Core\Models\Compras\Cotizacion\CotizacionCompra;
 use App\Models\CADECO\Obra;
 
 class OrdenCompra extends Transaccion
@@ -39,23 +35,29 @@ class OrdenCompra extends Transaccion
     {
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
-    public function pago_anticipado(){
+
+    public function pago_anticipado()
+    {
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
     }
+
     public function scopeSinPagoAnticipado($query)
     {
         return $query->whereDoesntHave('pago_anticipado');
     }
 
-    public function entradas_material(){
+    public function entradas_material()
+    {
         return $this->hasMany(EntradaMaterial::class, 'id_antecedente','id_transaccion');
     }
 
-    public function getNombre(){
+    public function getNombre()
+    {
         return 'ORDEN DE COMPRA';
     }
 
-    public function getEncabezadoReferencia(){
+    public function getEncabezadoReferencia()
+    {
         if (strlen($this->observaciones) > 100) {
             return utf8_encode(substr($this->observaciones, 0, 100));
         } else {
@@ -63,39 +65,23 @@ class OrdenCompra extends Transaccion
         }
     }
 
-    public function cotizacion(){
-        return $this->belongsTo(CotizacionCompra::class, 'id_referente', 'id_transaccion');
-    }
-
-
-
-    public function ordenCompraVersiones()
+    public function solicitud()
     {
-        return $this->hasMany(OrdenCompraVersiones::class, 'id_transaccion', 'id_transaccion');
-    }
-
-//    public function requisicion(){
-//        return $this->hasOne(SolicitudCompra::class, 'id_transaccion', 'id_antecedente');
-//    }
-
-
-    public function solicitud(){
         return $this->hasOne(SolicitudCompra::class, 'id_transaccion', 'id_antecedente');
     }
 
-
-    public function complemento(){
+    public function complemento()
+    {
         return $this->hasOne(OrdenCompraComplemento::class, 'id_transaccion');
     }
 
-    public function partidas(){
+    public function partidas()
+    {
         return $this->hasMany(OrdenCompraPartida::class,'id_transaccion','id_transaccion');
     }
+
     public function obra()
     {
         return $this->hasOne(Obra::class, 'id_obra', 'id_obra');
     }
-
-
-
 }

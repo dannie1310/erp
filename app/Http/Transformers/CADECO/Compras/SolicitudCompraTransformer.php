@@ -39,10 +39,14 @@ class SolicitudCompraTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param SolicitudCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeUsuario(SolicitudCompra $model)
     {
         if ($usuario = $model->usuario) {
-            return $this->item($usuario, new UsuarioTransformer());
+            return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }
