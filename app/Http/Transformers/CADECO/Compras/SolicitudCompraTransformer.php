@@ -5,7 +5,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\IGH\UsuarioTransformer;
-use App\Models\CADECO\Compras\SolicitudCompra;
+use App\Models\CADECO\SolicitudCompra;
 use League\Fractal\TransformerAbstract;
 
 class SolicitudCompraTransformer extends TransformerAbstract
@@ -39,10 +39,14 @@ class SolicitudCompraTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param SolicitudCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeUsuario(SolicitudCompra $model)
     {
         if ($usuario = $model->usuario) {
-            return $this->item($usuario, new UsuarioTransformer());
+            return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }

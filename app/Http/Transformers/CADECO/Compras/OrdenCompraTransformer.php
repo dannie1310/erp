@@ -10,10 +10,8 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\SolicitudTransformer;
-use App\Models\CADECO\Compras\OrdenCompra;
+use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
-use App\Models\CADECO\Solicitud;
 
 class OrdenCompraTransformer extends TransformerAbstract
 {
@@ -68,15 +66,22 @@ class OrdenCompraTransformer extends TransformerAbstract
      * @param OrdenCompra $model
      * @return \League\Fractal\Resource\Item
      */
-    public function includeEmpresa(OrdenCompra $model) {
+    public function includeEmpresa(OrdenCompra $model)
+    {
         if ($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
         }
         return null;
     }
-    public function includeSolicitud(OrdenCompra $model) {
+
+    /**
+     * @param OrdenCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSolicitud(OrdenCompra $model)
+    {
         if ($solicitud = $model->solicitud) {
-            return $this->item($solicitud, new SolicitudTransformer());
+            return $this->item($solicitud, new SolicitudCompraTransformer);
         }
         return null;
     }

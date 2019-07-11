@@ -10,7 +10,7 @@ namespace App\Http\Transformers\CADECO\Tesoreria;
 
 
 use App\Http\Transformers\CADECO\CuentaTransformer;
-use App\Http\Transformers\TransaccionTransformer;
+use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Models\CADECO\Tesoreria\MovimientoBancario;
 use League\Fractal\TransformerAbstract;
 

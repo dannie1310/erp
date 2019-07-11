@@ -12,7 +12,7 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 use App\Http\Transformers\CADECO\CuentaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoTransformer;
-use App\Http\Transformers\TransaccionTransformer;
+use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use League\Fractal\TransformerAbstract;
 
