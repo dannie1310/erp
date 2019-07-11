@@ -201,9 +201,6 @@
             this.getMonedas();
         },
         computed: {
-            datosContables() {
-                return this.$store.getters['auth/datosContables']
-            },
             sumaSeleccionImportes() {
                 let result = 0;
                 this.documentos.forEach(function (doc, i) {
