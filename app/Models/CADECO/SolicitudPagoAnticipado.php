@@ -72,6 +72,7 @@ class SolicitudPagoAnticipado extends Transaccion
     public function subcontrato(){
         return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente');
     }
+
     public function cancelar($id){
 
         $solicitud = SolicitudPagoAnticipado::find($id);

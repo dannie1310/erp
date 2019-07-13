@@ -265,7 +265,7 @@
                 return this.$store.dispatch('compras/orden-compra/index',{
                     config: {
                         params: {
-                            scope: 'sinPagoAnticipado'
+                            scope: 'ordenCompraDisponible'
                         }
                     }
                 }).then(data => {

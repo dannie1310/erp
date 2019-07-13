@@ -41,7 +41,7 @@ class OrdenCompra extends Transaccion
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
     }
 
-    public function scopeSinPagoAnticipado($query)
+    public function scopeSinPagoAnticipado($query) //obsoleto
     {
         return $query->whereDoesntHave('pago_anticipado');
     }
@@ -83,5 +83,58 @@ class OrdenCompra extends Transaccion
     public function obra()
     {
         return $this->hasOne(Obra::class, 'id_obra', 'id_obra');
+    }
+
+    public function partidas_facturadas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function getMontoFacturado()
+    {
+       return round(FacturaPartida::where('id_antecedente', '=', $this->id_transaccion)->sum('importe'),2);
+    }
+
+    public function getImporteReal(){
+        return round($this->monto - $this->impuesto,2);
+    }
+
+    public function getMontoPagoAnticipado()
+    {
+        return round(SolicitudPagoAnticipado::where('id_antecedente', '=', $this->id_transaccion)->sum('monto'), 2);
+    }
+
+    public function getMontoDisponible()
+    {
+        return $this->getImporteReal() - ($this->getMontoFacturado() + $this->getMontoPagoAnticipado());
+    }
+
+    public function scopeOrdenCompraDisponible($query, $orden_compra)
+    {
+        $existentes = self::query()->whereHas('partidas_facturadas', function ($q)  {
+            return $q->whereHas('factura', function ($q) {
+                return $q->whereRaw('(monto-impuesto) > 0');
+            });
+        })->pluck('id_tipo_cuenta_contable');
+
+        return $query->whereNotIn('id_tipo_cuenta_contable', $existentes);
+
+
+
+//        $orden_compra = OrdenCompra::select('id_transaccion')->where('estado', '!=', -2)->whereRaw('(monto-impuesto) > 0')->get()->toArray();
+//        $pago_anticipado = SolicitudPagoAnticipado::select('id_transaccion')->where('estado', '!=', -2)->whereRaw('(monto-impuesto) > 0')->get()->toArray();
+//        dd($pago_anticipado);
+//        $pago_anticipado = SolicitudPagoAnticipado::select('id_transaccion')->where('estado', '!=', -2)->whereRaw('(monto-impuesto) > 0')->get()->toArray();
+//        dd($pago_anticipado);
+
+    }
+
+
+    public function  scopeDisponiblesParaDistribuir($query, $id_remesa){
+
+        $existentes = DistribucionRecursoRemesa::select('id')->where('id_remesa', '=', $id_remesa)->where('estado','>=', 0)->get()->toArray();
+        $documentos = DistribucionRecursoRemesaPartida::select('id_documento')->whereIn('id_distribucion_recurso', $existentes)->where('estado','>=', 0)->get()->toArray();
+
+        return $query->whereNotIn('IDDocumento', $documentos);
     }
 }

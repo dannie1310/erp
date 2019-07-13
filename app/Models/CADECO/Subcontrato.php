@@ -132,4 +132,9 @@ class Subcontrato extends Transaccion
     public function getNombre(){
         return 'SUBCONTRATO';
     }
+
+    public function partidas_facturadas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
+    }
 }
