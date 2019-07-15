@@ -41,7 +41,7 @@ class OrdenCompra extends Transaccion
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
     }
 
-    public function scopeSinPagoAnticipado($query)
+    public function scopeSinPagoAnticipado($query) //obsoleto
     {
         return $query->whereDoesntHave('pago_anticipado');
     }
@@ -83,5 +83,44 @@ class OrdenCompra extends Transaccion
     public function obra()
     {
         return $this->hasOne(Obra::class, 'id_obra', 'id_obra');
+    }
+
+    public function partidas_facturadas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function getMontoFacturado()
+    {
+       return round(FacturaPartida::where('id_antecedente', '=', $this->id_transaccion)->sum('importe'),2);
+    }
+
+    public function getImporteReal(){
+        return round($this->monto - $this->impuesto,2);
+    }
+
+    public function getMontoPagoAnticipado()
+    {
+        return round(SolicitudPagoAnticipado::where('id_antecedente', '=', $this->id_transaccion)->sum('monto'), 2);
+    }
+
+    public function getMontoDisponible()
+    {
+        return $this->getImporteReal() - ($this->getMontoFacturado() + $this->getMontoPagoAnticipado());
+    }
+
+    public function scopeOrdenCompraDisponible($query)
+    {
+        $transacciones = array();
+        $i = 0;
+        $orden_compra = OrdenCompra::select('id_transaccion')->where('estado', '!=', -2)->get()->toArray();
+        foreach ($orden_compra as $item) {
+            $orden = OrdenCompra::find($item['id_transaccion']);
+            if ($orden->getMontoDisponible() > 0) {
+                $transacciones = array_add($transacciones, $i, $item['id_transaccion']);
+                $i++;
+            }
+        }
+        return $query->whereIn('id_transaccion', $transacciones);
     }
 }
