@@ -92,7 +92,7 @@ class OrdenCompra extends Transaccion
 
     public function getMontoFacturado()
     {
-       return round(FacturaPartida::where('id_antecedente', '=', $this->id_transaccion)->sum('importe'),2);
+       return round($this->partidas_facturadas()->sum('importe'),2);
     }
 
     public function getImporteReal(){
@@ -101,7 +101,7 @@ class OrdenCompra extends Transaccion
 
     public function getMontoPagoAnticipado()
     {
-        return round(SolicitudPagoAnticipado::where('id_antecedente', '=', $this->id_transaccion)->sum('monto'), 2);
+        return round($this->pago_anticipado()->sum('monto'), 2);
     }
 
     public function getMontoDisponible()
@@ -111,16 +111,12 @@ class OrdenCompra extends Transaccion
 
     public function scopeOrdenCompraDisponible($query)
     {
-        $transacciones = array();
-        $i = 0;
-        $orden_compra = OrdenCompra::select('id_transaccion')->where('estado', '!=', -2)->get()->toArray();
-        foreach ($orden_compra as $item) {
-            $orden = OrdenCompra::find($item['id_transaccion']);
-            if ($orden->getMontoDisponible() > 0) {
-                $transacciones = array_add($transacciones, $i, $item['id_transaccion']);
-                $i++;
-            }
-        }
-        return $query->whereIn('id_transaccion', $transacciones);
+        $orden_compra = $query->where('estado', '!=', -2)->get();
+
+        $transacciones = $orden_compra->filter(function ($item, $key){
+           return $item->getMontoDisponible() > 0;
+        })->pluck('id_transaccion');
+
+      return $query->whereIn('id_transaccion', $transacciones);
     }
 }
