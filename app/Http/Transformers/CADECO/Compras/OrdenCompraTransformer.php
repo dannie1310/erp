@@ -59,7 +59,7 @@ class OrdenCompraTransformer extends TransformerAbstract
             'dato_transaccion' => (string)$model->getEncabezadoReferencia(),
 //            'monto_facturado' => $model->getMontoFacturado(),
 //            'importe' => $model->getImporteReal(),
-//            'monto_disponible' => $model->getMontoDisponible()
+           'monto_disponible' => $model->getMontoDisponible()*1.16
         ];
     }
 
