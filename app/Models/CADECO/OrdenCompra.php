@@ -95,10 +95,6 @@ class OrdenCompra extends Transaccion
        return round($this->partidas_facturadas()->sum('importe'),2);
     }
 
-    public function getImporteReal(){
-        return round($this->monto - $this->impuesto,2);
-    }
-
     public function getMontoPagoAnticipado()
     {
         return round($this->pago_anticipado()->sum('monto'), 2);
@@ -106,12 +102,12 @@ class OrdenCompra extends Transaccion
 
     public function getMontoDisponible()
     {
-        return round($this->getImporteReal() - ($this->getMontoFacturado() + $this->getMontoPagoAnticipado()), 2);
+        return round($this->getSubtotalAttribute() - ($this->getMontoFacturado() + $this->getMontoPagoAnticipado()), 2);
     }
 
     public function scopeOrdenCompraDisponible($query)
     {
-        $transacciones = $query->where('estado', '!=', -2)->get()->filter(function ($item, $key){
+        $transacciones = $query->get()->filter(function ($item){
             return $item->getMontoDisponible() > 0;
         })->pluck('id_transaccion');;
 
