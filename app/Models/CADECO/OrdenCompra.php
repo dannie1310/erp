@@ -106,17 +106,15 @@ class OrdenCompra extends Transaccion
 
     public function getMontoDisponible()
     {
-        return ($this->getMontoFacturado() + $this->getMontoPagoAnticipado());
+        return round($this->getImporteReal() - ($this->getMontoFacturado() + $this->getMontoPagoAnticipado()), 2);
     }
 
     public function scopeOrdenCompraDisponible($query)
     {
-       // $orden_compra = $query->where('estado', '!=', -2)->get();
+        $transacciones = $query->where('estado', '!=', -2)->get()->filter(function ($item, $key){
+            return $item->getMontoDisponible() > 0;
+        })->pluck('id_transaccion');;
 
-//        $transacciones = $orden_compra->filter(function ($item, $key){
-//           return $item->getMontoDisponible() > 0;
-//        })->pluck('id_transaccion');
-
-      return $query->where('estado', '!=', -2)->where('monto - impuesto',' >', $this->getMontoDisponible());
+       return $query->whereIn('id_transaccion', $transacciones);
     }
 }
