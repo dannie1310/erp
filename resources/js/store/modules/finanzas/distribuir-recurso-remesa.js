@@ -221,6 +221,45 @@ export default {
                     })
             });
         },
+        cargaManualLayout(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar Layout manual de pagos",
+                    text: "¿Está seguro/a de que desea generar los pagos?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Generar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + '/cargaLayoutManual', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    console.log(data);
+                                    swal("Pagos registrados correctamente", {
+                                        icon: "success",
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_DISTRIBUCION', data);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject('Archivo no procesable');
+                                })
+                        }
+                    });
+            });
+        },
         descarga(context, payload) {
 
             return new Promise((resolve, reject) => {

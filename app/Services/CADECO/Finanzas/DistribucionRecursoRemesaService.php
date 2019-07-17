@@ -23,6 +23,7 @@ use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Repositories\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class DistribucionRecursoRemesaService
 {
@@ -73,7 +74,6 @@ class DistribucionRecursoRemesaService
             }
 
             DB::connection('cadeco')->commit();
-
             return $d;
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
@@ -214,27 +214,24 @@ class DistribucionRecursoRemesaService
     }
 
     public function cargaLayoutManual(Request $request, $id){
-        $file = $request->file('file');
-        $nombre = $request->file('file')->getClientOriginalName();
-        $id_distribucion = (int)substr($nombre, 1, 5);
-        if($id_distribucion != $id){
-            abort(400, "Archivo de carga no corresponde con esta distribución.");
-        }
-
-        switch (pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_EXTENSION)){
-            case 'doc':
-                $data = $this->getDocData($file);
-                break;
-            case 'csv':
-                $data = $this->getCsvData($file);
-                return $this->registrarPagos($data, $id);
-                break;
-        }
+        $file = $request->file;
+        $data = $this->getCsvData($file);
+        return $this->registrarPagos($data, $id);
+//        switch (pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)){
+//            case 'doc':
+//                $data = $this->getDocData($file);
+//                break;
+//            case 'csv':
+//                $data = $this->getCsvData($file);
+//                return $this->registrarPagos($data, $id);
+//                break;
+//        }
 
     }
 
     public function registrarPagos($pagos, $id){
         try {
+            DistribucionRecursoRemesa::find($id)->remesaValidaEstado();
             DB::connection('cadeco')->beginTransaction();
             foreach ($pagos as $pago) {
                 $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $id)->where('id_documento', '=', $pago['documento'])->first();

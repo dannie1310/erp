@@ -7,13 +7,15 @@
 <!--        <a :href="url" target="_blank" v-if="value.pagar && (value.estado === 1)" type="button" class="btn btn-sm btn-outline-info" title="Pagar"><i class="fa fa-money"></i></a>-->
 <!--        <a :href="urlmanual" target="_blank" v-if="value.pagar && (value.estado === 1)" type="button" class="btn btn-sm btn-outline-info" title="Layout"><i class="fa fa-file-excel-o"></i></a>-->
         <button @click="cancelar" v-if="value.cancelar && (value.estado === 0)" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar"><i class="fa fa-ban"></i></button>
+        <DistibucionCargaLayout  v-bind:id="value.id" />
     </div>
 </template>
 
 <script>
+    import DistibucionCargaLayout from "../CargaLayout";
     export default {
         name: "action-buttons",
-        components: {},
+        components: {DistibucionCargaLayout},
         props: ['value'],
         methods: {
             cancelar() {

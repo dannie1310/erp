@@ -4,6 +4,8 @@
 namespace App\LAYOUT;
 
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
+use DateInterval;
+use DateTime;
 
 class DistribucionRecursoRemesa
 {
@@ -20,16 +22,16 @@ class DistribucionRecursoRemesa
 
     function create(){
         if($this->remesa->estado != 1){return "Layout de distribucion de remesa no disponible.". PHP_EOL . "Estado: " . $this->remesa->estatus->descripcion ;}
+        if($this->remesa->remesaLayout){return "Layout de distribucion de remesa descargado previamente." ;}
         $this->encabezado();
         $this->detalle();
         $this->sumario();
-        $file_nombre = 'tran' . date('dmYhi'). '_' . 'nemonico';
+        $date = now();
+        $file_nombre = $this->getFileName($date);
+        $path = "layouts/files/$file_nombre.in";
+
         $a = "";
         foreach ($this->data as $dat){$a .= $dat . "\n";}
-        $path = "layouts/files/$file_nombre.in";
-        if(file_exists($path)){
-            unlink($path);
-        }
         $fp_i = fopen($path,"w+");
         fwrite($fp_i,$a);
         fclose($fp_i);
@@ -49,6 +51,7 @@ class DistribucionRecursoRemesa
             $reg_layout->usuario_descarga = auth()->id();
             $reg_layout->contador_descarga = 1;
             $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
+            $reg_layout->nombre_archivo = $file_nombre;
             $reg_layout->save();
 
             $this->remesa->estado = 2;
@@ -56,6 +59,15 @@ class DistribucionRecursoRemesa
         }
         return response()->download('layouts/files/'.$file_nombre.'.in');
         // return $this->>remesa;
+    }
+
+    function getFileName($date){
+        $file_nombre = 'tran' . $date->format('dmYHi') .'_' . 'nemonico';
+        $path = "layouts/files/$file_nombre.in";
+        if(file_exists($path)){
+            $this->getFileName($date->add(new DateInterval('PT1M')));
+        }
+        return 'tran' . $date->format('dmYHi') .'_' . 'nemonico';
     }
 
     function encabezado(){
