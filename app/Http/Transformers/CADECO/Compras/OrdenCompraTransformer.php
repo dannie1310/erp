@@ -57,9 +57,9 @@ class OrdenCompraTransformer extends TransformerAbstract
             'saldo' => (float)$model->saldo,
             'tipo_nombre' => (string)$model->getNombre(),
             'dato_transaccion' => (string)$model->getEncabezadoReferencia(),
-            'monto_facturado' => $model->getMontoFacturado(),
-            'monto_disponible' => $model->getMontoDisponible(),
-            'monto_solicitado' => $model->getMontoPagoAnticipado()
+//            'monto_facturado' => (string) '$ '.number_format($model->montoFacturado,2,".",","),
+//            'monto_disponible' => (string) '$ '.number_format($model->montoDisponible,2,".",","),
+//            'monto_solicitado' => (string) '$ '.number_format($model->montoPagoAnticipado,2,".",",")
         ];
     }
 

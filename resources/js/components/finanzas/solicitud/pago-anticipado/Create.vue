@@ -150,20 +150,16 @@
                                                                         <td class="bg-gray-light" align="right">{{ transaccion.total_format }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th class="bg-gray-light">Importe:</th>
-                                                                        <td class="bg-gray-light" align="right">{{ transaccion.total_format }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th class="bg-gray-light">Monto Facturado:</th>
-                                                                        <td class="bg-gray-light" align="right">{{ transaccion.monto_facturado }}</td>
+                                                                        <th>Monto Facturado:</th>
+                                                                        <td align="right">{{ transaccion.monto_facturado }}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th class="bg-gray-light">Monto Solicitado:</th>
-                                                                        <td class="bg-gray-light" align="right"></td>
+                                                                        <td class="bg-gray-light" align="right">{{ transaccion.monto_solicitado }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th class="bg-gray-light">Monto Disponible:</th>
-                                                                        <td class="bg-gray-light" align="right">{{ transaccion.monto_disponible }}</td>
+                                                                        <th class="bg-gray">Monto Disponible:</th>
+                                                                        <td class="bg-gray" align="right">{{ transaccion.monto_disponible }}</td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
