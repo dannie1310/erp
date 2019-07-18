@@ -214,8 +214,12 @@ class DistribucionRecursoRemesaService
     }
 
     public function cargaLayoutManual(Request $request, $id){
-        $file = $request->file;
-        $data = $this->getCsvData($file);
+        $file_mismo_banco = $request->file_mismo_banco;
+        $file_interbancario = $request->file_interbancario;
+
+        $data = $this->getCsvData($file_mismo_banco);
+        $interbancario = $this->getDocData($file_interbancario);
+
         return $this->registrarPagos($data, $id);
 //        switch (pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)){
 //            case 'doc':
@@ -346,11 +350,13 @@ class DistribucionRecursoRemesaService
                 "razon_social"      => substr($linea, 41, 40),
                 "monto"             => substr($linea, 81, 19),
                 "clave"             => substr($linea, 101, 4),
-                "concepto"          => substr($linea, 105, 120),
+                "documento"         => substr($linea, 106, 9),
+                "concepto"          => substr($linea, 115, 120),
                 "control"           => substr($linea, 225, 7),
                 "control2"          => substr($linea, 232, 8),
             );
         }
+        dd($content);
         fclose($myfile);
         return $content;
     }

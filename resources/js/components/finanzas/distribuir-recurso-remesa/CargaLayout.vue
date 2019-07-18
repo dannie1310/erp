@@ -9,26 +9,42 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Seleccionar archivo de layout.</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Selecciona archivo de layout.</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group row">
-<!--                        <label for="layout" class="col-lg-2 col-form-label"></label>-->
+                        <label for="layout_interbancario" class="col-lg-12 col-form-label">Layout Interbancario</label>
                             <div class="col-lg-12">
-                                <input type="file" class="form-control" id="carga_layout" @change="onFileChange"
+                                <input type="file" class="form-control" id="carga_layout_interbancario" @change="onFileChange"
                                 row="3"
-                                v-validate="{ ext: ['csv', 'txt']}"
-                                name="carga_layout"
-                                data-vv-as="Layout"
-                                ref="carga_layout"
-                                :class="{'is-invalid': errors.has('carga_layout')}"
+                                v-validate="{ ext: ['doc']}"
+                                name="carga_layout_interbancario"
+                                data-vv-as="Layout Interbancario"
+                                ref="carga_layout_interbancario"
+                                :class="{'is-invalid': errors.has('carga_layout_interbancario')}"
                                 >
-                                <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv, txt)</div>
+                                <div class="invalid-feedback" v-show="errors.has('carga_layout_interbancario')">{{ errors.first('carga_layout_interbancario') }} (doc)</div>
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                        <label for="layout" class="col-lg-12 col-form-label">Layout mismo banco</label>
+                            <div class="col-lg-12">
+                                <input type="file" class="form-control" id="carga_layout_mismo_banco" @change="onFileChange"
+                                       row="3"
+                                       v-validate="{ ext: ['csv']}"
+                                       name="carga_layout_mismo_banco"
+                                       data-vv-as="Layout"
+                                       ref="carga_layout_mismo_banco"
+                                       :class="{'is-invalid': errors.has('carga_layout_mismo_banco')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('carga_layout_mismo_banco')">{{ errors.first('carga_layout_mismo_banco') }} (csv)</div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="cerrarModal">Cerrar</button>
@@ -46,9 +62,10 @@
         props: ['id'],
         data() {
             return {
-                cuenta: null,
-                cargando: false,
-                file:null
+                cuenta : null,
+                cargando : false,
+                file_mismo_banco : null,
+                file_interbancario : null
             }
         },
         methods: {
@@ -56,15 +73,17 @@
                 $(this.$refs.modal).modal('show')
             },
             cerrarModal(event) {
-                console.log(this.$refs.carga_layout.value);
-                this.$refs.carga_layout.value = '';
+                console.log(this.$refs.carga_layout_mismo_banco.value);
+                console.log(this.$refs.carga_layout_interbancario.value);
+                this.$refs.carga_layout_interbancario.value = '';
+                this.$refs.carga_layout_mismo_banco.value = '';
                 this.$validator.errors.clear();
                 $(this.$refs.modal).modal('hide')
             },
             cargarLayout(e){
                 var formData = new FormData();
-                formData.append('file',  this.file);
-                formData.append('file_inter',  this.file);
+                formData.append('file_mismo_banco',  this.file_mismo_banco);
+                formData.append('file_interbancario',  this.file_interbancario);
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/cargaManualLayout',
                     {
                         id: this.id,
@@ -81,15 +100,22 @@
                 var files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
                     return;
-                this.createImage(files[0]);
+                if(e.target.id == 'carga_layout_interbancario') {
+                    this.createImage(files[0], 1);
+                }else{
+                    this.createImage(files[0], 2);
+                }
             },
             createImage(file, tipo) {
-                //var image = new Image();
                 var reader = new FileReader();
                 var vm = this;
 
                 reader.onload = (e) => {
-                    vm.file = e.target.result;
+                    if(tipo == 1) {
+                        vm.file_interbancario = e.target.result;
+                    }else{
+                        vm.file_mismo_banco = e.target.result;
+                    }
                 };
                 reader.readAsDataURL(file);
             }
