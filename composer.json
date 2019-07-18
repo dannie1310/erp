@@ -18,7 +18,8 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "phpoffice/phpword": "v0.13.*",
         "sonata-project/google-authenticator": "^2.2",
-        "tymon/jwt-auth": "1.0.0-rc.3"
+        "tymon/jwt-auth": "1.0.0-rc.3",
+        "chumper/zipper": "1.0.x"
     },
     "require-dev": {
         "filp/whoops": "^2.0",

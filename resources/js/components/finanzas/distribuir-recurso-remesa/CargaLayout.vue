@@ -64,6 +64,7 @@
             cargarLayout(e){
                 var formData = new FormData();
                 formData.append('file',  this.file);
+                formData.append('file_inter',  this.file);
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/cargaManualLayout',
                     {
                         id: this.id,
@@ -82,7 +83,7 @@
                     return;
                 this.createImage(files[0]);
             },
-            createImage(file) {
+            createImage(file, tipo) {
                 //var image = new Image();
                 var reader = new FileReader();
                 var vm = this;
