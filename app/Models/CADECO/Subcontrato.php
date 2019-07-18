@@ -115,11 +115,6 @@ class Subcontrato extends Transaccion
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
-    public function getMontoSubcontratoAttribute()
-    {
-        return $this->monto - $this->impuesto;
-    }
-
     public function pago_anticipado(){
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
     }
