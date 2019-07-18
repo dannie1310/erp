@@ -6,6 +6,7 @@ namespace App\LAYOUT;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
 use Chumper\Zipper\Zipper;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Storage;
 
 class DistribucionRecursoRemesaManual
 {
@@ -24,34 +25,27 @@ class DistribucionRecursoRemesaManual
         $a = "";
         foreach ($this->data as $dat){$a .= $dat . PHP_EOL;}
 
-        $fp_i = fopen("layouts/files/#$llave-i-santander.txt","w+");
-        fwrite($fp_i,$a);
-        fclose($fp_i);
+        $file_nombre = '#'.$llave.'-i-santander';
+        Storage::disk('portal_descarga')->put($file_nombre.'.txt', $a);
 
         $reg_layout = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $this->id)->first();
 
         if($reg_layout){
-            $reg_layout->contador_descarga = $reg_layout->contador_descarga + 1;
-            $reg_layout->save();
-
-            $this->remesa->estado = 2;
-            $this->remesa->save();
-
+            return "Layout de distribucion de remesa descargado previamente." ;
         }else{
             $reg_layout = new DistribucionRecursoRemesaLayout();
             $reg_layout->id_distrubucion_recurso =$this->id;
             $reg_layout->usuario_descarga = auth()->id();
             $reg_layout->contador_descarga = 1;
             $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
+            $reg_layout->nombre_archivo = $file_nombre;
             $reg_layout->save();
 
             $this->remesa->estado = 2;
             $this->remesa->save();
         }
 
-
-        return response()->download("layouts/files/#$llave-i-santander.txt");
-
+        return Storage::disk('portal_descarga')->download($file_nombre.'.txt');
     }
 
     public function generar(){

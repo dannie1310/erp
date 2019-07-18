@@ -6,6 +6,7 @@ namespace App\LAYOUT;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
 use DateInterval;
 use DateTime;
+use Illuminate\Support\Facades\Storage;
 
 class DistribucionRecursoRemesa
 {
@@ -28,13 +29,10 @@ class DistribucionRecursoRemesa
         $this->sumario();
         $date = now();
         $file_nombre = $this->getFileName($date);
-        $path = "layouts/files/$file_nombre.in";
 
         $a = "";
         foreach ($this->data as $dat){$a .= $dat . "\n";}
-        $fp_i = fopen($path,"w+");
-        fwrite($fp_i,$a);
-        fclose($fp_i);
+        Storage::disk('h2h_in')->put($file_nombre.'.in', $a);
 
         $reg_layout = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $this->id)->first();
 
@@ -57,8 +55,8 @@ class DistribucionRecursoRemesa
             $this->remesa->estado = 2;
             $this->remesa->save();
         }
-        return response()->download('layouts/files/'.$file_nombre.'.in');
-        // return $this->>remesa;
+
+          return Storage::disk('h2h_in')->download($file_nombre.'.in');
     }
 
     function getFileName($date){
