@@ -216,10 +216,12 @@ class DistribucionRecursoRemesaService
     public function cargaLayoutManual(Request $request, $id){
         $file_mismo_banco = $request->file_mismo_banco;
         $file_interbancario = $request->file_interbancario;
+        $pagos = [];
 
         $data = $this->getCsvData($file_mismo_banco);
         $interbancario = $this->getDocData($file_interbancario);
-
+        $pagos = array_merge($data, $interbancario);
+dd($pagos);
         return $this->registrarPagos($data, $id);
 //        switch (pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)){
 //            case 'doc':
@@ -344,19 +346,20 @@ class DistribucionRecursoRemesaService
         while(!feof($myfile)) {
             $linea = str_replace("\n","",fgets($myfile));
             $content[] = array(
-                "cuenta_cargo"      => substr($linea, 0, 16),
-                "cuenta_abono"      => substr($linea, 17, 19),
-                "nombre_corto"      => substr($linea, 36, 5),
-                "razon_social"      => substr($linea, 41, 40),
-                "monto"             => substr($linea, 81, 19),
-                "clave"             => substr($linea, 101, 4),
-                "documento"         => substr($linea, 106, 9),
-                "concepto"          => substr($linea, 115, 120),
-                "control"           => substr($linea, 225, 7),
-                "control2"          => substr($linea, 232, 8),
+                "cuenta_cargo"      => str_replace("  ","",substr($linea, 0, 16)),
+                "cuenta_abono"      => str_replace("  ","",substr($linea, 17, 19)),
+                "nombre_corto"      => str_replace("  ","",substr($linea, 36, 5)),
+                "razon_social"      => str_replace("  ","",substr($linea, 41, 40)),
+                "monto"             => str_replace("  ","",substr($linea, 81, 19)),
+                "clave"             => str_replace("  ","",substr($linea, 101, 4)),
+                "fecha_aplicacion"  => '',
+                "documento"         => str_replace("  ","",substr($linea, 106, 9)),
+                "concepto"          => str_replace("  ","",substr($linea, 115, 120)),
+                "clave_bancaria"    => '',
+                "control"           => str_replace("  ","",substr($linea, 225, 7)),
+                "control2"          => str_replace("  ","",substr($linea, 232, 8)),
             );
         }
-        dd($content);
         fclose($myfile);
         return $content;
     }
@@ -369,15 +372,19 @@ class DistribucionRecursoRemesaService
         while ( $data = fgetcsv($file, '', ",") ){
             if($encabezados > 0){
                 $all_data[] = array(
-                    "cuenta_cargo" => str_replace("\t","",$data[0]),
-                    "cuenta_abono" => str_replace("\t","",$data[1]),
-                    "monto" => str_replace("\t","",$data[2].$data[3]),
-                    "fecha_aplicacion" => str_replace("\t","",$data[4]),
-                    "concepto" => str_replace("\t","",$data[5]),
-                    "documento" => substr($data[5], 1, 9),
-                    "clave_bancaria" => str_replace("\t","",$data[7]),
-                    "nombre_corto" => '',
-                    "razon_social" => ''
+                    "cuenta_cargo"      => str_replace("\t","",$data[0]),
+                    "cuenta_abono"      => str_replace("\t","",$data[1]),
+                    "nombre_corto"      => '',
+                    "razon_social"      => '',
+                    "monto"             => str_replace("\t","",$data[2].$data[3]),
+                    "clave"             => '',
+                    "fecha_aplicacion"  => str_replace("\t","",$data[4]),
+                    "documento"         => substr($data[5], 1, 9),
+                    "concepto"          => str_replace("\t","",$data[5]),
+                    "clave_bancaria"    => str_replace("\t","",$data[7]),
+                    "control"           => '',
+                    "control2"          => ''
+
                 );
             }
             $encabezados++;
