@@ -233,8 +233,11 @@ class DistribucionRecursoRemesaService
 
     public function registrarPagos($pagos, $id){
         try {
-            DistribucionRecursoRemesa::find($id)->remesaValidaEstado();
             DB::connection('cadeco')->beginTransaction();
+            DistribucionRecursoRemesa::find($id)->remesaValidaEstado();
+            $remesa = DistribucionRecursoRemesa::with('partida')->find($id);
+            if($remesa->partida->count() != count($pagos)){abort(403, "El archivo de entrada no contiene las mismas partidas de remesa.");}
+
             foreach ($pagos as $pago) {
                 $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $id)->where('id_documento', '=', $pago['documento'])->first();
                 if(!$partida_remesa) abort(403, "El archivo de entrada no corresponde a la distribución seleccionada .");

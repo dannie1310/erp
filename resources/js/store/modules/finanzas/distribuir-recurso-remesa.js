@@ -247,6 +247,7 @@ export default {
                                     console.log(data);
                                     swal("Pagos registrados correctamente", {
                                         icon: "success",
+                                        timer: 3000,
                                         buttons: false
                                     }).then(() => {
                                         context.commit('UPDATE_DISTRIBUCION', data);
