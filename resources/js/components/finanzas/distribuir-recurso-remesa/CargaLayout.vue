@@ -68,6 +68,13 @@
                 file_interbancario : null
             }
         },
+
+        // mounted() {
+        //     $(this.$refs.modal).on('hide.bs.modal', () => {
+        //         $('.modal-backdrop fade show').remove();
+        //     });
+        // },
+
         methods: {
             load() {
                 $(this.$refs.modal).modal('show')
@@ -98,9 +105,13 @@
                         }
                     })
                     .then(() => {
-                        $(this.$refs.modal).modal('hide')
                         this.$emit('success')
-                    })
+                    }).finally(() => {
+                        setTimeout(() => {
+                            $(this.$refs.modal).modal('hide');
+
+                        }, 100);
+                    });
             },
             onFileChange(e){
                 this.file_interbancario = null;
@@ -129,7 +140,6 @@
             },
             validate() {
                 this.$validator.validate().then(result => {
-                    console.log(result);
                     if (result){
                         this.cargarLayout()
                     }else{

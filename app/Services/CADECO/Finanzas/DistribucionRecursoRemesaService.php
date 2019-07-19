@@ -235,12 +235,9 @@ class DistribucionRecursoRemesaService
         try {
             DB::connection('cadeco')->beginTransaction();
             DistribucionRecursoRemesa::find($id)->remesaValidaEstado();
-//            $remesa = DistribucionRecursoRemesa::with('partida')->find($id);
-//            if($remesa->partida->count() != count($pagos)){abort(403, "El archivo de entrada no contiene las mismas partidas de remesa.");}
-//dd('panda', $pagos[0]['documento']);
+
             foreach ($pagos as $pago) {
                 $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $id)->where('id_documento', '=', $pago['documento'])->first();
-                //dd($partida_remesa);
                 if(!$partida_remesa) abort(403, "El archivo de entrada no corresponde a la distribución seleccionada .");
                 if($partida_remesa->estado != 1) abort(403, "El archivo de entrada contiene partidas con estado: " . $partida_remesa->estatus->descripcion);
                 $data = array(
@@ -253,10 +250,9 @@ class DistribucionRecursoRemesaService
                     //"destino" => $partida_remesa->documento->Destinatario,
                     //"observaciones" => $partida_remesa->documento->Observaciones
                 );
-                //dd($partida_remesa->documento);
 
                 if ($partida_remesa->documento->IDTransaccionCDC) {
-                    $transaccion = Transaccion::find($partida_remesa->documento->IDTransaccionCDC)->first();
+                    $transaccion = Transaccion::find($partida_remesa->documento->IDTransaccionCDC);
                     $pago_remesa = null;
                     switch ($transaccion->tipo_transaccion) {
                         case 65:

@@ -244,7 +244,6 @@ export default {
                                 .post(URI + payload.id + '/cargaLayoutManual', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    console.log(data);
                                     swal("Pagos registrados correctamente", {
                                         icon: "success",
                                         timer: 3000,
