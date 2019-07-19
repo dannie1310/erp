@@ -98,6 +98,7 @@
                         }
                     })
                     .then(() => {
+                        $(this.$refs.modal).modal('hide')
                         this.$emit('success')
                     })
             },
