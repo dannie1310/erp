@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="load" class="btn btn-sm btn-outline-info" :disabled="cargando">
+        <button @click="load" class="btn btn-sm btn-outline-info" title="Cargar" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-upload" v-else></i>
         </button>
@@ -48,7 +48,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="cerrarModal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" @click="cargarLayout">Cargar</button>
+                        <button type="button" class="btn btn-primary" @click="validate">Cargar</button>
                     </div>
                 </div>
             </div>
@@ -85,7 +85,7 @@
                 this.$validator.errors.clear();
                 $(this.$refs.modal).modal('hide')
             },
-            cargarLayout(e){
+            cargarLayout(){
                 var formData = new FormData();
                 formData.append('file_mismo_banco',  this.file_mismo_banco);
                 formData.append('file_interbancario',  this.file_interbancario);
@@ -125,7 +125,19 @@
                     }
                 };
                 reader.readAsDataURL(file);
-            }
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    console.log(result);
+                    if (result) {
+
+                            this.cargarLayout()
+
+                    }else{
+                        swal('¡Error!', 'Error archivos de entrada invalidos.', 'error')
+                    }
+                });
+            },
         }
     }
 </script>
