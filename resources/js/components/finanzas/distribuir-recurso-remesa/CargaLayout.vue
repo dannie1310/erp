@@ -129,11 +129,19 @@
             validate() {
                 this.$validator.validate().then(result => {
                     console.log(result);
-                    if (result) {
-
-                            this.cargarLayout()
-
+                    if (result){
+                        this.cargarLayout()
                     }else{
+                        if(this.$refs.carga_layout_interbancario.value !== ''){
+                            this.$refs.carga_layout_interbancario.value = '';
+                            this.file_interbancario = null;
+                        }
+                        if(this.$refs.carga_layout_mismo_banco.value !== ''){
+                            this.$refs.carga_layout_mismo_banco.value = '';
+                            this.file_mismo_banco = null;
+                        }
+
+                        this.$validator.errors.clear();
                         swal('¡Error!', 'Error archivos de entrada invalidos.', 'error')
                     }
                 });

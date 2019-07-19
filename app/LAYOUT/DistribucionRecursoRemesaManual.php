@@ -84,11 +84,11 @@ class DistribucionRecursoRemesaManual
         if($this->remesa->estado != 1){ dd("Layout de distribucion de remesa no disponible.". PHP_EOL . "Estado: " . $this->remesa->estatus->descripcion );}
         foreach ($this->remesa->partida as $key => $partida){
             if($partida->cuentaAbono->tipo == 1){
-                $cuenta_cargo = str_pad($partida->cuentaCargo->numero, 16, ' ', STR_PAD_RIGHT);
+                $cuenta_cargo = str_pad(substr($partida->cuentaCargo->numero, 0, 16), 16, ' ', STR_PAD_RIGHT);
                 $cuenta_abono = str_pad($partida->cuentaAbono->cuenta_clabe, 16, ' ', STR_PAD_RIGHT);
                 $importe = str_pad(number_format($partida->documento->MontoTotal, '2', '.', ''), 13, 0, STR_PAD_LEFT);
                 $documento = "D" . str_pad($partida->id_documento, 9, 0, STR_PAD_LEFT);
-                $concepto = strlen($partida->documento->Concepto) > 30 ? substr($partida->cuentaAbono->empresa->razon_social, 0, 30) :
+                $concepto = strlen($partida->documento->Concepto) > 30 ? substr($partida->documento->Concepto, 0, 30) :
                     str_pad($partida->documento->Concepto, 30, ' ', STR_PAD_RIGHT);
                 $fecha_presentacion = date('dmY');
                 $this->data_mismo[] = $cuenta_cargo . $cuenta_abono . $importe . $documento . $concepto . $fecha_presentacion;
@@ -98,7 +98,7 @@ class DistribucionRecursoRemesaManual
                     str_pad($partida->cuentaAbono->empresa->razon_social, 40, ' ', STR_PAD_RIGHT);
                 $monto = explode('.', $partida->documento->MontoTotal);
                 $documento = "D" . str_pad($partida->id_documento, 9, 0, STR_PAD_LEFT);
-                $concepto = strlen($partida->documento->Concepto) > 120 ? substr($partida->cuentaAbono->empresa->razon_social, 0, 120) :
+                $concepto = strlen($partida->documento->Concepto) > 120 ? substr($partida->documento->Concepto, 0, 120) :
                     str_pad($partida->documento->Concepto, 120, ' ', STR_PAD_RIGHT);
                 $this->data_inter[] = str_pad(substr($partida->cuentaCargo->numero, 0, 16), 16, ' ', STR_PAD_RIGHT)
                     . str_pad($partida->cuentaAbono->cuenta_clabe, 20, ' ', STR_PAD_RIGHT)
