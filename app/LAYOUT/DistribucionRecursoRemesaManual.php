@@ -52,13 +52,25 @@ class DistribucionRecursoRemesaManual
         if($reg_layout){
             return "Layout de distribucion de remesa descargado previamente." ;
         }else{
-            $reg_layout = new DistribucionRecursoRemesaLayout();
-            $reg_layout->id_distrubucion_recurso =$this->id;
-            $reg_layout->usuario_descarga = auth()->id();
-            $reg_layout->contador_descarga = 1;
-            $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
-            $reg_layout->nombre_archivo = $file_m_banco;
-            $reg_layout->save();
+
+            if(count($this->data_mismo) > 0) {
+                $reg_layout = new DistribucionRecursoRemesaLayout();
+                $reg_layout->id_distrubucion_recurso = $this->id;
+                $reg_layout->usuario_descarga = auth()->id();
+                $reg_layout->contador_descarga = 1;
+                $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
+                $reg_layout->nombre_archivo = $file_m_banco;
+                $reg_layout->save();
+            }
+            if(count($this->data_inter) > 0){
+                $reg_layout = new DistribucionRecursoRemesaLayout();
+                $reg_layout->id_distrubucion_recurso = $this->id;
+                $reg_layout->usuario_descarga = auth()->id();
+                $reg_layout->contador_descarga = 1;
+                $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
+                $reg_layout->nombre_archivo = $file_interb;
+                $reg_layout->save();
+            }
 
             $this->remesa->estado = 2;
             $this->remesa->save();

@@ -216,23 +216,19 @@ class DistribucionRecursoRemesaService
     public function cargaLayoutManual(Request $request, $id){
         $file_mismo_banco = $request->file_mismo_banco;
         $file_interbancario = $request->file_interbancario;
+        $interbancario = array();
+        $mismo_banco = array();
         $pagos = [];
 
-        $data = $this->getCsvData($file_mismo_banco);
-        $interbancario = $this->getDocData($file_interbancario);
-        $pagos = array_merge($data, $interbancario);
-dd($pagos);
-        return $this->registrarPagos($data, $id);
-//        switch (pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION)){
-//            case 'doc':
-//                $data = $this->getDocData($file);
-//                break;
-//            case 'csv':
-//                $data = $this->getCsvData($file);
-//                return $this->registrarPagos($data, $id);
-//                break;
-//        }
+        if($file_mismo_banco != "null") {
+            $mismo_banco = $this->getCsvData($file_mismo_banco);
+        }
+        if($file_interbancario != "null") {
+            $interbancario = $this->getDocData($file_interbancario);
+        }
+        $pagos = array_merge($mismo_banco, $interbancario);
 
+        return $this->registrarPagos($pagos, $id);
     }
 
     public function registrarPagos($pagos, $id){
@@ -335,7 +331,7 @@ dd($pagos);
             return $distribucion;
         }catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
+            abort(400, "Error archivos de entrada invalidos.");
             throw $e;
         }
     }

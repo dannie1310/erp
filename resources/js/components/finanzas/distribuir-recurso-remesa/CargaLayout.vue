@@ -71,12 +71,17 @@
         methods: {
             load() {
                 $(this.$refs.modal).modal('show')
-            },
-            cerrarModal(event) {
-                console.log(this.$refs.carga_layout_mismo_banco.value);
-                console.log(this.$refs.carga_layout_interbancario.value);
                 this.$refs.carga_layout_interbancario.value = '';
                 this.$refs.carga_layout_mismo_banco.value = '';
+                this.file_interbancario = null;
+                this.file_mismo_banco = null;
+            },
+            cerrarModal(event) {
+                this.$refs.carga_layout_interbancario.value = '';
+                this.$refs.carga_layout_mismo_banco.value = '';
+                this.file_interbancario = null;
+                this.file_mismo_banco = null;
+
                 this.$validator.errors.clear();
                 $(this.$refs.modal).modal('hide')
             },
@@ -97,6 +102,8 @@
                     })
             },
             onFileChange(e){
+                this.file_interbancario = null;
+                this.file_mismo_banco = null;
                 var files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
                     return;
