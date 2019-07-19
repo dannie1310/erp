@@ -36,6 +36,8 @@ class DistribucionRecursoRemesaManual
         $file_interb = '#'.$llave.'-santander-inter';
         $file_zip = '#'.$llave.'-santander';
 
+        Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());
+
         count($this->data_mismo) > 0? Storage::disk('portal_zip')->put($file_m_banco.'.txt', $mismo):'';
         count($this->data_inter) > 0? Storage::disk('portal_zip')->put($file_interb.'.txt', $inter):'';
 
@@ -88,6 +90,7 @@ class DistribucionRecursoRemesaManual
                 $cuenta_abono = str_pad($partida->cuentaAbono->cuenta_clabe, 16, ' ', STR_PAD_RIGHT);
                 $importe = str_pad(number_format($partida->documento->MontoTotal, '2', '.', ''), 13, 0, STR_PAD_LEFT);
                 $documento = "D" . str_pad($partida->id_documento, 9, 0, STR_PAD_LEFT);
+                $concepto = str_replace(array("\/", "\*", '\"', '\'', '#', '-', '.'), ' ', $partida->documento->Concepto);
                 $concepto = strlen($partida->documento->Concepto) > 30 ? substr($partida->documento->Concepto, 0, 30) :
                     str_pad($partida->documento->Concepto, 30, ' ', STR_PAD_RIGHT);
                 $fecha_presentacion = date('dmY');
