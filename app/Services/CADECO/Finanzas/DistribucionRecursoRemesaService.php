@@ -9,15 +9,21 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Facades\Context;
 use App\LAYOUT\DistribucionRecursoRemesaManual;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
+use App\Models\CADECO\OrdenPago;
+use App\Models\CADECO\Pago;
+use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Repositories\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class DistribucionRecursoRemesaService
 {
@@ -68,7 +74,6 @@ class DistribucionRecursoRemesaService
             }
 
             DB::connection('cadeco')->commit();
-
             return $d;
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
@@ -209,42 +214,126 @@ class DistribucionRecursoRemesaService
     }
 
     public function cargaLayoutManual(Request $request, $id){
-        $data = array();
-        $file = $request->file('file');
-        $nombre = $request->file('file')->getClientOriginalName();
-        $id_distribucion = (int)substr($nombre, 1, 5);
-        if($id_distribucion != $id){
-            abort(400, "Archivo de carga no corresponde con esta distribución.");
-        }
+        $file_mismo_banco = $request->file_mismo_banco;
+        $file_interbancario = $request->file_interbancario;
+        $interbancario = array();
+        $mismo_banco = array();
+        $pagos = [];
 
-        switch (pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_EXTENSION)){
-            case 'doc':
-                $data = $this->getDocData($file);
-                break;
-            case 'csv':
-                $data = $this->getCsvData($file);
-                $this->registrarPagos($data, $id);
-                break;
+        if($file_mismo_banco != "null") {
+            $mismo_banco = $this->getCsvData($file_mismo_banco);
         }
+        if($file_interbancario != "null") {
+            $interbancario = $this->getDocData($file_interbancario);
+        }
+        $pagos = array_merge($mismo_banco, $interbancario);
 
-        dd(pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_EXTENSION), $request->file('file')->getClientOriginalName());
+        return $this->registrarPagos($pagos, $id);
     }
 
     public function registrarPagos($pagos, $id){
-        foreach ($pagos as $pago){
-            $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $id)->where('id_documento', '=', $pago['documento'])->first();
-            dd($partida_remesa->documento);
-            if($transaccion = Transaccion::find($partida_remesa->documento->IDTransaccionCDC)){
-                dd('panda', $partida_remesa);
-            }else{
-                $transaccion->save([
+        try {
+            DistribucionRecursoRemesa::find($id)->remesaValidaEstado();
+            DB::connection('cadeco')->beginTransaction();
+            foreach ($pagos as $pago) {
+                $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $id)->where('id_documento', '=', $pago['documento'])->first();
+                if(!$partida_remesa) abort(403, "El archivo de entrada no corresponde a la distribución seleccionada .");
+                if($partida_remesa->estado != 1) abort(403, "El archivo de entrada contiene partidas con estado: " . $partida_remesa->estatus->descripcion);
+                $data = array(
+                    //"id_cuenta" => $partida_remesa->id_cuenta_cargo,
+                    "id_empresa" => $partida_remesa->documento->IDDestinatario,
+                    "id_moneda" => $partida_remesa->documento->IDMoneda,
+                    "monto" => -1 * abs($partida_remesa->documento->MontoTotalSolicitado),
+                    //"saldo" => -1 * abs($partida_remesa->documento->MontoTotalSolicitado),
+                    "referencia" => $partida_remesa->cuentaAbono->cuenta_clabe,
+                    //"destino" => $partida_remesa->documento->Destinatario,
+                    //"observaciones" => $partida_remesa->documento->Observaciones
+                );
+                //dd($partida_remesa->documento);
+                if ($transaccion = Transaccion::find($partida_remesa->documento->IDTransaccionCDC)) {
+                    $pago_remesa = null;
+                    switch ($transaccion->tipo_transaccion) {
+                        case 65:
+                                 // se registra un pago
+                            $data["id_antecedente"] = $transaccion->id_antecedente;
+                            $data["id_referente"] = $transaccion->id_transaccion;
+                            $o_pago = OrdenPago::query()->create($data);
+                            $o_pago = OrdenPago::query()->where('id_transaccion', '=', $o_pago->id_transaccion)->first();
+                            unset($data["id_antecedente"]);
+                            unset($data["id_referente"]);
+                            $data["numero_folio"] = $o_pago->numero_folio;
+                            $data["estado"] = 2;
+                            $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
+                            $data["destino"] = $partida_remesa->documento->Destinatario;
+                            $data["observaciones"] = $partida_remesa->documento->Observaciones;
+                            $pago_remesa = Pago::query()->create($data);
 
-                ]);
-                dd($partida_remesa->documento->tipoDocumento, Transaccion::find($partida_remesa->documento->IDTransaccionCDC));
+                            break;
+                        case 72:
+                            if($partida_remesa->documento->IDTipoDocumento == 12){
+                                unset($data["id_empresa"]);
+                                $data["id_antecedente"] = $transaccion->id_transaccion;
+                                $data["id_referente"] = $transaccion->id_referente;
+                                $data["estado"] = 1;
+                                $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
+                                $data["saldo"] = -1 * abs($partida_remesa->documento->MontoTotalSolicitado);
+                                $data["referencia"] = $pago['clave_bancaria'];
+                                $data["destino"] = $partida_remesa->documento->Destinatario;
+                                $data["observaciones"] = $partida_remesa->documento->Observaciones;
+                                $pago_remesa = PagoVario::query()->create($data);
+
+
+                            }else{
+                                $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
+                                $data["saldo"] = -1 * abs($partida_remesa->documento->MontoTotalSolicitado);
+                                $data["destino"] = $partida_remesa->documento->Destinatario;
+                                $data["observaciones"] = $partida_remesa->documento->Observaciones;
+
+                                $pago_remesa = PagoACuenta::query()->create($data);
+                            }
+                            break;
+                        default:
+                            $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
+                            $data["saldo"] = -1 * abs($partida_remesa->documento->MontoTotalSolicitado);
+                            $data["destino"] = $partida_remesa->documento->Destinatario;
+                            $data["observaciones"] = $partida_remesa->documento->Observaciones;
+
+                            $pago_remesa = PagoACuenta::query()->create($data);
+                            break;
+                    }
+                    $transaccion->estado = 2;
+                    $transaccion->save();
+
+                } else {
+                    $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
+                    $data["saldo"] = -1 * abs($partida_remesa->documento->MontoTotalSolicitado);
+                    $data["destino"] = $partida_remesa->documento->Destinatario;
+                    $data["observaciones"] = $partida_remesa->documento->Observaciones;
+
+                    $pago_remesa = PagoACuenta::query()->create($data);
+                }
+                $partida_remesa->estado = 2;
+                $partida_remesa->id_transaccion_pago = $pago_remesa->id_transaccion;
+                $partida_remesa->folio_partida_bancaria = $pago['clave_bancaria'];
+                $partida_remesa->save();
+
             }
 
+            $distribucion = DistribucionRecursoRemesa::query()->find($id);
+            $distribucion->estado = 3;
+            $distribucion->save();
+            $distribucion_layout = DistribucionRecursoRemesaLayout::query()->where('id_distrubucion_recurso', '=', $id)->first();
+            $distribucion_layout->usuario_carga = auth()->id();
+            $distribucion_layout->fecha_hora_carga = date('Y-m-d');
+            $distribucion_layout->folio_confirmacion_bancaria = date('Y-m-d');
+            $distribucion_layout->save();
+            DB::connection('cadeco')->commit();
+            return $distribucion;
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, "Error archivos de entrada invalidos.");
+            throw $e;
         }
-        dd($pagos);
     }
 
     public function getDocData($docFile){
@@ -253,15 +342,18 @@ class DistribucionRecursoRemesaService
         while(!feof($myfile)) {
             $linea = str_replace("\n","",fgets($myfile));
             $content[] = array(
-                "cuenta_cargo"      => substr($linea, 0, 16),
-                "cuenta_abono"      => substr($linea, 17, 19),
-                "nombre_corto"      => substr($linea, 36, 5),
-                "razon_social"      => substr($linea, 41, 40),
-                "monto"             => substr($linea, 81, 19),
-                "clave"             => substr($linea, 101, 4),
-                "concepto"          => substr($linea, 105, 120),
-                "control"           => substr($linea, 225, 7),
-                "control2"          => substr($linea, 232, 8),
+                "cuenta_cargo"      => str_replace("  ","",substr($linea, 0, 16)),
+                "cuenta_abono"      => str_replace("  ","",substr($linea, 17, 19)),
+                "nombre_corto"      => str_replace("  ","",substr($linea, 36, 5)),
+                "razon_social"      => str_replace("  ","",substr($linea, 41, 40)),
+                "monto"             => str_replace("  ","",substr($linea, 81, 19)),
+                "clave"             => str_replace("  ","",substr($linea, 101, 4)),
+                "fecha_aplicacion"  => '',
+                "documento"         => str_replace("  ","",substr($linea, 106, 9)),
+                "concepto"          => str_replace("  ","",substr($linea, 115, 120)),
+                "clave_bancaria"    => '',
+                "control"           => str_replace("  ","",substr($linea, 225, 7)),
+                "control2"          => str_replace("  ","",substr($linea, 232, 8)),
             );
         }
         fclose($myfile);
@@ -276,15 +368,19 @@ class DistribucionRecursoRemesaService
         while ( $data = fgetcsv($file, '', ",") ){
             if($encabezados > 0){
                 $all_data[] = array(
-                    "cuenta_cargo" => str_replace("\t","",$data[0]),
-                    "cuenta_abono" => str_replace("\t","",$data[1]),
-                    "monto" => str_replace("\t","",$data[2].$data[3]),
-                    "fecha_aplicacion" => str_replace("\t","",$data[4]),
-                    "concepto" => str_replace("\t","",$data[5]),
-                    "documento" => substr($data[5], 1, 9),
-                    "clave_bancaria" => str_replace("\t","",$data[7]),
-                    "nombre_corto" => '',
-                    "razon_social" => ''
+                    "cuenta_cargo"      => str_replace("\t","",$data[0]),
+                    "cuenta_abono"      => str_replace("\t","",$data[1]),
+                    "nombre_corto"      => '',
+                    "razon_social"      => '',
+                    "monto"             => str_replace("\t","",$data[2].$data[3]),
+                    "clave"             => '',
+                    "fecha_aplicacion"  => str_replace("\t","",$data[4]),
+                    "documento"         => substr($data[5], 1, 9),
+                    "concepto"          => str_replace("\t","",$data[5]),
+                    "clave_bancaria"    => str_replace("\t","",$data[7]),
+                    "control"           => '',
+                    "control2"          => ''
+
                 );
             }
             $encabezados++;

@@ -63,6 +63,33 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
         ],
+        /**
+         * Disks para configurar almacenamiento de layouts bancarios de Santander por H2H y Portal
+         */
+        'h2h_in' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_H2H_STORAGE_IN')),
+        ],
+        'h2h_out' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_H2H_STORAGE_OUT')),
+        ],
+        'h2h_historico' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_H2H_STORAGE_HISTORICO')),
+        ],
+        'portal_descarga' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_PORTAL_STORAGE_DESCARGA')),
+        ],
+        'portal_carga' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_PORTAL_STORAGE_CARGA')),
+        ],
+        'portal_zip' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_PORTAL_STORAGE_ZIP')),
+        ],
 
     ],
 
