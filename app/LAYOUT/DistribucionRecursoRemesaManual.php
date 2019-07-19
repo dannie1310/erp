@@ -8,6 +8,7 @@ use Chumper\Zipper\Zipper;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class DistribucionRecursoRemesaManual
 {
@@ -22,35 +23,29 @@ class DistribucionRecursoRemesaManual
     }
 
     function create(){
+
         $this->generar();
         $llave = str_pad($this->id, 5, 0, STR_PAD_LEFT);
         $inter = "";
         $mismo = "";
+
         foreach ($this->data_inter as $dat){$inter .= $dat . PHP_EOL;}
         foreach ($this->data_mismo as $dat){$mismo .= $dat . PHP_EOL;}
-
+        //dd('panda');
         $file_m_banco = '#'.$llave.'-santander-local';
         $file_interb = '#'.$llave.'-santander-inter';
         $file_zip = '#'.$llave.'-santander';
-        count($this->data_mismo) > 0? Storage::disk('portal_descarga')->put($file_m_banco.'.txt', $mismo):'';
-        count($this->data_inter) > 0? Storage::disk('portal_descarga')->put($file_interb.'.txt', $inter):'';
 
-        $getMismo = Storage::disk('portal_descarga')->get($file_m_banco . '.txt');
-        $getInter = Storage::disk('portal_descarga')->get($file_interb . '.txt');
-        //dd($getInter);
-        $zipper = new Zipper();
-        try {
+        count($this->data_mismo) > 0? Storage::disk('portal_zip')->put($file_m_banco.'.txt', $mismo):'';
+        count($this->data_inter) > 0? Storage::disk('portal_zip')->put($file_interb.'.txt', $inter):'';
 
-            $zipper->zip($file_zip . '.zip')->folder('storage/layouts_bancarios/zip')->add(
-                $getMismo, $getInter
-            );
+        $files_global = storage_path('layouts_bancarios/santander/portal/zip/*');
+        $zip_file = storage_path('layouts_bancarios/santander/portal/descarga');
+        $zipper = new Zipper;
+        $files = glob($files_global);
+        $zipper->make($zip_file.'/' .$file_zip .'.zip')->add($files)->close();
 
-            Storage::disk('portal_descarga')->put($file_zip.'.zip', $zipper);
-        } catch (FileNotFoundException $e) {
-            dd('Exception 1:  ',$e);
-        } catch (\Exception $e) {
-            dd('Exception 2:  ' ,$e);
-        }
+
 
         $reg_layout = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $this->id)->first();
 
@@ -69,7 +64,8 @@ class DistribucionRecursoRemesaManual
             $this->remesa->save();
         }
 
-        return Storage::disk('portal_descarga')->exists($file_zip.'.zip')->download($file_zip.'.zip');
+        Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());
+        return Storage::disk('portal_descarga')->download($file_zip.'.zip');
     }
 
     public function generar(){

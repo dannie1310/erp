@@ -86,6 +86,10 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('SANTANDER_PORTAL_STORAGE_CARGA')),
         ],
+        'portal_zip' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_PORTAL_STORAGE_ZIP')),
+        ],
 
     ],
 
