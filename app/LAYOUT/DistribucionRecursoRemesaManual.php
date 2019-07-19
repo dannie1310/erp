@@ -90,9 +90,9 @@ class DistribucionRecursoRemesaManual
                 $cuenta_abono = str_pad($partida->cuentaAbono->cuenta_clabe, 16, ' ', STR_PAD_RIGHT);
                 $importe = str_pad(number_format($partida->documento->MontoTotal, '2', '.', ''), 13, 0, STR_PAD_LEFT);
                 $documento = "D" . str_pad($partida->id_documento, 9, 0, STR_PAD_LEFT);
-                $concepto = str_replace(array("\/", "\*", '\"', '\'', '#', '-', '.'), ' ', $partida->documento->Concepto);
-                $concepto = strlen($partida->documento->Concepto) > 30 ? substr($partida->documento->Concepto, 0, 30) :
-                    str_pad($partida->documento->Concepto, 30, ' ', STR_PAD_RIGHT);
+                $concepto_rep = str_replace(array("\/", "\*", '\"', '\'', '#', '-', '.'), ' ', $partida->documento->Concepto);
+                $concepto = strlen($concepto_rep) > 30 ? substr($concepto_rep, 0, 30) :
+                    str_pad($concepto_rep, 30, ' ', STR_PAD_RIGHT);
                 $fecha_presentacion = date('dmY');
                 $this->data_mismo[] = $cuenta_cargo . $cuenta_abono . $importe . $documento . $concepto . $fecha_presentacion;
             }
