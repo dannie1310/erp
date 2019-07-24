@@ -28,7 +28,9 @@ class DistribucionRecursoRemesa extends Model
             'monto_autorizado',
             'monto_distribuido',
             'usuario_registro',
-            'estado'
+            'estado',
+            'usuario_autorizo',
+            'fecha_hora_autorizacion'
     ];
 
     protected static function boot()
@@ -87,6 +89,10 @@ class DistribucionRecursoRemesa extends Model
         return $this->belongsTo(Usuario::class, 'usuario_cancelo', 'idusuario');
     }
 
+    public function usuarioAutorizo() {
+        return $this->belongsTo(Usuario::class, 'usuario_autorizo', 'idusuario');
+    }
+
     public function estatus(){
         return $this->belongsTo(CtgEstadoDistribucionRecursoRemesa::class, 'estado', 'estado');
     }
@@ -129,6 +135,8 @@ class DistribucionRecursoRemesa extends Model
                 $partida->autorizar();
             }
             $this->estado = 1;
+            $this->usuario_autorizo = auth()->id();
+            $this->fecha_hora_autorizacion = date('Y-m-d h:i:s');
             $this->save();
             return $this;
         }
