@@ -7,6 +7,7 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
 use Chumper\Zipper\Zipper;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
@@ -14,48 +15,45 @@ class DistribucionRecursoRemesaManual
 {
     protected $data_inter = array();
     protected $data_mismo = array();
+    private $files_global;
+    private $zip_file_path;
+
     protected $id;
     public function __construct($id)
     {
+
         $this->id = $id;
         $this->remesa = \App\Models\CADECO\Finanzas\DistribucionRecursoRemesa::with('partida')->where('id', '=', $this->id)->first();
-
+        $this->zip_file_path = config('app.env_variables.SANTANDER_PORTAL_STORAGE_DESCARGA');
+        $this->files_global = config('app.env_variables.SANTANDER_PORTAL_STORAGE_ZIP');
     }
 
     function create(){
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $reg_layout = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $this->id)->first();
+            if ($reg_layout) {
+                return "Layout de distribucion de remesa descargado previamente.";
+            }
 
-        $this->generar();
-        $llave = str_pad($this->id, 5, 0, STR_PAD_LEFT);
-        $inter = "";
-        $mismo = "";
+            $this->generar();
 
-        foreach ($this->data_inter as $dat){$inter .= $dat . PHP_EOL;}
-        foreach ($this->data_mismo as $dat){$mismo .= $dat . PHP_EOL;}
-        //dd('panda');
-        $file_m_banco = '#'.$llave.'-santander-local';
-        $file_interb = '#'.$llave.'-santander-inter';
-        $file_zip = '#'.$llave.'-santander';
+            $inter = "";
+            $mismo = "";
 
-        Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());
+            foreach ($this->data_inter as $dat) {
+                $inter .= $dat . PHP_EOL;
+            }
+            foreach ($this->data_mismo as $dat) {
+                $mismo .= $dat . PHP_EOL;
+            }
 
-        count($this->data_mismo) > 0? Storage::disk('portal_zip')->put($file_m_banco.'.txt', $mismo):'';
-        count($this->data_inter) > 0? Storage::disk('portal_zip')->put($file_interb.'.txt', $inter):'';
+            $llave = str_pad($this->id, 5, 0, STR_PAD_LEFT);
+            $file_m_banco = '#' . $llave . '-santander-mismob';
+            $file_interb = '#' . $llave . '-santander-interb';
+            $file_zip = '#' . $llave . '-santander';
 
-        $files_global = storage_path('layouts_bancarios/santander/portal/zip/*');
-        $zip_file = storage_path('layouts_bancarios/santander/portal/descarga');
-        $zipper = new Zipper;
-        $files = glob($files_global);
-        $zipper->make($zip_file.'/' .$file_zip .'.zip')->add($files)->close();
-
-
-
-        $reg_layout = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $this->id)->first();
-
-        if($reg_layout){
-            return "Layout de distribucion de remesa descargado previamente." ;
-        }else{
-
-            if(count($this->data_mismo) > 0) {
+            if (count($this->data_mismo) > 0) {
                 $reg_layout = new DistribucionRecursoRemesaLayout();
                 $reg_layout->id_distrubucion_recurso = $this->id;
                 $reg_layout->usuario_descarga = auth()->id();
@@ -64,7 +62,7 @@ class DistribucionRecursoRemesaManual
                 $reg_layout->nombre_archivo = $file_m_banco;
                 $reg_layout->save();
             }
-            if(count($this->data_inter) > 0){
+            if (count($this->data_inter) > 0) {
                 $reg_layout = new DistribucionRecursoRemesaLayout();
                 $reg_layout->id_distrubucion_recurso = $this->id;
                 $reg_layout->usuario_descarga = auth()->id();
@@ -76,10 +74,45 @@ class DistribucionRecursoRemesaManual
 
             $this->remesa->estado = 2;
             $this->remesa->save();
-        }
 
-        Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());
-        return Storage::disk('portal_descarga')->download($file_zip.'.zip');
+            if (count($this->data_mismo) > 0 && count($this->data_inter) > 0) {
+
+                Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());
+
+                Storage::disk('portal_zip')->put($file_m_banco . '.txt', $mismo);
+                Storage::disk('portal_zip')->put($file_interb . '.txt', $inter);
+
+                $files_global = storage_path($this->files_global . '/*');
+                $zip_file_path = storage_path($this->zip_file_path);
+                $zipper = new Zipper;
+                $files = glob($files_global);
+                $zipper->make($zip_file_path . '/' . $file_zip . '.zip')->add($files)->close();
+
+                Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());
+                DB::connection('cadeco')->commit();
+                return Storage::disk('portal_descarga')->download($file_zip . '.zip');
+            }else{
+                if (count($this->data_mismo) > 0){
+                    Storage::disk('portal_descarga')->put($file_m_banco . '.txt', $mismo);
+
+                    DB::connection('cadeco')->commit();
+                    return Storage::disk('portal_descarga')->download($file_m_banco . '.txt');
+                }
+                if (count($this->data_inter) > 0){
+                    Storage::disk('portal_descarga')->put($file_interb . '.txt', $inter);
+
+                    DB::connection('cadeco')->commit();
+                    return Storage::disk('portal_descarga')->download($file_interb . '.txt');
+                }
+            }
+
+            DB::connection('cadeco')->rollBack();
+            return "No se pudo generar el archivo de layout de distribucion de recursos de remesa.";
+
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
     }
 
     public function generar(){
@@ -97,8 +130,9 @@ class DistribucionRecursoRemesaManual
                 $this->data_mismo[] = $cuenta_cargo . $cuenta_abono . $importe . $documento . $concepto . $fecha_presentacion;
             }
             if($partida->cuentaAbono->tipo == 2) {
-                $razon_social = strlen($partida->cuentaAbono->empresa->razon_social) > 40 ? substr($partida->cuentaAbono->empresa->razon_social, 0, 40) :
-                    str_pad($partida->cuentaAbono->empresa->razon_social, 40, ' ', STR_PAD_RIGHT);
+                $r_social_dep = $this->elimina_caracteres_especiales($partida->cuentaAbono->empresa->razon_social);
+                $razon_social = strlen($r_social_dep) > 40 ? substr($r_social_dep, 0, 40) :
+                    str_pad($r_social_dep, 40, ' ', STR_PAD_RIGHT);
                 $monto = explode('.', $partida->documento->MontoTotal);
                 $documento = "D" . str_pad($partida->id_documento, 9, 0, STR_PAD_LEFT);
                 $concepto_rep = $this->elimina_caracteres_especiales($partida->documento->Concepto);
