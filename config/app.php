@@ -3,6 +3,19 @@
 return [
 
     'id_obra' => env('ID_OBRA', "1"),
+
+    /**
+     * Obtener valor de variables de entorno (.env) y utilizarlas en cualquier clase
+     */
+
+    'env_variables' => [
+        'SANTANDER_H2H_STORAGE_IN' => env('SANTANDER_H2H_STORAGE_IN'),
+        'SANTANDER_H2H_STORAGE_OUT' => env('SANTANDER_H2H_STORAGE_OUT'),
+        'SANTANDER_H2H_STORAGE_HISTORICO' => env('SANTANDER_H2H_STORAGE_HISTORICO'),
+        'SANTANDER_PORTAL_STORAGE_DESCARGA' => env('SANTANDER_PORTAL_STORAGE_DESCARGA'),
+        'SANTANDER_PORTAL_STORAGE_CARGA' => env('SANTANDER_PORTAL_STORAGE_CARGA'),
+        'SANTANDER_PORTAL_STORAGE_ZIP' => env('SANTANDER_PORTAL_STORAGE_ZIP'),
+    ],
     /*
     |--------------------------------------------------------------------------
     | Application Name
