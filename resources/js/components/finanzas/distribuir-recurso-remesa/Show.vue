@@ -18,12 +18,7 @@
                                 <td class="bg-gray-light">
                                    {{distribucion.folio}}
                                 </td>
-                                <td class="bg-gray-light">
-                                    <b>Fecha de Registro:</b>
-                                </td>
-                                <td class="bg-gray-light">
-                                   {{distribucion.fecha_registro}}
-                                </td>
+
                                 <td class="bg-gray-light">
                                     <b>Monto Total de Remesa:</b>
                                 </td>
@@ -36,29 +31,52 @@
                                 <td class="bg-gray-light text-right">
                                     $ {{(parseFloat(distribucion.monto_distribuido)).formatMoney(2,'.',',')}}
                                 </td>
+                                <td class="bg-gray-light"><b>Estado:</b><br> </td>
+                                <td class="bg-gray-light"><estatus-label :value="distribucion.estado"></estatus-label></td>
                             </tr>
                             <tr>
-                                <td colspan="2" class="bg-gray-light"><b>Estado:</b><br> </td>
-                                <td colspan="2" class="bg-gray-light"><estatus-label :value="distribucion.estado"></estatus-label></td>
-
                                 <td colspan="2" class="bg-gray-light">
-                                    <b>Usuario de Registro:</b>
+                                    <b>Usuario Registró:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
                                     {{distribucion.usuario_registro.nombre}}
                                 </td>
+                                <td colspan="2" class="bg-gray-light">
+                                    <b>Fecha de Registro:</b>
+                                </td>
+                                <td colspan="2" class="bg-gray-light">
+                                    {{distribucion.fecha_registro}}
+                                </td>
                             </tr>
                             <tr v-if="distribucion.estado.estado == -1">
                                 <td colspan="4" class="bg-gray-light">
-                                    <b>Usuario de Cancelación</b>
+                                    <b>Usuario Canceló</b>
                                 </td>
                                 <td colspan="4" class="bg-gray-light">
                                     {{distribucion.usuario_cancelo.nombre}}
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="8" class="bg-gray-light"><b>Información de la Remesa</b></td>
+                            <tr v-if="distribucion.estado.estado == 1">
+                                <td colspan="2" class="bg-gray-light">
+                                    <b>Usuario Autorizó:</b>
+                                </td>
+                                <td colspan="2" class="bg-gray-light">
+                                    {{distribucion.usuario_autorizo.nombre}}
+                                </td>
+                                <td colspan="2" class="bg-gray-light">
+                                    <b>Fecha de Autorización:</b>
+                                </td>
+                                <td colspan="2" class="bg-gray-light">
+                                    {{distribucion.fecha_autorizacion}}
+                                </td>
                             </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive col-12">
+                        <h5><i class="fa fa-info-circle" style="padding-right: 3px"></i>Información de la Remesa</h5>
+                        <table class="table table-striped">
+                            <tbody>
                             <tr>
                                 <td colspan="2" class="bg-gray-light">
                                     <b>Año:</b><br>
@@ -80,6 +98,7 @@
                         </table>
                     </div>
                 </div>
+                <h5><i class="fa fa-list" style="padding-right: 3px"></i>Partidas de la Distribución</h5>
                 <div v-if="distribucion" class="row">
                     <div  class="col-12 table-responsive">
                         <table class="table table-striped">
@@ -150,7 +169,7 @@
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/find', {
                     id: this.id,
                     params: {
-                        include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa','partidas.cuentaAbono.banco', 'partidas.transaccion', 'usuario_cancelo'],
+                        include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa','partidas.cuentaAbono.banco', 'partidas.transaccion', 'usuario_cancelo', 'usuario_autorizo'],
                     }
                 }).then(data => {
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);
