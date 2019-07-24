@@ -30,7 +30,8 @@ class DistribucionRecursoRemesa extends Model
             'usuario_registro',
             'estado',
             'usuario_autorizo',
-            'fecha_hora_autorizacion'
+            'fecha_hora_autorizacion',
+            'fecha_hora_cancelacion'
     ];
 
     protected static function boot()
@@ -59,6 +60,7 @@ class DistribucionRecursoRemesa extends Model
                 $partida->cancelar();
             }
             $this->usuario_cancelo = auth()->id();
+            $this->fecha_hora_cancelacion = date('Y-m-d h:i:s');
             $this->estado = -1;
             $this->save();
             return $this;
