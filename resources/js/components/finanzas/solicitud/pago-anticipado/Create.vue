@@ -289,7 +289,7 @@
                 return this.$store.dispatch('contratos/subcontrato/index',{
                     config: {
                         params: {
-                            scope: 'sinPagoAnticipado'
+                            scope: 'subcontratosDisponible'
                         }
                     }
                 }).then(data => {
