@@ -47,11 +47,6 @@ class DistribucionRecursoRemesa extends Model
             $model->fecha_hora_registro = date('Y-m-d h:i:s');
             $model->estado = 0;
         });
-
-        self::created(function($query)
-        {
-
-        });
     }
     public function cancelar(){
         if($this->estado != 0 ){
@@ -66,6 +61,14 @@ class DistribucionRecursoRemesa extends Model
             $this->save();
             return $this;
         }
+    }
+
+    public function remesaLayout(){
+        return $this->hasOne(DistribucionRecursoRemesaLayout::class, 'id_distrubucion_recurso', 'id');
+    }
+
+    public function remesaLog(){
+        return $this->hasMany(DistribucionRecursoRemesaLog::class, 'id_recurso_remesa', 'id');
     }
 
     public function remesaPagable(){
@@ -99,6 +102,9 @@ class DistribucionRecursoRemesa extends Model
     public function remesaValidaEstado(){
         switch ($this->estado){
             case 0:
+                abort(400, 'La distribucion de recurso de remesa no ha sido autorizada.');
+                break;
+            case 1:
                 abort(400, 'Archivo de distribución de recurso no ha sido descargado.');
                 break;
             case 3:
