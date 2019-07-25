@@ -103,7 +103,7 @@
                             <tr v-for="(doc, i) in distribucion.partidas.data">
                                 <td>{{i+1}}</td>
                                 <td>{{doc.documento.concepto}}</td>
-                                <td>{{doc.documento.empresa ? doc.documento.empresa.razon_social : ''}}</td>
+                                <td>{{doc.documento.beneficiario}}</td>
                                 <td class="text-right">{{doc.documento.monto_total_format}}</td>
                                 <td class="text-right">{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
                                 <td class="text-right">{{doc.documento.saldo_moneda_nacional_format}}</td>
@@ -159,7 +159,6 @@
                 })
             },
             getCuentaAbono(cuenta){
-                console.log(cuenta);
                 if(cuenta.banco && cuenta.banco.complemento){
                     return cuenta.banco.complemento.nombre_corto+" "+ cuenta.cuenta;
                 }

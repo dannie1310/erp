@@ -12,6 +12,7 @@ namespace App\Models\MODULOSSAO\ControlRemesas;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
+use App\Models\CADECO\Fondo;
 use App\Models\CADECO\Moneda;
 use Illuminate\Database\Eloquent\Model;
 
@@ -55,6 +56,11 @@ class Documento extends Model
         return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
     }
 
+    public function fondo()
+    {
+        return $this->belongsTo(Fondo::class, 'IDDestinatario', 'id_fondo');
+    }
+
     public function tipoDocumento(){
         return $this->belongsTo(TipoDocumento::class, 'IDTipoDocumento', 'IDTipoDocumento');
     }
@@ -74,5 +80,21 @@ class Documento extends Model
         }else {
             return $this->MontoTotal;
         }
+    }
+
+    public function getBeneficiarioAttribute()
+    {
+        if($this->IDTipoDocumento == 12){
+             $fondo = Fondo::select('descripcion')->where('id_fondo','=', $this->IDDestinatario)->first();
+             if($fondo){
+                 return $fondo->descripcion;
+             }
+        }else{
+            $empresa = Empresa::select('razon_social')->where('id_empresa','=', $this->IDDestinatario)->first();
+            if($empresa){
+                return $empresa->razon_social;
+            }
+        }
+        return null;
     }
 }
