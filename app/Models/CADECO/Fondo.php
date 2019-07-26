@@ -22,6 +22,7 @@ class Fondo extends Model
     public $timestamps = false;
     public $searchable = [
         'descripcion',
+        'nombre',
         'saldo',
         'cuentaFondo.cuenta'
     ];

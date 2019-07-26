@@ -85,9 +85,9 @@ class Documento extends Model
     public function getBeneficiarioAttribute()
     {
         if($this->IDTipoDocumento == 12){
-             $fondo = Fondo::select('descripcion')->where('id_fondo','=', $this->IDDestinatario)->first();
+             $fondo = Fondo::select('nombre')->where('id_fondo','=', $this->IDDestinatario)->first();
              if($fondo){
-                 return $fondo->descripcion;
+                 return $fondo->nombre;
              }
         }else{
             $empresa = Empresa::select('razon_social')->where('id_empresa','=', $this->IDDestinatario)->first();
