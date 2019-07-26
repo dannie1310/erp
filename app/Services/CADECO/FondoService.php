@@ -9,8 +9,14 @@
 namespace App\Services\CADECO;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Finanzas\CtgTipoFondo;
 use App\Models\CADECO\Fondo;
 use App\Repositories\CADECO\Fondo\Repository;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class FondoService
 {
@@ -56,5 +62,48 @@ class FondoService
     {
         return $this->repository->all();
     }
+
+    public function store(array $data){
+
+        $empresa_array = Empresa::query()->where('id_empresa','=',$data['id_responsable'])->get();
+        $razon_social=$empresa_array[0]['razon_social'];
+
+        $tipos_array= CtgTipoFondo::query()->where('id',$data['id_tipo'])->get();
+        $tipo_desc_corta=$tipos_array[0]['descripcion_corta'];
+
+        $id_obra= Context::getIdObra();
+
+        $descripcion= $tipo_desc_corta .' '.$razon_social;
+
+
+
+
+        try{
+            DB::connection('cadeco')->beginTransaction();
+
+            $datos = [
+                'id_obra' => $id_obra,
+                'id_tipo' => $data['id_tipo'],
+                'id_responsable' => $data['id_responsable'],
+                'descripcion' => $descripcion,
+                'nombre' =>$razon_social,
+                'fecha'=>Carbon::now()->format('Y-m-d'),
+                'fondo_obra'=>$data['fondo_obra'],
+                'id_costo' => $data['id_costo']
+            ];
+
+            $fondo = Fondo::query()->create($datos);
+
+            DB::connection('cadeco')->commit();
+
+            return $fondo;
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+
+    }
+
 
 }

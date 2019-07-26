@@ -25,6 +25,16 @@ class Fondo extends Model
         'saldo',
         'cuentaFondo.cuenta'
     ];
+    protected $fillable = [
+        'id_obra',
+        'id_tipo',
+        'id_responsable',
+        'descripcion',
+        'nombre',
+        'fecha',
+        'fondo_obra',
+        'id_costo'
+    ];
 
     protected static function boot()
     {

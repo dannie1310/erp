@@ -617,6 +617,33 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path:'fondo',
+                component: require('./components/finanzas/fondo/Layout.vue'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'fondo',
+                        component: require('./components/finanzas/fondo/Index.vue'),
+                        meta: {
+                            title: 'Fondos',
+                            breadcrumb: {name: 'FONDOS', parent: 'finanzas'},
+                            middleware: [auth, context]
+                        }
+
+                    },
+                    {
+                        path: 'create',
+                        name: 'fondo-create',
+                        component: require('./components/finanzas/fondo/Create'),
+                        meta: {
+                            title: 'Registrar Fondo',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                            middleware: [auth, context],
+                        }
+                    }
+                ]
+            },
         ]
     },
     {
