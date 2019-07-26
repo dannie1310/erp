@@ -40,6 +40,11 @@ class Fondo extends Model
             ->where('Contabilidad.cuentas_fondos.estatus', '=', 1);
     }
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_responsable', 'id_empresa');
+    }
+
     public function scopeSinCuenta($query)
     {
         return $query->doesntHave('cuentaFondo');
