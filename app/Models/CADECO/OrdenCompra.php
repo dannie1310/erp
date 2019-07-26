@@ -43,11 +43,6 @@ class OrdenCompra extends Transaccion
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
     }
 
-    public function scopeSinPagoAnticipado($query) //obsoleto
-    {
-        return $query->whereDoesntHave('pago_anticipado');
-    }
-
     public function entradas_material()
     {
         return $this->hasMany(EntradaMaterial::class, 'id_antecedente','id_transaccion');

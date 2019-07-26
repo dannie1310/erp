@@ -304,7 +304,7 @@
                     return this.$store.dispatch('compras/orden-compra/find', {
                         id: this.id_antecedente,
                         params: {
-                            include: ['empresa']
+                            include: ['empresa', 'montos']
                         }
                     })
                         .then(data => {

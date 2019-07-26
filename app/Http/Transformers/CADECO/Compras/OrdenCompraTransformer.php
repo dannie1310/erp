@@ -22,7 +22,8 @@ class OrdenCompraTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'empresa',
-        'solicitud'
+        'solicitud',
+        'montos'
     ];
 
     /**
@@ -87,5 +88,19 @@ class OrdenCompraTransformer extends TransformerAbstract
             return $this->item($solicitud, new SolicitudCompraTransformer);
         }
         return null;
+    }
+
+    /**
+     * Detalle de los montos de la orden de compra
+     * @param OrdenCompra $model
+     * @return array
+     */
+    public function includeMontos(OrdenCompra $model)
+    {
+            return array(
+                'monto_facturado' => (string) '$ '.number_format($model->montoFacturado,2,".",","),
+                'monto_disponible' => (string) '$ '.number_format($model->montoDisponible,2,".",","),
+                'monto_solicitado' => (string) '$ '.number_format($model->montoPagoAnticipado,2,".",",")
+            );
     }
 }
