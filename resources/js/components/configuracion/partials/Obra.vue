@@ -220,6 +220,10 @@
                             <label class="form-check-label" for="tipo_obra1"> En Proyecto</label>
                         </div>
                         <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="tipo_obra3" value="2" v-model="form.tipo_obra">
+                            <label class="form-check-label" for="tipo_obra3"> Solo consulta</label>
+                        </div>
+                        <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" id="tipo_obra2" value="2" v-model="form.tipo_obra">
                             <label class="form-check-label" for="tipo_obra2"> Terminada</label>
                         </div>
