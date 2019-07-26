@@ -56,7 +56,7 @@
                                     {{distribucion.usuario_cancelo.nombre}}
                                 </td>
                             </tr>
-                            <tr v-if="distribucion.estado.estado == 1">
+                            <tr v-if="distribucion.usuario_autorizo">
                                 <td colspan="2" class="bg-gray-light">
                                     <b>Usuario Autorizó:</b>
                                 </td>
