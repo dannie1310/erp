@@ -42,7 +42,7 @@ class DistribucionRecursoRemesaPartida extends Model
 
         self::creating(function ($model) {
             if(DistribucionRecursoRemesaPartida::query()->where('id_documento', '=',  $model->id_documento)->where('estado', '>=', 0)->get()->toArray() == []) {
-                $model->fecha_registro = date('Y-m-d h:i:s');
+                $model->fecha_registro = date('Y-m-d H:i:s');
                 $model->estado = 0;
             }else {
                 throw New \Exception('Está distribución no puede ser procesada debido a que cuenta con documentos relacionados en otra distribución.');

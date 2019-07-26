@@ -47,7 +47,7 @@ class DistribucionRecursoRemesa extends Model
             $model->id_obra = Context::getIdObra();
             $model->folio = $count +1;
             $model->usuario_registro = auth()->id();
-            $model->fecha_hora_registro = date('Y-m-d h:i:s');
+            $model->fecha_hora_registro = date('Y-m-d H:i:s');
             $model->estado = 0;
         });
     }

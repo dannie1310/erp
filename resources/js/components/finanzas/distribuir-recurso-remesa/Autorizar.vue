@@ -94,10 +94,10 @@
                                     <th>#</th>
                                     <th>Concepto</th>
                                     <th>Beneficiario</th>
-                                    <th>Importe</th>
+                                 <!-- <th>Importe</th>
                                     <th>Tipo Cambio</th>
                                     <th>Importe con TC</th>
-                                    <th>Tipo Cambio Actual</th>
+                                    <th>Tipo Cambio Actual</th>-->
                                     <th>Importe Pesos</th>
                                     <th>Cuenta Abono</th>
                                     <th>Cuenta Cargo</th>
@@ -109,10 +109,10 @@
                                     <td>{{i+1}}</td>
                                     <td>{{doc.documento.concepto}}</td>
                                     <td>{{doc.documento.beneficiario}}</td>
-                                    <td class="text-right">{{doc.documento.monto_total_format}}</td>
+                                    <!--<td class="text-right">{{doc.documento.monto_total_format}}</td>
                                     <td class="text-right">{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
                                     <td class="text-right">{{doc.documento.saldo_moneda_nacional_format}}</td>
-                                    <td class="text-right">{{doc.moneda && doc.moneda.tipo != 1? parseFloat(doc.moneda.tipo_cambio).formatMoney(2, '.', ',') : '1.00'}}</td>
+                                    <td class="text-right">{{doc.moneda && doc.moneda.tipo != 1? parseFloat(doc.moneda.tipo_cambio).formatMoney(2, '.', ',') : '1.00'}}</td>-->
                                     <td class="text-right">${{doc.moneda && doc.moneda.tipo != 1? parseFloat((doc.documento.monto_total * doc.moneda.tipo_cambio)).formatMoney(2, '.', ',') : parseFloat((doc.documento.monto_total)).formatMoney(2, '.', ',')}}</td>
                                     <td>{{getCuentaAbono(doc.cuentaAbono)}}</td>
                                     <td>{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>

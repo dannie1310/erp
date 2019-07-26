@@ -63,9 +63,9 @@
                                                 <th>#</th>
                                                 <th>Concepto</th>
                                                 <th>Beneficiario</th>
-                                                <th>Importe Moneda Original</th>
+                                               <!-- <th>Importe Moneda Original</th>
                                                 <th>Moneda</th>
-                                                <th>Importe en Pesos</th>
+                                                <th>Importe en Pesos</th>-->
                                                 <th>Importe a Pagar en Pesos</th>
                                                 <th>Cuenta Abono</th>
                                                 <th>Cuenta Cargo</th>
@@ -78,9 +78,9 @@
                                                     <td>{{doc.concepto}}</td>
                                                     <td v-if="doc.beneficiario != null">{{doc.beneficiario}}</td>
                                                     <td class="text-danger" v-else>No registrado</td>
-                                                    <td class="text-right">{{doc.monto_total_format}}</td>
-                                                    <td>{{doc.moneda.abreviatura}}</td>
-                                                    <td class="text-right">{{doc.saldo_moneda_nacional_format}}</td>
+                                                    <!--<td class="text-right">{{doc.monto_total_format}}</td>-->
+                                                    <!--<td>{{doc.moneda.abreviatura}}</td>-->
+                                                    <!--<td class="text-right">{{doc.saldo_moneda_nacional_format}}</td>-->
                                                     <td class="text-right">${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
                                                     <td v-if = "doc.tipo_documento != 12 && doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0" style="width: 15%;">
                                                         <select class="form-control"
