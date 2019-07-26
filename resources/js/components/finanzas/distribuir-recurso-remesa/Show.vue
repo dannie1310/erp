@@ -112,8 +112,8 @@
                                 <th>Importe con TC</th>
                                 <th>Tipo Cambio Actual</th>-->
                                 <th>Importe Pesos</th>
-                                <th>Cuenta Abono</th>
                                 <th>Cuenta Cargo</th>
+                                <th>Cuenta Abono</th>
                                 <th v-if="distribucion.estado.estado === 3">Folio del Pago</th>
                                 <th>Estado</th>
                             </tr>
@@ -128,8 +128,8 @@
                                 <td class="text-right">{{doc.documento.saldo_moneda_nacional_format}}</td>
                                 <td class="text-right">{{doc.moneda  &&  doc.moneda.tipo != 1? parseFloat(doc.moneda.tipo_cambio).formatMoney(2, '.', ',') : '1.00'}}</td>-->
                                 <td class="text-right">${{doc.moneda  &&  doc.moneda.tipo != 1?parseFloat((doc.documento.monto_total * doc.moneda.tipo_cambio)).formatMoney(2, '.', ',') :parseFloat((doc.documento.monto_total)).formatMoney(2, '.', ',') }}</td>
-                                <td>{{getCuentaAbono(doc.cuentaAbono)}}</td>
                                 <td>{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
+                                <td>{{getCuentaAbono(doc.cuentaAbono)}}</td>
                                 <td v-if="distribucion.estado.estado === 3 && doc.transaccion"> #{{doc.transaccion.numero_folio}}</td>
                                 <td><partida-estatus :value="doc.estado"></partida-estatus></td>
                             </tr>
