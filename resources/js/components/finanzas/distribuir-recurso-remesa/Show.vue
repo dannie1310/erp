@@ -36,7 +36,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2" class="bg-gray-light">
-                                    <b>Usuario Registró:</b>
+                                    <b>Registró:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
                                     {{distribucion.usuario_registro.nombre}}
@@ -50,7 +50,7 @@
                             </tr>
                             <tr v-if="distribucion.estado.estado == -1">
                                 <td colspan="4" class="bg-gray-light">
-                                    <b>Usuario Canceló</b>
+                                    <b>Canceló</b>
                                 </td>
                                 <td colspan="4" class="bg-gray-light">
                                     {{distribucion.usuario_cancelo.nombre}}
@@ -58,7 +58,7 @@
                             </tr>
                             <tr v-if="distribucion.usuario_autorizo">
                                 <td colspan="2" class="bg-gray-light">
-                                    <b>Usuario Autorizó:</b>
+                                    <b>Autorizó:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
                                     {{distribucion.usuario_autorizo.nombre}}
