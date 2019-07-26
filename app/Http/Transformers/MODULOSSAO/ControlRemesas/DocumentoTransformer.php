@@ -11,6 +11,7 @@ namespace App\Http\Transformers\MODULOSSAO\ControlRemesas;
 
 use App\Http\Transformers\CADECO\CambioTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\FondoTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use League\Fractal\TransformerAbstract;
@@ -26,7 +27,8 @@ class DocumentoTransformer extends TransformerAbstract
         'remesa',
         'documentoLiberado',
         'empresa',
-        'moneda'
+        'moneda',
+        'fondo'
     ];
 
     /**
@@ -56,23 +58,28 @@ class DocumentoTransformer extends TransformerAbstract
             'monto_total_solicitado' => $model->MontoTotalSolicitado,
             'observaciones' => $model->Observaciones,
             'destinatario' => $model->Destinatario,
-            'importe_total' => $model->getImporteTotalAttribute()
+            'importe_total' => $model->getImporteTotalAttribute(),
+            'beneficiario' => $model->beneficiario,
+            'tipo_documento' => $model->IDTipoDocumento
         ];
     }
 
     /**
+     * Remesa
      * @param Documento $model
      * @return \League\Fractal\Resource\Item|null
      */
     public function includeRemesa(Documento $model)
     {
-        if($remesa = $model->remesa){
+        if($remesa = $model->remesa)
+        {
             return $this->item($remesa, new RemesaTransformer);
         }
         return null;
     }
 
     /**
+     * Documento Liberado
      * @param Documento $model
      * @return \League\Fractal\Resource\Item|null
      */
@@ -86,6 +93,7 @@ class DocumentoTransformer extends TransformerAbstract
     }
 
     /**
+     * Empresa
      * @param Documento $model
      * @return \League\Fractal\Resource\Item|null
      */
@@ -98,11 +106,27 @@ class DocumentoTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * Moneda
+     * @param Documento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeMoneda(Documento $model)
     {
-        if($moneda = $model->moneda) {
+        if($moneda = $model->moneda)
+        {
             return $this->item($moneda, new MonedaTransformer);
         }
         return null;
     }
+
+   public function includeFondo(Documento $model)
+   {
+       if($fondo = $model->fondo)
+       {
+           return $this->item($fondo, new FondoTransformer);
+       }
+       return null;
+   }
+
 }
