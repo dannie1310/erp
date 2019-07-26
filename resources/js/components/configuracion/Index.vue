@@ -2,11 +2,11 @@
     <div class="row">
         <div class="col-lg-10 offset-lg-1" v-if="obra">
            <configuracion-obra :obra="obra"></configuracion-obra>
-<!--            <configuracion-sistema  v-if="$root.can('habilitar_deshabilitar_sistema')"></configuracion-sistema>-->
-<!--            <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>-->
+            <configuracion-sistema  v-if="$root.can('habilitar_deshabilitar_sistema')"></configuracion-sistema>
+            <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>
             <!-- ESTE COMPONENTE CONTIENE LAS ASIGNACIONES PARA EL ESQUEMA GLOBAL, PARA EL ESQUEMA PERSONALIZADO SE DEBERÁ CREAR EL CORRESPONDIENTE COMPONENTE -->
-<!--            <configuracion-seguridad v-if="obra.configuracion.esquema_permisos == 1"></configuracion-seguridad>-->
-<!--            <configuracion-seguridad-personalizado v-else-if="obra.configuracion.esquema_permisos == 2"></configuracion-seguridad-personalizado>-->
+            <configuracion-seguridad v-if="obra.configuracion.esquema_permisos == 1"></configuracion-seguridad>
+            <configuracion-seguridad-personalizado v-else-if="obra.configuracion.esquema_permisos == 2"></configuracion-seguridad-personalizado>
         </div>
     </div>
 </template>
@@ -28,7 +28,7 @@
 
         mounted() {
             this.cargando = true;
-            Promise.all([this.getObra(), this.getMonedas(), this.getConfiguraciones()])
+            Promise.all([this.getObra(), this.getMonedas()])
                 .then(data => {
                     this.obra = data[0];
                     this.$store.commit('cadeco/moneda/SET_MONEDAS', data[1].data)
@@ -47,12 +47,6 @@
                     id: this.currentObra.id_obra,
                     params: { include: ['configuracion', 'datosContables'], 'logo' : true }
                 })
-            },
-            getConfiguraciones() {
-                return this.$store.dispatch('seguridad/configuracion-obra/contexto')
-                    .then(data => {
-                        this.$store.commit('seguridad/configuracion-obra/SET_CONFIGURACIONES', data.data);
-                    })
             },
         },
 
