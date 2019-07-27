@@ -45,6 +45,8 @@ class RolController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('esquemaGlobal');
+        $this->middleware('permiso:asignar_roles')->only(['asignacionMasiva','desasignacionMasiva']);
+        $this->middleware('permiso:asignar_permisos')->only('asignacionPermisos');
 
         $this->fractal = $fractal;
         $this->service = $service;
