@@ -48,6 +48,7 @@ class ObraController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context', ['except' => ['authPaginate']]);
+        $this->middleware('permiso:administracion_configuracion_obra')->only(['update']);
 
         $this->fractal = $fractal;
         $this->service = $service;
