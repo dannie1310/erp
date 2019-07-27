@@ -38,7 +38,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Cuenta', field: 'cuenta__cuenta', sortable: true },
+                    { title: 'Cuenta', field: 'cuenta', sortable: true },
                     { title: 'Fondo', field: 'id_fondo', sortable: true },
                     { title: 'Saldo', field: 'saldo', sortable: true },
                     { title: 'Editar', field: 'buttons', tdComp: require('./partials/ActionButtons')},
@@ -46,8 +46,8 @@
                 data: [],
                 total: 0,
                 query: {
-                    include: 'cuentaFondo',
-                    scope: 'conCuenta'
+                    include: 'fondo',
+                    scope: 'activo'
                 },
                 search: '',
                 cargando: false
@@ -65,10 +65,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/fondo/paginate', { params: this.query })
+                return this.$store.dispatch('contabilidad/cuenta-fondo/paginate', { params: this.query })
                     .then(data => {
-                        this.$store.commit('cadeco/fondo/SET_FONDOS', data.data);
-                        this.$store.commit('cadeco/fondo/SET_META', data.meta);
+                        this.$store.commit('contabilidad/cuenta-fondo/SET_CUENTAS', data.data);
+                        this.$store.commit('contabilidad/cuenta-fondo/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -78,10 +78,10 @@
 
         computed: {
             fondos(){
-                return this.$store.getters['cadeco/fondo/fondos'];
+                return this.$store.getters['contabilidad/cuenta-fondo/cuentas'];
             },
             meta(){
-                return this.$store.getters['cadeco/fondo/meta'];
+                return this.$store.getters['contabilidad/cuenta-fondo/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -96,12 +96,12 @@
                     fondos.forEach(function (fondo, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            cuenta__cuenta: fondo.cuentaFondo.cuenta,
-                            id_fondo: fondo.descripcion,
-                            saldo:  '$'+parseFloat(fondo.saldo).formatMoney(2, '.', ','),
+                            cuenta: fondo.cuenta,
+                            id_fondo: fondo.fondo.descripcion,
+                            saldo:  '$'+parseFloat(fondo.fondo.saldo).formatMoney(2, '.', ','),
                             buttons: $.extend({}, {
                                 edit: self.$root.can('editar_cuenta_fondo') ? true : undefined,
-                                id: fondo.cuentaFondo.id
+                                id: fondo.id
                             })
                         })
                     })
