@@ -10,7 +10,7 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Fondo;
-use App\Repositories\CADECO\Fondo\Repository;
+use App\Repositories\Repository;
 
 class FondoService
 {
@@ -36,15 +36,7 @@ class FondoService
 
     public function paginate($data)
     {
-        $fondo = $this->repository;
-        if (isset($data['cuenta__cuenta'])) {
-            $fondo = $fondo->where([['cuenta.cuenta', 'LIKE', '%' . $data['cuenta__cuenta'] . '%']]);
-        }
-
-        if (isset($data['id_fondo'])) {
-            $fondo= $fondo->where([['fondos.descripcion', 'LIKE', '%' . $data['id_fondo'] . '%']]);
-        }
-        return $fondo->paginate($data);
+        return $this->repository->paginate($data);
     }
 
     public function show($id)
