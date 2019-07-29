@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaFondo;
+use App\Models\CADECO\Finanzas\CtgTipoFondo;
 use Illuminate\Database\Eloquent\Model;
 
 class Fondo extends Model
@@ -50,8 +51,19 @@ class Fondo extends Model
             ->where('Contabilidad.cuentas_fondos.estatus', '=', 1);
     }
 
+    public function tipoFondo()
+    {
+        return $this->belongsTo(CtgTipoFondo::class, 'id_tipo', 'id');
+    }
+
     public function scopeSinCuenta($query)
     {
         return $query->doesntHave('cuentaFondo');
     }
+
+    public function scopeConResponsable($query)
+    {
+        return $query->where('id_responsable', '>', 0);
+    }
+
 }
