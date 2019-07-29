@@ -23,7 +23,6 @@ class FondoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        ''
     ];
 
     /**
