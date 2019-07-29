@@ -11,6 +11,7 @@ namespace App\Http\Transformers\CADECO;
 
 use App\Http\Transformers\CADECO\Contabilidad\CuentaFondoTransformer;
 use App\Http\Transformers\CADECO\Finanzas\CtgTipoFondoTransformer;
+use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Fondo;
 use League\Fractal\TransformerAbstract;
 
@@ -32,7 +33,8 @@ class FondoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'tipo_fondo',
-        'cuenta_fondo'
+        'cuenta_fondo',
+        'empresa'
     ];
 
     public function transform(Fondo $model)
@@ -52,8 +54,10 @@ class FondoTransformer extends TransformerAbstract
      * @param CuentaFondo $model
      * @return \League\Fractal\Resource\Item
      */
-    public function includeCuentaFondo(Fondo $model){
-        if($fondo = $model->cuentaFondo){
+    public function includeCuentaFondo(Fondo $model)
+    {
+        if($fondo = $model->cuentaFondo)
+        {
             return $this->item($fondo, new CuentaFondoTransformer);
         }
         return null;
@@ -64,11 +68,26 @@ class FondoTransformer extends TransformerAbstract
      * @param Fondo $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeTipoFondo(Fondo $model) {
-        if ($fondo = $model->tipoFondo) {
+    public function includeTipoFondo(Fondo $model)
+    {
+        if ($fondo = $model->tipoFondo)
+        {
             return $this->item($fondo, new CtgTipoFondoTransformer);
         }
         return null;
     }
 
+    /**
+     * Empresa
+     * @param Fondo $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEmpresa(Fondo $model)
+    {
+        if($empresa = $model->empresa)
+        {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
 }

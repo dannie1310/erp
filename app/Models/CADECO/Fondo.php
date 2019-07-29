@@ -23,6 +23,7 @@ class Fondo extends Model
     public $timestamps = false;
     public $searchable = [
         'descripcion',
+        'nombre',
         'saldo',
         'cuentaFondo.cuenta'
     ];
@@ -49,6 +50,11 @@ class Fondo extends Model
     {
         return $this->hasOne(CuentaFondo::class, 'id_fondo', 'id_fondo')
             ->where('Contabilidad.cuentas_fondos.estatus', '=', 1);
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_responsable', 'id_empresa');
     }
 
     public function tipoFondo()

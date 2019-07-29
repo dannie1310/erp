@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaObserver;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        DistribucionRecursoRemesa::observe(DistribucionRecursoRemesaObserver::class);
     }
 
     /**
