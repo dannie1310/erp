@@ -23,18 +23,16 @@ class Lectura
 
     public function handle($request, Closure $next)
     {
-        $proyectos = Proyecto::query()->get()->where('base_datos','=',Context::getDatabase());
+        $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
 
-        foreach($proyectos as $proyecto){
-            $tipo_obra = ConfiguracionObra::query()->get()->where('id_proyecto','=',$proyecto->id)
-                ->where('id_obra','=',Context::getIdObra());
-            foreach ($tipo_obra as $tipo){
-                if($tipo->consulta == 1 || $tipo->tipo_obra == 2){
-                    abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
-                }
-                return $next($request);
-            }
+        $tipo_obra = ConfiguracionObra::query()->where('id_proyecto','=',$proyectos->id)
+            ->where('id_obra','=',Context::getIdObra())->first();
+
+        if($tipo_obra->consulta == 1 || $tipo_obra->tipo_obra == 2){
+            abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
         }
+
+        return $next($request);
     }
 
 }
