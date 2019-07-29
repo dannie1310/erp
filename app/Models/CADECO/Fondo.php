@@ -44,10 +44,4 @@ class Fondo extends Model
     {
         return $query->doesntHave('cuentaFondo');
     }
-
-    public function scopeConCuenta($query)
-    {
-        return $query->has('cuentaFondo');
-    }
-
 }
