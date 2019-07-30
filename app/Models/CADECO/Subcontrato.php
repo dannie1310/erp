@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
+use Illuminate\Support\Facades\DB;
 
 class Subcontrato extends Transaccion
 {
@@ -115,11 +116,6 @@ class Subcontrato extends Transaccion
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
-    public function getMontoSubcontratoAttribute()
-    {
-        return $this->monto - $this->impuesto;
-    }
-
     public function pago_anticipado(){
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
     }
@@ -131,5 +127,24 @@ class Subcontrato extends Transaccion
 
     public function getNombre(){
         return 'SUBCONTRATO';
+    }
+
+    public function partidas_facturadas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function scopeSubcontratosDisponible($query)
+    {
+        $transacciones = DB::connection('cadeco')->select(DB::raw(" 
+                 select oc.id_transaccion from transacciones oc
+                 left join (select SUM(monto) as solicitado, id_antecedente as id from  transacciones where tipo_transaccion = 72 and opciones = 327681 and estado >= 0 group by id_antecedente) as sol on sol.id = oc.id_transaccion 
+                 left join (select SUM(importe) as suma, i.id_antecedente as id from items i where i.estado >= 0 group by i.id_antecedente) as factura on factura.id = oc.id_transaccion
+                 where oc.tipo_transaccion = 51 and oc.estado in (0, 1) and  oc.id_obra = 1 and oc.opciones = 2 
+                 and (ROUND(oc.monto - oc.impuesto, 2) - ROUND((ISNULL(sol.solicitado,0) + ISNULL(factura.suma, 0)),2)) > 1 order by oc.id_transaccion"));
+
+        $transacciones = json_decode(json_encode($transacciones), true);
+
+        return $query->whereIn('id_transaccion', $transacciones);
     }
 }

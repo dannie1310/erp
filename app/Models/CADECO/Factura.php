@@ -11,7 +11,6 @@ namespace App\Models\CADECO;
 
 class Factura extends Transaccion
 {
-
     protected static function boot()
     {
         parent::boot();
@@ -23,4 +22,8 @@ class Factura extends Transaccion
         });
     }
 
+    public function partidas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
 }
