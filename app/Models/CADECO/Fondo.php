@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaFondo;
+use App\Models\CADECO\Finanzas\CtgTipoFondo;
 use Illuminate\Database\Eloquent\Model;
 
 class Fondo extends Model
@@ -22,8 +23,19 @@ class Fondo extends Model
     public $timestamps = false;
     public $searchable = [
         'descripcion',
+        'nombre',
         'saldo',
         'cuentaFondo.cuenta'
+    ];
+    protected $fillable = [
+        'id_obra',
+        'id_tipo',
+        'id_responsable',
+        'descripcion',
+        'nombre',
+        'fecha',
+        'fondo_obra',
+        'id_costo'
     ];
 
     protected static function boot()
@@ -40,14 +52,28 @@ class Fondo extends Model
             ->where('Contabilidad.cuentas_fondos.estatus', '=', 1);
     }
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_responsable', 'id_empresa');
+    }
+
+    public function tipoFondo()
+    {
+        return $this->belongsTo(CtgTipoFondo::class, 'id_tipo', 'id');
+    }
+    public function costo()
+    {
+        return$this->belongsTo(Costo::class, 'id_costo','id_costo');
+    }
+
     public function scopeSinCuenta($query)
     {
         return $query->doesntHave('cuentaFondo');
     }
 
-    public function scopeConCuenta($query)
+    public function scopeConResponsable($query)
     {
-        return $query->has('cuentaFondo');
+        return $query->where('id_responsable', '>', 0);
     }
 
 }

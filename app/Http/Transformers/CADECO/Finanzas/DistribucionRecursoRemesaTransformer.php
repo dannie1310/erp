@@ -37,13 +37,15 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
     protected $defaultIncludes = [
         'estado',
         'usuario_registro',
+        'usuario_autorizo'
     ];
 
     public function transform(DistribucionRecursoRemesa $model){
         return [
             'id' => $model->getKey(),
             'folio' => $model->folio,
-            'fecha_registro' => date('Y-m-d h:i:s', strtotime($model->fecha_hora_registro)),
+            'fecha_registro' => date('Y-m-d H:i:s', strtotime($model->fecha_hora_registro)),
+            'fecha_autorizacion' => date('Y-m-d H:i:s', strtotime($model->fecha_hora_autorizacion)),
             'monto_autorizado' => $model->monto_autorizado,
             'monto_distribuido' => $model->monto_distribuido,
             'estado' => $model->estado,
@@ -82,6 +84,18 @@ class DistribucionRecursoRemesaTransformer extends TransformerAbstract
     public function includeUsuarioCancelo(DistribucionRecursoRemesa $model)
     {
         if($usuario = $model->usuarioCancelo){
+            return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param DistribucionRecursoRemesa $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuarioAutorizo(DistribucionRecursoRemesa $model)
+    {
+        if($usuario = $model->usuarioAutorizo){
             return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
