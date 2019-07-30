@@ -63,7 +63,7 @@
                                         </div>
                         </div>
                                 <!-- Tipo de Fondo-->
-                                     <div class="col-md-10">
+                                     <div class="col-md-10" v-if="tiposFondo">
                                     <div class="form-group error-content">
                                         <label for="id_tipo_fondo">Tipo de Fondo</label>
                                         <select
@@ -143,6 +143,7 @@
                 descripcion: '',
                 cuentas: [],
                 empresas:[],
+                tiposFondo:[],
                 isHidden:false,
                 query:{},
             }
@@ -177,7 +178,7 @@
                     })
             },
             getTiposFondo() {
-                return this.$store.dispatch('finanzas/fondo/ctgTipoFondo',{
+                return this.$store.dispatch('finanzas/ctg-tipo-fondo/ctgTipoFondo',{
                 })
                     .then(data => {
                         this.tiposFondo = data.data;
@@ -194,7 +195,7 @@
             store() {
 
                 if(!this.id_empresa){
-                return this.$store.dispatch('finanzas/fondo/storeResponsable',{
+                return this.$store.dispatch('cadeco/fondo/storeResponsable',{
                     tipo_empresa: 32,
                     razon_social:this.responsable_text,
 
@@ -211,7 +212,7 @@
                  this.fondo_obra=0;
                 }
 
-                 return this.$store.dispatch('finanzas/fondo/store', {
+                 return this.$store.dispatch('cadeco/fondo/store', {
                      id_tipo: this.id_tipo_fondo,
                      id_responsable: this.id_empresa,
                      fondo_obra: this.fondo_obra,

@@ -28,17 +28,17 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Tipo', field: 'id_tipo', sortable: true },
-                    { title: 'Descripción', field: 'descripcion', sortable:true},
-                    { title: 'Responsable', field:'nombre',sortable:true},
+                    { title: 'Tipo', field: 'tipo', sortable: false },
+                    { title: 'Descripción', field: 'descripcion', sortable:false},
+                    { title: 'Responsable', field:'nombre',sortable:false},
                     { title: 'Saldo',field: 'saldo', tdClass: 'money', thClass: 'th_money', sortable: false  },
-                    { title: 'Fecha',field:'fecha',sortable:true },
+                    { title: 'Fecha',field:'fecha',sortable:false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: 'tipo_fondo', scope:'ConResponsable'
+                    include: 'tipo_fondo', scope:'ConResponsable', order: 'desc'
                 },
                 cargando: false
 
@@ -80,16 +80,20 @@
         watch: {
             fondos: {
                 handler(fondos){
-                   // console.log("here "+fondos);
                     let self = this
                     self.$data.data = []
                       fondos.forEach(function(fondo, i){
-                          console.log(fondo);
                           self.$data.data.push({
                             index: (i+1)+self.query.offset,
-                            tipo: fondo.id_tipo,
+                            tipo: fondo.tipo_fondo.descripcion,
+                            nombre: fondo.nombre,
+                            fecha: fondo.fecha_format,
                             saldo: `$ ${parseFloat(fondo.saldo).formatMoney(2)}`,
                             descripcion: fondo.descripcion,
+                            buttons: $.extend({},{
+                                show:true,
+                                id: fondo.id
+                            })
                         })
 
                     });
@@ -100,8 +104,8 @@
         },
         meta: {
             handler(meta){
-                let total = meta.pagination.total
-                this.$data.local = total
+                let total = meta.pagination.total;
+                this.$data.local = total;
             },
             deep: true
         },
@@ -123,15 +127,3 @@
 
 </style>
 
-<style>
-    .money
-    {
-        text-align: right;
-    }
-    .th_money
-    {
-        width: 150px;
-        max-width: 150px;
-        min-width: 100px;
-    }
-</style>

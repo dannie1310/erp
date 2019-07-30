@@ -49,8 +49,8 @@ import contratoProyectado from './modules/contratos/contrato-proyectado';
 
 //FINANZAS
 import cuenta_bancaria_proveedor from './modules/finanzas/cuenta-bancaria-proveedor';
+import ctg_tipo_fondo from './modules/finanzas/ctg-tipo-fondo';
 import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
-import fondo_fijo from './modules/finanzas/fondo';
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
 import remesa from './modules/finanzas/remesa';
 
@@ -100,7 +100,7 @@ export default new Vuex.Store({
 
         'finanzas/cuenta-bancaria-proveedor': cuenta_bancaria_proveedor,
         'finanzas/distribuir-recurso-remesa': distribuir_recurso_remesa,
-        'finanzas/fondo':fondo_fijo,
+        'finanzas/ctg-tipo-fondo': ctg_tipo_fondo,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
         'finanzas/remesa': remesa,
 

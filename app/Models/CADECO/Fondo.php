@@ -61,6 +61,10 @@ class Fondo extends Model
     {
         return $this->belongsTo(CtgTipoFondo::class, 'id_tipo', 'id');
     }
+    public function costo()
+    {
+        return$this->belongsTo(Costo::class, 'id_costo','id_costo');
+    }
 
     public function scopeSinCuenta($query)
     {

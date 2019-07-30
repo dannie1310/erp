@@ -13,6 +13,7 @@ use App\Http\Transformers\CADECO\Contabilidad\CuentaFondoTransformer;
 use App\Http\Transformers\CADECO\Finanzas\CtgTipoFondoTransformer;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Fondo;
+use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 class FondoTransformer extends TransformerAbstract
@@ -34,7 +35,8 @@ class FondoTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'tipo_fondo',
         'cuenta_fondo',
-        'empresa'
+        'empresa',
+        'costo'
     ];
 
     public function transform(Fondo $model)
@@ -46,7 +48,10 @@ class FondoTransformer extends TransformerAbstract
             'descripcion' =>$model->descripcion,
             'nombre'=>$model->nombre,
             'saldo' => $model->saldo,
-            'fecha'=>$model->fecha
+            'fecha'=>$model->fecha,
+            'fecha_format'=>Carbon::parse($model->fecha)->format('d/m/Y'),
+            'fondo_obra'=>$model->fondo_obra,
+            'id_costo'=>$model->id_costo,
         ];
     }
 
@@ -73,6 +78,15 @@ class FondoTransformer extends TransformerAbstract
         if ($fondo = $model->tipoFondo)
         {
             return $this->item($fondo, new CtgTipoFondoTransformer);
+        }
+        return null;
+    }
+
+    public function includeCosto(Fondo $model)
+    {
+        if ($fondo =$model->costo)
+        {
+            return $this->Item($fondo, new CostoTransformer);
         }
         return null;
     }

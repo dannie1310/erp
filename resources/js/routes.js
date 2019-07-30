@@ -643,7 +643,19 @@ export const routes = [
                             middleware: [auth, context],
                           //  permission: 'registrar_fondos'
                         }
-                    }
+                    },
+                    {
+                        path: ':id',
+                        name: 'fondo-show',
+                        props: true,
+                        component: require('./components/finanzas/fondo/Show'),
+                        meta: {
+                            title: 'Ver Fondo',
+                            breadcrumb: {name: 'VER', parent: 'finanzas'},
+                            middleware: [auth, context],
+                           // permission: 'consultar_fondos'
+                        }
+                    },
                 ]
             },
         ]
