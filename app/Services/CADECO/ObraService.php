@@ -56,6 +56,11 @@ class ObraService
             ]);
         }
 
+        $obra->configuracion()->update([
+            'tipo_obra' => $data['configuracion']['tipo_obra'],
+            'consulta' => $data['configuracion']['consulta']
+        ]);
+
         $obra->configuracion->fill(array_except($data['configuracion'], 'logotipo_original'));
         $obra->configuracion->save();
 

@@ -46,7 +46,9 @@ class ConfiguracionObraTransformer extends TransformerAbstract
             'nombre' => $model->nombre,
             'base_datos' => $model->proyecto->base_datos,
             'id_proyecto' => $model->id_proyecto,
-            'id_obra' => $model->id_obra
+            'id_obra' => $model->id_obra,
+            'consulta' => $model->consulta,
+            'tipo_obra' => $model->tipo_obra,
         ];
     }
 

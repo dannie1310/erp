@@ -423,6 +423,7 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'configuracion-obra'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@index');
+            $api->get('contexto', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@contexto');
         });
 
         $api->group(['prefix' => 'google-2fa'], function ($api) {
