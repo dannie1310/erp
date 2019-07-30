@@ -628,8 +628,8 @@ export const routes = [
                         meta: {
                             title: 'Fondos',
                             breadcrumb: {name: 'FONDOS', parent: 'finanzas'},
-                            middleware: [auth, context],
-                            // permission: 'consultar_fondos'
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_fondos'
                         }
 
                     },
@@ -640,8 +640,8 @@ export const routes = [
                         meta: {
                             title: 'Registrar Fondo',
                             breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
-                            middleware: [auth, context],
-                          //  permission: 'registrar_fondos'
+                            middleware: [auth, context,permission],
+                            permission: 'registrar_fondos'
                         }
                     },
                     {
@@ -652,8 +652,8 @@ export const routes = [
                         meta: {
                             title: 'Ver Fondo',
                             breadcrumb: {name: 'VER', parent: 'finanzas'},
-                            middleware: [auth, context],
-                           // permission: 'consultar_fondos'
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_fondos'
                         }
                     },
                 ]
