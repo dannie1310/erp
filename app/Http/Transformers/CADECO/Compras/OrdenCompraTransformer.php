@@ -58,9 +58,9 @@ class OrdenCompraTransformer extends TransformerAbstract
             'saldo' => (float)$model->saldo,
             'tipo_nombre' => (string)$model->getNombre(),
             'dato_transaccion' => (string)$model->getEncabezadoReferencia(),
-//            'monto_facturado' => (string) '$ '.number_format($model->montoFacturado,2,".",","),
-//            'monto_disponible' => (string) '$ '.number_format($model->montoDisponible,2,".",","),
-//            'monto_solicitado' => (string) '$ '.number_format($model->montoPagoAnticipado,2,".",",")
+            'monto_facturado' => (string) '$ '.number_format($model->montoFacturado,2,".",","),
+            'monto_disponible' => (string) '$ '.number_format($model->montoDisponible,2,".",","),
+            'monto_solicitado' => (string) '$ '.number_format($model->montoPagoAnticipado,2,".",",")
         ];
     }
 
@@ -97,10 +97,11 @@ class OrdenCompraTransformer extends TransformerAbstract
      */
     public function includeMontos(OrdenCompra $model)
     {
-            return array(
-                'monto_facturado' => (string) '$ '.number_format($model->montoFacturado,2,".",","),
+        dd( $this->currentScope);
+            return $this->transform(
+                ['monto_facturado' => (string) '$ '.number_format($model->montoFacturado,2,".",","),
                 'monto_disponible' => (string) '$ '.number_format($model->montoDisponible,2,".",","),
-                'monto_solicitado' => (string) '$ '.number_format($model->montoPagoAnticipado,2,".",",")
+                'monto_solicitado' => (string) '$ '.number_format($model->montoPagoAnticipado,2,".",",")]
             );
     }
 }

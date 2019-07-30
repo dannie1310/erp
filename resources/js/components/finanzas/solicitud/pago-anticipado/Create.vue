@@ -154,8 +154,26 @@
                                                                         <td align="right">{{ transaccion.monto_facturado }}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th class="bg-gray-light">Monto Solicitado:</th>
-                                                                        <td class="bg-gray-light" align="right">{{ transaccion.monto_solicitado }}</td>
+                                                                        <th class="bg-gray-light" for="importe">Importe a Solicitar:</th>
+                                                                        <td class="bg-gray-light" align="right">
+                                                                            <div class="col-12">
+                                                                                <div class="form-group error-content">
+                                                                                    <input
+                                                                                            :disabled="!transaccion"
+                                                                                            type="number"
+                                                                                            step="any"
+                                                                                            name="importe"
+                                                                                            data-vv-as="Importe"
+                                                                                            v-validate="{required: true}"
+                                                                                            class="form-control"
+                                                                                            id="importe1"
+                                                                                            placeholder="Importe"
+                                                                                            v-model="importe"
+                                                                                            :class="{'is-invalid': errors.has('importe')}">
+                                                                                    <div class="invalid-feedback" v-show="errors.has('importe')">{{ errors.first('importe') }}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th class="bg-gray">Monto Disponible:</th>
@@ -247,7 +265,8 @@
                 transaccion: [],
                 observaciones: '',
                 id_costo: '',
-                bandera_transaccion: 0
+                bandera_transaccion: 0,
+                importe : '',
             }
         },
         computed: {
@@ -269,6 +288,7 @@
                     this.observaciones = '';
                     this.$validator.reset();
                     this.cargando = false;
+                    this.importe = '';
             },
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
@@ -304,7 +324,7 @@
                     return this.$store.dispatch('compras/orden-compra/find', {
                         id: this.id_antecedente,
                         params: {
-                            include: ['empresa', 'montos']
+                            include: ['empresa']
                         }
                     })
                         .then(data => {
