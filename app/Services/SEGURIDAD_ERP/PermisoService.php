@@ -191,6 +191,7 @@ class PermisoService
                                      ON     (role_user.id_proyecto =
                                                 configuracion_obra.id_proyecto)
                                         AND (role_user.id_obra = configuracion_obra.id_obra)
+									WHERE configuracion_obra.tipo_obra != 2
                            GROUP BY role_user.[user_id]) Subquery_1
                              ON (vwUsuariosIntranet.idusuario = Subquery_1.[user_id])
                     WHERE vwUsuariosIntranet.usuario_estado = 2 AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') 
