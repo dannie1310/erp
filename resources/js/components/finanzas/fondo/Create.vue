@@ -195,17 +195,15 @@
             store() {
 
                 if(!this.id_empresa){
-                return this.$store.dispatch('cadeco/fondo/storeResponsable',{
+                return this.$store.dispatch('cadeco/empresa/store',{
                     tipo_empresa: 32,
                     razon_social:this.responsable_text,
-
                 })
                     .then((data) => {
                         this.id_empresa = data;
                     })
 
                 }
-
                 if(this.checkFondo===true){
                  this.fondo_obra=1;
                 }else{
