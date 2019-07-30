@@ -77,14 +77,14 @@
                 data: [],
                 total: 0,
                 query: {},
+                query1: {},
                 cargando: false
             }
         },
 
         mounted() {
             this.$Progress.start();
-            this.query.sort = 'permiso';
-            this.query.order = 'desc';
+            this.query1.scope = 'obraTerminada';
             this.getConfiguraciones()
                 .finally(() => {
                     this.$Progress.finish();
@@ -94,7 +94,7 @@
         methods: {
             getConfiguraciones() {
                 this.cargando = true;
-                return this.$store.dispatch('seguridad/configuracion-obra/index', )
+                return this.$store.dispatch('seguridad/configuracion-obra/index', { params: this.query1 } )
                     .then(data => {
                         this.$store.commit('seguridad/configuracion-obra/SET_CONFIGURACIONES', data.data);
                     })
