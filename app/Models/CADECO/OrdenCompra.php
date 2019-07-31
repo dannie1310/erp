@@ -97,10 +97,10 @@ class OrdenCompra extends Transaccion
         return round($this->pago_anticipado()->sum('monto'), 2);
     }
 
-    public function getMontoDisponibleAttribute()
-    {
-        return round($this->subtotal - ($this->montoFacturado + $this->MontoPagoAnticipado), 2);
-    }
+//    public function getMontoDisponibleAttribute()
+//    {
+//        return round($this->subtotal - ($this->montoFacturado + $this->MontoPagoAnticipado), 2);
+//    }
 
     public function scopeOrdenCompraDisponible($query)
     {
@@ -108,7 +108,7 @@ class OrdenCompra extends Transaccion
                  select oc.id_transaccion from transacciones oc
                  left join (select SUM(monto) as solicitado, id_antecedente as id from  transacciones where tipo_transaccion = 72 and opciones = 327681 and estado >= 0 group by id_antecedente) as sol on sol.id = oc.id_transaccion 
                  left join (select SUM(importe) as suma, i.id_antecedente as id from items i where i.estado >= 0 group by i.id_antecedente) as factura on factura.id = oc.id_transaccion
-                 where oc.tipo_transaccion = 19 and oc.estado >= 0 and  oc.id_obra = 1 and oc.opciones = 1 
+                 where oc.tipo_transaccion = 19 and oc.estado >= 0 and  oc.id_obra = ".Context::getIdObra()." and oc.opciones = 1 
                  and (ROUND(oc.monto - oc.impuesto, 2) - ROUND((ISNULL(sol.solicitado,0) + ISNULL(factura.suma, 0)),2)) > 0 order by oc.id_transaccion"));
 
         $transacciones = json_decode(json_encode($transacciones), true);

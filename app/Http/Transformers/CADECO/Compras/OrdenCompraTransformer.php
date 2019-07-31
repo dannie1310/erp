@@ -59,7 +59,6 @@ class OrdenCompraTransformer extends TransformerAbstract
             'tipo_nombre' => (string)$model->getNombre(),
             'dato_transaccion' => (string)$model->getEncabezadoReferencia(),
             'monto_facturado' => (string) '$ '.number_format($model->montoFacturado,2,".",","),
-            'monto_disponible' => (string) '$ '.number_format($model->montoDisponible,2,".",","),
             'monto_solicitado' => (string) '$ '.number_format($model->montoPagoAnticipado,2,".",",")
         ];
     }
@@ -90,18 +89,4 @@ class OrdenCompraTransformer extends TransformerAbstract
         return null;
     }
 
-    /**
-     * Detalle de los montos de la orden de compra
-     * @param OrdenCompra $model
-     * @return array
-     */
-    public function includeMontos(OrdenCompra $model)
-    {
-        dd( $this->currentScope);
-            return $this->transform(
-                ['monto_facturado' => (string) '$ '.number_format($model->montoFacturado,2,".",","),
-                'monto_disponible' => (string) '$ '.number_format($model->montoDisponible,2,".",","),
-                'monto_solicitado' => (string) '$ '.number_format($model->montoPagoAnticipado,2,".",",")]
-            );
-    }
 }

@@ -131,111 +131,118 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                            <div class="row" align="right">
-                                                <div class="table-responsive col-md-12">
-                                                    <div class="col-6">
-                                                        <div class="table-responsive">
-                                                            <table class="table">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <th style="width:50%" class="bg-gray-light">Subtotal:</th>
-                                                                        <td class="bg-gray-light" align="right">{{ transaccion.subtotal_format}}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>IVA:</th>
-                                                                        <td align="right">{{ transaccion.impuesto_format }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th class="bg-gray-light">Total:</th>
-                                                                        <td class="bg-gray-light" align="right">{{ transaccion.total_format }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>Monto Facturado:</th>
-                                                                        <td align="right">{{ transaccion.monto_facturado }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th class="bg-gray-light" for="importe">Importe a Solicitar:</th>
-                                                                        <td class="bg-gray-light" align="right">
-                                                                            <div class="col-12">
-                                                                                <div class="form-group error-content">
-                                                                                    <input
-                                                                                            :disabled="!transaccion"
-                                                                                            type="number"
-                                                                                            step="any"
-                                                                                            name="importe"
-                                                                                            data-vv-as="Importe"
-                                                                                            v-validate="{required: true}"
-                                                                                            class="form-control"
-                                                                                            id="importe1"
-                                                                                            placeholder="Importe"
-                                                                                            v-model="importe"
-                                                                                            :class="{'is-invalid': errors.has('importe')}">
-                                                                                    <div class="invalid-feedback" v-show="errors.has('importe')">{{ errors.first('importe') }}</div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th class="bg-gray">Monto Disponible:</th>
-                                                                        <td class="bg-gray" align="right">{{ transaccion.monto_disponible }}</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
+                                            <div>
+                                                <form role="form" @submit.prevent = "validate">
+                                                    <div class="row" align="left">
+                                                        <div class="table-responsive col-md-12">
+                                                            <div class="col-12">
+                                                                <div class="table-responsive">
+                                                                    <table class="table">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <th style="width:20%" class="bg-gray-light">Subtotal:</th>
+                                                                                <td style="width: 20%" class="bg-gray-light" align="right"><b>{{ transaccion.subtotal_format}}</b></td>
+
+                                                                                <th style="width:5%"></th>
+                                                                                <td style="width:5%"></td>
+                                                                                <th style="width: 20%" for="importe">Importe a Solicitar:</th>
+                                                                                <td style="width: 30%" align="right">
+                                                                                    <div class="col-12">
+                                                                                        <div class="form-group error-content">
+                                                                                            <input
+                                                                                                    :disabled="!transaccion"
+                                                                                                    type="number"
+                                                                                                    step="any"
+                                                                                                    name="importe"
+                                                                                                    data-vv-as="Importe"
+                                                                                                    v-validate="{required: true}"
+                                                                                                    class="form-control"
+                                                                                                    id="importe"
+                                                                                                    placeholder="Importe"
+                                                                                                    v-model="importe"
+                                                                                                    :class="{'is-invalid': errors.has('importe')}">
+                                                                                            <div class="invalid-feedback" v-show="errors.has('importe')">{{ errors.first('importe') }}</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th>IVA:</th>
+                                                                                <td align="right">{{ transaccion.impuesto_format }}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th class="bg-gray-light">Total:</th>
+                                                                                <td class="bg-gray-light" align="right"   name="total" id="total" v-model="total">{{ transaccion.total_format }}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th>Monto Facturado:</th>
+                                                                                <td align="right" v-model="facturado">{{ transaccion.monto_facturado }}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th class="bg-gray-light">Monto en otras Solicitudes:</th>
+                                                                                <td align="right" class="bg-gray-light" v-model="solicitado">{{ transaccion.monto_solicitado }}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th class="bg-gray">Monto Disponible:</th>
+                                                                                <td class="bg-gray" align="right" v-model="disponible">12</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </form>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <!-- Observaciones -->
-                                <div class="col-md-12">
-                                    <div class="form-group error-content">
-                                        <label for="observaciones">Observaciones:</label>
-                                        <textarea
-                                                name="observaciones"
-                                                id="observaciones"
-                                                class="form-control"
-                                                v-model="observaciones"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Observaciones"
-                                                :class="{'is-invalid': errors.has('observaciones')}"
-                                        ></textarea>
-                                        <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                <div class="row col-12">
+                                    <!-- Observaciones -->
+                                    <div class="col-md-12">
+                                        <div class="form-group error-content">
+                                            <label for="observaciones">Observaciones:</label>
+                                            <textarea
+                                                    name="observaciones"
+                                                    id="observaciones"
+                                                    class="form-control"
+                                                    v-model="observaciones"
+                                                    v-validate="{required: true}"
+                                                    data-vv-as="Observaciones"
+                                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                            ></textarea>
+                                            <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <!-- Costos -->
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="id_costo" class="col-sm-2 col-form-label">Costos:</label>
-                                        <div class="col-sm-10">
-                                            <costo-select
-                                                    name="id_costo"
-                                                    data-vv-as="Costo"
-                                                    scope="costoFinanza"
-                                                    v-validate="{required: true}"
-                                                    id="id_costo"
-                                                    v-model="id_costo"
-                                                    :error="errors.has('id_costo')"
-                                                    ref="costoSelect"
-                                                    :disableBranchNodes="false"
-                                            ></costo-select>
-                                            <div class="error-label" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
+                                <div class="row col-12">
+                                    <!-- Costos -->
+                                    <div class="col-md-12">
+                                        <div class="form-group row error-content">
+                                            <label for="id_costo" class="col-sm-2 col-form-label">Costos:</label>
+                                            <div class="col-sm-10">
+                                                <costo-select
+                                                        name="id_costo"
+                                                        data-vv-as="Costo"
+                                                        scope="costoFinanza"
+                                                        v-validate="{required: true}"
+                                                        id="id_costo"
+                                                        v-model="id_costo"
+                                                        :error="errors.has('id_costo')"
+                                                        ref="costoSelect"
+                                                        :disableBranchNodes="false"
+                                                ></costo-select>
+                                                <div class="error-label" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Registrar</button>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Registrar</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -267,6 +274,10 @@
                 id_costo: '',
                 bandera_transaccion: 0,
                 importe : '',
+                disponible : 0,
+                solicitado : 0,
+                facturado : 0,
+                total : 0
             }
         },
         computed: {
@@ -289,6 +300,10 @@
                     this.$validator.reset();
                     this.cargando = false;
                     this.importe = '';
+                    this.disponible = 0;
+                    this.solicitado = 0;
+                    this.facturado = 0;
+                    this.total = 0;
             },
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
@@ -423,8 +438,15 @@
                     this.cumplimiento = y+'-'+ m+'-'+d;
                 }
             },
-
-
+            transaccion(value){
+                this.disponible = 0;
+                this.solicitado = 0;
+                this.facturado = 0;
+                this.total = 0;
+                if(value.length != 0) {
+                    console.log(value);
+                }
+            }
         }
     }
 </script>
