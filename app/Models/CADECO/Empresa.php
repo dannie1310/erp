@@ -26,7 +26,7 @@ class Empresa extends Model
     protected $fillable = [
         'tipo_empresa',
         'razon_social',
-//        'UsuarioRegistro',
+        'UsuarioRegistro',
     ];
 
     public function cuentasEmpresa()

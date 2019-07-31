@@ -60,7 +60,7 @@ class FondoService
         $data_empresa =[
             'tipo_empresa'=>32,
             'razon_social'=>$data['empresa_manual'],
-//            'UsuarioRegistro'=>auth()->id(),
+            'UsuarioRegistro'=>auth()->id(),
                     ];
         try {
             DB::connection('cadeco')->beginTransaction();
