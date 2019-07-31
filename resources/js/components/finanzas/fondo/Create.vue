@@ -145,12 +145,11 @@
                 empresas:[],
                 tiposFondo:[],
                 isHidden:false,
-                query:{},
+                query:{ scope:'TipoEmpresa'},
             }
         },
 
         mounted() {
-            this.query.scope = 'tipoEmpresa';
             this.getEmpresa()
             this.getTiposFondo()
 
@@ -194,16 +193,6 @@
             },
             store() {
 
-                if(!this.id_empresa){
-                return this.$store.dispatch('cadeco/empresa/store',{
-                    tipo_empresa: 32,
-                    razon_social:this.responsable_text,
-                })
-                    .then((data) => {
-                        this.id_empresa = data;
-                    })
-
-                }
                 if(this.checkFondo===true){
                  this.fondo_obra=1;
                 }else{
@@ -214,7 +203,8 @@
                      id_tipo: this.id_tipo_fondo,
                      id_responsable: this.id_empresa,
                      fondo_obra: this.fondo_obra,
-                     id_costo: this.id_costo
+                     id_costo: this.id_costo,
+                     empresa_manual: this.responsable_text,
                  })
                      .then((data) => {
                         $(this.$refs.modal).modal('hide');

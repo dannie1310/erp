@@ -56,8 +56,31 @@ class FondoService
 
     public function store(array $data){
 
+    if(!empty($data['empresa_manual'])){
+        $data_empresa =[
+            'tipo_empresa'=>32,
+            'razon_social'=>$data['empresa_manual'],
+            'UsuarioRegistro'=>auth()->id(),
+                    ];
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $empresa_arr= Empresa::query()->create($data_empresa);
+            $razon_social=$empresa_arr['razon_social'];
+            $id_responsable=$empresa_arr['id_empresa'];
+            DB::connection('cadeco')->commit();
+        }catch(\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+
+
+    }else{
         $empresa_array = Empresa::query()->where('id_empresa','=',$data['id_responsable'])->get();
         $razon_social=$empresa_array[0]['razon_social'];
+        $id_responsable=$data['id_responsable'];
+    }
+
 
         $tipos_array= CtgTipoFondo::query()->where('id',$data['id_tipo'])->get();
         $tipo_desc_corta=$tipos_array[0]['descripcion_corta'];
@@ -75,7 +98,7 @@ class FondoService
             $datos = [
                 'id_obra' => $id_obra,
                 'id_tipo' => $data['id_tipo'],
-                'id_responsable' => $data['id_responsable'],
+                'id_responsable' => $id_responsable,
                 'descripcion' => $descripcion,
                 'nombre' =>$razon_social,
                 'fecha'=>Carbon::now()->format('Y-m-d'),

@@ -54,7 +54,7 @@ class EmpresaService
         $datos = [
             'tipo_empresa' => $data['tipo_empresa'],
             'razon_social' => $data['razon_social'],
-            'UsuarioRegistro'=>auth()->id(),
+            'UsuarioRegistro'=>$data['UsuarioRegistro'],
         ];
 
         $empresa = Empresa::query()->create($datos);
