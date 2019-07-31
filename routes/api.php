@@ -369,6 +369,13 @@ $api->version('v1', function ($api) {
        $api->group(['prefix' => 'cuenta-bancaria-proveedor'], function ($api){
           $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaProveedorController@index');
        });
+
+        /**
+         * GESTIÓN PAGOS
+         */
+       $api->group(['prefix' => 'gestion-pago'], function ($api){
+           $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\GestionPagoController@presentaBitacora');
+       });
     });
 
     /**

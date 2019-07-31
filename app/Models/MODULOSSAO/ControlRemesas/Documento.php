@@ -14,6 +14,7 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Fondo;
 use App\Models\CADECO\Moneda;
+use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
 
 class Documento extends Model
@@ -63,6 +64,10 @@ class Documento extends Model
 
     public function tipoDocumento(){
         return $this->belongsTo(TipoDocumento::class, 'IDTipoDocumento', 'IDTipoDocumento');
+    }
+
+    public function transaccion(){
+        return $this->belongsTo(Transaccion::class, 'IDTransaccionCDC', 'id_transaccion');
     }
 
     public function  scopeDisponiblesParaDistribuir($query, $id_remesa){
