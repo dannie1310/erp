@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" class="btn btn-app btn-info pull-right">
+        <button @click="init" v-if="$root.can('registrar_fondos')" class="btn btn-app btn-info pull-right">
             <i class="fa fa-plus"></i> Registrar Fondo
         </button>
 
