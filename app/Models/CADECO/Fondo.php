@@ -12,6 +12,7 @@ namespace App\Models\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaFondo;
 use App\Models\CADECO\Finanzas\CtgTipoFondo;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Fondo extends Model
@@ -43,6 +44,15 @@ class Fondo extends Model
         parent::boot();
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
+        });
+
+        self::creating(function ($model){
+            if(Fondo::query()->where([['id_tipo',$model->id_tipo],['id_responsable',$model->id_responsable]])->get()->toArray() == []){
+                $model -> id_obra = Context::getIdObra();
+                $model->fecha = Carbon::now()->format('Y-m-d');
+            }else{
+                throw New \Exception('Este fondo se encuentra registrado.');
+            }
         });
     }
 

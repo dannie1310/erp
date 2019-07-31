@@ -40,7 +40,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2 mt-4"  >
-                                    <button v-on:click="isHidden = true" class="btn btn-md  btn-secondary"  style="margin-top:6px;" >
+                                    <button v-on:click="isHidden = true" type="button" class="btn btn-md  btn-secondary"  style="margin-top:6px;" >
                                         <i class="fa fa-plus"></i>
                                       </button>
                                 </div>
@@ -50,13 +50,20 @@
                                          <div class="col-md-10" >
                                             <div class="form-group error-content">
                                                 <label for="responsable_text">Responsable</label>
-                                                 <input type="text" class="form-control"  v-model="responsable_text" id="responsable_text" placeholder="Nombre del Responsable">
+                                                 <input type="text" class="form-control"
+                                                        name="responsable_text"
+                                                        data-vv-as="Responsable"
+                                                        v-model="responsable_text"
+                                                        v-validate="{required: true}"
+                                                        :class="{'is-invalid': errors.has('responsable_text')}"
+                                                        id="responsable_text"
+                                                        placeholder="Nombre del Responsable">
 
                                                 <div class="invalid-feedback" v-show="errors.has('responsable_text')">{{ errors.first('responsable_text') }}</div>
                                             </div>
                                         </div>
                                         <div class="col-md-2 mt-4"  >
-                                            <button v-on:click="isHidden = false" class="btn btn-md  btn-secondary"  style="margin-top:6px;" >
+                                            <button v-on:click="isHidden = false"  type= "button" class="btn btn-md  btn-secondary"  style="margin-top:6px;" >
 
                                               <i class="fa fa-caret-square-o-down"></i>
                                               </button>
@@ -82,10 +89,10 @@
                                         <div class="invalid-feedback" v-show="errors.has('id_tipo_fondo')">{{ errors.first('id_tipo_fondo') }}</div>
                                     </div>
                                 </div>
-                                <!-- Tipo de Gasto-->
+                                <!-- Tipo de Costo-->
                                      <div class="col-md-10">
                                     <div class="form-group error-content">
-                                        <label for="id_costo">Tipo de Gasto</label>
+                                        <label for="id_costo">Tipo de Costo</label>
                                        <costo-select
                                                name="id_costo"
                                                data-vv-as="Costo"
@@ -126,10 +133,12 @@
 </template>
 
 <script>
+
+    import FondoIndex from '../Index';
     import CostoSelect from "../../cadeco/costo/Select";
     export default {
         name: "fondo-create",
-        components: {CostoSelect},
+        components: {CostoSelect, FondoIndex},
         data() {
             return {
                 id_empresa: '',
@@ -141,11 +150,10 @@
                 checkFondo: false,
                 fondo_obra: '',
                 descripcion: '',
-                cuentas: [],
+                costos: [],
                 empresas:[],
                 tiposFondo:[],
-                isHidden:false,
-                query:{ scope:'TipoEmpresa'},
+                isHidden:false
             }
         },
 
@@ -166,12 +174,13 @@
                 this.descripcion_corta= '';
                 this.descripcion = '',
                 this.fondo_obra = '',
+                this.costos = [],
                 this.checkFondo = false;
 
                 this.$validator.reset()
             },
             getEmpresa() {
-                return this.$store.dispatch('cadeco/empresa/index', { params: this.query })
+                return this.$store.dispatch('cadeco/empresa/index', { params: { scope:'TipoEmpresa'} })
                     .then(data => {
                         this.empresas= data.data;
                     })
@@ -192,23 +201,12 @@
                 });
             },
             store() {
-
-                if(this.checkFondo===true){
-                 this.fondo_obra=1;
-                }else{
-                 this.fondo_obra=0;
-                }
-
-                 return this.$store.dispatch('cadeco/fondo/store', {
-                     id_tipo: this.id_tipo_fondo,
-                     id_responsable: this.id_empresa,
-                     fondo_obra: this.fondo_obra,
-                     id_costo: this.id_costo,
-                     empresa_manual: this.responsable_text,
-                 })
+                 return this.$store.dispatch('cadeco/fondo/store', this.$data)
                      .then((data) => {
                         $(this.$refs.modal).modal('hide');
-                        this.$emit('created')
+                        this.$emit('created',data)
+                         this.getEmpresa();
+
                      })
             }
         },
