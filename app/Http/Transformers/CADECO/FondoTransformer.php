@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO;
 
 
 use App\Http\Transformers\CADECO\Contabilidad\CuentaFondoTransformer;
+use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Fondo;
 use League\Fractal\TransformerAbstract;
 
@@ -17,12 +18,23 @@ class FondoTransformer extends TransformerAbstract
 {
 
     /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'cuentaFondo',
+        'empresa'
+    ];
+
+    /**
      * List of resources to automatically include
      *
      * @var array
      */
     protected $defaultIncludes = [
-        'cuentaFondo'
+        'cuentaFondo',
+        'empresa'
     ];
 
 
@@ -39,11 +51,26 @@ class FondoTransformer extends TransformerAbstract
      * @param CuentaFondo $model
      * @return \League\Fractal\Resource\Item
      */
-    public function includeCuentaFondo(Fondo $model){
-        if($fondo = $model->cuentaFondo){
+    public function includeCuentaFondo(Fondo $model)
+    {
+        if($fondo = $model->cuentaFondo)
+        {
             return $this->item($fondo, new CuentaFondoTransformer);
         }
         return null;
     }
 
+    /**
+     * Empresa
+     * @param Fondo $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEmpresa(Fondo $model)
+    {
+        if($empresa = $model->empresa)
+        {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
 }
