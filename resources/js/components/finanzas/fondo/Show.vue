@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Fondo">
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Fondo">
             <i class="fa fa-eye"></i>
         </button>
           <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -89,31 +89,28 @@
         data(){
           return{
               fondo: null,
-              query: {
-                  include: ['tipo_fondo','costo'], scope:'ConResponsable', order: 'desc'
-              },
               cargando: false,
           }
         },
         methods: {
-            find(id) {
-                    this.cargando = true;
+            find() {
+                 this.cargando = true;
                 this.$store.commit('cadeco/fondo/SET_FONDO', null);
                 return this.$store.dispatch('cadeco/fondo/find', {
-                    id: id,
-                    params: this.query
+                    id: this.id,
+                    params:{
+                        include: ['tipo_fondo','costo'], scope:'ConResponsable', order: 'desc'
+                    }
                 }).then(data => {
                     this.$store.commit('cadeco/fondo/SET_FONDO', data);
-
                     $(this.$refs.modal).modal('show')
                 })
 
             }
         },
         computed: {
-        fondoFijo() {
+            fondoFijo() {
                 return this.$store.getters['cadeco/fondo/currentFondo']
-
              }
         }
     }

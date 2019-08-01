@@ -640,7 +640,7 @@ export const routes = [
                         meta: {
                             title: 'Registrar Fondo',
                             breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
-                            middleware: [auth, context,permission],
+                            middleware: [auth, context, permission],
                             permission: 'registrar_fondos'
                         }
                     },

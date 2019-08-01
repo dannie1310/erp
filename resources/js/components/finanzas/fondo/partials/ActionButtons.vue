@@ -1,5 +1,4 @@
 <template>
-
         <div class="btn-group " v-if="value.id">
             <FondoShow v-if="value.show" @click="value.id" v-bind:id="value.id" />
         </div>
@@ -17,24 +16,12 @@
         components: { FondoCreate, FondoShow },
         props: ['value'],
         methods: {
-
             destroy() {
 
             },
             show() {
                 this.$router.push({name: 'fondo-show', params: {id: this.value.id}});
             },
-            validate(){
-                this.$validator.validate().then(result=>{
-                    if(result){
-
-                    }
-                });
-            }
-
-        },
-        mounted() {
-
         }
     }
 </script>

@@ -27,7 +27,10 @@ export default {
                 }
                 return fondo
             })
-            state.currentFondo = state.currentFondo ? data : null;
+            state.currentFondo = data ;
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentFondo[data.attribute] = data.value
         }
     },
 
@@ -91,8 +94,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .post('/api/fondo/', payload)
-
+                                .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Fondo registrado correctamente", {

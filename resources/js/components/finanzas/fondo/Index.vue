@@ -1,7 +1,7 @@
 <template>
     <div class="row">
-        <div class="col-12"  v-if="" :disabled="cargando">
-            <fondo-create></fondo-create>
+        <div class="col-12">
+            <create @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -19,10 +19,10 @@
     </div>
 </template>
 <script>
-    import FondoCreate from "./Create";
+    import Create from "./Create";
     export default {
         name: "fondo-index",
-        components: {FondoCreate},
+        components: {Create},
         data(){
             return{
                 HeaderSettings: false,
@@ -38,14 +38,14 @@
                 data: [],
                 total: 0,
                 query: {
-                    include: 'tipo_fondo', scope:'ConResponsable', order: 'desc'
+                    include: 'tipo_fondo', scope:'ConResponsable', sort: 'id_fondo',  order: 'desc'
+
                 },
                 cargando: false
 
             }
         },
         mounted() {
-          //this.query.scope = 'conResponsable';
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -79,19 +79,19 @@
         },
         watch: {
             fondos: {
-                handler(fondos){
+                handler(fondos) {
                     let self = this
                     self.$data.data = []
-                      fondos.forEach(function(fondo, i){
-                          self.$data.data.push({
-                            index: (i+1)+self.query.offset,
+                    fondos.forEach(function (fondo, i) {
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
                             tipo: fondo.tipo_fondo.descripcion,
-                            nombre: fondo.nombre,
+                            nombre: fondo.nombre.toUpperCase(),
                             fecha: fondo.fecha_format,
                             saldo: `$ ${parseFloat(fondo.saldo).formatMoney(2)}`,
-                            descripcion: fondo.descripcion,
-                            buttons: $.extend({},{
-                                show:true,
+                            descripcion: fondo.descripcion.toUpperCase(),
+                            buttons: $.extend({}, {
+                                show: true,
                                 id: fondo.id
                             })
                         })
@@ -100,30 +100,39 @@
 
                 },
                 deep: true
+            },
+            meta: {
+                handler(meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler(query) {
+                    this.paginate(query)
+                },
+                deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
             }
         },
-        meta: {
-            handler(meta){
-                let total = meta.pagination.total;
-                this.$data.local = total;
-            },
-            deep: true
-        },
-        query: {
-            handler( query ){
-                this.paginate(query)
-            },
-            deep:true
-        },
-        cargando(val){
-            $('tbody').css({
-                  '-webkit-filter': val ? 'blur(2px)' : '',
-                  'pointer-events': val ? 'none' : ''
-                              });
-        }
     }
 </script>
-<style scoped>
-
-</style>
 
