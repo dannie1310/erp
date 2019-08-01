@@ -388,14 +388,9 @@
                 formData.append('iva', this.form.iva)
                 formData.append('nombre', this.form.nombre);
                 formData.append('rfc', this.form.rfc)
-
                 formData.append('tipo_obra', this.form.tipo_obra);
                 formData.append('configuracion[tipo_obra]', this.form.configuracion.tipo_obra);
-
-
-
                 formData.append('valor_contrato', this.form.valor_contrato)
-
                 formData.forEach((value, key) => {
                     if(value == 'null' || value == '')
                         formData.delete(key);
