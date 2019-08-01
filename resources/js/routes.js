@@ -617,6 +617,48 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path: 'gestion-pago',
+                component: require('./components/finanzas/gestion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'gestion-pago',
+                        component: require('./components/finanzas/gestion/Index'),
+                        meta: {
+                            title: 'Gestión de Pago',
+                            breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGO'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'pago',
+                        name: 'pago',
+                        component: require('./components/finanzas/gestion/pago/Index'),
+                        meta: {
+                            title: 'Gestión de Pago',
+                            breadcrumb: {
+                                parent: 'gestion-pago',
+                                name: 'PAGO'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'pago-create',
+                        component: require('./components/finanzas/gestion/pago/Create'),
+                        meta: {
+                            title: 'Cargar Bitácora Bancaria',
+                            breadcrumb: {name: 'CARGAR', parent: 'pago'},
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
+                ]
+            }
         ]
     },
     {

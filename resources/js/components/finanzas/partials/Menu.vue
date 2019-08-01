@@ -29,6 +29,24 @@
                     <p>Distribuir Recursos de Remesa</p>
                 </router-link>
             </li>
+
+            <li class="nav-item" v-if="pagar">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-money"></i>
+                    <p>
+                        Gestión de Pago
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('cargar_distribucion_recursos_remesa')">
+                        <router-link :to="{name: 'pago'}" class="nav-link" :class="{active: this.$route.name == 'pago'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Pago Anticipado</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
@@ -43,6 +61,11 @@
                 return this.$root.can([
                     'consultar_solicitud_pago_anticipado'
                 ])
+            },
+            pagar() {
+                return this.$root.can([
+                    'cargar_distribucion_recursos_remesa'
+                ]);
             }
         },
         methods: {
