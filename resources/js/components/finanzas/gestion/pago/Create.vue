@@ -15,18 +15,18 @@
                         <div class="modal-body">
                             <div class="row justify-content-between">
                                 <div class="col-md-8">
-                                     <label for="carga_layout_interbancario" class="col-lg-12 col-form-label">Cargar Bitácora</label>
+                                     <label for="carga_bitacora" class="col-lg-12 col-form-label">Cargar Bitácora</label>
                                     <div class="col-lg-12">
-                                        <input type="file" class="form-control" id="carga_layout_interbancario"
+                                        <input type="file" class="form-control" id="carga_bitacora"
                                                @change="onFileChange"
                                                row="3"
                                                v-validate="{ ext: ['txt']}"
-                                               name="carga_layout_interbancario"
-                                               data-vv-as="Layout Interbancario"
-                                               ref="carga_layout_interbancario"
-                                               :class="{'is-invalid': errors.has('carga_layout_interbancario')}"
+                                               name="carga_bitacora"
+                                               data-vv-as="Bitácora"
+                                               ref="carga_bitacora"
+                                               :class="{'is-invalid': errors.has('carga_bitacora')}"
                                         >
-                                        <div class="invalid-feedback" v-show="errors.has('carga_layout_interbancario')">{{ errors.first('carga_layout_interbancario') }} (doc)</div>
+                                        <div class="invalid-feedback" v-show="errors.has('carga_bitacora')">{{ errors.first('carga_bitacora') }} (txt)</div>
                                     </div>
                                 </div>
                             </div>
@@ -123,7 +123,7 @@
                 var files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
                     return;
-                if(e.target.id == 'carga_layout_interbancario') {
+                if(e.target.id == 'carga_bitacora') {
                     this.createImage(files[0]);
                 }
             },
@@ -139,15 +139,15 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result){
-                        if(this.$refs.carga_layout_interbancario.value === ''){
+                        if(this.$refs.carga_bitacora.value === ''){
                             swal('¡Error!', 'Seleccione un archivo.', 'warning')
                         }else{
                             this.cargarBitacora()
                         }
                         //this.cargarLayout()
                     }else{
-                        if(this.$refs.carga_layout_interbancario.value !== ''){
-                            this.$refs.carga_layout_interbancario.value = '';
+                        if(this.$refs.carga_bitacora.value !== ''){
+                            this.$refs.carga_bitacora.value = '';
                             this.file_interbancario = null;
                         }
                         this.$validator.errors.clear();

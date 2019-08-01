@@ -10,6 +10,7 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Repositories\Repository;
+use function GuzzleHttp\Psr7\get_message_body_summary;
 use mysql_xdevapi\Exception;
 use NumberFormatter;
 
@@ -74,41 +75,57 @@ class GestionPagoService
                         $cta_abono = CuentaBancariaProveedor::query()->where('cuenta_clabe', $pago['cuenta_abono'])->first();
                         $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->first();
 
-                        $dist_part = DistribucionRecursoRemesaPartida::query()->whereIn('id_documento', $documentos->pluck('IDDocumento'))
-                            ->where('id_cuenta_abono', '=', $cta_abono->id)
-                            ->where('id_cuenta_cargo', '=', $cta_cargo->id_cuenta)
-                            ->whereNotIn('id_documento',array_values($doctos_repetidos))->get();
-
-
-
-                        if(count($dist_part) > 1){
-                            $doctos_repetidos[$dist_part[0]->id_documento] =  $dist_part[0]->id_documento;
+                        if(!$cta_abono || !$cta_cargo){
                             $registros_bitacora[] = array(
-                                'id_documento' => $dist_part[0]->documento->IDDocumento,
-                                'id_transaccion' => $dist_part[0]->documento->transaccion? $documentos[0]->transaccion->id_transaccion:null,
-                                'estado' => $dist_part[0]->documento->partidas->estatus,
-                                'pagable' => $dist_part[0]->documento->partidas->pagable,
-                                'concepto' => $dist_part[0]->documento->Concepto,
-                                'beneficiario' => $dist_part[0]->documento->Destinatario,
+                                'id_documento' => '',
+                                'id_transaccion' => '',
+                                'estado' => ['id' => 0, 'estado' => -3, 'descripcion' => 'Inválido'],
+                                'pagable' => false,
+                                'concepto' => $pago['concepto'],
+                                'beneficiario' => '',
                                 'monto' => $pago['monto'],
-                                'cuenta_cargo' => ['numero'=> $dist_part[0]->documento->partidas->cuentaCargo->numero, 'abreviatura'=> $dist_part[0]->documento->partidas->cuentaCargo->abreviatura, 'nombre' => $dist_part[0]->documento->partidas->cuentaCargo->empresa->razon_social],
-                                'cuenta_abono' => ['numero'=> $dist_part[0]->documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $dist_part[0]->documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $dist_part[0]->documento->partidas->cuentaAbono->banco->razon_social],
+                                'cuenta_cargo' => $cta_cargo?['numero' => $cta_cargo->numero, 'abreviatura' => $cta_cargo->abreviatura, 'nombre' => $cta_cargo->empresa->razon_social]:
+                                                    ['numero' => $pago['cuenta_cargo'], 'abreviatura' => $pago['cuenta_cargo'], 'nombre' => ''],
+                                'cuenta_abono' => $cta_abono?['numero' => $cta_abono->cuenta_clabe, 'abreviatura' => $cta_abono->complemento->nombre_corto, 'nombre' => $cta_abono->banco->razon_social]:
+                                                    ['numero' => $pago['cuenta_abono'], 'abreviatura' => $pago['cuenta_abono'], 'nombre' => ''],
                                 'referencia' => $pago['referencia'],
                             );
-                        }
-                        if(count($dist_part) == 1){
-                            $registros_bitacora[] = array(
-                                'id_documento' => $dist_part[0]->documento->IDDocumento,
-                                'id_transaccion' => $dist_part[0]->documento->transaccion? $documentos[0]->transaccion->id_transaccion:null,
-                                'estado' => $dist_part[0]->documento->partidas->estatus,
-                                'pagable' => $dist_part[0]->documento->partidas->pagable,
-                                'concepto' => $dist_part[0]->documento->Concepto,
-                                'beneficiario' => $dist_part[0]->documento->Destinatario,
-                                'monto' => $pago['monto'],
-                                'cuenta_cargo' => ['numero'=> $dist_part[0]->documento->partidas->cuentaCargo->numero, 'abreviatura'=> $dist_part[0]->documento->partidas->cuentaCargo->abreviatura, 'nombre' => $dist_part[0]->documento->partidas->cuentaCargo->empresa->razon_social],
-                                'cuenta_abono' => ['numero'=> $dist_part[0]->documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $dist_part[0]->documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $dist_part[0]->documento->partidas->cuentaAbono->banco->razon_social],
-                                'referencia' => $pago['referencia'],
-                            );
+                        }else {
+                            $dist_part = DistribucionRecursoRemesaPartida::query()->whereIn('id_documento', $documentos->pluck('IDDocumento'))
+                                ->where('id_cuenta_abono', '=', $cta_abono->id)
+                                ->where('id_cuenta_cargo', '=', $cta_cargo->id_cuenta)
+                                ->whereNotIn('id_documento', array_values($doctos_repetidos))->get();
+
+
+                            if (count($dist_part) > 1) {
+                                $doctos_repetidos[$dist_part[0]->id_documento] = $dist_part[0]->id_documento;
+                                $registros_bitacora[] = array(
+                                    'id_documento' => $dist_part[0]->documento->IDDocumento,
+                                    'id_transaccion' => $dist_part[0]->documento->transaccion ? $documentos[0]->transaccion->id_transaccion : null,
+                                    'estado' => $dist_part[0]->documento->partidas->estatus,
+                                    'pagable' => $dist_part[0]->documento->partidas->pagable,
+                                    'concepto' => $dist_part[0]->documento->Concepto,
+                                    'beneficiario' => $dist_part[0]->documento->Destinatario,
+                                    'monto' => $pago['monto'],
+                                    'cuenta_cargo' => ['numero' => $dist_part[0]->documento->partidas->cuentaCargo->numero, 'abreviatura' => $dist_part[0]->documento->partidas->cuentaCargo->abreviatura, 'nombre' => $dist_part[0]->documento->partidas->cuentaCargo->empresa->razon_social],
+                                    'cuenta_abono' => ['numero' => $dist_part[0]->documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura' => $dist_part[0]->documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $dist_part[0]->documento->partidas->cuentaAbono->banco->razon_social],
+                                    'referencia' => $pago['referencia'],
+                                );
+                            }
+                            if (count($dist_part) == 1) {
+                                $registros_bitacora[] = array(
+                                    'id_documento' => $dist_part[0]->documento->IDDocumento,
+                                    'id_transaccion' => $dist_part[0]->documento->transaccion ? $documentos[0]->transaccion->id_transaccion : null,
+                                    'estado' => $dist_part[0]->documento->partidas->estatus,
+                                    'pagable' => $dist_part[0]->documento->partidas->pagable,
+                                    'concepto' => $dist_part[0]->documento->Concepto,
+                                    'beneficiario' => $dist_part[0]->documento->Destinatario,
+                                    'monto' => $pago['monto'],
+                                    'cuenta_cargo' => ['numero' => $dist_part[0]->documento->partidas->cuentaCargo->numero, 'abreviatura' => $dist_part[0]->documento->partidas->cuentaCargo->abreviatura, 'nombre' => $dist_part[0]->documento->partidas->cuentaCargo->empresa->razon_social],
+                                    'cuenta_abono' => ['numero' => $dist_part[0]->documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura' => $dist_part[0]->documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $dist_part[0]->documento->partidas->cuentaAbono->banco->razon_social],
+                                    'referencia' => $pago['referencia'],
+                                );
+                            }
                         }
                     }
                 }
@@ -141,7 +158,7 @@ class GestionPagoService
             fclose($myfile);
             return $content;
         }catch (\Exception $e){
-            throw New \Exception('pandita');
+            throw New \Exception('Error al procesar el archivo: ' . $e->getMessage());
         }
         return [];
     }
