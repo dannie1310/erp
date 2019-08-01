@@ -45,7 +45,7 @@ class FondoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:registrar_fondos')->only(['create']);
+        $this->middleware('permiso:registrar_fondos')->only(['store']);
         $this->middleware('permiso:consultar_fondos')->only(['paginate','index','show']);
 
 
