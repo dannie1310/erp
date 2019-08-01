@@ -617,6 +617,47 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path:'fondo',
+                component: require('./components/finanzas/fondo/Layout.vue'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'fondo',
+                        component: require('./components/finanzas/fondo/Index.vue'),
+                        meta: {
+                            title: 'Fondos',
+                            breadcrumb: {name: 'FONDOS', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_fondos'
+                        }
+
+                    },
+                    {
+                        path: 'create',
+                        name: 'fondo-create',
+                        component: require('./components/finanzas/fondo/Create'),
+                        meta: {
+                            title: 'Registrar Fondo',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_fondos'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'fondo-show',
+                        props: true,
+                        component: require('./components/finanzas/fondo/Show'),
+                        meta: {
+                            title: 'Ver Fondo',
+                            breadcrumb: {name: 'VER', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_fondos'
+                        }
+                    },
+                ]
+            },
         ]
     },
     {

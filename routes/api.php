@@ -59,6 +59,8 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\EmpresaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\EmpresaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EmpresaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\EmpresaController@store');
+
         });
 
         // FONDOS
@@ -66,6 +68,8 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\FondoController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\FondoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\FondoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\FondoController@store');
+
         });
 
         // MATERIALES
@@ -330,6 +334,17 @@ $api->version('v1', function ($api) {
      * FINANZAS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {
+
+        /**
+         * FONDO
+         */
+
+        $api->group(['prefix'=>'fondo'],function ($api){
+
+            $api->get('tipo-fondo','App\Http\Controllers\v1\CADECO\Finanzas\CtgTipoFondoController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CtgTipoFondoController@show')->where(['id' => '[0-9]+']);
+
+        });
 
         /**
          * SOLICITUD DE PAGO ANTICIPADO

@@ -11,6 +11,8 @@ namespace App\Services\CADECO;
 
 use App\Models\CADECO\Empresa;
 use App\Repositories\Repository;
+use App\Models\CADECO\Obra;
+use Illuminate\Support\Facades\DB;
 
 class EmpresaService
 {
@@ -42,5 +44,28 @@ class EmpresaService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function store(array $data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+
+        $datos = [
+            'tipo_empresa' => $data['tipo_empresa'],
+            'razon_social' => $data['razon_social'],
+            'UsuarioRegistro'=>$data['UsuarioRegistro'],
+        ];
+
+        $empresa = Empresa::query()->create($datos);
+
+            DB::connection('cadeco')->commit();
+
+            return $empresa ;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 }

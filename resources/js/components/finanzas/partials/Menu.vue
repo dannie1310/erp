@@ -29,6 +29,12 @@
                     <p>Distribuir Recursos de Remesa</p>
                 </router-link>
             </li>
+            <li class="nav-item" v-if="$root.can('consultar_fondos')">
+                <router-link :to="{name: 'fondo'}" class="nav-link">
+                    <i class="fa fa-list-alt nav-icon"></i>
+                    <p>Gestión de Fondos</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->

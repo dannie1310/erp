@@ -46,6 +46,7 @@ class FondoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;

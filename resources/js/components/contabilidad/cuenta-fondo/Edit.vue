@@ -100,7 +100,7 @@
                     .then(data => {
                         this.$store.dispatch('cadeco/fondo/find', {
                             id: this.id_fondo,
-                            params: { include: 'cuentaFondo' }
+                            params: { include: 'cuenta_fondo' }
                         })
                             .then(data => {
                                 $(this.$refs.modal).modal('hide');
