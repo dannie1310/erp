@@ -149,6 +149,18 @@
                                                                         <th class="bg-gray-light">Total:</th>
                                                                         <td class="bg-gray-light" align="right">{{ transaccion.total_format }}</td>
                                                                     </tr>
+                                                                    <tr>
+                                                                        <th>Monto Facturado:</th>
+                                                                        <td align="right">{{ transaccion.monto_facturado }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="bg-gray-light">Monto Solicitado:</th>
+                                                                        <td class="bg-gray-light" align="right">{{ transaccion.monto_solicitado }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th class="bg-gray">Monto Disponible:</th>
+                                                                        <td class="bg-gray" align="right">{{ transaccion.monto_disponible }}</td>
+                                                                    </tr>
                                                                 </tbody>
                                                             </table>
                                                         </div>
@@ -265,7 +277,7 @@
                 return this.$store.dispatch('compras/orden-compra/index',{
                     config: {
                         params: {
-                            scope: 'sinPagoAnticipado'
+                            scope: 'ordenCompraDisponible'
                         }
                     }
                 }).then(data => {
@@ -277,7 +289,7 @@
                 return this.$store.dispatch('contratos/subcontrato/index',{
                     config: {
                         params: {
-                            scope: 'sinPagoAnticipado'
+                            scope: 'subcontratosDisponible'
                         }
                     }
                 }).then(data => {
