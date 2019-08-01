@@ -82,8 +82,8 @@ class FondoService
             $datos = [
                 'id_tipo' => $data['id_tipo_fondo'],
                 'id_responsable' => $id_responsable,
-                'descripcion' => $tipo[0]['descripcion_corta'] . ' ' . $razon_social,
-                'nombre' => $razon_social,
+                'descripcion' => $tipo[0]['descripcion_corta'] . ' ' .strtoupper($razon_social),
+                'nombre' => strtoupper($razon_social),
                 'fondo_obra' => $fondo_obra,
                 'id_costo' => $data['id_costo']
             ];

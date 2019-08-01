@@ -17,6 +17,7 @@ class EmpresaFondoFijo extends Empresa
         self::creating(function ($model){
             $model->tipo_empresa = 32;
             $model->UsuarioRegistro = auth()->id();
+            $model->razon_social= strtoupper($model->razon_social);
         });
     }
 }

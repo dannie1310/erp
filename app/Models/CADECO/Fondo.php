@@ -51,7 +51,7 @@ class Fondo extends Model
                 $model -> id_obra = Context::getIdObra();
                 $model->fecha = Carbon::now()->format('Y-m-d');
             }else{
-                throw New \Exception('Este fondo se encuentra registrado.');
+                throw New \Exception('El responsable ya tiene un fondo del tipo seleccionado');
             }
         });
     }
@@ -69,7 +69,7 @@ class Fondo extends Model
 
     public function tipoFondo()
     {
-        return $this->belongsTo(CtgTipoFondo::class, 'id_tipo', 'id')->where('Finanzas.ctg_tipos_fondos.estado','=',1);
+        return $this->belongsTo(CtgTipoFondo::class, 'id_tipo', 'id');
     }
     public function costo()
     {
