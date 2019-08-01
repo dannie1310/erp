@@ -46,6 +46,7 @@ class PermisoService
     {
         $query = DB::select('SELECT DISTINCT
        configuracion_obra.nombre AS nombre_obra,
+       configuracion_obra.tipo_obra AS tipo_obra,
        proyectos.base_datos,
        roles.display_name AS rol,
        sistemas.[name] AS sistema,
@@ -119,7 +120,7 @@ class PermisoService
                      AND (role_user.role_id = Subquery.role_id)
                      AND (role_user.id_proyecto = Subquery.id_proyecto)
                      AND (role_user.id_obra = Subquery.id_obra)
-                 WHERE (vwUsuariosIntranet.idusuario = '.$id.')
+                 WHERE (vwUsuariosIntranet.idusuario = '.$id.') AND (configuracion_obra.tipo_obra != 2)
                  AND ([permissions].display_name LIKE \'%'.request('permiso').'%\')
                  AND (roles.display_name LIKE \'%'.request('rol').'%\') AND (sistemas.[name] LIKE \'%'.request('sistema').'%\')
                  AND (proyectos.base_datos LIKE \'%'.request('proyecto').'%\')  AND (configuracion_obra.nombre LIKE \'%'.request('obra').'%\')
@@ -190,6 +191,7 @@ class PermisoService
                                      ON     (role_user.id_proyecto =
                                                 configuracion_obra.id_proyecto)
                                         AND (role_user.id_obra = configuracion_obra.id_obra)
+									WHERE configuracion_obra.tipo_obra != 2
                            GROUP BY role_user.[user_id]) Subquery_1
                              ON (vwUsuariosIntranet.idusuario = Subquery_1.[user_id])
                     WHERE vwUsuariosIntranet.usuario_estado = 2 AND (vwUsuariosIntranet.usuario LIKE \'%'.request('usuario').'%\') 
