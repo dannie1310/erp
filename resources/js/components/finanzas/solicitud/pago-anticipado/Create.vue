@@ -150,12 +150,12 @@
                                                                                     <div class="col-12">
                                                                                         <div class="form-group error-content">
                                                                                             <input
-                                                                                                    :disabled="!transaccion"
+                                                                                                    :disabled="!iniciar"
                                                                                                     type="number"
                                                                                                     step="any"
                                                                                                     name="importe"
                                                                                                     data-vv-as="Importe"
-                                                                                                    v-validate="{required: true}"
+                                                                                                    v-validate="{required: true, min_value:0.1, max_value: disponible, decimal:2}"
                                                                                                     class="form-control"
                                                                                                     id="importe"
                                                                                                     placeholder="Importe"
@@ -172,19 +172,23 @@
                                                                             </tr>
                                                                             <tr>
                                                                                 <th class="bg-gray-light">Total:</th>
-                                                                                <td class="bg-gray-light" align="right"   name="total" id="total" v-model="total">{{ transaccion.total_format }}</td>
+                                                                                <td class="bg-gray-light" align="right">{{ transaccion.total_format }}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <th>Monto Facturado:</th>
-                                                                                <td align="right" v-model="facturado">{{ transaccion.monto_facturado }}</td>
+                                                                                <td align="right" v-model="facturado">$ {{ (parseFloat(facturado)).formatMoney(2,'.',',') }}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <th class="bg-gray-light">Monto en otras Solicitudes:</th>
-                                                                                <td align="right" class="bg-gray-light" v-model="solicitado">{{ transaccion.monto_solicitado }}</td>
+                                                                                <td align="right" class="bg-gray-light" v-model="solicitado">$ {{ (parseFloat(solicitado)).formatMoney(2,'.',',') }}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <th class="bg-gray">Monto Disponible:</th>
-                                                                                <td class="bg-gray" align="right" v-model="disponible">12</td>
+                                                                                <td class="bg-gray" align="right" v-model="disponible">$ {{ (parseFloat(disponible)).formatMoney(2,'.',',')}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th class="bg-gray-light">Monto Restante:</th>
+                                                                                <td class="bg-gray-light" align="right" v-model="restante">$ {{ (parseFloat(restante)).formatMoney(2,'.',',')}}</td>
                                                                             </tr>
                                                                         </tbody>
                                                                     </table>
@@ -277,7 +281,8 @@
                 disponible : 0,
                 solicitado : 0,
                 facturado : 0,
-                total : 0
+                iniciar : 0,
+                restante : 0
             }
         },
         computed: {
@@ -303,7 +308,8 @@
                     this.disponible = 0;
                     this.solicitado = 0;
                     this.facturado = 0;
-                    this.total = 0;
+                    this.iniciar = 0;
+                    this.restante = 0;
             },
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
@@ -318,6 +324,7 @@
                 }).then(data => {
                     this.transacciones = data;
                     this.bandera_transaccion = 1;
+                    this.iniciar = 0;
                 })
             },
             getSubcontratos() {
@@ -330,6 +337,7 @@
                 }).then(data => {
                     this.transacciones = data;
                     this.bandera_transaccion = 1;
+                    this.iniciar = 0;
                 })
             },
             getTransaccion(){
@@ -344,6 +352,7 @@
                     })
                         .then(data => {
                             this.transaccion = data;
+                            this.iniciar = 1;
                         })
                 }
                 if(this.tipo == 51)
@@ -356,6 +365,7 @@
                     })
                         .then(data => {
                             this.transaccion = data;
+                            this.iniciar = 1;
                         })
                 }
             },
@@ -442,9 +452,18 @@
                 this.disponible = 0;
                 this.solicitado = 0;
                 this.facturado = 0;
-                this.total = 0;
+                this.restante = 0;
+
                 if(value.length != 0) {
-                    console.log(value);
+                    this.disponible = value.subtotal - (value.monto_facturado + value.monto_solicitado);
+                    this.solicitado = value.monto_solicitado;
+                    this.facturado = value.monto_facturado;
+                    this.restante = value.subtotal - (value.monto_facturado + value.monto_solicitado);
+                }
+            },
+            importe(value){
+                if(value){
+                    this.restante = this.disponible - value;
                 }
             }
         }

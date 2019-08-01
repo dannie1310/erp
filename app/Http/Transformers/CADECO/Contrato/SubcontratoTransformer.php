@@ -60,8 +60,8 @@ class SubcontratoTransformer extends TransformerAbstract
             'saldo'=>(float)$model->saldo,
             'tipo_nombre'=>(string)$model->getNombre(),
             'dato_transaccion'=>(string)$model->referencia,
-            'monto_facturado' => (string) '$ '.number_format($model->montoFacturado,2,".",","),
-            'monto_solicitado' => (string) '$ '.number_format($model->montoPagoAnticipado,2,".",",")
+            'monto_facturado' => (float) $model->montoFacturado,
+            'monto_solicitado' => (float) $model->montoPagoAnticipado
         ];
     }
     /**
