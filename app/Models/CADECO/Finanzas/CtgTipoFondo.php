@@ -18,6 +18,6 @@ class CtgTipoFondo extends Model
 
     public function scopeTipoFondoActivo($query)
     {
-        return $query->where('estado',1);
+        return $query->where('estado','=',1);
     }
 }
