@@ -38,7 +38,8 @@
                 data: [],
                 total: 0,
                 query: {
-                    include: 'tipo_fondo', scope:'ConResponsable', order: 'desc'
+                    include: 'tipo_fondo', scope:'ConResponsable', sort: 'id_fondo',  order: 'desc'
+
                 },
                 cargando: false
 

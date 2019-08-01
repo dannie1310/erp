@@ -69,7 +69,7 @@ class Fondo extends Model
 
     public function tipoFondo()
     {
-        return $this->belongsTo(CtgTipoFondo::class, 'id_tipo', 'id');
+        return $this->belongsTo(CtgTipoFondo::class, 'id_tipo', 'id')->where('Finanzas.ctg_tipos_fondos.estado','=',1);
     }
     public function costo()
     {

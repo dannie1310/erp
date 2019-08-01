@@ -89,10 +89,10 @@
                                         <div class="invalid-feedback" v-show="errors.has('id_tipo_fondo')">{{ errors.first('id_tipo_fondo') }}</div>
                                     </div>
                                 </div>
-                                <!-- Tipo de Costo-->
+                                <!-- Tipo de Gasto-->
                                      <div class="col-md-10">
                                     <div class="form-group error-content">
-                                        <label for="id_costo">Tipo de Costo</label>
+                                        <label for="id_costo">Tipo de Gasto</label>
                                        <costo-select
                                                name="id_costo"
                                                data-vv-as="Costo"
@@ -187,6 +187,7 @@
             },
             getTiposFondo() {
                 return this.$store.dispatch('finanzas/ctg-tipo-fondo/ctgTipoFondo',{
+                    params: {scope:'TipoFondoActivo'}
                 })
                     .then(data => {
                         this.tiposFondo = data.data;
