@@ -75,14 +75,6 @@ class Obra extends Model
         }
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-        self::addGlobalScope(function ($query) {
-            return $query->where('tipo_obra', '!=', 2);
-        });
-    }
-
     public function getAdministradorAttribute()
     {
         if (Context::isEstablished()) {
