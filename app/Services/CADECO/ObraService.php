@@ -175,6 +175,18 @@ class ObraService
             $obra->update($data);
 
         }else if($tipo_obra->consulta == false && $tipo_obra->tipo_obra != 2 && $obra->tipo_obra != 2){
+            $datos = [
+                'EstaActivo' => 1,
+                'VisibleEnReportes' => 1,
+                'VisibleEnApps' => 1
+            ];
+            $base_unificado = BaseDatosObra::query()->first();
+            $unificado = UnificacionObra::query()->where('IDBaseDatos',$base_unificado->IDBaseDatos)->get();
+
+            foreach ($unificado as $uni)
+            {
+                $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where('IDProyecto','=',$uni->IDProyecto)->update($datos);
+            }
             $obra->configuracion()->update($data['configuracion']);
             $obra->update($data);
 
