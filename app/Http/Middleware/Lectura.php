@@ -28,7 +28,9 @@ class Lectura
         $tipo_obra = ConfiguracionObra::query()->where('id_proyecto','=',$proyectos->id)
             ->where('id_obra','=',Context::getIdObra())->first();
 
-        if($tipo_obra->consulta == 1 || $tipo_obra->tipo_obra == 2){
+        $obra = Obra::query()->where('id_obra','=',Context::getIdObra())->first();
+
+        if($tipo_obra->consulta == 1 || $tipo_obra->tipo_obra == 2 || $obra->tipo_obra == 2){
             abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
         }
 
