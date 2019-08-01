@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\ConfiguracionObraTransformer;
 use App\Services\SEGURIDAD_ERP\ConfiguracionObraService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class ConfiguracionObraController extends Controller
@@ -37,9 +38,15 @@ class ConfiguracionObraController extends Controller
     public function __construct(Manager $fractal, ConfiguracionObraService $service, ConfiguracionObraTransformer $transformer)
     {
         $this->middleware( 'auth:api');
+        $this->middleware( 'context')->except('index');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function contexto(Request $request)
+    {
+        return $this->service->contexto();
     }
 }

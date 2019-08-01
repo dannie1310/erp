@@ -18,4 +18,5 @@ yarn-error.log
 /storage/logs
 /public/images
 /public/mix-manifest.json
-/storage/layouts_bancarios
+/public/layouts/files
+/public/layouts/zip

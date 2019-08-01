@@ -50,6 +50,10 @@ class ContratoProyectadoController extends Controller
         $this->middleware('auth:api');
 
         $this->middleware('context');
+        $this->middleware('permiso:modificar_area_subcontratante_cp')->only('show');
+
+//        $this->middleware('lectura');
+
 
         $this->service = $service;
         $this->fractal = $fractal;

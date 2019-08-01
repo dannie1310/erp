@@ -47,7 +47,7 @@
                     id: this.currentObra.id_obra,
                     params: { include: ['configuracion', 'datosContables'], 'logo' : true }
                 })
-            }
+            },
         },
 
         computed: {

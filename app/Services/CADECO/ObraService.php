@@ -11,6 +11,8 @@ namespace App\Services\CADECO;
 
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Usuario;
+use App\Models\MODULOSSAO\BaseDatosObra;
+use App\Models\MODULOSSAO\UnificacionObra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Repositories\Repository;
 use Illuminate\Database\Eloquent\Collection;
@@ -41,6 +43,20 @@ class ObraService
 
     public function update($data, $id)
     {
+        if($data['tipo_obra'] == 2){
+            $datos = [
+                'EstaActivo' => 0,
+                'VisibleEnReportes' => 0,
+                'VisibleEnApps' => 0
+            ];
+            $base_unificado = BaseDatosObra::query()->first();
+            $unificado = UnificacionObra::query()->where('IDBaseDatos',$base_unificado->IDBaseDatos)->get();
+
+            foreach ($unificado as $uni)
+            {
+                $proyecto = \App\Models\MODULOSSAO\Proyectos\Proyecto::query()->where('IDProyecto','=',$uni->IDProyecto)->update($datos);
+            }
+        }
         $obra = $this->repository->show($id);
 
         if (isset($data['configuracion']['id_responsable'])) {
@@ -55,6 +71,8 @@ class ObraService
                 'logotipo_reportes' => DB::raw("CONVERT(VARBINARY(MAX), '" . $imageData[1] . "')")
             ]);
         }
+
+        $obra->configuracion()->update($data['configuracion']);
 
         $obra->configuracion->fill(array_except($data['configuracion'], 'logotipo_original'));
         $obra->configuracion->save();
@@ -119,7 +137,7 @@ class ObraService
             return [];
         }
         if ($usuarioCadeco->tieneAccesoATodasLasObras()) {
-            return Obra::orderBy('nombre')->where(function($query) {
+            return Obra::where('tipo_obra','!=',2)->orderBy('nombre')->where(function($query) {
                 foreach ((new Obra())->searchable as $col)
                 {
                     $explode = explode('.', $col);
@@ -134,7 +152,7 @@ class ObraService
                 }
             })->get();
         }
-        return $usuarioCadeco->obras()->orderBy('nombre')->where(function($query) {
+        return $usuarioCadeco->obras()->where('tipo_obra','!=',2)->orderBy('nombre')->where(function($query) {
             foreach ((new Obra())->searchable as $col)
             {
                 $explode = explode('.', $col);

@@ -45,6 +45,13 @@ class Permiso
                 return $next($request);
             });
         }
+
+        if ($consulta = \App\Models\SEGURIDAD_ERP\Permiso::query()->whereIn('name', $permisos)->where('es_de_consulta', '=', false)->first()) {
+            return app( Lectura::class )->handle( $request, function ($request) use ($next) {
+                return $next( $request );
+            } );
+        }
+
         return $next($request);
     }
 }

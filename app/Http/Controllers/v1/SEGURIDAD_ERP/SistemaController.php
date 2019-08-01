@@ -47,6 +47,8 @@ class SistemaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:habilitar_deshabilitar_sistema')->only('asignacionSistemas');
+
 
         $this->fractal = $fractal;
         $this->service = $service;
