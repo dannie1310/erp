@@ -626,8 +626,8 @@ export const routes = [
                         name: 'gestion-pago',
                         component: require('./components/finanzas/gestion/Index'),
                         meta: {
-                            title: 'Gestión de Pago',
-                            breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGO'},
+                            title: 'Gestión de Pagos',
+                            breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGOS'},
                             middleware: [auth, context],
 
                         }
@@ -637,10 +637,10 @@ export const routes = [
                         name: 'pago',
                         component: require('./components/finanzas/gestion/pago/Index'),
                         meta: {
-                            title: 'Gestión de Pago',
+                            title: 'Gestión de Pagos',
                             breadcrumb: {
                                 parent: 'gestion-pago',
-                                name: 'PAGO'
+                                name: 'PAGOS'
                             },
                             middleware: [auth, context, permission],
                             permission: 'cargar_distribucion_recursos_remesa'
@@ -651,8 +651,8 @@ export const routes = [
                         name: 'pago-create',
                         component: require('./components/finanzas/gestion/pago/Create'),
                         meta: {
-                            title: 'Cargar Bitácora Bancaria',
-                            breadcrumb: {name: 'CARGAR', parent: 'pago'},
+                            title: 'Registrar Pagos con Bitácora Bancaria (SANTANDER)',
+                            breadcrumb: {name: 'REGISTRAR (BITÁCORA BSANT)', parent: 'pago'},
                             middleware: [auth, context, permission],
                             permission: 'cargar_distribucion_recursos_remesa'
                         }

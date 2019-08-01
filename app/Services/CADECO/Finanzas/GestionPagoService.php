@@ -10,6 +10,7 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Repositories\Repository;
+use mysql_xdevapi\Exception;
 use NumberFormatter;
 
 class GestionPagoService
@@ -29,10 +30,10 @@ class GestionPagoService
     }
 
     public function validarBitacora($bitacora){
-        $nombre = $bitacora->getClientOriginalName();
-        if(pathinfo($nombre, PATHINFO_EXTENSION) != 'txt'){
-            abort(400, 'Archivo no valido.');
-        }
+//        $nombre = $bitacora->getClientOriginalName();
+//        if(pathinfo($nombre, PATHINFO_EXTENSION) != 'txt'){
+//            abort(400, 'Archivo no valido.');
+//        }
 
         $registros_bitacora = array();
         $doctos_repetidos = [];
@@ -45,12 +46,13 @@ class GestionPagoService
                     $registros_bitacora[] = array(
                         'id_documento' => $documento->IDDocumento,
                         'id_transaccion' => $documento->transaccion? $documento->transaccion->id_transaccion:null,
+                        'estado' => $documento->partidas->estatus,
                         'pagable' => $documento->partidas->pagable,
                         'concepto' => $documento->Concepto,
-                        'destinatario' => $documento->Destinatario,
+                        'beneficiario' => $documento->Destinatario,
                         'monto' => $pago['monto'],
-                        'cuenta_cargo' => $pago['cuenta_cargo'],
-                        'cuenta_abono' => $pago['cuenta_abono'],
+                        'cuenta_cargo' => ['numero'=> $documento->partidas->cuentaCargo->numero, 'abreviatura'=> $documento->partidas->cuentaCargo->abreviatura, 'nombre' => $documento->partidas->cuentaCargo->empresa->razon_social],
+                        'cuenta_abono' => ['numero'=> $documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $documento->partidas->cuentaAbono->banco->razon_social],
                         'referencia' => $pago['referencia'],
                     );
                 }else{
@@ -59,12 +61,13 @@ class GestionPagoService
                         $registros_bitacora[] = array(
                             'id_documento' => $documentos[0]->IDDocumento,
                             'id_transaccion' => $documentos[0]->transaccion? $documentos[0]->transaccion->id_transaccion:null,
+                            'estado' => $documentos[0]->partidas->estatus,
                             'pagable' => $documentos[0]->partidas->pagable,
                             'concepto' => $documentos[0]->Concepto,
-                            'destinatario' => $documentos[0]->Destinatario,
+                            'beneficiario' => $documentos[0]->Destinatario,
                             'monto' => $pago['monto'],
-                            'cuenta_cargo' => $pago['cuenta_cargo'],
-                            'cuenta_abono' => $pago['cuenta_abono'],
+                            'cuenta_cargo' => ['numero'=> $documentos[0]->partidas->cuentaCargo->numero, 'abreviatura'=> $documentos[0]->partidas->cuentaCargo->abreviatura, 'nombre' => $documentos[0]->partidas->cuentaCargo->empresa->razon_social],
+                            'cuenta_abono' => ['numero'=> $documentos[0]->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $documentos[0]->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $documentos[0]->partidas->cuentaAbono->banco->razon_social],
                             'referencia' => $pago['referencia'],
                         );
                     }else {
@@ -83,12 +86,13 @@ class GestionPagoService
                             $registros_bitacora[] = array(
                                 'id_documento' => $dist_part[0]->documento->IDDocumento,
                                 'id_transaccion' => $dist_part[0]->documento->transaccion? $documentos[0]->transaccion->id_transaccion:null,
+                                'estado' => $dist_part[0]->documento->partidas->estatus,
                                 'pagable' => $dist_part[0]->documento->partidas->pagable,
                                 'concepto' => $dist_part[0]->documento->Concepto,
-                                'destinatario' => $dist_part[0]->documento->Destinatario,
+                                'beneficiario' => $dist_part[0]->documento->Destinatario,
                                 'monto' => $pago['monto'],
-                                'cuenta_cargo' => $pago['cuenta_cargo'],
-                                'cuenta_abono' => $pago['cuenta_abono'],
+                                'cuenta_cargo' => ['numero'=> $dist_part[0]->documento->partidas->cuentaCargo->numero, 'abreviatura'=> $dist_part[0]->documento->partidas->cuentaCargo->abreviatura, 'nombre' => $dist_part[0]->documento->partidas->cuentaCargo->empresa->razon_social],
+                                'cuenta_abono' => ['numero'=> $dist_part[0]->documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $dist_part[0]->documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $dist_part[0]->documento->partidas->cuentaAbono->banco->razon_social],
                                 'referencia' => $pago['referencia'],
                             );
                         }
@@ -96,12 +100,13 @@ class GestionPagoService
                             $registros_bitacora[] = array(
                                 'id_documento' => $dist_part[0]->documento->IDDocumento,
                                 'id_transaccion' => $dist_part[0]->documento->transaccion? $documentos[0]->transaccion->id_transaccion:null,
+                                'estado' => $dist_part[0]->documento->partidas->estatus,
                                 'pagable' => $dist_part[0]->documento->partidas->pagable,
                                 'concepto' => $dist_part[0]->documento->Concepto,
-                                'destinatario' => $dist_part[0]->documento->Destinatario,
+                                'beneficiario' => $dist_part[0]->documento->Destinatario,
                                 'monto' => $pago['monto'],
-                                'cuenta_cargo' => $pago['cuenta_cargo'],
-                                'cuenta_abono' => $pago['cuenta_abono'],
+                                'cuenta_cargo' => ['numero'=> $dist_part[0]->documento->partidas->cuentaCargo->numero, 'abreviatura'=> $dist_part[0]->documento->partidas->cuentaCargo->abreviatura, 'nombre' => $dist_part[0]->documento->partidas->cuentaCargo->empresa->razon_social],
+                                'cuenta_abono' => ['numero'=> $dist_part[0]->documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $dist_part[0]->documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $dist_part[0]->documento->partidas->cuentaAbono->banco->razon_social],
                                 'referencia' => $pago['referencia'],
                             );
                         }
@@ -113,28 +118,32 @@ class GestionPagoService
     }
 
     public function getTxtData($file){
-        $myfile = fopen($file, "r") or die("Unable to open file!");
-        $content = array();
-        while(!feof($myfile)) {
-            $linea = explode(";",fgets($myfile));
-            if(count($linea) > 1 && $linea[8] == 'Aceptado' && $linea[4] > 1) {
-                $content[] = array(
-                    "fecha" => $linea[0],
-                    "hora" => $linea[1],
-                    "concepto" => str_replace('  ', '', $linea[2]),
-                    "cuenta_cargo" =>  str_replace(' ', '', $linea[3]),
-                    "cuenta_abono" =>  str_replace(' ', '', $linea[4]),
-                    "monto" => $this->getAmount($linea[5]),
-                    "referencia" => $linea[6],
-                    "usuario" => $linea[7],
-                    "estatus" => $linea[8],
-                    "origen" => $linea[9]
-                );
+        try{
+            $myfile = fopen($file, "r") or die("Unable to open file!");
+            $content = array();
+            while(!feof($myfile)) {
+                $linea = explode(";",fgets($myfile));
+                if(count($linea) > 1 && $linea[8] == 'Aceptado' && $linea[4] > 1) {
+                    $content[] = array(
+                        "fecha" => $linea[0],
+                        "hora" => $linea[1],
+                        "concepto" => str_replace('  ', '', $linea[2]),
+                        "cuenta_cargo" =>  str_replace(' ', '', $linea[3]),
+                        "cuenta_abono" =>  str_replace(' ', '', $linea[4]),
+                        "monto" => $this->getAmount($linea[5]),
+                        "referencia" => $linea[6],
+                        "usuario" => $linea[7],
+                        "estatus" => $linea[8],
+                        "origen" => $linea[9]
+                    );
+                }
             }
+            fclose($myfile);
+            return $content;
+        }catch (\Exception $e){
+            throw New \Exception('pandita');
         }
-        fclose($myfile);
-        return $content;
-
+        return [];
     }
 
     public function getAmount($money)

@@ -34,7 +34,7 @@
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-money"></i>
                     <p>
-                        Gestión de Pago
+                        Gestión de Pagos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -42,7 +42,7 @@
                     <li class="nav-item" v-if="$root.can('cargar_distribucion_recursos_remesa')">
                         <router-link :to="{name: 'pago'}" class="nav-link" :class="{active: this.$route.name == 'pago'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Pago Anticipado</p>
+                            <p>Pagos</p>
                         </router-link>
                     </li>
                 </ul>
