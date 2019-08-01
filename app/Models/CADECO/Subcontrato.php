@@ -140,10 +140,10 @@ class Subcontrato extends Transaccion
         return round($this->pago_anticipado()->sum('monto'), 2);
     }
 
-//    public function getMontoDisponibleAttribute()
-//    {
-//        return round($this->subtotal - ($this->montoFacturado + $this->MontoPagoAnticipado), 2);
-//    }
+    public function getMontoDisponibleAttribute()
+    {
+        return round($this->subtotal - ($this->montoFacturado + $this->MontoPagoAnticipado), 2);
+    }
 
     public function scopeSubcontratosDisponible($query)
     {
