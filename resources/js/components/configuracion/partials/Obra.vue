@@ -207,30 +207,6 @@
                 </div>
             </div>
 
-            <fieldset class="form-group">
-                <div class="row">
-                    <legend class="col-form-label col-lg-2 pt-0"><b>Estado</b></legend>
-                    <div class="col-lg-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="tipo_obra0" value="0" v-model="form.tipo_obra">
-                            <label class="form-check-label" for="tipo_obra0"> En ejecución </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="tipo_obra1" value="1" v-model="form.tipo_obra">
-                            <label class="form-check-label" for="tipo_obra1"> En Proyecto</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="tipo_obra3" value="3" v-model="form.tipo_obra">
-                            <label class="form-check-label" for="tipo_obra3"> Solo consulta</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="tipo_obra2" value="2" v-model="form.tipo_obra">
-                            <label class="form-check-label" for="tipo_obra2"> Terminada</label>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-
             <div class="form-group row">
                 <label for="id_tipo_proyecto" class="col-lg-2 col-form-label">Tipo de Proyecto</label>
                 <div class="col-lg-4">
@@ -415,16 +391,6 @@
                 formData.append('iva', this.form.iva)
                 formData.append('nombre', this.form.nombre);
                 formData.append('rfc', this.form.rfc)
-                if(this.form.tipo_obra == 3){
-                    formData.append('configuracion[tipo_obra]', 0);
-                    formData.append('tipo_obra', 0);
-                    formData.append('configuracion[consulta]', 1);
-                }else{
-                    formData.append('configuracion[tipo_obra]', this.form.tipo_obra);
-                    formData.append('tipo_obra', this.form.tipo_obra);
-                    formData.append('configuracion[consulta]', 0);
-
-                }
                 formData.append('valor_contrato', this.form.valor_contrato)
 
                 formData.forEach((value, key) => {

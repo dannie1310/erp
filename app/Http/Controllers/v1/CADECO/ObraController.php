@@ -71,4 +71,9 @@ class ObraController extends Controller
         $obras = $this->service->getObrasPorUsuario($user_id);
         return $this->respondWithCollection($obras);
     }
+    public function actualizarEstado(Request $request, $id)
+    {
+        $obras = $this->service->actualizarEstado($request->all(),$id);
+        return $this->updateTrait($request, $id);
+    }
 }

@@ -84,6 +84,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'obra'], function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@show');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
+            $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
         });
     });
 
