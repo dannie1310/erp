@@ -16,5 +16,8 @@ class CtgTipoFondo extends Model
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.ctg_tipos_fondos';
 
-
+    public function scopeTipoFondoActivo($query)
+    {
+        return $query->where('estado',1);
+    }
 }
