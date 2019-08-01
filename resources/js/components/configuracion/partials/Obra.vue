@@ -336,9 +336,6 @@
                 if (this.form.configuracion.logotipo_original) {
                     this.logo = `data:image/png;base64,${this.form.configuracion.logotipo_original}`;
                 }
-                if(this.form.configuracion.tipo_obra == 0 && this.form.configuracion.consulta == 1){
-                    this.form.tipo_obra = 3;
-                }
             }, 100);
         },
 
@@ -391,8 +388,9 @@
                 formData.append('iva', this.form.iva)
                 formData.append('nombre', this.form.nombre);
                 formData.append('rfc', this.form.rfc)
+                formData.append('tipo_obra', this.form.tipo_obra);
+                formData.append('configuracion[tipo_obra]', this.form.configuracion.tipo_obra);
                 formData.append('valor_contrato', this.form.valor_contrato)
-
                 formData.forEach((value, key) => {
                     if(value == 'null' || value == '')
                         formData.delete(key);
@@ -412,9 +410,6 @@
                             setTimeout(() => {
                                 if (data.configuracion.logotipo_original) {
                                     this.logo = `data:image/png;base64,${data.configuracion.logotipo_original}`;
-                                }
-                                if(this.form.configuracion.tipo_obra == 0 && this.form.configuracion.consulta == 1){
-                                    this.form.tipo_obra = 3;
                                 }
                             }, 100);
                         }
