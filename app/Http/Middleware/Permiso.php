@@ -40,16 +40,16 @@ class Permiso
             abort(403, 'No cuentas con los permisos necesarios para realizar la acción solicitada');
         }
 
-        if ($google_auth = \App\Models\SEGURIDAD_ERP\Permiso::query()->whereIn('name', $permisos)->where('requiere_autorizacion', '=', true)->first()) {
-            return app(TwoFactorAuth::class)->handle($request, function ($request) use ($next) {
-                return $next($request);
-            });
-        }
-
         if ($consulta = \App\Models\SEGURIDAD_ERP\Permiso::query()->whereIn('name', $permisos)->where('es_de_consulta', '=', false)->first()) {
             return app( Lectura::class )->handle( $request, function ($request) use ($next) {
                 return $next( $request );
             } );
+        }
+
+        if ($google_auth = \App\Models\SEGURIDAD_ERP\Permiso::query()->whereIn('name', $permisos)->where('requiere_autorizacion', '=', true)->first()) {
+            return app(TwoFactorAuth::class)->handle($request, function ($request) use ($next) {
+                return $next($request);
+            });
         }
 
         return $next($request);
