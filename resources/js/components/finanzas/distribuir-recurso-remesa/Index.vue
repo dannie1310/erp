@@ -101,9 +101,10 @@
                                 autorizar: self.$root.can('autorizar_distribucion_recursos_remesa') ? true : false,
                                 pagar: self.$root.can('pagar_distribucion_recursos_remesa') ? true : false,
                                 cancelar: self.$root.can('cancelar_distribucion_recursos_remesa') ? true : false,
+                                descargar: self.$root.can('descargar_distribucion_recursos_remesa') ? true : false,
+                                cargar: self.$root.can('cargar_distribucion_recursos_remesa') ? true : false,
                                 id: distribucion.id,
                                 estado: distribucion.estado.estado
-
                             })
                         })
                     });

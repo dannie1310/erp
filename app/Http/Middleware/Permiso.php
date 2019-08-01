@@ -30,13 +30,13 @@ class Permiso
      * @return mixed|\Symfony\Component\HttpFoundation\Response
      * @throws \Exception
      */
-    public function handle($request, Closure $next, $permisos)
+    public function handle($request, Closure $next, $permisos, $requireAll = false)
     {
         if (!is_array($permisos)) {
             $permisos = explode(self::DELIMITER, $permisos);
         }
 
-        if ($this->auth->guest() || !$request->user()->can($permisos)) {
+        if ($this->auth->guest() || !$request->user()->can($permisos, $requireAll)) {
             abort(403, 'No cuentas con los permisos necesarios para realizar la acción solicitada');
         }
 

@@ -22,6 +22,7 @@ class Fondo extends Model
     public $timestamps = false;
     public $searchable = [
         'descripcion',
+        'nombre',
         'saldo',
         'cuentaFondo.cuenta'
     ];
@@ -40,14 +41,13 @@ class Fondo extends Model
             ->where('Contabilidad.cuentas_fondos.estatus', '=', 1);
     }
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_responsable', 'id_empresa');
+    }
+
     public function scopeSinCuenta($query)
     {
         return $query->doesntHave('cuentaFondo');
     }
-
-    public function scopeConCuenta($query)
-    {
-        return $query->has('cuentaFondo');
-    }
-
 }
