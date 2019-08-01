@@ -97,10 +97,12 @@ class SolicitudPagoAnticipado extends Transaccion
 
     private function validarAntecedente(){
         $solicitud = SolicitudPagoAnticipado::query()->where('id_antecedente', '=', $this->id_antecedente)->first();
-
-//        if($solicitud){
-//            throw New \Exception('Existe una solicitud de pago anticipada para esta transacción antecedente');
-//        }
+        $orden = OrdenCompra::where('id_transaccion', $this->id_antecedente);
+        $subcontrato = $this->subcontrato();
+        dd($orden, $subcontrato->get()->toArray());
+        if($solicitud){
+            throw New \Exception('Existe una solicitud de pago anticipada para esta transacción antecedente');
+        }
 
         $orden = OrdenCompra::query()->find($this->id_antecedente);
         if($orden != null){

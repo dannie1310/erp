@@ -22,6 +22,10 @@ class OrdenCompra extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
 
+    protected $attributes = [
+        'montoDisponible' => 0
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -97,10 +101,10 @@ class OrdenCompra extends Transaccion
         return round($this->pago_anticipado()->sum('monto'), 2);
     }
 
-//    public function getMontoDisponibleAttribute()
-//    {
-//        return round($this->subtotal - ($this->montoFacturado + $this->MontoPagoAnticipado), 2);
-//    }
+    public function getMontoDisponibleAttribute()
+    {
+        return $this->attributes['montoDisponible'] = round($this->subtotal - ($this->montoFacturado + $this->MontoPagoAnticipado), 2);
+    }
 
     public function scopeOrdenCompraDisponible($query)
     {
