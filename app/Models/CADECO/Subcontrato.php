@@ -142,7 +142,7 @@ class Subcontrato extends Transaccion
 
     public function getMontoPagoAnticipadoAttribute()
     {
-        return round($this->pago_anticipado()->sum('monto'), 2);
+        return round($this->pago_anticipado()->where('estado', '>=',0)->sum('monto'), 2);
     }
 
     public function getMontoDisponibleAttribute()

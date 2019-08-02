@@ -309,6 +309,7 @@
                     this.facturado = 0;
                     this.iniciar = 0;
                     this.restante = 0;
+                    this.bandera_transaccion = 0;
             },
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
@@ -392,6 +393,7 @@
             tipo(value){
                 this.transacciones = [];
                 this.transaccion = [];
+                this.bandera_transaccion = 0;
                 if(value){
                     if(value == 19){
                         this.getOrdenes();
