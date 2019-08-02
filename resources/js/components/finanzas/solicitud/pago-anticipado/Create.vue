@@ -53,7 +53,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group error-content">
                                         <label for="tipo">Tipo de Transacción:</label>
                                         <select
@@ -73,7 +73,7 @@
                                         <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-9">
+                                <div class="col-md-8">
                                     <div class="form-group error-content">
                                         <label for="id_antecedente">Transacción: </label>
                                         <select
@@ -115,18 +115,13 @@
                                                             <td class="bg-gray-light"><b>Número de Folio:</b><br>
                                                                 {{ transaccion.numero_folio_format}}
                                                             </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="bg-gray-light" v-if="transaccion.empresa"><b>Empresa:</b><br>
+                                                             <td class="bg-gray-light" v-if="transaccion.empresa"><b>Empresa:</b><br>
                                                                 {{ transaccion.empresa.razon_social }}
                                                             </td>
-                                                        </tr>
-                                                        <tr>
                                                             <td class="bg-gray-light"><b>Referencia:</b><br>
                                                                {{ transaccion.referencia}}
                                                             </td>
                                                         </tr>
-
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -140,13 +135,11 @@
                                                                     <table class="table">
                                                                         <tbody>
                                                                             <tr>
-                                                                                <th style="width:20%" class="bg-gray-light">Subtotal:</th>
-                                                                                <td style="width: 20%" class="bg-gray-light" align="right"><b>{{ transaccion.subtotal_format}}</b></td>
-
-                                                                                <th style="width:5%"></th>
-                                                                                <td style="width:5%"></td>
-                                                                                <th style="width: 20%" for="importe">Importe a Solicitar:</th>
-                                                                                <td style="width: 30%" align="right">
+                                                                                <th class="bg-gray-light">Subtotal:</th>
+                                                                                <td class="bg-gray-light" align="right"><b>{{ transaccion.subtotal_format}}</b></td>
+                                                                                <th></th>
+                                                                                <th style="width: 10%" for="importe">Importe a Solicitar:</th>
+                                                                                <td>
                                                                                     <div class="col-12">
                                                                                         <div class="form-group error-content">
                                                                                             <input
@@ -174,19 +167,25 @@
                                                                                 <th class="bg-gray-light">Total:</th>
                                                                                 <td class="bg-gray-light" align="right">{{ transaccion.total_format }}</td>
                                                                             </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" align="left">
+                                                        <div class="table-responsive col-md-12">
+                                                            <div class="col-12">
+                                                                <div class="table-responsive">
+                                                                    <table class="table">
+                                                                        <tbody>
                                                                             <tr>
                                                                                 <th>Monto Facturado:</th>
                                                                                 <td align="right" v-model="facturado">$ {{ (parseFloat(facturado)).formatMoney(2,'.',',') }}</td>
-                                                                            </tr>
-                                                                            <tr>
                                                                                 <th class="bg-gray-light">Monto en otras Solicitudes:</th>
                                                                                 <td align="right" class="bg-gray-light" v-model="solicitado">$ {{ (parseFloat(solicitado)).formatMoney(2,'.',',') }}</td>
-                                                                            </tr>
-                                                                            <tr>
                                                                                 <th class="bg-gray">Monto Disponible:</th>
                                                                                 <td class="bg-gray" align="right" v-model="disponible">$ {{ (parseFloat(disponible)).formatMoney(2,'.',',')}}</td>
-                                                                            </tr>
-                                                                            <tr>
                                                                                 <th class="bg-gray-light">Monto Restante:</th>
                                                                                 <td class="bg-gray-light" align="right" v-model="restante">$ {{ (parseFloat(restante)).formatMoney(2,'.',',')}}</td>
                                                                             </tr>
@@ -243,11 +242,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal-footer">
+                        </div>
+                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <button type="submit" class="btn btn-primary">Registrar</button>
-                            </div>
-                        </div>
+                         </div>
                     </form>
                 </div>
             </div>
@@ -269,7 +268,7 @@
                 fecha_limite_1: '',
                 cumplimiento: '',
                 vencimiento: '',
-                tipo: 0,
+                tipo: '',
                 transacciones: [],
                 id_antecedente: '',
                 cargando: false,
@@ -296,7 +295,7 @@
                     this.fecha_limite_1 = '';
                     this.cumplimiento = '';
                     this.vencimiento = '';
-                    this.tipo = 0;
+                    this.tipo = '';
                     this.transacciones = [];
                     this.id_antecedente = '';
                     this.transaccion = [];
