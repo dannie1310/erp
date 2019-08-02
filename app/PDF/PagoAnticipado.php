@@ -497,7 +497,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
         $this->SetAligns(array('R',  'R'));
-        $this->Row(array("Total Solicitado:", $this->total_format));
+        $this->Row(array("Monto Solicitado:", $this->total_format));
     }
 
 
