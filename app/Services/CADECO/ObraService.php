@@ -155,7 +155,8 @@ class ObraService
     {
         $obra = $this->repository->show($id);
         $tipo_obra = $obra->configuracion()->first();
-        $obra = $obra->first();
+        $obra = $obra->where('id_obra',$id)->first();
+
 
         if($tipo_obra->consulta == true && $data['configuracion']['tipo_obra'] == 2 && $data['tipo_obra'] == 2  ){
 
@@ -190,12 +191,11 @@ class ObraService
             $obra->configuracion()->update($data['configuracion']);
             $obra->update($data);
 
-            }else if($tipo_obra->tipo_obra == 2 || $obra->tipo_obra == 2){
-                abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
-
-                }else{
-                    abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
-                }
+        }else if($tipo_obra->tipo_obra == 2 || $obra->tipo_obra == 2){
+            abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
+        }else{
+            abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
+        }
 
         return $obra;
     }
