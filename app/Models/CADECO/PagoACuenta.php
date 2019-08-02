@@ -11,6 +11,24 @@ namespace App\Models\CADECO;
 
 class PagoACuenta extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = null;
+
+    protected $fillable = [
+        'id_antecedente',
+        'fecha',
+        'id_obra',
+        'cumplimiento',
+        'vencimiento',
+        'monto',
+        'referencia',
+        'observaciones',
+        'tipo_transaccion',
+        "id_cuenta",
+        "id_empresa",
+        "id_moneda",
+        "saldo",
+        "destino"
+    ];
     protected static function boot()
     {
         parent::boot();
@@ -19,6 +37,13 @@ class PagoACuenta extends Transaccion
             return $query->where('tipo_transaccion', '=', 82)
                 ->where('opciones', '=', 327681)
                 ->where('estado', '!=', -2);
+        });
+        self::creating(function ($model) {
+            $model->tipo_transaccion = 82;
+            $model->opciones = 327681;
+            $model->fecha = date('Y-m-d');
+            $model->cumplimiento =  date('Y-m-d');
+            $model->vencimiento = date('Y-m-d');
         });
     }
 }

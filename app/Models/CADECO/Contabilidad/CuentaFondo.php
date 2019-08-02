@@ -47,4 +47,10 @@ class CuentaFondo extends Model
     {
         return $this->belongsTo(Fondo::class, 'id_fondo');
     }
+
+    public function scopeActivo($query)
+    {
+        return $query->where('estatus', '=', 1);
+    }
+
 }
