@@ -49,8 +49,9 @@ class EstimacionController extends Controller
      */
     public function __construct(EstimacionService $service, Manager $fractal, EstimacionTransformer $transformer)
     {
-//        $this->middleware('auth')->only('pdfOrdenPago');
-//        $this->middleware('auth:api')->except('pdfOrdenPago');
+
+        $this->middleware('auth:api');
+        $this->middleware('context');
         $this->middleware('permiso:consultar_formato_orden_pago_estimacion')->only('pdfOrdenPago');
         $this->middleware('permiso:registrar_estimacion_subcontrato')->only('store');
         $this->middleware('permiso:aprobar_estimacion_subcontrato')->only('aprobar');
