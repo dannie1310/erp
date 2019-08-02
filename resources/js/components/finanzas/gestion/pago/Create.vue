@@ -55,6 +55,10 @@
                                                             <th>Cuenta Cargo</th>
                                                             <th>Cuenta Abono</th>
                                                             <th>Estado</th>
+                                                            <th>Origen</th>
+                                                            <th>Tipo de Transacción Pagada</th>
+                                                            <th>Referencia de Transacción Pagada</th>
+                                                            <th>Tipo de Pago a Generar</th>
                                                             <th></th>
                                                         </tr>
                                                         </thead>
@@ -66,11 +70,15 @@
                                                                 <td class="text-right">$ {{parseFloat(pago.monto).formatMoney(2, '.', ',')}}</td>
                                                                 <td>{{pago.cuenta_cargo.numero}} ({{pago.cuenta_cargo.abreviatura}})</td>
                                                                 <td>{{pago.cuenta_abono.numero}} ({{pago.cuenta_abono.abreviatura}})</td>
-                                                                <td>
+                                                                <td class="text-center">
                                                                     <small class="badge" :class="{'badge-warning': pago.estado.estado != 1,  'badge-success': pago.estado.estado == 1}">
                                                                         {{ pago.estado.descripcion }}
                                                                     </small>
                                                                 </td>
+                                                                <td>{{pago.origen_docto}}</td>
+                                                                <td>{{pago.id_transaccion_tipo}}</td>
+                                                                <td>{{pago.referencia_docto}}</td>
+                                                                <td>{{pago.pago_a_generar}}</td>
                                                                 <td>
                                                                     <span v-if="pago.pagable">
                                                                         <i class="fa fa-check"></i>

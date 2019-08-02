@@ -66,6 +66,10 @@ class Documento extends Model
         return $this->belongsTo(TipoDocumento::class, 'IDTipoDocumento', 'IDTipoDocumento');
     }
 
+    public function origenDocumento(){
+        return $this->belongsTo(OrigenDocumento::class, 'IDOrigenDocumento', 'IDOrigenDocumento');
+    }
+
     public function transaccion(){
         return $this->belongsTo(Transaccion::class, 'IDTransaccionCDC', 'id_transaccion');
     }

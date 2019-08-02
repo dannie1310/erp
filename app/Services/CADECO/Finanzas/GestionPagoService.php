@@ -44,33 +44,11 @@ class GestionPagoService
             if(!$c_cargo){
                 if(strlen($pago['concepto']) > 10 && is_numeric(substr($pago['concepto'], 1, 9))){
                     $documento = Documento::query()->where('IDDocumento', '=', substr($pago['concepto'], 1, 9))->first();
-                    $registros_bitacora[] = array(
-                        'id_documento' => $documento->IDDocumento,
-                        'id_transaccion' => $documento->transaccion? $documento->transaccion->id_transaccion:null,
-                        'estado' => $documento->partidas->estatus,
-                        'pagable' => $documento->partidas->pagable,
-                        'concepto' => $documento->Concepto,
-                        'beneficiario' => $documento->Destinatario,
-                        'monto' => $pago['monto'],
-                        'cuenta_cargo' => ['numero'=> $documento->partidas->cuentaCargo->numero, 'abreviatura'=> $documento->partidas->cuentaCargo->abreviatura, 'nombre' => $documento->partidas->cuentaCargo->empresa->razon_social],
-                        'cuenta_abono' => ['numero'=> $documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $documento->partidas->cuentaAbono->banco->razon_social],
-                        'referencia' => $pago['referencia'],
-                    );
+                    $registros_bitacora[] = $this->bitacoraPago($documento, $pago);
                 }else{
                     $documentos = Documento::query()->where('MontoTotalSolicitado', '=', $pago['monto'])->get();
                     if(count($documentos) == 1){
-                        $registros_bitacora[] = array(
-                            'id_documento' => $documentos[0]->IDDocumento,
-                            'id_transaccion' => $documentos[0]->transaccion? $documentos[0]->transaccion->id_transaccion:null,
-                            'estado' => $documentos[0]->partidas->estatus,
-                            'pagable' => $documentos[0]->partidas->pagable,
-                            'concepto' => $documentos[0]->Concepto,
-                            'beneficiario' => $documentos[0]->Destinatario,
-                            'monto' => $pago['monto'],
-                            'cuenta_cargo' => ['numero'=> $documentos[0]->partidas->cuentaCargo->numero, 'abreviatura'=> $documentos[0]->partidas->cuentaCargo->abreviatura, 'nombre' => $documentos[0]->partidas->cuentaCargo->empresa->razon_social],
-                            'cuenta_abono' => ['numero'=> $documentos[0]->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $documentos[0]->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $documentos[0]->partidas->cuentaAbono->banco->razon_social],
-                            'referencia' => $pago['referencia'],
-                        );
+                        $registros_bitacora[] = $this->bitacoraPago($documentos[0], $pago);
                     }else {
                         $cta_abono = CuentaBancariaProveedor::query()->where('cuenta_clabe', $pago['cuenta_abono'])->first();
                         $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->first();
@@ -79,16 +57,20 @@ class GestionPagoService
                             $registros_bitacora[] = array(
                                 'id_documento' => '',
                                 'id_transaccion' => '',
-                                'estado' => ['id' => 0, 'estado' => -3, 'descripcion' => 'Inválido'],
-                                'pagable' => false,
+                                'id_transaccion_tipo' => '   N/A   ',
+                                'pago_a_generar' => 'Pago a Cuenta',
+                                'estado' => ['id' => 0, 'estado' => -3, 'descripcion' => '   N/A   '],
+                                'pagable' => true,
                                 'concepto' => $pago['concepto'],
-                                'beneficiario' => '',
+                                'beneficiario' => $cta_abono?'$cta_abono->banco->razon_social':$pago['cuenta_abono'],
                                 'monto' => $pago['monto'],
                                 'cuenta_cargo' => $cta_cargo?['numero' => $cta_cargo->numero, 'abreviatura' => $cta_cargo->abreviatura, 'nombre' => $cta_cargo->empresa->razon_social]:
                                                     ['numero' => $pago['cuenta_cargo'], 'abreviatura' => $pago['cuenta_cargo'], 'nombre' => ''],
                                 'cuenta_abono' => $cta_abono?['numero' => $cta_abono->cuenta_clabe, 'abreviatura' => $cta_abono->complemento->nombre_corto, 'nombre' => $cta_abono->banco->razon_social]:
                                                     ['numero' => $pago['cuenta_abono'], 'abreviatura' => $pago['cuenta_abono'], 'nombre' => ''],
                                 'referencia' => $pago['referencia'],
+                                'referencia_docto' => '   N/A   ',
+                                'origen_docto' => '   N/A   ',
                             );
                         }else {
                             $dist_part = DistribucionRecursoRemesaPartida::query()->whereIn('id_documento', $documentos->pluck('IDDocumento'))
@@ -96,35 +78,12 @@ class GestionPagoService
                                 ->where('id_cuenta_cargo', '=', $cta_cargo->id_cuenta)
                                 ->whereNotIn('id_documento', array_values($doctos_repetidos))->get();
 
-
                             if (count($dist_part) > 1) {
                                 $doctos_repetidos[$dist_part[0]->id_documento] = $dist_part[0]->id_documento;
-                                $registros_bitacora[] = array(
-                                    'id_documento' => $dist_part[0]->documento->IDDocumento,
-                                    'id_transaccion' => $dist_part[0]->documento->transaccion ? $documentos[0]->transaccion->id_transaccion : null,
-                                    'estado' => $dist_part[0]->documento->partidas->estatus,
-                                    'pagable' => $dist_part[0]->documento->partidas->pagable,
-                                    'concepto' => $dist_part[0]->documento->Concepto,
-                                    'beneficiario' => $dist_part[0]->documento->Destinatario,
-                                    'monto' => $pago['monto'],
-                                    'cuenta_cargo' => ['numero' => $dist_part[0]->documento->partidas->cuentaCargo->numero, 'abreviatura' => $dist_part[0]->documento->partidas->cuentaCargo->abreviatura, 'nombre' => $dist_part[0]->documento->partidas->cuentaCargo->empresa->razon_social],
-                                    'cuenta_abono' => ['numero' => $dist_part[0]->documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura' => $dist_part[0]->documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $dist_part[0]->documento->partidas->cuentaAbono->banco->razon_social],
-                                    'referencia' => $pago['referencia'],
-                                );
+                                $registros_bitacora[] = $this->bitacoraPago($dist_part[0]->documento, $pago);
                             }
                             if (count($dist_part) == 1) {
-                                $registros_bitacora[] = array(
-                                    'id_documento' => $dist_part[0]->documento->IDDocumento,
-                                    'id_transaccion' => $dist_part[0]->documento->transaccion ? $documentos[0]->transaccion->id_transaccion : null,
-                                    'estado' => $dist_part[0]->documento->partidas->estatus,
-                                    'pagable' => $dist_part[0]->documento->partidas->pagable,
-                                    'concepto' => $dist_part[0]->documento->Concepto,
-                                    'beneficiario' => $dist_part[0]->documento->Destinatario,
-                                    'monto' => $pago['monto'],
-                                    'cuenta_cargo' => ['numero' => $dist_part[0]->documento->partidas->cuentaCargo->numero, 'abreviatura' => $dist_part[0]->documento->partidas->cuentaCargo->abreviatura, 'nombre' => $dist_part[0]->documento->partidas->cuentaCargo->empresa->razon_social],
-                                    'cuenta_abono' => ['numero' => $dist_part[0]->documento->partidas->cuentaAbono->cuenta_clabe, 'abreviatura' => $dist_part[0]->documento->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $dist_part[0]->documento->partidas->cuentaAbono->banco->razon_social],
-                                    'referencia' => $pago['referencia'],
-                                );
+                                $registros_bitacora[] = $this->bitacoraPago($dist_part[0]->documento, $pago);
                             }
                         }
                     }
@@ -132,6 +91,42 @@ class GestionPagoService
             }
         }
         return $registros_bitacora;
+    }
+
+    public function bitacoraPago($data, $pago){
+        $pago_a_generar = '';
+        switch ((int)$data->IDTipoDocumento){
+            case 9:
+            case 11:
+                $pago_a_generar = 'Pago';
+                break;
+            case 12:
+                $pago_a_generar = 'Pago Varios';
+                break;
+            case 15:
+                $pago_a_generar = 'Pago a Cuenta';
+                break;
+            default:
+                $pago_a_generar = 'Pago a Cuenta';
+                break;
+        }
+
+        return array(
+            'id_documento' => $data->IDDocumento,
+            'id_transaccion' => $data->transaccion? $data->transaccion->id_transaccion:null,
+            'id_transaccion_tipo' => $data->tipoDocumento->TipoDocumento,
+            'pago_a_generar' => $pago_a_generar,
+            'estado' => $data->partidas->estatus,
+            'pagable' => $data->partidas->pagable,
+            'concepto' => $data->Concepto,
+            'beneficiario' => $data->Destinatario,
+            'monto' => $pago['monto'],
+            'cuenta_cargo' => ['numero'=> $data->partidas->cuentaCargo->numero, 'abreviatura'=> $data->partidas->cuentaCargo->abreviatura, 'nombre' => $data->partidas->cuentaCargo->empresa->razon_social],
+            'cuenta_abono' => ['numero'=> $data->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $data->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $data->partidas->cuentaAbono->banco->razon_social],
+            'referencia' => $pago['referencia'],
+            'referencia_docto' => $data->Referencia,
+            'origen_docto' => $data->origenDocumento->OrigenDocumento,
+        );
     }
 
     public function getTxtData($file){
