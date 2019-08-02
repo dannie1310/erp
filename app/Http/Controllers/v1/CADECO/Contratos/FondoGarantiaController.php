@@ -51,6 +51,11 @@ class FondoGarantiaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_fondo_garantia')->only(['paginate','index']);
+        $this->middleware('permiso:generar_fondo_garantia')->only('store');
+        $this->middleware('permiso:ajustar_saldo_fondo_garantia')->only('ajustarSaldo');
+        $this->middleware ('permiso:consultar_detalle_fondo_garantia')->only('show');
+
 
         $this->service = $service;
         $this->fractal = $fractal;
