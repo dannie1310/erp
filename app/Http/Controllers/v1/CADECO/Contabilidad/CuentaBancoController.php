@@ -52,6 +52,11 @@ class CuentaBancoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_cuenta_contable_bancaria')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:registrar_cuenta_contable_bancaria')->only('store');
+        $this->middleware('permiso:editar_cuenta_contable_bancaria')->only('update');
+        $this->middleware('permiso:eliminar_cuenta_contable_bancaria')->only('destroy');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
@@ -66,5 +71,4 @@ class CuentaBancoController extends Controller
     {
         return $this->traitStore($request);
     }
-
 }

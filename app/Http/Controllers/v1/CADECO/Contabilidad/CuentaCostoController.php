@@ -48,6 +48,11 @@ class CuentaCostoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_cuenta_costo')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:registrar_cuenta_costo')->only('store');
+        $this->middleware('permiso:editar_cuenta_costo')->only('update');
+        $this->middleware('permiso:eliminar_cuenta_costo')->only('destroy');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
