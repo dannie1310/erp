@@ -66,42 +66,42 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <div class="row" align="right"  v-if="pagoAnticipado && (pagoAnticipado.subcontrato || pagoAnticipado.orden_compra)">
-                                            <div class="table-responsive col-md-12">
-                                                <div class="col-6">
-                                                    <div class="table-responsive">
-                                                        <table class="table">
-                                                            <tbody>
-                                                                <tr v-if="pagoAnticipado.subcontrato">
-                                                                    <th style="width:50%" class="bg-gray-light">Subtotal:</th>
-                                                                    <td class="bg-gray-light" align="right">{{pagoAnticipado.subcontrato.subtotal_format}}</td>
-                                                                </tr>
-                                                                <tr  v-if="pagoAnticipado.orden_compra">
-                                                                    <th style="width:50%" class="bg-gray-light">Subtotal:</th>
-                                                                    <td class="bg-gray-light" align="right">{{pagoAnticipado.orden_compra.subtotal_format}}</td>
-                                                                </tr>
-                                                                <tr v-if="pagoAnticipado.subcontrato">
-                                                                    <th>IVA:</th>
-                                                                    <td align="right">{{pagoAnticipado.subcontrato.impuesto_format}}</td>
-                                                                </tr>
-                                                                <tr  v-if="pagoAnticipado.orden_compra">
-                                                                    <th>IVA:</th>
-                                                                    <td align="right">{{pagoAnticipado.orden_compra.impuesto_format}}</td>
-                                                                </tr>
-                                                                <tr v-if="pagoAnticipado.subcontrato">
-                                                                    <th class="bg-gray-light">Total:</th>
-                                                                    <td class="bg-gray-light" align="right">{{pagoAnticipado.subcontrato.monto_format}}</td>
-                                                                </tr>
-                                                                <tr  v-if="pagoAnticipado.orden_compra">
-                                                                    <th class="bg-gray-light">Total:</th>
-                                                                    <td class="bg-gray-light" align="right">{{pagoAnticipado.orden_compra.monto_format}}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <!--<div class="row" align="right"  v-if="pagoAnticipado && (pagoAnticipado.subcontrato || pagoAnticipado.orden_compra)">-->
+                                            <!--<div class="table-responsive col-md-12">-->
+                                                <!--<div class="col-6">-->
+                                                    <!--<div class="table-responsive">-->
+                                                        <!--<table class="table">-->
+                                                            <!--<tbody>-->
+                                                                <!--<tr v-if="pagoAnticipado.subcontrato">-->
+                                                                    <!--<th style="width:50%" class="bg-gray-light">Subtotal:</th>-->
+                                                                    <!--<td class="bg-gray-light" align="right">{{pagoAnticipado.subcontrato.subtotal_format}}</td>-->
+                                                                <!--</tr>-->
+                                                                <!--<tr  v-if="pagoAnticipado.orden_compra">-->
+                                                                    <!--<th style="width:50%" class="bg-gray-light">Subtotal:</th>-->
+                                                                    <!--<td class="bg-gray-light" align="right">{{pagoAnticipado.orden_compra.subtotal_format}}</td>-->
+                                                                <!--</tr>-->
+                                                                <!--<tr v-if="pagoAnticipado.subcontrato">-->
+                                                                    <!--<th>IVA:</th>-->
+                                                                    <!--<td align="right">{{pagoAnticipado.subcontrato.impuesto_format}}</td>-->
+                                                                <!--</tr>-->
+                                                                <!--<tr  v-if="pagoAnticipado.orden_compra">-->
+                                                                    <!--<th>IVA:</th>-->
+                                                                    <!--<td align="right">{{pagoAnticipado.orden_compra.impuesto_format}}</td>-->
+                                                                <!--</tr>-->
+                                                                <!--<tr v-if="pagoAnticipado.subcontrato">-->
+                                                                    <!--<th class="bg-gray-light">Total:</th>-->
+                                                                    <!--<td class="bg-gray-light" align="right">{{pagoAnticipado.subcontrato.monto_format}}</td>-->
+                                                                <!--</tr>-->
+                                                                <!--<tr  v-if="pagoAnticipado.orden_compra">-->
+                                                                    <!--<th class="bg-gray-light">Total:</th>-->
+                                                                    <!--<td class="bg-gray-light" align="right">{{pagoAnticipado.orden_compra.monto_format}}</td>-->
+                                                                <!--</tr>-->
+                                                            <!--</tbody>-->
+                                                        <!--</table>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
                                     </div>
                                 </div>
                             </div>
