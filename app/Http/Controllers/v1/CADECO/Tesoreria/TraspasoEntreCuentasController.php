@@ -38,6 +38,10 @@ class TraspasoEntreCuentasController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_traspaso_cuenta')->only(['paginate','show']);
+        $this->middleware('permiso:editar_traspaso_cuenta')->only(['update']);
+        $this->middleware('permiso:eliminar_traspaso_cuenta')->only(['delete','destroy']);
+        $this->middleware('permiso:registrar_traspaso_cuenta')->only(['store','create']);
 
         $this->fractal = $fractal;
         $this->service = $service;
