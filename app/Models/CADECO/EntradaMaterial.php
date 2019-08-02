@@ -21,5 +21,4 @@ class EntradaMaterial extends Transaccion
                 ->where('estado', '!=', -2);
         });
     }
-
 }

@@ -87,7 +87,17 @@ class OrdenCompra extends Transaccion
         return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function getMontoFacturadoAttribute()
+    public function entradasAlmacen()
+    {
+        return $this->hasMany(EntradaMaterial::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function getMontoFacturadoEntradaAlmacenAttribute()
+    {
+        return round(FacturaPartida::query()->whereIn('id_antecedente', $this->entradas_material()->pluck('id_transaccion'))->sum('importe'));
+    }
+
+    public function getMontoFacturadoOrdenCompraAttribute()
     {
        return round($this->partidas_facturadas()->sum('importe'),2);
     }
@@ -99,7 +109,7 @@ class OrdenCompra extends Transaccion
 
     public function getMontoDisponibleAttribute()
     {
-        return round($this->subtotal - ($this->montoFacturado + $this->MontoPagoAnticipado), 2);
+        return round($this->subtotal - ($this->montoFacturadoEntradaAlmacen + $this->montoFacturadoOrdenCompra + $this->MontoPagoAnticipado), 2);
     }
 
     public function scopeOrdenCompraDisponible($query)

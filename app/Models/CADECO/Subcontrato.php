@@ -130,7 +130,12 @@ class Subcontrato extends Transaccion
         return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function getMontoFacturadoAttribute()
+    public function getMontoFacturadoEstimacionAttribute()
+    {
+        return round(FacturaPartida::query()->whereIn('id_antecedente', $this->estimaciones()->pluck('id_transaccion'))->sum('importe'));
+    }
+
+    public function getMontoFacturadoSubcontratoAttribute()
     {
         return round($this->partidas_facturadas()->sum('importe'),2);
     }
@@ -142,7 +147,7 @@ class Subcontrato extends Transaccion
 
     public function getMontoDisponibleAttribute()
     {
-        return round($this->subtotal - ($this->montoFacturado + $this->MontoPagoAnticipado), 2);
+        return round($this->subtotal - ($this->montoFacturadoEstimacion + $this->montoFacturadoSubcontrato + $this->MontoPagoAnticipado), 2);
     }
 
     public function scopeSubcontratosDisponible($query)

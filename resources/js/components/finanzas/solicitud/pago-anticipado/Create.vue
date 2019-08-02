@@ -455,10 +455,10 @@
                 this.restante = 0;
 
                 if(value.length != 0) {
-                    this.disponible = value.subtotal - (value.monto_facturado + value.monto_solicitado);
+                    this.disponible = parseFloat(value.subtotal - (value.monto_facturado_ea + value.monto_facturado_oc + value.monto_solicitado)).toFixed(2);
                     this.solicitado = value.monto_solicitado;
-                    this.facturado = value.monto_facturado;
-                    this.restante = value.subtotal - (value.monto_facturado + value.monto_solicitado);
+                    this.facturado = value.monto_facturado_ea + value.monto_facturado_oc;
+                    this.restante = parseFloat(value.subtotal - (value.monto_facturado_ea + value.monto_facturado_oc + value.monto_solicitado)).toFixed(2);
                 }
             },
             importe(value){

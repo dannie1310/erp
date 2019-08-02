@@ -102,11 +102,11 @@ class SolicitudPagoAnticipado extends Transaccion
         /**
          * Se revisa la transaccion antecedente aun cuenta con el monto disponible que se desea solicitar, en caso contrario impide registrar la solicitud de pago anticipado
          */
-        if($orden != null && $orden->montoDisponible <= round($this->monto,2)) {
+        if($orden != null && $orden->montoDisponible < round($this->monto,2)) {
             throw New \Exception('Está orden de compra no cuenta con el saldo disponible para lo que solicita.');
         }
 
-        if ($subcontrato != null && $subcontrato->montoDisponible <= round($this->monto,2)){
+        if ($subcontrato != null && $subcontrato->montoDisponible < round($this->monto,2)){
             throw New \Exception('Este subcontrato no cuenta con el saldo disponible para lo que solicita.');
         }
     }
