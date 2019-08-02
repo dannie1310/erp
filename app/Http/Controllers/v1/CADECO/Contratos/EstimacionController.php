@@ -51,7 +51,9 @@ class EstimacionController extends Controller
     {
         $this->middleware('auth')->only('pdfOrdenPago');
         $this->middleware('auth:api')->except('pdfOrdenPago');
-
+        $this->middleware('permiso:registrar_estimacion_subcontrato')->only('store');
+        $this->middleware('permiso:aprobar_estimacion_subcontrato')->only('aprobar');
+        $this->middleware('permiso:revertir_aprobacion_estimacion_subcontrato')->only('revertirAprobacion');
         $this->middleware('context');
 
         $this->service = $service;
