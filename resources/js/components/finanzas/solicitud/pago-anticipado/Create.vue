@@ -95,7 +95,7 @@
                                 </div>
                             </div>
 
-                            <div class="row">
+                            <div class="row" v-if="iniciar == 1">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
@@ -324,7 +324,6 @@
                 }).then(data => {
                     this.transacciones = data;
                     this.bandera_transaccion = 1;
-                    this.iniciar = 0;
                 })
             },
             getSubcontratos() {
@@ -337,7 +336,6 @@
                 }).then(data => {
                     this.transacciones = data;
                     this.bandera_transaccion = 1;
-                    this.iniciar = 0;
                 })
             },
             getTransaccion(){
@@ -394,6 +392,10 @@
                 this.transacciones = [];
                 this.transaccion = [];
                 this.bandera_transaccion = 0;
+                this.iniciar = 0;
+                this.id_costo = '';
+                this.observaciones = '';
+
                 if(value){
                     if(value == 19){
                         this.getOrdenes();
@@ -454,6 +456,7 @@
                 this.solicitado = 0;
                 this.facturado = 0;
                 this.restante = 0;
+                this.importe = '';
 
                 if(value.length != 0) {
                     this.disponible = parseFloat(value.subtotal - (value.monto_facturado_ea + value.monto_facturado_oc + value.monto_solicitado)).toFixed(2);
