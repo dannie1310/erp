@@ -44,15 +44,13 @@
                                                         <td  v-if="pagoAnticipado.orden_compra">({{pagoAnticipado.orden_compra.tipo_nombre}}){{pagoAnticipado.orden_compra.numero_folio_format}}({{pagoAnticipado.orden_compra.referencia}})</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Monto Solicitado:</th>
-                                                        <td>{{ pagoAnticipado.monto_format}}</td>
-                                                        <th>Estado:</th>
+                                                        <th v-if="pagoAnticipado.costo">Costos:</th>
+                                                        <td v-if="pagoAnticipado.costo">{{pagoAnticipado.costo.descripcion}}</td>
+                                                         <th>Estado:</th>
                                                         <td v-if="pagoAnticipado.estado === 0">Registrada</td>
                                                         <td v-if="pagoAnticipado.estado === 2 || pagoAnticipado.estado === -2 ">Cancelada</td>
                                                     </tr>
                                                     <tr>
-                                                        <th v-if="pagoAnticipado.costo">Costos:</th>
-                                                        <td v-if="pagoAnticipado.costo">{{pagoAnticipado.costo.descripcion}}</td>
                                                         <th>Fecha y Hora de Registro:</th>
                                                         <td>{{pagoAnticipado.fecha_format}}</td>
                                                         <th v-if="pagoAnticipado.usuario">Registro:</th>
@@ -61,6 +59,8 @@
                                                     <tr>
                                                         <th>Observaciones:</th>
                                                         <td>{{pagoAnticipado.observaciones}}</td>
+                                                        <th>Monto Solicitado:</th>
+                                                        <td>{{ pagoAnticipado.monto_format}}</td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -121,7 +121,7 @@
                 this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', null);
                 return this.$store.dispatch('finanzas/solicitud-pago-anticipado/find', {
                     id: id,
-                    params: { include: ['subcontrato','empresa','usuario','orden_compra'] }
+                    params: { include: ['subcontrato','empresa','usuario','orden_compra','costo'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUD', data);
                     $(this.$refs.modal).modal('show')
