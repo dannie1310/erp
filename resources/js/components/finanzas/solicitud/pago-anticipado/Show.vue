@@ -59,19 +59,24 @@
                                                     <tr>
                                                         <th>Observaciones:</th>
                                                         <td>{{pagoAnticipado.observaciones}}</td>
-                                                        <th>Monto Solicitado:</th>
-                                                        <td>{{ pagoAnticipado.monto_format}}</td>
+                                                        <th></th>
+                                                        <td></td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
+                                        <div class="row" align="right"  v-if="pagoAnticipado">
                                         <!--<div class="row" align="right"  v-if="pagoAnticipado && (pagoAnticipado.subcontrato || pagoAnticipado.orden_compra)">-->
-                                            <!--<div class="table-responsive col-md-12">-->
-                                                <!--<div class="col-6">-->
-                                                    <!--<div class="table-responsive">-->
-                                                        <!--<table class="table">-->
-                                                            <!--<tbody>-->
+                                            <div class="table-responsive col-md-12">
+                                                <div class="col-6">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <tbody>
+                                                                <tr class="bg-white">
+                                                                    <th>Monto Solicitado:</th>
+                                                                    <td>{{ pagoAnticipado.monto_format}}</td>
+                                                                </tr>
                                                                 <!--<tr v-if="pagoAnticipado.subcontrato">-->
                                                                     <!--<th style="width:50%" class="bg-gray-light">Subtotal:</th>-->
                                                                     <!--<td class="bg-gray-light" align="right">{{pagoAnticipado.subcontrato.subtotal_format}}</td>-->
@@ -96,12 +101,12 @@
                                                                     <!--<th class="bg-gray-light">Total:</th>-->
                                                                     <!--<td class="bg-gray-light" align="right">{{pagoAnticipado.orden_compra.monto_format}}</td>-->
                                                                 <!--</tr>-->
-                                                            <!--</tbody>-->
-                                                        <!--</table>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            <!--</div>-->
-                                        <!--</div>-->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
