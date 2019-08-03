@@ -43,11 +43,6 @@ class OrdenCompra extends Transaccion
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
     }
 
-    public function scopeSinPagoAnticipado($query) //obsoleto
-    {
-        return $query->whereDoesntHave('pago_anticipado');
-    }
-
     public function entradas_material()
     {
         return $this->hasMany(EntradaMaterial::class, 'id_antecedente','id_transaccion');
@@ -92,19 +87,29 @@ class OrdenCompra extends Transaccion
         return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function getMontoFacturadoAttribute()
+    public function entradasAlmacen()
+    {
+        return $this->hasMany(EntradaMaterial::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function getMontoFacturadoEntradaAlmacenAttribute()
+    {
+        return round(FacturaPartida::query()->whereIn('id_antecedente', $this->entradas_material()->pluck('id_transaccion'))->sum('importe'));
+    }
+
+    public function getMontoFacturadoOrdenCompraAttribute()
     {
        return round($this->partidas_facturadas()->sum('importe'),2);
     }
 
     public function getMontoPagoAnticipadoAttribute()
     {
-        return round($this->pago_anticipado()->sum('monto'), 2);
+        return round($this->pago_anticipado()->where('estado', '>=',0)->sum('monto'), 2);
     }
 
     public function getMontoDisponibleAttribute()
     {
-        return round($this->subtotal - ($this->montoFacturado + $this->MontoPagoAnticipado), 2);
+        return round($this->subtotal - ($this->montoFacturadoEntradaAlmacen + $this->montoFacturadoOrdenCompra + $this->MontoPagoAnticipado), 2);
     }
 
     public function scopeOrdenCompraDisponible($query)

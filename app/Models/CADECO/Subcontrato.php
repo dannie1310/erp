@@ -121,11 +121,6 @@ class Subcontrato extends Transaccion
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
     }
 
-    public function scopeSinPagoAnticipado($query)
-    {
-        return $query->whereDoesntHave('pago_anticipado');
-    }
-
     public function getNombre(){
         return 'SUBCONTRATO';
     }
@@ -133,6 +128,26 @@ class Subcontrato extends Transaccion
     public function partidas_facturadas()
     {
         return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function getMontoFacturadoEstimacionAttribute()
+    {
+        return round(FacturaPartida::query()->whereIn('id_antecedente', $this->estimaciones()->pluck('id_transaccion'))->sum('importe'));
+    }
+
+    public function getMontoFacturadoSubcontratoAttribute()
+    {
+        return round($this->partidas_facturadas()->sum('importe'),2);
+    }
+
+    public function getMontoPagoAnticipadoAttribute()
+    {
+        return round($this->pago_anticipado()->where('estado', '>=',0)->sum('monto'), 2);
+    }
+
+    public function getMontoDisponibleAttribute()
+    {
+        return round($this->subtotal - ($this->montoFacturadoEstimacion + $this->montoFacturadoSubcontrato + $this->MontoPagoAnticipado), 2);
     }
 
     public function scopeSubcontratosDisponible($query)

@@ -457,21 +457,35 @@ RFC: ' . $this->rfc), '', 'J');
 
 
     function costos(){
+//        $this->Ln(.8);
+//        $this->setX(12.5);
+//        $this->SetWidths(array( 4, 4));
+//        $this->SetFont('Arial', '', 6);
+//        $this->SetStyles(array('DF', 'DF'));
+//        $this->SetWidths(array(4,  4));
+//        $this->SetRounds(array('1', '2'));
+//        $this->SetRadius(array(0.2,  0.2));
+//        $this->SetFills(array('180,180,180',  '255,255,255'));
+//        $this->SetTextColors(array('0,0,0', '0,0,0'));
+//        $this->SetHeights(array(0.5));
+//        $this->SetAligns(array('R',  'R'));
+//        $this->Row(array("Subtotal:", "$ ".(string)$this->subtotal));
+
+
+//        $this->setX(12.5);
+//        $this->SetWidths(array( 4, 4));
+//        $this->SetFont('Arial', '', 6);
+//        $this->SetStyles(array('DF', 'DF'));
+//        $this->SetWidths(array(4,  4));
+//        $this->SetRounds(array('', ''));
+//        $this->SetRadius(array(0.2,  0.2));
+//        $this->SetFills(array('180,180,180',  '255,255,255'));
+//        $this->SetTextColors(array('0,0,0', '0,0,0'));
+//        $this->SetHeights(array(0.5));
+//        $this->SetAligns(array('R',  'R'));
+//        $this->Row(array("IVA:", "$ ".(string)$this->iva));
+
         $this->Ln(.8);
-        $this->setX(12.5);
-        $this->SetWidths(array( 4, 4));
-        $this->SetFont('Arial', '', 6);
-        $this->SetStyles(array('DF', 'DF'));
-        $this->SetWidths(array(4,  4));
-        $this->SetRounds(array('1', '2'));
-        $this->SetRadius(array(0.2,  0.2));
-        $this->SetFills(array('180,180,180',  '255,255,255'));
-        $this->SetTextColors(array('0,0,0', '0,0,0'));
-        $this->SetHeights(array(0.5));
-        $this->SetAligns(array('R',  'R'));
-        $this->Row(array("Subtotal:", "$ ".(string)$this->subtotal));
-
-
         $this->setX(12.5);
         $this->SetWidths(array( 4, 4));
         $this->SetFont('Arial', '', 6);
@@ -483,22 +497,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetTextColors(array('0,0,0', '0,0,0'));
         $this->SetHeights(array(0.5));
         $this->SetAligns(array('R',  'R'));
-        $this->Row(array("IVA:", "$ ".(string)$this->iva));
-
-
-        $this->setX(12.5);
-        $this->SetWidths(array( 4, 4));
-        $this->SetFont('Arial', '', 6);
-        $this->SetStyles(array('DF', 'DF'));
-        $this->SetWidths(array(4,  4));
-        $this->SetRounds(array('4', '3'));
-        $this->SetRadius(array(0.2,  0.2));
-        $this->SetFills(array('180,180,180',  '255,255,255'));
-        $this->SetTextColors(array('0,0,0', '0,0,0'));
-        $this->SetHeights(array(0.5));
-        $this->SetAligns(array('R',  'R'));
-        $this->Row(array("Total:", $this->total_format));
-        $this->Ln(.5);
+        $this->Row(array("Monto Solicitado:", $this->total_format));
     }
 
 
