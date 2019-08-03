@@ -50,6 +50,11 @@ class TipoCuentaContableController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_tipo_cuenta_contable')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:registrar_cuenta_contable_bancaria')->only('store');
+        $this->middleware('permiso:editar_tipo_cuenta_contable')->only('update');
+        $this->middleware('permiso:eliminar_tipo_cuenta_contable')->only('destroy');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
