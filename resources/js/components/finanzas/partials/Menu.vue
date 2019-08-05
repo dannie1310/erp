@@ -30,7 +30,7 @@
                 </router-link>
             </li>
 
-            <li class="nav-item" v-if="pagar">
+            <li class="nav-item" v-if="pagos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-money"></i>
                     <p>
@@ -39,7 +39,7 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('cargar_distribucion_recursos_remesa')">
+                    <li class="nav-item" v-if="$root.can('consultar_pagos')">
                         <router-link :to="{name: 'pago'}" class="nav-link" :class="{active: this.$route.name == 'pago'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Pagos</p>
@@ -62,9 +62,9 @@
                     'consultar_solicitud_pago_anticipado'
                 ])
             },
-            pagar() {
+            pagos() {
                 return this.$root.can([
-                    'cargar_distribucion_recursos_remesa'
+                    'consultar_pagos'
                 ]);
             }
         },

@@ -18,6 +18,24 @@ class CuentaBancariaProveedor extends Model
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.cuentas_bancarias_proveedores';
     public $timestamps = false;
+    protected $fillable = [
+        'id_empresa',
+        'id_banco',
+        'cuenta_clabe',
+        'sucursal',
+        'tipo',
+        'plaza',
+        'id_moneda'
+    ];
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->fecha_hora_registro = date('Y-m-d h:i:s');
+            $model->registro =  auth()->id();
+        });
+    }
 
     public function banco()
     {

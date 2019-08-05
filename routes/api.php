@@ -374,6 +374,7 @@ $api->version('v1', function ($api) {
          * GESTIÓN PAGOS
          */
        $api->group(['prefix' => 'gestion-pago'], function ($api){
+           $api->post('registrar_pagos', 'App\Http\Controllers\v1\CADECO\Finanzas\GestionPagoController@registrarPagos');
            $api->post('bitacora', 'App\Http\Controllers\v1\CADECO\Finanzas\GestionPagoController@presentaBitacora');
        });
     });

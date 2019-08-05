@@ -40,6 +40,7 @@
                                             </div>
                                             <div class="col-3">
                                                 <h6 align="right">Total: {{bitacora.length}}</h6>
+                                                <h6 align="right">Pagables: {{resumen.pagables}}</h6>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -78,13 +79,25 @@
                                                                 <td>{{pago.origen_docto}}</td>
                                                                 <td>{{pago.id_transaccion_tipo}}</td>
                                                                 <td>{{pago.referencia_docto}}</td>
-                                                                <td>{{pago.pago_a_generar}}</td>
+                                                                <td>
+
+                                                                    <span v-if="!pago.pagable" >
+                                                                        <i class="fa fa-exclamation-triangle"style="color: red" title="Partida pagada previamente"></i>
+                                                                        N/A
+                                                                    </span>
+                                                                    <span v-else>
+                                                                        <span v-if="pago.aplicacion_manual" >
+                                                                            <i class="fa fa-exclamation-triangle"style="color: orange" title="El pago requiere aplicación manual en CADECO"></i>
+                                                                        </span>
+                                                                        {{pago.pago_a_generar}}
+                                                                    </span>
+                                                                </td>
                                                                 <td>
                                                                     <span v-if="pago.pagable">
                                                                         <i class="fa fa-check"></i>
                                                                     </span>
-                                                                    <span>
-
+                                                                    <span v-else>
+                                                                        <i class="fa fa-close"></i>
                                                                     </span>
                                                                 </td>
                                                             </tr>
@@ -99,9 +112,15 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
-                            <button type="button" class="btn btn-primary" @click="validate" v-if="bitacora.length === 0">Cargar</button>
-                            <button type="button" class="btn btn-primary" @click="validate" v-else>Registrar</button>
+                            <button type="button" class="btn btn-secondary" @click="salir">
+                                <span v-if="cargando">
+                                    <i class="fa fa-spin fa-spinner"></i>
+                                </span>
+                                <span v-else>
+                                    Cerrar
+                                </span>
+                            </button>
+                            <button type="button" class="btn btn-primary" @click="store" v-if="bitacora.length > 0 && resumen.pagables > 0 && $root.can('registrar_pagos_bitacora')">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -116,6 +135,7 @@
         data() {
             return {
                 bitacora:[],
+                resumen:[],
                 cargando: false,
                 file_interbancario : null
             }
@@ -126,15 +146,35 @@
         computed: {
         },
         methods: {
-            onFileChange(e){
-                this.file_interbancario = null;
-                var files = e.target.files || e.dataTransfer.files;
-                if (!files.length)
-                    return;
-                if(e.target.id == 'carga_bitacora') {
-                    this.createImage(files[0]);
-                }
+            cargarBitacora(){
+                this.cargando = true;
+                var formData = new FormData();
+                formData.append('bitacora',  this.file_interbancario);
+                return this.$store.dispatch('finanzas/gestion-pago/cargarBitacora',
+                    {
+                        data: formData,
+                        config: {
+                            params: { _method: 'POST'}
+                        }
+                    })
+                    .then(data => {
+                        console.log(data.resumen);
+                        if(data.data.length > 0){
+                            this.bitacora = data.data;
+                            this.resumen = data.resumen;
+                        }else{
+                            if(this.$refs.carga_bitacora.value !== ''){
+                                this.$refs.carga_bitacora.value = '';
+                                this.file_interbancario = null;
+                            }
+                            this.bitacora = [];
+                            swal('Cargar Bitácora', 'Archivo de bitácora sin pagos válidos.', 'warning')
+                        }
+                    }).finally(() => {
+                        this.cargando = false;
+                    });
             },
+
             createImage(file, tipo) {
                 var reader = new FileReader();
                 var vm = this;
@@ -143,7 +183,36 @@
                     vm.file_interbancario = e.target.result;
                 };
                 reader.readAsDataURL(file);
+
             },
+
+            onFileChange(e){
+                this.file_interbancario = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                if(e.target.id == 'carga_bitacora') {
+                    this.createImage(files[0]);
+                }
+                setTimeout(() => {
+                    this.validate()
+                }, 500);
+            },
+
+            salir(){
+                return this.$store.dispatch('finanzas/gestion-pago/salir')
+                    .then(() => {
+                        this.$router.push({name: 'pago'});
+                    });
+            },
+
+            store() {
+                return this.$store.dispatch('finanzas/gestion-pago/store', this.$data.bitacora)
+                    .then((data) => {
+                        this.$router.push({name: 'pago'});
+                    });
+            },
+
             validate() {
                 this.$validator.validate().then(result => {
                     if (result){
@@ -159,24 +228,12 @@
                             this.file_interbancario = null;
                         }
                         this.$validator.errors.clear();
-                        swal('¡Error!', 'Archivo de entrada no válido.', 'warning')
+                        this.bitacora = [];
+                        swal('¡Error!', 'Archivo de bitácora no válido.', 'warning')
                     }
                 });
             },
-            cargarBitacora(){
-                var formData = new FormData();
-                formData.append('bitacora',  this.file_interbancario);
-                return this.$store.dispatch('finanzas/gestion-pago/cargarBitacora',
-                    {
-                        data: formData,
-                        config: {
-                            params: { _method: 'POST'}
-                        }
-                    })
-                    .then(data => {
-                         this.bitacora = data;
-                    });
-            },
+
             getRemesas() {
                 this.cargando = true;
                 let self = this
@@ -236,12 +293,7 @@
             },
 
 
-            salir(){
-                // return this.$store.dispatch('finanzas/distribuir-recurso-remesa/salir')
-                //     .then(() => {
-                //         this.$router.push({name: 'distribuir-recurso-remesa'});
-                //     });
-            }
+
         },
         watch: {
 

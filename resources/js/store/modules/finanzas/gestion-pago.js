@@ -25,6 +25,68 @@ export default {
                     })
             });
         },
+        salir(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registro de Pagos con Bitácora Bancaria (SANTANDER)",
+                    text: "¿Está seguro/a de que desea salir? Perderá los cambios no guardados.",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Salir',
+                            closeModal: true,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            resolve(null);
+                        }
+                    });
+            });
+        },
+        store(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Pagos con Bitácora Bancaria (SANTANDER)",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar Pagos',
+                            closeModal: false,
+                        }
+                    }
+                }).then((value) => {
+                    if (value) {
+                        axios
+                            .post(URI + 'registrar_pagos', payload)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Pagos con Bitácora Bancaria (SANTANDER) registrados correctamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            });
+                    }
+                });
+            });
+        }
     },
     getters: {
         bitacora(state) {
