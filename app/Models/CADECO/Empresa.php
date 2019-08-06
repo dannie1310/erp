@@ -37,11 +37,6 @@ class Empresa extends Model
             $model->UsuarioRegistro =  auth()->id();
         });
     }
-    protected $fillable = [
-        'tipo_empresa',
-        'razon_social',
-        'UsuarioRegistro',
-    ];
 
     public function cuentasEmpresa()
     {
