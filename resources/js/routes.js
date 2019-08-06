@@ -575,7 +575,7 @@ export const routes = [
                         component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
                         meta: {
                             title: 'Dispersión de Recursos Autorizados de Remesa',
-                            breadcrumb: {name: 'DISPERSAR RECURSOS DE REMESA', parent: 'finanzas'},
+                            breadcrumb: {name: 'DISPERSIÓN RECURSOS AUTORIZADOS DE REMESA', parent: 'finanzas'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_distribucion_recursos_remesa'
                         }
