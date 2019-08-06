@@ -135,7 +135,7 @@ class OrdenCompra extends Transaccion
                     group by ea.id_antecedente
                     )as facturado_ea on facturado_ea.id = oc.id_transaccion
                     where oc.tipo_transaccion = 19 and oc.estado >= 0 and  oc.id_obra = ".Context::getIdObra()." and oc.opciones = 1 
-                    and (ROUND(oc.monto - oc.impuesto, 2) - ROUND((ISNULL(sol.solicitado,0) + ISNULL(factura_anticipo.suma_anticipo, 0) + ISNULL(facturado_ea.suma_ea, 0)),2)) > 0 
+                    and (ROUND(oc.monto - oc.impuesto, 2) - ROUND((ISNULL(sol.solicitado,0) + ISNULL(factura_anticipo.suma_anticipo, 0) + ISNULL(facturado_ea.suma_ea, 0)),2)) > 1 
                     order by oc.id_transaccion;
                 "));
 

@@ -245,7 +245,7 @@
                         </div>
                          <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Registrar</button>
+                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || id_antecedente=='' ">Registrar</button>
                          </div>
                     </form>
                 </div>
@@ -370,11 +370,10 @@
             store() {
                 return this.$store.dispatch('finanzas/solicitud-pago-anticipado/store', this.$data)
                     .then(data => {
-                        $(this.$refs.modal).modal('hide');
-                        this.$emit('created', data)
+                       this.$emit('created', data);
+                       $(this.$refs.modal).modal('hide');
                     });
             },
-
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
