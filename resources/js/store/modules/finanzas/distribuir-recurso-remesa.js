@@ -206,7 +206,7 @@ export default {
                     .get(URI + payload.id + '/layout')
                     .then(r => r.data)
                     .then(data => {
-                        swal("Layout de pago de distribucion de remesa fue generado en el repositorio remosor correctamente", {
+                        swal("Layout de pago de distribucion de remesa fue generado en el repositorio remoto correctamente", {
                             icon: "success",
                             timer: 1500,
                             buttons: false
