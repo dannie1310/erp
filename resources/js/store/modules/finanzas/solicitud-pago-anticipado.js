@@ -30,7 +30,10 @@ export default {
                 }
                 return solicitud
             })
-            state.currentSolicitud != null ? data : null;
+            state.currentSolicitud = data;
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentSolicitud[data.attribute] = data.value
         }
     },
 
