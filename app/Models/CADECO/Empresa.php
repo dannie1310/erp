@@ -23,6 +23,20 @@ class Empresa extends Model
         'razon_social',
         'rfc'
     ];
+    protected $fillable = [
+        'tipo_empresa',
+        'razon_social',
+        'rfc'
+    ];
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->FechaHoraRegistro = date('Y-m-d h:i:s');
+            $model->UsuarioRegistro =  auth()->id();
+        });
+    }
 
     public function cuentasEmpresa()
     {
@@ -60,5 +74,10 @@ class Empresa extends Model
     public function scopeParaSubcontratistas($query)
     {
         return $query->has('subcontrato')->has('estimacion')->distinct('id_empresa')->orderBy('razon_social');
+    }
+
+    public function scopeTipoEmpresa($query)
+    {
+        return $query->where('tipo_empresa',32);
     }
 }

@@ -50,6 +50,10 @@ class SolicitudPagoAnticipadoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:registrar_solicitud_pago_anticipado')->only('store');
+        $this->middleware('permiso:cancelar_solicitud_pago_anticipado')->only('cancelar');
+        $this->middleware('permiso:editar_solicitud_pago_anticipado')->only('update');
+        $this->middleware('permiso:consultar_solicitud_pago_anticipado')->only(['pdfPagoAnticipado','show','paginate','index','find']);
 
         $this->service = $service;
         $this->fractal = $fractal;

@@ -574,8 +574,8 @@ export const routes = [
                         name: 'distribuir-recurso-remesa',
                         component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
                         meta: {
-                            title: 'Distribuir Recursos Autorizados de Remesa',
-                            breadcrumb: {name: 'DISTRIBUIR RECURSOS DE REMESA', parent: 'finanzas'},
+                            title: 'Dispersión de Recursos Autorizados de Remesa',
+                            breadcrumb: {name: 'DISPERSAR RECURSOS DE REMESA', parent: 'finanzas'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_distribucion_recursos_remesa'
                         }
@@ -585,7 +585,7 @@ export const routes = [
                         name: 'distribuir-recurso-remesa-create',
                         component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
                         meta: {
-                            title: 'Registrar Distribución de Recursos Autorizados',
+                            title: 'Registrar Dispersión de Recursos Autorizados',
                             breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_distribucion_recursos_remesa'
@@ -597,7 +597,7 @@ export const routes = [
                         props: true,
                         component: require('./components/finanzas/distribuir-recurso-remesa/Show'),
                         meta: {
-                            title: 'Consultar Distribución de Recursos Autorizados',
+                            title: 'Consultar Dispersión de Recursos Autorizados',
                             breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_distribucion_recursos_remesa'
@@ -609,7 +609,7 @@ export const routes = [
                         props: true,
                         component: require('./components/finanzas/distribuir-recurso-remesa/Autorizar'),
                         meta: {
-                            title: 'Autorizar Distribución de Recursos Autorizados',
+                            title: 'Autorizar Dispersión de Recursos Autorizados',
                             breadcrumb: {name: 'AUTORIZAR', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
                             permission: 'autorizar_distribucion_recursos_remesa'
@@ -617,6 +617,89 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path:'fondo',
+                component: require('./components/finanzas/fondo/Layout.vue'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'fondo',
+                        component: require('./components/finanzas/fondo/Index.vue'),
+                        meta: {
+                            title: 'Fondos',
+                            breadcrumb: {name: 'FONDOS', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_fondos'
+                        }
+
+                    },
+                    {
+                        path: 'create',
+                        name: 'fondo-create',
+                        component: require('./components/finanzas/fondo/Create'),
+                        meta: {
+                            title: 'Registrar Fondo',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_fondos'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'fondo-show',
+                        props: true,
+                        component: require('./components/finanzas/fondo/Show'),
+                        meta: {
+                            title: 'Ver Fondo',
+                            breadcrumb: {name: 'VER', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_fondos'
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'gestion-pago',
+                component: require('./components/finanzas/gestion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'gestion-pago',
+                        component: require('./components/finanzas/gestion/Index'),
+                        meta: {
+                            title: 'Gestión de Pagos',
+                            breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'pago',
+                        name: 'pago',
+                        component: require('./components/finanzas/gestion/pago/Index'),
+                        meta: {
+                            title: 'Gestión de Pagos',
+                            breadcrumb: {
+                                parent: 'gestion-pago',
+                                name: 'PAGOS'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'pago-create',
+                        component: require('./components/finanzas/gestion/pago/Create'),
+                        meta: {
+                            title: 'Registrar Pagos con Bitácora Bancaria (SANTANDER)',
+                            breadcrumb: {name: 'REGISTRAR (BITÁCORA BSANT)', parent: 'pago'},
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
+                ]
+            }
         ]
     },
     {

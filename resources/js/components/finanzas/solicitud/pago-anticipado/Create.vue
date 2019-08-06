@@ -53,7 +53,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group error-content">
                                         <label for="tipo">Tipo de Transacción:</label>
                                         <select
@@ -73,7 +73,7 @@
                                         <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-9">
+                                <div class="col-md-8">
                                     <div class="form-group error-content">
                                         <label for="id_antecedente">Transacción: </label>
                                         <select
@@ -95,7 +95,7 @@
                                 </div>
                             </div>
 
-                            <div class="row">
+                            <div class="row" v-if="iniciar == 1">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
@@ -115,98 +115,138 @@
                                                             <td class="bg-gray-light"><b>Número de Folio:</b><br>
                                                                 {{ transaccion.numero_folio_format}}
                                                             </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="bg-gray-light" v-if="transaccion.empresa"><b>Empresa:</b><br>
+                                                             <td class="bg-gray-light" v-if="transaccion.empresa"><b>Empresa:</b><br>
                                                                 {{ transaccion.empresa.razon_social }}
                                                             </td>
-                                                        </tr>
-                                                        <tr>
                                                             <td class="bg-gray-light"><b>Referencia:</b><br>
                                                                {{ transaccion.referencia}}
                                                             </td>
                                                         </tr>
-
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
-                                            <div class="row" align="right">
-                                                <div class="table-responsive col-md-12">
-                                                    <div class="col-6">
-                                                        <div class="table-responsive">
-                                                            <table class="table">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <th style="width:50%" class="bg-gray-light">Subtotal:</th>
-                                                                        <td class="bg-gray-light" align="right">{{ transaccion.subtotal_format}}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th>IVA:</th>
-                                                                        <td align="right">{{ transaccion.impuesto_format }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th class="bg-gray-light">Total:</th>
-                                                                        <td class="bg-gray-light" align="right">{{ transaccion.total_format }}</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
+                                            <div>
+                                                <form role="form" @submit.prevent = "validate">
+                                                    <div class="row" align="left">
+                                                        <div class="table-responsive col-md-12">
+                                                            <div class="col-12">
+                                                                <div class="table-responsive">
+                                                                    <table class="table">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <th class="bg-gray-light">Subtotal:</th>
+                                                                                <td class="bg-gray-light" align="right"><b>{{ transaccion.subtotal_format}}</b></td>
+                                                                                <th></th>
+                                                                                <th style="width: 10%" for="importe">Importe a Solicitar:</th>
+                                                                                <td>
+                                                                                    <div class="col-12">
+                                                                                        <div class="form-group error-content">
+                                                                                            <input
+                                                                                                    :disabled="!iniciar"
+                                                                                                    type="number"
+                                                                                                    step="any"
+                                                                                                    name="importe"
+                                                                                                    data-vv-as="Importe"
+                                                                                                    v-validate="{required: true, min_value:0.1, max_value: disponible, decimal:2}"
+                                                                                                    class="form-control"
+                                                                                                    id="importe"
+                                                                                                    placeholder="Importe"
+                                                                                                    v-model="importe"
+                                                                                                    :class="{'is-invalid': errors.has('importe')}">
+                                                                                            <div class="invalid-feedback" v-show="errors.has('importe')">{{ errors.first('importe') }}</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th>IVA:</th>
+                                                                                <td align="right">{{ transaccion.impuesto_format }}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th class="bg-gray-light">Total:</th>
+                                                                                <td class="bg-gray-light" align="right">{{ transaccion.total_format }}</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                    <div class="row" align="left">
+                                                        <div class="table-responsive col-md-12">
+                                                            <div class="col-12">
+                                                                <div class="table-responsive">
+                                                                    <table class="table">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <th>Monto Facturado:</th>
+                                                                                <td align="right" v-model="facturado">$ {{ (parseFloat(facturado)).formatMoney(2,'.',',') }}</td>
+                                                                                <th class="bg-gray-light">Monto en otras Solicitudes:</th>
+                                                                                <td align="right" class="bg-gray-light" v-model="solicitado">$ {{ (parseFloat(solicitado)).formatMoney(2,'.',',') }}</td>
+                                                                                <th class="bg-gray">Monto Disponible:</th>
+                                                                                <td class="bg-gray" align="right" v-model="disponible">$ {{ (parseFloat(disponible)).formatMoney(2,'.',',')}}</td>
+                                                                                <th class="bg-gray-light">Monto Restante:</th>
+                                                                                <td class="bg-gray-light" align="right" v-model="restante">$ {{ (parseFloat(restante)).formatMoney(2,'.',',')}}</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <!-- Observaciones -->
-                                <div class="col-md-12">
-                                    <div class="form-group error-content">
-                                        <label for="observaciones">Observaciones:</label>
-                                        <textarea
-                                                name="observaciones"
-                                                id="observaciones"
-                                                class="form-control"
-                                                v-model="observaciones"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Observaciones"
-                                                :class="{'is-invalid': errors.has('observaciones')}"
-                                        ></textarea>
-                                        <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                <div class="row col-12">
+                                    <!-- Observaciones -->
+                                    <div class="col-md-12">
+                                        <div class="form-group error-content">
+                                            <label for="observaciones">Observaciones:</label>
+                                            <textarea
+                                                    name="observaciones"
+                                                    id="observaciones"
+                                                    class="form-control"
+                                                    v-model="observaciones"
+                                                    v-validate="{required: true}"
+                                                    data-vv-as="Observaciones"
+                                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                            ></textarea>
+                                            <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <!-- Costos -->
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="id_costo" class="col-sm-2 col-form-label">Costos:</label>
-                                        <div class="col-sm-10">
-                                            <costo-select
-                                                    name="id_costo"
-                                                    data-vv-as="Costo"
-                                                    scope="costoFinanza"
-                                                    v-validate="{required: true}"
-                                                    id="id_costo"
-                                                    v-model="id_costo"
-                                                    :error="errors.has('id_costo')"
-                                                    ref="costoSelect"
-                                                    :disableBranchNodes="false"
-                                            ></costo-select>
-                                            <div class="error-label" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
+                                <div class="row col-12">
+                                    <!-- Costos -->
+                                    <div class="col-md-12">
+                                        <div class="form-group row error-content">
+                                            <label for="id_costo" class="col-sm-2 col-form-label">Costos:</label>
+                                            <div class="col-sm-10">
+                                                <costo-select
+                                                        name="id_costo"
+                                                        data-vv-as="Costo"
+                                                        scope="costoFinanza"
+                                                        v-validate="{required: true}"
+                                                        id="id_costo"
+                                                        v-model="id_costo"
+                                                        :error="errors.has('id_costo')"
+                                                        ref="costoSelect"
+                                                        :disableBranchNodes="false"
+                                                ></costo-select>
+                                                <div class="error-label" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Registrar</button>
-                        </div>
+                         <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Registrar</button>
+                         </div>
                     </form>
                 </div>
             </div>
@@ -228,14 +268,20 @@
                 fecha_limite_1: '',
                 cumplimiento: '',
                 vencimiento: '',
-                tipo: 0,
+                tipo: '',
                 transacciones: [],
                 id_antecedente: '',
                 cargando: false,
                 transaccion: [],
                 observaciones: '',
                 id_costo: '',
-                bandera_transaccion: 0
+                bandera_transaccion: 0,
+                importe : '',
+                disponible : 0,
+                solicitado : 0,
+                facturado : 0,
+                iniciar : 0,
+                restante : 0
             }
         },
         computed: {
@@ -249,7 +295,7 @@
                     this.fecha_limite_1 = '';
                     this.cumplimiento = '';
                     this.vencimiento = '';
-                    this.tipo = 0;
+                    this.tipo = '';
                     this.transacciones = [];
                     this.id_antecedente = '';
                     this.transaccion = [];
@@ -257,6 +303,13 @@
                     this.observaciones = '';
                     this.$validator.reset();
                     this.cargando = false;
+                    this.importe = '';
+                    this.disponible = 0;
+                    this.solicitado = 0;
+                    this.facturado = 0;
+                    this.iniciar = 0;
+                    this.restante = 0;
+                    this.bandera_transaccion = 0;
             },
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
@@ -265,7 +318,7 @@
                 return this.$store.dispatch('compras/orden-compra/index',{
                     config: {
                         params: {
-                            scope: 'sinPagoAnticipado'
+                            scope: 'ordenCompraDisponible'
                         }
                     }
                 }).then(data => {
@@ -277,7 +330,7 @@
                 return this.$store.dispatch('contratos/subcontrato/index',{
                     config: {
                         params: {
-                            scope: 'sinPagoAnticipado'
+                            scope: 'subcontratosDisponible'
                         }
                     }
                 }).then(data => {
@@ -297,6 +350,7 @@
                     })
                         .then(data => {
                             this.transaccion = data;
+                            this.iniciar = 1;
                         })
                 }
                 if(this.tipo == 51)
@@ -309,6 +363,7 @@
                     })
                         .then(data => {
                             this.transaccion = data;
+                            this.iniciar = 1;
                         })
                 }
             },
@@ -336,6 +391,11 @@
             tipo(value){
                 this.transacciones = [];
                 this.transaccion = [];
+                this.bandera_transaccion = 0;
+                this.iniciar = 0;
+                this.id_costo = '';
+                this.observaciones = '';
+
                 if(value){
                     if(value == 19){
                         this.getOrdenes();
@@ -391,8 +451,25 @@
                     this.cumplimiento = y+'-'+ m+'-'+d;
                 }
             },
+            transaccion(value){
+                this.disponible = 0;
+                this.solicitado = 0;
+                this.facturado = 0;
+                this.restante = 0;
+                this.importe = '';
 
-
+                if(value.length != 0) {
+                    this.disponible = parseFloat(value.subtotal - (value.monto_facturado_ea + value.monto_facturado_oc + value.monto_solicitado)).toFixed(2);
+                    this.solicitado = value.monto_solicitado;
+                    this.facturado = value.monto_facturado_ea + value.monto_facturado_oc;
+                    this.restante = parseFloat(value.subtotal - (value.monto_facturado_ea + value.monto_facturado_oc + value.monto_solicitado)).toFixed(2);
+                }
+            },
+            importe(value){
+                if(value){
+                    this.restante = this.disponible - value;
+                }
+            }
         }
     }
 </script>

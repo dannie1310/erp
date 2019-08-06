@@ -4,7 +4,7 @@
             <div class="invoice p-3 mb-3">
                 <div class="row">
                     <div class="col-12">
-                        <h4> <i class="fa fa-list-alt"></i> DISTRIBUCIÓN DE RECURSOS AUTORIZADOS DE LA REMESA </h4>
+                        <h4> <i class="fa fa-list-alt"></i> DISPERSIÓN DE RECURSOS AUTORIZADOS DE LA REMESA </h4>
                     </div>
                 </div>
 <!--                <div class="modal-body">-->
@@ -14,7 +14,7 @@
                                 <tbody>
                                 <tr>
                                     <td class="bg-gray-light">
-                                        <b>Folio Distribución:</b>
+                                        <b>Folio Dispersión:</b>
                                     </td>
                                     <td class="bg-gray-light">
                                         {{distribucion.folio}}
@@ -27,7 +27,7 @@
                                         $&nbsp; {{(parseFloat(distribucion.monto_autorizado)).formatMoney(2,'.',',')}}
                                     </td>
                                     <td class="bg-gray-light">
-                                        <b>Monto de Está Distribución:</b>
+                                        <b>Monto de Está Dispersion:</b>
                                     </td>
                                     <td class="bg-gray-light text-right">
                                         $ {{(parseFloat(distribucion.monto_distribuido)).formatMoney(2,'.',',')}}
@@ -37,7 +37,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="bg-gray-light">
-                                        <b>Usuario Registró:</b>
+                                        <b>Registró:</b>
                                     </td>
                                     <td colspan="2" class="bg-gray-light">
                                         {{distribucion.usuario_registro.nombre}}
@@ -51,7 +51,7 @@
                                 </tr>
                                 <tr v-if="distribucion.estado.estado == -1">
                                     <td colspan="4" class="bg-gray-light">
-                                        <b>Usuario de Cancelación</b>
+                                        <b>Canceló</b>
                                     </td>
                                     <td colspan="4" class="bg-gray-light">
                                         {{distribucion.usuario_cancelo.nombre}}
@@ -85,7 +85,7 @@
                             </table>
                         </div>
                     </div>
-                    <h5><i class="fa fa-list" style="padding-right: 3px"></i>Partidas de la Distribución</h5>
+                    <h5><i class="fa fa-list" style="padding-right: 3px"></i>Partidas de la Dispersión</h5>
                     <div v-if="distribucion" class="row">
                         <div  class="col-12 table-responsive">
                             <table class="table table-striped">

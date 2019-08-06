@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO;
 
+use App\Facades\Context;
 use App\Models\CADECO\OrdenCompraPartida;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Compras\OrdenCompraComplemento;
@@ -15,6 +16,7 @@ use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Obra;
+use Illuminate\Support\Facades\DB;
 
 class OrdenCompra extends Transaccion
 {
@@ -39,11 +41,6 @@ class OrdenCompra extends Transaccion
     public function pago_anticipado()
     {
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
-    }
-
-    public function scopeSinPagoAnticipado($query)
-    {
-        return $query->whereDoesntHave('pago_anticipado');
     }
 
     public function entradas_material()
@@ -83,5 +80,67 @@ class OrdenCompra extends Transaccion
     public function obra()
     {
         return $this->hasOne(Obra::class, 'id_obra', 'id_obra');
+    }
+
+    public function partidas_facturadas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function entradasAlmacen()
+    {
+        return $this->hasMany(EntradaMaterial::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function getMontoFacturadoEntradaAlmacenAttribute()
+    {
+        return round(FacturaPartida::query()->whereIn('id_antecedente', $this->entradas_material()->pluck('id_transaccion'))->sum('importe'));
+    }
+
+    public function getMontoFacturadoOrdenCompraAttribute()
+    {
+       return round($this->partidas_facturadas()->sum('importe'),2);
+    }
+
+    public function getMontoPagoAnticipadoAttribute()
+    {
+        return round($this->pago_anticipado()->where('estado', '>=',0)->sum('monto'), 2);
+    }
+
+    public function getMontoDisponibleAttribute()
+    {
+        return round($this->subtotal - ($this->montoFacturadoEntradaAlmacen + $this->montoFacturadoOrdenCompra + $this->MontoPagoAnticipado), 2);
+    }
+
+    public function scopeOrdenCompraDisponible($query)
+    {
+        $transacciones = DB::connection('cadeco')->select(DB::raw(" 
+                  select oc.id_transaccion from transacciones oc
+                    left join (
+                    select SUM(monto) as solicitado, id_antecedente as id from  transacciones
+                    where tipo_transaccion = 72 and opciones = 327681 and estado >= 0 and id_obra = ".Context::getIdObra()." group by id_antecedente
+                    )as sol on sol.id = oc.id_transaccion 
+                    left join (
+                    select SUM(i.importe) as suma_anticipo, i.id_antecedente as id from items i
+                    join transacciones factura on factura.id_transaccion = i.id_transaccion 
+                    where factura.tipo_transaccion = 65 and factura.estado >= 0 and factura.id_obra = ".Context::getIdObra()." and i.id_antecedente in 
+                    (select id_transaccion from transacciones where tipo_transaccion = 19 and estado >= 0 and id_obra = ".Context::getIdObra().")
+                    group by i.id_antecedente
+                    )as factura_anticipo on factura_anticipo.id = oc.id_transaccion
+                    left join (
+                    select SUM(i.importe) as suma_ea, ea.id_antecedente as id  from items i
+                    join transacciones f on f.id_transaccion = i.id_transaccion
+                    join transacciones ea on ea.id_transaccion = i.id_antecedente 
+                    where f.tipo_transaccion = 65 and f.estado >= 0 and f.id_obra = ".Context::getIdObra()." and ea.tipo_transaccion = 33 and ea.estado >= 0 and ea.id_obra = ".Context::getIdObra()."
+                    group by ea.id_antecedente
+                    )as facturado_ea on facturado_ea.id = oc.id_transaccion
+                    where oc.tipo_transaccion = 19 and oc.estado >= 0 and  oc.id_obra = ".Context::getIdObra()." and oc.opciones = 1 
+                    and (ROUND(oc.monto - oc.impuesto, 2) - ROUND((ISNULL(sol.solicitado,0) + ISNULL(factura_anticipo.suma_anticipo, 0) + ISNULL(facturado_ea.suma_ea, 0)),2)) > 0 
+                    order by oc.id_transaccion;
+                "));
+
+        $transacciones = json_decode(json_encode($transacciones), true);
+
+       return $query->whereIn('id_transaccion', $transacciones);
     }
 }

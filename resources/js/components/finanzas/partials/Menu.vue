@@ -26,8 +26,33 @@
             <li class="nav-item" v-if="$root.can('consultar_distribucion_recursos_remesa')">
                 <router-link :to="{name: 'distribuir-recurso-remesa'}" class="nav-link">
                     <i class="fa fa-list-alt nav-icon"></i>
-                    <p>Distribuir Recursos de Remesa</p>
+                    <p>Dispersión de Recursos
+                        <br>de Remesa</p>
                 </router-link>
+            </li>
+            <li class="nav-item" v-if="$root.can('consultar_fondos')">
+                <router-link :to="{name: 'fondo'}" class="nav-link">
+                    <i class="fa fa-list-alt nav-icon"></i>
+                    <p>Gestión de Fondos</p>
+                </router-link>
+            </li>
+
+            <li class="nav-item" v-if="pagos">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-money"></i>
+                    <p>
+                        Gestión de Pagos
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_pagos')">
+                        <router-link :to="{name: 'pago'}" class="nav-link" :class="{active: this.$route.name == 'pago'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Pagos</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>
@@ -43,6 +68,11 @@
                 return this.$root.can([
                     'consultar_solicitud_pago_anticipado'
                 ])
+            },
+            pagos() {
+                return this.$root.can([
+                    'consultar_pagos'
+                ]);
             }
         },
         methods: {

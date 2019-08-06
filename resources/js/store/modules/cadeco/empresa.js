@@ -71,6 +71,19 @@ export default {
                         reject(error);
                     });
             });
+        },
+        store(context,payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .post('/api/empresa/', payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data.id);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
         }
     },
 

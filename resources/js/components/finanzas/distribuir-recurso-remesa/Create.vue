@@ -160,15 +160,15 @@
                                                                             <td style="width:15%" align="right"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th style="width:20%">Distribuciones Anteriores (MXP):</th>
+                                                                            <th style="width:20%">Dispersiones Anteriores (MXP):</th>
                                                                             <td style="width:15%" align="right"><b>$&nbsp; {{(parseFloat(monto_distribuido_anteriormente)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th class="bg-gray-light">Distribucion Actual (MXP):</th>
+                                                                            <th class="bg-gray-light">Dispersión Actual (MXP):</th>
                                                                             <td align="right" class="bg-gray-light"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th>Restante por Distribuir (MXP):</th>
+                                                                            <th>Restante por Dispersar (MXP):</th>
                                                                             <td align="right"> <b>$&nbsp;{{(parseFloat(monto_total_remesa-(sumaSeleccionImportes + monto_distribuido_anteriormente)).formatMoney(2,'.',','))}}</b></td>
                                                                         </tr>
                                                                     </tbody>
