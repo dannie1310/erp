@@ -26,8 +26,17 @@ class Empresa extends Model
     protected $fillable = [
         'tipo_empresa',
         'razon_social',
-        'UsuarioRegistro',
+        'rfc'
     ];
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->FechaHoraRegistro = date('Y-m-d h:i:s');
+            $model->UsuarioRegistro =  auth()->id();
+        });
+    }
 
     public function cuentasEmpresa()
     {

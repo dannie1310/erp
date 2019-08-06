@@ -59,20 +59,14 @@ class DistribucionRecursoRemesaController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
+    public function autorizar($id){
+        return $this->service->autorizar($id);
+    }
 
-    public function store(StoreDistribucionRecursoRemesaRequest $request)
+    public function cancelar(Request $request, $id)
     {
-        return $this->traitStore($request);
-    }
-
-    public function descargaLayout($id){
-        return $this->service->layoutDistribucionRemesa($id);
-//        $item = $this->service->layoutDistribucionRemesa($id)->create();
-//        return $this->respondWithItem($item);
-    }
-
-    public function descargaLayoutManual($id){
-        return $this->service->layoutDistribucionRemesaManual($id);
+        $item = $this->service->cancelar($id);
+        return $this->respondWithItem($item);
     }
 
     public function cargarLayout(Request $request, $id){
@@ -85,19 +79,24 @@ class DistribucionRecursoRemesaController extends Controller
         return response()->json($respuesta, 200);
     }
 
-    public function cancelar(Request $request, $id)
+    public function descargaLayout($id){
+        return $this->service->layoutDistribucionRemesa($id);
+//        $item = $this->service->layoutDistribucionRemesa($id)->create();
+//        return $this->respondWithItem($item);
+    }
+
+    public function descargaLayoutManual($id){
+        return $this->service->layoutDistribucionRemesaManual($id);
+    }
+
+    public function store(StoreDistribucionRecursoRemesaRequest $request)
     {
-        $item = $this->service->cancelar($id);
-        return $this->respondWithItem($item);
+        return $this->traitStore($request);
     }
 
     public function validar(Request $request, $id)
     {
         $item = $this->service->show($id);
         return $this->respondWithItem($item);
-    }
-
-    public function autorizar($id){
-        return $this->service->autorizar($id);
     }
 }

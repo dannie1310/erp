@@ -21,7 +21,7 @@ class Lectura
      * @return mixed
      */
 
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, $permisos)
     {
         $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
 
@@ -31,10 +31,12 @@ class Lectura
         $obra = Obra::query()->where('id_obra','=',Context::getIdObra())->first();
 
         if($tipo_obra->consulta == 1 || $tipo_obra->tipo_obra == 2 || $obra->tipo_obra == 2){
-            abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción');
-        }
+            $consulta = \App\Models\SEGURIDAD_ERP\Permiso::query()->whereIn('name', $permisos)->where('es_de_consulta', '=', false)->first();
+            if($consulta){
+                abort(400, 'El estatus en el que se encuentra la obra no permite ejecutar esta acción.');
+            }
 
-        return $next($request);
+        }
     }
 
 }

@@ -118,4 +118,8 @@ class DistribucionRecursoRemesaPartida extends Model
         $this->save();
         return $this;
     }
+
+    public function getPagableAttribute(){
+        return $this->estado == 1;
+    }
 }
