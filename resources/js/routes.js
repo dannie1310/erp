@@ -574,8 +574,8 @@ export const routes = [
                         name: 'distribuir-recurso-remesa',
                         component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
                         meta: {
-                            title: 'Distribuir Recursos Autorizados de Remesa',
-                            breadcrumb: {name: 'DISTRIBUIR RECURSOS DE REMESA', parent: 'finanzas'},
+                            title: 'Dispersión de Recursos Autorizados de Remesa',
+                            breadcrumb: {name: 'DISPERSAR RECURSOS DE REMESA', parent: 'finanzas'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_distribucion_recursos_remesa'
                         }
@@ -585,7 +585,7 @@ export const routes = [
                         name: 'distribuir-recurso-remesa-create',
                         component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
                         meta: {
-                            title: 'Registrar Distribución de Recursos Autorizados',
+                            title: 'Registrar Dispersión de Recursos Autorizados',
                             breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_distribucion_recursos_remesa'
@@ -597,7 +597,7 @@ export const routes = [
                         props: true,
                         component: require('./components/finanzas/distribuir-recurso-remesa/Show'),
                         meta: {
-                            title: 'Consultar Distribución de Recursos Autorizados',
+                            title: 'Consultar Dispersión de Recursos Autorizados',
                             breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_distribucion_recursos_remesa'
@@ -609,7 +609,7 @@ export const routes = [
                         props: true,
                         component: require('./components/finanzas/distribuir-recurso-remesa/Autorizar'),
                         meta: {
-                            title: 'Autorizar Distribución de Recursos Autorizados',
+                            title: 'Autorizar Dispersión de Recursos Autorizados',
                             breadcrumb: {name: 'AUTORIZAR', parent: 'distribuir-recurso-remesa'},
                             middleware: [auth, context, permission],
                             permission: 'autorizar_distribucion_recursos_remesa'

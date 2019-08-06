@@ -26,7 +26,8 @@
             <li class="nav-item" v-if="$root.can('consultar_distribucion_recursos_remesa')">
                 <router-link :to="{name: 'distribuir-recurso-remesa'}" class="nav-link">
                     <i class="fa fa-list-alt nav-icon"></i>
-                    <p>Distribuir Recursos de Remesa</p>
+                    <p>Dispersión de Recursos
+                        <br>de Remesa</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_fondos')">

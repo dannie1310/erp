@@ -49,9 +49,9 @@ class DistribucionRecursoRemesaManual
             }
 
             $llave = str_pad($this->id, 5, 0, STR_PAD_LEFT);
-            $file_m_banco = '#' . $llave . '-santander-mismob';
-            $file_interb = '#' . $llave . '-santander-interb';
-            $file_zip = '#' . $llave . '-santander';
+            $file_m_banco = '#' . $llave . '-santander-mismob' . date('dmYhis');
+            $file_interb = '#' . $llave . '-santander-interb' . date('dmYhis');
+            $file_zip = '#' . $llave . '-santander' . date('dmYhis');
 
             if (count($this->data_mismo) > 0) {
                 $reg_layout = new DistribucionRecursoRemesaLayout();

@@ -48,7 +48,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar la Distribucion de Recurso de Remesa",
+                    title: "Registrar la Dispersión de Recurso de Remesa",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -68,7 +68,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Distribución de recurso registrada correctamente", {
+                                    swal("Dispersión de recurso registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
@@ -86,8 +86,8 @@ export default {
         cancel(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Cancelar distribución de recurso autorizado de remesa",
-                    text: "¿Está seguro/a de que desea cancelar esta distribución?",
+                    title: "Cancelar dispersión de recurso autorizado de remesa",
+                    text: "¿Está seguro/a de que desea cancelar esta dispersión?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -107,7 +107,7 @@ export default {
                                 .patch(URI+ payload.id +'/cancelar',{id:payload.id}, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Distribución cancelada correctamente", {
+                                    swal("Dispersión cancelada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -178,8 +178,8 @@ export default {
         salir(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Cerrar distribución de recurso autorizado de remesa",
-                    text: "¿Está seguro/a de que desea cerrar esta distribución? Perderá los cambios no guardados.",
+                    title: "Cerrar dispersión de recurso autorizado de remesa",
+                    text: "¿Está seguro/a de que desea cerrar esta dispersión? Perderá los cambios no guardados.",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -206,7 +206,7 @@ export default {
                     .get(URI + payload.id + '/layout')
                     .then(r => r.data)
                     .then(data => {
-                        swal("Layout de pago de distribucion de remesa fue generado en el repositorio remoto correctamente", {
+                        swal("Layout de pago de dispersión de remesa fue generado en el repositorio remoto correctamente", {
                             icon: "success",
                             timer: 1500,
                             buttons: false
@@ -284,7 +284,7 @@ export default {
                             }
                         }else{
                             return new Promise((resolve, reject) => {
-                                swal("Layout de distribucion de recurso descargado previemente", {
+                                swal("Layout de dispersión de recurso descargado previemente", {
                                     icon: "warning",
                                     timer: 3000,
                                     buttons: false
@@ -320,7 +320,7 @@ export default {
                             }
                         }else{
                             return new Promise((resolve, reject) => {
-                                swal("Layout de distribucion de recurso descargado previemente", {
+                                swal("Layout de dispersión de recurso descargado previemente", {
                                     icon: "warning",
                                     timer: 3000,
                                     buttons: false
