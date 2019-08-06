@@ -61,6 +61,11 @@ class Empresa extends Model
         return $this->hasMany(CuentaBancariaProveedor::class, 'id_empresa', 'id_empresa');
     }
 
+//    public function sucursales()
+//    {
+//        return $this->belongs(Sucu)
+//    }
+
     public function scopeConCuentas($query)
     {
         return $query->has('cuentasEmpresa');

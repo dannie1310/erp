@@ -29,6 +29,12 @@
                     <p>Dispersión de Recursos</p>
                 </router-link>
             </li>
+            <li class="nav-item" v-if="">
+                <router-link :to="{name: 'banco'}" class="nav-link">
+                    <i class="fa fa-list-alt nav-icon"></i>
+                    <p>Gestión de Bancos</p>
+                </router-link>
+            </li>
             <li class="nav-item" v-if="$root.can('consultar_fondos')">
                 <router-link :to="{name: 'fondo'}" class="nav-link">
                     <i class="fa fa-list-alt nav-icon"></i>
