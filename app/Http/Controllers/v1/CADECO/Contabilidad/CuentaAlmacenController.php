@@ -50,6 +50,10 @@ class CuentaAlmacenController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_cuenta_almacen')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:editar_cuenta_almacen')->only('update');
+        $this->middleware('permiso:registrar_cuenta_almacen')->only('store');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
