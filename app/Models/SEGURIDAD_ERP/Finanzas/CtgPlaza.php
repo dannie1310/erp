@@ -15,4 +15,5 @@ class CtgPlaza extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'Finanzas.ctg_plazas';
+    public $timestamps = false;
 }

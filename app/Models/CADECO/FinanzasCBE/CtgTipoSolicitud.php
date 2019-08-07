@@ -15,4 +15,5 @@ class CtgTipoSolicitud extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'FinanzasCBE.ctg_tipos_solicitud';
+    public $timestamps = false;
 }

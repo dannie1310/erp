@@ -12,6 +12,7 @@ namespace App\Models\CADECO\FinanzasCBE;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Moneda;
+use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgPlaza;
 use Illuminate\Database\Eloquent\Model;
 
@@ -50,5 +51,15 @@ class Solicitud extends Model
     public function plaza()
     {
         return $this->belongsTo(CtgPlaza::class, 'id_plaza', 'id');
+    }
+
+    public function registro()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_registra', 'idusuario');
+    }
+
+    public function getTipoCuentaAttribute()
+    {
+        return $this->tipo_cuenta == 1 ? 'Mismo Banco' : 'Interbancario';
     }
 }

@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\FinanzasCBE;
 
 
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class SolicitudMovimiento extends Model
@@ -26,8 +27,13 @@ class SolicitudMovimiento extends Model
         return $this->belongsTo(CtgTipoMovimientoSolicitud::class, 'id_tipo_movimiento', 'id');
     }
 
-    public function solicitudAntecedente()
+    public function movimientoAntecedente()
     {
         return $this->belongsTo(SolicitudMovimiento::class, 'id_movimiento_antecedente', 'id');
+    }
+
+    public function registro()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_registra', 'idusuario');
     }
 }

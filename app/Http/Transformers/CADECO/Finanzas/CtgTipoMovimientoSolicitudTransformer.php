@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Models\CADECO\FinanzasCBE\CtgTipoMovimientoSolicitud;
 use League\Fractal\TransformerAbstract;
 
 class CtgTipoMovimientoSolicitudTransformer extends TransformerAbstract
@@ -30,10 +31,12 @@ class CtgTipoMovimientoSolicitudTransformer extends TransformerAbstract
 
     ];
 
-    public function transform( $model)
+    public function transform(CtgTipoMovimientoSolicitud $model)
     {
         return [
-            'id' => $model->getKey()
+            'id' => (int)$model->getKey(),
+            'descripcion' => (string)$model->descripcion,
+            'estado_resultante_desc' => (string)$model->estado_resultante_desc,
         ];
     }
 }

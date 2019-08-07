@@ -2,17 +2,17 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 06/08/2019
- * Time: 09:08 PM
+ * Date: 07/08/2019
+ * Time: 12:00 PM
  */
 
-namespace App\Http\Transformers\CADECO\Finanzas;
+namespace App\Http\Transformers\SEGURIDAD_ERP;
 
 
-use App\Models\CADECO\FinanzasCBE\CtgTipoSolicitud;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgPlaza;
 use League\Fractal\TransformerAbstract;
 
-class CtgTipoSolicitudTransformer extends TransformerAbstract
+class CtgPlazaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -31,11 +31,12 @@ class CtgTipoSolicitudTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(CtgTipoSolicitud $model)
+    public function transform(CtgPlaza $model)
     {
         return [
             'id' => $model->getKey(),
-            'descripcion' => $model->descripcion
+            'clave' => $model->clave,
+            'nombre' => $model->nombre
         ];
     }
 }
