@@ -19,6 +19,12 @@ class Banco extends Empresa
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_empresa', '=', 8);
         });
+
+        self::creating(function ($model){
+            $model->tipo_empresa = 8;
+            $model->UsuarioRegistro = auth()->id();
+            $model->razon_social = mb_strtoupper($model->razon_social);
+        });
     }
 
     public function complemento(){

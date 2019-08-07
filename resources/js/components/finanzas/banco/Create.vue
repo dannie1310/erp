@@ -8,7 +8,7 @@
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Registrar Fondo</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Registrar Banco</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -16,35 +16,10 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-
-                                <!--Responsable Manual-->
-                                        <div  class="row" id="selResMan" v-if="isHidden" style="width:100%; margin-left:1px;">
-                                         <div class="col-md-10" >
-                                            <div class="form-group error-content">
-                                                <label for="responsable_text">Responsable</label>
-                                                 <input type="text" class="form-control"
-                                                        name="responsable_text"
-                                                        data-vv-as="Responsable"
-                                                        v-model="responsable_text"
-                                                        v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('responsable_text')}"
-                                                        id="responsable_text"
-                                                        placeholder="Nombre del Responsable">
-
-                                                <div class="invalid-feedback" v-show="errors.has('responsable_text')">{{ errors.first('responsable_text') }}</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 mt-4"  >
-                                            <button v-on:click="isHidden = false"  type= "button" class="btn btn-md  btn-secondary"  style="margin-top:6px;" >
-
-                                              <i class="fa fa-caret-square-o-down"></i>
-                                              </button>
-                                        </div>
-                        </div>
-                                <!-- Tipo de Fondo-->
-                                     <div class="col-md-10" v-if="tiposFondo">
+                                <!-- Banco -->
+                                     <div class="col-md-12" v-if="bancos">
                                     <div class="form-group error-content">
-                                        <label for="id_tipo_fondo">Tipo de Fondo</label>
+                                        <label for="id_tipo_fondo">Banco</label>
                                         <select
                                             class="form-control"
                                             name="id_tipo_fondo"
@@ -53,9 +28,9 @@
                                             v-model="id_tipo_fondo"
                                             v-validate="{required: true}"
                                             :class="{'is-invalid': errors.has('id_tipo_fondo')}">
-                                            <option value>-- Tipo de Fondo--</option>
-                                            <option v-for="(item, index) in tiposFondo" :value="item.id">
-                                                {{ item.descripcion }}
+                                            <option value>-- Seleccione --</option>
+                                            <option v-for="(item, index) in bancos" :value="item.id">
+                                                {{ item.razon_social }}
                                             </option>
                                         </select>
                                         <div class="invalid-feedback" v-show="errors.has('id_tipo_fondo')">{{ errors.first('id_tipo_fondo') }}</div>
@@ -94,15 +69,15 @@
                 fondo_obra: '',
                 descripcion: '',
                 costos: [],
-                empresas:[],
+                bancos:[],
                 tiposFondo:[],
                 isHidden:false
             }
         },
 
         mounted() {
-            this.getEmpresa()
-            this.getTiposFondo()
+            this.getBancos()
+           // this.getTiposFondo()
 
         },
 
@@ -122,11 +97,11 @@
 
                 this.$validator.reset()
             },
-            getEmpresa() {
-                // return this.$store.dispatch('cadeco/empresa/index', { params: { scope:'TipoEmpresa'} })
-                //     .then(data => {
-                //         this.empresas= data.data;
-                //     })
+            getBancos() {
+                return this.$store.dispatch('seguridad/finanzas/ctg-banco/index', { params: { } })
+                    .then(data => {
+                        this.bancos= data.data;
+                    })
             },
             getTiposFondo() {
                 // return this.$store.dispatch('finanzas/ctg-tipo-fondo/ctgTipoFondo',{

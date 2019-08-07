@@ -30,13 +30,12 @@
                 columns: [
                     { title: '#', field:'index',sortable: false},
                     { title: 'Razón Social', field: 'razon_social', sortable: false },
-                    { title: 'RFC', field: 'rfc', sortable:false},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    scope:'Bancos'
+                    scope:'BancosCtg', sort: 'id_empresa',  order: 'desc'
                 },
                 cargando: false
 
@@ -83,9 +82,9 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             razon_social: empresa.razon_social,
-                            rfc: empresa.rfc,
                             buttons: $.extend({}, {
                                 show: true,
+                                edit: true,
                                 id: empresa.id
                             })
                         })

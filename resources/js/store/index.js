@@ -62,6 +62,7 @@ import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
+import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -133,6 +134,7 @@ export default new Vuex.Store({
         'tesoreria/tipo-movimiento': tipoMovimiento,
         'tesoreria/traspaso-entre-cuentas': traspaso,
 
+        'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,

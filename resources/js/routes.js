@@ -734,6 +734,18 @@ export const routes = [
                             breadcrumb: {name: 'VER', parent: 'finanzas'},
                             middleware: [auth, context]
                         }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'banco-edit',
+                        component: require('./components/finanzas/banco/Edit'),
+                        props: true,
+                        meta: {
+                            title: 'Editar Banco',
+                            breadcrumb: { parent: 'banco-show', name: 'EDITAR'},
+                            middleware: [auth, context],
+
+                        }
                     }
                 ]
             }

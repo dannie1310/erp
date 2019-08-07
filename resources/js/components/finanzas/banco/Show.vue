@@ -4,7 +4,7 @@
             <i class="fa fa-eye"></i>
         </button>
           <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> INFORMACIÓN DE BANCO</h5>
@@ -19,19 +19,46 @@
                                           <div class="col-md-12">
                                             <div class="form-group error-content">
                                                 <div class="form-group">
-                                                    <label><b>Razón Social:</b></label>
+                                                    <label><b>Banco:</b></label>
                                                     {{ banco.razon_social }}
                                                 </div>
                                             </div>
                                           </div>
-                                               <div class="col-md-12">
-                                                    <div class="form-group error-content">
-                                                        <div class="form-group">
-                                                            <label><b>RFC: </b></label>
-                                                            {{ banco.rfc }}
+
+
+
+                                              <div class="col-md-6">
+                                                    <div class="form-group">
+                                                            <label><b>Nombre Corto: </b></label>
+
                                                         </div>
-                                                    </div>
-                                                </div>
+                                              </div>
+                                               <div class="col-md-6">
+                                                     <div class="form-group">
+                                                            <label><b>Clave: </b></label>
+
+                                                        </div>
+                                               </div>
+
+
+
+
+
+
+                                              <div class="col-md-6">
+                                                    <div class="form-group">
+                                                            <label><b>Registró: </b></label>
+
+                                                        </div>
+                                              </div>
+                                               <div class="col-md-6">
+                                                     <div class="form-group">
+                                                            <label><b>Fecha y Hora: </b></label>
+                                                         {{ banco.FechaHoraRegistro }}
+                                                        </div>
+                                               </div>
+
+
 
 
 
@@ -64,9 +91,10 @@
                 return this.$store.dispatch('cadeco/empresa/find', {
                     id: this.id,
                     params:{
-                       scope:'Bancos'
+                       include: ['usuario','ctgbancos'], scope:'Bancos'
                     }
                 }).then(data => {
+                    console.log(data);
                     this.$store.commit('cadeco/empresa/SET_EMPRESA', data);
                     $(this.$refs.modal).modal('show')
                 })
