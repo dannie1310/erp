@@ -23,8 +23,8 @@ class CuentaBancariaEmpresa extends Model
         'id_banco',
         'cuenta_clabe',
         'sucursal',
-        'tipo',
-        'plaza',
+        'tipo_cuenta',
+        'id_plaza',
         'id_moneda'
     ];
     protected static function boot()
@@ -49,5 +49,10 @@ class CuentaBancariaEmpresa extends Model
 
     public function complemento(){
         return $this->hasOne(BancoComplemento::class, 'id_empresa', 'id_banco');
+    }
+
+    public function getTipoAttribute()
+    {
+        return $this->tipo_cuenta == 1 ? 'Mismo Banco' : 'Interbancario';
     }
 }

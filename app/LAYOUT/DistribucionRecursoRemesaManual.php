@@ -118,7 +118,7 @@ class DistribucionRecursoRemesaManual
     public function generar(){
         if($this->remesa->estado != 1){ dd("Layout de distribucion de remesa no disponible.". PHP_EOL . "Estado: " . $this->remesa->estatus->descripcion );}
         foreach ($this->remesa->partida as $key => $partida){
-            if($partida->cuentaAbono->tipo == 1){
+            if($partida->cuentaAbono->tipo_cuenta == 1){
                 $cuenta_cargo = str_pad(substr($partida->cuentaCargo->numero, 0, 16), 16, ' ', STR_PAD_RIGHT);
                 $cuenta_abono = str_pad($partida->cuentaAbono->cuenta_clabe, 16, ' ', STR_PAD_RIGHT);
                 $importe = str_pad(number_format($partida->documento->MontoTotal, '2', '.', ''), 13, 0, STR_PAD_LEFT);
@@ -129,7 +129,7 @@ class DistribucionRecursoRemesaManual
                 $fecha_presentacion = date('dmY');
                 $this->data_mismo[] = $cuenta_cargo . $cuenta_abono . $importe . $documento . $concepto . $fecha_presentacion;
             }
-            if($partida->cuentaAbono->tipo == 2) {
+            if($partida->cuentaAbono->tipo_cuenta == 2) {
                 $r_social_dep = $this->elimina_caracteres_especiales($partida->cuentaAbono->empresa->razon_social);
                 $razon_social = strlen($r_social_dep) > 40 ? substr($r_social_dep, 0, 40) :
                     str_pad($r_social_dep, 40, ' ', STR_PAD_RIGHT);

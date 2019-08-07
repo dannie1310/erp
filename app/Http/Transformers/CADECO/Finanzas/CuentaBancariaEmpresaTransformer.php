@@ -39,8 +39,8 @@ class CuentaBancariaEmpresaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'cuenta' => $model->cuenta_clabe,
             'sucursal' => $model->sucursal,
-            'tipo' => $model->tipo,
-            'fecha' => $model->FechaHoraRegistro
+            'tipo' => (string) $model->tipo,
+            'fecha' => $model->fecha_hora_registro
         ];
     }
 

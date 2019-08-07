@@ -20,7 +20,7 @@ class EmpresaTransformer extends TransformerAbstract
         'cuentasEmpresa',
         'cuentas',
         'subcontratos',
-        'cuentasBancariasProveedor'
+        'cuentas_bancarias'
     ];
 
     public function transform(Empresa $model)
@@ -73,8 +73,9 @@ class EmpresaTransformer extends TransformerAbstract
      * @param Empresa $model
      * @return \League\Fractal\Resource\Collection|null
      */
-    public function includeCuentasBancariasProveedor(Empresa $model){
-        if($cuenta = $model->cuentaProveedor){
+    public function includeCuentasBancarias(Empresa $model)
+    {
+        if($cuenta = $model->cuentasBancarias){
             return $this->collection($cuenta, new CuentaBancariaEmpresaTransformer);
         }
         return null;
