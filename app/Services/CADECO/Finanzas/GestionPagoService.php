@@ -6,7 +6,7 @@ namespace App\Services\CADECO\Finanzas;
 
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Finanzas\CuentaBancariaProveedor;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
@@ -228,7 +228,7 @@ class GestionPagoService
                             'rfc' => '']
                         );
 
-                        $cuenta = CuentaBancariaProveedor::query()->create([
+                        $cuenta = CuentaBancariaEmpresa::query()->create([
                             'id_empresa' => $empresa->id_empresa,
                             'id_banco' => $pago['cuenta_cargo']['id_empresa'],
                             'cuenta_clabe' => $pago['cuenta_abono']['numero'],
@@ -300,7 +300,7 @@ class GestionPagoService
                             ->whereNotIn('id_documento', array_values($doctos_repetidos))->get();
 
                         if(count($dist_part) == 0){
-                            $cuenta_abono = CuentaBancariaProveedor::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
+                            $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
                             $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
                             if($transaccion_pagada){
                                 $registros_bitacora[] = array(

@@ -380,10 +380,10 @@ $api->version('v1', function ($api) {
         });
 
        /**
-        * CUENTA BANCARIA PROVEEDOR
+        * CUENTA BANCARIA EMPRESA
         */
-       $api->group(['prefix' => 'cuenta-bancaria-proveedor'], function ($api){
-          $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaProveedorController@index');
+       $api->group(['prefix' => 'cuenta-bancaria-empresa'], function ($api){
+          $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaEmpresaController@index');
        });
 
         /**

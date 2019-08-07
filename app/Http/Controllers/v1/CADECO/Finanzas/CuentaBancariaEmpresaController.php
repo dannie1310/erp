@@ -10,16 +10,16 @@ namespace App\Http\Controllers\v1\CADECO\Finanzas;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Finanzas\CuentaBancariaProveedorTransformer;
-use App\Services\CADECO\Finanzas\CuentaBancariaProveedorService;
+use App\Http\Transformers\CADECO\Finanzas\CuentaBancariaEmpresaTransformer;
+use App\Services\CADECO\Finanzas\CuentaBancariaEmpresaService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
 
-class CuentaBancariaProveedorController extends Controller
+class CuentaBancariaEmpresaController extends Controller
 {
     use ControllerTrait;
     /**
-     * @var CuentaBancariaProveedorService
+     * @var CuentaBancariaEmpresaService
      */
     private $service;
 
@@ -29,17 +29,17 @@ class CuentaBancariaProveedorController extends Controller
     private $fractal;
 
     /**
-     * @var CuentaBancariaProveedorTransformer
+     * @var CuentaBancariaEmpresaTransformer
      */
     private $transformer;
 
     /**
-     * CuentaBancariaProveedorController constructor.
-     * @param CuentaBancariaProveedorService $service
+     * CuentaBancariaEmpresaController constructor.
+     * @param CuentaBancariaEmpresaService $service
      * @param Manager $fractal
-     * @param CuentaBancariaProveedorTransformer $transformer
+     * @param CuentaBancariaEmpresaTransformer $transformer
      */
-    public function __construct(CuentaBancariaProveedorService $service, Manager $fractal, CuentaBancariaProveedorTransformer $transformer)
+    public function __construct(CuentaBancariaEmpresaService $service, Manager $fractal, CuentaBancariaEmpresaTransformer $transformer)
     {
         $this->middleware('auth:api');
         $this->middleware('context');

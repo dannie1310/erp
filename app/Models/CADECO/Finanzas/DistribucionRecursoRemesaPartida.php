@@ -77,7 +77,7 @@ class DistribucionRecursoRemesaPartida extends Model
 
     public function cuentaAbono()
     {
-        return $this->belongsTo(CuentaBancariaProveedor::class, 'id_cuenta_abono', 'id');
+        return $this->belongsTo(CuentaBancariaEmpresa::class, 'id_cuenta_abono', 'id');
     }
 
     public function moneda()

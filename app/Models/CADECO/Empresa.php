@@ -9,7 +9,7 @@
 namespace App\Models\CADECO;
 
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
-use App\Models\CADECO\Finanzas\CuentaBancariaProveedor;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
@@ -58,7 +58,7 @@ class Empresa extends Model
 
     public function cuentaProveedor()
     {
-        return $this->hasMany(CuentaBancariaProveedor::class, 'id_empresa', 'id_empresa');
+        return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
     }
 
     public function scopeConCuentas($query)

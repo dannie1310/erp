@@ -13,10 +13,10 @@ use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
 use Illuminate\Database\Eloquent\Model;
 
-class CuentaBancariaProveedor extends Model
+class CuentaBancariaEmpresa extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'Finanzas.cuentas_bancarias_proveedores';
+    protected $table = 'Finanzas.cuentas_bancarias_empresas';
     public $timestamps = false;
     protected $fillable = [
         'id_empresa',
