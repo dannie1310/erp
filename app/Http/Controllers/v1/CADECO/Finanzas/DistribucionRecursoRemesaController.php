@@ -51,6 +51,7 @@ class DistribucionRecursoRemesaController extends Controller
         $this->middleware('auth:api')->except(['descargaLayoutManual']);
         $this->middleware('context');
 
+        $this->middleware('permiso:registrar_distribucion_recursos_remesa')->only(['store']);
         $this->middleware('permiso:autorizar_distribucion_recursos_remesa')->only(['autorizar']);
         $this->middleware('permiso:cancelar_distribucion_recursos_remesa')->only(['cancelar']);
         $this->middleware('permiso:descargar_distribucion_recursos_remesa|pagar_distribucion_recursos_remesa')->only(['validar']);

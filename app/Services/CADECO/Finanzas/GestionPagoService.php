@@ -261,7 +261,7 @@ class GestionPagoService
 
         }catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
-            abort(400, "Error archivos de entrada invalidos.");
+            abort(400, "Error archivo de entrada inválido.");
             throw $pago;
         }
     }
