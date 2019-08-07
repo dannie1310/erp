@@ -13,7 +13,7 @@ use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudMovimientoTransformer extends TransformerAbstract
+class SolicitudMovimientoCuentaBancariaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -56,7 +56,7 @@ class SolicitudMovimientoTransformer extends TransformerAbstract
     {
         if($solicitud = $model->solicitud)
         {
-            return $this->item($solicitud, new SolicitudTransformer);
+            return $this->item($solicitud, new SolicitudCuentaBancariaTransformer);
         }
         return null;
     }
@@ -84,7 +84,7 @@ class SolicitudMovimientoTransformer extends TransformerAbstract
     {
         if($antecedente = $model->movimientoAntecedente)
         {
-            return $this->item($antecedente, new SolicitudMovimientoTransformer);
+            return $this->item($antecedente, new SolicitudMovimientoCuentaBancariaTransformer);
         }
         return null;
     }

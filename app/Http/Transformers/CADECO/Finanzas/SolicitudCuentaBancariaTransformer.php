@@ -17,7 +17,7 @@ use App\Http\Transformers\SEGURIDAD_ERP\CtgPlazaTransformer;
 use App\Models\CADECO\FinanzasCBE\Solicitud;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudTransformer extends TransformerAbstract
+class SolicitudCuentaBancariaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include

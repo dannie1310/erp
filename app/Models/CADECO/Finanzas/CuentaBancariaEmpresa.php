@@ -11,6 +11,10 @@ namespace App\Models\CADECO\Finanzas;
 
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\FinanzasCBE\Solicitud;
+use App\Models\CADECO\Moneda;
+use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgPlaza;
 use Illuminate\Database\Eloquent\Model;
 
 class CuentaBancariaEmpresa extends Model
@@ -21,6 +25,8 @@ class CuentaBancariaEmpresa extends Model
     protected $fillable = [
         'id_empresa',
         'id_banco',
+        'id_solicitud_origen_alta',
+        'id_solicitud_origen_baja',
         'cuenta_clabe',
         'sucursal',
         'tipo_cuenta',
@@ -49,6 +55,31 @@ class CuentaBancariaEmpresa extends Model
 
     public function complemento(){
         return $this->hasOne(BancoComplemento::class, 'id_empresa', 'id_banco');
+    }
+
+    public function solicitudAlta()
+    {
+        return $this->belongsTo(Solicitud::class, 'id_solicitud_origen_alta', 'id');
+    }
+
+    public function solicitudBaja()
+    {
+        return $this->belongsTo(Solicitud::class, 'id_solicitud_origen_baja', 'id');
+    }
+
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function plaza()
+    {
+        return $this->belongsTo(CtgPlaza::class,'id_plaza', 'id');
+    }
+
+    public function registro()
+    {
+        return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
     }
 
     public function getTipoAttribute()

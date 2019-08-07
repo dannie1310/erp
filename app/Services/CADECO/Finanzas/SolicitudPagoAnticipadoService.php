@@ -95,8 +95,7 @@ class SolicitudPagoAnticipadoService
         return $this->repository->show($id);
     }
     public function cancelar(array $data, $id){
-        $solicitud = $this->repository;
-        $solicitud = $solicitud->cancelar($id);
+        $solicitud = $this->repository->cancelar($id);
         return $solicitud;
     }
 
