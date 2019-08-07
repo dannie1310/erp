@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 use App\Models\CADECO\Finanzas\BancoComplemento;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgBanco;
 
 class Banco extends Empresa
 {
@@ -21,7 +22,13 @@ class Banco extends Empresa
         });
     }
 
-    public function complemento(){
+    public function complemento()
+    {
         return $this->belongsTo(BancoComplemento::class, 'id_empresa','id_empresa');
+    }
+
+    public function bancos()
+    {
+        return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos', 'id');
     }
 }
