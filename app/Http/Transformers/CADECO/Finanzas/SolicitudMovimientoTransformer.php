@@ -23,7 +23,7 @@ class SolicitudMovimientoTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'solicitud',
         'tipo',
-        'movimientoAntecedente',
+        'movimiento_antecedente',
         'usuario'
     ];
 

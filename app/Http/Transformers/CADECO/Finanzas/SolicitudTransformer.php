@@ -49,7 +49,7 @@ class SolicitudTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'cuenta' => $model->cuenta_clabe,
             'sucursal' => $model->sucursal,
-            'tipo_cuenta' => $model->tipoCuenta,
+            'tipo_cuenta' => $model->tipo,
             'fecha' => $model->fecha,
             'observaciones' => $model->observaciones
         ];

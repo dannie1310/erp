@@ -58,7 +58,7 @@ class Solicitud extends Model
         return $this->belongsTo(Usuario::class, 'usuario_registra', 'idusuario');
     }
 
-    public function getTipoCuentaAttribute()
+    public function getTipoAttribute()
     {
         return $this->tipo_cuenta == 1 ? 'Mismo Banco' : 'Interbancario';
     }
