@@ -139,7 +139,7 @@ export default {
         autorizar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Autorización de distribución de recurso de remesa",
+                    title: "Autorización de dispersión de recurso de remesa",
                     text: "¿Está seguro/a de que desea autorizar está distribución?",
                     icon: "warning",
                     buttons: {
@@ -159,7 +159,7 @@ export default {
                                 .get(URI + payload.id + '/autorizar', {params: payload.params})
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Distribución autorizada correctamente", {
+                                    swal("Dispersión autorizada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
