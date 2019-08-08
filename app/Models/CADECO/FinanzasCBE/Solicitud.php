@@ -62,4 +62,35 @@ class Solicitud extends Model
     {
         return $this->tipo_cuenta == 1 ? 'Mismo Banco' : 'Interbancario';
     }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
+
+    }
+
+    public function getNumeroFolioFormatOrdenAttribute(){
+        return '# '. str_pad($this->numero_folio, 5,"0",STR_PAD_LEFT);
+    }
+
+    public function getSucursalFormatAttribute(){
+        return str_pad($this->sucursal, 3,"0",STR_PAD_LEFT);
+    }
+
+    public function getEstatusAttribute()
+    {
+        if($this->estado == 1){
+            return 'Registro';
+        }
+        if($this->estado == 2){
+            return 'Autorización';
+        }
+        if($this->estado == 3){
+            return 'Cancelación';
+        }
+        if($this->estado == 4){
+            return 'Rechazo';
+        }
+    }
 }

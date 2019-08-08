@@ -80,4 +80,20 @@ class Empresa extends Model
     {
         return $query->where('tipo_empresa',32);
     }
+
+    public function getTipoAttribute()
+    {
+        if($this->tipo_empresa == 1){
+            return 'Proveedor';
+        }
+        if($this->tipo_empresa == 2){
+            return 'Contratista';
+        }
+        if($this->tipo_empresa == 3){
+            return 'Proveedor y Contratista';
+        }
+        if($this->tipo_empresa == 32){
+            return 'Responsables Fondos Fijos';
+        }
+    }
 }

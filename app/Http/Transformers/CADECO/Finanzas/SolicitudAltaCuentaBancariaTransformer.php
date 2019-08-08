@@ -51,7 +51,13 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
             'sucursal' => $model->sucursal,
             'tipo_cuenta' => $model->tipo,
             'fecha' => $model->fecha,
-            'observaciones' => $model->observaciones
+            'observaciones' => $model->observaciones,
+            'estado' => $model->estatus,
+            'fecha_format' => $model->fecha_format,
+            'estado' => $model->estatus,
+            'folio' => $model->numero_folio,
+            'numero_folio_format_orden' => $model->numero_folio_format_orden,
+            'sucursal_format' => $model->sucursal_format
         ];
     }
 

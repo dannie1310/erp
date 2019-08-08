@@ -16,4 +16,10 @@ class CtgPlaza extends Model
     protected $connection = 'seguridad';
     protected $table = 'Finanzas.ctg_plazas';
     public $timestamps = false;
+
+
+    public function getClaveFormatAttribute(){
+        return str_pad($this->clave, 3,"0",STR_PAD_LEFT);
+    }
+
 }
