@@ -734,8 +734,8 @@ export const routes = [
                         meta: {
                             title: 'Ver Banco',
                             breadcrumb: {name: 'VER', parent: 'finanzas'},
-                            middleware: [auth, context],
-
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
                         }
                     },
                     {
