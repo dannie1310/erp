@@ -14,6 +14,48 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                     <form role="form" @submit.prevent="validate">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="btn-group btn-group-toggle">
+                                        <label class="btn btn-outline-secondary" :class="id_tipo_solicitud === Number(key) ? 'active': ''" v-for="(tipo_solicitud, key) in tipos_solicitud" :key="key">
+                                            <input type="radio"
+                                                   class="btn-group-toggle"
+                                                   name="id_tipo_solicitud"
+                                                   :id="'tipo_solicitud_' + key"
+                                                   :value="key"
+                                                   autocomplete="off"
+                                                   v-model.number="id_tipo_solicitud">
+                                            {{ tipo_solicitud }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="btn-group btn-group-toggle">
+                                        <label class="btn btn-outline-secondary">
+                                            <input type="radio"
+                                                   class="btn-group-toggle"
+                                                   name="tipo_empresa"
+                                                   :id="1"
+                                                   :value="key"
+                                                   autocomplete="off"
+                                                   v-model.number="tipo_empresa">prueba
+                                        </label>
+                                        <label class="btn btn-outline-secondary">
+                                            <input type="radio"
+                                                   class="btn-group-toggle"
+                                                   name="tipo_empresa"
+                                                   :id="1"
+                                                   :value="key"
+                                                   autocomplete="off"
+                                                   v-model.number="tipo_empresa">prueba2
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                     </form>
                 </div>
             </div>
         </div>
@@ -30,6 +72,7 @@
             return {
                 es: es,
                 cargando: false,
+                tipo_empresa: '',
             }
         },
         computed: {
