@@ -19,21 +19,22 @@
                                 <!-- Banco -->
                                      <div class="col-md-12" v-if="bancos">
                                     <div class="form-group error-content">
-                                        <label for="id_tipo_fondo">Banco</label>
+                                        <label for="id_banco">Banco</label>
                                         <select
                                             class="form-control"
-                                            name="id_tipo_fondo"
-                                            data-vv-as="Tipo de Fondo"
-                                            id="id_tipo_fondo"
-                                            v-model="id_tipo_fondo"
+                                            name="id_ctg_banco"
+                                            data-vv-as="Banco"
+                                            id="id_ctg_banco"
+                                            v-model="id_ctg_banco"
                                             v-validate="{required: true}"
                                             :class="{'is-invalid': errors.has('id_tipo_fondo')}">
-                                            <option value>-- Seleccione --</option>
-                                            <option v-for="(item, index) in bancos" :value="item.id">
+                                            <option value>-- Seleccione un banco --</option>
+                                            <option  v-for="(item, index) in bancos" :value="item.id">
                                                 {{ item.razon_social }}
                                             </option>
+
                                         </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_tipo_fondo')">{{ errors.first('id_tipo_fondo') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('id_ctg_banco')">{{ errors.first('id_ctg_banco') }}</div>
                                     </div>
                                 </div>
 
@@ -59,58 +60,31 @@
        components: {BancoIndex},
         data() {
             return {
-                id_empresa: '',
-                responsable_text: '',
-                id_tipo_fondo: '',
-                id_costo: '',
-                nombre: '',
-                descripcion_corta: '',
-                checkFondo: false,
-                fondo_obra: '',
-                descripcion: '',
-                costos: [],
+
+                id_ctg_banco: '',
                 bancos:[],
-                tiposFondo:[],
-                isHidden:false
+
             }
         },
 
         mounted() {
             this.getBancos()
-           // this.getTiposFondo()
+
 
         },
 
         methods: {
             init() {
                 $(this.$refs.modal).modal('show');
-                // this.id_empresa = '';
-                // this.responsable_text = '';
-                // this.id_tipo_fondo = '';
-                // this.id_costo = '';
-                // this.nombre = '';
-                // this.descripcion_corta= '';
-                // this.descripcion = '',
-                //     this.fondo_obra = '',
-                //     this.costos = [],
-                //     this.checkFondo = false;
-
-                this.$validator.reset()
+                  this.$validator.reset()
             },
             getBancos() {
-                return this.$store.dispatch('seguridad/finanzas/ctg-banco/index', { params: { } })
+                return this.$store.dispatch('seguridad/finanzas/ctg-banco/index', {
+                params: {sort: 'razon_social',  order: 'asc', scope:'NoRegistrado'}
+                })
                     .then(data => {
                         this.bancos= data.data;
                     })
-            },
-            getTiposFondo() {
-                // return this.$store.dispatch('finanzas/ctg-tipo-fondo/ctgTipoFondo',{
-                //     params: {scope:'TipoFondoActivo'}
-                // })
-                //     .then(data => {
-                //         this.tiposFondo = data.data;
-                //
-                //     })
             },
             validate() {
                 this.$validator.validate().then(result => {
@@ -120,13 +94,15 @@
                 });
             },
             store() {
-                // return this.$store.dispatch('cadeco/fondo/store', this.$data)
-                //     .then((data) => {
-                //         $(this.$refs.modal).modal('hide');
-                //         this.$emit('created',data)
-                //         this.getEmpresa();
-                //
-                //     })
+
+                return this.$store.dispatch('cadeco/banco/store', this.$data)
+                    .then((data) => {
+                        $(this.$refs.modal).modal('hide');
+                        this.$emit('created',data)
+                        this.bancos=[];
+                        this.getBancos();
+
+                    })
             }
         },
 

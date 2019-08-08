@@ -29,13 +29,13 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Razón Social', field: 'razon_social', sortable: false },
+                    { title: 'Razón Social', field: 'razon_social',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    scope:'BancosCtg', sort: 'id_empresa',  order: 'desc'
+                    scope:'Bancos', sort: 'id_empresa',  order: 'desc'
                 },
                 cargando: false
 
@@ -51,10 +51,10 @@
         methods: {
             paginate(){
                 this.cargando=true;
-                return this.$store.dispatch('cadeco/empresa/paginate', {params: this.query})
+                return this.$store.dispatch('cadeco/banco/paginate', {params: this.query})
                     .then(data=>{
-                        this.$store.commit('cadeco/empresa/SET_EMPRESAS', data.data);
-                        this.$store.commit('cadeco/empresa/SET_META',data.meta)
+                        this.$store.commit('cadeco/banco/SET_BANCOS', data.data);
+                        this.$store.commit('cadeco/banco/SET_META',data.meta)
                     })
                     .finally(()=>{
                         this.cargando=false;
@@ -63,29 +63,29 @@
             }
         },
         computed: {
-            empresas(){
-                return this.$store.getters['cadeco/empresa/empresas'];
+            bancos(){
+                return this.$store.getters['cadeco/banco/bancos'];
             },
             meta(){
-                return this.$store.getters['cadeco/empresa/meta']
+                return this.$store.getters['cadeco/banco/meta']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            empresas: {
-                handler(empresas) {
+            bancos: {
+                handler(bancos) {
                     let self = this
                     self.$data.data = []
-                    empresas.forEach(function (empresa, i) {
+                    bancos.forEach(function (banco, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            razon_social: empresa.razon_social,
+                            razon_social: banco.razon_social,
                             buttons: $.extend({}, {
                                 show: true,
-                                edit: true,
-                                id: empresa.id
+                                // edit: true,
+                                id: banco.id
                             })
                         })
 

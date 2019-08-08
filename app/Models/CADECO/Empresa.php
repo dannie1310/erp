@@ -10,8 +10,6 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\CADECO\Finanzas\CuentaBancariaProveedor;
-use App\Models\IGH\Usuario;
-use App\Models\SEGURIDAD_ERP\Finanzas\CtgBanco;
 use Illuminate\Database\Eloquent\Model;
 
 
@@ -30,17 +28,9 @@ class Empresa extends Model
     protected $fillable = [
         'tipo_empresa',
         'razon_social',
-        'rfc'
+        'UsuarioRegistro',
+        'id_ctg_bancos',
     ];
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->FechaHoraRegistro = date('Y-m-d h:i:s');
-            $model->UsuarioRegistro =  auth()->id();
-        });
-    }
 
     public function cuentasEmpresa()
     {
@@ -60,14 +50,6 @@ class Empresa extends Model
         return $this->hasMany(Estimacion::class, 'id_empresa', 'id_empresa');
     }
 
-    public function usuario()
-    {
-        return $this->belongsTo(Usuario::class,  'UsuarioRegistro', 'idusuario');
-    }
-    public function ctgbancos()
-    {
-        return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos','id');
-    }
     public function cuentaProveedor()
     {
         return $this->hasMany(CuentaBancariaProveedor::class, 'id_empresa', 'id_empresa');
@@ -92,8 +74,6 @@ class Empresa extends Model
     {
         return $query->where('tipo_empresa',32);
     }
-    public function scopeBancosCtg($query)
-    {
-        return $query->where([['tipo_empresa', '=', 8],['id_ctg_bancos','>',0] ]);
-    }
+
+
 }

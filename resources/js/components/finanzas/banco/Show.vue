@@ -16,7 +16,7 @@
                             <div>
                                 <div v-if="banco">
                                       <div class="row" v-if="banco">
-                                          <div class="col-md-12">
+                                          <div class="col-md-12" v-if="banco.razon_social">
                                             <div class="form-group error-content">
                                                 <div class="form-group">
                                                     <label><b>Banco:</b></label>
@@ -24,44 +24,31 @@
                                                 </div>
                                             </div>
                                           </div>
-
-
-
-                                              <div class="col-md-6">
+                                              <div class="col-md-6" v-if="banco.ctgBanco.nombre_corto">
                                                     <div class="form-group">
                                                             <label><b>Nombre Corto: </b></label>
-
+                                                           {{ banco.ctgBanco.nombre_corto }}
                                                         </div>
                                               </div>
-                                               <div class="col-md-6">
+                                               <div class="col-md-6" v-if="banco.ctgBanco.clave">
                                                      <div class="form-group">
                                                             <label><b>Clave: </b></label>
-
+                                                         {{ banco.ctgBanco.clave }}
                                                         </div>
                                                </div>
 
-
-
-
-
-
-                                              <div class="col-md-6">
+                                              <div class="col-md-6" v-if="banco.usuario.nombre ">
                                                     <div class="form-group">
                                                             <label><b>Registró: </b></label>
-
+                                                        {{ banco.usuario.nombre }}
                                                         </div>
                                               </div>
-                                               <div class="col-md-6">
+                                               <div class="col-md-6" v-if="banco.FechaHoraRegistro">
                                                      <div class="form-group">
                                                             <label><b>Fecha y Hora: </b></label>
                                                          {{ banco.FechaHoraRegistro }}
                                                         </div>
                                                </div>
-
-
-
-
-
                                       </div>
                                 </div>
 
@@ -87,23 +74,21 @@
         methods: {
             find() {
                 this.cargando = true;
-                this.$store.commit('cadeco/empresa/SET_EMPRESA', null);
-                return this.$store.dispatch('cadeco/empresa/find', {
+                this.$store.commit('cadeco/banco/SET_BANCO', null);
+                return this.$store.dispatch('cadeco/banco/find', {
                     id: this.id,
                     params:{
-                       include: ['usuario','ctgbancos'], scope:'Bancos'
+                       include: ['ctgBanco','usuario']
                     }
                 }).then(data => {
-                    console.log(data);
-                    this.$store.commit('cadeco/empresa/SET_EMPRESA', data);
+                    this.$store.commit('cadeco/banco/SET_BANCO', data);
                     $(this.$refs.modal).modal('show')
                 })
-
             }
         },
         computed: {
             banco() {
-                return this.$store.getters['cadeco/empresa/currentEmpresa']
+                return this.$store.getters['cadeco/banco/currentBanco']
             }
         }
     }

@@ -6,6 +6,7 @@ namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
 use App\Models\CADECO\Banco;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class CtgBanco extends Model
 {
@@ -16,13 +17,12 @@ class CtgBanco extends Model
 
     public function banco()
     {
-        return $this->belongsTo(Banco::class, 'id', 'id_ctg_bancos');
+        return $this->belongsTo(Banco::class, 'id_ctg_bancos');
     }
 
     public function scopeNoRegistrado($query)
     {
-        $registrado = $query->whereHas('banco');
-//        return $query->whereIn($registrado);
-        return $query->whereNotIn($registrado);
+         $bancos = array_column(Banco::query()->select('id_ctg_bancos')->where('id_ctg_bancos', '>', 0)->get()->toArray(),'id_ctg_bancos');
+         return $query->whereNotIn('id',$bancos);
     }
 }

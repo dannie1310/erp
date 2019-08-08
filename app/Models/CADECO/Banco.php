@@ -9,9 +9,13 @@
 namespace App\Models\CADECO;
 
 use App\Models\CADECO\Finanzas\BancoComplemento;
+use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgBanco;
+
 
 class Banco extends Empresa
 {
+
     protected static function boot()
     {
         parent::boot();
@@ -29,5 +33,20 @@ class Banco extends Empresa
 
     public function complemento(){
         return $this->belongsTo(BancoComplemento::class, 'id_empresa','id_empresa');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class,  'UsuarioRegistro', 'idusuario');
+    }
+
+    public function ctg_banco()
+    {
+        return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos');
+    }
+
+    public function scopeBancos($query)
+    {
+        return $query->where('tipo_empresa', '=', 8);
     }
 }

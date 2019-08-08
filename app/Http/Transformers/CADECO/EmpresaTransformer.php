@@ -20,7 +20,8 @@ class EmpresaTransformer extends TransformerAbstract
         'cuentasEmpresa',
         'cuentas',
         'subcontratos',
-        'cuentasBancariasProveedor'
+        'cuentasBancariasProveedor',
+
     ];
 
     public function transform(Empresa $model)
@@ -82,4 +83,7 @@ class EmpresaTransformer extends TransformerAbstract
         }
         return null;
     }
+
+
+
 }
