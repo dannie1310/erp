@@ -28,7 +28,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_pagos')">
-                        <router-link :to="{name: 'solicitud-alta-cuenta-bancaria'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-alta-cuenta-bancaria'}">
+                        <router-link :to="{name: 'solicitud-alta'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-alta'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Solicitud de Alta</p>
                         </router-link>

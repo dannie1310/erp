@@ -643,8 +643,8 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'solicitud-alta-cuenta-bancaria',
-                        name: 'solicitud-alta-cuenta-bancaria',
+                        path: 'solicitud-alta',
+                        name: 'solicitud-alta',
                         component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-alta/Index'),
                         meta: {
                             title: 'Solicitud de Alta',

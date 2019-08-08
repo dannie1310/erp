@@ -12,7 +12,7 @@ namespace App\Services\CADECO\Finanzas;
 use App\Models\CADECO\FinanzasCBE\Solicitud;
 use App\Repositories\Repository;
 
-class SolicitudCuentaBancariaService
+class SolicitudAltaCuentaBancariaService
 {
     /**
      * @var Repository
@@ -20,11 +20,16 @@ class SolicitudCuentaBancariaService
     protected $repository;
 
     /**
-     * SolicitudCuentaBancariaService constructor.
+     * SolicitudAltaCuentaBancariaService constructor.
      * @param Solicitud $model
      */
     public function __construct(Solicitud $model)
     {
         $this->repository = new Repository($model);
+    }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
     }
 }

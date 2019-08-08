@@ -1,11 +1,7 @@
 <template>
     <div class="row">
-        <div class="col-12"  v-if="$root.can('registrar_distribucion_recursos_remesa')" :disabled="cargando">
-            <button  @click="create" title="Crear" class="btn btn-app btn-info pull-right" >
-                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                <i class="fa fa-plus" v-else></i>
-                Registrar Dispersión
-            </button>
+        <div class="col-12" :disabled="cargando">
+            <create @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -26,23 +22,23 @@
 <script>
     import Create from "./Create";
     export default {
-        name: "solicitud-alta-cuenta-bancaria-index",
+        name: "solicitud-alta-index",
         components: {Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio', sortable: true },
-                    { title: 'Remesa Liberada', field: 'remesa', sortable: false },
-                    { title: 'Monto Remesa', field: 'monto_autorizado', tdClass: 'money',sortable: true },
-                    { title: 'Monto Dispersado', field: 'monto_distribuido', tdClass: 'money', sortable: true },
+                    { title: 'Cuenta', field: 'cuenta', sortable: true },
+                    { title: 'Sucursal', field: 'sucursal', sortable: true },
+                    { title: 'Tipo', field: 'tipo', sortable: true},
+                    { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons'},
                 ],
                 data: [],
                 total: 0,
-                // query: {include: ['remesa_liberada'], sort: 'id', order: 'desc'},
+                query: {},
                 estado: "",
                 cargando: false
             }
@@ -58,79 +54,66 @@
 
         methods: {
             paginate() {
-                // this.cargando = true;
-                // return this.$store.dispatch('finanzas/distribuir-recurso-remesa/paginate', { params: this.query})
-                //     .then(data => {
-                //         this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCIONES', data.data);
-                //         this.$store.commit('finanzas/distribuir-recurso-remesa/SET_META', data.meta);
-                //     })
-                //     .finally(() => {
-                //         this.cargando = false;
-                //     })
-            },
-            // create() {
-            //     this.$router.push({name: 'distribuir-recurso-remesa-create'});
-            // },
+                this.cargando = true;
+                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTAS', data.data);
+                        this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
+            }
         },
         computed: {
-            // distribuciones(){
-            //     return this.$store.getters['finanzas/distribuir-recurso-remesa/distribuciones'];
-            // },
-            // meta(){
-            //     return this.$store.getters['finanzas/distribuir-recurso-remesa/meta'];
-            // },
-            // tbodyStyle() {
-            //     return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
-            // }
+            cuentas(){
+                return this.$store.getters['finanzas/solicitud-alta-cuenta-bancaria/cuentas'];
+            },
+            meta(){
+                return this.$store.getters['finanzas/solicitud-alta-cuenta-bancaria/meta'];
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
         },
         watch: {
-            // distribuciones: {
-            //     handler(distribuciones) {
-            //         let self = this
-            //         self.$data.data = []
-            //         distribuciones.forEach(function (distribucion, i) {
-            //             self.$data.data.push({
-            //                 index: (i + 1) + self.query.offset,
-            //                 folio: 'REM-'+distribucion.folio,
-            //                 remesa: 'Año: '+distribucion.remesa_liberada.remesa.año+' Semana: '+distribucion.remesa_liberada.remesa.semana+' Remesa: '+distribucion.remesa_liberada.remesa.tipo+' ('+distribucion.remesa_liberada.remesa.folio+')',
-            //                 monto_autorizado: '$'+(parseFloat(distribucion.monto_autorizado)).formatMoney(2,'.',','),
-            //                 monto_distribuido:  '$'+(parseFloat(distribucion.monto_distribuido)).formatMoney(2,'.',','),
-            //                 estado: distribucion.estado,
-            //                 buttons: $.extend({}, {
-            //                     show: true,
-            //                     autorizar: self.$root.can('autorizar_distribucion_recursos_remesa') ? true : false,
-            //                     pagar: self.$root.can('pagar_distribucion_recursos_remesa') ? true : false,
-            //                     cancelar: self.$root.can('cancelar_distribucion_recursos_remesa') ? true : false,
-            //                     descargar: self.$root.can('descargar_distribucion_recursos_remesa') ? true : false,
-            //                     cargar: self.$root.can('cargar_distribucion_recursos_remesa') ? true : false,
-            //                     id: distribucion.id,
-            //                     estado: distribucion.estado.estado
-            //                 })
-            //             })
-            //         });
-            //     },
-            //     deep: true
-            // },
-            //
-            // meta: {
-            //     handler(meta) {
-            //         let total = meta.pagination.total
-            //         this.$data.total = total
-            //     },
-            //     deep: true
-            // },
-            // query: {
-            //     handler(query) {
-            //         this.paginate(query)
-            //     },
-            //     deep: true
-            // },
-            // cargando(val) {
-            //     $('tbody').css({
-            //         '-webkit-filter': val ? 'blur(2px)' : '',
-            //         'pointer-events': val ? 'none' : ''
-            //     });
-            // }
+            cuentas: {
+                handler(cuentas) {
+                    let self = this
+                    self.$data.data = []
+                    cuentas.forEach(function (cuenta, i) {
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            cuenta: cuenta.cuenta,
+                            sucursal: cuenta.sucursal,
+                            tipo: cuenta.tipo_cuenta,
+                            observaciones: cuenta.observaciones
+
+                        })
+                    });
+                },
+                deep: true
+            },
+
+            meta: {
+                handler(meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler(query) {
+                    this.paginate(query)
+                },
+                deep: true
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
         }
     }
 </script>
