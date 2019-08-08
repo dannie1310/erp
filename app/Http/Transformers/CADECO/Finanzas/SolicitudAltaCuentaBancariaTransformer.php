@@ -14,10 +14,10 @@ use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\CtgPlazaTransformer;
-use App\Models\CADECO\FinanzasCBE\Solicitud;
+use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudCuentaBancariaTransformer extends TransformerAbstract
+class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -43,7 +43,7 @@ class SolicitudCuentaBancariaTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(Solicitud $model)
+    public function transform(SolicitudAlta $model)
     {
         return [
             'id' => $model->getKey(),
@@ -56,11 +56,11 @@ class SolicitudCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Solicitud $model
-     * Include Tipo de Solicitud
+     * @param SolicitudAlta $model
+     * Include Tipo de SolicitudAlta
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeTipo(Solicitud $model)
+    public function includeTipo(SolicitudAlta $model)
     {
         if($tipo = $model->tipoSolicitud)
         {
@@ -70,11 +70,11 @@ class SolicitudCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Solicitud $model
+     * @param SolicitudAlta $model
      * Include Empresa
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeEmpresa(Solicitud $model)
+    public function includeEmpresa(SolicitudAlta $model)
     {
         if($empresa = $model->empresa)
         {
@@ -84,11 +84,11 @@ class SolicitudCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Solicitud $model
+     * @param SolicitudAlta $model
      * Include Moneda
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeMoneda(Solicitud $model)
+    public function includeMoneda(SolicitudAlta $model)
     {
         if($moneda = $model->moneda)
         {
@@ -98,11 +98,11 @@ class SolicitudCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Solicitud $model
+     * @param SolicitudAlta $model
      * Include Banco
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeBanco(Solicitud $model)
+    public function includeBanco(SolicitudAlta $model)
     {
         if($banco = $model->banco)
         {
@@ -112,11 +112,11 @@ class SolicitudCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Solicitud $model
+     * @param SolicitudAlta $model
      * Include Plaza
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includePlaza(Solicitud $model)
+    public function includePlaza(SolicitudAlta $model)
     {
         if($plaza = $model->plaza)
         {
@@ -126,11 +126,11 @@ class SolicitudCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Solicitud $model
+     * @param SolicitudAlta $model
      * Include Usuario
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeUsuario(Solicitud $model)
+    public function includeUsuario(SolicitudAlta $model)
     {
         if($usuario = $model->registro)
         {

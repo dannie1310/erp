@@ -9,7 +9,7 @@
 namespace App\Services\CADECO\Finanzas;
 
 
-use App\Models\CADECO\FinanzasCBE\Solicitud;
+use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Repositories\Repository;
 
 class SolicitudAltaCuentaBancariaService
@@ -21,9 +21,9 @@ class SolicitudAltaCuentaBancariaService
 
     /**
      * SolicitudAltaCuentaBancariaService constructor.
-     * @param Solicitud $model
+     * @param SolicitudAlta $model
      */
-    public function __construct(Solicitud $model)
+    public function __construct(SolicitudAlta $model)
     {
         $this->repository = new Repository($model);
     }

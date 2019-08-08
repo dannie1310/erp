@@ -56,7 +56,7 @@ class SolicitudMovimientoCuentaBancariaTransformer extends TransformerAbstract
     {
         if($solicitud = $model->solicitud)
         {
-            return $this->item($solicitud, new SolicitudCuentaBancariaTransformer);
+            return $this->item($solicitud, new SolicitudAltaCuentaBancariaTransformer);
         }
         return null;
     }

@@ -10,7 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Finanzas;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Finanzas\SolicitudCuentaBancariaTransformer;
+use App\Http\Transformers\CADECO\Finanzas\SolicitudAltaCuentaBancariaTransformer;
 use App\Services\CADECO\Finanzas\SolicitudAltaCuentaBancariaService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
@@ -30,7 +30,7 @@ class SolicitudAltaCuentaBancariaController extends Controller
     private $fractal;
 
     /**
-     * @var SolicitudCuentaBancariaTransformer
+     * @var SolicitudAltaCuentaBancariaTransformer
      */
     private $transformer;
 
@@ -38,9 +38,9 @@ class SolicitudAltaCuentaBancariaController extends Controller
      * SolicitudAltaCuentaBancariaController constructor.
      * @param SolicitudAltaCuentaBancariaService $service
      * @param Manager $fractal
-     * @param SolicitudCuentaBancariaTransformer $transformer
+     * @param SolicitudAltaCuentaBancariaTransformer $transformer
      */
-    public function __construct(SolicitudAltaCuentaBancariaService $service, Manager $fractal, SolicitudCuentaBancariaTransformer $transformer)
+    public function __construct(SolicitudAltaCuentaBancariaService $service, Manager $fractal, SolicitudAltaCuentaBancariaTransformer $transformer)
     {
         $this->middleware('auth:api');
         $this->middleware('context');
