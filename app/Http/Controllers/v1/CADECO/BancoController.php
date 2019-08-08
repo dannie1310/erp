@@ -45,8 +45,6 @@ class BancoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:registrar_banco')->only(['store']);
-        $this->middleware('permiso:consultar_banco')->only(['paginate','index','show']);
 
 
         $this->fractal = $fractal;
