@@ -27,8 +27,13 @@ class Banco extends Empresa
         return $this->belongsTo(BancoComplemento::class, 'id_empresa','id_empresa');
     }
 
-    public function bancos()
+    public function bancosGeneral()
     {
         return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos', 'id');
+    }
+
+    public function scopeBancoGlobal($query)
+    {
+        return $query->whereHas('bancoGeneral');
     }
 }

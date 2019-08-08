@@ -76,8 +76,13 @@ class Empresa extends Model
         return $query->has('subcontrato')->has('estimacion')->distinct('id_empresa')->orderBy('razon_social');
     }
 
-    public function scopeTipoEmpresa($query)
+    public function scopeResponsableFondoFijo($query)
     {
         return $query->where('tipo_empresa',32);
+    }
+
+    public function scopeProveedorContratista($query)
+    {
+        return $query->whereIn('tipo_empresa',[1,2,3]);
     }
 }

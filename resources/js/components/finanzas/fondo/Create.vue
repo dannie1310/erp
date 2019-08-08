@@ -180,7 +180,7 @@
                 this.$validator.reset()
             },
             getEmpresa() {
-                return this.$store.dispatch('cadeco/empresa/index', { params: { scope:'TipoEmpresa'} })
+                return this.$store.dispatch('cadeco/empresa/index', { params: { scope:'ResponsableFondoFijo'} })
                     .then(data => {
                         this.empresas= data.data;
                     })
