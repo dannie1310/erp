@@ -711,7 +711,8 @@ export const routes = [
                         meta:{
                             title: 'Bancos',
                             breadcrumb: {name: 'BANCOS', parent: 'finanzas'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
                         }
                     },
                     {
@@ -721,7 +722,8 @@ export const routes = [
                         meta: {
                             title: 'Registrar Banco',
                             breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_banco'
                         }
                     },
                     {
@@ -732,7 +734,8 @@ export const routes = [
                         meta: {
                             title: 'Ver Banco',
                             breadcrumb: {name: 'VER', parent: 'finanzas'},
-                            middleware: [auth, context]
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
                         }
                     },
                     {
