@@ -8,10 +8,12 @@
 
 namespace App\Http\Transformers\CADECO;
 
-
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Http\Transformers\CADECO\Finanzas\BancoComplementoTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgBancoTransformer;
 use App\Models\CADECO\Banco;
 use League\Fractal\TransformerAbstract;
+
 
 class BancoTransformer extends TransformerAbstract
 {
@@ -21,7 +23,9 @@ class BancoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-       'complemento'
+       'complemento',
+        'ctgBanco',
+        'usuario',
     ];
 
     /**
@@ -30,14 +34,18 @@ class BancoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'complemento'
+
     ];
 
     public function transform(Banco $model)
     {
         return [
             'id' => $model->getKey(),
-            'razon_social' => $model->razon_social
+            'razon_social' => $model->razon_social,
+            'rfc'=> $model->rfc,
+            'UsuarioRegistro'=>$model->UsuarioRegistro,
+            'FechaHoraRegistro'=>$model->FechaHoraRegistro,
+
         ];
     }
 
@@ -51,5 +59,28 @@ class BancoTransformer extends TransformerAbstract
             return $this->item($banco, new BancoComplementoTransformer);
         }
         return null;
+    }
+
+    /**
+     * @param Banco $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeCtgBanco(Banco $model){
+        if($banco_ctg = $model->ctg_banco){
+            return $this->item($banco_ctg, new CtgBancoTransformer);
+        }
+        return null;
+    }
+    /**
+     * @param Banco $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeUsuario(Banco $model)
+    {
+        if($usuario = $model->usuario){
+            return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+
     }
 }

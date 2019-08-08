@@ -12,6 +12,8 @@ use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\CADECO\Finanzas\CuentaBancariaProveedor;
 use Illuminate\Database\Eloquent\Model;
 
+
+
 class Empresa extends Model
 {
     protected $connection = 'cadeco';
@@ -26,17 +28,9 @@ class Empresa extends Model
     protected $fillable = [
         'tipo_empresa',
         'razon_social',
-        'rfc'
+        'UsuarioRegistro',
+        'id_ctg_bancos',
     ];
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->FechaHoraRegistro = date('Y-m-d h:i:s');
-            $model->UsuarioRegistro =  auth()->id();
-        });
-    }
 
     public function cuentasEmpresa()
     {
@@ -80,4 +74,6 @@ class Empresa extends Model
     {
         return $query->where('tipo_empresa',32);
     }
+
+
 }
