@@ -54,6 +54,7 @@ import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-rem
 import gestion_pago from './modules/finanzas/gestion-pago';
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
 import remesa from './modules/finanzas/remesa';
+import solicitud_alta from './modules/finanzas/solicitud-alta-cuenta-bancaria';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
@@ -105,6 +106,7 @@ export default new Vuex.Store({
         'finanzas/gestion-pago': gestion_pago,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
         'finanzas/remesa': remesa,
+        'finanzas/solicitud-alta-cuenta-bancaria' : solicitud_alta,
 
 
         'contabilidad/cierre-periodo': cierrePeriodo,

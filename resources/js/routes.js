@@ -535,37 +535,6 @@ export const routes = [
                 }
             },
             {
-                path: 'solicitud',
-                component: require('./components/finanzas/solicitud/Layout'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'solicitud',
-                        component: require('./components/finanzas/solicitud/Index'),
-                        meta: {
-                            title: 'Solicitudes de Pago',
-                            breadcrumb: {parent: 'finanzas', name: 'SOLICITUDES DE PAGO'},
-                            middleware: [auth, context],
-
-                        }
-                    },
-                    {
-                        path: 'pago-anticipado',
-                        name: 'pago-anticipado',
-                        component: require('./components/finanzas/solicitud/pago-anticipado/Index'),
-                        meta: {
-                            title: 'Solicitud de Pago Anticipado',
-                            breadcrumb: {
-                                parent: 'solicitud',
-                                name: 'PAGO ANTICIPADO'
-                            },
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_pago_anticipado'
-                        }
-                    },
-                ]
-            },
-            {
                 path: 'distribuir-recurso-remesa',
                 component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue'),
                 children: [
@@ -659,6 +628,37 @@ export const routes = [
                 ]
             },
             {
+                path: 'gestion-cuenta-bancaria',
+                component: require('./components/finanzas/gestion-cuenta-bancaria/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'gestion-cuenta-bancaria',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/Index'),
+                        meta: {
+                            title: 'Gestión de Cuentas Bancarias',
+                            breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE CUENTAS BANCARIAS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'solicitud-alta-cuenta-bancaria',
+                        name: 'solicitud-alta-cuenta-bancaria',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-alta/Index'),
+                        meta: {
+                            title: 'Solicitud de Alta',
+                            breadcrumb: {
+                                parent: 'gestion-cuenta-bancaria',
+                                name: 'SOLICITUD DE ALTA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'gestion-pago',
                 component: require('./components/finanzas/gestion/Layout'),
                 children: [
@@ -699,7 +699,38 @@ export const routes = [
                         }
                     },
                 ]
-            }
+            },
+            {
+                path: 'solicitud',
+                component: require('./components/finanzas/solicitud/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud',
+                        component: require('./components/finanzas/solicitud/Index'),
+                        meta: {
+                            title: 'Solicitudes de Pago',
+                            breadcrumb: {parent: 'finanzas', name: 'SOLICITUDES DE PAGO'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'pago-anticipado',
+                        name: 'pago-anticipado',
+                        component: require('./components/finanzas/solicitud/pago-anticipado/Index'),
+                        meta: {
+                            title: 'Solicitud de Pago Anticipado',
+                            breadcrumb: {
+                                parent: 'solicitud',
+                                name: 'PAGO ANTICIPADO'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_pago_anticipado'
+                        }
+                    },
+                ]
+            },
         ]
     },
     {

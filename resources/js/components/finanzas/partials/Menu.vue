@@ -6,23 +6,6 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
 
-            <li class="nav-item" v-if="solicitudes">
-                <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-signal"></i>
-                    <p>
-                        Solicitudes de Pago
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_solicitud_pago_anticipado')">
-                        <router-link :to="{name: 'pago-anticipado'}" class="nav-link" :class="{active: this.$route.name == 'pago-anticipado'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Pago Anticipado</p>
-                        </router-link>
-                    </li>
-                </ul>
-            </li>
             <li class="nav-item" v-if="$root.can('consultar_distribucion_recursos_remesa')">
                 <router-link :to="{name: 'distribuir-recurso-remesa'}" class="nav-link">
                     <i class="fa fa-list-alt nav-icon"></i>
@@ -35,7 +18,23 @@
                     <p>Gestión de Fondos</p>
                 </router-link>
             </li>
-
+            <li class="nav-item" v-if="cuenta_bancaria">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-wpforms"></i>
+                    <p>
+                        Gestión de Cuentas Bancarias
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_pagos')">
+                        <router-link :to="{name: 'solicitud-alta-cuenta-bancaria'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-alta-cuenta-bancaria'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Solicitud de Alta</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
             <li class="nav-item" v-if="pagos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-money"></i>
@@ -49,6 +48,23 @@
                         <router-link :to="{name: 'pago'}" class="nav-link" :class="{active: this.$route.name == 'pago'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Pagos</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item" v-if="solicitudes">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-signal"></i>
+                    <p>
+                        Solicitudes de Pago
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_solicitud_pago_anticipado')">
+                        <router-link :to="{name: 'pago-anticipado'}" class="nav-link" :class="{active: this.$route.name == 'pago-anticipado'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Pago Anticipado</p>
                         </router-link>
                     </li>
                 </ul>
@@ -72,7 +88,13 @@
                 return this.$root.can([
                     'consultar_pagos'
                 ]);
+            },
+            cuenta_bancaria(){
+                return this.$root.can([
+                    'consultar_pagos'
+                ]);
             }
+
         },
         methods: {
             mostrarMenu(event) {
