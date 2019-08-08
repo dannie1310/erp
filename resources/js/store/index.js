@@ -3,8 +3,9 @@ import Vuex from 'vuex';
 import auth from './modules/auth';
 
 //CADECO
-import obras from './modules/cadeco/obras';
+
 import almacen from './modules/cadeco/almacen';
+import banco from './modules/cadeco/banco';
 import concepto from './modules/cadeco/concepto';
 import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
@@ -12,6 +13,8 @@ import empresa from './modules/cadeco/empresa';
 import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
+import obras from './modules/cadeco/obras';
+
 
 //COMPRAS
 import solicitudCompra from './modules/compras/solicitud-compra';
@@ -62,6 +65,7 @@ import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
+import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -78,8 +82,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
-        'cadeco/obras': obras,
         'cadeco/almacen': almacen,
+        'cadeco/banco': banco,
         'cadeco/concepto': concepto,
         'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
@@ -87,6 +91,7 @@ export default new Vuex.Store({
         'cadeco/fondo': fondo,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
+        'cadeco/obras': obras,
 
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
@@ -133,6 +138,7 @@ export default new Vuex.Store({
         'tesoreria/tipo-movimiento': tipoMovimiento,
         'tesoreria/traspaso-entre-cuentas': traspaso,
 
+        'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,

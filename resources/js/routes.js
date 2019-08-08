@@ -699,6 +699,55 @@ export const routes = [
                         }
                     },
                 ]
+            },
+            {
+                path:'banco',
+                component: require('./components/finanzas/banco/Layout.vue'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'banco',
+                        component: require('./components/finanzas/banco/Index.vue'),
+                        meta:{
+                            title: 'Bancos',
+                            breadcrumb: {name: 'BANCOS', parent: 'finanzas'},
+                            middleware: [auth, context],
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'banco-create',
+                        component: require('./components/finanzas/banco/Create'),
+                        meta: {
+                            title: 'Registrar Banco',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                            middleware: [auth, context],
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'banco-show',
+                        props: true,
+                        component: require('./components/finanzas/banco/Show'),
+                        meta: {
+                            title: 'Ver Banco',
+                            breadcrumb: {name: 'VER', parent: 'finanzas'},
+                            middleware: [auth, context]
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'banco-edit',
+                        component: require('./components/finanzas/banco/Edit'),
+                        props: true,
+                        meta: {
+                            title: 'Editar Banco',
+                            breadcrumb: { parent: 'banco-show', name: 'EDITAR'},
+                            middleware: [auth, context],
+
+                        }
+                    }
+                ]
             }
         ]
     },
