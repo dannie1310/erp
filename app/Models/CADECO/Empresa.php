@@ -81,6 +81,11 @@ class Empresa extends Model
         return $query->where('tipo_empresa',32);
     }
 
+    public function scopeProveedorContratista($query)
+    {
+        return $query->whereIn('tipo_empresa',[1,2,3]);
+    }
+
     public function getTipoAttribute()
     {
         if($this->tipo_empresa == 1){
