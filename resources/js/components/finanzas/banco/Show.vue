@@ -24,20 +24,22 @@
                                                 </div>
                                             </div>
                                           </div>
-                                              <div class="col-md-6" v-if="banco.ctgBanco.nombre_corto">
+
+                                              <div class="col-md-6" v-if="banco.ctgBanco">
                                                     <div class="form-group">
                                                             <label><b>Nombre Corto: </b></label>
                                                            {{ banco.ctgBanco.nombre_corto }}
                                                         </div>
                                               </div>
-                                               <div class="col-md-6" v-if="banco.ctgBanco.clave">
+                                               <div class="col-md-6" v-if="banco.ctgBanco">
                                                      <div class="form-group">
                                                             <label><b>Clave: </b></label>
                                                          {{ banco.ctgBanco.clave }}
                                                         </div>
                                                </div>
 
-                                              <div class="col-md-6" v-if="banco.usuario.nombre ">
+
+                                              <div class="col-md-6" v-if="banco.usuario">
                                                     <div class="form-group">
                                                             <label><b>Registró: </b></label>
                                                         {{ banco.usuario.nombre }}
@@ -49,6 +51,7 @@
                                                          {{ banco.FechaHoraRegistro }}
                                                         </div>
                                                </div>
+
                                       </div>
                                 </div>
 
