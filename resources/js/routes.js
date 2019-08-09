@@ -727,7 +727,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id',
+                        path: 'show',
                         name: 'banco-show',
                         props: true,
                         component: require('./components/finanzas/banco/Show'),
@@ -744,8 +744,8 @@ export const routes = [
                         props: true,
                         component: require('./components/finanzas/banco/Edit'),
                         meta: {
-                            title: 'Editar Banco',
-                            breadcrumb: {name: 'Editar Banco', parent: 'finanzas'},
+                            title: 'Edición de Bancos',
+                            breadcrumb: {name: 'EDICIÓN DE BANCOS', parent: 'finanzas'},
                             middleware: [auth, context],
 
                         }

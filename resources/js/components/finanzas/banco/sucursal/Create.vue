@@ -10,7 +10,7 @@
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Registrar Banco</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Alta de Sucursal Bancaria</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -18,26 +18,20 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-                                <!-- Banco -->
-                                     <div class="col-md-12" v-if="bancos">
-                                    <div class="form-group error-content">
-                                        <label for="id_banco">Banco</label>
-                                        <select
-                                            class="form-control"
-                                            name="id_ctg_banco"
-                                            data-vv-as="Banco"
-                                            id="id_ctg_banco"
-                                            v-model="id_ctg_banco"
-                                            v-validate="{required: true}"
-                                            :class="{'is-invalid': errors.has('id_tipo_fondo')}">
-                                            <option value>-- Seleccione un banco --</option>
-                                            <option  v-for="(item, index) in bancos" :value="item.id">
-                                                {{ item.razon_social }}
-                                            </option>
-
-                                        </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_ctg_banco')">{{ errors.first('id_ctg_banco') }}</div>
-                                    </div>
+                                <!-- Descripción -->
+                                     <div class="col-md-12" >
+                                           <div class="form-group error-content">
+                                         <label for="descripcion">Descripción</label>
+                                        <input type="text" class="form-control"
+                                               name="descripcion"
+                                               data-vv-as="Descripción"
+                                               v-model="descripcion"
+                                               v-validate="{required: true}"
+                                               :class="{'is-invalid': errors.has('descripcion')}"
+                                               id="descripcion"
+                                               placeholder="Descripción de la Sucursal">
+                                                <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
+                                           </div>
                                 </div>
 
 
@@ -64,7 +58,15 @@
         data() {
             return {
 
-                id_ctg_banco: '',
+                descripcion:'',
+                direccion:'',
+                ciudad:'',
+                codigo_postal:'',
+                estado:'',
+                voz:'',
+                fax:'',
+                contacto:'',
+                checkCentral:false,
                 bancos:[],
 
             }
