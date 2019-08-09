@@ -54,7 +54,7 @@ class DistribucionRecursoRemesaController extends Controller
         $this->middleware('permiso:registrar_distribucion_recursos_remesa')->only(['store']);
         $this->middleware('permiso:autorizar_distribucion_recursos_remesa')->only(['autorizar']);
         $this->middleware('permiso:cancelar_distribucion_recursos_remesa')->only(['cancelar']);
-        $this->middleware('permiso:descargar_distribucion_recursos_remesa|pagar_distribucion_recursos_remesa')->only(['validar']);
+//        $this->middleware('permiso:descargar_distribucion_recursos_remesa|pagar_distribucion_recursos_remesa')->only(['validar']);
 
         $this->service = $service;
         $this->fractal = $fractal;
