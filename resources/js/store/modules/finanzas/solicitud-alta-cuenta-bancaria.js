@@ -50,6 +50,26 @@ export default{
                     })
             });
         },
+
+        autorizar(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'autorizar/'+payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        swal("Solicitud de alta de cuenta bancaria autorizada correctamente", {
+                            icon: "success",
+                            timer: 1500,
+                            buttons: false
+                        }).then(() => {
+                            resolve(data);
+                        })
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
     },
 
     getters: {

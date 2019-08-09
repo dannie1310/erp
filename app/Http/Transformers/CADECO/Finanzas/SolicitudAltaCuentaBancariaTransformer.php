@@ -54,7 +54,8 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
             'observaciones' => $model->observaciones,
             'estado' => $model->estatus,
             'fecha_format' => $model->fecha_format,
-            'estado' => $model->estatus,
+            'estatus' => $model->estatus,
+            'estado' => $model->estado,
             'folio' => $model->numero_folio,
             'numero_folio_format_orden' => $model->numero_folio_format_orden,
             'sucursal_format' => $model->sucursal_format

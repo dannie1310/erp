@@ -49,4 +49,8 @@ class SolicitudAltaCuentaBancariaController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
+
+    public function autorizar ($id){
+        return $this->service->autorizar($id);
+    }
 }

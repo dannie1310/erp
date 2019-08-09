@@ -37,4 +37,8 @@ class SolicitudAltaCuentaBancariaService
     {
         return $this->repository->show($id);
     }
+
+    public function autorizar($id){
+        return $this->repository->show($id);
+    }
 }
