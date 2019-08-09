@@ -36,16 +36,15 @@ class SolicitudAlta extends Solicitud
         });
     }
 
-    public function validar()
+    private function validar()
     {
-        $cuentaBancaria = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $this->cuenta_clabe);
-        $solicitud = SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('estado','=',0);
-        dd($cuentaBancaria, $solicitud);
+        $cuentaBancaria = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $this->cuenta_clabe)->get()->toArray();
+        $solicitud = SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('estado','>=',0)->get()->toArray();
 
-        if($cuentaBancaria){
+        if($cuentaBancaria != []){
             abort(400, 'La solicitud no puede ser registrada, la cuenta clabe ya existe');
         }
-        if($solicitud){
+        if($solicitud != []){
             abort(400, 'Existe una solicitud para esta cuenta clabe.');
         }
     }

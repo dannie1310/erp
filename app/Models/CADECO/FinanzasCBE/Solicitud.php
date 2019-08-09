@@ -21,6 +21,23 @@ class Solicitud extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'FinanzasCBE.solicitudes';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_empresa',
+        'id_banco',
+        'numero_folio',
+        'id_tipo_solicitud',
+        'id_moneda',
+        'cuenta_clabe',
+        'id_plaza',
+        'sucursal',
+        'tipo_cuenta',
+        'fecha',
+        'observaciones',
+        'usuario_registra',
+        'estado'
+    ];
 
     public function tipoSolicitud()
     {

@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Finanzas;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Finanzas\StoreSolicitudAltaCuentaBancariaRequest;
 use App\Http\Transformers\CADECO\Finanzas\SolicitudAltaCuentaBancariaTransformer;
 use App\Services\CADECO\Finanzas\SolicitudAltaCuentaBancariaService;
 use App\Traits\ControllerTrait;

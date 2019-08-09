@@ -16,6 +16,17 @@ class SolicitudMovimiento extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'FinanzasCBE.solicitud_movimiento';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_solicitud',
+        'id_tipo_movimiento',
+        'usuario_registra',
+        'mac_address',
+        'ip',
+        'observaciones',
+        'fecha_hora'
+    ];
 
     protected static function boot()
     {
