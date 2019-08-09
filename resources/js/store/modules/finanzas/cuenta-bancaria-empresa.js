@@ -1,4 +1,4 @@
-const URI = '/api/finanzas/cuenta-bancaria-proveedor/';
+const URI = '/api/finanzas/cuenta-bancaria-empresa/';
 
 export default {
     namespaced: true,

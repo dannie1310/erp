@@ -108,7 +108,7 @@ class DistribucionRecursoRemesaPartidaTransformer extends TransformerAbstract
     public function includeCuentaAbono(DistribucionRecursoRemesaPartida $model)
     {
         if($cuenta = $model->cuentaAbono){
-            return $this->item($cuenta, new CuentaBancariaProveedorTransformer);
+            return $this->item($cuenta, new CuentaBancariaEmpresaTransformer);
         }
         return null;
     }

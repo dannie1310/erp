@@ -44,8 +44,7 @@ class BancoTransformer extends TransformerAbstract
             'razon_social' => $model->razon_social,
             'rfc'=> $model->rfc,
             'UsuarioRegistro'=>$model->UsuarioRegistro,
-            'FechaHoraRegistro'=>$model->FechaHoraRegistro,
-
+            'FechaHoraRegistro'=>$model->FechaHoraRegistro
         ];
     }
 

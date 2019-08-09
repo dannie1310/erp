@@ -4,7 +4,7 @@ namespace App\Http\Transformers\CADECO;
 
 
 use App\Http\Transformers\CADECO\Contabilidad\CuentaEmpresaTransformer;
-use App\Http\Transformers\CADECO\Finanzas\CuentaBancariaProveedorTransformer;
+use App\Http\Transformers\CADECO\Finanzas\CuentaBancariaEmpresaTransformer;
 use App\Models\CADECO\Empresa;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
@@ -20,8 +20,7 @@ class EmpresaTransformer extends TransformerAbstract
         'cuentasEmpresa',
         'cuentas',
         'subcontratos',
-        'cuentasBancariasProveedor',
-
+        'cuentas_bancarias'
     ];
 
     public function transform(Empresa $model)
@@ -77,13 +76,11 @@ class EmpresaTransformer extends TransformerAbstract
      * @param Empresa $model
      * @return \League\Fractal\Resource\Collection|null
      */
-    public function includeCuentasBancariasProveedor(Empresa $model){
-        if($cuenta = $model->cuentaProveedor){
-            return $this->collection($cuenta, new CuentaBancariaProveedorTransformer);
+    public function includeCuentasBancarias(Empresa $model)
+    {
+        if($cuenta = $model->cuentasBancarias){
+            return $this->collection($cuenta, new CuentaBancariaEmpresaTransformer);
         }
         return null;
     }
-
-
-
 }

@@ -15,7 +15,6 @@ use App\Models\SEGURIDAD_ERP\Finanzas\CtgBanco;
 
 class Banco extends Empresa
 {
-
     protected static function boot()
     {
         parent::boot();
@@ -45,8 +44,13 @@ class Banco extends Empresa
         return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos');
     }
 
-    public function scopeBancos($query)
+    public function bancoGeneral()
     {
-        return $query->where('tipo_empresa', '=', 8);
+        return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos', 'id');
+    }
+
+    public function scopeBancoGlobal($query)
+    {
+        return $query->whereHas('bancoGeneral');
     }
 }

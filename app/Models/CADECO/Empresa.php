@@ -9,10 +9,8 @@
 namespace App\Models\CADECO;
 
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
-use App\Models\CADECO\Finanzas\CuentaBancariaProveedor;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use Illuminate\Database\Eloquent\Model;
-
-
 
 class Empresa extends Model
 {
@@ -30,7 +28,17 @@ class Empresa extends Model
         'razon_social',
         'UsuarioRegistro',
         'id_ctg_bancos',
+        'rfc'
     ];
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            $model->FechaHoraRegistro = date('Y-m-d h:i:s');
+            $model->UsuarioRegistro =  auth()->id();
+        });
+    }
 
     public function cuentasEmpresa()
     {
@@ -50,9 +58,9 @@ class Empresa extends Model
         return $this->hasMany(Estimacion::class, 'id_empresa', 'id_empresa');
     }
 
-    public function cuentaProveedor()
+    public function cuentasBancarias()
     {
-        return $this->hasMany(CuentaBancariaProveedor::class, 'id_empresa', 'id_empresa');
+        return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
     }
 
     public function scopeConCuentas($query)
@@ -70,10 +78,13 @@ class Empresa extends Model
         return $query->has('subcontrato')->has('estimacion')->distinct('id_empresa')->orderBy('razon_social');
     }
 
-    public function scopeTipoEmpresa($query)
+    public function scopeResponsableFondoFijo($query)
     {
         return $query->where('tipo_empresa',32);
     }
 
-
+    public function scopeProveedorContratista($query)
+    {
+        return $query->whereIn('tipo_empresa',[1,2,3]);
+    }
 }
