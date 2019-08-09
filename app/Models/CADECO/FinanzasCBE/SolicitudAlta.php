@@ -24,14 +24,15 @@ class SolicitudAlta extends Solicitud
 
         self::creating(function ($solicitud) {
             $solicitud->validar();
+            $solicitud->numero_folio = $solicitud->folio();
             $solicitud->id_tipo_solicitud = 1;
             $solicitud->fecha = date('Y-m-d H:i:s');
             $solicitud->usuario_registra = auth()->id();
             $solicitud->estado = 0;
         });
 
-        self::created(function ($solicitud){
-
+        self::created(function ($sol){
+            $sol->generaMovimiento();
         });
     }
 
@@ -52,7 +53,7 @@ class SolicitudAlta extends Solicitud
     /**
      * @return mixed
      */
-    private function generaMovimiento()
+    public function generaMovimiento()
     {
         return SolicitudMovimiento::create([
                 'id_solicitud'=>$this->id,
@@ -62,5 +63,13 @@ class SolicitudAlta extends Solicitud
                 'observaciones'=>$this->observaciones
             ]
         );
+    }
+
+    /**
+     * @return int
+     */
+    public function folio()
+    {
+        return $count = SolicitudAlta::query()->count('id') + 1;
     }
 }
