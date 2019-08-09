@@ -1,14 +1,14 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <!--            <create ></create>-->
+            <create v-bind:id="id"></create>
         </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <!--                        <datatable v-bind="$data" />-->
+                        <datatable v-bind="$data" />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -20,9 +20,11 @@
 </template>
 
 <script>
+    import Create from './Create';
     export default {
-        name: "gestion-banco-cuenta-index",
+        name: "cuenta-index",
         props:['id'],
+        components: {Create},
         data() {
             return{
                 HeaderSettings: false,
@@ -42,16 +44,16 @@
                     scope:'Bancos', sort: 'id_empresa',  order: 'desc', id:this.id, include:['cuentas']
                 },
                 cargando: false,
-                cuentas:[]
+                cuentas:[],
 
             }
         },
         mounted() {
-            // console.log(this.query);
             this.$Progress.start();
-            this.find();
-            this.getCuentas()
+
+            this.find()
                 .finally(() => {
+                    this.getData();
                     this.$Progress.finish();
                 })
         },
@@ -60,74 +62,40 @@
                 this.cargando = true;
                 this.$store.commit('cadeco/empresa/SET_EMPRESA', null);
                 return this.$store.dispatch('cadeco/empresa/find', {
-                    id: this.id,
-                    scope:'bancos',
-                    include:['cuentas']
-                }).then(data => {
-                    this.$store.commit('cadeco/empresa/SET_EMPRESA', data);
-                    // $(this.$refs.modal).modal('show')
-                })
-            },
-            getCuentas() {
-                this.cargando = true;
-                let self = this
-                return self.$store.dispatch('cadeco/empresa/find', {
-                    id:self.id,
+                    id:this.id,
                     params: {
                         scope: 'bancos',
                         sort: 'id_empresa',
                         order: 'DESC',
                         include:['cuentas']
                     }
+                }).then(data => {
+                    this.cuentas = data.cuentas.data;
+
+                }).finally(()=>{
+                    this.cargando=false;
                 })
-                    .then(data => {
-                        this.cuentas = data.cuentas.data;
+            },
+            getData(){
+                let self = this
+                self.$data.data = []
+                this.cuentas.forEach(function (cuenta, i) {
+                    self.$data.data.push({
+                        index: (i + 1),
+                        cuenta: cuenta.numero,
+                        saldo: cuenta.numero,
+                        moneda: cuenta.numero,
+                        chequera: cuenta.numero,
+                        tipo: cuenta.numero,
+                        abreviatura: cuenta.numero,
+                        // buttons: $.extend({}, {
+                        //     show: true,
+                        //     id: sucursal.id
+                        // })
                     })
-                    .finally(() => {
-                        this.cargando = false;
-                    });
-            },
-        },
-        computed: {
-            empresa() {
-                return this.$store.getters['cadeco/empresa/currentEmpresa']
-            },
-            empresas(){
-                return this.$store.getters['cadeco/empresa/empresas'];
-            },
-            meta(){
-                return this.$store.getters['cadeco/empresa/meta']
-            },
-            tbodyStyle() {
-                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+                })
+
             }
-        },
-        watch: {
-            // empresas: {
-                // handler(empresas) {
-                //     let self = this
-                //     self.$data.data = []
-                //     empresas.forEach(function (empresa, i) {
-                //         self.$data.data.push({
-                //             index: (i + 1) + self.query.offset,
-                //             cuenta: empresa.descripcion,
-                //             fecha: empresa.direccion,
-                //             saldo: empresa.direccion,
-                //             moneda: empresa.direccion,
-                //             chequera: empresa.direccion,
-                //             tipo: empresa.direccion,
-                //             abreviatura: empresa.direccion,
-                //             // buttons: $.extend({}, {
-                //             //     show: true,
-                //             //     id: sucursal.id
-                //             // })
-                //         })
-                //
-                //     });
-                //
-                // },
-                // deep: true
-            // },
 
         },
     }
