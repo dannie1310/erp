@@ -107,10 +107,10 @@
                                         <div class="col-sm-10">
                                             <input
                                                     :disabled="!id_tipo"
-                                                    type="text"
+                                                    type="number"
                                                     name="cuenta"
                                                     data-vv-as="Cuenta"
-                                                    v-validate="{required: true}"
+                                                    v-validate="{required: true, min:9, max:18}"
                                                     class="form-control"
                                                     v-mask="tamano_cuenta"
                                                     id="cuenta"
@@ -155,9 +155,8 @@
                                                     step="any"
                                                     name="sucursal"
                                                     data-vv-as="Sucursal"
-                                                    v-validate="{required: true}"
+                                                    v-validate="{required: true, digits: 3}"
                                                     class="form-control"
-                                                    maxlength="3"
                                                     id="sucursal"
                                                     placeholder="Sucursal"
                                                     v-model="sucursal"
@@ -248,6 +247,7 @@
                 monedas: [],
                 id_plaza: '',
                 plazas: [],
+                sucursal: '',
                 observaciones: ''
             }
         },

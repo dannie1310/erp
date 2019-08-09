@@ -32,4 +32,18 @@ class SolicitudAltaCuentaBancariaService
     {
         return $this->repository->paginate($data);
     }
+
+    public function store(array $data){
+        $datos = [
+            'id_empresa' => $data['id_empresa'],
+            'id_banco' => $data['id_banco'],
+            'id_moneda' =>  $data['id_moneda'],
+            'cuenta_clave' => $data['cuenta'],
+            'id_plaza' => $data['id_plaza'],
+            'sucursal' => $data['sucursal'],
+            'tipo_cuenta' => $data['id_tipo'],
+            'observaciones' => $data['observaciones']
+        ];
+        return $this->repository->create($datos);
+    }
 }

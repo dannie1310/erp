@@ -11,6 +11,7 @@ namespace App\Models\CADECO\FinanzasCBE;
 
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Moneda;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgPlaza;
