@@ -193,9 +193,8 @@
                              <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="id_plaza" class="col-sm-2 col-form-label">Plaza: </label>
+                                        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones: </label>
                                         <div class="col-sm-10">
-                                            <label for="observaciones">Observaciones:</label>
                                             <textarea
                                                     name="observaciones"
                                                     id="observaciones"

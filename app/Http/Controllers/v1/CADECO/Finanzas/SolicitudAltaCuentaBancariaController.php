@@ -17,7 +17,9 @@ use League\Fractal\Manager;
 
 class SolicitudAltaCuentaBancariaController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        store as protected traitStore;
+    }
 
     /**
      * @var SolicitudAltaCuentaBancariaService
@@ -49,4 +51,10 @@ class SolicitudAltaCuentaBancariaController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
+
+    public function store(StoreSolicitudAltaCuentaBancariaRequest $request)
+    {
+        return $this->traitStore($request);
+    }
+
 }
