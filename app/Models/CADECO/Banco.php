@@ -44,7 +44,7 @@ class Banco extends Empresa
         return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos');
     }
 
-    public function bancosGeneral()
+    public function bancoGeneral()
     {
         return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos', 'id');
     }

@@ -37,7 +37,7 @@
                 data: [],
                 total: 0,
                 query: {
-                    scope:'Bancos', sort: 'id_empresa',  order: 'desc', include: ['ctgBanco']
+                    sort: 'id_empresa',  order: 'desc', include: ['ctgBanco']
                 },
                 cargando: false
 
