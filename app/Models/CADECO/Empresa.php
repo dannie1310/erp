@@ -26,6 +26,8 @@ class Empresa extends Model
     protected $fillable = [
         'tipo_empresa',
         'razon_social',
+        'UsuarioRegistro',
+        'id_ctg_bancos',
         'rfc'
     ];
     protected static function boot()

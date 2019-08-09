@@ -9,7 +9,9 @@
 namespace App\Services\CADECO;
 
 
+use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgBanco;
 use App\Repositories\Repository;
 use App\Models\CADECO\Obra;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +40,11 @@ class EmpresaService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        if(isset($data['razon_social'])){
+         return $this->repository->where([['razon_social','like', '%'.$data['razon_social'].'%']])->paginate();
+        }else{
+            return $this->repository->paginate();
+        }
     }
 
     public function show($id)
@@ -57,7 +63,7 @@ class EmpresaService
             'UsuarioRegistro'=>$data['UsuarioRegistro'],
         ];
 
-        $empresa = Empresa::query()->create($datos);
+         $empresa = Empresa::query()->create($datos);
 
             DB::connection('cadeco')->commit();
 
@@ -67,5 +73,6 @@ class EmpresaService
             abort(400, $e->getMessage());
             throw $e;
         }
+
     }
 }
