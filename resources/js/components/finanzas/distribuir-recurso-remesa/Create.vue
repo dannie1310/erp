@@ -311,7 +311,7 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documentosDisponibles', 'documentosDisponibles.empresa.cuentasBancariasProveedor.banco', 'documentosDisponibles.moneda', 'remesaLiberada', 'documentosDisponibles.fondo.empresa.cuentasBancariasProveedor.banco']
+                        include: ['documentosDisponibles', 'documentosDisponibles.empresa.cuentasBancariasProveedor.banco.ctgBanco', 'documentosDisponibles.moneda', 'remesaLiberada', 'documentosDisponibles.fondo.empresa.cuentasBancariasProveedor.banco']
                     }
                 })
                     .then(data => {
@@ -340,8 +340,8 @@
             },
 
             getCuentaAbono(cuenta){
-                if(cuenta.banco.complemento){
-                    return cuenta.banco.complemento.nombre_corto+" "+ cuenta.cuenta;
+                if(cuenta.banco.ctgBanco){
+                    return cuenta.banco.ctgBanco.nombre_corto+" "+ cuenta.cuenta;
                 }
                 return  "----- "+ cuenta.cuenta;
             },
