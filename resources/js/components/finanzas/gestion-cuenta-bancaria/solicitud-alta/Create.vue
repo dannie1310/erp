@@ -122,6 +122,98 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_moneda" class="col-sm-2 col-form-label">Moneda: </label>
+                                        <div class="col-sm-10">
+                                            <select
+                                                    type="text"
+                                                    name="id_moneda"
+                                                    data-vv-as="Moneda"
+                                                    v-validate="{required: true}"
+                                                    class="form-control"
+                                                    id="id_moneda"
+                                                    v-model="id_moneda"
+                                                    :class="{'is-invalid': errors.has('id_moneda')}"
+                                            >
+                                                <option value>-- Seleccione un Moneda --</option>
+                                                <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.nombre }}</option>
+                                            </select>
+                                            <div class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="sucursal" class="col-sm-2 col-form-label">Sucursal: </label>
+                                        <div class="col-sm-10">
+                                            <input
+                                                    type="number"
+                                                    step="any"
+                                                    name="sucursal"
+                                                    data-vv-as="Sucursal"
+                                                    v-validate="{required: true}"
+                                                    class="form-control"
+                                                    maxlength="3"
+                                                    id="sucursal"
+                                                    placeholder="Sucursal"
+                                                    v-model="sucursal"
+                                                    :class="{'is-invalid': errors.has('sucursal')}">
+                                            <div class="invalid-feedback" v-show="errors.has('sucursal')">{{ errors.first('sucursal') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_plaza" class="col-sm-2 col-form-label">Plaza: </label>
+                                        <div class="col-sm-10">
+                                            <select
+                                                    type="text"
+                                                    name="id_plaza"
+                                                    data-vv-as="Plaza"
+                                                    v-validate="{required: true}"
+                                                    class="form-control"
+                                                    id="id_plaza"
+                                                    v-model="id_plaza"
+                                                    :class="{'is-invalid': errors.has('id_plaza')}"
+                                            >
+                                                <option value>-- Seleccione un Plaza --</option>
+                                                <option v-for="plaza in plazas" :value="plaza.id">{{ plaza.clave }} {{plaza.nombre}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" v-show="errors.has('id_plaza')">{{ errors.first('id_plaza') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_plaza" class="col-sm-2 col-form-label">Plaza: </label>
+                                        <div class="col-sm-10">
+                                            <label for="observaciones">Observaciones:</label>
+                                            <textarea
+                                                    name="observaciones"
+                                                    id="observaciones"
+                                                    class="form-control"
+                                                    v-model="observaciones"
+                                                    v-validate="{required: true}"
+                                                    data-vv-as="Observaciones"
+                                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                            ></textarea>
+                                            <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || cuenta =='' ">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -152,11 +244,18 @@
                     1: "Interbancaria",
                     2: "Mismo Banco"
                 },
-                tamano_cuenta: '###-###-#########-#'
+                tamano_cuenta: '###-###-#########-#',
+                id_moneda: '',
+                monedas: [],
+                id_plaza: '',
+                plazas: [],
+                observaciones: ''
             }
         },
         mounted(){
           this.getBancos();
+          this.getMonedas();
+          this.getPlazas();
         },
         computed: {
 
@@ -175,6 +274,17 @@
                     .then(data => {
                         this.bancos = data;
                     })
+            },
+            getMonedas(){
+                return this.$store.dispatch('cadeco/moneda/index', {
+
+                })
+                    .then(data => {
+                        this.monedas = data.data;
+                    })
+            },
+            getPlazas(){
+            //    aqui plazas
             },
             getEmpresa(){
                 return this.$store.dispatch('cadeco/empresa/index', {
@@ -197,7 +307,21 @@
                         this.empresa = data;
                         this.bandera_empresa = 1;
                     })
-            }
+            },
+            store() {
+                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/store', this.$data)
+                    .then(data => {
+                        this.$emit('created', data);
+                        $(this.$refs.modal).modal('hide');
+                    });
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store()
+                    }
+                });
+            },
         },
         watch: {
             id_tipo_empresa(value){
