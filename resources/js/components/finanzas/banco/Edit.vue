@@ -20,7 +20,9 @@
                 <div class="tab-content" id="nav-tabContent">
 
                 <!--  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">...</div>-->
-                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">Cuentas</div>
+                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                      <index-cuenta v-bind:id="id"></index-cuenta>
+                  </div>
                   <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" style="display:block;">
                       <index-sucursal  v-bind:id="banco.id"></index-sucursal>
                   </div>
@@ -30,10 +32,11 @@
 
 </template>
 <script>
+    import IndexCuenta from "./cuenta/Index";
     import IndexSucursal from "./sucursal/Index";
     export default {
         name: "banco-edit",
-        components: {IndexSucursal},
+        components: {IndexSucursal, IndexCuenta},
         props: ['id'],
         data(){
             return{

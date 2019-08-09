@@ -32,6 +32,7 @@ export default {
 
     actions: {
         find(context, payload) {
+            console.log(payload);
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + payload.id, { params: payload.params })
