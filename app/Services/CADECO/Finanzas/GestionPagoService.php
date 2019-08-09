@@ -223,7 +223,7 @@ class GestionPagoService
                         }
                     } else {
                         $empresa = Empresa::query()->create(
-                            ['tipo_empresa' => 8,
+                            ['tipo_empresa' => 64,
                             'razon_social' => $pago['cuenta_abono']['numero'],
                             'rfc' => '']
                         );

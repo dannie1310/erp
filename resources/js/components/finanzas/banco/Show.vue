@@ -16,6 +16,12 @@
                             <div>
                                 <div v-if="banco">
                                       <div class="row" v-if="banco">
+                                          <div class="col-md-12" v-if="banco.ctgBanco">
+                                                 <div class="form-group">
+                                                        <label><b>Clave: </b></label>
+                                                     {{ banco.ctgBanco.clave }}
+                                                    </div>
+                                           </div>
                                           <div class="col-md-12" v-if="banco.razon_social">
                                             <div class="form-group error-content">
                                                 <div class="form-group">
@@ -25,32 +31,33 @@
                                             </div>
                                           </div>
 
-                                              <div class="col-md-6" v-if="banco.ctgBanco">
-                                                    <div class="form-group">
-                                                            <label><b>Nombre Corto: </b></label>
-                                                           {{ banco.ctgBanco.nombre_corto }}
-                                                        </div>
-                                              </div>
-                                               <div class="col-md-6" v-if="banco.ctgBanco">
-                                                     <div class="form-group">
-                                                            <label><b>Clave: </b></label>
-                                                         {{ banco.ctgBanco.clave }}
-                                                        </div>
-                                               </div>
+                                          <div class="col-md-6" v-if="banco.ctgBanco">
+                                                <div class="form-group">
+                                                        <label><b>Descripción Corta: </b></label>
+                                                       {{ banco.ctgBanco.descripcion_corta }}
+                                                    </div>
+                                          </div>
+                                          <div class="col-md-6" v-if="banco.ctgBanco">
+                                                <div class="form-group">
+                                                        <label><b>Nombre Corto: </b></label>
+                                                       {{ banco.ctgBanco.nombre_corto }}
+                                                    </div>
+                                          </div>
 
 
-                                              <div class="col-md-6" v-if="banco.usuario">
-                                                    <div class="form-group">
-                                                            <label><b>Registró: </b></label>
-                                                        {{ banco.usuario.nombre }}
-                                                        </div>
-                                              </div>
-                                               <div class="col-md-6" v-if="banco.FechaHoraRegistro">
-                                                     <div class="form-group">
-                                                            <label><b>Fecha y Hora: </b></label>
-                                                         {{ banco.FechaHoraRegistro }}
-                                                        </div>
-                                               </div>
+
+                                          <div class="col-md-6" v-if="banco.usuario">
+                                                <div class="form-group">
+                                                        <label><b>Registró: </b></label>
+                                                    {{ banco.usuario.nombre }}
+                                                    </div>
+                                          </div>
+                                           <div class="col-md-6" v-if="banco.FechaHoraRegistro">
+                                                 <div class="form-group">
+                                                        <label><b>Fecha y Hora: </b></label>
+                                                     {{ banco.FechaHoraRegistro }}
+                                                    </div>
+                                           </div>
 
                                       </div>
                                 </div>

@@ -30,12 +30,14 @@
                 columns: [
                     { title: '#', field:'index',sortable: false},
                     { title: 'Razón Social', field: 'razon_social',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Nombre Corto', field: 'nombre_corto',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Descripción Corta', field: 'descripcion_corta',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    scope:'Bancos', sort: 'id_empresa',  order: 'desc'
+                    scope:'Bancos', sort: 'id_empresa',  order: 'desc', include: ['ctgBanco']
                 },
                 cargando: false
 
@@ -82,6 +84,8 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             razon_social: banco.razon_social,
+                            descripcion_corta: banco.ctgBanco.descripcion_corta?banco.ctgBanco.descripcion_corta:'--',
+                            nombre_corto: banco.ctgBanco.nombre_corto?banco.ctgBanco.nombre_corto:'--',
                             buttons: $.extend({}, {
                                 show: true,
                                 // edit: true,
