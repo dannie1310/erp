@@ -13,4 +13,13 @@ class Sucursal extends Model
     protected $primaryKey = 'id_sucursal';
 
     public $timestamps = false;
+
+    protected static function boot(){
+        parent::boot();
+
+        self::creating(function ($model){
+            $model->UsuarioRegistro = auth()->id();
+
+        });
+    }
 }

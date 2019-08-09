@@ -739,17 +739,39 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id/edit',
+                        path: ':id',
                         name: 'banco-edit',
-                        component: require('./components/finanzas/banco/Edit'),
                         props: true,
+                        component: require('./components/finanzas/banco/Edit'),
                         meta: {
                             title: 'Editar Banco',
-                            breadcrumb: { parent: 'banco-show', name: 'EDITAR'},
+                            breadcrumb: {name: 'Editar Banco', parent: 'finanzas'},
                             middleware: [auth, context],
 
                         }
-                    }
+                    },
+                    {
+                        path: '/',
+                        name: 'sucursal',
+                        component: require('./components/finanzas/banco/sucursal/Index.vue'),
+                        meta: {
+                            title: 'Sucursales',
+                            breadcrumb: { name: 'SUCURSALES', parent: 'finanzas'},
+                            middleware: [auth, context],
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'sucursal-create',
+                        component: require('./components/finanzas/banco/sucursal/Create'),
+                        meta: {
+                            title: 'Registrar Sucursal',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+
                 ]
             }
         ]
