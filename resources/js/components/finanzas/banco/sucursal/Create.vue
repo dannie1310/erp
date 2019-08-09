@@ -33,6 +33,138 @@
                                                 <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
                                            </div>
                                 </div>
+                                    <!--Ubicación -->
+                                <div class="col-md-12 mt-1 text-center" >
+                                      <label class="text-secondary">Ubicación </label>
+                                       <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
+                                </div>
+                                    <!--Dirección-->
+                                           <div class="col-md-12" >
+                                                   <div class="form-group error-content">
+                                                 <label for="direccion">Dirección</label>
+                                                <textarea row="7" class="form-control"
+                                                       name="direccion"
+                                                       data-vv-as="Dirección"
+                                                       v-model="direccion"
+                                                       v-validate="{required: true}"
+                                                       :class="{'is-invalid': errors.has('direccion')}"
+                                                       id="direccion"
+                                                          placeholder="Dirección de la Sucursal"></textarea>
+                                                        <div class="invalid-feedback" v-show="errors.has('direccion')">{{ errors.first('direccion') }}</div>
+                                                   </div>
+                                        </div>
+                                <!--Ciudad-->
+                                         <div class="col-md-12" >
+                                               <div class="form-group error-content">
+                                             <label for="ciudad">Ciudad</label>
+                                            <input type="text" class="form-control"
+                                                   name="ciudad"
+                                                   data-vv-as="Descripción"
+                                                   v-model="ciudad"
+                                                   v-validate="{required: true}"
+                                                   :class="{'is-invalid': errors.has('ciudad')}"
+                                                   id="ciudad"
+                                                   placeholder="Ciudad">
+                                                    <div class="invalid-feedback" v-show="errors.has('ciudad')">{{ errors.first('ciudad') }}</div>
+                                               </div>
+                                        </div>
+                                <!--Código Postal-->
+                                    <div class="col-md-6" >
+                                               <div class="form-group error-content">
+                                             <label for="codigo_postal">Código Postal</label>
+                                            <input type="text" class="form-control"
+                                                   name="codigo_postal"
+                                                   data-vv-as="Descripción"
+                                                   v-model="codigo_postal"
+                                                   v-validate="{required: true}"
+                                                   :class="{'is-invalid': errors.has('codigo_postal')}"
+                                                   id="codigo_postal"
+                                                   placeholder="Código Postal" :maxlength="5">
+                                                    <div class="invalid-feedback" v-show="errors.has('codigo_postal')">{{ errors.first('codigo_postal') }}</div>
+                                               </div>
+                                        </div>
+
+                                <!--Estado-->
+                                        <div class="col-md-6" >
+                                               <div class="form-group error-content">
+                                             <label for="estado">Estado</label>
+                                            <input type="text" class="form-control"
+                                                   name="estado"
+                                                   data-vv-as="Estado"
+                                                   v-model="estado"
+                                                   v-validate="{required: true}"
+                                                   :class="{'is-invalid': errors.has('estado')}"
+                                                   id="estado"
+                                                   placeholder="Estado" >
+                                                    <div class="invalid-feedback" v-show="errors.has('estado')">{{ errors.first('estado') }}</div>
+                                               </div>
+                                        </div>
+
+                                <!--Teléfonos -->
+                                <div class="col-md-12 mt-1 text-center" >
+                                      <label class="text-secondary">Teléfonos</label>
+                                       <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
+                                </div>
+
+                                <!--Voz-->
+                                    <div class="col-md-6" >
+                                               <div class="form-group error-content">
+                                             <label for="voz">Voz</label>
+                                            <input type="text" class="form-control"
+                                                   name="voz"
+                                                   data-vv-as="Voz"
+                                                   v-model="voz"
+                                                   v-validate="{required: true}"
+                                                   :class="{'is-invalid': errors.has('voz')}"
+                                                   id="voz"
+                                                   placeholder="Número de Teléfono" :maxlength="10">
+                                                    <div class="invalid-feedback" v-show="errors.has('voz')">{{ errors.first('voz') }}</div>
+                                               </div>
+                                        </div>
+                                <!--Fax-->
+                                         <div class="col-md-6" >
+                                               <div class="form-group error-content">
+                                             <label for="fax">Fax</label>
+                                            <input type="text" class="form-control"
+                                                   name="fax"
+                                                   data-vv-as="Fax"
+                                                   v-model="fax"
+                                                   v-validate="{required: true}"
+                                                   :class="{'is-invalid': errors.has('fax')}"
+                                                   id="voz"
+                                                   placeholder="Número de Fax" >
+                                                    <div class="invalid-feedback" v-show="errors.has('fax')">{{ errors.first('fax') }}</div>
+                                               </div>
+                                        </div>
+                                <!--Contacto-->
+                                  <div class="col-md-9" >
+                                               <div class="form-group error-content">
+                                             <label for="contacto">Contacto</label>
+                                            <input type="text" class="form-control"
+                                                   name="contacto"
+                                                   data-vv-as="Contacto"
+                                                   v-model="contacto"
+                                                   v-validate="{required: true}"
+                                                   :class="{'is-invalid': errors.has('contacto')}"
+                                                   id="contacto"
+                                                   placeholder="Nombre del Responsble" >
+                                                    <div class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
+                                               </div>
+                                        </div>
+                                <!--Check Central-->
+                                   <div class="col-md-3 mt-5">
+                                    <div class="form-check">
+                                        <input type="checkbox"
+                                               name="checkCentral"
+                                               class="form-check-input"
+                                               data-vv-as="Central"
+                                               v-model="checkCentral"
+                                               id="checkFondo"
+                                               v-on:click=" ! checkCentral">
+                                        <label class="form-check-label" for="checkCentral">Central</label>
+                                    </div></div>
+
+
 
 
                             </div>
@@ -54,6 +186,7 @@
     import SucursalIndex from './Index';
     export default {
         name: "sucursal-create",
+        props: ['id'],
         components: {SucursalIndex},
         data() {
             return {
@@ -67,29 +200,21 @@
                 fax:'',
                 contacto:'',
                 checkCentral:false,
-                bancos:[],
-
+                id_banco:'',
             }
         },
 
         mounted() {
-            this.getBancos()
 
+// console.log("Create "+this.id);
 
         },
 
         methods: {
             init() {
+                this.id_banco = this.id;
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset()
-            },
-            getBancos() {
-                return this.$store.dispatch('seguridad/finanzas/ctg-banco/index', {
-                    params: {sort: 'razon_social',  order: 'asc', scope:'NoRegistrado'}
-                })
-                    .then(data => {
-                        this.bancos= data.data;
-                    })
             },
             validate() {
                 this.$validator.validate().then(result => {
@@ -100,12 +225,15 @@
             },
             store() {
 
-                return this.$store.dispatch('cadeco/banco/store', this.$data)
+                return this.$store.dispatch('cadeco/sucursal/store', {
+                    id: this.id,
+                    data:this.$data
+                })
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created',data)
-                        this.bancos=[];
-                        this.getBancos();
+                        // this.bancos=[];
+
 
                     })
             }

@@ -22,7 +22,7 @@
                 <!--  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">...</div>-->
                   <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">Cuentas</div>
                   <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" style="display:block;">
-                      <index-sucursal></index-sucursal>
+                      <index-sucursal  v-bind:id="banco.id"></index-sucursal>
                   </div>
                 </div>
     </nav>
@@ -42,6 +42,7 @@
             }
         },
         mounted() {
+            // console.log("Edit Sucursal "+this.id);
         this.find()
         },
         methods: {

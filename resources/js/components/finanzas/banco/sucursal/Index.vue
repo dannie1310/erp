@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-        <create ></create>
+        <create  @created="paginate()" v-bind:id="id"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -23,6 +23,7 @@
     import Create from './Create';
     export default {
         name: "sucursal-index",
+        props: ['id'],
         components: {Create},
         data(){
             return{
@@ -31,10 +32,11 @@
                     { title: '#', field:'index',sortable: false},
                     { title: 'Descripción', field: 'descripcion', sortable: false},
                     { title: 'Dirección', field:'direccion', sortable: false},
-
+                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
+                id: this.id,
                 query: {
                     // scope:'Bancos', sort: 'id_empresa',  order: 'desc'
                 },
@@ -43,6 +45,7 @@
             }
         },
         mounted() {
+            // console.log("Index"+this.id);
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -86,7 +89,7 @@
                             direccion: sucursal.direccion,
                             buttons: $.extend({}, {
                                  show: true,
-                                id: sucursal.id
+                                 id: sucursal.id
                             })
                         })
 
