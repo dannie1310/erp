@@ -41,6 +41,10 @@ class Cuenta extends Model
         return $this->hasMany(CuentaBanco::class, 'id_cuenta', 'id_cuenta');
     }
 
+    public function moneda(){
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
     public function scopeConCuentas($query)
     {
         return $query->has('cuentasBanco');
