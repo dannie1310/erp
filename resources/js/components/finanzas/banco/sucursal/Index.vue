@@ -8,7 +8,7 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" @created="init()" />
+                        <datatable v-bind="$data"  />
                     </div>
                 </div>
                 <!-- /.card-body -->
