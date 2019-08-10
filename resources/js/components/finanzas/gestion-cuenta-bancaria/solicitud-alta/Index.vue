@@ -29,16 +29,18 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Cuenta', field: 'cuenta', sortable: true },
-                    { title: 'Sucursal', field: 'sucursal', sortable: true },
-                    { title: 'Tipo', field: 'tipo', sortable: true},
-                    { title: 'Observaciones', field: 'observaciones', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: true},
-                    { title: 'Acciones', field: 'buttons'},
+                    { title: 'Folio', field: 'folio', sortable: false },
+                    { title: 'Fecha', field: 'fecha', sortable: false },
+                    { title: 'Beneficiario', field: 'empresa', sortable: false},
+                    { title: 'Tipo Beneficiaro', field: 'tipo_empresa'},
+                    { title: 'Banco', field: 'banco', sortable: false},
+                    { title: 'Cuenta/CLABE', field: 'cuenta', sortable: false },
+                    { title: 'Estatus', field: 'estado'},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza']},
                 estado: "",
                 cargando: false
             }
@@ -84,10 +86,19 @@
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
+                            folio: cuenta.numero_folio_format_orden,
+                            id: cuenta.id,
+                            fecha: cuenta.fecha_format,
+                            empresa: cuenta.empresa.razon_social,
+                            tipo_empresa: cuenta.empresa.tipo_empresa,
+                            banco: cuenta.banco.razon_social,
                             cuenta: cuenta.cuenta,
-                            sucursal: cuenta.sucursal,
-                            tipo: cuenta.tipo_cuenta,
-                            observaciones: cuenta.observaciones
+                            estado: cuenta.estado,
+                            buttons: $.extend({}, {
+                                show: true,
+                                id: cuenta.id,
+                                estado: cuenta.estado
+                            })
 
                         })
                     });

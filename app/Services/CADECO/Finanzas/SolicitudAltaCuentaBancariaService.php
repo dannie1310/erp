@@ -33,6 +33,11 @@ class SolicitudAltaCuentaBancariaService
         return $this->repository->paginate($data);
     }
 
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
     public function store(array $data){
 
         $datos = [

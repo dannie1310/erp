@@ -36,6 +36,7 @@ class CtgPlazaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'clave' => $model->clave,
+            'clave_format' => $model->clave_format,
             'nombre' => $model->nombre
         ];
     }
