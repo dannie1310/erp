@@ -13,7 +13,88 @@
                         </button>
                     </div>
                         <div class="modal-body">
-                            <div>
+                            <div class="row">
+                                <!---Sucursal-->
+                                   <div class="col-md-12" v-if="sucursal">
+                                                 <div class="form-group">
+                                                        <label><b>Descripción: </b></label>
+                                                     {{ sucursal.descripcion }}
+                                                    </div>
+                                           </div>
+                                <!--Ubicación -->
+                                <div class="col-md-12  mt-3 text-left" >
+                                      <label class="text-secondary">Ubicación </label>
+                                       <hr style="color: #0056b2; margin-top:auto;" width="95%" size="10" />
+                                </div>
+                                <!--Dirección-->
+                                  <div class="col-md-12" v-if="sucursal">
+                                                 <div class="form-group">
+                                                        <label><b>Dirección: </b></label>
+                                                     {{ sucursal.direccion }}
+                                                    </div>
+                                           </div>
+                                <!--Ciudad-->
+                                     <div class="col-md-12" v-if="sucursal">
+                                                 <div class="form-group">
+                                                        <label><b>Dirección: </b></label>
+                                                     {{ sucursal.ciudad }}
+                                                    </div>
+                                           </div>
+                                <!--Código Postal-->
+
+                                 <div class="col-md-6" v-if="sucursal">
+                                                 <div class="form-group">
+                                                        <label><b>CP: </b></label>
+                                                     {{ sucursal.codigo_postal }}
+                                                    </div>
+                                           </div>
+                                <!--Estado-->
+                                     <div class="col-md-6" v-if="sucursal">
+                                                 <div class="form-group">
+                                                        <label><b>Estado: </b></label>
+                                                     {{ sucursal.estado }}
+                                                    </div>
+                                           </div>
+
+                                <!--Teléfonos -->
+                                <div class="col-md-12 mt-5 text-left" >
+                                      <label class="text-secondary">Teléfonos</label>
+                                       <hr style="color: #0056b2; margin-top:auto;" width="95%" size="10" />
+                                </div>
+
+                                <!--Voz-->
+                              <div class="col-md-6" v-if="sucursal">
+                                                 <div class="form-group">
+                                                        <label><b>Voz: </b></label>
+                                                     {{ sucursal.telefono }}
+                                                    </div>
+                                           </div>
+                                <!--Fax-->
+                                  <div class="col-md-6" v-if="sucursal">
+                                                 <div class="form-group">
+                                                        <label><b>Fax: </b></label>
+                                                     {{ sucursal.fax }}
+                                                    </div>
+                                           </div>
+                                <!--Contacto-->
+                                    <div class="col-md-6" v-if="sucursal">
+                                                 <div class="form-group">
+                                                        <label><b>Contacto: </b></label>
+                                                     {{ sucursal.contacto}}
+                                                    </div>
+                                           </div>
+                                <!--Check Central-->
+                                   <div class="col-md-6" v-if="sucursal">
+                                                 <div class="form-group" v-if="sucursal.casa_central === 'S'">
+                                                        <label><b>Central: </b></label>
+                                                                 Sí
+                                                    </div>
+                                       <div class="form-group" v-if="sucursal.casa_central === 'N'">
+                                                        <label><b>Central: </b></label>
+                                                                No
+                                                    </div>
+                                           </div>
+
 
 
                                 </div>

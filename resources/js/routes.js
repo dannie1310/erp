@@ -756,7 +756,7 @@ export const routes = [
                         component: require('./components/finanzas/banco/sucursal/Index.vue'),
                         meta: {
                             title: 'Sucursales',
-                            breadcrumb: { name: 'SUCURSALES', parent: 'finanzas'},
+                            breadcrumb: { name: 'SUCURSALES', parent: 'banco'},
                             middleware: [auth, context],
                         }
                     },
@@ -766,7 +766,18 @@ export const routes = [
                         component: require('./components/finanzas/banco/sucursal/Create'),
                         meta: {
                             title: 'Registrar Sucursal',
-                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                            breadcrumb: {name: 'REGISTRAR', parent: 'banco'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'show',
+                        name: 'sucursal-show',
+                        component: require('./components/finanzas/banco/sucursal/Show'),
+                        meta: {
+                            title: 'Ver Sucursal',
+                            breadcrumb: {name: 'VER', parent: 'banco'},
                             middleware: [auth, context],
 
                         }

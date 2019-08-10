@@ -39,9 +39,21 @@ class SucursalTransformer extends TransformerAbstract
             'id'=>$model->getKey(),
             'descripcion'=>$model->descripcion,
             'direccion'=>$model->direccion,
+            'ciudad'=>$model->ciudad,
+            'estado'=>$model->estado,
+            'codigo_postal'=>$model->codigo_postal,
+            'telefono'=>$model->telefono,
+            'fax'=>$model->fax,
+            'contacto'=>$model->contacto,
+            'casa_central'=>$model->casa_central,
+            'FechaHoraRegistro'=>$model->FechaHoraRegistro,
+            'UsuarioRegistro'=>$model->UsuarioRegistro,
+
 
         ];
 
     }
+
+
 
 }

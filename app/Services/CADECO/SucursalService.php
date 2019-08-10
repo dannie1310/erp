@@ -31,7 +31,14 @@ class SucursalService
     }
 
     public function paginate($data){
-        return $this->repository->paginate();
+//dd($data);
+        if(!empty($data['id'])){
+
+            return $this->repository->where([['id_empresa','=',$data['id']]])->paginate();
+        }else{
+            return $this->repository->paginate();
+        }
+
     }
 
     public function show($id){
@@ -40,14 +47,15 @@ class SucursalService
 
     public function store(array $data)
     {
-        dd($data);
-        if($data['checkCentral']==true){
+
+        if($data["checkCentral"]==true){
             $central='S';
         }else{
             $central='N';
         }
+
         $datos = [
-            'id_empresa'=> $data[''],
+            'id_empresa'=> $data['id_banco'],
             'descripcion' => $data['descripcion'],
             'direccion' => $data['direccion'],
             'ciudad' => $data['ciudad'],
@@ -56,11 +64,11 @@ class SucursalService
             'telefono'=> $data['voz'],
             'fax' => $data['fax'],
             'contacto'=>$data['contacto'],
-            'central'=>$central,
+            'casa_central'=>$central,
 
         ];
-//        $sucursal = Sucursal::query()->create($datos);
-//        return $sucursal;
+        $sucursal = Sucursal::query()->create($datos);
+        return $sucursal;
     }
 
 
