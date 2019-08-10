@@ -88,6 +88,19 @@ export default{
                     })
             });
         },
+        findPdf(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'pdf/'+payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
     },
 
     getters: {

@@ -28,11 +28,10 @@ class EmpresaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'razon_social' => $model->razon_social,
-            'tipo_empresa' => $model->tipo
-            'razon_social' => $model->razon_social,
-            'rfc'=> $model->rfc,
-            'UsuarioRegistro'=>$model->UsuarioRegistro,
-            'FechaHoraRegistro'=>$model->FechaHoraRegistro,
+            'tipo_empresa' => $model->tipo,
+            'rfc' => $model->rfc,
+            'UsuarioRegistro' => $model->UsuarioRegistro,
+            'FechaHoraRegistro' => $model->FechaHoraRegistro,
         ];
     }
 

@@ -65,8 +65,23 @@
                             </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i>  Ver Archivo Soporte</button>
+                        <button @click="findPdf(id)" type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i>  Ver Archivo Soporte</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" ref="modalPDF" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"> <i class="fa fa-th"></i> CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE ALTA DE CUENTA BANCARIA</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                        <div class="modal-body">
+                            <h1>PDF</h1>
                     </div>
                 </div>
             </div>
@@ -88,7 +103,17 @@
                     this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).modal('show');
                 })
-            }
+            },
+            findPdf(id) {
+                $(this.$refs.modal).modal('hide');
+                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/findPdf', {
+                    id: id,
+                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'] }
+                }).then(data => {
+                    $(this.$refs.modalPDF).modal('show');
+                })
+            },
+
         },
         computed: {
             solicitudAlta() {
