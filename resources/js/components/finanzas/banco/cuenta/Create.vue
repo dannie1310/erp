@@ -56,16 +56,16 @@
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label><b>Fecha:</b></label>
-                                            <datepicker v-model = "fecha_inicial"
-                                                        name = "fecha_inicial"
+                                            <datepicker v-model = "fecha"
+                                                        name = "fecha"
                                                         :language = "es"
                                                         :format = "formatoFecha"
                                                         :bootstrap-styling = "true"
                                                         class = "form-control"
                                                         v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('fecha_inicial')}"
+                                                        :class="{'is-invalid': errors.has('fecha')}"
                                             ></datepicker>
-                                         <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
+                                         <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -143,6 +143,7 @@
                 es: es,
                 numero:'',
                 id_moneda:'',
+                fecha:'',
                 fecha_inicial:'',
                 saldo_inicial:0,
                 chequera:'',
@@ -164,7 +165,6 @@
                 this.$store.commit('cadeco/moneda/SET_MONEDAS', null);
                 return this.$store.dispatch('cadeco/moneda/index', {
                 }).then(data => {
-                    console.log(data);
                     this.monedas = data.data;
                 }).finally(()=>{
                     this.cargando=false;
@@ -186,7 +186,7 @@
             },
         },
         watch:{
-            fecha_inicial(value) {
+            fecha(value) {
                 var d = 0;
                 var m = 0;
                 var y = 0;
