@@ -119,6 +119,10 @@
 
                             </div>
                         </div>
+                       <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 ">Guardar</button>
+                         </div>
                    </form>
                </div>
            </div>
