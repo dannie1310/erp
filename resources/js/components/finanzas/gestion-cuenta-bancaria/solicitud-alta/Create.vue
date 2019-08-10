@@ -271,7 +271,7 @@
                     }
                 })
                     .then(data => {
-                        this.bancos = data;
+                        this.bancos = data.data;
                     })
             },
             getMonedas(){
@@ -283,7 +283,12 @@
                     })
             },
             getPlazas(){
-            //    aqui plazas
+                return this.$store.dispatch('seguridad/finanzas/ctg-plaza/index', {
+
+                })
+                    .then(data => {
+                        this.plazas = data.data;
+                    })
             },
             getEmpresa(){
                 return this.$store.dispatch('cadeco/empresa/index', {
