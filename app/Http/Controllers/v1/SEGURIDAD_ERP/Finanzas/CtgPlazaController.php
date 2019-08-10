@@ -10,7 +10,7 @@ namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\SEGURIDAD_ERP\CtgPlazaTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgPlazaTransformer;
 use App\Services\SEGURIDAD_ERP\Finanzas\CtgPlazaService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;

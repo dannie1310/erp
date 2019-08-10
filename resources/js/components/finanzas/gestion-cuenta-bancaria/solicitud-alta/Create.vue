@@ -211,7 +211,7 @@
                         </div>
                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || cuenta =='' ">Registrar</button>
+                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || cuenta =='' || id_tipo_empresa =='' || id_empresa == ''">Registrar</button>
                         </div>
                      </form>
                 </div>
