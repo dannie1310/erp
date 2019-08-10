@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group " v-if="value.id">
         <BancoShow v-if="value.show" @click="value.id" v-bind:id="value.id" />
-        <button @click="show"  type="button" class="btn btn-sm btn-outline-secondary" title="Edición "><i class="fa fa-edit"></i></button>
+        <button @click="show"  type="button" class="btn btn-sm btn-outline-primary" title="Edición "><i class="fa fa-pencil"></i></button>
 <!--     <BancoEdit  v-if="value.edit" v-bind:id="value.id" :key="value.id"/>-->
     </div>
 

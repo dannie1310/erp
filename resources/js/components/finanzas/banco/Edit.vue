@@ -45,7 +45,6 @@
             }
         },
         mounted() {
-            // console.log("Edit Sucursal "+this.id);
         this.find()
         },
         methods: {

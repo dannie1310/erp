@@ -1,14 +1,14 @@
 <template>
     <div class="row">
         <div class="col-12">
-        <create  @created="paginate()" v-bind:id="id"></create>
+        <create @created="paginate()" v-bind:id="id"></create>
         </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" />
+                        <datatable v-bind="$data"  />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -32,20 +32,26 @@
                     { title: '#', field:'index',sortable: false},
                     { title: 'Descripción', field: 'descripcion', sortable: false},
                     { title: 'Dirección', field:'direccion', sortable: false},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                id: this.id,
+                aux:'',
                 query: {
-                    // scope:'Bancos', sort: 'id_empresa',  order: 'desc'
+
                 },
                 cargando: false
 
             }
         },
         mounted() {
-            // console.log("Index"+this.id);
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
+        },
+        init(){
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -55,7 +61,12 @@
         methods: {
             paginate(){
                 this.cargando=true;
-                return this.$store.dispatch('cadeco/sucursal/paginate', {params: this.query})
+                return this.$store.dispatch('cadeco/sucursal/paginate', {params: {
+                    id:this.id,
+                    sort: 'id_sucursal',
+                    order: 'desc',
+
+                } })
                     .then(data=>{
                         this.$store.commit('cadeco/sucursal/SET_SUCURSALES', data.data);
                         this.$store.commit('cadeco/sucursal/SET_META',data.meta)

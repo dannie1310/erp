@@ -11,10 +11,11 @@
 
     import SucursalCreate from "../Create";
     import SucursalShow from "../Show";
+    import SucursalIndex from "../Index";
     export default {
 
         name: "action-buttons",
-        components: { SucursalCreate, SucursalShow} ,
+        components: { SucursalCreate, SucursalShow, SucursalIndex} ,
         props: ['value'],
         methods: {
             destroy() {

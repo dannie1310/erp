@@ -34,8 +34,8 @@
                                            </div>
                                 </div>
                                     <!--Ubicación -->
-                                <div class="col-md-12 mt-1 text-center" >
-                                      <label class="text-secondary">Ubicación </label>
+                                <div class="col-md-12 mt-2 text-left" >
+                                      <label class="text-secondary ">Ubicación </label>
                                        <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
                                 </div>
                                     <!--Dirección-->
@@ -101,7 +101,7 @@
                                         </div>
 
                                 <!--Teléfonos -->
-                                <div class="col-md-12 mt-1 text-center" >
+                                <div class="col-md-12 mt-2 text-left" >
                                       <label class="text-secondary">Teléfonos</label>
                                        <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
                                 </div>
@@ -110,14 +110,14 @@
                                     <div class="col-md-6" >
                                                <div class="form-group error-content">
                                              <label for="voz">Voz</label>
-                                            <input type="text" class="form-control"
+                                            <input type="number" class="form-control"
                                                    name="voz"
                                                    data-vv-as="Voz"
                                                    v-model="voz"
                                                    v-validate="{required: true}"
                                                    :class="{'is-invalid': errors.has('voz')}"
                                                    id="voz"
-                                                   placeholder="Número de Teléfono" :maxlength="10">
+                                                   placeholder="Número de Teléfono" maxlength="10">
                                                     <div class="invalid-feedback" v-show="errors.has('voz')">{{ errors.first('voz') }}</div>
                                                </div>
                                         </div>
@@ -225,10 +225,7 @@
             },
             store() {
 
-                return this.$store.dispatch('cadeco/sucursal/store', {
-                    id: this.id,
-                    data:this.$data
-                })
+                return this.$store.dispatch('cadeco/sucursal/store',  this.$data )
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created',data)
