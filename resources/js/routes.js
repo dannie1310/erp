@@ -710,7 +710,7 @@ export const routes = [
                         component: require('./components/finanzas/banco/Index.vue'),
                         meta:{
                             title: 'Bancos',
-                            breadcrumb: {name: 'BANCOS', parent: 'finanzas'},
+                            breadcrumb: {name: 'GESTIÓN DE BANCOS', parent: 'finanzas'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_banco'
                         }
@@ -745,7 +745,7 @@ export const routes = [
                         component: require('./components/finanzas/banco/Edit'),
                         meta: {
                             title: 'Edición de Bancos',
-                            breadcrumb: {name: 'EDICIÓN DE BANCOS', parent: 'finanzas'},
+                            breadcrumb: {name: 'EDICIÓN DE BANCOS', parent: 'banco'},
                             middleware: [auth, context],
 
                         }
