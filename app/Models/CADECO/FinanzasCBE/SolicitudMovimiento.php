@@ -34,6 +34,8 @@ class SolicitudMovimiento extends Model
 
         self::creating(function ($solicitud) {
             $solicitud->validar();
+            $solicitud->ip = gethostbyname(getHostName());
+            $solicitud->mac_address = substr(shell_exec('getmac'), 475,17);
             $solicitud->fecha_hora = date('Y-m-d H:i:s');
             $solicitud->usuario_registra = auth()->id();
         });
