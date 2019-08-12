@@ -9,7 +9,11 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
+use App\Models\CADECO\Obra;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Repositories\Repository;
 
 class SolicitudAltaCuentaBancariaService
@@ -18,6 +22,7 @@ class SolicitudAltaCuentaBancariaService
      * @var Repository
      */
     protected $repository;
+    private $files_global;
 
     /**
      * SolicitudAltaCuentaBancariaService constructor.
@@ -31,6 +36,21 @@ class SolicitudAltaCuentaBancariaService
     public function paginate($data)
     {
         return $this->repository->paginate($data);
+    }
+
+    public function pdf($id){
+        $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
+        $obra = Context::getIdObra();
+
+        $filename = $proyectos->id.'_'.$obra.'_'.$id.'.pdf';
+
+        $path = storage_path($this->files_global . 'finanzas\solicitudes_cuentas_bancarias/'.$filename);
+
+        if(!file_exists($path)){
+            return "El archivo al cual intenta acceder no existe o no se encuentra disponible.";
+        }else{
+            return response()->file($path);
+        }
     }
 
     public function show($id)

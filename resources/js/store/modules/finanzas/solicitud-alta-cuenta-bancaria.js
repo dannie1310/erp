@@ -87,7 +87,7 @@ export default{
                         reject(error);
                     })
             });
-        },
+        }
     },
 
     getters: {
