@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-12" :disabled="cargando">
+        <div class="col-12">
             <create @created="paginate()"></create>
         </div>
         <div class="col-12">
@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza']},
+                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'], sort: 'numero_folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }

@@ -32,14 +32,7 @@ export default {
                         reject(error)
                     })
             });
-        },
-        currentFondo(state){
-            return state.currentFondo
-        },
-        meta(state){
-            return state.meta
-        },
-
+        }
     },
 
     getters: {

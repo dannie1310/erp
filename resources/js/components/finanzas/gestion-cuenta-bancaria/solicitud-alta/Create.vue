@@ -74,7 +74,7 @@
                                                     :class="{'is-invalid': errors.has('id_banco')}"
                                             >
                                                 <option value>-- Seleccione un Banco --</option>
-                                                <option v-for="banco in bancos" :value="banco.id">{{ banco.razon_social }}</option>
+                                                <option v-for="banco in bancos" :value="banco.id">{{getClave(banco)}} - {{ banco.razon_social }}</option>
                                             </select>
                                             <div class="invalid-feedback" v-show="errors.has('id_banco')">{{ errors.first('id_banco') }}</div>
                                         </div>
@@ -100,7 +100,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="tamano_cuenta">
+                            <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="cuenta" class="col-sm-2 col-form-label">Cuenta:</label>
@@ -112,7 +112,6 @@
                                                     data-vv-as="Cuenta"
                                                     v-validate="{required: true, min:9, max:18}"
                                                     class="form-control"
-                                                    v-mask="tamano_cuenta"
                                                     id="cuenta"
                                                     placeholder="Cuenta"
                                                     v-model="cuenta"
@@ -155,7 +154,7 @@
                                                     step="any"
                                                     name="sucursal"
                                                     data-vv-as="Sucursal"
-                                                    v-validate="{required: true, digits: 3}"
+                                                    v-validate="{required: true, integer: true,digits: 3}"
                                                     class="form-control"
                                                     id="sucursal"
                                                     placeholder="Sucursal"
@@ -169,22 +168,22 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="id_plaza" class="col-sm-2 col-form-label">Plaza: </label>
+                                        <label for="plaza" class="col-sm-2 col-form-label">Plaza: </label>
                                         <div class="col-sm-10">
                                             <select
                                                     type="text"
-                                                    name="id_plaza"
+                                                    name="plaza"
                                                     data-vv-as="Plaza"
                                                     v-validate="{required: true}"
                                                     class="form-control"
-                                                    id="id_plaza"
-                                                    v-model="id_plaza"
-                                                    :class="{'is-invalid': errors.has('id_plaza')}"
+                                                    id="plaza"
+                                                    v-model="plaza"
+                                                    :class="{'is-invalid': errors.has('plaza')}"
                                             >
                                                 <option value>-- Seleccione un Plaza --</option>
-                                                <option v-for="plaza in plazas" :value="plaza.id">{{ plaza.clave }} {{plaza.nombre}}</option>
+                                                <option v-for="plaza in plazas" :value="plaza">{{plaza.nombre}}</option>
                                             </select>
-                                            <div class="invalid-feedback" v-show="errors.has('id_plaza')">{{ errors.first('id_plaza') }}</div>
+                                            <div class="invalid-feedback" v-show="errors.has('plaza')">{{ errors.first('plaza') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -211,7 +210,7 @@
                         </div>
                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || cuenta =='' ">Registrar</button>
+                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || cuenta =='' || id_tipo_empresa =='' || id_empresa == ''">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -236,17 +235,19 @@
                 bandera_empresa: 0,
                 id_banco: '',
                 bancos: [],
+                banco_clave: '',
                 cuenta: '',
                 id_tipo: '',
                 tipos: {
                     1: "Interbancaria",
                     2: "Mismo Banco"
                 },
-                tamano_cuenta: '###-###-#########-#',
                 id_moneda: '',
                 monedas: [],
                 id_plaza: '',
+                plaza: '',
                 plazas: [],
+                plaza_clave: '',
                 sucursal: '',
                 observaciones: ''
             }
@@ -267,11 +268,12 @@
             getBancos(){
                 return this.$store.dispatch('cadeco/banco/index', {
                     params: {
+                        include: 'ctg_banco',
                         scope: 'bancoGlobal'
                     }
                 })
                     .then(data => {
-                        this.bancos = data;
+                        this.bancos = data.data;
                     })
             },
             getMonedas(){
@@ -283,7 +285,12 @@
                     })
             },
             getPlazas(){
-            //    aqui plazas
+                return this.$store.dispatch('seguridad/finanzas/ctg-plaza/index', {
+                    sort: 'nombre', order: 'desc'
+                })
+                    .then(data => {
+                        this.plazas = data.data;
+                    })
             },
             getEmpresa(){
                 return this.$store.dispatch('cadeco/empresa/index', {
@@ -312,15 +319,45 @@
                     .then(data => {
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');
+                    }).finally( ()=>{
+                        this.cargando = false;
                     });
             },
             validate() {
+                this.getPlaza();
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        if(this.id_tipo == 1 && this.cuenta.length < 18)
+                        {
+                            swal('¡Error!', 'La cuenta tipo interbancaria debe contar con 18 digitos.', 'error')
+                        }
+                        else if(this.id_tipo == 2 && this.cuenta.length > 9)
+                        {
+                            swal('¡Error!', 'La cuenta de mismo banco debe contar con 9 digitos.', 'error')
+                        }
+                        else if(this.id_tipo == 1 && this.cuenta.length == 18){
+                            if (this.cuenta.substring(0, 3) != this.banco_clave) {
+                                swal('¡Error!', 'La cuenta no corresponde con la clave del banco.', 'error')
+                            }
+                            else if (this.cuenta.substring(3, 6) != this.plaza_clave) {
+                                swal('¡Error!', 'La cuenta no corresponde con la clave de la plaza.', 'error')
+                            }
+                        }
+                        else {
+                            this.store()
+                        }
+
                     }
                 });
             },
+            getClave(banco){
+                this.banco_clave = banco.ctg_banco.clave_format;
+                return this.banco_clave;
+            },
+            getPlaza(){
+                this.plaza_clave = this.plaza.clave_format;
+                this.id_plaza = this.plaza.id;
+            }
         },
         watch: {
             id_tipo_empresa(value){
@@ -330,17 +367,6 @@
                     }
                     if(value == 2){
                         this.getFondoFijo();
-                    }
-                }
-            },
-            id_tipo(value){
-                if(value != ''){
-                    this.cuenta = '';
-                    if(value == 1){
-                        this.tamano_cuenta = '###-###-#########-#'
-                    }
-                    if(value == 2){
-                        this.tamano_cuenta = '####-####-#'
                     }
                 }
             }

@@ -58,8 +58,8 @@ class SolicitudAltaCuentaBancariaService
         return $this->repository->show($id);
     }
 
-    public function store(array $data){
-
+    public function store(array $data)
+    {
         $datos = [
             'id_empresa' => $data['id_empresa'],
             'id_banco' => $data['id_banco'],

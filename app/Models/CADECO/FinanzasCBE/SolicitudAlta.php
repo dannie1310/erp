@@ -28,7 +28,7 @@ class SolicitudAlta extends Solicitud
             $solicitud->id_tipo_solicitud = 1;
             $solicitud->fecha = date('Y-m-d H:i:s');
             $solicitud->usuario_registra = auth()->id();
-            $solicitud->estado = 0;
+            $solicitud->estado = 1;
         });
 
         self::created(function ($sol){

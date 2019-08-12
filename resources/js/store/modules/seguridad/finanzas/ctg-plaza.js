@@ -1,19 +1,19 @@
-const URI = '/api/SEGURIDAD_ERP/ctg_banco/';
+const URI = '/api/SEGURIDAD_ERP/ctg_plaza/';
 
 
 export default {
     namespaced: true,
     state: {
-        bancos: [],
-        currentBanco: null,
+        plazas: [],
+        currentPlaza: null,
         meta:{}
     },
     mutations:{
-        SET_BANCOS(state, data){
-            state.bancos = data;
+        SET_PLAZAS(state, data){
+            state.plazas = data;
         },
-        SET_BANCO(state,data){
-            state.currentBanco = data;
+        SET_PLAZA(state,data){
+            state.currentPlaza = data;
         },
         SET_META(state,meta){
             state.meta = data;
@@ -36,11 +36,11 @@ export default {
     },
 
     getters: {
-        bancos(state) {
-            return state.bancos;
+        plazas(state) {
+            return state.plazas;
         },
-        currentBanco(state) {
-            return state.currentBanco;
+        currentPlaza(state) {
+            return state.currentPlaza;
         }
     }
 }

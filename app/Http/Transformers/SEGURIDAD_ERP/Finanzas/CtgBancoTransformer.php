@@ -26,6 +26,7 @@ class CtgBancoTransformer extends TransformerAbstract
           'descripcion_corta'=>$model->descripcion_corta,
           'clave'=>str_pad($model->clave, 3, '0', STR_PAD_LEFT),
           'clave_h2h'=>$model->clave_h2h,
+          'clave_format' => $model->clave_format
         ];
     }
 }

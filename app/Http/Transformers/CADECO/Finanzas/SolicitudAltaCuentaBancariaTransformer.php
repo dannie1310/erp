@@ -13,7 +13,7 @@ use App\Http\Transformers\CADECO\BancoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
-use App\Http\Transformers\SEGURIDAD_ERP\CtgPlazaTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgPlazaTransformer;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use League\Fractal\TransformerAbstract;
 
