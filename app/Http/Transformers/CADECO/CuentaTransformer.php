@@ -67,4 +67,11 @@ class CuentaTransformer extends TransformerAbstract
         return null;
     }
 
+    public function includeMoneda(cuenta $model){
+        if($moneda = $model->moneda){
+            return $moneda->item($moneda, new MonedaTransformer);
+        }
+        return null;
+    }
+
 }
