@@ -31,7 +31,7 @@
                 columns: [
                     { title: 'numero', field:'cuenta',sortable: false},
                     { title: 'Apertura', field: 'fecha', sortable: false},
-                    { title: 'Saldo Inicial', field:'saldo', sortable: false},
+                    { title: 'Saldo Inicial', field:'saldo',tdClass: 'money', thClass: 'th_money'},
                     { title: 'Moneda', field:'moneda', sortable: false},
                     { title: 'Chequera', field:'chequera', sortable: false},
                     { title: 'Tipo', field:'tipo', sortable: false},
@@ -67,7 +67,7 @@
                         scope: 'bancos',
                         sort: 'id_empresa',
                         order: 'DESC',
-                        include:['cuentas']
+                        include:'cuentas.moneda,cuentas.tiposCuentasObra',
                     }
                 }).then(data => {
                     this.cuentas = data.cuentas.data;
@@ -83,11 +83,12 @@
                     self.$data.data.push({
                         index: (i + 1),
                         cuenta: cuenta.numero,
-                        saldo: cuenta.numero,
-                        moneda: cuenta.numero,
-                        chequera: cuenta.numero,
-                        tipo: cuenta.numero,
-                        abreviatura: cuenta.numero,
+                        fecha: cuenta.fecha,
+                        saldo: cuenta.saldo,
+                        moneda: cuenta.moneda.nombre + ' (' + cuenta.moneda.abreviatura + ')',
+                        chequera: cuenta.chequera == 0?'N':'S',
+                        tipo: cuenta.tiposCuentasObra.descripcion,
+                        abreviatura: cuenta.abreviatura,
                         // buttons: $.extend({}, {
                         //     show: true,
                         //     id: sucursal.id
@@ -101,6 +102,15 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    .money
+    {
+        text-align: right;
+    }
+    .th_money
+    {
+        width: 150px;
+        max-width: 150px;
+        min-width: 100px;
+    }
 </style>

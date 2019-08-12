@@ -109,14 +109,12 @@
                                         <div class="form-group error-content">
                                             <label for="abreviatura">Tipo de Cuenta:</label>
                                             <button type="button" @click="tipoCuenta(1)"
-                                                    :class="{'btn btn-secondary': id_tipo_cuentas_obra == 2,'btn btn-primary': id_tipo_cuentas_obra == 1}">Pagadora</button>
+                                                    :class="{'btn btn-secondary': id_tipo_cuentas_obra != 1,'btn btn-primary': id_tipo_cuentas_obra == 1}">Pagadora</button>
                                             <button type="button" @click="tipoCuenta(2)"
-                                                    :class="{'btn btn-secondary': id_tipo_cuentas_obra == 1,'btn btn-primary': id_tipo_cuentas_obra == 2}">Concentradora</button>
+                                                    :class="{'btn btn-secondary': id_tipo_cuentas_obra != 2,'btn btn-primary': id_tipo_cuentas_obra == 2}">Concentradora</button>
                                         </div>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
                        <div class="modal-footer">
@@ -178,6 +176,7 @@
                 this.id_tipo_cuentas_obra = tipo;
             },
             validate() {
+                console.log(this.$parent.data);
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.store()
