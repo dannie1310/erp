@@ -46,11 +46,9 @@
                                                        name="direccion"
                                                        data-vv-as="Dirección"
                                                        v-model="direccion"
-                                                       v-validate="{required: true}"
-                                                       :class="{'is-invalid': errors.has('direccion')}"
                                                        id="direccion"
                                                           placeholder="Dirección de la Sucursal"></textarea>
-                                                        <div class="invalid-feedback" v-show="errors.has('direccion')">{{ errors.first('direccion') }}</div>
+
                                                    </div>
                                         </div>
                                 <!--Ciudad-->
@@ -61,11 +59,9 @@
                                                    name="ciudad"
                                                    data-vv-as="Descripción"
                                                    v-model="ciudad"
-                                                   v-validate="{required: true}"
-                                                   :class="{'is-invalid': errors.has('ciudad')}"
                                                    id="ciudad"
                                                    placeholder="Ciudad">
-                                                    <div class="invalid-feedback" v-show="errors.has('ciudad')">{{ errors.first('ciudad') }}</div>
+
                                                </div>
                                         </div>
                                 <!--Código Postal-->
@@ -76,11 +72,8 @@
                                                    name="codigo_postal"
                                                    data-vv-as="Descripción"
                                                    v-model="codigo_postal"
-                                                   v-validate="{required: true}"
-                                                   :class="{'is-invalid': errors.has('codigo_postal')}"
                                                    id="codigo_postal"
                                                    placeholder="Código Postal" :maxlength="5">
-                                                    <div class="invalid-feedback" v-show="errors.has('codigo_postal')">{{ errors.first('codigo_postal') }}</div>
                                                </div>
                                         </div>
 
@@ -92,11 +85,8 @@
                                                    name="estado"
                                                    data-vv-as="Estado"
                                                    v-model="estado"
-                                                   v-validate="{required: true}"
-                                                   :class="{'is-invalid': errors.has('estado')}"
                                                    id="estado"
                                                    placeholder="Estado" >
-                                                    <div class="invalid-feedback" v-show="errors.has('estado')">{{ errors.first('estado') }}</div>
                                                </div>
                                         </div>
 
@@ -114,11 +104,8 @@
                                                    name="voz"
                                                    data-vv-as="Voz"
                                                    v-model="voz"
-                                                   v-validate="{required: true}"
-                                                   :class="{'is-invalid': errors.has('voz')}"
                                                    id="voz"
                                                    placeholder="Número de Teléfono" maxlength="10">
-                                                    <div class="invalid-feedback" v-show="errors.has('voz')">{{ errors.first('voz') }}</div>
                                                </div>
                                         </div>
                                 <!--Fax-->
@@ -129,11 +116,9 @@
                                                    name="fax"
                                                    data-vv-as="Fax"
                                                    v-model="fax"
-                                                   v-validate="{required: true}"
-                                                   :class="{'is-invalid': errors.has('fax')}"
                                                    id="voz"
                                                    placeholder="Número de Fax" >
-                                                    <div class="invalid-feedback" v-show="errors.has('fax')">{{ errors.first('fax') }}</div>
+
                                                </div>
                                         </div>
                                 <!--Contacto-->
@@ -144,11 +129,8 @@
                                                    name="contacto"
                                                    data-vv-as="Contacto"
                                                    v-model="contacto"
-                                                   v-validate="{required: true}"
-                                                   :class="{'is-invalid': errors.has('contacto')}"
                                                    id="contacto"
                                                    placeholder="Nombre del Responsble" >
-                                                    <div class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
                                                </div>
                                         </div>
                                 <!--Check Central-->
