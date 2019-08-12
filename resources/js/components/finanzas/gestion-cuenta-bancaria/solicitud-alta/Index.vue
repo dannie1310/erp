@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza']},
+                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'], sort: 'numero_folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }

@@ -35,9 +35,9 @@ class StoreSolicitudAltaCuentaBancariaRequest extends FormRequest
             'id_empresa' => ['required', 'exists:cadeco.empresas,id_empresa'],
             'id_banco' => ['required', 'exists:cadeco.empresas,id_empresa'],
             'id_tipo' => ['required', 'integer'],
-            'cuenta' => ['required'],
+            'cuenta' => ['required', 'numeric'],
             'id_moneda' => ['required', 'exists:cadeco.monedas,id_moneda'],
-            'sucursal' => ['required', 'digits:3'],
+            'sucursal' => ['required', 'integer', 'digits:3'],
             'id_plaza' => ['required', 'exists:seguridad.Finanzas.ctg_plazas,id'],
             'observaciones' => ['required', 'string'],
         ];

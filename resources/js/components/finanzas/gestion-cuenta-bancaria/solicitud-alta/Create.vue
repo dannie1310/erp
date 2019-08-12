@@ -100,7 +100,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="tamano_cuenta">
+                            <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="cuenta" class="col-sm-2 col-form-label">Cuenta:</label>
@@ -112,7 +112,6 @@
                                                     data-vv-as="Cuenta"
                                                     v-validate="{required: true, min:9, max:18}"
                                                     class="form-control"
-                                                    v-mask="tamano_cuenta"
                                                     id="cuenta"
                                                     placeholder="Cuenta"
                                                     v-model="cuenta"
@@ -155,7 +154,7 @@
                                                     step="any"
                                                     name="sucursal"
                                                     data-vv-as="Sucursal"
-                                                    v-validate="{required: true, digits: 3}"
+                                                    v-validate="{required: true, integer: true,digits: 3}"
                                                     class="form-control"
                                                     id="sucursal"
                                                     placeholder="Sucursal"
@@ -242,7 +241,6 @@
                     1: "Interbancaria",
                     2: "Mismo Banco"
                 },
-                tamano_cuenta: '###-###-#########-#',
                 id_moneda: '',
                 monedas: [],
                 id_plaza: '',
@@ -317,12 +315,24 @@
                     .then(data => {
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');
+                    }).finally( ()=>{
+                        this.cargando = false;
                     });
             },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        if(this.id_tipo == 1 && this.cuenta.length < 18)
+                        {
+                            swal('¡Error!', 'La cuenta tipo interbancaria debe contar con 18 digitos.', 'error')
+                        }
+                        else if(this.id_tipo == 2 && this.cuenta.length > 9)
+                        {
+                            swal('¡Error!', 'La cuenta de mismo banco debe contar con 9 digitos.', 'error')
+                        }
+                        else {
+                            this.store()
+                        }
                     }
                 });
             },
@@ -335,17 +345,6 @@
                     }
                     if(value == 2){
                         this.getFondoFijo();
-                    }
-                }
-            },
-            id_tipo(value){
-                if(value != ''){
-                    this.cuenta = '';
-                    if(value == 1){
-                        this.tamano_cuenta = '###-###-#########-#'
-                    }
-                    if(value == 2){
-                        this.tamano_cuenta = '####-####-#'
                     }
                 }
             }
