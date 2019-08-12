@@ -214,6 +214,15 @@
             init() {
                 this.id_banco = this.id;
                 $(this.$refs.modal).modal('show');
+                this.descripcion = '';
+                this.direccion = '';
+                this.ciudad = '';
+                this.codigo_postal = '';
+                this.estado = '';
+                this.voz = '';
+                this.fax ='';
+                this.contacto = '';
+                this.checkCentral = '';
                 this.$validator.reset()
             },
             validate() {
