@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <create v-bind:id="id"></create>
+            <create v-bind:id="id" @created="find()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -29,13 +29,14 @@
             return{
                 HeaderSettings: false,
                 columns: [
-                    { title: 'numero', field:'cuenta',sortable: false},
+                    { title: 'Número', field:'cuenta',sortable: false},
                     { title: 'Apertura', field: 'fecha', sortable: false},
                     { title: 'Saldo Inicial', field:'saldo',tdClass: 'money', thClass: 'th_money'},
                     { title: 'Moneda', field:'moneda', sortable: false},
                     { title: 'Chequera', field:'chequera', sortable: false},
                     { title: 'Tipo', field:'tipo', sortable: false},
                     { title: 'Abreviatura', field:'abreviatura', sortable: false},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
 
                 ],
                 data: [],
@@ -53,7 +54,6 @@
 
             this.find()
                 .finally(() => {
-                    this.getData();
                     this.$Progress.finish();
                 })
         },
@@ -73,6 +73,7 @@
                     this.cuentas = data.cuentas.data;
 
                 }).finally(()=>{
+                    this.getData();
                     this.cargando=false;
                 })
             },
@@ -86,13 +87,13 @@
                         fecha: cuenta.fecha,
                         saldo: cuenta.saldo,
                         moneda: cuenta.moneda.nombre + ' (' + cuenta.moneda.abreviatura + ')',
-                        chequera: cuenta.chequera == 0?'N':'S',
+                        chequera: cuenta.chequera === 0?'N':'S',
                         tipo: cuenta.tiposCuentasObra.descripcion,
                         abreviatura: cuenta.abreviatura,
-                        // buttons: $.extend({}, {
-                        //     show: true,
-                        //     id: sucursal.id
-                        // })
+                        buttons: $.extend({}, {
+                            show: true,
+                            id: cuenta.id
+                        })
                     })
                 })
 

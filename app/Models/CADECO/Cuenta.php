@@ -22,6 +22,32 @@ class Cuenta extends Model
         'numero',
         'empresa.razon_social'
     ];
+    protected $fillable = [
+        'id_empresa',
+        'id_moneda',
+        'numero',
+        'saldo_inicial',
+        'fecha_inicial',
+        'chequera',
+        'abreviatura',
+        'id_tipo_cuentas_obra'
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($model) {
+            if(!cuenta::query()->where('numero', '=',  $model->numero)->first()) {
+                $model->saldo_real = $model->saldo_inicial;
+                $model->fecha_real = $model->fecha_inicial;
+                $model->fecha_estado = $model->fecha_inicial;
+                $model->estado = 0;
+            }else {
+                throw New \Exception('Ya existe un registro con el mismo número de cuenta.');
+            }
+        });
+    }
 
     public $timestamps = false;
 

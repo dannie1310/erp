@@ -23,7 +23,7 @@
                                                    name="numero"
                                                    data-vv-as="Número"
                                                    v-model="numero"
-                                                   v-validate="{required: true, max:18}"
+                                                   v-validate="{required: true, min:9, max:18}"
                                                    :class="{'is-invalid': errors.has('numero')}"
                                                    id="numero"
                                                    placeholder="Número de Cuenta">
@@ -75,7 +75,7 @@
                                                name="saldo_inicial"
                                                data-vv-as="Saldo Inicial"
                                                v-model="saldo_inicial"
-                                               v-validate="{required: true, max_value: 999999999999999, decimal:2}"
+                                               v-validate="{required: true, min_value:0, max_value: 999999999999999, decimal:4}"
                                                :class="{'is-invalid': errors.has('saldo_inicial')}"
                                                id="saldo_inicial">
                                         <div class="invalid-feedback" v-show="errors.has('saldo_inicial')">{{ errors.first('saldo_inicial') }}</div>
@@ -100,7 +100,7 @@
                                 <div class="col-md-6">
                                     <div class="form-check">
                                         <br>
-                                        <input type="checkbox" class="form-check-imput" id="chequera">
+                                        <input type="checkbox" class="form-check-imput" id="chequera" v-model="chk_chequera">
                                         <label class="form-check-label" for="chequera"><b>   Manejo de Chequera </b></label>
                                     </div>
                                 </div>
@@ -144,7 +144,8 @@
                 fecha:'',
                 fecha_inicial:'',
                 saldo_inicial:0,
-                chequera:'',
+                chequera:0,
+                chk_chequera:false,
                 abreviatura:'',
                 id_tipo_cuentas_obra:1,
                 monedas:[]
@@ -154,7 +155,6 @@
             this.getMonedas();
         },
         methods: {
-
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
             },
@@ -172,11 +172,29 @@
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset();
             },
+            store() {
+                let datos = {
+                    'id_empresa':this.id,
+                    'id_moneda':this.$data.id_moneda,
+                    'numero':this.$data.numero,
+                    'saldo_inicial':this.$data.saldo_inicial,
+                    'fecha_inicial':this.$data.fecha_inicial,
+                    'chequera':this.$data.chequera,
+                    'abreviatura':this.$data.abreviatura,
+                    'id_tipo_cuentas_obra':this.$data.id_tipo_cuentas_obra
+                };
+                return this.$store.dispatch('cadeco/cuenta/store',  datos)
+                    .then((data) => {
+                        // this.$parent.data.push(data);
+                        this.$emit('created', data);
+                        $(this.$refs.modal).modal('hide');
+                        // console.log(data);
+                    })
+            },
             tipoCuenta(tipo) {
                 this.id_tipo_cuentas_obra = tipo;
             },
             validate() {
-                console.log(this.$parent.data);
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.store()
@@ -185,6 +203,9 @@
             },
         },
         watch:{
+            chk_chequera(value) {
+                this.chequera = value?1:0;
+            },
             fecha(value) {
                 var d = 0;
                 var m = 0;
@@ -201,7 +222,7 @@
                     if (m < 10) {
                         m = '0' + m;
                     }
-                    this.fecha_inicial = y+'-'+ m+'-'+d;
+                    this.fecha_inicial = y+'-'+ m+'-'+d+' 00:00:00.000';
                 }
             },
         }
