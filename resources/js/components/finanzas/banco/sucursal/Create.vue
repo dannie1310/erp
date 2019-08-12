@@ -110,14 +110,14 @@
                                     <div class="col-md-6" >
                                                <div class="form-group error-content">
                                              <label for="voz">Voz</label>
-                                            <input type="number" class="form-control"
+                                            <input type="text" class="form-control"
                                                    name="voz"
                                                    data-vv-as="Voz"
                                                    v-model="voz"
                                                    v-validate="{required: true}"
                                                    :class="{'is-invalid': errors.has('voz')}"
                                                    id="voz"
-                                                   placeholder="Número de Teléfono" maxlength="10">
+                                                   placeholder="Número de Teléfono" >
                                                     <div class="invalid-feedback" v-show="errors.has('voz')">{{ errors.first('voz') }}</div>
                                                </div>
                                         </div>
