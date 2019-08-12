@@ -181,7 +181,7 @@
                                                     :class="{'is-invalid': errors.has('plaza')}"
                                             >
                                                 <option value>-- Seleccione un Plaza --</option>
-                                                <option v-for="plaza in plazas" :value="plaza">{{plaza.nombre}}</option>
+                                                <option v-for="plaza in plazas" :value="plaza">({{plaza.clave_format}}) {{plaza.nombre}}</option>
                                             </select>
                                             <div class="invalid-feedback" v-show="errors.has('plaza')">{{ errors.first('plaza') }}</div>
                                         </div>
@@ -207,6 +207,24 @@
                                     </div>
                                 </div>
                              </div>
+                            <div class="row">
+                                 <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="archivo" class="col-sm-2 col-form-label">Cargar Archivo de Soporte: </label>
+                                        <div class="col-sm-10">
+                                            <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                                                   row="3"
+                                                   v-validate="{ ext: ['pdf']}"
+                                                   name="archivo"
+                                                   data-vv-as="Archivo"
+                                                   ref="archivo"
+                                                   :class="{'is-invalid': errors.has('archivo')}"
+                                            >
+                                            <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (pdf)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -249,7 +267,8 @@
                 plazas: [],
                 plaza_clave: '',
                 sucursal: '',
-                observaciones: ''
+                observaciones: '',
+                archivo: null
             }
         },
         mounted(){
@@ -262,10 +281,26 @@
         },
         methods: {
             init() {
-                this.cargando = true;
+                // this.cargando = true;
                 $(this.$refs.modal).modal('show');
+                this.id_tipo_empresa = '';
+                this.id_empresa = '';
+                this.empresas = [];
+                this.bandera_empresa = 0;
+                this.id_banco = '';
+                this.banco_clave = '';
+                this.cuenta = '';
+                this.id_tipo = '';
+                this.id_moneda = '';
+                this.id_plaza = '';
+                this.plaza = '';
+                this.plaza_clave = '';
+                this.sucursal = '';
+                this.observaciones = '';
+                this.archivo = null;
             },
             getBancos(){
+                this.bancos = [];
                 return this.$store.dispatch('cadeco/banco/index', {
                     params: {
                         include: 'ctg_banco',
@@ -277,6 +312,7 @@
                     })
             },
             getMonedas(){
+                this.monedas = [];
                 return this.$store.dispatch('cadeco/moneda/index', {
 
                 })
@@ -285,8 +321,11 @@
                     })
             },
             getPlazas(){
+                this.plazas = [];
                 return this.$store.dispatch('seguridad/finanzas/ctg-plaza/index', {
-                    sort: 'nombre', order: 'desc'
+                    params: {
+                        sort: 'nombre', order: 'asc'
+                    }
                 })
                     .then(data => {
                         this.plazas = data.data;
@@ -326,7 +365,6 @@
             validate() {
                 this.getPlaza();
                 this.$validator.validate().then(result => {
-                    console.log(this.cuenta.length);
                     if (result) {
                         if (this.id_tipo == 1 && this.cuenta.length < 18) {
                             swal('¡Error!', 'La cuenta tipo interbancaria debe contar con 18 digitos.', 'error')
@@ -352,7 +390,21 @@
             getPlaza(){
                 this.plaza_clave = this.plaza.clave_format;
                 this.id_plaza = this.plaza.id;
-            }
+            },
+            onFileChange(e){
+                this.archivo = null;
+                var files = e.target.files || e.dataTransfer.files;
+                this.createImage(files[0], 1);
+            },
+            createImage(file) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                        vm.archivo = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
         },
         watch: {
             id_tipo_empresa(value){
