@@ -52,7 +52,9 @@ class SolicitudAltaCuentaBancariaService
             'observaciones' => $data['observaciones']
         ];
         $registro = $this->repository->create($datos);
-        Storage::disk('alta_cuenta_bancaria')->put($registro->id.'_'.$registro->numero_folio.'_'.Context::getDatabase().'_alta_cuenta_bancaria'.'.pdf', fopen($data['archivo'], 'r'));
+        if($data['archivo'] != null) {
+            Storage::disk('alta_cuenta_bancaria')->put($registro->id . '_' . $registro->numero_folio . '_' . Context::getDatabase() . '_alta_cuenta_bancaria' . '.pdf', fopen($data['archivo'], 'r'));
+        }
         return $registro;
     }
 }

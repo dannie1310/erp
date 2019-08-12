@@ -281,7 +281,7 @@
         },
         methods: {
             init() {
-                // this.cargando = true;
+                this.cargando = true;
                 $(this.$refs.modal).modal('show');
                 this.id_tipo_empresa = '';
                 this.id_empresa = '';
@@ -296,6 +296,8 @@
                 this.plaza = '';
                 this.plaza_clave = '';
                 this.sucursal = '';
+                this.$validator.reset();
+                this.cargando = false;
                 this.observaciones = '';
                 this.archivo = null;
             },
