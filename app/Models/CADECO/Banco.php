@@ -51,6 +51,6 @@ class Banco extends Empresa
 
     public function scopeBancoGlobal($query)
     {
-        return $query->whereHas('bancoGeneral');
+        return $query->where('id_ctg_bancos', '!=', null);
     }
 }

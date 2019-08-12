@@ -24,7 +24,7 @@ class BancoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
        'complemento',
-        'ctgBanco',
+        'ctg_banco',
         'usuario',
     ];
 

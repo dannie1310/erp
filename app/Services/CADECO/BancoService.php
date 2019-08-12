@@ -60,4 +60,8 @@ class BancoService
         }
     }
 
+    public function index()
+    {
+        return $this->repository->all();
+    }
 }

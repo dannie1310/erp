@@ -6,7 +6,7 @@
  * Time: 12:00 PM
  */
 
-namespace App\Http\Transformers\SEGURIDAD_ERP;
+namespace App\Http\Transformers\SEGURIDAD_ERP\Finanzas;
 
 
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgPlaza;
@@ -36,6 +36,7 @@ class CtgPlazaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'clave' => $model->clave,
+            'clave_format' => $model->clave_format,
             'nombre' => $model->nombre
         ];
     }

@@ -13,7 +13,7 @@ use App\Http\Transformers\CADECO\BancoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
-use App\Http\Transformers\SEGURIDAD_ERP\CtgPlazaTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgPlazaTransformer;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use League\Fractal\TransformerAbstract;
 
@@ -51,7 +51,13 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
             'sucursal' => $model->sucursal,
             'tipo_cuenta' => $model->tipo,
             'fecha' => $model->fecha,
-            'observaciones' => $model->observaciones
+            'observaciones' => $model->observaciones,
+            'estado' => $model->estatus,
+            'fecha_format' => $model->fecha_format,
+            'estado' => $model->estatus,
+            'folio' => $model->numero_folio,
+            'numero_folio_format_orden' => $model->numero_folio_format_orden,
+            'sucursal_format' => $model->sucursal_format
         ];
     }
 
