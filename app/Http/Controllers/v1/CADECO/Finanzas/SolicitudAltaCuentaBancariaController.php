@@ -59,7 +59,7 @@ class SolicitudAltaCuentaBancariaController extends Controller
     }
 
     public function pdf($id){
-
+        return $this->service->pdf($id);
     }
 
 }
