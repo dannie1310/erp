@@ -59,6 +59,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\CuentaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\CuentaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\CuentaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\CuentaController@store');
 
         });
 
@@ -98,6 +99,17 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
             $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
         });
+
+        // SUCURSAL
+        $api->group(['prefix' => 'sucursal'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\SucursalController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\SucursalController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\SucursalController@store');
+        });
+
+
+
     });
 
     /**
