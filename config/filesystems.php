@@ -92,7 +92,7 @@ return [
         ],
         'alta_cuenta_bancaria' =>[
             'driver' => 'local',
-            'root' => storage_path(env('SOPORTE_SOLICITUD_ALTA_CUENTA_BANCARIA')),
+            'root' => storage_path(env('STORAGE_SOPORTE_SOLICITUD_ALTA_CUENTA_BANCARIA')),
         ],
 
     ],
