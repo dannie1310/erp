@@ -47,6 +47,8 @@ class CuentaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:registrar_cuenta_corriente')->only(['store']);
+        $this->middleware('permiso:consultar_cuenta_corriente')->only(['paginate','index','show']);
 
         $this->fractal = $fractal;
         $this->service = $service;
