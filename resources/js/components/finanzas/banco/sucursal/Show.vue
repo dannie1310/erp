@@ -36,7 +36,7 @@
                                 <!--Ciudad-->
                                      <div class="col-md-12" v-if="sucursal">
                                                  <div class="form-group">
-                                                        <label><b>Dirección: </b></label>
+                                                        <label><b>Ciudad: </b></label>
                                                      {{ sucursal.ciudad }}
                                                     </div>
                                            </div>

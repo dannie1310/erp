@@ -12,5 +12,5 @@ export const es = {
     ',': ',',
 
     /* PageSizeSelect.vue */
-    'items / page': 'elementos / pagina'
+    'items / page': 'elementos / página'
 }
