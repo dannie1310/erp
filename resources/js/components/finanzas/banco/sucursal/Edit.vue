@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" class="btn btn-sm btn-outline-info" :disabled="cargando">
+        <button @click="find(id)" v-if="$root.can('editar_sucursal_banco')"class="btn btn-sm btn-outline-info" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-pencil" v-else></i>
         </button>
