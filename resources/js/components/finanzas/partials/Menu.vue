@@ -33,7 +33,7 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_pagos')">
+                    <li class="nav-item" v-if="$root.can('consular_solicitud_alta_cuenta_bancaria_empresa')">
                         <router-link :to="{name: 'solicitud-alta'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-alta'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Solicitud de Alta</p>
