@@ -36,6 +36,44 @@ export default{
                     })
             });
         },
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Solicitud de Alta de Cuenta Bancaria",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Solicitud de alta registrada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
 
         find(context, payload) {
             return new Promise((resolve, reject) => {
@@ -53,21 +91,42 @@ export default{
 
         autorizar(context, payload) {
             return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + 'autorizar/'+payload.id, { params: payload.params })
-                    .then(r => r.data)
-                    .then(data => {
-                        swal("Solicitud de alta de cuenta bancaria autorizada correctamente", {
-                            icon: "success",
-                            timer: 1500,
-                            buttons: false
-                        }).then(() => {
-                            resolve(data);
-                        })
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
+                swal({
+                    title: "Solicitud de Alta de Cuenta Bancaria",
+                    text: "¿Estás seguro/a de autorizar la solicitud de alta de cuenta bancaria?",
+                    icon: "info",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Autorizar',
+                            closeModal: false,
+                        }
+                    }
+                }) .then((value) => {
+                    if (value) {
+                        axios
+                            .patch(URI + 'autorizar/'+payload.id, payload.data, payload.config)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("La autorizacion ha sido aplicada exitosamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error =>  {
+                                reject(error);
+                            });
+                    } else {
+                        reject();
+                    }
+                });
             });
         },
     },

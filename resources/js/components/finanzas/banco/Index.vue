@@ -18,34 +18,31 @@
         <!-- /.col -->
     </div>
 </template>
-
 <script>
-    import Create from "./Create";
+
+  import Create from "./Create";
     export default {
-        name: "solicitud-alta-index",
+        name: "banco-index",
         components: {Create},
-        data() {
-            return {
+        data(){
+            return{
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio', sortable: false },
-                    { title: 'Fecha', field: 'fecha', sortable: false },
-                    { title: 'Beneficiario', field: 'empresa', sortable: false},
-                    { title: 'Tipo Beneficiaro', field: 'tipo_empresa'},
-                    { title: 'Banco', field: 'banco', sortable: false},
-                    { title: 'Cuenta/CLABE', field: 'cuenta', sortable: false },
-                    { title: 'Estatus', field: 'estatus'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    { title: '#', field:'index',sortable: false},
+                    { title: 'Razón Social', field: 'razon_social',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Nombre Corto', field: 'nombre_corto',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Descripción Corta', field: 'descripcion_corta',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'], sort: 'numero_folio', order: 'desc'},
-                estado: "",
+                query: {
+                    sort: 'id_empresa',  order: 'desc', include: ['ctgBanco']
+                },
                 cargando: false
+
             }
         },
-
         mounted() {
             this.$Progress.start();
             this.paginate()
@@ -53,60 +50,54 @@
                     this.$Progress.finish();
                 })
         },
-
         methods: {
-            paginate() {
-                this.cargando = true;
-                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/paginate', { params: this.query})
-                    .then(data => {
-                        this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTAS', data.data);
-                        this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_META', data.meta);
+            paginate(){
+                this.cargando=true;
+                return this.$store.dispatch('cadeco/banco/paginate', {params: this.query})
+                    .then(data=>{
+                        this.$store.commit('cadeco/banco/SET_BANCOS', data.data);
+                        this.$store.commit('cadeco/banco/SET_META',data.meta)
                     })
-                    .finally(() => {
-                        this.cargando = false;
+                    .finally(()=>{
+                        this.cargando=false;
                     })
+
             }
         },
         computed: {
-            cuentas(){
-                return this.$store.getters['finanzas/solicitud-alta-cuenta-bancaria/cuentas'];
+            bancos(){
+                return this.$store.getters['cadeco/banco/bancos'];
             },
             meta(){
-                return this.$store.getters['finanzas/solicitud-alta-cuenta-bancaria/meta'];
+                return this.$store.getters['cadeco/banco/meta']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            cuentas: {
-                handler(cuentas) {
+            bancos: {
+                handler(bancos) {
                     let self = this
                     self.$data.data = []
-                    cuentas.forEach(function (cuenta, i) {
+                    bancos.forEach(function (banco, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: cuenta.numero_folio_format_orden,
-                            id: cuenta.id,
-                            fecha: cuenta.fecha_format,
-                            empresa: cuenta.empresa.razon_social,
-                            tipo_empresa: cuenta.empresa.tipo_empresa,
-                            banco: cuenta.banco.razon_social,
-                            cuenta: cuenta.cuenta,
-                            estatus: cuenta.estatus,
+                            razon_social: banco.razon_social,
+                            descripcion_corta: banco.ctgBanco.descripcion_corta?banco.ctgBanco.descripcion_corta:'--',
+                            nombre_corto: banco.ctgBanco.nombre_corto?banco.ctgBanco.nombre_corto:'--',
                             buttons: $.extend({}, {
                                 show: true,
-                                autorizar: self.$root.can('autorizar_solicitud_alta_cuenta_bancaria_empresa') ? true : false,
-                                id: cuenta.id,
-                                estado: cuenta.estado
+                                // edit: true,
+                                id: banco.id
                             })
-
                         })
+
                     });
+
                 },
                 deep: true
             },
-
             meta: {
                 handler(meta) {
                     let total = meta.pagination.total
@@ -137,13 +128,7 @@
                     '-webkit-filter': val ? 'blur(2px)' : '',
                     'pointer-events': val ? 'none' : ''
                 });
-            }
-        }
+             }
+        },
     }
 </script>
-<style>
-    .money
-    {
-        text-align: right;
-    }
-</style>

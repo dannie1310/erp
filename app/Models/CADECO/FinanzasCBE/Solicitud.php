@@ -11,6 +11,7 @@ namespace App\Models\CADECO\FinanzasCBE;
 
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Moneda;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgPlaza;
@@ -20,6 +21,23 @@ class Solicitud extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'FinanzasCBE.solicitudes';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_empresa',
+        'id_banco',
+        'numero_folio',
+        'id_tipo_solicitud',
+        'id_moneda',
+        'cuenta_clabe',
+        'id_plaza',
+        'sucursal',
+        'tipo_cuenta',
+        'fecha',
+        'observaciones',
+        'usuario_registra',
+        'estado'
+    ];
 
     public function tipoSolicitud()
     {

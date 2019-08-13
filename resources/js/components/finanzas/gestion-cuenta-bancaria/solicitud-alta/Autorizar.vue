@@ -1,7 +1,7 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-            <i class="fa fa-eye"></i>
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-success" title="Autorizar">
+            <i class="fa fa-check"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -66,6 +66,7 @@
                     </div>
                     <div class="modal-footer">
                         <button @click="init(id)" type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i>  Ver Archivo Soporte</button>
+                        <button @click="autorizar(id)" type="button" class="btn btn-success"><i class="fa fa-file-pdf-o"></i>  Autorizar</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
@@ -92,7 +93,7 @@
 
 <script>
     export default {
-        name: "solicitud-alta-show",
+        name: "solicitud-alta-autorizar",
         props: ['id'],
         methods: {
             find(id) {
@@ -113,6 +114,16 @@
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE ALTA DE CUENTA BANCARIA</iframe>');
                 $(this.$refs.modalPDF).modal('show');
             },
+
+            autorizar(id) {
+                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/autorizar', {
+                    id: id,
+                    data: [this.solicitudAlta],
+                    config: {
+                        params: { _method: 'PATCH'}
+                    }
+                })
+            }
 
         },
         computed: {

@@ -161,7 +161,7 @@
                 this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/find', {
                     id: this.id,
-                    params: {include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa', 'partidas.cuentaAbono.banco', 'partidas.transaccion', 'usuario_cancelo']}
+                    params: {include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa', 'partidas.cuentaAbono.banco.ctgBanco', 'partidas.transaccion', 'usuario_cancelo']}
                 }).then(data => {
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);
                 }).finally(() => {
@@ -181,9 +181,8 @@
             },
 
             getCuentaAbono(cuenta){
-                console.log(cuenta);
-                if(cuenta.banco && cuenta.banco.complemento){
-                    return cuenta.banco.complemento.nombre_corto+" "+ cuenta.cuenta;
+                if(cuenta.banco && cuenta.banco.ctgBanco){
+                    return cuenta.banco.ctgBanco.nombre_corto+" "+ cuenta.cuenta;
                 }
                 return  "----- "+ cuenta.cuenta;
             }
