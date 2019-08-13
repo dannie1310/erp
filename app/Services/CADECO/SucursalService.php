@@ -73,21 +73,25 @@ class SucursalService
 
     public function update(array $data, $id)
     {
-//        dd($data);
-//        $central='S';
+
+        if($data["checkCentral"]==true){
+            $central='S';
+        }else{
+            $central='N';
+        }
+
         $datos = [
-            'id_sucursal'=> $data['id'],
+            'id_sucursal'=> $id,
             'descripcion' => $data['descripcion'],
             'direccion' => $data['direccion'],
             'ciudad' => $data['ciudad'],
             'codigo_postal' => $data['codigo_postal'],
             'estado' => $data['estado'],
-            'telefono'=> $data['voz'],
+            'telefono'=> $data['telefono'],
             'fax'=> $data['fax'],
             'contacto'=>$data['contacto'],
             'casa_central'=>$central,
         ];
-//        dd($datos);
 
         return $this->repository->update($datos, $id);
     }

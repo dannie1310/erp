@@ -14,7 +14,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                   <form role="form" @submit.prevent="validate">
+                   <form role="form" @submit.prevent="update">
                     <div class="modal-body">
                          <div class="row">
                                 <!-- Descripción -->
@@ -26,7 +26,7 @@
                                                data-vv-as="Descripción"
                                                @input="updateAttribute"
                                                v-validate="{required: true}"
-                                               :value="sucursal.descripcion"
+                                               v-model="sucursal.descripcion"
                                                :class="{'is-invalid': errors.has('descripcion')}"
                                                id="descripcion"
                                                placeholder="Descripción de la Sucursal">
@@ -45,7 +45,7 @@
                                                 <textarea row="7" class="form-control"
                                                           name="direccion"
                                                           data-vv-as="Dirección"
-                                                          :value="sucursal.direccion"
+                                                          v-model="sucursal.direccion"
                                                           @input="updateAttribute"
                                                           id="direccion"
                                                           placeholder="Dirección de la Sucursal"></textarea>
@@ -59,7 +59,7 @@
                                             <input type="text" class="form-control"
                                                    name="ciudad"
                                                    data-vv-as="Descripción"
-                                                   :value="sucursal.ciudad"
+                                                   v-model="sucursal.ciudad"
                                                    @input="updateAttribute"
                                                    id="ciudad"
                                                    placeholder="Ciudad">
@@ -73,7 +73,7 @@
                                             <input type="text" class="form-control"
                                                    name="codigo_postal"
                                                    data-vv-as="Descripción"
-                                                   :value="sucursal.codigo_postal"
+                                                   v-model="sucursal.codigo_postal"
                                                    @input="updateAttribute"
                                                    id="codigo_postal"
                                                    placeholder="Código Postal" :maxlength="5">
@@ -86,7 +86,7 @@
                                             <input type="text" class="form-control"
                                                    name="estado"
                                                    data-vv-as="Estado"
-                                                   :value="sucursal.estado"
+                                                   v-model="sucursal.estado"
                                                    @input="updateAttribute"
                                                    id="estado"
                                                    placeholder="Estado" >
@@ -106,7 +106,7 @@
                                             <input type="number" class="form-control"
                                                    name="voz"
                                                    data-vv-as="Voz"
-                                                   :value="sucursal.voz"
+                                                   v-model="sucursal.voz"
                                                    @input="updateAttribute"
                                                    id="voz"
                                                    placeholder="Número de Teléfono" maxlength="10">
@@ -119,9 +119,9 @@
                                             <input type="text" class="form-control"
                                                    name="fax"
                                                    data-vv-as="Fax"
-                                                   :value="sucursal.fax"
+                                                   v-model="sucursal.fax"
                                                    @input="updateAttribute"
-                                                   id="voz"
+                                                   id="fax"
                                                    placeholder="Número de Fax" >
 
                                                </div>
@@ -134,7 +134,7 @@
                                                    name="contacto"
                                                    data-vv-as="Contacto"
                                                    :v-model="contacto"
-                                                   :value="sucursal.contacto"
+                                                   v-model="sucursal.contacto"
                                                    @input="updateAttribute"
                                                    id="contacto"
                                                    placeholder="Nombre del Responsble" >
@@ -148,7 +148,8 @@
                                                class="form-check-input"
                                                data-vv-as="Central"
                                                checked="checked"
-                                               :checked="!checkCentral"
+                                               :value="this.checkCentral==true"
+                                               v-model="checkCentral"
                                                @input="updateAttribute"
                                                id="checkCentral"
                                                v-on:click=" ! checkCentral">
@@ -160,7 +161,7 @@
                                                name="checkCentral"
                                                class="form-check-input"
                                                data-vv-as="Central"
-                                               :checked="checkCentral"
+                                               v-model="checkCentral"
                                                @input="updateAttribute"
                                                id="checkCentral"
                                                v-on:click=" ! checkCentral">
@@ -197,20 +198,23 @@
                 sucursal: null,
                 cargando: false,
                 checkCentral: false,
+                form:[],
+
             }
         },
 
         computed: {
             sucursal(){
-                return this.$store.getters['cadeco/sucursal/currentSucursal']
+                return (this.$store.getters['cadeco/sucursal/currentSucursal'] != null && this.$store.getters['cadeco/sucursal/currentSucursal'].id == this.id)? this.$store.getters['cadeco/sucursal/currentSucursal'] :null
+
             }
         },
 
         methods: {
-            find() {
+            find(id) {
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/sucursal/find', {
-                    id: this.id
+                    id: id
                 })
                     .then(data => {
                         this.sucursal = data
@@ -221,10 +225,10 @@
                     })
             },
             update() {
+
                 return this.$store.dispatch('cadeco/sucursal/update', {
                     id: this.sucursal.id,
                     data: {
-
                             id_sucursal: this.sucursal.id,
                             descripcion : this.sucursal.descripcion,
                             direccion: this.sucursal.direccion,
@@ -234,7 +238,7 @@
                             telefono: this.sucursal.voz,
                             fax: this.sucursal.fax,
                             contacto: this.sucursal.contacto,
-                            casa_central: this.checkCentral,
+                            checkCentral: this.checkCentral,
 
                     },
 

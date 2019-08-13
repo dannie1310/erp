@@ -16,6 +16,12 @@ export default {
         SET_SUCURSAL(state, data) {
             state.currentSucursal = data;
         },
+        SET_META(state, data) {
+            state.meta = data;
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentSucursal, data.attribute, data.value);
+        },
 
         UPDATE_SUCURSAL(state, data) {
             state.sucursales = state.sucursales.map(sucursal=> {
@@ -25,12 +31,6 @@ export default {
                 return sucursal
             })
             state.currentSucursal = data ;
-        },
-        UPDATE_ATTRIBUTE(state, data) {
-            state.currentSucursal[data.attribute] = data.value
-        },
-        SET_META(state, data) {
-            state.meta = data;
         },
 
     },
@@ -135,6 +135,7 @@ export default {
                     }
                 })
                     .then((value) => {
+
                         if (value) {
                             axios
                                 .patch(URI + payload.id, payload.data)
@@ -161,15 +162,15 @@ export default {
 
     getters: {
         sucursales(state) {
-            return state.sucursales;
+            return state.sucursales
         },
 
         meta(state) {
-            return state.meta;
+            return state.meta
         },
 
         currentSucursal(state) {
-            return state.currentSucursal;
+            return state.currentSucursal
         }
     }
 }
