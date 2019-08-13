@@ -305,6 +305,7 @@
                 this.cargando = false;
                 this.observaciones = '';
                 this.archivo = null;
+                this.$refs.archivo.value = '';
             },
             getBancos(){
                 this.bancos = [];
@@ -341,6 +342,7 @@
             getEmpresa(){
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
+                        sort: 'razon_social', order: 'asc',
                         scope: 'proveedorContratista'
                     }
                 })

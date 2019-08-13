@@ -42,10 +42,10 @@ class SolicitudAlta extends Solicitud
         $solicitud = SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->orWhere('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray();
 
         if($cuentaBancaria != []){
-            abort(400, 'La solicitud no puede ser registrada, la cuenta clabe o empresa ya existe');
+            abort(400, 'Ya existe una cuenta bancaria registrada para este beneficiario.');
         }
         if($solicitud != []){
-            abort(400, 'Existe una solicitud para esta cuenta clabe o empresa.');
+            abort(400, 'Ya existe una solicitud de alta de cuenta bancaria registrada con la cuenta ingresada.');
         }
     }
 
