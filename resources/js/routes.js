@@ -710,7 +710,7 @@ export const routes = [
                         component: require('./components/finanzas/banco/Index.vue'),
                         meta:{
                             title: 'Bancos',
-                            breadcrumb: {name: 'BANCOS', parent: 'finanzas'},
+                            breadcrumb: {name: 'GESTIÓN DE BANCOS', parent: 'finanzas'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_banco'
                         }
@@ -745,7 +745,7 @@ export const routes = [
                         component: require('./components/finanzas/banco/Edit'),
                         meta: {
                             title: 'Edición de Bancos',
-                            breadcrumb: {name: 'EDICIÓN DE BANCOS', parent: 'finanzas'},
+                            breadcrumb: {name: 'EDICIÓN DE BANCOS', parent: 'banco'},
                             middleware: [auth, context],
 
                         }
@@ -757,7 +757,8 @@ export const routes = [
                         meta: {
                             title: 'Sucursales',
                             breadcrumb: { name: 'SUCURSALES', parent: 'banco'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_sucursal_banco'
                         }
                     },
                     {
@@ -767,7 +768,8 @@ export const routes = [
                         meta: {
                             title: 'Registrar Sucursal',
                             breadcrumb: {name: 'REGISTRAR', parent: 'banco'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_sucursal_banco'
 
                         }
                     },
@@ -778,7 +780,20 @@ export const routes = [
                         meta: {
                             title: 'Ver Sucursal',
                             breadcrumb: {name: 'VER', parent: 'banco'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_sucursal_banco'
+
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'sucursal-edit',
+                        component: require('./components/finanzas/banco/sucursal/Edit'),
+                        meta: {
+                            title: 'Editar Sucursal',
+                            breadcrumb: {name: 'EDITAR', parent: 'banco'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_sucursal_banco'
 
                         }
                     },

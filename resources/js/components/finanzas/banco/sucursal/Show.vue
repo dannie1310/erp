@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Sucursal">
+        <button @click="find()" v-if="$root.can('consultar_sucursal_banco')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Sucursal">
             <i class="fa fa-eye"></i>
         </button>
           <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -36,7 +36,7 @@
                                 <!--Ciudad-->
                                      <div class="col-md-12" v-if="sucursal">
                                                  <div class="form-group">
-                                                        <label><b>Dirección: </b></label>
+                                                        <label><b>Ciudad: </b></label>
                                                      {{ sucursal.ciudad }}
                                                     </div>
                                            </div>
@@ -66,7 +66,7 @@
                               <div class="col-md-6" v-if="sucursal">
                                                  <div class="form-group">
                                                         <label><b>Voz: </b></label>
-                                                     {{ sucursal.telefono }}
+                                                     {{ sucursal.voz }}
                                                     </div>
                                            </div>
                                 <!--Fax-->
