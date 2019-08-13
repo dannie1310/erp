@@ -1,7 +1,8 @@
 <template>
     <div class="btn-group " v-if="value.id">
         <BancoShow v-if="value.show" @click="value.id" v-bind:id="value.id" />
-        <BancoEdit  v-if="value.edit" v-bind:id="value.id" :key="value.id"/>
+        <button @click="show"  type="button" class="btn btn-sm btn-outline-primary" title="Edición "><i class="fa fa-pencil"></i></button>
+<!--     <BancoEdit  v-if="value.edit" v-bind:id="value.id" :key="value.id"/>-->
     </div>
 
 
@@ -11,6 +12,7 @@
     import BancoShow from "../Show";
     import BancoCreate from "../Create";
     import BancoEdit from "../Edit";
+    // import SucursalEdit from '../sucursal/Show';
 
     export default {
 
@@ -22,7 +24,7 @@
 
             },
             show() {
-               this.$router.push({name: 'banco-show', params: {id: this.value.id}});
+               this.$router.push({name: 'banco-edit', params: {id: this.value.id}});
             },
         }
     }
