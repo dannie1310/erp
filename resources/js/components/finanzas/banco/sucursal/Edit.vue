@@ -14,7 +14,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                   <form role="form" @submit.prevent="update">
+                   <form role="form" @submit.prevent="validate">
                     <div class="modal-body">
                          <div class="row">
                                 <!-- Descripción -->
