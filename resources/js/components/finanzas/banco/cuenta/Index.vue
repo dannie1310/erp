@@ -95,7 +95,8 @@
                             id: cuenta.id
                         })
                     })
-                })
+                });
+                this.$data.total = this.cuentas.length;
 
             }
 
