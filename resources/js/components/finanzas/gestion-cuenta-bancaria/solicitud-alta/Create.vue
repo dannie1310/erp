@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_solicitud_pago_anticipado')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('solicitar_alta_cuenta_bancaria_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Solicitud
@@ -214,7 +214,7 @@
                                         <div class="col-sm-10">
                                             <input type="file" class="form-control" id="archivo" @change="onFileChange"
                                                    row="3"
-                                                   v-validate="{ ext: ['pdf']}"
+                                                   v-validate="{required: true,  ext: ['pdf']}"
                                                    name="archivo"
                                                    data-vv-as="Archivo"
                                                    ref="archivo"
