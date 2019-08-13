@@ -101,28 +101,17 @@
             return {
                 cargando: false,
                 id_empresa: '',
+                bandera_empresa: 0,
                 empresas: [],
                 cuenta: '',
-                id_tipo: '',
-                tipos: {
-                    1: "Interbancaria",
-                    2: "Mismo Banco"
-                },
-                id_moneda: '',
-                monedas: [],
-                id_plaza: '',
-                plaza: '',
-                plazas: [],
-                plaza_clave: '',
-                sucursal: '',
+                cuentas: [],
                 observaciones: '',
                 archivo: null
             }
         },
         mounted(){
-            this.getBancos();
-            this.getMonedas();
-            this.getPlazas();
+            this.getBeneficiario();
+            this.getCuentas();
         },
         computed: {
 
@@ -131,58 +120,17 @@
             init() {
                 this.cargando = true;
                 $(this.$refs.modal).modal('show');
-                this.id_tipo_empresa = '';
                 this.id_empresa = '';
                 this.empresas = [];
                 this.bandera_empresa = 0;
-                this.id_banco = '';
-                this.banco_clave = '';
                 this.cuenta = '';
-                this.id_tipo = '';
-                this.id_moneda = '';
-                this.id_plaza = '';
-                this.plaza = '';
-                this.plaza_clave = '';
-                this.sucursal = '';
                 this.$validator.reset();
                 this.cargando = false;
                 this.observaciones = '';
                 this.archivo = null;
                 this.$refs.archivo.value = '';
             },
-            getBancos(){
-                this.bancos = [];
-                return this.$store.dispatch('cadeco/banco/index', {
-                    params: {
-                        include: 'ctg_banco',
-                        scope: 'bancoGlobal'
-                    }
-                })
-                    .then(data => {
-                        this.bancos = data.data;
-                    })
-            },
-            getMonedas(){
-                this.monedas = [];
-                return this.$store.dispatch('cadeco/moneda/index', {
-
-                })
-                    .then(data => {
-                        this.monedas = data.data;
-                    })
-            },
-            getPlazas(){
-                this.plazas = [];
-                return this.$store.dispatch('seguridad/finanzas/ctg-plaza/index', {
-                    params: {
-                        sort: 'clave', order: 'asc'
-                    }
-                })
-                    .then(data => {
-                        this.plazas = data.data;
-                    })
-            },
-            getEmpresa(){
+            getBeneficiario(){
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
                         sort: 'razon_social', order: 'asc',
@@ -194,58 +142,15 @@
                         this.bandera_empresa = 1;
                     })
             },
-            getFondoFijo(){
-                return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {
-                        scope: 'responsableFondoFijo'
-                    }
-                })
-                    .then(data => {
-                        this.empresa = data;
-                        this.bandera_empresa = 1;
-                    })
+            getCuentas(){
+
             },
             store() {
-                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/store', this.$data)
-                    .then(data => {
-                        this.$emit('created', data);
-                        $(this.$refs.modal).modal('hide');
-                    }).finally( ()=>{
-                        this.cargando = false;
-                    });
             },
             validate() {
-                this.getPlaza();
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        if (this.id_tipo == 1 && this.cuenta.length < 18) {
-                            swal('¡Error!', 'La cuenta tipo interbancaria debe contar con 18 digitos.', 'error')
-                        }
-                        else if (this.id_tipo == 2 && this.cuenta.length > 9) {
-                            swal('¡Error!', 'La cuenta de mismo banco debe contar con 9 digitos.', 'error')
-                        }
-                        else if (this.id_tipo == 1 && this.cuenta.length == 18 && this.cuenta.substring(0, 3) != this.banco_clave) {
-                            swal('¡Error!', 'La cuenta no corresponde con la clave del banco.', 'error');
-                        }
-                        else if (this.id_tipo == 1 && this.cuenta.length == 18 && this.cuenta.substring(3, 6) != this.plaza_clave) {
-                            swal('¡Error!', 'La cuenta no corresponde con la clave de la plaza.', 'error')
-                        }else if(this.archivo == null){
-                            swal('¡Error!', 'Error al cargar el archivo, favor de seleccionarlo nuevamente.', 'error')
-                        }
-                        else {
-                            this.store()
-                        }
-                    }
-                });
+
             },
-            getClave(banco){
-                this.banco_clave = banco.ctg_banco.clave_format;
-                return this.banco_clave;
-            },
-            getPlaza(){
-                this.plaza_clave = this.plaza.clave_format;
-                this.id_plaza = this.plaza.id;
-            },
+
             onFileChange(e){
                 this.archivo = null;
                 var files = e.target.files || e.dataTransfer.files;
@@ -267,16 +172,7 @@
             },
         },
         watch: {
-            id_tipo_empresa(value){
-                if(value != ''){
-                    if(value == 1){
-                        this.getEmpresa();
-                    }
-                    if(value == 2){
-                        this.getFondoFijo();
-                    }
-                }
-            }
+
         }
     }
 </script>
