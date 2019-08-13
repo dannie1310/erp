@@ -97,7 +97,7 @@
             },
             cuenta_bancaria(){
                 return this.$root.can([
-                    'consultar_pagos'
+                    'solicitar_alta_cuenta_bancaria_empresa'
                 ]);
             }
 
