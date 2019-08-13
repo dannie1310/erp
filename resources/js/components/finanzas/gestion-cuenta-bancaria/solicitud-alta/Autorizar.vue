@@ -66,7 +66,7 @@
                     </div>
                     <div class="modal-footer">
                         <button @click="init(id)" type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i>  Ver Archivo Soporte</button>
-                        <button @click="autorizar(id)" type="button" class="btn btn-success"><i class="fa fa-file-pdf-o"></i>  Autorizar</button>
+                        <button @click="autorizar(id)" type="button" class="btn btn-success">Autorizar</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>

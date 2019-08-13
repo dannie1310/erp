@@ -71,20 +71,25 @@ class SolicitudAlta extends Solicitud
     }
 
     public function autorizar(){
-        $cuenta = CuentaBancariaEmpresa::query()->create([
-            'id_empresa' => $this->id_empresa,
-            'id_banco' =>  $this->id_banco,
-            'cuenta_clabe' =>  $this->cuenta_clabe,
-            'sucursal' => $this->sucursal,
-            'tipo_cuenta' => $this->tipo_cuenta,
-            'id_solicitud_origen_alta' => $this->id,
-            'id_plaza' => $this->id_plaza,
-            'id_moneda' => $this->id_moneda
-        ]);
+//        $cuenta = CuentaBancariaEmpresa::query()->create([
+//            'id_empresa' => $this->id_empresa,
+//            'id_banco' =>  $this->id_banco,
+//            'cuenta_clabe' =>  $this->cuenta_clabe,
+//            'sucursal' => $this->sucursal,
+//            'tipo_cuenta' => $this->tipo_cuenta,
+//            'id_solicitud_origen_alta' => $this->id,
+//            'id_plaza' => $this->id_plaza,
+//            'id_moneda' => $this->id_moneda
+//        ]);
+
+        $movimiento  = SolicitudMovimiento::query()->where('id_solicitud','=',$this->id)->first();
+        dd($this->id);
 
         $this->update([
             'estado' => 2
         ]);
+
+
 //        $this->generaMovimiento(2);
 
     }

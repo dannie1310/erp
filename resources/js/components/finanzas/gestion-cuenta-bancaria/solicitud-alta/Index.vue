@@ -96,7 +96,7 @@
                             estatus: cuenta.estatus,
                             buttons: $.extend({}, {
                                 show: true,
-                                autorizar: self.$root.can('autorizar_solicitud_alta_cuenta_bancaria_empresa') ? true : false,
+                                autorizar: true,// self.$root.can('autorizar_solicitud_alta_cuenta_bancaria_empresa') ? true : false,
                                 id: cuenta.id,
                                 estado: cuenta.estado
                             })
