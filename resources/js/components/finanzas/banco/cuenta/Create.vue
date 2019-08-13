@@ -49,7 +49,7 @@
                                         <div class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mt-1 text-center" >
+                                <div class="col-md-12 mt-1 text-left" >
                                       <label class="text-secondary">Apertura </label>
                                        <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
                                 </div>
