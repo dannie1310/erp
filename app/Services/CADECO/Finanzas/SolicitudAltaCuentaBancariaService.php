@@ -8,9 +8,10 @@
 
 namespace App\Services\CADECO\Finanzas;
 
-
+use App\Facades\Context;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\Storage;
 
 class SolicitudAltaCuentaBancariaService
 {
@@ -50,6 +51,10 @@ class SolicitudAltaCuentaBancariaService
             'tipo_cuenta' => $data['id_tipo'],
             'observaciones' => $data['observaciones']
         ];
-        return $this->repository->create($datos);
+        $registro = $this->repository->create($datos);
+        if($data['archivo'] != null) {
+            Storage::disk('alta_cuenta_bancaria')->put($registro->id . '_' . $registro->numero_folio . '_' . Context::getDatabase() . '_alta_cuenta_bancaria' . '.pdf', fopen($data['archivo'], 'r'));
+        }
+        return $registro;
     }
 }
