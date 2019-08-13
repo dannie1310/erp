@@ -40,6 +40,7 @@ class StoreSolicitudAltaCuentaBancariaRequest extends FormRequest
             'sucursal' => ['required', 'integer', 'digits:3'],
             'id_plaza' => ['required', 'exists:seguridad.Finanzas.ctg_plazas,id'],
             'observaciones' => ['required', 'string'],
+            'archivo' => ['required']
         ];
     }
 

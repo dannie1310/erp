@@ -16,6 +16,7 @@ use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\Storage;
 
 class SolicitudAltaCuentaBancariaService
 {
@@ -45,7 +46,7 @@ class SolicitudAltaCuentaBancariaService
 
         $filename = $proyectos->id.'_'.$obra.'_'.$id.'.pdf';
 
-        $path = storage_path($this->files_global . 'finanzas\solicitudes_cuentas_bancarias/'.$filename);
+        $path = storage_path($this->files_global . 'Finanzas\solicitudes_cuentas_bancarias/'.$filename);
 
         if(!file_exists($path)){
             return "El archivo al cual intenta acceder no existe o no se encuentra disponible.";
@@ -71,7 +72,11 @@ class SolicitudAltaCuentaBancariaService
             'tipo_cuenta' => $data['id_tipo'],
             'observaciones' => $data['observaciones']
         ];
-        return $this->repository->create($datos);
+        $registro = $this->repository->create($datos);
+        if($data['archivo'] != null) {
+            Storage::disk('alta_cuenta_bancaria')->put($registro->id . '_' . $registro->numero_folio . '_' . Context::getDatabase() . '_alta_cuenta_bancaria' . '.pdf', fopen($data['archivo'], 'r'));
+        }
+        return $registro;
     }
 
     public function autorizar($id){

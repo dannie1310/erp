@@ -48,6 +48,10 @@ class SolicitudAltaCuentaBancariaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:solicitar_alta_cuenta_bancaria_empresa')->only('store');
+//        $this->middleware('permiso:rechazar_solicitud_alta_cuenta_bancaria_empresa')->only('');
+//        $this->middleware('permiso:cancelar_solicitud_alta_cuenta_bancaria_empresa')->only('cancelar');
+//        $this->middleware('permiso:autorizar_solicitud_alta_cuenta_bancaria_empresa')->only('autorizar');
 
         $this->service = $service;
         $this->fractal = $fractal;
