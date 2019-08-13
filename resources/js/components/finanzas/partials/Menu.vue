@@ -39,6 +39,12 @@
                             <p>Solicitud de Alta</p>
                         </router-link>
                     </li>
+                    <li class="nav-item" v-if="$root.can('consultar_solicitud_cambio_cuenta_bancaria_empresa')">
+                        <router-link :to="{name: 'solicitud-cambio'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-cambio'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Solicitud de Cambio</p>
+                        </router-link>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item" v-if="pagos">

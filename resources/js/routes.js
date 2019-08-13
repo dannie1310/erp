@@ -707,6 +707,20 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_solicitud_alta_cuenta_bancaria_empresa'
                         }
+                    },
+                    {
+                        path: 'solicitud-cambio',
+                        name: 'solicitud-cambio',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-cambio/Index'),
+                        meta: {
+                            title: 'Solicitud de Cambio',
+                            breadcrumb: {
+                                parent: 'gestion-cuenta-bancaria',
+                                name: 'SOLICITUD DE CAMBIO'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_cambio_cuenta_bancaria_empresa'
+                        }
                     }
                 ]
             },
