@@ -17,6 +17,9 @@ export default {
         },
         SET_META(state, data) {
             state.meta = data
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value
         }
     },
 

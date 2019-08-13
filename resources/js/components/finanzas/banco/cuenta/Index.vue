@@ -92,12 +92,12 @@
                         abreviatura: cuenta.abreviatura,
                         buttons: $.extend({}, {
                             show: true,
+                            edit: true,
                             id: cuenta.id
                         })
                     })
                 });
                 this.$data.total = this.cuentas.length;
-
             }
 
         },
