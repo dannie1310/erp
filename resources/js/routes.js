@@ -757,7 +757,8 @@ export const routes = [
                         meta: {
                             title: 'Sucursales',
                             breadcrumb: { name: 'SUCURSALES', parent: 'banco'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_sucursal_banco'
                         }
                     },
                     {
@@ -767,7 +768,8 @@ export const routes = [
                         meta: {
                             title: 'Registrar Sucursal',
                             breadcrumb: {name: 'REGISTRAR', parent: 'banco'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_sucursal_banco'
 
                         }
                     },
@@ -778,7 +780,8 @@ export const routes = [
                         meta: {
                             title: 'Ver Sucursal',
                             breadcrumb: {name: 'VER', parent: 'banco'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_sucursal_banco'
 
                         }
                     },

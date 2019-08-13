@@ -43,7 +43,5 @@ class Sucursal extends Model
     }
 
 
-//    public function banco(){
-//        return $this->belongsTo(Banco::class, 'id_empresa', 'id_empresa');
-//    }
+
 }

@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Sucursal">
+        <button @click="find()" v-if="$root.can('consultar_sucursal_banco')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Sucursal">
             <i class="fa fa-eye"></i>
         </button>
           <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">

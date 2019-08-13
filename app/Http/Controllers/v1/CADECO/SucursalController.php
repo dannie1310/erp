@@ -46,6 +46,8 @@ class SucursalController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:registrar_sucursal_banco')->only(['store']);
+        $this->middleware('permiso:consultar_sucursal_banco')->only(['paginate','index','show']);
 
         $this->fractal = $fractal;
         $this->service = $service;
