@@ -165,7 +165,6 @@
                 this.chk_chequera=false;
                 this.abreviatura='';
                 this.id_tipo_cuentas_obra=1;
-                this.monedas=[];
             },
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
@@ -197,10 +196,9 @@
                 };
                 return this.$store.dispatch('cadeco/cuenta/store',  datos)
                     .then((data) => {
-                        // this.$parent.data.push(data);
+                        this.cleanData();
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');
-                        // console.log(data);
                     })
             },
             tipoCuenta(tipo) {
