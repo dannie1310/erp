@@ -9,8 +9,10 @@
 namespace App\Services\CADECO;
 
 
+use App\Models\CADECO\Contabilidad\Cierre;
 use App\Models\CADECO\Cuenta;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\DB;
 
 class CuentaService
 {
@@ -41,5 +43,10 @@ class CuentaService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function store(array $data)
+    {
+            return $this->repository->create($data);
     }
 }
