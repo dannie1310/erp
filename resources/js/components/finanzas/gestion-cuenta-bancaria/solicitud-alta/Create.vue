@@ -305,6 +305,7 @@
                 this.cargando = false;
                 this.observaciones = '';
                 this.archivo = null;
+                this.$refs.archivo.value = '';
             },
             getBancos(){
                 this.bancos = [];
