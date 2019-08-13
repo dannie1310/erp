@@ -326,7 +326,7 @@
                 this.plazas = [];
                 return this.$store.dispatch('seguridad/finanzas/ctg-plaza/index', {
                     params: {
-                        sort: 'nombre', order: 'asc'
+                        sort: 'clave', order: 'asc'
                     }
                 })
                     .then(data => {
