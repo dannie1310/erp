@@ -97,7 +97,7 @@
             },
             cuenta_bancaria(){
                 return this.$root.can([
-                    'solicitar_alta_cuenta_bancaria_empresa'
+                    'consular_solicitud_alta_cuenta_bancaria_empresa'
                 ]);
             }
 
