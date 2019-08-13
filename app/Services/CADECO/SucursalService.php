@@ -31,7 +31,7 @@ class SucursalService
     }
 
     public function paginate($data){
-//dd($data);
+
         if(!empty($data['id'])){
 
             return $this->repository->where([['id_empresa','=',$data['id']]])->paginate();
@@ -69,6 +69,27 @@ class SucursalService
         ];
         $sucursal = Sucursal::query()->create($datos);
         return $sucursal;
+    }
+
+    public function update(array $data, $id)
+    {
+//        dd($data);
+//        $central='S';
+        $datos = [
+            'id_sucursal'=> $data['id'],
+            'descripcion' => $data['descripcion'],
+            'direccion' => $data['direccion'],
+            'ciudad' => $data['ciudad'],
+            'codigo_postal' => $data['codigo_postal'],
+            'estado' => $data['estado'],
+            'telefono'=> $data['voz'],
+            'fax'=> $data['fax'],
+            'contacto'=>$data['contacto'],
+            'casa_central'=>$central,
+        ];
+//        dd($datos);
+
+        return $this->repository->update($datos, $id);
     }
 
 

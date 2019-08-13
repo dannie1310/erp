@@ -4,8 +4,6 @@
         <i class="fa fa-plus"></i> Registrar Sucursal
     </button>
 
-
-
             <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
@@ -146,9 +144,6 @@
                                         <label class="form-check-label" for="checkCentral">Central</label>
                                     </div></div>
 
-
-
-
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -188,7 +183,7 @@
 
         mounted() {
 
-// console.log("Create "+this.id);
+
 
         },
 

@@ -3,7 +3,7 @@
     <span>
     <nav>
                  <div class="col-md-12"  v-if="banco">
-                                              <div class="form-group">
+                                              <div class="form-group" >
                                                         <label><b>Banco:</b></label>
                                                         {{ banco.razon_social }}
                                                     </div>
@@ -24,7 +24,7 @@
                       <index-cuenta v-bind:id="id"></index-cuenta>
                   </div>
                   <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" style="display:block;">
-                      <index-sucursal  v-bind:id="banco.id"></index-sucursal>
+                      <index-sucursal  v-bind:id="banco.id"  @created="IndexSucursal.paginate()"></index-sucursal>
                   </div>
                 </div>
     </nav>
@@ -46,6 +46,7 @@
         },
         mounted() {
         this.find()
+
         },
         methods: {
             find() {
