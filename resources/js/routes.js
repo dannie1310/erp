@@ -705,7 +705,7 @@ export const routes = [
                                 name: 'SOLICITUD DE ALTA'
                             },
                             middleware: [auth, context, permission],
-                            permission: 'solicitar_alta_cuenta_bancaria_empresa'
+                            permission: 'consular_solicitud_alta_cuenta_bancaria_empresa'
                         }
                     }
                 ]

@@ -20,7 +20,7 @@ class StoreSolicitudAltaCuentaBancariaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('registrar_solicitud_pago_anticipado');
+        return auth()->user()->can('consular_solicitud_alta_cuenta_bancaria_empresa');
     }
 
     /**
