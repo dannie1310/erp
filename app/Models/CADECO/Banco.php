@@ -42,17 +42,12 @@ class Banco extends Empresa
 
     public function ctg_banco()
     {
-        return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos');
+        return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos', 'id');
     }
 
     public function sucursal()
     {
         return $this->hasMany(Sucursal::class, 'id_empresa', 'id_empresa');
-    }
-
-    public function bancoGeneral()
-    {
-        return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos', 'id');
     }
 
     public function scopeBancoGlobal($query)
