@@ -38,14 +38,20 @@ class SolicitudAlta extends Solicitud
 
     private function validar()
     {
-        $cuentaBancaria = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $this->cuenta_clabe)->orWhere('id_empresa', '=', $this->id_empresa)->get()->toArray();
-        $solicitud = SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->orWhere('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray();
+        if(CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $this->cuenta_clabe)->where('estado','>=',0)->get()->toArray() != []){
+            abort(400, 'Ya existe está cuenta bancaria registrada.');
+        }
 
-        if($cuentaBancaria != []){
+        if(CuentaBancariaEmpresa::query()->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray() != []){
             abort(400, 'Ya existe una cuenta bancaria registrada para este beneficiario.');
         }
-        if($solicitud != []){
+
+        if(SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('estado','>=',0)->get()->toArray() != []){
             abort(400, 'Ya existe una solicitud de alta de cuenta bancaria registrada con la cuenta ingresada.');
+        }
+
+        if(SolicitudAlta::query()->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray() != []){
+            abort(400, 'Ya existe una solicitud de alta de cuenta bancaria registrada con el beneficiario seleccionado.');
         }
     }
 
