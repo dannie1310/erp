@@ -397,6 +397,9 @@
                 this.archivo = null;
                 var files = e.target.files || e.dataTransfer.files;
                 this.createImage(files[0], 1);
+                setTimeout(() => {
+                    this.validate()
+                }, 500);
             },
             createImage(file) {
                 var reader = new FileReader();

@@ -44,7 +44,7 @@ class SolicitudAltaCuentaBancariaService
 
         $filename = $proyectos->id.'_'.$obra.'_'.$id.'_alta_cuenta_bancaria.pdf';
 
-        $path = storage_path($this->files_global . 'finanzas\solicitudes_cuentas_bancarias/'.$filename);
+        $path = storage_path($this->files_global . 'Finanzas\solicitudes_cuentas_bancarias/'.$filename);
 
         if(!file_exists($path)){
             return "El archivo al cual intenta acceder no existe o no se encuentra disponible.";
