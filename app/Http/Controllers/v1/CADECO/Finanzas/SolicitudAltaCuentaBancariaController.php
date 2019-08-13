@@ -63,4 +63,8 @@ class SolicitudAltaCuentaBancariaController extends Controller
         return $this->traitStore($request);
     }
 
+    public function pdf($id){
+        return $this->service->pdf($id);
+    }
+
 }
