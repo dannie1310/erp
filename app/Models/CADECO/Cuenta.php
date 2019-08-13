@@ -70,6 +70,10 @@ class Cuenta extends Model
         return '$ ' . number_format($this->saldo_inicial,2);
     }
 
+    public function getSaldoRealFormatAttribute(){
+        return '$ ' . number_format($this->saldo_real,2);
+    }
+
     public function moneda(){
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }

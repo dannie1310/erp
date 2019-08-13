@@ -42,8 +42,9 @@ class CuentaTransformer extends TransformerAbstract
             'empresa' => $model->id_empresa,
             'numero' => $model->numero,
             'saldo' => $model->saldo_inicial_format,
+            'saldo_real' => $model->saldo_real_format,
             'fecha' => $model->fecha_format,
-            'chequera' => $model->chequera,
+            'chequera' => (int)$model->chequera,
             'tipo_cuentas_obra' => $model->id_tipo_cuentas_obra,
             'abreviatura' => $model->abreviatura
         ];
