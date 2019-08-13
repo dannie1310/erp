@@ -154,7 +154,7 @@
                                                     step="any"
                                                     name="sucursal"
                                                     data-vv-as="Sucursal"
-                                                    v-validate="{required: true, integer: true,digits: 3}"
+                                                    v-validate="{required: true, numeric:true, digits: 3}"
                                                     class="form-control"
                                                     id="sucursal"
                                                     placeholder="Sucursal"
@@ -379,7 +379,10 @@
                         }
                         else if (this.id_tipo == 1 && this.cuenta.length == 18 && this.cuenta.substring(3, 6) != this.plaza_clave) {
                             swal('¡Error!', 'La cuenta no corresponde con la clave de la plaza.', 'error')
-                        }else {
+                        }else if(this.archivo == null){
+                            swal('¡Error!', 'Error al cargar el archivo, favor de seleccionarlo nuevamente.', 'error')
+                        }
+                        else {
                             this.store()
                         }
                     }
@@ -398,7 +401,9 @@
                 var files = e.target.files || e.dataTransfer.files;
                 this.createImage(files[0], 1);
                 setTimeout(() => {
-                    this.validate()
+                    if(this.archivo == null) {
+                        onFileChange(e)
+                    }
                 }, 500);
             },
             createImage(file) {
