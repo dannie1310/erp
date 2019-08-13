@@ -8,7 +8,7 @@
                <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalCuenta">Alta de Cuenta Bancaria</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="cleanData">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -118,7 +118,7 @@
                             </div>
                         </div>
                        <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="cleanData">Cerrar</button>
                                 <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 ">Guardar</button>
                          </div>
                    </form>
@@ -155,6 +155,18 @@
             this.getMonedas();
         },
         methods: {
+            cleanData(){
+                this.numero='';
+                this.id_moneda='';
+                this.fecha='';
+                this.fecha_inicial='';
+                this.saldo_inicial=0;
+                this.chequera=0;
+                this.chk_chequera=false;
+                this.abreviatura='';
+                this.id_tipo_cuentas_obra=1;
+                this.monedas=[];
+            },
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
             },
