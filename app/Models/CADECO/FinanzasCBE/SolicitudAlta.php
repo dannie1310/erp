@@ -38,11 +38,11 @@ class SolicitudAlta extends Solicitud
 
     private function validar()
     {
-        if(CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $this->cuenta_clabe)->where('estado','>=',0)->get()->toArray() != []){
+        if(CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $this->cuenta_clabe)->where('estatus','>=',0)->get()->toArray() != []){
             abort(400, 'Ya existe está cuenta bancaria registrada.');
         }
 
-        if(CuentaBancariaEmpresa::query()->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray() != []){
+        if(CuentaBancariaEmpresa::query()->where('id_empresa', '=', $this->id_empresa)->where('estatus','>=',0)->get()->toArray() != []){
             abort(400, 'Ya existe una cuenta bancaria registrada para este beneficiario.');
         }
 
