@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO;
 
 
 use App\Http\Transformers\CADECO\Contabilidad\CuentaBancoTransformer;
+use App\Http\Transformers\CADECO\Finanzas\CtgTipoCuentaObraTransformer;
 use App\Models\CADECO\Cuenta;
 use League\Fractal\TransformerAbstract;
 
@@ -22,7 +23,9 @@ class CuentaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'empresa',
-        'cuentasBanco'
+        'cuentasBanco',
+        'moneda',
+        'tiposCuentasObra'
     ];
 
     /**
@@ -36,7 +39,13 @@ class CuentaTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
+            'empresa' => $model->id_empresa,
             'numero' => $model->numero,
+            'saldo' => $model->saldo_inicial_format,
+            'saldo_real' => $model->saldo_real_format,
+            'fecha' => $model->fecha_format,
+            'chequera' => (int)$model->chequera,
+            'tipo_cuentas_obra' => $model->id_tipo_cuentas_obra,
             'abreviatura' => $model->abreviatura
         ];
     }
@@ -67,11 +76,22 @@ class CuentaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * Include Monedas
+     * @param Cuenta $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeMoneda(cuenta $model){
         if($moneda = $model->moneda){
-            return $moneda->item($moneda, new MonedaTransformer);
+            return $this->item($moneda, new MonedaTransformer);
         }
         return null;
+    }
+
+    public function includeTiposCuentasObra(cuenta $model){
+        if($tipos_cuentas_obra = $model->tiposCuentasObra){
+            return $this->item($tipos_cuentas_obra, new CtgTipoCuentaObraTransformer);
+        }
     }
 
 }

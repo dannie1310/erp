@@ -12,7 +12,7 @@
                                           <nav>
                       <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <!--    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Identificación</a>-->
-                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Cuentas</a>
+                        <a class="nav-item nav-link" v-if="$root.can('consultar_cuenta_corriente')" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Cuentas</a>
                         <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false" v-if="$root.can('consultar_sucursal_banco')">Sucursales</a>
                       </div>
                     </nav>
@@ -23,8 +23,8 @@
                   <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                       <index-cuenta v-bind:id="id"></index-cuenta>
                   </div>
-                  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" style="display:block;" v-if="$root.can('consultar_sucursal_banco')">
-                      <index-sucursal  v-bind:id="banco.id"></index-sucursal>
+                  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" style="display:block;">
+                      <index-sucursal  v-bind:id="id"></index-sucursal>
                   </div>
                 </div>
     </nav>
@@ -45,7 +45,7 @@
             }
         },
         mounted() {
-        this.find()
+            this.find()
         },
         methods: {
             find() {

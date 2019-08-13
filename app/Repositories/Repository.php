@@ -96,6 +96,7 @@ class Repository implements RepositoryInterface
     public function create(array $data)
     {
         return $this->model->create($data);
+        dd('lkoala', $data);
     }
 
     public function delete(array $data, $id)
