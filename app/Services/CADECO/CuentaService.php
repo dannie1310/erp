@@ -47,14 +47,6 @@ class CuentaService
 
     public function store(array $data)
     {
-        try {
-            DB::connection('cadeco')->beginTransaction();
-            $cuenta = $this->repository->create($data);
-            DB::connection('cadeco')->commit();
-            return $cuenta;
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollback();
-            abort($e->getCode(), $e->getMessage());
-        }
+            return $this->repository->create($data);
     }
 }
