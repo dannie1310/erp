@@ -24,7 +24,7 @@
                       <index-cuenta v-bind:id="id"></index-cuenta>
                   </div>
                   <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" style="display:block;">
-                      <index-sucursal  v-bind:id="banco.id"></index-sucursal>
+                      <index-sucursal  v-bind:id="id"></index-sucursal>
                   </div>
                 </div>
     </nav>
@@ -45,7 +45,7 @@
             }
         },
         mounted() {
-        this.find()
+            this.find()
         },
         methods: {
             find() {
