@@ -20,10 +20,10 @@
                 <div class="tab-content" id="nav-tabContent">
 
                 <!--  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">...</div>-->
-                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" v-if="$root.can('consultar_cuenta_corriente')">
                       <index-cuenta v-bind:id="id"></index-cuenta>
                   </div>
-                  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" style="display:block;">
+                  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" style="display:block;" v-if="$root.can('consultar_sucursal_banco')">
                       <index-sucursal  v-bind:id="id"></index-sucursal>
                   </div>
                 </div>

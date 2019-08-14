@@ -64,22 +64,22 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="id_banco" class="col-sm-2 col-form-label">Banco: </label>
+                                        <label for="banco" class="col-sm-2 col-form-label">Banco: </label>
                                         <div class="col-sm-10">
                                             <select
                                                     type="text"
-                                                    name="id_banco"
+                                                    name="banco"
                                                     data-vv-as="Banco"
                                                     v-validate="{required: true}"
                                                     class="form-control"
-                                                    id="id_banco"
-                                                    v-model="id_banco"
-                                                    :class="{'is-invalid': errors.has('id_banco')}"
+                                                    id="banco"
+                                                    v-model="banco"
+                                                    :class="{'is-invalid': errors.has('banco')}"
                                             >
                                                 <option value>-- Seleccione un Banco --</option>
-                                                <option v-for="banco in bancos" :value="banco.id">{{getClave(banco)}} - {{ banco.razon_social }}</option>
+                                                <option v-for="banco in bancos" :value="banco">{{banco.ctg_banco.clave_format}} - {{ banco.razon_social }}</option>
                                             </select>
-                                            <div class="invalid-feedback" v-show="errors.has('id_banco')">{{ errors.first('id_banco') }}</div>
+                                            <div class="invalid-feedback" v-show="errors.has('banco')">{{ errors.first('banco') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -258,6 +258,7 @@
                 bandera_empresa: 0,
                 id_banco: '',
                 bancos: [],
+                banco: '',
                 banco_clave: '',
                 cuenta: '',
                 id_tipo: '',
@@ -294,6 +295,7 @@
                 this.bandera_empresa = 0;
                 this.id_banco = '';
                 this.banco_clave = '';
+                this.banco = '';
                 this.cuenta = '';
                 this.id_tipo = '';
                 this.id_moneda = '';
@@ -358,7 +360,7 @@
                     }
                 })
                     .then(data => {
-                        this.empresa = data;
+                        this.empresas = data.data;
                         this.bandera_empresa = 1;
                     })
             },
@@ -397,6 +399,7 @@
             },
             getClave(banco){
                 this.banco_clave = banco.ctg_banco.clave_format;
+                this.id_banco = banco.id;
                 return this.banco_clave;
             },
             getPlaza(){
@@ -426,12 +429,18 @@
         watch: {
             id_tipo_empresa(value){
                 if(value != ''){
+                    this.empresas = [];
                     if(value == 1){
                         this.getEmpresa();
                     }
                     if(value == 2){
                         this.getFondoFijo();
                     }
+                }
+            },
+            banco(value){
+                if(value!=''){
+                    this.getClave(this.banco)
                 }
             }
         }

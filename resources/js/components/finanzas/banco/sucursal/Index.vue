@@ -100,7 +100,8 @@
                             direccion: sucursal.direccion,
                             buttons: $.extend({}, {
                                  show: true,
-                                 id: sucursal.id
+                                 id: sucursal.id,
+                                 edit: true,
                             })
                         })
 

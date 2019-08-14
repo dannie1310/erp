@@ -544,7 +544,7 @@ export const routes = [
                         component: require('./components/finanzas/banco/Index.vue'),
                         meta:{
                             title: 'Bancos',
-                            breadcrumb: {name: 'BANCOS', parent: 'finanzas'},
+                            breadcrumb: {name: 'GESTIÓN DE BANCOS', parent: 'finanzas'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_banco'
                         }
@@ -583,7 +583,8 @@ export const routes = [
                             middleware: [auth, context],
 
                         }
-                    },{
+                    },
+                    {
                         path: '/',
                         name: 'sucursal',
                         component: require('./components/finanzas/banco/sucursal/Index.vue'),

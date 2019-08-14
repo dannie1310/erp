@@ -16,6 +16,12 @@ export default {
         SET_SUCURSAL(state, data) {
             state.currentSucursal = data;
         },
+        SET_META(state, data) {
+            state.meta = data;
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentSucursal, data.attribute, data.value);
+        },
 
         UPDATE_SUCURSAL(state, data) {
             state.sucursales = state.sucursales.map(sucursal=> {
@@ -27,9 +33,6 @@ export default {
             state.currentSucursal = data ;
         },
 
-        SET_META(state, data) {
-            state.meta = data;
-        }
     },
 
     actions: {
@@ -114,19 +117,60 @@ export default {
 
         },
 
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Sucursal",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Sucursal actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        }
+
     },
 
     getters: {
         sucursales(state) {
-            return state.sucursales;
+            return state.sucursales
         },
 
         meta(state) {
-            return state.meta;
+            return state.meta
         },
 
         currentSucursal(state) {
-            return state.currentSucursal;
+            return state.currentSucursal
         }
     }
 }

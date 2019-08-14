@@ -42,7 +42,7 @@ class SucursalTransformer extends TransformerAbstract
             'ciudad'=>$model->ciudad,
             'estado'=>$model->estado,
             'codigo_postal'=>$model->codigo_postal,
-            'telefono'=>$model->telefono,
+            'voz'=>$model->telefono,
             'fax'=>$model->fax,
             'contacto'=>$model->contacto,
             'casa_central'=>$model->casa_central,
