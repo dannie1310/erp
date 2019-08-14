@@ -94,7 +94,7 @@
                                                name="abreviatura"
                                                data-vv-as="Abreviatura"
                                                v-model="cuenta.abreviatura"
-                                               v-validate="{required: true}"
+                                               v-validate="{required: true, max:16}"
                                                :class="{'is-invalid': errors.has('abreviatura')}"
                                                id="abreviatura">
                                         <div class="invalid-feedback" v-show="errors.has('abreviatura')">{{ errors.first('abreviatura') }}</div>
