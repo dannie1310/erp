@@ -52,4 +52,8 @@ class SolicitudBajaCuentaBancariaController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
+
+    public function pdf($id){
+        return $this->service->pdf($id);
+    }
 }
