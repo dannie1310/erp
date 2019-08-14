@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'], sort: 'numero_folio', order: 'desc'},
+                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimiento_solicitud'], sort: 'numero_folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -93,9 +93,10 @@
                             tipo_empresa: cuenta.empresa.tipo_empresa,
                             banco: cuenta.banco.razon_social,
                             cuenta: cuenta.cuenta,
-                            estado: cuenta.estado,
+                            estado: cuenta.movimiento_solicitud.estado_resultante_desc,
                             buttons: $.extend({}, {
                                 show: true,
+                                autorizar: self.$root.can('autorizar_solicitud_alta_cuenta_bancaria_empresa') ? true : false,
                                 id: cuenta.id,
                                 estado: cuenta.estado
                             })
@@ -118,6 +119,18 @@
                     this.paginate(query)
                 },
                 deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+
+                }, 500);
             },
             cargando(val) {
                 $('tbody').css({

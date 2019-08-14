@@ -19,7 +19,21 @@ export default{
 
         SET_CUENTA(state, data){
             state.currentCuenta = data
-        }
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentCuenta, data.attribute, data.value);
+        },
+
+        UPDATE_CUENTA(state, data) {
+            state.cuentas = state.cuentas.map(cuentas => {
+                if (cuentas.id === data.id) {
+                    return Object.assign({}, cuentas, data)
+                }
+                return cuentas
+            })
+            state.currentCuenta = data;
+        },
     },
 
     actions: {
@@ -87,7 +101,48 @@ export default{
                         reject(error);
                     })
             });
-        }
+        },
+
+        autorizar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Solicitud de Alta de Cuenta Bancaria",
+                    text: "¿Estás seguro/a de autorizar la solicitud de alta de cuenta bancaria?",
+                    icon: "info",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Autorizar',
+                            closeModal: false,
+                        }
+                    }
+                }) .then((value) => {
+                    if (value) {
+                        axios
+                            .get(URI + payload.id + '/autorizar', {params: payload.params})
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("La autorizacion ha sido aplicada exitosamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error =>  {
+                                reject(error);
+                            });
+                    } else {
+                        reject();
+                    }
+                });
+            });
+        },
     },
 
     getters: {

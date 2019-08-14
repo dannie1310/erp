@@ -38,6 +38,7 @@ class CuentaBancariaEmpresa extends Model
         parent::boot();
 
         self::creating(function ($model) {
+            $model->validar();
             $model->fecha_hora_registro = date('Y-m-d h:i:s');
             $model->registro =  auth()->id();
         });
@@ -85,5 +86,14 @@ class CuentaBancariaEmpresa extends Model
     public function getTipoAttribute()
     {
         return $this->tipo_cuenta == 1 ? 'Mismo Banco' : 'Interbancario';
+    }
+
+    public function validar()
+    {
+        $cuentaBancaria = $this->query()->where('id_empresa', '=', $this->id_empresa)->get()->toArray();
+
+        if($cuentaBancaria != []){
+            abort(400, 'La solicitud no puede ser autorizada, la empresa tiene una cuenta activa');
+        }
     }
 }

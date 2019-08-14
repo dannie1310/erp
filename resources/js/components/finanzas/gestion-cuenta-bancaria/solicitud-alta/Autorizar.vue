@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-            <i class="fa fa-eye"></i>
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-success" title="Autorizar">
+            <i class="fa fa-check"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CONSULTA DE SOLICITUD DE ALTA DE CUENTA BANCARIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AUTORIZAR SOLICITUD DE ALTA DE CUENTA BANCARIA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -60,33 +60,13 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <div class="row" v-if="solicitudAlta.movimientos.data.length > 1">Movimientos de Solicitud
-
-                                            <div class="table-responsive col-12">
-                                                <table class="table table-striped">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th>Fecha/Hora</th>
-                                                            <th>Acción</th>
-                                                            <th>Usuario</th>
-                                                            <th>Observaciones</th>
-                                                        </tr>
-                                                        <tr v-for="(mov,i) in solicitudAlta.movimientos.data">
-                                                            <td>{{mov.fecha_format}}</td>
-                                                            <td>{{mov.movimiento}}</td>
-                                                            <td>{{mov.usuario.nombre}}</td>
-                                                            <td>{{mov.observaciones}}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                     </div>
                     <div class="modal-footer">
                         <button @click="init(id)" type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i>  Ver Archivo Soporte</button>
+                        <button @click="autorizar(id)" type="button" class="btn btn-success">Autorizar</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
@@ -113,7 +93,7 @@
 
 <script>
     export default {
-        name: "solicitud-alta-show",
+        name: "solicitud-alta-autorizar",
         props: ['id'],
         methods: {
             find(id) {
@@ -134,7 +114,18 @@
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE ALTA DE CUENTA BANCARIA</iframe>');
                 $(this.$refs.modalPDF).modal('show');
             },
-
+            autorizar() {
+                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/autorizar', {
+                    id: this.id,
+                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
+                    }).then(data => {
+                    this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/UPDATE_CUENTA', data)
+                    $(this.$refs.modal).modal('hide');
+                })
+                    .finally( ()=>{
+                        this.cargando = false;
+                });
+            }
         },
         computed: {
             solicitudAlta() {

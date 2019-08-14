@@ -11,6 +11,7 @@ namespace App\Models\CADECO\FinanzasCBE;
 
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use function foo\func;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudAlta extends Solicitud
 {
@@ -32,7 +33,7 @@ class SolicitudAlta extends Solicitud
         });
 
         self::created(function ($sol){
-            $sol->generaMovimiento();
+            $sol->generaMovimiento(1);
         });
     }
 
@@ -58,11 +59,11 @@ class SolicitudAlta extends Solicitud
     /**
      * @return mixed
      */
-    public function generaMovimiento()
+    public function generaMovimiento($tipo_movimiento)
     {
         return SolicitudMovimiento::create([
                 'id_solicitud'=>$this->id,
-                'id_tipo_movimiento'=>1,
+                'id_tipo_movimiento'=>$tipo_movimiento,
                 'observaciones'=>$this->observaciones
             ]
         );
@@ -74,5 +75,32 @@ class SolicitudAlta extends Solicitud
     public function folio()
     {
         return $count = SolicitudAlta::query()->count('id') + 1;
+    }
+
+    public function autorizar(){
+        DB::connection('cadeco')->transaction(function() {
+            $cuenta = CuentaBancariaEmpresa::query()->create( [
+                'id_empresa' => $this->id_empresa,
+                'id_banco' => $this->id_banco,
+                'cuenta_clabe' => $this->cuenta_clabe,
+                'sucursal' => $this->sucursal,
+                'tipo_cuenta' => $this->tipo_cuenta,
+                'id_solicitud_origen_alta' => $this->id,
+                'id_plaza' => $this->id_plaza,
+                'id_moneda' => $this->id_moneda
+            ] );
+
+            $movimiento = SolicitudMovimiento::query()->where( 'id_solicitud', '=', $this->id )->first();
+            $id = $movimiento->id;
+            $movs = SolicitudMovimiento::query()->create( [
+                'id_solicitud' => $this->id,
+                'id_movimiento_antecedente' => $id,
+                'id_tipo_movimiento' => 2,
+            ] );
+            $this->update( [
+                'estado' => 2
+            ] );
+        });
+        return $this;
     }
 }
