@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('consultar_solicitud_alta_cuenta_bancaria_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('solicitar_alta_cuenta_bancaria_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Solicitud
@@ -17,19 +17,22 @@
                      <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="form-group row error-content">
-                                    <div class="col-sm-12">
-                                        <div class="btn-group btn-group-toggle">
-                                            <label class="btn btn-outline-secondary" :class="id_tipo_empresa === Number(key) ? 'active': ''" v-for="(tipo_empresa, key) in tipos_empresas" :key="key">
-                                                <input type="radio"
-                                                               class="btn-group-toggle"
-                                                               name="id_tipo_empresa"
-                                                               :id="'tipo_empresa' + key"
-                                                               :value="key"
-                                                               autocomplete="on"
-                                                               v-model.number="id_tipo_empresa">
-                                                        {{ tipo_empresa }}
-                                            </label>
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_empresa" class="col-sm-2 col-form-label">Tipo Beneficiario: </label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group btn-group-toggle">
+                                                <label class="btn btn-outline-secondary" :class="id_tipo_empresa === Number(key) ? 'active': ''" v-for="(tipo_empresa, key) in tipos_empresas" :key="key">
+                                                    <input type="radio"
+                                                                   class="btn-group-toggle"
+                                                                   name="id_tipo_empresa"
+                                                                   :id="'tipo_empresa' + key"
+                                                                   :value="key"
+                                                                   autocomplete="on"
+                                                                   v-model.number="id_tipo_empresa">
+                                                            {{ tipo_empresa }}
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -82,20 +85,22 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group row error-content">
-                                    <label for="id_tipo" class="col-sm-2 col-form-label">Tipo: </label>
-                                    <div class="col-sm-10">
-                                        <div class="btn-group btn-group-toggle">
-                                            <label class="btn btn-outline-secondary" :class="id_tipo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos" :key="llave">
-                                                <input type="radio"
-                                                               class="btn-group-toggle"
-                                                               name="id_tipo"
-                                                               :id="'tipo' + llave"
-                                                               :value="llave"
-                                                               autocomplete="on"
-                                                               v-model.number="id_tipo">
-                                                        {{ tipo}}
-                                            </label>
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_tipo" class="col-sm-2 col-form-label">Tipo: </label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group btn-group-toggle">
+                                                <label class="btn btn-outline-secondary" :class="id_tipo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos" :key="llave">
+                                                    <input type="radio"
+                                                           class="btn-group-toggle"
+                                                           name="id_tipo"
+                                                           :id="'tipo' + llave"
+                                                           :value="llave"
+                                                           autocomplete="on"
+                                                           v-model.number="id_tipo">
+                                                            {{ tipo}}
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +159,7 @@
                                                     step="any"
                                                     name="sucursal"
                                                     data-vv-as="Sucursal"
-                                                    v-validate="{required: true, integer: true,digits: 3}"
+                                                    v-validate="{required: true, numeric:true, digits: 3}"
                                                     class="form-control"
                                                     id="sucursal"
                                                     placeholder="Sucursal"
@@ -300,6 +305,7 @@
                 this.cargando = false;
                 this.observaciones = '';
                 this.archivo = null;
+                this.$refs.archivo.value = '';
             },
             getBancos(){
                 this.bancos = [];
@@ -326,7 +332,7 @@
                 this.plazas = [];
                 return this.$store.dispatch('seguridad/finanzas/ctg-plaza/index', {
                     params: {
-                        sort: 'nombre', order: 'asc'
+                        sort: 'clave', order: 'asc'
                     }
                 })
                     .then(data => {
@@ -336,6 +342,7 @@
             getEmpresa(){
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
+                        sort: 'razon_social', order: 'asc',
                         scope: 'proveedorContratista'
                     }
                 })
@@ -379,7 +386,10 @@
                         }
                         else if (this.id_tipo == 1 && this.cuenta.length == 18 && this.cuenta.substring(3, 6) != this.plaza_clave) {
                             swal('¡Error!', 'La cuenta no corresponde con la clave de la plaza.', 'error')
-                        }else {
+                        }else if(this.archivo == null){
+                            swal('¡Error!', 'Error al cargar el archivo, favor de seleccionarlo nuevamente.', 'error')
+                        }
+                        else {
                             this.store()
                         }
                     }
@@ -398,7 +408,9 @@
                 var files = e.target.files || e.dataTransfer.files;
                 this.createImage(files[0], 1);
                 setTimeout(() => {
-                    this.validate()
+                    if(this.archivo == null) {
+                        onFileChange(e)
+                    }
                 }, 500);
             },
             createImage(file) {
