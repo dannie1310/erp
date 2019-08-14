@@ -9,11 +9,6 @@
     export default {
         name: "action-buttons",
         components: {SolicitudBajaShow},
-        props: ['value'],
-        methods: {
-            show() {
-                this.$router.push({name: 'solicitud-baja-show', params: {id: this.value.id}});
-            }
-        },
+        props: ['value']
     }
 </script>
