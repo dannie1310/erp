@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <create v-bind:id="id" @created="find()"></create>
+            <create v-bind:id="id" @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -41,26 +41,21 @@
                 ],
                 data: [],
                 total: 0,
-                query: {
-                    scope:'Bancos', sort: 'id_empresa',  order: 'desc', id:this.id, include:['cuentas']
-                },
+                query: {include:'moneda,tiposCuentasObra'},
                 cargando: false,
-                cuentas:[],
 
             }
         },
         mounted() {
             this.$Progress.start();
-
-            this.find()
+            this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
                 })
         },
         methods: {
-            find() {
+            paginate() {
                 this.cargando = true;
-                this.$store.commit('cadeco/empresa/SET_EMPRESA', null);
                 return this.$store.dispatch('cadeco/empresa/find', {
                     id:this.id,
                     params: {
@@ -69,38 +64,69 @@
                         order: 'DESC',
                         include:'cuentas.moneda,cuentas.tiposCuentasObra',
                     }
-                }).then(data => {
-                    this.cuentas = data.cuentas.data;
-
-                }).finally(()=>{
-                    this.getData();
-                    this.cargando=false;
                 })
+                    .then(data => {
+                        this.$store.commit('cadeco/cuenta/SET_CUENTAS', data.cuentas.data);
+                        this.$store.commit('cadeco/cuenta/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             },
-            getData(){
-                let self = this
-                self.$data.data = []
-                this.cuentas.forEach(function (cuenta, i) {
-                    self.$data.data.push({
+        },
+        computed: {
+            cuentas(){
+                return this.$store.getters['cadeco/cuenta/cuentas'];
+            },
+            meta(){
+                return this.$store.getters['cadeco/cuenta/meta'];
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
+        },
+        watch: {
+            cuentas: {
+                handler(cuentas) {
+                    let self = this
+                    self.$data.data = []
+                    self.$data.data = cuentas.map((cuenta, i) => ({
                         index: (i + 1),
                         cuenta: cuenta.numero,
                         fecha: cuenta.fecha,
                         saldo: cuenta.saldo,
                         moneda: cuenta.moneda.nombre + ' (' + cuenta.moneda.abreviatura + ')',
                         chequera: cuenta.chequera === 0?'N':'S',
-                        tipo: cuenta.tiposCuentasObra.descripcion,
+                        tipo: cuenta.tiposCuentasObra?cuenta.tiposCuentasObra.descripcion:'---',
                         abreviatura: cuenta.abreviatura,
                         buttons: $.extend({}, {
-                            show: true,
+                            show: self.$root.can('consultar_cuenta_corriente') ? true : false,
+                            edit: self.$root.can('editar_cuenta_corriente') ? true : false,
                             id: cuenta.id
                         })
-                    })
-                });
-                this.$data.total = this.cuentas.length;
+                    }));
+                    let total =this.$data.data.length;
+                    this.$data.total = total
+                },
 
-            }
-
+                deep: true
+            },
+            meta: {
+                handler (meta) {
+                    let total =this.$data.data.length;
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler () {
+                    this.paginate()
+                },
+                deep: true
+            },
         },
+
+
     }
 </script>
 
