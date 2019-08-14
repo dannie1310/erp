@@ -754,7 +754,7 @@ export const routes = [
                                 name: 'SOLICITUD DE BAJA'
                             },
                             middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_cancelacion_cuenta_bancaria_empresa'
+                            permission: 'consultar_solicitud_baja_cuenta_bancaria_empresa'
                         }
                     }
                 ]
