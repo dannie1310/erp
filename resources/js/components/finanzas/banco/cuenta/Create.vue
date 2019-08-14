@@ -71,7 +71,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="saldo_inicial">Saldo Inicial:</label>
-                                        <input type="number" class="form-control"
+                                        <input type="text" class="form-control"
                                                name="saldo_inicial"
                                                data-vv-as="Saldo Inicial"
                                                v-model="saldo_inicial"
