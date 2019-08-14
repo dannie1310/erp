@@ -24,7 +24,7 @@
                     <p>Gestión de Fondos</p>
                 </router-link>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_solicitud_alta_cuenta_bancaria_empresa')">
+            <li class="nav-item" v-if="cuenta_bancaria">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-wpforms"></i>
                     <p>
@@ -37,6 +37,12 @@
                         <router-link :to="{name: 'solicitud-alta'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-alta'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Solicitud de Alta</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_solicitud_baja_cuenta_bancaria_empresa')">
+                        <router-link :to="{name: 'solicitud-baja'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-baja'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Solicitud de Baja</p>
                         </router-link>
                     </li>
                 </ul>
@@ -97,7 +103,8 @@
             },
             cuenta_bancaria(){
                 return this.$root.can([
-                    'consultar_solicitud_alta_cuenta_bancaria_empresa'
+                    'consultar_solicitud_alta_cuenta_bancaria_empresa',
+                    'consultar_solicitud_baja_cuenta_bancaria_empresa'
                 ]);
             }
 
