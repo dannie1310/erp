@@ -45,8 +45,8 @@ class SolicitudBajaCuentaBancariaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        $this->middleware('permiso:consultar_solicitud_cancelacion_cuenta_bancaria_empresa')->only(['show','paginate','index','find','pdf']);
-        $this->middleware('permiso:solicitar_cancelacion_cuenta_bancaria_empresa')->only('store');
+        $this->middleware('permiso:consultar_solicitud_baja_cuenta_bancaria_empresa')->only(['show','paginate','index','find','pdf']);
+        $this->middleware('permiso:solicitar_baja_cuenta_bancaria_empresa')->only('store');
 
         $this->service = $service;
         $this->fractal = $fractal;

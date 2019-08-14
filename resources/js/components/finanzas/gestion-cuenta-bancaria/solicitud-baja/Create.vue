@@ -1,6 +1,6 @@
 <template>
      <span>
-        <button @click="init" v-if="$root.can('solicitar_cancelacion_cuenta_bancaria_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('solicitar_baja_cuenta_bancaria_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Solicitud
@@ -68,7 +68,7 @@
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
                                             <div class="col-12">
-                                                <h3>Datos de la Cuenta</h3>
+                                                <h5>Datos de la Cuenta</h5>
                                             </div>
                                         </div>
                                         <form role="form">
