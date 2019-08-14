@@ -402,6 +402,13 @@ $api->version('v1', function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@store');
                 $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@pdf');
             });
+
+            /**
+             * SOLICITUD DE CAMBIO
+             */
+            $api->group(['prefix' => 'solicitud-cambio'], function ($api) {
+               $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudCambioCuentaBancariaController@store');
+            });
         });
 
         /**
