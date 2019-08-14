@@ -106,6 +106,6 @@ class Empresa extends Model
 
     public function scopeBeneficiarioCuentaBancaria($query)
     {
-        return $query->has('cuentasBancarias')->toSql;
+        return $query->has('cuentasBancarias');
     }
 }
