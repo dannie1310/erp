@@ -39,7 +39,7 @@ export default{
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Solicitud de Cambio de Cuenta Bancaria",
+                    title: "Registrar Solicitud de Baja de Cuenta Bancaria",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     buttons: {
