@@ -26,6 +26,7 @@
                                                                name="rfc"
                                                                data-vv-as="RFC"
                                                                v-model="banco.rfc"
+                                                               :class="{'is-invalid':rfcValidate}"
                                                                v-validate="{ required: true, regex: /\.(js|ts)$/ }"
                                                                id="rfc"
                                                                placeholder="RFC" />
