@@ -76,22 +76,26 @@
                                                 <div class="table-responsive col-md-12">
                                                     <table class="table table-striped">
                                                         <tbody>
-                                                        <tr>
-                                                            <td class="bg-gray-light"><b>Banco:</b></td>
-                                                            <td>{{cuenta.id}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="bg-gray-light"><b>Moneda:</b></td>
-                                                            <td>   $$$</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="bg-gray-light"><b>Sucursal:</b></td>
-                                                            <td>111</td>
-                                                        </tr>
-                                                         <tr>
-
-                                                         </tr>
-
+                                                            <tr>
+                                                                <td><b>Banco:</b></td>
+                                                                <td>{{cuenta.banco.razon_social}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><b>Moneda:</b></td>
+                                                                <td>{{cuenta.moneda.nombre}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><b>Sucursal:</b></td>
+                                                                <td>{{cuenta.sucursal}}</td>
+                                                            </tr>
+                                                             <tr>
+                                                                <td><b>Plaza:</b></td>
+                                                                <td>{{cuenta.plaza.clave_format}}</td>
+                                                             </tr>
+                                                            <tr>
+                                                                <td><b>Tipo:</b></td>
+                                                                <td>{{cuenta.tipo}}</td>
+                                                             </tr>
 
                                                         </tbody>
                                                     </table>
@@ -120,11 +124,28 @@
                                     </div>
                                 </div>
                              </div>
-
+                             <div class="row">
+                                 <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="archivo" class="col-sm-2 col-form-label">Cargar Archivo de Soporte: </label>
+                                        <div class="col-sm-10">
+                                            <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                                                   row="3"
+                                                   v-validate="{required: true,  ext: ['pdf']}"
+                                                   name="archivo"
+                                                   data-vv-as="Archivo"
+                                                   ref="archivo"
+                                                   :class="{'is-invalid': errors.has('archivo')}"
+                                            >
+                                            <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (pdf)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                          <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || cuenta =='' || id_tipo_empresa =='' || id_empresa == ''">Registrar</button>
+                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 || id_empresa =='' || id_cuenta ==''">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -186,7 +207,7 @@
                 this.detalle = 0;
                 return this.$store.dispatch('cadeco/empresa/find', {
                     id: this.id_empresa,
-                    params: {include: 'cuentas_bancarias'}
+                    params: {include: ['cuentas_bancarias', 'cuentas_bancarias.moneda', 'cuentas_bancarias.plaza', 'cuentas_bancarias.banco']}
                 }).then(data => {
                     this.cuentas = data.cuentas_bancarias.data;
                     this.bandera_empresa = 1;
@@ -195,7 +216,16 @@
             store() {
             },
             validate() {
-
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        if(this.archivo == null){
+                            swal('¡Error!', 'Error al cargar el archivo, favor de seleccionarlo nuevamente.', 'error')
+                        }
+                        else {
+                            this.store()
+                        }
+                    }
+                });
             },
 
             onFileChange(e){
