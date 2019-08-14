@@ -198,7 +198,7 @@
                 this.cuenta.chequera = data.chequera;
                 this.chk_chequera = data.chequera;
                 this.cuenta.abreviatura = data.abreviatura;
-                this.cuenta.id_tipo_cuentas_obra = data.tiposCuentasObra.id;
+                this.cuenta.id_tipo_cuentas_obra = data.tiposCuentasObra?data.tiposCuentasObra.id:1;
             },
             show() {
                 this.cargando = true;
