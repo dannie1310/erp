@@ -785,6 +785,18 @@ export const routes = [
 
                         }
                     },
+                    {
+                        path: ':id',
+                        name: 'sucursal-edit',
+                        component: require('./components/finanzas/banco/sucursal/Edit'),
+                        meta: {
+                            title: 'Editar Sucursal',
+                            breadcrumb: {name: 'EDITAR', parent: 'banco'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_sucursal_banco'
+
+                        }
+                    },
 
                 ]
             }
