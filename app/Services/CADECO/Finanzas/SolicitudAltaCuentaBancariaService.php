@@ -82,4 +82,8 @@ class SolicitudAltaCuentaBancariaService
     public function autorizar($id){
         return $this->repository->show($id)->autorizar();
     }
+
+    public function rechazar($data , $id){
+        return $this->repository->show($id)->rechazar($data['data'][0]);
+    }
 }
