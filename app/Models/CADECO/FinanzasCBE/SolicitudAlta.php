@@ -31,7 +31,7 @@ class SolicitudAlta extends Solicitud
         });
 
         self::created(function ($sol){
-            $sol->generaMovimiento();
+            $sol->generaMovimiento(1);
         });
     }
 
@@ -57,16 +57,15 @@ class SolicitudAlta extends Solicitud
     /**
      * @return mixed
      */
-    public function generaMovimiento()
+    public function generaMovimiento($tipo_movimiento)
     {
         return SolicitudMovimiento::create([
                 'id_solicitud'=>$this->id,
-                'id_tipo_movimiento'=>1,
+                'id_tipo_movimiento'=>$tipo_movimiento,
                 'observaciones'=>$this->observaciones
             ]
         );
     }
-
     /**
      * @return int
      */

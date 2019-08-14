@@ -9,7 +9,46 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\FinanzasCBE\SolicitudCambio;
+use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\Repositories\Repository;
+use Illuminate\Support\Facades\Storage;
+
 class SolicitudCambioCuentaBancariaService
 {
 
+    /**
+     * @var Repository
+     */
+    protected $repository;
+
+    /**
+     * SolicitudCambioCuentaBancariaService constructor.
+     * @param SolicitudCambio $model
+     */
+    public function __construct(SolicitudCambio $model)
+    {
+        $this->repository = $model;
+    }
+
+    public function store(array $data)
+    {
+        $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
+        $datos = [
+            'id_empresa' => $data['id_empresa'],
+            'id_banco' =>$data['cuenta']['banco']['id'],
+            'id_moneda' => $data['cuenta']['moneda']['id'],
+            'cuenta_clabe' => $data['cuenta']['cuenta'],
+            'id_plaza' => $data['cuenta']['plaza']['id'],
+            'sucursal' => $data['cuenta']['sucursal'],
+            'tipo_cuenta' => $data['cuenta']['id_tipo'],
+            'observaciones' => $data['observaciones']
+        ];
+        $registro = $this->repository->create($datos);
+        if($data['archivo'] != null) {
+            Storage::disk('solicitud_cuenta_bancaria')->put($proyectos->id.'_'.Context::getIdObra().'_'.$registro->id.'_cambio_cuenta_bancaria'.'.pdf', fopen($data['archivo'], 'r'));
+        }
+        return $registro;
+    }
 }

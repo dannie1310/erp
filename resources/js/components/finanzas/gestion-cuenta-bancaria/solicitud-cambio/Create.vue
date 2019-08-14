@@ -214,7 +214,7 @@
                 })
             },
             store() {
-                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/store', this.$data)
+                return this.$store.dispatch('finanzas/solicitud-cambio-cuenta-bancaria/store', this.$data)
                     .then(data => {
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');

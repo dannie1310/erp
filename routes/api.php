@@ -407,7 +407,7 @@ $api->version('v1', function ($api) {
              * SOLICITUD DE CAMBIO
              */
             $api->group(['prefix' => 'solicitud-cambio'], function ($api) {
-               $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudCambioCuentaBancariaController@store');
+               $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudCambioCuentaBancariaController@store');
             });
         });
 
