@@ -47,6 +47,7 @@ class BancoController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:registrar_banco')->only(['store']);
         $this->middleware('permiso:consultar_banco')->only(['paginate','index','show']);
+        $this->middleware('permiso:editar_banco')->only(['update']);
 
         $this->fractal = $fractal;
         $this->service = $service;

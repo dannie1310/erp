@@ -11,7 +11,7 @@
 
                                           <nav>
                       <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <!--    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Identificación</a>-->
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true" v-if="$root.can('editar_banco')">Identificación</a>
                         <a class="nav-item nav-link" v-if="$root.can('consultar_cuenta_corriente')" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Cuentas</a>
                         <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false" v-if="$root.can('consultar_sucursal_banco')">Sucursales</a>
                       </div>
@@ -19,7 +19,9 @@
 
                 <div class="tab-content" id="nav-tabContent">
 
-                <!--  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">...</div>-->
+                  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" v-if="$root.can('editar_banco')">
+                      <edit-banco v-bind:id="id"></edit-banco>
+                  </div>
                   <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" v-if="$root.can('consultar_cuenta_corriente')">
                       <index-cuenta v-bind:id="id"></index-cuenta>
                   </div>
@@ -34,9 +36,12 @@
 <script>
     import IndexCuenta from "./cuenta/Index";
     import IndexSucursal from "./sucursal/Index";
+    import EditBanco from "./EditBanco";
+
+
     export default {
         name: "banco-edit",
-        components: {IndexSucursal, IndexCuenta},
+        components: {IndexSucursal, IndexCuenta, EditBanco},
         props: ['id'],
         data(){
             return{
