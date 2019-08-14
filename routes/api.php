@@ -104,6 +104,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'sucursal'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\SucursalController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\SucursalController@paginate');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\SucursalController@store');
         });
