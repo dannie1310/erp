@@ -8,13 +8,14 @@
 
 namespace App\Services\CADECO\Finanzas;
 
-
 use App\Facades\Context;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\Storage;
 
 class SolicitudAltaCuentaBancariaService
 {
@@ -42,9 +43,9 @@ class SolicitudAltaCuentaBancariaService
         $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
         $obra = Context::getIdObra();
 
-        $filename = $proyectos->id.'_'.$obra.'_'.$id.'.pdf';
+        $filename = $proyectos->id.'_'.$obra.'_'.$id.'_alta_cuenta_bancaria.pdf';
 
-        $path = storage_path($this->files_global . 'finanzas\solicitudes_cuentas_bancarias/'.$filename);
+        $path = storage_path($this->files_global . 'Finanzas\solicitudes_cuentas_bancarias/'.$filename);
 
         if(!file_exists($path)){
             return "El archivo al cual intenta acceder no existe o no se encuentra disponible.";
@@ -60,6 +61,7 @@ class SolicitudAltaCuentaBancariaService
 
     public function store(array $data)
     {
+        $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
         $datos = [
             'id_empresa' => $data['id_empresa'],
             'id_banco' => $data['id_banco'],
@@ -70,6 +72,14 @@ class SolicitudAltaCuentaBancariaService
             'tipo_cuenta' => $data['id_tipo'],
             'observaciones' => $data['observaciones']
         ];
-        return $this->repository->create($datos);
+        $registro = $this->repository->create($datos);
+        if($data['archivo'] != null) {
+            Storage::disk('solicitud_cuenta_bancaria')->put($proyectos->id.'_'.Context::getIdObra().'_'.$registro->id.'_alta_cuenta_bancaria'.'.pdf', fopen($data['archivo'], 'r'));
+        }
+        return $registro;
+    }
+
+    public function autorizar($id){
+        return $this->repository->show($id)->autorizar();
     }
 }

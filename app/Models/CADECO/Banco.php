@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 use App\Models\CADECO\Finanzas\BancoComplemento;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgBanco;
+use App\Models\CADECO\Sucursal;
 
 
 class Banco extends Empresa
@@ -42,6 +43,11 @@ class Banco extends Empresa
     public function ctg_banco()
     {
         return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos');
+    }
+
+    public function sucursal()
+    {
+        return $this->hasMany(Sucursal::class, 'id_empresa', 'id_empresa');
     }
 
     public function bancoGeneral()

@@ -90,6 +90,10 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('SANTANDER_PORTAL_STORAGE_ZIP')),
         ],
+        'solicitud_cuenta_bancaria' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_SOPORTE_SOLICITUD_CUENTA_BANCARIA')),
+        ],
 
     ],
 

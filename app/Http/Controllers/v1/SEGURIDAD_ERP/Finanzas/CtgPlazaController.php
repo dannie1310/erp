@@ -42,6 +42,9 @@ class CtgPlazaController extends Controller
      */
     public function __construct(CtgPlazaService $service, Manager $fractal, CtgPlazaTransformer $transformer)
     {
+        $this->middleware('auth:api');
+        $this->middleware('context');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;

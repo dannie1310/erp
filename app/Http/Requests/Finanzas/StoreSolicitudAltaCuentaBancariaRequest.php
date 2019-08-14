@@ -20,7 +20,7 @@ class StoreSolicitudAltaCuentaBancariaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('registrar_solicitud_pago_anticipado');
+        return auth()->user()->can('consultar_solicitud_alta_cuenta_bancaria_empresa');
     }
 
     /**
@@ -37,9 +37,10 @@ class StoreSolicitudAltaCuentaBancariaRequest extends FormRequest
             'id_tipo' => ['required', 'integer'],
             'cuenta' => ['required', 'numeric'],
             'id_moneda' => ['required', 'exists:cadeco.monedas,id_moneda'],
-            'sucursal' => ['required', 'integer', 'digits:3'],
+            'sucursal' => ['required', 'digits:3'],
             'id_plaza' => ['required', 'exists:seguridad.Finanzas.ctg_plazas,id'],
             'observaciones' => ['required', 'string'],
+            'archivo' => ['required']
         ];
     }
 
