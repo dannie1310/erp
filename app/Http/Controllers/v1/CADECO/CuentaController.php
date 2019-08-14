@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCuentaRequest;
 use App\Http\Transformers\CADECO\CuentaTransformer;
 use App\Services\CADECO\CuentaService;
 use App\Traits\ControllerTrait;
@@ -17,7 +18,9 @@ use League\Fractal\Manager;
 
 class CuentaController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        store as protected traitStore;
+    }
 
     /**
      * @var Manager
@@ -44,9 +47,16 @@ class CuentaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:registrar_cuenta_corriente')->only(['store']);
+        $this->middleware('permiso:consultar_cuenta_corriente')->only(['paginate','index','show']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function store(StoreCuentaRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }
