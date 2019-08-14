@@ -66,7 +66,7 @@ class SolicitudBajaCuentaBancariaService
         $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
         $obra = Context::getIdObra();
 
-        $filename = $proyectos->id.'_'.$obra.'_'.$id.'_cambio_cuenta_bancaria.pdf';
+        $filename = $proyectos->id.'_'.$obra.'_'.$id.'_baja_cuenta_bancaria.pdf';
 
         $path = storage_path('Finanzas\solicitudes_cuentas_bancarias/'.$filename);
 
