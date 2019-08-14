@@ -84,8 +84,8 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             razon_social: banco.razon_social,
-                            descripcion_corta: banco.ctg_banco.descripcion_corta?banco.ctg_banco.descripcion_corta:'--',
-                            nombre_corto: banco.ctg_banco.nombre_corto?banco.ctg_banco.nombre_corto:'--',
+                            descripcion_corta: banco.ctg_banco?banco.ctg_banco.descripcion_corta:'--',
+                            nombre_corto: banco.ctg_banco?banco.ctg_banco.nombre_corto:'--',
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: true,
