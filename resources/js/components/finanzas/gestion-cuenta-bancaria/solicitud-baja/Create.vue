@@ -68,7 +68,7 @@
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
                                             <div class="col-12">
-                                                <h3>Datos de la Cuenta</h3>
+                                                <h5>Datos de la Cuenta</h5>
                                             </div>
                                         </div>
                                         <form role="form">
