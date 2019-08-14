@@ -360,7 +360,7 @@
                     }
                 })
                     .then(data => {
-                        this.empresa = data;
+                        this.empresas = data.data;
                         this.bandera_empresa = 1;
                     })
             },
@@ -429,6 +429,7 @@
         watch: {
             id_tipo_empresa(value){
                 if(value != ''){
+                    this.empresas = [];
                     if(value == 1){
                         this.getEmpresa();
                     }
