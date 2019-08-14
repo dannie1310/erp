@@ -46,13 +46,14 @@
 
                         </div>
                         </div>
-                </form>
-                <!--Margen footer-->
-                            <div class="col-md-12 mb-3 mt-4" >
-                                <hr style="color: #0056b2;" width="95%" size="10" />
-                            </div>
 
+                </form>
                 </div>
+            <!--Margen footer-->
+            <div class="col-md-12 mb-3 mt-4" >
+                <hr style="color: #0056b2;" width="95%" size="10" />
+            </div>
+            <p class="text-white">..</p>
             </div>
         </div>
 
