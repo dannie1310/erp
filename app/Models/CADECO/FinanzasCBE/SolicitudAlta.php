@@ -104,15 +104,15 @@ class SolicitudAlta extends Solicitud
         return $this;
     }
 
-    public function rechazar($data){
-        DB::connection('cadeco')->transaction(function() use($data){
+    public function rechazar($observaciones){
+        DB::connection('cadeco')->transaction(function() use($observaciones){
             $movimiento = SolicitudMovimiento::query()->where( 'id_solicitud', '=', $this->id )->first();
             $id = $movimiento->id;
             $movs = SolicitudMovimiento::query()->create( [
                 'id_solicitud' => $this->id,
                 'id_movimiento_antecedente' => $id,
                 'id_tipo_movimiento' => 4,
-                'observaciones' => $data
+                'observaciones' => $observaciones
             ] );
             $this->update( [
                 'estado' => 4
