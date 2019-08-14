@@ -10,12 +10,12 @@ namespace App\Services\CADECO\Finanzas;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\FinanzasCBE\SolicitudCambio;
+use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\Storage;
 
-class SolicitudCambioCuentaBancariaService
+class SolicitudBajaCuentaBancariaService
 {
 
     /**
@@ -25,9 +25,9 @@ class SolicitudCambioCuentaBancariaService
 
     /**
      * SolicitudCambioCuentaBancariaService constructor.
-     * @param SolicitudCambio $model
+     * @param SolicitudBaja $model
      */
-    public function __construct(SolicitudCambio $model)
+    public function __construct(SolicitudBaja $model)
     {
         $this->repository = $model;
     }
@@ -47,7 +47,7 @@ class SolicitudCambioCuentaBancariaService
         ];
         $registro = $this->repository->create($datos);
         if($data['archivo'] != null) {
-            Storage::disk('solicitud_cuenta_bancaria')->put($proyectos->id.'_'.Context::getIdObra().'_'.$registro->id.'_cambio_cuenta_bancaria'.'.pdf', fopen($data['archivo'], 'r'));
+            Storage::disk('solicitud_cuenta_bancaria')->put($proyectos->id.'_'.Context::getIdObra().'_'.$registro->id.'_baja_cuenta_bancaria'.'.pdf', fopen($data['archivo'], 'r'));
         }
         return $registro;
     }

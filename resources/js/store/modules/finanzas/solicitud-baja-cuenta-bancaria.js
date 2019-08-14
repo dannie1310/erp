@@ -1,4 +1,4 @@
-const URI = '/api/finanzas/gestion-cuenta-bancaria/solicitud-cambio/';
+const URI = '/api/finanzas/gestion-cuenta-bancaria/solicitud-baja/';
 
 export default{
     namespaced: true,

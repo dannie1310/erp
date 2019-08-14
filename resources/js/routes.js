@@ -734,7 +734,7 @@ export const routes = [
                         name: 'solicitud-alta',
                         component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-alta/Index'),
                         meta: {
-                            title: 'Solicitud de Alta',
+                            title: 'Solicitud de Alta de Cuenta Bancaria',
                             breadcrumb: {
                                 parent: 'gestion-cuenta-bancaria',
                                 name: 'SOLICITUD DE ALTA'
@@ -744,17 +744,17 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'solicitud-cambio',
-                        name: 'solicitud-cambio',
-                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-cambio/Index'),
+                        path: 'solicitud-baja',
+                        name: 'solicitud-baja',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-baja/Index'),
                         meta: {
-                            title: 'Solicitud de Cambio',
+                            title: 'Solicitud de Baja de Cuenta Bancaria',
                             breadcrumb: {
                                 parent: 'gestion-cuenta-bancaria',
-                                name: 'SOLICITUD DE CAMBIO'
+                                name: 'SOLICITUD DE BAJA'
                             },
                             middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_cambio_cuenta_bancaria_empresa'
+                            permission: 'consultar_solicitud_cancelacion_cuenta_bancaria_empresa'
                         }
                     }
                 ]

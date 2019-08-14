@@ -1,6 +1,6 @@
 <template>
      <span>
-        <button @click="init" v-if="$root.can('solicitar_cambio_cuenta_bancaria_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('solicitar_cancelacion_cuenta_bancaria_empresa')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Solicitud
@@ -9,7 +9,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR SOLICITUD DE CAMBIO DE CUENTA BANCARIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR SOLICITUD DE BAJA DE CUENTA BANCARIA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -156,7 +156,7 @@
 
 <script>
     export default {
-        name: "solicitud-cambio-create",
+        name: "solicitud-baja-create",
         data() {
             return {
                 cargando: false,
@@ -214,7 +214,7 @@
                 })
             },
             store() {
-                return this.$store.dispatch('finanzas/solicitud-cambio-cuenta-bancaria/store', this.$data)
+                return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/store', this.$data)
                     .then(data => {
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');

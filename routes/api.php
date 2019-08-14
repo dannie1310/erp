@@ -404,10 +404,10 @@ $api->version('v1', function ($api) {
             });
 
             /**
-             * SOLICITUD DE CAMBIO
+             * SOLICITUD DE BAJA
              */
-            $api->group(['prefix' => 'solicitud-cambio'], function ($api) {
-               $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudCambioCuentaBancariaController@store');
+            $api->group(['prefix' => 'solicitud-baja'], function ($api) {
+               $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@store');
             });
         });
 

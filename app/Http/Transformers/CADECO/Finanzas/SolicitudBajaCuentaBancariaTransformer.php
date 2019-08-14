@@ -9,10 +9,10 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
-use App\Models\CADECO\FinanzasCBE\SolicitudCambio;
+use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudCambioCuentaBancariaTransformer extends TransformerAbstract
+class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -30,7 +30,7 @@ class SolicitudCambioCuentaBancariaTransformer extends TransformerAbstract
     protected $defaultIncludes = [
     ];
 
-    public function transform(SolicitudCambio $model)
+    public function transform(SolicitudBaja $model)
     {
         return [
             'id' => $model->getKey(),

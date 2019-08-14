@@ -22,7 +22,7 @@
 <script>
     import Create from "./Create";
     export default {
-        name: "solicitud-cambio-index",
+        name: "solicitud-baja-index",
         components: {Create},
         data() {
             return {

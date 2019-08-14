@@ -11,7 +11,7 @@ namespace App\Models\CADECO\FinanzasCBE;
 
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 
-class SolicitudCambio extends Solicitud
+class SolicitudBaja extends Solicitud
 {
     protected static function boot()
     {
@@ -42,7 +42,7 @@ class SolicitudCambio extends Solicitud
             abort(400, 'No existe está cuenta bancaria empresa.');
         }
 
-        if(SolicitudCambio::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray() != [])
+        if(SolicitudBaja::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray() != [])
         {
             abort(400, 'Ya existe una solicitud de cambio para está cuenta bancaria.');
         }
@@ -66,6 +66,6 @@ class SolicitudCambio extends Solicitud
      */
     public function folio()
     {
-        return $count = SolicitudCambio::query()->count('id') + 1;
+        return $count = SolicitudBaja::query()->count('id') + 1;
     }
 }
