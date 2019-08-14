@@ -38,14 +38,14 @@ class SolicitudAlta extends Solicitud
 
     private function validar()
     {
-        $cuentaBancaria = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $this->cuenta_clabe)->get()->toArray();
-        $solicitud = SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('estado','>=',0)->get()->toArray();
+        $cuentaBancaria = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $this->cuenta_clabe)->where('id_empresa', '=', $this->id_empresa)->get()->toArray();
+        $solicitud = SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray();
 
         if($cuentaBancaria != []){
-            abort(400, 'La solicitud no puede ser registrada, la cuenta clabe ya existe');
+            abort(400, 'La solicitud no puede ser registrada, la cuenta clabe o empresa ya existe');
         }
         if($solicitud != []){
-            abort(400, 'Existe una solicitud para esta cuenta clabe.');
+            abort(400, 'Existe una solicitud para esta cuenta clabe o empresa.');
         }
     }
 
@@ -71,26 +71,28 @@ class SolicitudAlta extends Solicitud
     }
 
     public function autorizar(){
-//        $cuenta = CuentaBancariaEmpresa::query()->create([
-//            'id_empresa' => $this->id_empresa,
-//            'id_banco' =>  $this->id_banco,
-//            'cuenta_clabe' =>  $this->cuenta_clabe,
-//            'sucursal' => $this->sucursal,
-//            'tipo_cuenta' => $this->tipo_cuenta,
-//            'id_solicitud_origen_alta' => $this->id,
-//            'id_plaza' => $this->id_plaza,
-//            'id_moneda' => $this->id_moneda
-//        ]);
+        $cuenta = CuentaBancariaEmpresa::query()->create([
+            'id_empresa' => $this->id_empresa,
+            'id_banco' =>  $this->id_banco,
+            'cuenta_clabe' =>  $this->cuenta_clabe,
+            'sucursal' => $this->sucursal,
+            'tipo_cuenta' => $this->tipo_cuenta,
+            'id_solicitud_origen_alta' => $this->id,
+            'id_plaza' => $this->id_plaza,
+            'id_moneda' => $this->id_moneda
+        ]);
 
         $movimiento  = SolicitudMovimiento::query()->where('id_solicitud','=',$this->id)->first();
-        dd($this->id);
-
+        $id = $movimiento->id;
+        $movs  = SolicitudMovimiento::query()->create([
+            'id_solicitud' => $this->id,
+            'id_movimiento_antecedente' =>  $id,
+            'id_tipo_movimiento' =>  2,
+            'observaciones' =>  $this->observaciones,
+        ]);
         $this->update([
             'estado' => 2
         ]);
-
-
-//        $this->generaMovimiento(2);
-
+        return $this;
     }
 }

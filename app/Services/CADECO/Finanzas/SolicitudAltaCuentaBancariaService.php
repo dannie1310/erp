@@ -8,7 +8,6 @@
 
 namespace App\Services\CADECO\Finanzas;
 
-
 use App\Facades\Context;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
@@ -44,7 +43,7 @@ class SolicitudAltaCuentaBancariaService
         $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
         $obra = Context::getIdObra();
 
-        $filename = $proyectos->id.'_'.$obra.'_'.$id.'.pdf';
+        $filename = $proyectos->id.'_'.$obra.'_'.$id.'_alta_cuenta_bancaria.pdf';
 
         $path = storage_path($this->files_global . 'Finanzas\solicitudes_cuentas_bancarias/'.$filename);
 
@@ -62,6 +61,7 @@ class SolicitudAltaCuentaBancariaService
 
     public function store(array $data)
     {
+        $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
         $datos = [
             'id_empresa' => $data['id_empresa'],
             'id_banco' => $data['id_banco'],
@@ -74,7 +74,7 @@ class SolicitudAltaCuentaBancariaService
         ];
         $registro = $this->repository->create($datos);
         if($data['archivo'] != null) {
-            Storage::disk('alta_cuenta_bancaria')->put($registro->id . '_' . $registro->numero_folio . '_' . Context::getDatabase() . '_alta_cuenta_bancaria' . '.pdf', fopen($data['archivo'], 'r'));
+            Storage::disk('alta_cuenta_bancaria')->put($proyectos->id.'_'.Context::getIdObra().'_'.$registro->id.'_alta_cuenta_bancaria'.'.pdf', fopen($data['archivo'], 'r'));
         }
         return $registro;
     }

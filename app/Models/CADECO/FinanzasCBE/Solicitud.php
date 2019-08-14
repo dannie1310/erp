@@ -66,6 +66,11 @@ class Solicitud extends Model
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function movimientos()
+    {
+        return $this->hasMany(SolicitudMovimiento::class, 'id_solicitud', 'id');
+    }
+
     public function plaza()
     {
         return $this->belongsTo(CtgPlaza::class, 'id_plaza', 'id');
@@ -104,10 +109,10 @@ class Solicitud extends Model
         if($this->estado == 2){
             return 'Autorización';
         }
-        if($this->estado == 3){
+        if($this->estado == -1){
             return 'Cancelación';
         }
-        if($this->estado == 4){
+        if($this->estado == -2){
             return 'Rechazo';
         }
     }

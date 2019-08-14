@@ -32,6 +32,13 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
         });
 
+        $api->group(['prefix'=>'banco'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\BancoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\BancoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\BancoController@store');
+        });
+
         // CONCEPTOS
         $api->group(['prefix' => 'concepto'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ConceptoController@index');
@@ -378,7 +385,8 @@ $api->version('v1', function ($api) {
             $api->group(['prefix' => 'solicitud-alta'], function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@paginate');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@show')->where(['id' => '[0-9]+']);
-                $api->patch('autorizar/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@autorizar')->where(['id' => '[0-9]+']);
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@store');
+                $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@autorizar')->where(['id' => '[0-9]+']);
             });
         });
 
@@ -504,6 +512,14 @@ $api->version('v1', function ($api) {
             $api->get('code', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@code');
             $api->post('check', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@check');
             $api->get('isVerified', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@isVerified');
+        });
+
+        $api->group(['prefix'=>'ctg_banco'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgBancoController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgBancoController@show');
+        });
+        $api->group(['prefix'=>'ctg_plaza'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgPlazaController@index');
         });
     });
 

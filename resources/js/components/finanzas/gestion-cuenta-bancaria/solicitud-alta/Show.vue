@@ -4,7 +4,7 @@
             <i class="fa fa-eye"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CONSULTA DE SOLICITUD DE ALTA DE CUENTA BANCARIA</h5>
@@ -60,6 +60,27 @@
                                                 </table>
                                             </div>
                                         </div>
+                                        <div class="row" v-if="solicitudAlta.movimientos.data.length > 1">Movimientos de Solicitud
+
+                                            <div class="table-responsive col-12">
+                                                <table class="table table-striped">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>Fecha/Hora</th>
+                                                            <th>Acción</th>
+                                                            <th>Usuario</th>
+                                                            <th>Observaciones</th>
+                                                        </tr>
+                                                        <tr v-for="(mov,i) in solicitudAlta.movimientos.data">
+                                                            <td>{{mov.fecha_format}}</td>
+                                                            <td>{{mov.movimiento}}</td>
+                                                            <td>{{mov.usuario.nombre}}</td>
+                                                            <td>{{mov.observaciones}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +120,7 @@
                 this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/find', {
                     id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'] }
+                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).modal('show');

@@ -4,7 +4,7 @@
             <i class="fa fa-check"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CONSULTA DE SOLICITUD DE ALTA DE CUENTA BANCARIA</h5>
@@ -114,15 +114,16 @@
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE ALTA DE CUENTA BANCARIA</iframe>');
                 $(this.$refs.modalPDF).modal('show');
             },
-
-            autorizar(id) {
+            autorizar() {
                 return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/autorizar', {
-                    id: id,
-                    data: [this.solicitudAlta],
-                    config: {
-                        params: { _method: 'PATCH'}
-                    }
+                    id: this.id
+                }).then(data => {
+                    this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/UPDATE_CUENTA', data)
+                    $(this.$refs.modal).modal('hide');
                 })
+                    .finally( ()=>{
+                        this.cargando = false;
+                });
             }
 
         },

@@ -30,7 +30,8 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
         'moneda',
         'banco',
         'plaza',
-        'usuario'
+        'usuario',
+        'movimientos'
 
     ];
 
@@ -53,7 +54,6 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
             'tipo_cuenta' => $model->tipo_cuenta,
             'fecha' => $model->fecha,
             'observaciones' => $model->observaciones,
-            'estado' => $model->estatus,
             'fecha_format' => $model->fecha_format,
             'estatus' => $model->estatus,
             'estado' => $model->estado,
@@ -143,6 +143,19 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
         if($usuario = $model->registro)
         {
             return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param SolicitudAlta $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeMovimientos(SolicitudAlta $model)
+    {
+        if($movimientos = $model->movimientos)
+        {
+            return $this->collection($movimientos, new SolicitudMovimientoTransformer);
         }
         return null;
     }

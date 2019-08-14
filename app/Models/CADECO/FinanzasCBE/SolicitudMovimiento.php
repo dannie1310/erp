@@ -68,4 +68,26 @@ class SolicitudMovimiento extends Model
 
         }
     }
+    public function getTipoMovimientoAttribute()
+    {
+        if($this->id_tipo_movimiento == 1){
+            return 'Registro';
+        }
+        if($this->id_tipo_movimiento == 2){
+            return 'Autorización';
+        }
+        if($this->id_tipo_movimiento == 3){
+            return 'Cancelación';
+        }
+        if($this->id_tipo_movimiento == 4){
+            return 'Rechazo';
+        }
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora);
+        return date_format($date,"d/m/Y H:m");
+
+    }
 }
