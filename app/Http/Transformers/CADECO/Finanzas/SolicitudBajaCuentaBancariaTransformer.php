@@ -30,7 +30,8 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
         'moneda',
         'banco',
         'plaza',
-        'usuario'
+        'usuario',
+        'mov_estado'
     ];
 
     /**
@@ -139,6 +140,19 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
         if($usuario = $model->registro)
         {
             return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param SolicitudBaja $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMovEstado(SolicitudBaja $model)
+    {
+        if($movimiento = $model->movimientoSolicitud)
+        {
+            return $this->item($movimiento, new CtgTipoMovimientoSolicitudTransformer);
         }
         return null;
     }

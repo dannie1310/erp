@@ -141,6 +141,10 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param SolicitudAlta $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeMovimientoSolicitud(SolicitudAlta $model)
     {
         if($movimiento = $model->movimientoSolicitud)
