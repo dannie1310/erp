@@ -402,6 +402,13 @@ $api->version('v1', function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@store');
                 $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@pdf');
             });
+
+            /**
+             * SOLICITUD DE BAJA
+             */
+            $api->group(['prefix' => 'solicitud-baja'], function ($api) {
+               $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@store');
+            });
         });
 
         /**
