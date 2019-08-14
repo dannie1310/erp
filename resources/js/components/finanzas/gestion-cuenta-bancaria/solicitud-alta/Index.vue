@@ -35,12 +35,12 @@
                     { title: 'Tipo Beneficiaro', field: 'tipo_empresa'},
                     { title: 'Banco', field: 'banco', sortable: false},
                     { title: 'Cuenta/CLABE', field: 'cuenta', sortable: false },
-                    { title: 'Estatus', field: 'estado', tdComp: require('./partials/SolicitudEstatus')},
+                    { title: 'Estatus', field: 'estado'},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'], sort: 'numero_folio', order: 'desc'},
+                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimiento_solicitud'], sort: 'numero_folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -93,7 +93,7 @@
                             tipo_empresa: cuenta.empresa.tipo_empresa,
                             banco: cuenta.banco.razon_social,
                             cuenta: cuenta.cuenta,
-                            estado: cuenta.estado,
+                            estado: cuenta.movimiento_solicitud.estado_resultante_desc,
                             buttons: $.extend({}, {
                                 show: true,
                                 autorizar: self.$root.can('autorizar_solicitud_alta_cuenta_bancaria_empresa') ? true : false,

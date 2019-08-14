@@ -31,7 +31,8 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
         'banco',
         'plaza',
         'usuario',
-        'movimientos'
+        'movimientos',
+        'movimiento_solicitud'
 
     ];
 
@@ -41,7 +42,14 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'tipo',
+        'empresa',
+        'moneda',
+        'banco',
+        'plaza',
+        'usuario',
+        'movimientos',
+        'movimiento_solicitud'
     ];
 
     public function transform(SolicitudAlta $model)
@@ -50,12 +58,12 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'cuenta' => $model->cuenta_clabe,
             'sucursal' => $model->sucursal,
-            'tipo' => $model->tipo,
+            'tipos' => $model->tipos_cuentas,
             'tipo_cuenta' => $model->tipo_cuenta,
             'fecha' => $model->fecha,
             'observaciones' => $model->observaciones,
             'fecha_format' => $model->fecha_format,
-            'estatus' => $model->estatus,
+            'estatus' => $model->movimientoSolicitud->estado_resultante_desc,
             'estado' => $model->estado,
             'folio' => $model->numero_folio,
             'numero_folio_format_orden' => $model->numero_folio_format_orden,
@@ -133,6 +141,15 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
         return null;
     }
 
+    public function includeMovimientoSolicitud(SolicitudAlta $model)
+    {
+        if($movimiento = $model->movimientoSolicitud)
+        {
+            return $this->item($movimiento, new CtgTipoMovimientoSolicitudTransformer);
+        }
+        return null;
+    }
+
     /**
      * @param SolicitudAlta $model
      * Include Usuario
@@ -153,9 +170,9 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
      */
     public function includeMovimientos(SolicitudAlta $model)
     {
-        if($movimientos = $model->movimientos)
+        if($movimiento_solicitud = $model->movimientos)
         {
-            return $this->collection($movimientos, new SolicitudMovimientoTransformer);
+            return $this->collection($movimiento_solicitud, new SolicitudMovimientoTransformer);
         }
         return null;
     }
