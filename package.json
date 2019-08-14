@@ -31,6 +31,7 @@
         "sweetalert": "^2.1.2",
         "vee-validate": "^2.1.5",
         "vue-inputmask": "^0.2.1",
+        "vue-pattern-input": "^2.1.4",
         "vue-progressbar": "^0.7.5",
         "vue-router": "^3.0.2",
         "vue-router-multiguard": "^1.0.3",

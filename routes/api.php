@@ -37,6 +37,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\BancoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\BancoController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@update')->where(['id' => '[0-9]+']);
         });
 
         // CONCEPTOS

@@ -64,4 +64,8 @@ class BancoService
     {
         return $this->repository->all();
     }
+
+    public function update(array $data, $id){
+        return $this->repository->update($data, $id);
+    }
 }
