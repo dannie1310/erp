@@ -21,45 +21,68 @@
                                                 <table class="table table-striped">
                                                     <tbody>
                                                         <tr>
-                                                            <th>Tipo de Beneficiario:</th>
-                                                            <td>{{solicitudBaja.empresa.tipo_empresa}}</td>
-                                                        </tr>
-                                                        <tr>
                                                             <th>Beneficiario:</th>
                                                             <td>{{solicitudBaja.empresa.razon_social}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Banco:</th>
-                                                            <td>{{solicitudBaja.banco.razon_social}}</td>
                                                         </tr>
                                                         <tr>
                                                             <th>Cuenta / CLABE:</th>
                                                             <td>{{solicitudBaja.cuenta}}</td>
                                                         </tr>
-                                                        <tr>
-                                                            <th>Modena:</th>
-                                                            <td>{{solicitudBaja.moneda.nombre}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Sucursal:</th>
-                                                            <td>{{solicitudBaja.sucursal_format}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Plaza:</th>
-                                                            <td>{{solicitudBaja.plaza.clave_format}} ({{solicitudBaja.plaza.nombre}})</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Tipo:</th>
-                                                            <td>{{solicitudBaja.tipo_cuenta}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Observaciones:</th>
-                                                            <td>{{solicitudBaja.observaciones}}</td>
-                                                        </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row"  v-if="solicitudBaja">
+                                <div class="col-12">
+                                    <div class="invoice p-3 mb-3">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h5>Datos de la Cuenta</h5>
+                                            </div>
+                                        </div>
+                                        <form role="form">
+                                            <div class="row">
+                                                <div class="table-responsive col-md-12">
+                                                    <table class="table table-striped">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td><b>Banco:</b></td>
+                                                                <td>{{solicitudBaja.banco.razon_social}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><b>Modena:</b></td>
+                                                                <td>{{solicitudBaja.moneda.nombre}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><b>Sucursal:</b></td>
+                                                                <td>{{solicitudBaja.sucursal_format}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><b>Plaza:</b></td>
+                                                                <td>{{solicitudBaja.plaza.clave_format}} ({{solicitudBaja.plaza.nombre}})</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><b>Tipo:</b></td>
+                                                                <td>{{solicitudBaja.tipo_cuenta}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                             </div>
+                             <div class="row" v-if="solicitudBaja">
+                                <div class="col-12">
+                                    <div class = "col-sm-6">
+                                        <label>Observaciones:</label>
+                                    </div>
+                                    <div class = "col-sm-6">
+                                          <h6>{{solicitudBaja.observaciones}}</h6>
                                     </div>
                                 </div>
                             </div>
