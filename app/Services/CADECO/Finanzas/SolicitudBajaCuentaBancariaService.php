@@ -29,7 +29,17 @@ class SolicitudBajaCuentaBancariaService
      */
     public function __construct(SolicitudBaja $model)
     {
-        $this->repository = $model;
+        $this->repository = new Repository($model);
+    }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
     }
 
     public function store(array $data)
