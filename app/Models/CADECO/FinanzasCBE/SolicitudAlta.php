@@ -10,7 +10,6 @@ namespace App\Models\CADECO\FinanzasCBE;
 
 
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
-use function foo\func;
 use Illuminate\Support\Facades\DB;
 
 class SolicitudAlta extends Solicitud
