@@ -59,7 +59,7 @@ export default{
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Solicitud de cambio registrada correctamente", {
+                                    swal("Solicitud de baja registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
