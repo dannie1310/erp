@@ -61,4 +61,20 @@ class SolicitudBajaCuentaBancariaService
         }
         return $registro;
     }
+
+    public function pdf($id){
+        $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
+        $obra = Context::getIdObra();
+
+        $filename = $proyectos->id.'_'.$obra.'_'.$id.'_cambio_cuenta_bancaria.pdf';
+
+        $path = storage_path('Finanzas\solicitudes_cuentas_bancarias/'.$filename);
+
+        if(!file_exists($path)){
+            return "El archivo al cual intenta acceder no existe o no se encuentra disponible.";
+        }else{
+            return response()->file($path);
+        }
+    }
+
 }
