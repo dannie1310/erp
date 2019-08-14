@@ -134,7 +134,7 @@
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {
                         sort: 'razon_social', order: 'asc',
-                        scope: 'proveedorContratista'
+                        scope: 'beneficiarioCuentaBancaria'
                     }
                 })
                     .then(data => {

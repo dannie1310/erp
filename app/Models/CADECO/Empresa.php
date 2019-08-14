@@ -103,4 +103,9 @@ class Empresa extends Model
             return 'Responsables Fondos Fijos';
         }
     }
+
+    public function scopeBeneficiarioCuentaBancaria($query)
+    {
+        return $query->has('cuentasBancarias')->toSql;
+    }
 }
