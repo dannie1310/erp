@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Finanzas;
 
 use App\Facades\Context;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
@@ -76,5 +77,9 @@ class SolicitudAltaCuentaBancariaService
             Storage::disk('solicitud_cuenta_bancaria')->put($proyectos->id.'_'.Context::getIdObra().'_'.$registro->id.'_alta_cuenta_bancaria'.'.pdf', fopen($data['archivo'], 'r'));
         }
         return $registro;
+    }
+
+    public function autorizar($id){
+        return $this->repository->show($id)->autorizar();
     }
 }

@@ -11,6 +11,7 @@ namespace App\Http\Controllers\v1\CADECO;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCuentaRequest;
+use App\Http\Requests\UpdateCuentaRequest;
 use App\Http\Transformers\CADECO\CuentaTransformer;
 use App\Services\CADECO\CuentaService;
 use App\Traits\ControllerTrait;
@@ -20,6 +21,7 @@ class CuentaController extends Controller
 {
     use ControllerTrait{
         store as protected traitStore;
+        update as protected traitUpdate;
     }
 
     /**
@@ -49,6 +51,8 @@ class CuentaController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:registrar_cuenta_corriente')->only(['store']);
         $this->middleware('permiso:consultar_cuenta_corriente')->only(['paginate','index','show']);
+        $this->middleware('permiso:editar_cuenta_corriente')->only('update');
+
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -58,5 +62,10 @@ class CuentaController extends Controller
     public function store(StoreCuentaRequest $request)
     {
         return $this->traitStore($request);
+    }
+
+    public function update(UpdateCuentaRequest $request, $id)
+    {
+        return $this->traitUpdate($request, $id);
     }
 }

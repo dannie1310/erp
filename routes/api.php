@@ -32,7 +32,6 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
         });
 
-        //BANCOS
         $api->group(['prefix'=>'banco'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\BancoController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\BancoController@paginate');
@@ -60,6 +59,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\CuentaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\CuentaController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\CuentaController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\CuentaController@update')->where(['id' => '[0-9]+']);
 
         });
 
@@ -401,6 +401,7 @@ $api->version('v1', function ($api) {
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@show')->where(['id' => '[0-9]+']);
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@store');
                 $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@pdf');
+                $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@autorizar')->where(['id' => '[0-9]+']);
             });
 
             /**
@@ -541,7 +542,6 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgBancoController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgBancoController@show');
         });
-
         $api->group(['prefix'=>'ctg_plaza'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgPlazaController@index');
         });

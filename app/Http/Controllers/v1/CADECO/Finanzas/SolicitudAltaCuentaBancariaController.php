@@ -14,6 +14,7 @@ use App\Http\Requests\Finanzas\StoreSolicitudAltaCuentaBancariaRequest;
 use App\Http\Transformers\CADECO\Finanzas\SolicitudAltaCuentaBancariaTransformer;
 use App\Services\CADECO\Finanzas\SolicitudAltaCuentaBancariaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class SolicitudAltaCuentaBancariaController extends Controller
@@ -51,7 +52,7 @@ class SolicitudAltaCuentaBancariaController extends Controller
         $this->middleware('permiso:solicitar_alta_cuenta_bancaria_empresa')->only('store');
 //        $this->middleware('permiso:rechazar_solicitud_alta_cuenta_bancaria_empresa')->only('');
 //        $this->middleware('permiso:cancelar_solicitud_alta_cuenta_bancaria_empresa')->only('cancelar');
-//        $this->middleware('permiso:autorizar_solicitud_alta_cuenta_bancaria_empresa')->only('autorizar');
+        $this->middleware('permiso:autorizar_solicitud_alta_cuenta_bancaria_empresa')->only('autorizar');
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -67,4 +68,8 @@ class SolicitudAltaCuentaBancariaController extends Controller
         return $this->service->pdf($id);
     }
 
+    public function autorizar ($id){
+        $item = $this->service->autorizar($id);
+        return $this->respondWithItem($item);
+    }
 }
