@@ -96,7 +96,6 @@ class SolicitudAlta extends Solicitud
                 'id_solicitud' => $this->id,
                 'id_movimiento_antecedente' => $id,
                 'id_tipo_movimiento' => 2,
-                'observaciones' => $this->observaciones,
             ] );
             $this->update( [
                 'estado' => 2

@@ -52,7 +52,7 @@ class SolicitudAltaCuentaBancariaController extends Controller
         $this->middleware('permiso:solicitar_alta_cuenta_bancaria_empresa')->only('store');
 //        $this->middleware('permiso:rechazar_solicitud_alta_cuenta_bancaria_empresa')->only('');
 //        $this->middleware('permiso:cancelar_solicitud_alta_cuenta_bancaria_empresa')->only('cancelar');
-//        $this->middleware('permiso:autorizar_solicitud_alta_cuenta_bancaria_empresa')->only('autorizar');
+        $this->middleware('permiso:autorizar_solicitud_alta_cuenta_bancaria_empresa')->only('autorizar');
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -69,6 +69,7 @@ class SolicitudAltaCuentaBancariaController extends Controller
     }
 
     public function autorizar ($id){
-        return $this->service->autorizar($id);
+        $item = $this->service->autorizar($id);
+        return $this->respondWithItem($item);
     }
 }

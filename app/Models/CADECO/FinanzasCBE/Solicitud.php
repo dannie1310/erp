@@ -71,6 +71,11 @@ class Solicitud extends Model
         return $this->hasMany(SolicitudMovimiento::class, 'id_solicitud', 'id');
     }
 
+    public function movimientoSolicitud()
+    {
+        return $this->belongsTo(CtgTipoMovimientoSolicitud::class, 'estado', 'id');
+    }
+
     public function plaza()
     {
         return $this->belongsTo(CtgPlaza::class, 'id_plaza', 'id');
@@ -81,7 +86,7 @@ class Solicitud extends Model
         return $this->belongsTo(Usuario::class, 'usuario_registra', 'idusuario');
     }
 
-    public function getTipoAttribute()
+    public function getTiposCuentasAttribute()
     {
         return $this->tipo_cuenta == 1 ? 'Mismo Banco' : 'Interbancario';
     }

@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CONSULTA DE SOLICITUD DE ALTA DE CUENTA BANCARIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AUTORIZAR SOLICITUD DE ALTA DE CUENTA BANCARIA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -50,7 +50,7 @@
                                                         </tr>
                                                         <tr>
                                                             <th>Tipo:</th>
-                                                            <td>{{solicitudAlta.tipo_cuenta}}</td>
+                                                            <td>{{solicitudAlta.tipos}}</td>
                                                         </tr>
                                                         <tr>
                                                             <th>Observaciones:</th>
@@ -100,7 +100,7 @@
                 this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/find', {
                     id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'] }
+                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).modal('show');
@@ -116,8 +116,9 @@
             },
             autorizar() {
                 return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/autorizar', {
-                    id: this.id
-                }).then(data => {
+                    id: this.id,
+                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
+                    }).then(data => {
                     this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/UPDATE_CUENTA', data)
                     $(this.$refs.modal).modal('hide');
                 })
@@ -125,7 +126,6 @@
                         this.cargando = false;
                 });
             }
-
         },
         computed: {
             solicitudAlta() {
