@@ -97,7 +97,7 @@
                         saldo: cuenta.saldo,
                         moneda: cuenta.moneda.nombre + ' (' + cuenta.moneda.abreviatura + ')',
                         chequera: cuenta.chequera === 0?'N':'S',
-                        tipo: cuenta.tiposCuentasObra.descripcion,
+                        tipo: cuenta.tiposCuentasObra?cuenta.tiposCuentasObra.descripcion:'---',
                         abreviatura: cuenta.abreviatura,
                         buttons: $.extend({}, {
                             show: self.$root.can('consultar_cuenta_corriente') ? true : false,
@@ -105,7 +105,10 @@
                             id: cuenta.id
                         })
                     }));
+                    let total =this.$data.data.length;
+                    this.$data.total = total
                 },
+
                 deep: true
             },
             meta: {
