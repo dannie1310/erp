@@ -287,7 +287,7 @@ class GestionPagoService
         foreach ($this->getTxtData($bitacora) as $key => $pago){
             $c_cargo = Cuenta::query()->where('numero', $pago['cuenta_abono'])->first();
             if(!$c_cargo){
-                $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->first();
+                $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->first();
                 if($cta_cargo) {
                     if (strlen($pago['concepto']) > 10 && is_numeric(substr($pago['concepto'], 1, 9))) {
                         $documento = Documento::query()->where('IDDocumento', '=', substr($pago['concepto'], 1, 9))->first();

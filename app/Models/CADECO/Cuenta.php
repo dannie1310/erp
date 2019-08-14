@@ -83,6 +83,11 @@ class Cuenta extends Model
         return $query->has('cuentasBanco');
     }
 
+    public function scopePagadora($query)
+    {
+        return $query->where('id_tipo_cuentas_obra', '=', 1);
+    }
+
     public function scopeParaTraspaso($query)
     {
         return $query->whereHas('empresa', function ($q) {
