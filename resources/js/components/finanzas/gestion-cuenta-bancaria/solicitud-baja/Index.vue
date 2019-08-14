@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'], sort: 'numero_folio', order: 'desc'},
+                query: {include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza', 'mov_estado'], sort: 'numero_folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -93,7 +93,7 @@
                             tipo_empresa: cuenta.empresa.tipo_empresa,
                             banco: cuenta.banco.razon_social,
                             cuenta: cuenta.cuenta,
-                            estado: cuenta.estado,
+                            estado: cuenta.mov_estado.estado_resultante_desc,
                             buttons: $.extend({}, {
                                 show: true,
                                 id: cuenta.id,
