@@ -16,7 +16,6 @@ use App\Models\CADECO\Sucursal;
 
 class Banco extends Empresa
 {
-
     protected static function boot()
     {
         parent::boot();
@@ -43,15 +42,16 @@ class Banco extends Empresa
 
     public function ctg_banco()
     {
-        return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos');
+        return $this->belongsTo(CtgBanco::class, 'id_ctg_bancos', 'id');
     }
 
-    public function sucursal(){
+    public function sucursal()
+    {
         return $this->hasMany(Sucursal::class, 'id_empresa', 'id_empresa');
     }
 
-    public function scopeBancos($query)
+    public function scopeBancoGlobal($query)
     {
-        return $query->where('tipo_empresa', '=', 8);
+        return $query->where('id_ctg_bancos', '!=', null);
     }
 }

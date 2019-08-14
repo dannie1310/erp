@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * User: DBenitezc
+ * Date: 06/08/2019
+ * Time: 05:08 PM
+ */
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
@@ -24,5 +29,9 @@ class CtgBanco extends Model
     {
          $bancos = array_column(Banco::query()->select('id_ctg_bancos')->where('id_ctg_bancos', '>', 0)->get()->toArray(),'id_ctg_bancos');
          return $query->whereNotIn('id',$bancos);
+    }
+
+    public function getClaveFormatAttribute(){
+        return str_pad($this->clave, 3,"0",STR_PAD_LEFT);
     }
 }

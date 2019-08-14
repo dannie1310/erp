@@ -9,10 +9,10 @@
 namespace App\Services\CADECO\Finanzas;
 
 
-use App\Models\CADECO\Finanzas\CuentaBancariaProveedor;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Repositories\Repository;
 
-class CuentaBancariaProveedorService
+class CuentaBancariaEmpresaService
 {
     /**
      * @var Repository
@@ -20,10 +20,10 @@ class CuentaBancariaProveedorService
     protected $repository;
 
     /**
-     * CuentaBancariaProveedorService constructor.
-     * @param CuentaBancariaProveedor $model
+     * CuentaBancariaEmpresaService constructor.
+     * @param CuentaBancariaEmpresa $model
      */
-    public function __construct(CuentaBancariaProveedor $model)
+    public function __construct(CuentaBancariaEmpresa $model)
     {
         $this->repository = new Repository($model);
     }

@@ -103,6 +103,7 @@ class Repository implements RepositoryInterface
     {
         $this->model->destroy($id);
     }
+
     public function cancelar($id){
         return $this->model->cancelar($id);
 

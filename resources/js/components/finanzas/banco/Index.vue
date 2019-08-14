@@ -37,7 +37,7 @@
                 data: [],
                 total: 0,
                 query: {
-                    scope:'Bancos', sort: 'id_empresa',  order: 'desc', include: ['ctgBanco']
+                    include: 'ctg_banco', sort: 'id_empresa',  order: 'desc'
                 },
                 cargando: false
 
@@ -84,8 +84,8 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             razon_social: banco.razon_social,
-                            descripcion_corta: banco.ctgBanco.descripcion_corta?banco.ctgBanco.descripcion_corta:'--',
-                            nombre_corto: banco.ctgBanco.nombre_corto?banco.ctgBanco.nombre_corto:'--',
+                            descripcion_corta: banco.ctg_banco?banco.ctg_banco.descripcion_corta:'--',
+                            nombre_corto: banco.ctg_banco?banco.ctg_banco.nombre_corto:'--',
                             buttons: $.extend({}, {
                                 show: true,
                                 edit: true,

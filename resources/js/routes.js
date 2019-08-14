@@ -535,32 +535,88 @@ export const routes = [
                 }
             },
             {
-                path: 'solicitud',
-                component: require('./components/finanzas/solicitud/Layout'),
+                path:'banco',
+                component: require('./components/finanzas/banco/Layout.vue'),
                 children: [
                     {
-                        path: '/',
-                        name: 'solicitud',
-                        component: require('./components/finanzas/solicitud/Index'),
+                        path:'/',
+                        name: 'banco',
+                        component: require('./components/finanzas/banco/Index.vue'),
+                        meta:{
+                            title: 'Bancos',
+                            breadcrumb: {name: 'GESTIÓN DE BANCOS', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'banco-create',
+                        component: require('./components/finanzas/banco/Create'),
                         meta: {
-                            title: 'Solicitudes de Pago',
-                            breadcrumb: {parent: 'finanzas', name: 'SOLICITUDES DE PAGO'},
+                            title: 'Registrar Banco',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_banco'
+                        }
+                    },
+                    {
+                        path: 'show',
+                        name: 'banco-show',
+                        props: true,
+                        component: require('./components/finanzas/banco/Show'),
+                        meta: {
+                            title: 'Ver Banco',
+                            breadcrumb: {name: 'VER', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'banco-edit',
+                        props: true,
+                        component: require('./components/finanzas/banco/Edit'),
+                        meta: {
+                            title: 'Edición de Bancos',
+                            breadcrumb: {name: 'EDICIÓN DE BANCOS', parent: 'banco'},
                             middleware: [auth, context],
 
                         }
                     },
                     {
-                        path: 'pago-anticipado',
-                        name: 'pago-anticipado',
-                        component: require('./components/finanzas/solicitud/pago-anticipado/Index'),
+                        path: '/',
+                        name: 'sucursal',
+                        component: require('./components/finanzas/banco/sucursal/Index.vue'),
                         meta: {
-                            title: 'Solicitud de Pago Anticipado',
-                            breadcrumb: {
-                                parent: 'solicitud',
-                                name: 'PAGO ANTICIPADO'
-                            },
+                            title: 'Sucursales',
+                            breadcrumb: { name: 'SUCURSALES', parent: 'banco'},
                             middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_pago_anticipado'
+                            permission: 'consultar_sucursal_banco'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'sucursal-create',
+                        component: require('./components/finanzas/banco/sucursal/Create'),
+                        meta: {
+                            title: 'Registrar Sucursal',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'banco'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_sucursal_banco'
+
+                        }
+                    },
+                    {
+                        path: 'show',
+                        name: 'sucursal-show',
+                        component: require('./components/finanzas/banco/sucursal/Show'),
+                        meta: {
+                            title: 'Ver Sucursal',
+                            breadcrumb: {name: 'VER', parent: 'banco'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_sucursal_banco'
+
                         }
                     },
                 ]
@@ -659,6 +715,37 @@ export const routes = [
                 ]
             },
             {
+                path: 'gestion-cuenta-bancaria',
+                component: require('./components/finanzas/gestion-cuenta-bancaria/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'gestion-cuenta-bancaria',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/Index'),
+                        meta: {
+                            title: 'Gestión de Cuentas Bancarias',
+                            breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE CUENTAS BANCARIAS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'solicitud-alta',
+                        name: 'solicitud-alta',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-alta/Index'),
+                        meta: {
+                            title: 'Solicitud de Alta',
+                            breadcrumb: {
+                                parent: 'gestion-cuenta-bancaria',
+                                name: 'SOLICITUD DE ALTA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_alta_cuenta_bancaria_empresa'
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'gestion-pago',
                 component: require('./components/finanzas/gestion/Layout'),
                 children: [
@@ -701,105 +788,36 @@ export const routes = [
                 ]
             },
             {
-                path:'banco',
-                component: require('./components/finanzas/banco/Layout.vue'),
+                path: 'solicitud',
+                component: require('./components/finanzas/solicitud/Layout'),
                 children: [
                     {
-                        path:'/',
-                        name: 'banco',
-                        component: require('./components/finanzas/banco/Index.vue'),
-                        meta:{
-                            title: 'Bancos',
-                            breadcrumb: {name: 'GESTIÓN DE BANCOS', parent: 'finanzas'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_banco'
-                        }
-                    },
-                    {
-                        path: 'create',
-                        name: 'banco-create',
-                        component: require('./components/finanzas/banco/Create'),
+                        path: '/',
+                        name: 'solicitud',
+                        component: require('./components/finanzas/solicitud/Index'),
                         meta: {
-                            title: 'Registrar Banco',
-                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
-                            middleware: [auth, context, permission],
-                            permission: 'registrar_banco'
-                        }
-                    },
-                    {
-                        path: 'show',
-                        name: 'banco-show',
-                        props: true,
-                        component: require('./components/finanzas/banco/Show'),
-                        meta: {
-                            title: 'Ver Banco',
-                            breadcrumb: {name: 'VER', parent: 'finanzas'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_banco'
-                        }
-                    },
-                    {
-                        path: ':id',
-                        name: 'banco-edit',
-                        props: true,
-                        component: require('./components/finanzas/banco/Edit'),
-                        meta: {
-                            title: 'Edición de Bancos',
-                            breadcrumb: {name: 'EDICIÓN DE BANCOS', parent: 'banco'},
+                            title: 'Solicitudes de Pago',
+                            breadcrumb: {parent: 'finanzas', name: 'SOLICITUDES DE PAGO'},
                             middleware: [auth, context],
 
                         }
                     },
                     {
-                        path: '/',
-                        name: 'sucursal',
-                        component: require('./components/finanzas/banco/sucursal/Index.vue'),
+                        path: 'pago-anticipado',
+                        name: 'pago-anticipado',
+                        component: require('./components/finanzas/solicitud/pago-anticipado/Index'),
                         meta: {
-                            title: 'Sucursales',
-                            breadcrumb: { name: 'SUCURSALES', parent: 'banco'},
+                            title: 'Solicitud de Pago Anticipado',
+                            breadcrumb: {
+                                parent: 'solicitud',
+                                name: 'PAGO ANTICIPADO'
+                            },
                             middleware: [auth, context, permission],
-                            permission: 'consultar_sucursal_banco'
+                            permission: 'consultar_solicitud_pago_anticipado'
                         }
                     },
-                    {
-                        path: 'create',
-                        name: 'sucursal-create',
-                        component: require('./components/finanzas/banco/sucursal/Create'),
-                        meta: {
-                            title: 'Registrar Sucursal',
-                            breadcrumb: {name: 'REGISTRAR', parent: 'banco'},
-                            middleware: [auth, context, permission],
-                            permission: 'registrar_sucursal_banco'
-
-                        }
-                    },
-                    {
-                        path: 'show',
-                        name: 'sucursal-show',
-                        component: require('./components/finanzas/banco/sucursal/Show'),
-                        meta: {
-                            title: 'Ver Sucursal',
-                            breadcrumb: {name: 'VER', parent: 'banco'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_sucursal_banco'
-
-                        }
-                    },
-                    {
-                        path: ':id',
-                        name: 'sucursal-edit',
-                        component: require('./components/finanzas/banco/sucursal/Edit'),
-                        meta: {
-                            title: 'Editar Sucursal',
-                            breadcrumb: {name: 'EDITAR', parent: 'banco'},
-                            middleware: [auth, context, permission],
-                            permission: 'editar_sucursal_banco'
-
-                        }
-                    },
-
                 ]
-            }
+            },
         ]
     },
     {

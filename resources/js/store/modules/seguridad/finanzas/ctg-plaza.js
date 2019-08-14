@@ -1,21 +1,24 @@
-const URI = '/api/finanzas/cuenta-bancaria-proveedor/';
+const URI = '/api/SEGURIDAD_ERP/ctg_plaza/';
+
 
 export default {
     namespaced: true,
     state: {
-        cuentas: [],
-        currentCuenta: null,
+        plazas: [],
+        currentPlaza: null,
+        meta:{}
     },
-
-    mutations: {
-        SET_CUENTAS(state, data) {
-            state.cuentas = data
+    mutations:{
+        SET_PLAZAS(state, data){
+            state.plazas = data;
         },
-        SET_CUENTA(state, data) {
-            state.currentCuenta = data;
+        SET_PLAZA(state,data){
+            state.currentPlaza = data;
+        },
+        SET_META(state,meta){
+            state.meta = data;
         }
     },
-
     actions: {
         index(context, payload) {
             return new Promise((resolve, reject) => {
@@ -29,15 +32,15 @@ export default {
                         reject(error)
                     })
             });
-        },
+        }
     },
 
     getters: {
-        cuentas(state) {
-            return state.cuentas;
+        plazas(state) {
+            return state.plazas;
         },
-        currentCuenta(state) {
-            return state.currentCuenta;
+        currentPlaza(state) {
+            return state.currentPlaza;
         }
     }
 }

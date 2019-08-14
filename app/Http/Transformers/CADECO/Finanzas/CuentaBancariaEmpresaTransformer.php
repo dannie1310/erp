@@ -11,10 +11,10 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 
 use App\Http\Transformers\CADECO\BancoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Models\CADECO\Finanzas\CuentaBancariaProveedor;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use League\Fractal\TransformerAbstract;
 
-class CuentaBancariaProveedorTransformer extends TransformerAbstract
+class CuentaBancariaEmpresaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -33,22 +33,22 @@ class CuentaBancariaProveedorTransformer extends TransformerAbstract
      */
     protected $defaultIncludes = [];
 
-    public function transform(CuentaBancariaProveedor $model)
+    public function transform(CuentaBancariaEmpresa $model)
     {
         return [
             'id' => $model->getKey(),
             'cuenta' => $model->cuenta_clabe,
             'sucursal' => $model->sucursal,
-            'tipo' => $model->tipo,
-            'fecha' => $model->FechaHoraRegistro
+            'tipo' => (string) $model->tipo,
+            'fecha' => $model->fecha_hora_registro
         ];
     }
 
     /**
-     * @param CuentaBancariaProveedor $model
+     * @param CuentaBancariaEmpresa $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeEmpresa(CuentaBancariaProveedor $model)
+    public function includeEmpresa(CuentaBancariaEmpresa $model)
     {
         if ($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
@@ -57,10 +57,10 @@ class CuentaBancariaProveedorTransformer extends TransformerAbstract
     }
 
     /**
-     * @param CuentaBancariaProveedor $model
+     * @param CuentaBancariaEmpresa $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeBanco(CuentaBancariaProveedor $model)
+    public function includeBanco(CuentaBancariaEmpresa $model)
     {
         if ($empresa = $model->banco) {
             return $this->item($empresa, new BancoTransformer);

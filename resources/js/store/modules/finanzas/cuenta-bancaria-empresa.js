@@ -1,24 +1,21 @@
-const URI = '/api/SEGURIDAD_ERP/ctg_banco/';
-
+const URI = '/api/finanzas/cuenta-bancaria-empresa/';
 
 export default {
     namespaced: true,
     state: {
-        bancos: [],
-        currentBanco: null,
-        meta:{}
+        cuentas: [],
+        currentCuenta: null,
     },
-    mutations:{
-        SET_BANCOS(state, data){
-            state.bancos = data;
+
+    mutations: {
+        SET_CUENTAS(state, data) {
+            state.cuentas = data
         },
-        SET_BANCO(state,data){
-            state.currentBanco = data;
-        },
-        SET_META(state,meta){
-            state.meta = data;
+        SET_CUENTA(state, data) {
+            state.currentCuenta = data;
         }
     },
+
     actions: {
         index(context, payload) {
             return new Promise((resolve, reject) => {
@@ -32,15 +29,15 @@ export default {
                         reject(error)
                     })
             });
-        }
+        },
     },
 
     getters: {
-        bancos(state) {
-            return state.bancos;
+        cuentas(state) {
+            return state.cuentas;
         },
-        currentBanco(state) {
-            return state.currentBanco;
+        currentCuenta(state) {
+            return state.currentCuenta;
         }
     }
 }
