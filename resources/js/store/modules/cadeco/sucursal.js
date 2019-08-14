@@ -1,23 +1,38 @@
-const URI = '/api/cuenta/';
+const URI = '/api/sucursal/';
 
 export default {
     namespaced: true,
     state: {
-        cuentas: [],
-        currentCuenta: null,
+        sucursales: [],
+        currentSucursal: null,
         meta: {}
     },
 
     mutations: {
-        SET_CUENTAS(state, data) {
-            state.cuentas = data
+        SET_SUCURSALES(state, data) {
+            state.sucursales = data;
         },
-        SET_CUENTA(state, data) {
-            state.currentCuenta = data
+
+        SET_SUCURSAL(state, data) {
+            state.currentSucursal = data;
         },
         SET_META(state, data) {
-            state.meta = data
-        }
+            state.meta = data;
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentSucursal, data.attribute, data.value);
+        },
+
+        UPDATE_SUCURSAL(state, data) {
+            state.sucursales = state.sucursales.map(sucursal=> {
+                if(sucursal.id === data.id){
+                    return Object.assign({}, sucursal, data)
+                }
+                return sucursal
+            })
+            state.currentSucursal = data ;
+        },
+
     },
 
     actions: {
@@ -34,6 +49,7 @@ export default {
                     });
             });
         },
+
         index(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -47,6 +63,7 @@ export default {
                     });
             });
         },
+
         paginate(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -64,7 +81,7 @@ export default {
 
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar cuenta",
+                    title: "Registrar Sucursal",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -83,7 +100,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cuenta registrada correctamente", {
+                                    swal("Sucursal registrado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -99,17 +116,61 @@ export default {
             });
 
         },
+
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Sucursal",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Sucursal actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        }
+
     },
 
     getters: {
-        cuentas(state) {
-            return state.cuentas;
+        sucursales(state) {
+            return state.sucursales
         },
+
         meta(state) {
-            return state.meta;
+            return state.meta
         },
-        currentCuenta(state) {
-            return state.currentCuenta;
+
+        currentSucursal(state) {
+            return state.currentSucursal
         }
     }
 }

@@ -22,7 +22,7 @@ class BancoController extends Controller
     /**
      * @var Manager
      */
-
+    protected $fractal;
     /**
      * @var BancoService
      */
