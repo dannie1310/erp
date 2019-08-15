@@ -31,6 +31,7 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
         'banco',
         'plaza',
         'usuario',
+        'movimientos',
         'mov_estado'
     ];
 
@@ -40,6 +41,14 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
+        'tipo',
+        'empresa',
+        'moneda',
+        'banco',
+        'plaza',
+        'usuario',
+        'movimientos',
+        'mov_estado'
     ];
 
     public function transform(SolicitudBaja $model)
@@ -153,6 +162,19 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
         if($movimiento = $model->movimientoSolicitud)
         {
             return $this->item($movimiento, new CtgTipoMovimientoSolicitudTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param SolicitudBaja $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeMovimientos(SolicitudBaja $model)
+    {
+        if($movimiento_solicitud = $model->movimientos)
+        {
+            return $this->collection($movimiento_solicitud, new SolicitudMovimientoTransformer);
         }
         return null;
     }

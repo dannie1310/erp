@@ -77,4 +77,9 @@ class SolicitudBajaCuentaBancariaService
         }
     }
 
+    public function cancelar($data , $id){
+        $observaciones = $data['data'][0];
+        return $this->repository->show($id)->cancelar($observaciones);
+    }
+
 }

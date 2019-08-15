@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Finanzas\SolicitudBajaCuentaBancariaTransformer;
 use App\Services\CADECO\Finanzas\SolicitudBajaCuentaBancariaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class SolicitudBajaCuentaBancariaController extends Controller
@@ -55,5 +56,10 @@ class SolicitudBajaCuentaBancariaController extends Controller
 
     public function pdf($id){
         return $this->service->pdf($id);
+    }
+
+    public function cancelar(Request $request , $id){
+        $item = $this->service->cancelar($request->all(),$id);
+        return $this->respondWithItem($item);
     }
 }
