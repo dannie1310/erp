@@ -60,7 +60,7 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <div class="row" v-if="solicitudAlta.movimientos.data.length > 1">Movimientos de Solicitud
+                                        <div class="row" v-if="solicitudAlta.movimientos.data">Movimientos de Solicitud
 
                                             <div class="table-responsive col-12">
                                                 <table class="table table-striped">

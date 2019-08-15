@@ -97,7 +97,10 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 id: cuenta.id,
-                                estado: cuenta.estado
+                                estado: cuenta.estado,
+                                mov_estado: cuenta.mov_estado.id,
+                                rechazar: self.$root.can('rechazar_solicitud_baja_cuenta_bancaria_empresa') ? true : false
+
                             })
 
                         })

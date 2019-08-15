@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Finanzas\SolicitudBajaCuentaBancariaTransformer;
 use App\Services\CADECO\Finanzas\SolicitudBajaCuentaBancariaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class SolicitudBajaCuentaBancariaController extends Controller
@@ -47,6 +48,8 @@ class SolicitudBajaCuentaBancariaController extends Controller
 
         $this->middleware('permiso:consultar_solicitud_baja_cuenta_bancaria_empresa')->only(['show','paginate','index','find','pdf']);
         $this->middleware('permiso:solicitar_baja_cuenta_bancaria_empresa')->only('store');
+        $this->middleware('permiso:rechazar_solicitud_baja_cuenta_bancaria_empresa')->only('rechazar');
+
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -55,5 +58,10 @@ class SolicitudBajaCuentaBancariaController extends Controller
 
     public function pdf($id){
         return $this->service->pdf($id);
+    }
+
+    public function rechazar(Request $request , $id){
+        $item = $this->service->rechazar($request->all(),$id);
+        return $this->respondWithItem($item);
     }
 }
