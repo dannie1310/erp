@@ -425,6 +425,14 @@ $api->version('v1', function ($api) {
             $api->post('bitacora', 'App\Http\Controllers\v1\CADECO\Finanzas\GestionPagoController@presentaBitacora');
         });
 
+
+        /***
+         * PAGOS
+         */
+        $api->group(['prefix' => 'pago'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@paginate');
+        });
+
         /**
          * REMESA
          */
