@@ -29,7 +29,7 @@
                                                                :class="{'is-invalid':rfcValidate}"
                                                                v-validate="{ required: true, regex: /\.(js|ts)$/ }"
                                                                id="rfc"
-                                                               placeholder="RFC" />
+                                                               placeholder="RFC" :maxlength="16"/>
                                                         <span class="text-danger" v-if="rfcValidate">RFC Inválido</span>
                                                     </div>
                                         </div>
@@ -82,6 +82,7 @@
         },
         methods:{
             update(){
+
                 if(!rfcRegex.test(this.banco.rfc)){
                     return this.invalidRFC();
                 } else{
