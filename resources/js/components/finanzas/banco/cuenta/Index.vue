@@ -41,7 +41,12 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include:'moneda,tiposCuentasObra'},
+                query: {
+                    id:this.id,
+                    sort: 'id_cuenta',
+                    order: 'DESC',
+                    include:'moneda,tiposCuentasObra'
+                },
                 cargando: false,
 
             }
@@ -56,17 +61,9 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/empresa/find', {
-                    id:this.id,
-                    params: {
-                        scope: 'bancos',
-                        sort: 'id_empresa',
-                        order: 'DESC',
-                        include:'cuentas.moneda,cuentas.tiposCuentasObra',
-                    }
-                })
+                return this.$store.dispatch('cadeco/cuenta/paginate', {params: this.query})
                     .then(data => {
-                        this.$store.commit('cadeco/cuenta/SET_CUENTAS', data.cuentas.data);
+                        this.$store.commit('cadeco/cuenta/SET_CUENTAS', data.data);
                         this.$store.commit('cadeco/cuenta/SET_META', data.meta);
                     })
                     .finally(() => {
@@ -105,15 +102,15 @@
                             id: cuenta.id
                         })
                     }));
-                    let total =this.$data.data.length;
-                    this.$data.total = total
+                    // let total =this.$data.data.length;
+                    // this.$data.total = total
                 },
 
                 deep: true
             },
             meta: {
                 handler (meta) {
-                    let total =this.$data.data.length;
+                    let total = meta.pagination.total
                     this.$data.total = total
                 },
                 deep: true
@@ -124,6 +121,7 @@
                 },
                 deep: true
             },
+
         },
 
 
