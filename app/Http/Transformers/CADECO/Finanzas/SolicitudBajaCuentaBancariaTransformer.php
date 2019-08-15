@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 06/08/2019
- * Time: 09:07 PM
+ * Date: 14/08/2019
+ * Time: 10:40 AM
  */
 
 namespace App\Http\Transformers\CADECO\Finanzas;
@@ -14,10 +14,10 @@ use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgPlazaTransformer;
-use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
+use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
+class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -31,9 +31,7 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
         'banco',
         'plaza',
         'usuario',
-        'movimientos',
-        'movimiento_solicitud'
-
+        'mov_estado'
     ];
 
     /**
@@ -42,29 +40,20 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'tipo',
-        'empresa',
-        'moneda',
-        'banco',
-        'plaza',
-        'usuario',
-        'movimientos',
-        'movimiento_solicitud'
     ];
 
-    public function transform(SolicitudAlta $model)
+    public function transform(SolicitudBaja $model)
     {
         return [
             'id' => $model->getKey(),
             'cuenta' => $model->cuenta_clabe,
             'sucursal' => $model->sucursal,
-            'tipos' => $model->tipos_cuentas,
-            'tipo_cuenta' => $model->tipo_cuenta,
+            'tipo_cuenta' => $model->tipo,
             'fecha' => $model->fecha,
             'observaciones' => $model->observaciones,
+            'estado' => $model->estatus,
             'fecha_format' => $model->fecha_format,
-            'estatus' => $model->movimientoSolicitud->estado_resultante_desc,
-            'estado' => $model->estado,
+            'estado' => $model->estatus,
             'folio' => $model->numero_folio,
             'numero_folio_format_orden' => $model->numero_folio_format_orden,
             'sucursal_format' => $model->sucursal_format
@@ -72,11 +61,11 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudAlta $model
-     * Include Tipo de SolicitudAlta
+     * @param SolicitudBaja $model
+     * Include Tipo de SolicitudBaja
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeTipo(SolicitudAlta $model)
+    public function includeTipo(SolicitudBaja $model)
     {
         if($tipo = $model->tipoSolicitud)
         {
@@ -86,11 +75,11 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudAlta $model
+     * @param SolicitudBaja $model
      * Include Empresa
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeEmpresa(SolicitudAlta $model)
+    public function includeEmpresa(SolicitudBaja $model)
     {
         if($empresa = $model->empresa)
         {
@@ -100,11 +89,11 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudAlta $model
+     * @param SolicitudBaja $model
      * Include Moneda
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeMoneda(SolicitudAlta $model)
+    public function includeMoneda(SolicitudBaja $model)
     {
         if($moneda = $model->moneda)
         {
@@ -114,11 +103,11 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudAlta $model
+     * @param SolicitudBaja $model
      * Include Banco
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeBanco(SolicitudAlta $model)
+    public function includeBanco(SolicitudBaja $model)
     {
         if($banco = $model->banco)
         {
@@ -128,11 +117,11 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudAlta $model
+     * @param SolicitudBaja $model
      * Include Plaza
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includePlaza(SolicitudAlta $model)
+    public function includePlaza(SolicitudBaja $model)
     {
         if($plaza = $model->plaza)
         {
@@ -142,24 +131,11 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudAlta $model
-     * @return \League\Fractal\Resource\Item|null
-     */
-    public function includeMovimientoSolicitud(SolicitudAlta $model)
-    {
-        if($movimiento = $model->movimientoSolicitud)
-        {
-            return $this->item($movimiento, new CtgTipoMovimientoSolicitudTransformer);
-        }
-        return null;
-    }
-
-    /**
-     * @param SolicitudAlta $model
+     * @param SolicitudBaja $model
      * Include Usuario
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeUsuario(SolicitudAlta $model)
+    public function includeUsuario(SolicitudBaja $model)
     {
         if($usuario = $model->registro)
         {
@@ -169,14 +145,14 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param SolicitudAlta $model
-     * @return \League\Fractal\Resource\Collection|null
+     * @param SolicitudBaja $model
+     * @return \League\Fractal\Resource\Item|null
      */
-    public function includeMovimientos(SolicitudAlta $model)
+    public function includeMovEstado(SolicitudBaja $model)
     {
-        if($movimiento_solicitud = $model->movimientos)
+        if($movimiento = $model->movimientoSolicitud)
         {
-            return $this->collection($movimiento_solicitud, new SolicitudMovimientoTransformer);
+            return $this->item($movimiento, new CtgTipoMovimientoSolicitudTransformer);
         }
         return null;
     }

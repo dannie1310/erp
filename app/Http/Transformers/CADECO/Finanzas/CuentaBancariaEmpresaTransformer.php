@@ -11,6 +11,8 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 
 use App\Http\Transformers\CADECO\BancoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgPlazaTransformer;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use League\Fractal\TransformerAbstract;
 
@@ -23,7 +25,9 @@ class CuentaBancariaEmpresaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'empresa',
-        'banco'
+        'banco',
+        'moneda',
+        'plaza'
     ];
 
     /**
@@ -40,6 +44,8 @@ class CuentaBancariaEmpresaTransformer extends TransformerAbstract
             'cuenta' => $model->cuenta_clabe,
             'sucursal' => $model->sucursal,
             'tipo' => (string) $model->tipo,
+            'id_tipo' => $model->tipo_cuenta,
+            'estado' => (string) $model->estatus,
             'fecha' => $model->fecha_hora_registro
         ];
     }
@@ -64,6 +70,34 @@ class CuentaBancariaEmpresaTransformer extends TransformerAbstract
     {
         if ($empresa = $model->banco) {
             return $this->item($empresa, new BancoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param CuentaBancariaEmpresa $model
+     * Include Moneda
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMoneda(CuentaBancariaEmpresa $model)
+    {
+        if($moneda = $model->moneda)
+        {
+            return $this->item($moneda, new MonedaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param CuentaBancariaEmpresa $model
+     * Include Plaza
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includePlaza(CuentaBancariaEmpresa $model)
+    {
+        if($plaza = $model->plaza)
+        {
+            return $this->item($plaza, new CtgPlazaTransformer);
         }
         return null;
     }

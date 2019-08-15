@@ -37,7 +37,11 @@ class CuentaService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        if(isset($data['id'])){
+            return $this->repository->where([['id_empresa','=', $data['id']]])->paginate();
+        }else{
+            return $this->repository->paginate();
+        }
     }
 
     public function show($id)

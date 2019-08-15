@@ -9,8 +9,10 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaBanco;
 use App\Models\CADECO\Finanzas\CtgTipoCuentaObra;
+use function foo\func;
 use Illuminate\Database\Eloquent\Model;
 
 class Cuenta extends Model
@@ -37,6 +39,12 @@ class Cuenta extends Model
     {
         parent::boot();
 
+        self::addGlobalScope(function ($query) {
+            return $query->whereHas('cuentasObra', function ($q) {
+                $q->where('id_obra', '=', Context::getIdObra());
+            });
+        });
+
         self::creating(function ($model) {
             if(!cuenta::query()->where('numero', '=',  $model->numero)->first()) {
                 $model->saldo_real = $model->saldo_inicial;
@@ -47,12 +55,19 @@ class Cuenta extends Model
                 throw New \Exception('Ya existe un registro con el mismo número de cuenta.');
             }
         });
+        self::created(function ($model){
+            $model->cuentasObra()->create(['id_obra'=>Context::getIdObra(), 'id_cuenta'=> $model->id_cuenta]);
+        });
     }
 
     public $timestamps = false;
 
     public function cuentasBanco(){
         return $this->hasMany(CuentaBanco::class, 'id_cuenta', 'id_cuenta');
+    }
+
+    public function cuentasObra(){
+        return $this->belongsTo(CuentaObra::class, 'id_cuenta', 'id_cuenta');
     }
 
     public function empresa()
@@ -81,6 +96,11 @@ class Cuenta extends Model
     public function scopeConCuentas($query)
     {
         return $query->has('cuentasBanco');
+    }
+
+    public function scopePagadora($query)
+    {
+        return $query->where('id_tipo_cuentas_obra', '=', 1);
     }
 
     public function scopeParaTraspaso($query)

@@ -37,6 +37,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\BancoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\BancoController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@update')->where(['id' => '[0-9]+']);
         });
 
         // CONCEPTOS
@@ -404,6 +405,16 @@ $api->version('v1', function ($api) {
                 $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@autorizar')->where(['id' => '[0-9]+']);
                 $api->get('{id}/rechazar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@rechazar')->where(['id' => '[0-9]+']);
                 $api->get('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@cancelar')->where(['id' => '[0-9]+']);
+            });
+
+            /**
+             * SOLICITUD DE BAJA
+             */
+            $api->group(['prefix' => 'solicitud-baja'], function ($api) {
+               $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@store');
+                $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@paginate');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@show')->where(['id' => '[0-9]+']);
+                $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@pdf')->where(['id' => '[0-9]+']);;
             });
         });
 
