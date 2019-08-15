@@ -81,7 +81,7 @@ class SolicitudBaja extends Solicitud
                 'observaciones' => $observaciones
             ] );
             $this->update( [
-                'estado' => 3
+                'estado' => -1
             ] );
         });
         return $this;

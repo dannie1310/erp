@@ -99,7 +99,7 @@
                                 id: cuenta.id,
                                 estado: cuenta.estado,
                                 mov_estado: cuenta.mov_estado.id,
-                                cancelar: self.$root.can('consultar_solicitud_baja_cuenta_bancaria_empresa') ? true : false
+                                cancelar: self.$root.can('cancelar_solicitud_baja_cuenta_bancaria_empresa') ? true : false
                             })
 
                         })
