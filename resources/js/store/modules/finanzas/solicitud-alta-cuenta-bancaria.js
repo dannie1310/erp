@@ -157,7 +157,7 @@ export default{
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Autorizar',
+                            text: 'Si, Rechazar',
                             closeModal: false,
                         }
                     }
