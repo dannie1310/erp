@@ -45,7 +45,7 @@ class FondoService
 
         $fondos =$this->repository;
 
-        if(isset($data['tipo'])){
+        if(isset($data['id_tipo'])){
             $tipo =CtgTipoFondo::query()->where([['descripcion', 'LIKE', '%'.$data['id_tipo'].'%']])->get();
             foreach ($tipo as $e){
                $fondos= $fondos->where([['id_tipo', '=', $e->id]]);
