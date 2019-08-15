@@ -84,24 +84,32 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="solicitudBaja">Movimientos de Solicitud
-                                <div class="table-responsive col-12">
-                                    <table class="table table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <th>Fecha/Hora</th>
-                                                <th>Acción</th>
-                                                <th>Usuario</th>
-                                                <th>Observaciones</th>
-                                            </tr>
-                                            <tr v-for="(mov,i) in solicitudBaja.movimientos.data">
-                                                <td>{{mov.fecha_format}}</td>
-                                                <td>{{mov.movimiento}}</td>
-                                                <td>{{mov.usuario.nombre}}</td>
-                                                <td>{{mov.observaciones}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <div class="invoice p-3 mb-3" v-if="solicitudBaja">
+                                <div class="row" v-if="solicitudBaja.movimientos.data"><h5>Movimientos de Solicitud</h5>
+
+                                    <div class="table-responsive col-12" v-for="(mov,i) in solicitudBaja.movimientos.data">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Fecha/Hora</th>
+                                                    <th>Acción</th>
+                                                    <th>Usuario</th>
+                                                    <th>IP</th>
+                                                    <th>Mac address</th>
+                                                </tr>
+                                                <tr >
+                                                    <td>{{mov.fecha_format}}</td>
+                                                    <td>{{mov.movimiento}}</td>
+                                                    <td>{{mov.usuario.nombre}}</td>
+                                                    <td>{{mov.ip}}</td>
+                                                    <td>{{mov.mac_address}}</td>
+                                                </tr>
+                                                <tr v-if="mov.observaciones">
+                                                    <td colspan="5"><b>Observaciones:</b><br/>{{mov.observaciones}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                     </div>

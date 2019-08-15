@@ -23,6 +23,8 @@ class SolicitudMovimientoTransformer extends TransformerAbstract
             'fecha_format' => $model->fecha_format,
             'observaciones' => $model->observaciones,
             'id_tipo_movimiento' => $model->id_tipo_movimiento,
+            'mac_address' => $model->mac_address,
+            'ip' => $model->ip,
             'movimiento' => $model->tipo_movimiento
         ];
     }
