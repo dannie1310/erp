@@ -28,11 +28,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Tipo', field: 'tipo', sortable: false },
-                    { title: 'Descripción', field: 'descripcion', sortable:false},
-                    { title: 'Responsable', field:'nombre',sortable:false},
-                    { title: 'Saldo',field: 'saldo', tdClass: 'money', thClass: 'th_money', sortable: false  },
-                    { title: 'Fecha',field:'fecha',sortable:false },
+                    { title: 'Tipo', field: 'id_tipo', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Descripción', field: 'descripcion', thComp: require('../../globals/th-Filter'), sortable:true},
+                    { title: 'Responsable', field:'nombre', thComp: require('../../globals/th-Filter'), sortable:true},
+                    { title: 'Saldo',field: 'saldo', tdClass: 'money', thClass: 'th_money', sortable: true},
+                    { title: 'Fecha',field:'fecha',sortable:true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
@@ -85,7 +85,7 @@
                     fondos.forEach(function (fondo, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            tipo: fondo.tipo_fondo.descripcion,
+                            id_tipo: fondo.tipo_fondo.descripcion,
                             nombre: fondo.nombre.toUpperCase(),
                             fecha: fondo.fecha_format,
                             saldo: `$ ${parseFloat(fondo.saldo).formatMoney(2)}`,

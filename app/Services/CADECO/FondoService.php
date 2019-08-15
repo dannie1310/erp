@@ -42,7 +42,26 @@ class FondoService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+
+        $fondos =$this->repository;
+
+        if(isset($data['tipo'])){
+            $tipo =CtgTipoFondo::query()->where([['descripcion', 'LIKE', '%'.$data['id_tipo'].'%']])->get();
+            foreach ($tipo as $e){
+               $fondos= $fondos->where([['id_tipo', '=', $e->id]]);
+            }
+        }
+
+        if(isset($data['descripcion'])){
+            $fondos= $fondos->where([['descripcion', 'LIKE', '%'.$data['descripcion'].'%']]);
+        }
+
+        if(isset($data['nombre'])){
+            $fondos= $fondos->where([['nombre', 'LIKE', '%'.$data['nombre'].'%']]);
+        }
+
+        return $fondos->paginate($data);
+
     }
 
     public function show($id)
