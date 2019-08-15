@@ -43,36 +43,34 @@
                                                 <h5>Datos de la Cuenta</h5>
                                             </div>
                                         </div>
-                                        <form role="form">
-                                            <div class="row">
-                                                <div class="table-responsive col-md-12">
-                                                    <table class="table table-striped">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td><b>Banco:</b></td>
-                                                                <td>{{solicitudBaja.banco.razon_social}}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><b>Modena:</b></td>
-                                                                <td>{{solicitudBaja.moneda.nombre}}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><b>Sucursal:</b></td>
-                                                                <td>{{solicitudBaja.sucursal_format}}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><b>Plaza:</b></td>
-                                                                <td>{{solicitudBaja.plaza.clave_format}} ({{solicitudBaja.plaza.nombre}})</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><b>Tipo:</b></td>
-                                                                <td>{{solicitudBaja.tipo_cuenta}}</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                        <div class="row">
+                                            <div class="table-responsive col-md-12">
+                                                <table class="table table-striped">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><b>Banco:</b></td>
+                                                            <td>{{solicitudBaja.banco.razon_social}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><b>Modena:</b></td>
+                                                            <td>{{solicitudBaja.moneda.nombre}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><b>Sucursal:</b></td>
+                                                            <td>{{solicitudBaja.sucursal_format}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><b>Plaza:</b></td>
+                                                            <td>{{solicitudBaja.plaza.clave_format}} ({{solicitudBaja.plaza.nombre}})</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><b>Tipo:</b></td>
+                                                            <td>{{solicitudBaja.tipo_cuenta}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                        </form>
+                                        </div>
                                     </div>
                                 </div>
                              </div>
@@ -84,6 +82,26 @@
                                     <div class = "col-sm-6">
                                           <h6>{{solicitudBaja.observaciones}}</h6>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row" v-if="solicitudBaja">Movimientos de Solicitud
+                                <div class="table-responsive col-12">
+                                    <table class="table table-striped">
+                                        <tbody>
+                                            <tr>
+                                                <th>Fecha/Hora</th>
+                                                <th>Acción</th>
+                                                <th>Usuario</th>
+                                                <th>Observaciones</th>
+                                            </tr>
+                                            <tr v-for="(mov,i) in solicitudBaja.movimientos.data">
+                                                <td>{{mov.fecha_format}}</td>
+                                                <td>{{mov.movimiento}}</td>
+                                                <td>{{mov.usuario.nombre}}</td>
+                                                <td>{{mov.observaciones}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                     </div>
@@ -122,7 +140,7 @@
                 this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/find', {
                     id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'] }
+                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos.usuario',] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).modal('show');
