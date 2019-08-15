@@ -63,7 +63,7 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
             'fecha' => $model->fecha,
             'observaciones' => $model->observaciones,
             'fecha_format' => $model->fecha_format,
-            'estatus' => $model->movimientoSolicitud->estado_resultante_desc,
+            'estatus' => $model->estadoSolicitud->estado_resultante_desc,
             'estado' => $model->estado,
             'folio' => $model->numero_folio,
             'numero_folio_format_orden' => $model->numero_folio_format_orden,
@@ -147,7 +147,7 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
      */
     public function includeMovimientoSolicitud(SolicitudAlta $model)
     {
-        if($movimiento = $model->movimientoSolicitud)
+        if($movimiento = $model->estadoSolicitud)
         {
             return $this->item($movimiento, new CtgTipoMovimientoSolicitudTransformer);
         }

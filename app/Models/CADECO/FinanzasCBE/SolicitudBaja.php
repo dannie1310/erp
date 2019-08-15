@@ -68,4 +68,32 @@ class SolicitudBaja extends Solicitud
     {
         return $count = SolicitudBaja::query()->count('id') + 1;
     }
+
+    public function autorizar()
+    {
+        $cuenta_empresa = CuentaBancariaEmpresa::query()->where('id_empresa', '=', $this->id_empresa)
+            ->where('cuenta_clabe', '=', $this->cuenta_clabe);
+
+        if($cuenta_empresa->first()->toArray()['estatus'] <= 0) {
+            abort(400, 'Está Cuenta Bancaria se dio de baja previamente.');
+        }
+
+        $cuenta_empresa->update([
+            'id_solicitud_origen_baja' => $this->id,
+            'estatus' => -1
+        ]);
+
+        $movimiento = SolicitudMovimiento::query()->where('id_solicitud', '=', $this->id)->first();
+
+        $movs = SolicitudMovimiento::query()->create([
+            'id_solicitud' => $this->id,
+            'id_movimiento_antecedente' => $movimiento->id,
+            'id_tipo_movimiento' => 2,
+        ]);
+
+        $this->update([
+            'estado' => 2
+        ]);
+        return $this;
+    }
 }

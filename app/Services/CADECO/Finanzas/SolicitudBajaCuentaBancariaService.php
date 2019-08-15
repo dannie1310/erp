@@ -77,4 +77,8 @@ class SolicitudBajaCuentaBancariaService
         }
     }
 
+    public function autorizar($id){
+        return $this->repository->show($id)->autorizar();
+    }
+
 }

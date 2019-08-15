@@ -56,4 +56,8 @@ class SolicitudBajaCuentaBancariaController extends Controller
     public function pdf($id){
         return $this->service->pdf($id);
     }
+
+    public function autorizar($id){
+        return $this->service->autorizar($id);
+    }
 }
