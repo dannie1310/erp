@@ -67,10 +67,8 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="row">
                             <div class="col-md-1"></div>
-                            <div class="col-md-11">
-                                <div class="form-group row error-content">
-                                    <label for="observaciones" class="col-sm-2 col-form-label">Motivo de Cancelación: </label>
-                                </div>
+                            <div class="col-md-11 form-group row error-content">
+                                    <b>Motivo de Rechazo: </b>
                             </div>
                          </div>
                         <div class="row">
