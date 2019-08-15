@@ -25,7 +25,8 @@ class SolicitudMovimiento extends Model
         'mac_address',
         'ip',
         'observaciones',
-        'fecha_hora'
+        'fecha_hora',
+        'id_movimiento_antecedente'
     ];
 
     protected static function boot()

@@ -102,4 +102,21 @@ class SolicitudAlta extends Solicitud
         });
         return $this;
     }
+
+    public function rechazar($observaciones){
+        DB::connection('cadeco')->transaction(function() use($observaciones){
+            $movimiento = SolicitudMovimiento::query()->where( 'id_solicitud', '=', $this->id )->first();
+            $id = $movimiento->id;
+            $movs = SolicitudMovimiento::query()->create( [
+                'id_solicitud' => $this->id,
+                'id_movimiento_antecedente' => $id,
+                'id_tipo_movimiento' => 4,
+                'observaciones' => $observaciones
+            ] );
+            $this->update( [
+                'estado' => 4
+            ] );
+        });
+        return $this;
+    }
 }
