@@ -60,25 +60,32 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <div class="row" v-if="solicitudAlta.movimientos.data.length > 1">Movimientos de Solicitud
+                                        <div class="invoice p-3 mb-3">
+                                            <div class="row" v-if="solicitudAlta.movimientos.data"><h5>Movimientos de Solicitud</h5>
 
-                                            <div class="table-responsive col-12">
-                                                <table class="table table-striped">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th>Fecha/Hora</th>
-                                                            <th>Acción</th>
-                                                            <th>Usuario</th>
-                                                            <th>Observaciones</th>
-                                                        </tr>
-                                                        <tr v-for="(mov,i) in solicitudAlta.movimientos.data">
-                                                            <td>{{mov.fecha_format}}</td>
-                                                            <td>{{mov.movimiento}}</td>
-                                                            <td>{{mov.usuario.nombre}}</td>
-                                                            <td>{{mov.observaciones}}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                                <div class="table-responsive col-12" v-for="(mov,i) in solicitudAlta.movimientos.data">
+                                                    <table class="table table-striped">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th>Fecha/Hora</th>
+                                                                <th>Acción</th>
+                                                                <th>Usuario</th>
+                                                                <th>IP</th>
+                                                                <th>Mac address</th>
+                                                            </tr>
+                                                            <tr >
+                                                                <td>{{mov.fecha_format}}</td>
+                                                                <td>{{mov.movimiento}}</td>
+                                                                <td>{{mov.usuario.nombre}}</td>
+                                                                <td>{{mov.ip}}</td>
+                                                                <td>{{mov.mac_address}}</td>
+                                                            </tr>
+                                                            <tr v-if="mov.observaciones">
+                                                                <td colspan="5"><b>Observaciones:</b><br/>{{mov.observaciones}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

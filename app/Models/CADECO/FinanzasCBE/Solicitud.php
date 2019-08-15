@@ -73,7 +73,7 @@ class Solicitud extends Model
 
     public function movimientoSolicitud()
     {
-        return $this->belongsTo(CtgTipoMovimientoSolicitud::class, 'estado', 'id');
+        return $this->belongsTo(CtgTipoMovimientoSolicitud::class, 'estado', 'estado_resultante');
     }
 
     public function plaza()
