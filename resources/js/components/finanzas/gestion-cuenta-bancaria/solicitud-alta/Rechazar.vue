@@ -149,11 +149,11 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.autorizar()
+                        this.rechazar()
                     }
                 });
             },
-            autorizar() {
+            rechazar() {
                 return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/rechazar', {
                     id: this.id,
                     params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'], data:[this.$data.observaciones]}
