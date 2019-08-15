@@ -25,38 +25,37 @@
 </template>
 
 <script>
-    // import Create from "./Create";
+
     export default {
         name: "gestion-pago-index",
-        // components: {Create},
+
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true },
-                    { title: 'Transacción Antecedente', field: 'id_antecedente', sortable: true },
-                    { title: 'Monto', field: 'monto', sortable: true },
-                    { title: 'Empresa', field: 'id_empresa', thComp: require('../../../globals/th-Filter'), sortable: true },
-                    { title: 'Fecha y Hora de Registro', field: 'FechaHoraRegistro', sortable: true },
-                    { title: 'Observaciones', field: 'observaciones', thComp: require('../../../globals/th-Filter'), sortable: true },
-                    // { title: 'Estatus', field: 'estado', tdComp: require('./partials/SolicitudEstatus')},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Folio', field: 'folio', sortable: false},
+                    { title: 'Fecha', field: 'fecha', sortable: false},
+                    { title: 'Beneficiario', field: 'beneficiario', sortable: false},
+                    { title: 'Cuenta', field: 'cuenta', sortable: false},
+                    { title: 'Concepto', field: 'concepto', sortable: false},
+                    { title: 'Importe', field: 'importe', sortable: false},
+                    { title: 'Moneda', field: 'moneda', sortable: false },
                 ],
                 data: [],
                 total: 0,
-                query: {include: [], sort: '', order: ''},
+                query: {include: ['moneda','cuenta','empresa'], sort: 'id_transaccion', order: 'desc'},
                 estado: "",
-                cargando: false
+                cargando: false,
             }
         },
 
         mounted() {
             this.$Progress.start();
-            // this.paginate()
-            //     .finally(() => {
-            //         this.$Progress.finish();
-            //     })
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
 
         methods: {
@@ -64,88 +63,76 @@
                 this.$router.push({name: 'pago-create'});
             },
             paginate() {
-                // this.cargando = true;
-                // return this.$store.dispatch('finanzas/solicitud-pago-anticipado/paginate', { params: this.query})
-                //     .then(data => {
-                //         this.$store.commit('finanzas/solicitud-pago-anticipado/SET_SOLICITUDES', data.data);
-                //         this.$store.commit('finanzas/solicitud-pago-anticipado/SET_META', data.meta);
-                //     })
-                //     .finally(() => {
-                //         this.cargando = false;
-                //     })
-            }
+                this.cargando = true;
+                return this.$store.dispatch('finanzas/pago/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('finanzas/pago/SET_PAGOS', data.data);
+                        this.$store.commit('finanzas/pago/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
+            },
         },
         computed: {
-            // solicitudes(){
-            //     return this.$store.getters['finanzas/solicitud-pago-anticipado/solicitudes'];
-            // },
-            // meta(){
-            //     return this.$store.getters['finanzas/solicitud-pago-anticipado/meta'];
-            // },
-            // tbodyStyle() {
-            //     return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
-            // }
+           pagos(){
+                return this.$store.getters['finanzas/pago/pagos'];
+            },
+            meta(){
+                return this.$store.getters['finanzas/pago/meta'];
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
         },
         watch: {
-            solicitudes: {
-                // handler(solicitudes) {
-                //     let self = this
-                //     self.$data.data = []
-                //     solicitudes.forEach(function (solicitud, i) {
-                //
-                //         if(solicitud.subcontrato){
-                //             self.$data.id_antecedente = '('+solicitud.subcontrato.tipo_nombre+') '+solicitud.subcontrato.numero_folio_format;
-                //             if(solicitud.subcontrato.referencia!=""){
-                //                 self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.subcontrato.dato_transaccion+')';
-                //             }else{
-                //                 self.$data.id_antecedente = self.$data.id_antecedente+' ---';
-                //             }
-                //         }else if(solicitud.orden_compra){
-                //             self.$data.id_antecedente = '('+solicitud.orden_compra.tipo_nombre+') '+solicitud.orden_compra.numero_folio_format;
-                //             if(solicitud.orden_compra.referencia!=""){
-                //                 self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.orden_compra.dato_transaccion+')';
-                //             }else{
-                //                 self.$data.id_antecedente = self.$data.id_antecedente+'---';
-                //             }
-                //         }else{
-                //             self.$data.id_antecedente = '';
-                //         }
-                //
-                //         self.$data.data.push({
-                //             index: (i + 1) + self.query.offset,
-                //             numero_folio: '# ' + solicitud.numero_folio,
-                //             id_antecedente: self.$data.id_antecedente,
-                //             monto: solicitud.monto_format,
-                //             id_empresa: solicitud.empresa.razon_social,
-                //             FechaHoraRegistro: solicitud.fecha_format,
-                //             observaciones: solicitud.observaciones,
-                //             estado: solicitud.estado,
-                //             buttons: $.extend({}, {
-                //                 show: true,
-                //                 edit: self.$root.can('editar_solicitud_pago_anticipado') ? true : false,
-                //                 cancelar: self.$root.can('cancelar_solicitud_pago_anticipado') ? true : false,
-                //                 pdf:true,
-                //                 id: solicitud.id,
-                //                 estado: solicitud.estado
-                //             })
-                //         })
-                //     });
-                // },
-                // deep: true
+            pagos: {
+                handler(pagos) {
+                    let self = this
+                    self.$data.data = []
+                    pagos.forEach(function (pago, i) {
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            folio: `#${pago.folio}`,
+                            fecha: pago.fecha_format,
+                            beneficiario: pago.empresa.razon_social.toUpperCase(),
+                            cuenta: pago.cuenta.numero,
+                            concepto: pago.concepto.toLocaleUpperCase(),
+                            importe: `$ ${parseFloat(pago.monto).formatMoney(2)}`,
+                            moneda:pago.moneda.nombre,
+                        })
+
+                    });
+
+                },
+                deep: true
             },
 
+
             meta: {
-                // handler(meta) {
-                //     let total = meta.pagination.total
-                //     this.$data.total = total
-                // },
-                // deep: true
+                handler(meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
             },
             query: {
                 handler(query) {
                     this.paginate(query)
                 },
                 deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+
+                }, 500);
             },
             cargando(val) {
                 $('tbody').css({

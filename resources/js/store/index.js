@@ -56,6 +56,7 @@ import ctg_tipo_fondo from './modules/finanzas/ctg-tipo-fondo';
 import cuenta_bancaria_empresa from './modules/finanzas/cuenta-bancaria-empresa';
 import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
 import gestion_pago from './modules/finanzas/gestion-pago';
+import pago from './modules/finanzas/pago';
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
 import remesa from './modules/finanzas/remesa';
 import solicitud_alta from './modules/finanzas/solicitud-alta-cuenta-bancaria';
@@ -113,6 +114,7 @@ export default new Vuex.Store({
         'finanzas/cuenta-bancaria-empresa': cuenta_bancaria_empresa,
         'finanzas/distribuir-recurso-remesa': distribuir_recurso_remesa,
         'finanzas/gestion-pago': gestion_pago,
+        'finanzas/pago': pago,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
         'finanzas/remesa': remesa,
         'finanzas/solicitud-alta-cuenta-bancaria' : solicitud_alta,
