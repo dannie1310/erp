@@ -403,6 +403,7 @@ $api->version('v1', function ($api) {
                 $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@pdf');
                 $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@autorizar')->where(['id' => '[0-9]+']);
                 $api->get('{id}/rechazar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@rechazar')->where(['id' => '[0-9]+']);
+                $api->get('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@cancelar')->where(['id' => '[0-9]+']);
             });
         });
 

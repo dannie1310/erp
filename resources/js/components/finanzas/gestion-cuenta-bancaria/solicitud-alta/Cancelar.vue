@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Rechazar">
-            <i class="fa fa-times"></i>
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar">
+            <i class="fa fa-ban"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> RECHAZAR SOLICITUD DE ALTA DE CUENTA BANCARIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CANCELAR SOLICITUD DE ALTA DE CUENTA BANCARIA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -69,7 +69,7 @@
                             <div class="col-md-1"></div>
                             <div class="col-md-11">
                                 <div class="form-group row error-content">
-                                    <label for="observaciones" class="col-sm-2 col-form-label">Motivo de Rechazo: </label>
+                                    <label for="observaciones" class="col-sm-2 col-form-label">Motivo de Cancelación: </label>
                                 </div>
                             </div>
                          </div>
@@ -94,7 +94,7 @@
                         </div>
                         <div class="modal-footer">
                             <button @click="init(id)" type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i>  Ver Archivo Soporte</button>
-                            <button type="submit" class="btn btn-danger">Rechazar</button>
+                            <button type="submit" class="btn btn-danger">Cancelar</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         </div>
                     </form>
@@ -122,7 +122,7 @@
 
 <script>
     export default {
-        name: "solicitud-alta-rechazar",
+        name: "solicitud-alta-cancelar",
         props: ['id'],
         data() {
             return {
@@ -151,12 +151,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.rechazar()
+                        this.cancelar()
                     }
                 });
             },
-            rechazar() {
-                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/rechazar', {
+            cancelar() {
+                return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/cancelar', {
                     id: this.id,
                     params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'], data:[this.$data.observaciones]}
                 }).then(data => {

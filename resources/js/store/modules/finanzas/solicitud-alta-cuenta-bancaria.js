@@ -144,6 +144,47 @@ export default{
             });
         },
 
+        cancelar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Solicitud de Alta de Cuenta Bancaria",
+                    text: "¿Estás seguro/a de cancelar la solicitud de alta de cuenta bancaria?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Continuar',
+                            closeModal: false,
+                        }
+                    }
+                }) .then((value) => {
+                    if (value) {
+                        axios
+                            .get(URI + payload.id + '/cancelar', {params: payload.params})
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("La cancelación ha sido aplicada exitosamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error =>  {
+                                reject(error);
+                            });
+                    } else {
+                        reject();
+                    }
+                });
+            });
+        },
+
         rechazar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -157,7 +198,7 @@ export default{
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Autorizar',
+                            text: 'Si, Rechazar',
                             closeModal: false,
                         }
                     }

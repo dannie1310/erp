@@ -87,4 +87,9 @@ class SolicitudAltaCuentaBancariaService
         $observaciones = $data['data'][0];
         return $this->repository->show($id)->rechazar($observaciones);
     }
+
+    public function cancelar($data , $id){
+        $observaciones = $data['data'][0];
+        return $this->repository->show($id)->cancelar($observaciones);
+    }
 }
