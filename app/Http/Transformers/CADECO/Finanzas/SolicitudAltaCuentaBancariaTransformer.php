@@ -42,14 +42,7 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'tipo',
-        'empresa',
-        'moneda',
-        'banco',
-        'plaza',
-        'usuario',
-        'movimientos',
-        'movimiento_solicitud'
+
     ];
 
     public function transform(SolicitudAlta $model)
@@ -63,7 +56,6 @@ class SolicitudAltaCuentaBancariaTransformer extends TransformerAbstract
             'fecha' => $model->fecha,
             'observaciones' => $model->observaciones,
             'fecha_format' => $model->fecha_format,
-            'estatus' => $model->estadoSolicitud->estado_resultante_desc,
             'estado' => $model->estado,
             'folio' => $model->numero_folio,
             'numero_folio_format_orden' => $model->numero_folio_format_orden,
