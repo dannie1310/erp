@@ -97,7 +97,7 @@
                             fecha: pago.fecha_format,
                             beneficiario: pago.empresa.razon_social.toUpperCase(),
                             cuenta: pago.cuenta.numero,
-                            concepto: pago.concepto,
+                            concepto: pago.concepto.toLocaleUpperCase(),
                             importe: `$ ${parseFloat(pago.monto).formatMoney(2)}`,
                             moneda:pago.moneda.nombre,
                         })
