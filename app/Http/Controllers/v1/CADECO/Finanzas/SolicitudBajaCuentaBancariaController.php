@@ -47,6 +47,7 @@ class SolicitudBajaCuentaBancariaController extends Controller
 
         $this->middleware('permiso:consultar_solicitud_baja_cuenta_bancaria_empresa')->only(['show','paginate','index','find','pdf']);
         $this->middleware('permiso:solicitar_baja_cuenta_bancaria_empresa')->only('store');
+        $this->middleware('permiso:autorizar_solicitud_baja_cuenta_bancaria_empresa')->only('autorizar');
 
         $this->service = $service;
         $this->fractal = $fractal;
