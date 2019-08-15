@@ -71,10 +71,14 @@ class SolicitudBaja extends Solicitud
 
     public function autorizar()
     {
-        $cuenta_empresa = CuentaBancariaEmpresa::query()->where('id_empresa', '=', $this->id_empresa)
-            ->where('cuenta_clabe', '=', $this->cuenta_clabe);
+        $cuenta_empresa = CuentaBancariaEmpresa::query()->where('id', $this->id_cuenta);
 
-        if($cuenta_empresa->first()->toArray()['estatus'] <= 0) {
+        if($cuenta_empresa->get()->toArray() == [])
+        {
+            abort(400, 'No se encuentra está cuenta bancaria empresa.');
+        }
+        if($cuenta_empresa->get()->toArray()[0]['estatus'] <= 0)
+        {
             abort(400, 'Está Cuenta Bancaria se dio de baja previamente.');
         }
 
