@@ -134,6 +134,7 @@ class SolicitudAlta extends Solicitud
                 'estado' => 3
             ] );
         });
+
         return $this;
     }
 }
