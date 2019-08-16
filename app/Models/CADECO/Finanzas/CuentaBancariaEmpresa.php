@@ -37,6 +37,10 @@ class CuentaBancariaEmpresa extends Model
     {
         parent::boot();
 
+        self::addGlobalScope(function ($query) {
+            return $query->where('estatus', '>=', 0);
+        });
+
         self::creating(function ($model) {
             $model->validar();
             $model->fecha_hora_registro = date('Y-m-d h:i:s');

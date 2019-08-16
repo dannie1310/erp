@@ -46,11 +46,11 @@ class SolicitudAlta extends Solicitud
             abort(400, 'Ya existe una cuenta bancaria registrada para este beneficiario.');
         }
 
-        if(SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('estado','>=',0)->get()->toArray() != []){
+        if(SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('estado',1)->get()->toArray() != []){
             abort(400, 'Ya existe una solicitud de alta de cuenta bancaria registrada con la cuenta ingresada.');
         }
 
-        if(SolicitudAlta::query()->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray() != []){
+        if(SolicitudAlta::query()->where('id_empresa', '=', $this->id_empresa)->where('estado',1)->get()->toArray() != []){
             abort(400, 'Ya existe una solicitud de alta de cuenta bancaria registrada con el beneficiario seleccionado.');
         }
     }
