@@ -34,13 +34,13 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio', sortable: false},
-                    { title: 'Fecha', field: 'fecha', sortable: false},
-                    { title: 'Beneficiario', field: 'beneficiario', sortable: false},
-                    { title: 'Cuenta', field: 'cuenta', sortable: false},
-                    { title: 'Concepto', field: 'concepto', sortable: false},
-                    { title: 'Importe', field: 'importe', sortable: false},
-                    { title: 'Moneda', field: 'moneda', sortable: false },
+                    { title: 'Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Fecha', field: 'fecha', sortable: true},
+                    { title: 'Beneficiario', field: 'id_empresa', thComp:require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Cuenta', field: 'id_cuenta',  thComp:require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Concepto', field: 'observaciones',  thComp:require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Importe', field: 'monto', sortable: true},
+                    { title: 'Moneda', field: 'id_moneda',  thComp:require('../../../globals/th-Filter'), sortable: true },
                 ],
                 data: [],
                 total: 0,
@@ -93,13 +93,13 @@
                     pagos.forEach(function (pago, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: `#${pago.folio}`,
+                            numero_folio: `#${pago.numero_folio}`,
                             fecha: pago.fecha_format,
-                            beneficiario: pago.empresa.razon_social.toUpperCase(),
-                            cuenta: pago.cuenta.numero,
-                            concepto: pago.concepto.toLocaleUpperCase(),
-                            importe: `$ ${parseFloat(pago.monto).formatMoney(2)}`,
-                            moneda:pago.moneda.nombre,
+                            id_empresa: pago.empresa.razon_social.toUpperCase(),
+                            id_cuenta: pago.cuenta.numero,
+                            observaciones: pago.observaciones.toLocaleUpperCase(),
+                            monto: `$ ${parseFloat(pago.monto).formatMoney(2)}`,
+                            id_moneda:pago.moneda.nombre,
                         })
 
                     });
