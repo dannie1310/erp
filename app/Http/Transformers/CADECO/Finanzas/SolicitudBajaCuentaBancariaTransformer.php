@@ -31,8 +31,8 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
         'banco',
         'plaza',
         'usuario',
-        'mov_estado',
-        'movimientos'
+        'movimientos',
+        'mov_estado'
     ];
 
     /**

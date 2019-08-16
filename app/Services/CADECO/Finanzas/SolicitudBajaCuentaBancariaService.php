@@ -88,4 +88,9 @@ class SolicitudBajaCuentaBancariaService
         return $this->repository->show($id)->cancelar($observaciones);
     }
 
+    public function rechazar($data , $id){
+        $observaciones = $data['data'][0];
+        return $this->repository->show($id)->rechazar($observaciones);
+    }
+
 }
