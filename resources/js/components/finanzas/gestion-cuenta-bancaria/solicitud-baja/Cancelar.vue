@@ -1,13 +1,13 @@
 <template>
     <span>
         <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Rechazar">
-            <i class="fa fa-times"></i>
+            <i class="fa fa-ban"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> RECHAZAR SOLICITUD DE BAJA DE CUENTA BANCARIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CANCELAR SOLICITUD DE BAJA DE CUENTA BANCARIA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -91,7 +91,7 @@
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-11 form-group row error-content">
-                                    <b>Motivo de Rechazo: </b>
+                                    <b>Motivo de Cancelación: </b>
                             </div>
                          </div>
                         <div class="row">
@@ -115,7 +115,7 @@
                         </div>
                         <div class="modal-footer">
                             <button @click="init(id)" type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i>  Ver Archivo Soporte</button>
-                            <button type="submit" class="btn btn-danger">Rechazar</button>
+                            <button type="submit" class="btn btn-danger">Cancelar</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         </div>
                     </form>
@@ -143,7 +143,7 @@
 
 <script>
     export default {
-        name: "solicitud-baja-rechazar",
+        name: "solicitud-baja-cancelar",
         props: ['id'],
         data() {
             return {
@@ -155,7 +155,7 @@
                 this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/find', {
                     id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
+                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos.usuario','movimiento_solicitud'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).modal('show');
@@ -172,14 +172,14 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.rechazar()
+                        this.cancelar()
                     }
                 });
             },
-            rechazar() {
-                return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/rechazar', {
+            cancelar() {
+                return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/cancelar', {
                     id: this.id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','mov_estado','movimientos.usuario','movimiento_solicitud'], data:[this.$data.observaciones]}
+                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos.usuario','mov_estado'], data:[this.$data.observaciones]}
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/UPDATE_CUENTA', data)
                     $(this.$refs.modal).modal('hide');

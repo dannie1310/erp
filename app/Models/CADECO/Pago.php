@@ -8,6 +8,9 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Moneda;
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Cuenta;
 
 class Pago extends Transaccion
 {
@@ -47,5 +50,16 @@ class Pago extends Transaccion
             $model->cumplimiento =  date('Y-m-d');
             $model->vencimiento = date('Y-m-d');
         });
+    }
+    public function moneda(){
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function cuenta(){
+        return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
+    }
+
+    public function empresa(){
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 }

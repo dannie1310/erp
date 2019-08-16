@@ -46,11 +46,11 @@ class SolicitudAlta extends Solicitud
             abort(400, 'Ya existe una cuenta bancaria registrada para este beneficiario.');
         }
 
-        if(SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('estado','>=',0)->get()->toArray() != []){
+        if(SolicitudAlta::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('estado',1)->get()->toArray() != []){
             abort(400, 'Ya existe una solicitud de alta de cuenta bancaria registrada con la cuenta ingresada.');
         }
 
-        if(SolicitudAlta::query()->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray() != []){
+        if(SolicitudAlta::query()->where('id_empresa', '=', $this->id_empresa)->where('estado',1)->get()->toArray() != []){
             abort(400, 'Ya existe una solicitud de alta de cuenta bancaria registrada con el beneficiario seleccionado.');
         }
     }
@@ -114,9 +114,27 @@ class SolicitudAlta extends Solicitud
                 'observaciones' => $observaciones
             ] );
             $this->update( [
-                'estado' => 4
+                'estado' => -2
             ] );
         });
+        return $this;
+    }
+
+    public function cancelar($observaciones){
+        DB::connection('cadeco')->transaction(function() use($observaciones){
+            $movimiento = SolicitudMovimiento::query()->where( 'id_solicitud', '=', $this->id )->first();
+            $id = $movimiento->id;
+            $movs = SolicitudMovimiento::query()->create( [
+                'id_solicitud' => $this->id,
+                'id_movimiento_antecedente' => $id,
+                'id_tipo_movimiento' => 3,
+                'observaciones' => $observaciones
+            ] );
+            $this->update( [
+                'estado' => -1
+            ] );
+        });
+
         return $this;
     }
 }
