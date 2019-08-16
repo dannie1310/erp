@@ -458,10 +458,10 @@
                 this.importe = '';
 
                 if(value.length != 0) {
-                    this.disponible = parseFloat(value.subtotal - (value.monto_facturado_ea + value.monto_facturado_oc + value.monto_solicitado)).toFixed(2);
+                    this.disponible = parseFloat(value.saldo - (value.monto_facturado_ea + value.monto_facturado_oc + value.monto_solicitado)).toFixed(2);
                     this.solicitado = value.monto_solicitado;
                     this.facturado = value.monto_facturado_ea + value.monto_facturado_oc;
-                    this.restante = parseFloat(value.subtotal - (value.monto_facturado_ea + value.monto_facturado_oc + value.monto_solicitado)).toFixed(2);
+                    this.restante = parseFloat(value.saldo - (value.monto_facturado_ea + value.monto_facturado_oc + value.monto_solicitado)).toFixed(2);
                 }
             },
             importe(value){
