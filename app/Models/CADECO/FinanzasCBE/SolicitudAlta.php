@@ -114,7 +114,7 @@ class SolicitudAlta extends Solicitud
                 'observaciones' => $observaciones
             ] );
             $this->update( [
-                'estado' => 4
+                'estado' => -2
             ] );
         });
         return $this;

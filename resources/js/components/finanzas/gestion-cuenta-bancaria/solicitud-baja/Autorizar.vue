@@ -1,18 +1,19 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-            <i class="fa fa-eye"></i>
+        <button @click="find" type="button" class="btn btn-sm btn-outline-success" title="Autorizar">
+            <i class="fa fa-check"></i>
         </button>
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CONSULTA DE SOLICITUD DE BAJA DE CUENTA BANCARIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AUTORIZAR SOLICITUD DE BAJA DE CUENTA BANCARIA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                        <div class="modal-body">
+
+                 <div class="modal-body">
                             <div class="row" v-if="solicitudBaja">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
@@ -89,6 +90,7 @@
                     </div>
                     <div class="modal-footer">
                         <button @click="pdf()" type="button" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i>  Ver Archivo Soporte</button>
+                         <button @click="autorizar()" type="button" class="btn btn-success">Autorizar</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
@@ -115,14 +117,14 @@
 
 <script>
     export default {
-        name: "solicitud-baja-show",
+        name: "solicitud-baja-autorizar",
         props: ['id'],
         methods: {
             find() {
                 this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/find', {
                     id: this.id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza'] }
+                    params: {include: ['moneda', 'subcontrato', 'empresa', 'banco', 'tipo', 'plaza', 'movimientos.usuario', 'mov_estado']}
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).modal('show');
@@ -133,6 +135,18 @@
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE BAJA DE CUENTA BANCARIA</iframe>');
                 $(this.$refs.modalPDF).modal('show');
             },
+            autorizar() {
+                return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/autorizar', {
+                    id: this.id,
+                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','mov_estado'] }
+                }).then(data => {
+                    this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/UPDATE_CUENTA', data)
+                    $(this.$refs.modal).modal('hide');
+                })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
+            }
         },
         computed: {
             solicitudBaja() {
@@ -141,7 +155,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

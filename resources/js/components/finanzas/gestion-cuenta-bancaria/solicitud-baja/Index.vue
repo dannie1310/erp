@@ -96,6 +96,7 @@
                             estado: cuenta.mov_estado.estado_resultante_desc,
                             buttons: $.extend({}, {
                                 show: true,
+                                autorizar: self.$root.can('autorizar_solicitud_baja_cuenta_bancaria_empresa') ? true : false,
                                 id: cuenta.id,
                                 estado: cuenta.estado
                             })
