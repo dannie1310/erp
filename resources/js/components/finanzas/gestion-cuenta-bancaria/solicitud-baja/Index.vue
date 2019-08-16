@@ -98,7 +98,8 @@
                                 show: true,
                                 autorizar: self.$root.can('autorizar_solicitud_baja_cuenta_bancaria_empresa') ? true : false,
                                 id: cuenta.id,
-                                estado: cuenta.estado
+                                estado: cuenta.estado,
+                                cancelar: self.$root.can('cancelar_solicitud_baja_cuenta_bancaria_empresa') ? true : false
                             })
 
                         })
