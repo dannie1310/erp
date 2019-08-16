@@ -10,6 +10,7 @@ namespace App\Models\CADECO\FinanzasCBE;
 
 
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudBaja extends Solicitud
 {
@@ -67,5 +68,37 @@ class SolicitudBaja extends Solicitud
     public function folio()
     {
         return $count = SolicitudBaja::query()->count('id') + 1;
+    }
+
+    public function autorizar()
+    {
+        DB::connection('cadeco')->transaction(function() {
+            $cuenta_empresa = CuentaBancariaEmpresa::query()->where('id', $this->id_cuenta);
+
+            if ($cuenta_empresa->get()->toArray() == []) {
+                abort(400, 'No se encuentra está cuenta bancaria empresa.');
+            }
+            if ($cuenta_empresa->get()->toArray()[0]['estatus'] <= 0) {
+                abort(400, 'Está Cuenta Bancaria se dio de baja previamente.');
+            }
+
+            $cuenta_empresa->update([
+                'id_solicitud_origen_baja' => $this->id,
+                'estatus' => -1
+            ]);
+
+            $movimiento = SolicitudMovimiento::query()->where('id_solicitud', '=', $this->id)->first();
+
+            $movs = SolicitudMovimiento::query()->create([
+                'id_solicitud' => $this->id,
+                'id_movimiento_antecedente' => $movimiento->id,
+                'id_tipo_movimiento' => 2,
+            ]);
+
+            $this->update([
+                'estado' => 2
+            ]);
+        });
+        return $this;
     }
 }

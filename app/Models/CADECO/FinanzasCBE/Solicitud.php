@@ -24,6 +24,7 @@ class Solicitud extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id_cuenta',
         'id_empresa',
         'id_banco',
         'numero_folio',
@@ -71,7 +72,7 @@ class Solicitud extends Model
         return $this->hasMany(SolicitudMovimiento::class, 'id_solicitud', 'id');
     }
 
-    public function movimientoSolicitud()
+    public function estadoSolicitud()
     {
         return $this->belongsTo(CtgTipoMovimientoSolicitud::class, 'estado', 'estado_resultante');
     }
