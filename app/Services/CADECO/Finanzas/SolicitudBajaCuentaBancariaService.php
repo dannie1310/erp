@@ -46,6 +46,7 @@ class SolicitudBajaCuentaBancariaService
     {
         $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
         $datos = [
+            'id_cuenta' => $data['cuenta']['id'],
             'id_empresa' => $data['id_empresa'],
             'id_banco' =>$data['cuenta']['banco']['id'],
             'id_moneda' => $data['cuenta']['moneda']['id'],
@@ -55,6 +56,7 @@ class SolicitudBajaCuentaBancariaService
             'tipo_cuenta' => $data['cuenta']['id_tipo'],
             'observaciones' => $data['observaciones']
         ];
+
         $registro = $this->repository->create($datos);
         if($data['archivo'] != null) {
             Storage::disk('solicitud_cuenta_bancaria')->put($proyectos->id.'_'.Context::getIdObra().'_'.$registro->id.'_baja_cuenta_bancaria'.'.pdf', fopen($data['archivo'], 'r'));
@@ -75,6 +77,10 @@ class SolicitudBajaCuentaBancariaService
         }else{
             return response()->file($path);
         }
+    }
+
+    public function autorizar($id){
+        return $this->repository->show($id)->autorizar();
     }
 
     public function cancelar($data , $id){

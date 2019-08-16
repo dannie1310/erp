@@ -31,8 +31,8 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
         'banco',
         'plaza',
         'usuario',
-        'movimientos',
-        'mov_estado'
+        'mov_estado',
+        'movimientos'
     ];
 
     /**
@@ -41,14 +41,6 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'tipo',
-        'empresa',
-        'moneda',
-        'banco',
-        'plaza',
-        'usuario',
-        'movimientos',
-        'mov_estado'
     ];
 
     public function transform(SolicitudBaja $model)
@@ -57,15 +49,14 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'cuenta' => $model->cuenta_clabe,
             'sucursal' => $model->sucursal,
-            'tipo_cuenta' => $model->tipo,
             'fecha' => $model->fecha,
             'observaciones' => $model->observaciones,
-            'estado' => $model->estatus,
+            'estado' => $model->estado,
             'fecha_format' => $model->fecha_format,
-            'estado' => $model->estatus,
             'folio' => $model->numero_folio,
             'numero_folio_format_orden' => $model->numero_folio_format_orden,
-            'sucursal_format' => $model->sucursal_format
+            'sucursal_format' => $model->sucursal_format,
+            'tipo_cuenta' => $model->tiposCuentas,
         ];
     }
 
@@ -159,7 +150,7 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
      */
     public function includeMovEstado(SolicitudBaja $model)
     {
-        if($movimiento = $model->movimientoSolicitud)
+        if($movimiento = $model->estadoSolicitud)
         {
             return $this->item($movimiento, new CtgTipoMovimientoSolicitudTransformer);
         }

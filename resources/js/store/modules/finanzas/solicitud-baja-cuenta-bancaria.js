@@ -20,7 +20,6 @@ export default{
         SET_CUENTA(state, data){
             state.currentCuenta = data
         },
-
         UPDATE_ATTRIBUTE(state, data) {
             _.set(state.currentCuenta, data.attribute, data.value);
         },
@@ -102,11 +101,51 @@ export default{
                     })
             });
         },
+        autorizar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Solicitud de Baja de Cuenta Bancaria",
+                    text: "¿Estás seguro/a de autorizar la solicitud de baja de cuenta bancaria?",
+                    icon: "info",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Autorizar',
+                            closeModal: false,
+                        }
+                    }
+                }) .then((value) => {
+                    if (value) {
+                        axios
+                            .get(URI + payload.id + '/autorizar', {params: payload.params})
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("La autorizacion ha sido aplicada exitosamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error =>  {
+                                reject(error);
+                            });
+                    } else {
+                        reject();
+                    }
+                });
+            });
+        },
         cancelar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Solicitud de Baja de Cuenta Bancaria",
-                    text: "¿Estás seguro/a de cancelar la solicitud de alta de cuenta bancaria?",
+                    text: "¿Estás seguro/a de cancelar la solicitud de baja de cuenta bancaria?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
