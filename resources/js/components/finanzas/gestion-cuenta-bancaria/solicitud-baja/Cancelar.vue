@@ -91,7 +91,7 @@
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-11 form-group row error-content">
-                                    <b>Motivo de Rechazo: </b>
+                                    <b>Motivo de Cancelación: </b>
                             </div>
                          </div>
                         <div class="row">
@@ -157,7 +157,7 @@
                     id: id,
                     params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos.usuario','movimiento_solicitud'] }
                 }).then(data => {
-                    this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', data);
+                    this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', data);
                     $(this.$refs.modal).modal('show');
                 })
             },
