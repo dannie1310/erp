@@ -94,15 +94,11 @@
                                                     <th>Fecha/Hora</th>
                                                     <th>Acción</th>
                                                     <th>Usuario</th>
-                                                    <th>IP</th>
-                                                    <th>Mac address</th>
                                                 </tr>
                                                 <tr >
                                                     <td>{{mov.fecha_format}}</td>
                                                     <td>{{mov.movimiento}}</td>
                                                     <td>{{mov.usuario.nombre}}</td>
-                                                    <td>{{mov.ip}}</td>
-                                                    <td>{{mov.mac_address}}</td>
                                                 </tr>
                                                 <tr v-if="mov.observaciones">
                                                     <td colspan="5"><b>Observaciones:</b><br/>{{mov.observaciones}}</td>
