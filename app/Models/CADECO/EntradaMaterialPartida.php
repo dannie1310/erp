@@ -9,7 +9,7 @@
 namespace App\Models\CADECO;
 
 
-class EntradaAlmacenPartida extends Item
+class EntradaMaterialPartida extends Item
 {
     protected static function boot()
     {
