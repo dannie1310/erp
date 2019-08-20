@@ -21,4 +21,13 @@ class EntradaMaterial extends Transaccion
                 ->where('estado', '!=', -2);
         });
     }
+
+    public function getEstadoFormatAttribute()
+    {
+        switch ($this->estado){
+            case 0 :
+                return 'Registrada';
+                break;
+        }
+    }
 }

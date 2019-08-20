@@ -18,6 +18,7 @@ import sucursal from './modules/cadeco/sucursal';
 
 
 //COMPRAS
+import entradaAlmacen from './modules/compras/entrada-almacen';
 import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
 
@@ -99,6 +100,7 @@ export default new Vuex.Store({
         'cadeco/obras': obras,
         'cadeco/sucursal': sucursal,
 
+        'compras/entrada-almacen' : entradaAlmacen,
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
 
