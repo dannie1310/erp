@@ -17,8 +17,16 @@ class EntradaMaterial extends Transaccion
 
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 33)
-                ->where('opciones', '=', 1)
-                ->where('estado', '!=', -2);
+                ->where('opciones', '=', 1);
         });
+    }
+
+    public function getEstadoFormatAttribute()
+    {
+        switch ($this->estado){
+            case 0 :
+                return 'Registrada';
+                break;
+        }
     }
 }

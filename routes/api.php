@@ -277,17 +277,21 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'compras'], function ($api) {
 
-        // ALMACEN
+        //ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {
+
+            // ENTRADA DE ALMACEN
+            $api->group(['prefix' => 'entrada'], function ($api) {
+                $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\EntradaAlmacenController@paginate');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\EntradaAlmacenController@show')->where(['id' => '[0-9]+']);
+            });
+
 
             // SALIDA DE ALMACEN
             $api->group(['prefix' => 'salida'], function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SalidaAlmacenController@paginate');
             });
-
         });
-
-
 
          // ORDEN DE COMPRA
         $api->group(['prefix' => 'orden-compra'], function ($api) {
