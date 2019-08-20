@@ -88,7 +88,8 @@
                             estado: entrada.estado_format,
                             buttons: $.extend({}, {
                                 id: entrada.id,
-                                estado: entrada.estado
+                                estado: entrada.estado,
+                                delete: true
                             })
                         })
                     });

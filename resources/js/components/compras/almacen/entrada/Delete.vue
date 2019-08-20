@@ -1,0 +1,112 @@
+<template>
+    <span>
+         <button @click="find" type="button" class="btn btn-sm btn-outline-danger ">
+             <i class="fa fa-trash"></i>
+         </button>
+        <div class="modal fade" ref="modal" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-trash"></i> ELIMINAR ENTRADA A ALMACÉN</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row"  v-if="entrada">
+                            <div class="col-12">
+                                <div class="invoice p-3 mb-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5>Datos de la Entrada Almacén</h5>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="table-responsive col-md-12">
+                                            <table class="table table-striped">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="bg-gray-light"><b>Folio:</b></td>
+                                                        <td class="bg-gray-light">{{entrada.numero_folio_format}}</td>
+                                                        <td class="bg-gray-light"><b>Empresa:</b></td>
+                                                        <td class="bg-gray-light">{{entrada.empresa.razon_social}}</td>
+                                                        <td class="bg-gray-light"><b>Referencia:</b></td>
+                                                        <td class="bg-gray-light">{{entrada.referencia}}</td>
+                                                        <td class="bg-gray-light"><b>Observaciones:</b></td>
+                                                        <td class="bg-gray-light">{{entrada.observaciones}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" class="bg-gray-light"><b>Fecha:</b></td>
+                                                        <td colspan="2" class="bg-gray-light">{{entrada.fecha_registro}}</td>
+                                                        <td colspan="2" class="bg-gray-light"><b>Estado:</b></td>
+                                                        <td colspan="2" class="bg-gray-light">{{entrada.estado_format}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group row error-content">
+                                                 <label for="motivo" class="col-sm-2 col-form-label">Motivo: </label>
+                                                <div class="col-sm-10">
+                                                    <textarea
+                                                            name="motivo"
+                                                            id="motivo"
+                                                            class="form-control"
+                                                            v-model="motivo"
+                                                            v-validate="{required: true}"
+                                                            data-vv-as="Motivo"
+                                                            :class="{'is-invalid': errors.has('motivo')}"
+                                                    ></textarea>
+                                                    <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-danger":disabled="errors.count() > 0 || motivo ==''">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </span>
+</template>
+
+<script>
+    export default {
+        name: "entrada-almacen-delete",
+        props: ['id'],
+        data() {
+            return {
+                motivo: ''
+            }
+        },
+        methods: {
+            find(){
+                this.$store.commit('compras/entrada-almacen/SET_ENTRADA', null);
+                return this.$store.dispatch('compras/entrada-almacen/find', {
+                    id: this.id,
+                    params: { include: 'empresa' }
+                }).then(data => {
+                    this.$store.commit('compras/entrada-almacen/SET_ENTRADA', data);
+                    $(this.$refs.modal).modal('show');
+                })
+            }
+        },
+        computed: {
+            entrada() {
+                return this.$store.getters['compras/entrada-almacen/currentEntrada'];
+            }
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

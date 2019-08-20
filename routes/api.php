@@ -282,8 +282,8 @@ $api->version('v1', function ($api) {
 
             // ENTRADA DE ALMACEN
             $api->group(['prefix' => 'entrada'], function ($api) {
-                $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\EntradaAlmacenController@index');
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\EntradaAlmacenController@paginate');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\EntradaAlmacenController@show')->where(['id' => '[0-9]+']);
             });
         });
 

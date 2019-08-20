@@ -42,6 +42,7 @@
             </li>
             <li class="nav-item" v-if="almacen">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-server"></i>
                     <p>
                         Gestión de Almacén
                         <i class="right fa fa-angle-left"></i>

@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\ItemTransformer;
 use App\Models\CADECO\EntradaMaterial;
 use League\Fractal\TransformerAbstract;
 
@@ -21,7 +22,8 @@ class EntradaAlmacenTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'empresa'
+        'empresa',
+        'partidas'
     ];
 
     /**
@@ -51,10 +53,24 @@ class EntradaAlmacenTransformer extends TransformerAbstract
      * @param EntradaMaterial $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeEmpresa(EntradaMaterial $model){
+    public function includeEmpresa(EntradaMaterial $model)
+    {
         if($empresa = $model->empresa)
         {
             return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param EntradaMaterial $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(EntradaMaterial $model)
+    {
+        if($partida = $model->items)
+        {
+            return $this->collection($partida, new EntradaAlmacenPartidaTransformer);
         }
         return null;
     }
