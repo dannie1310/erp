@@ -285,6 +285,12 @@ $api->version('v1', function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\EntradaAlmacenController@paginate');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\EntradaAlmacenController@show')->where(['id' => '[0-9]+']);
             });
+
+
+            // SALIDA DE ALMACEN
+            $api->group(['prefix' => 'salida'], function ($api) {
+                $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SalidaAlmacenController@paginate');
+            });
         });
 
          // ORDEN DE COMPRA
