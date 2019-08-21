@@ -63,13 +63,13 @@ export default{
                     })
             });
         },
-
-        delete(context, payload) {
+        eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar la Entrada de Almacén",
                     text: "¿Estás seguro/a de que desea eliminar esta entrada?",
                     icon: "warning",
+                    closeOnClickOutside: false,
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
@@ -79,8 +79,7 @@ export default{
                             text: 'Si, Eliminar',
                             closeModal: false,
                         }
-                    },
-                    dangerMode: true,
+                    }
                 })
                     .then((value) => {
                         if (value) {
@@ -93,13 +92,14 @@ export default{
                                         timer: 1500,
                                         buttons: false
                                     }).then(() => {
-                                        context.commit('UPDATE_ENTRADA', data);
                                         resolve(data);
                                     })
                                 })
-                                .catch(error => {
+                                .catch(error =>  {
                                     reject(error);
-                                })
+                                });
+                        } else {
+                            reject();
                         }
                     });
             });

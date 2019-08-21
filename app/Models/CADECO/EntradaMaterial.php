@@ -26,8 +26,7 @@ class EntradaMaterial extends Transaccion
         });
 
         self::deleting(function ($entrada) {
-            $entrada->validar();
-            $entrada->respaldar();
+
            dd("aqui esperando para eliminar....");
         });
     }
@@ -44,6 +43,16 @@ class EntradaMaterial extends Transaccion
     public function partidas()
     {
         return $this->hasMany(EntradaMaterialPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function eliminar($motivo)
+    {
+        $this->validar();
+        $this->respaldar($motivo);
+
+        dd("aqui esperando para eliminar...."  );
+        $this->delete();
+
     }
 
     private function validar()
@@ -70,90 +79,93 @@ class EntradaMaterial extends Transaccion
     /**
      *  Realiza funciones para despaldar todo lo implicado en la entrada material y realizar los respaldos pertinentes.
      */
-    private function respaldar()
+    private function respaldar($motivo)
     {
-        $partidas = $this->partidas()->get()->toArray();
-        foreach ($partidas as $partida) {
-            // Respaldar el Inventario
-//            $inventario = Inventario::query()->where('id_item', $partida['id_item'])->first()->toArray();
-//
-//            $respaldo_inventario = InventarioEliminado::query()->create(
-//                [
-//                    'id_lote' => $inventario['id_lote'],
-//                    'lote_antecedente' => $inventario['lote_antecedente'],
-//                    'id_almacen' => $inventario['id_almacen'],
-//                    'id_material' => $inventario['id_material'],
-//                    'id_item' => $inventario['id_item'],
-//                    'saldo' => $inventario['saldo'],
-//                    'monto_total' => $inventario['monto_total'],
-//                    'monto_pagado' => $inventario['monto_pagado'],
-//                    'monto_aplicado' => $inventario['monto_aplicado'],
-//                    'fecha_desde' => $inventario['fecha_desde'],
-//                    'referencia' => $inventario['referencia'],
-//                    'monto_original' => $inventario['monto_original']
-//                ]
-//            );
-//
-//            // Respaldar el Item
-//            $respaldo_item = ItemEntradaEliminada::query()->create(
-//                [
-//                    'id_item' => $partida['id_item'],
-//                    'id_transaccion' => $partida['id_transaccion'],
-//                    'id_antecedente' => $partida['id_antecedente'],
-//                    'item_antecedente' => $partida['item_antecedente'],
-//                    'id_almacen' => $partida['id_almacen'],
-//                    'id_concepto' => $partida['id_concepto'],
-//                    'id_material' => $partida['id_material'],
-//                    'unidad' => $partida['unidad'],
-//                    'numero' => $partida['numero'],
-//                    'cantidad' => $partida['cantidad'],
-//                    'cantidad_material' => $partida['cantidad_material'],
-//                    'importe' => $partida['importe'],
-//                    'saldo' => $partida['saldo'],
-//                    'precio_unitario' => $partida['precio_unitario'],
-//                    'anticipo' => $partida['anticipo'],
-//                    'precio_material' => $partida['precio_material'],
-//                    'referencia' => $partida['referencia'],
-//                    'estado' => $partida['estado'],
-//                    'cantidad_original1' => $partida['cantidad_original1'],
-//                    'precio_original1' => $partida['precio_original1'],
-//                    'id_asignacion' => $partida['id_asignacion']
-//                ]
-//            );
-//
-//            dd($respaldo_item);
-dd($this->id_transaccion);
-              $respaldo_entrada = EntradaEliminada::query()->create(
-                  [
-                      'id_transaccion' => $this->id_transaccion,
-                      'id_antecedente' => $this->id_antecedente,
-                      'tipo_transaccion' => $this->tipo_transaccion,
-                      'numero_folio' => $this->numero_folio,
-                      'fecha' => $this->fecha,
-                      'id_obra' => $this->id_obra,
-                      'id_empresa' => $this->id_empresa,
-                      'id_sucursal' => $this->id_sucursal,
-                      'id_moneda' => $this->id_moneda,
-                      'cumplimiento' => $this->cumplimiento,
-                      'vencimiento' => $this->vencimiento,
-                      'opciones' => $this->opciones,
-                      'anticipo' => $this->anticipo,
-                      'referencia' => $this->referencia,
-                      'comentario' => $this->comentario,
-                      'observaciones' => $this->observaciones,
-                      'TipoLiberacion' => $this->TipoLiberacion,
-                      'FechaHoraRegistro' => $this->FechaHoraRegistro,
-                      'usuario_elimina' => $this->id_transaccion,
-                      'motivo_eliminacion' => $this->id_transaccion,
-                      'fecha_eliminacion' => $this->id_transaccion,
-                  ]
-              );
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $partidas = $this->partidas()->get()->toArray();
+            foreach ($partidas as $partida) {
+                /**
+                 * Respaldar el Inventario
+                 */
+                $inventario = Inventario::query()->where('id_item', $partida['id_item'])->first()->toArray();
+
+                $respaldo_inventario = InventarioEliminado::query()->create(
+                    [
+                        'id_lote' => $inventario['id_lote'],
+                        'lote_antecedente' => $inventario['lote_antecedente'],
+                        'id_almacen' => $inventario['id_almacen'],
+                        'id_material' => $inventario['id_material'],
+                        'id_item' => $inventario['id_item'],
+                        'saldo' => $inventario['saldo'],
+                        'monto_total' => $inventario['monto_total'],
+                        'monto_pagado' => $inventario['monto_pagado'],
+                        'monto_aplicado' => $inventario['monto_aplicado'],
+                        'fecha_desde' => $inventario['fecha_desde'],
+                        'referencia' => $inventario['referencia'],
+                        'monto_original' => $inventario['monto_original']
+                    ]
+                );
+
+                // Respaldar el Item
+                $respaldo_item = ItemEntradaEliminada::query()->create(
+                    [
+                        'id_item' => $partida['id_item'],
+                        'id_transaccion' => $partida['id_transaccion'],
+                        'id_antecedente' => $partida['id_antecedente'],
+                        'item_antecedente' => $partida['item_antecedente'],
+                        'id_almacen' => $partida['id_almacen'],
+                        'id_concepto' => $partida['id_concepto'],
+                        'id_material' => $partida['id_material'],
+                        'unidad' => $partida['unidad'],
+                        'numero' => $partida['numero'],
+                        'cantidad' => $partida['cantidad'],
+                        'cantidad_material' => $partida['cantidad_material'],
+                        'importe' => $partida['importe'],
+                        'saldo' => $partida['saldo'],
+                        'precio_unitario' => $partida['precio_unitario'],
+                        'anticipo' => $partida['anticipo'],
+                        'precio_material' => $partida['precio_material'],
+                        'referencia' => $partida['referencia'],
+                        'estado' => $partida['estado'],
+                        'cantidad_original1' => $partida['cantidad_original1'],
+                        'precio_original1' => $partida['precio_original1'],
+                        'id_asignacion' => $partida['id_asignacion']
+                    ]
+                );
+            }
+            $respaldo_entrada = EntradaEliminada::query()->create(
+                [
+                    'id_transaccion' => $this->id_transaccion,
+                    'id_antecedente' => $this->id_antecedente,
+                    'tipo_transaccion' => $this->tipo_transaccion,
+                    'numero_folio' => $this->numero_folio,
+                    'fecha' => $this->fecha,
+                    'id_obra' => $this->id_obra,
+                    'id_empresa' => $this->id_empresa,
+                    'id_sucursal' => $this->id_sucursal,
+                    'id_moneda' => $this->id_moneda,
+                    'cumplimiento' => $this->cumplimiento,
+                    'vencimiento' => $this->vencimiento,
+                    'opciones' => $this->opciones,
+                    'anticipo' => $this->anticipo,
+                    'referencia' => $this->referencia,
+                    'comentario' => $this->comentario,
+                    'observaciones' => $this->observaciones,
+                    'TipoLiberacion' => $this->TipoLiberacion,
+                    'FechaHoraRegistro' => $this->FechaHoraRegistro,
+                    'motivo_eliminacion' => $motivo
+                ]
+            );
 
 
+            DB::connection('cadeco')->commit();
+
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
         }
-
-
-
     }
 
 

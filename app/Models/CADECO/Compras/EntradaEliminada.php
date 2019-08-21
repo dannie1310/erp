@@ -17,6 +17,30 @@ class EntradaEliminada extends Model
     protected $table = 'Compras.entradas_eliminadas';
     protected $primaryKey = 'id_transaccion';
 
+    protected $fillable = [
+        'id_transaccion',
+        'id_antecedente',
+        'tipo_transaccion',
+        'numero_folio',
+        'fecha',
+        'id_obra',
+        'id_empresa',
+        'id_sucursal',
+        'id_moneda',
+        'cumplimiento',
+        'vencimiento',
+        'opciones',
+        'anticipo',
+        'referencia',
+        'comentario',
+        'observaciones',
+        'TipoLiberacion',
+        'FechaHoraRegistro',
+        'usuario_elimina',
+        'motivo_eliminacion',
+        'fecha_eliminacion'
+    ];
+
     public $timestamps = false;
 
     protected static function boot()

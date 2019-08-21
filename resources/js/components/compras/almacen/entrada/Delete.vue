@@ -141,7 +141,10 @@
                 })
             },
             eliminar() {
-                return this.$store.dispatch('compras/entrada-almacen/delete', {id: this.id})
+                return this.$store.dispatch('compras/entrada-almacen/eliminar', {
+                    id: this.id,
+                    params: {data: [this.$data.motivo]}
+                })
                     .then(data => {
                         $(this.$refs.modal).modal('hide');
                     })
