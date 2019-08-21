@@ -1,0 +1,555 @@
+<?php
+
+
+namespace App\PDF;
+
+use App\Facades\Context;
+use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Item;
+use App\Models\CADECO\Obra;
+use App\Models\CADECO\Subcontrato;
+use App\Models\CADECO\TipoTransaccion;
+use Carbon\Carbon;
+use Ghidev\Fpdf\Rotation;
+
+use App\Models\CADECO\SolicitudPagoAnticipado;
+
+
+class EstimacionFormato extends Rotation
+{
+    protected $obra;
+    protected $estimacion;
+    private $encabezado_pdf = '';
+    var $encola = '';
+
+
+
+    const DPI = 96;
+    const MM_IN_INCH = 25.4;
+    const A4_HEIGHT = 297;
+    const A4_WIDTH = 210;
+
+    const MAX_WIDTH = 225;
+    const MAX_HEIGHT = 180;
+
+    /**
+     * PagoAnticipado constructor.
+     * @param $pagoAnticipado
+     */
+
+    public function __construct($id)
+    {
+
+        parent::__construct('L', 'cm', 'A4');
+
+         $this->obra = Obra::find(Context::getIdObra());
+         //print_r($id);
+//print_r($this->obra);
+         $this->id=$id;
+         $this->encabezado_pdf = utf8_decode($this->obra->facturar);
+         $this->estimacion = Estimacion::with('empresa','subcontratoEstimacion','moneda','item','item.concepto', 'item.contrato')->find($id);
+         $this->contratista =$this->estimacion->empresa->razon_social;
+         $this->folio_consecutivo=$this->estimacion->subcontratoEstimacion->NumeroFolioConsecutivo;
+
+         $this->id_antecedente=$this->estimacion->id_antecedente;
+//         print_r($this->estimacion->id_antecedente);
+         $this->subcontrato = Subcontrato::find($this->id_antecedente);
+         $this->no_contrato = $this->subcontrato->referencia;
+
+
+         $this->moneda = $this->estimacion->moneda->nombre;
+
+         $this->items = $this->estimacion->item;
+
+
+//         $this->items= Item::with('concepto')->find($id);
+//dd(  $this->estimacion->item);
+    //   print_r( $this->estimacion->moneda->nombre);
+
+
+
+         $this->numero_folio= str_pad($this->estimacion->numero_folio,6, 0, STR_PAD_LEFT);
+         $this->fecha=Carbon::parse($this->estimacion->fecha)->format('d-m-Y');
+         $this->fecha_inicial=Carbon::parse($this->estimacion->cumplimiento)->format('d-m-Y');
+         $this->fecha_final =Carbon::parse($this->estimacion->vencimiento)->format('d-m-Y');
+
+
+        $this->tran_antecedentes=0;
+         $this->suma_contrato=0;
+         $this->suma_estimacionAnterior=0;
+         $this->suma_estimacion=0;
+         $this->suma_acumulada=0;
+         $this->suma_porEstimar=0;
+
+         //print_r($numero_folio);
+//        $this->pagoAnticipado = SolicitudPagoAnticipado::with("subcontrato", "empresa", "usuario", "orden_compra")->find($id);
+
+        /*Header*/
+//        $this->folio = $this->pagoAnticipado->numero_folio;
+//        $this->fechaCompleta = str_replace("/", "-", substr($this->pagoAnticipado->fecha_format, 0, 10));
+//        $this->hora = substr($this->pagoAnticipado->FechaHoraRegistro, 11, 18);
+//        $this->fecha_limite = substr($this->pagoAnticipado->vencimiento, 0, 10);
+//        $this->fecha_solicitud = $this->pagoAnticipado->cumplimiento;
+//        $this->empresa_razon = $this->pagoAnticipado->empresa->razon_social;
+//        $this->observaciones = $this->pagoAnticipado->observaciones;
+
+
+//
+//        if (!empty($this->pagoAnticipado->subcontrato)){
+//
+//            $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+//            $this->aux=$this->pagoAnticipado->subcontrato->tipo_transaccion;
+//            $this->id_tipoAntecedente=TipoTransaccion::where("Tipo_Transaccion",$this->pagoAnticipado->subcontrato->tipo_transaccion)->get();
+//            $this->transaccion_antecedente=$this->id_tipoAntecedente[0]->Descripcion;
+//            $this->folio_antecedente=str_pad($this->pagoAnticipado->subcontrato->numero_folio, 5, "0", STR_PAD_LEFT);
+//            $this->fecha_antecedente=substr($this->pagoAnticipado->subcontrato->fecha,0,10);
+//            $this->observaciones_antecedente=$this->pagoAnticipado->subcontrato->observaciones;
+//            $this->referencia=$this->pagoAnticipado->subcontrato->referencia;
+//            $this->iva=number_format( $this->pagoAnticipado->subcontrato->impuesto,2,'.',',');
+//            $this->monto= number_format( $this->pagoAnticipado->subcontrato->monto,2,'.',',');
+//            $this->subtotal=number_format(doubleval(str_replace(",","",$this->monto))-doubleval(str_replace(",","",$this->iva)),2,".",",");
+//
+//
+//            $this->total_format="$ ".$this->monto;
+//
+//        }
+
+//
+//        if(!empty($this->pagoAnticipado->orden_compra)){
+//            $this->id_antecedente=$this->pagoAnticipado->id_antecedente;
+//            $this->aux=$this->pagoAnticipado->tipo_transaccion;
+//            $this->id_tipoAntecedente=TipoTransaccion::where("Tipo_Transaccion",$this->pagoAnticipado->tipo_transaccion)->get();
+//            $this->transaccion_antecedente=$this->id_tipoAntecedente[0]->Descripcion;
+//
+//
+//
+//            $this->folio_antecedente=str_pad($this->pagoAnticipado->orden_compra->numero_folio, 5, "0", STR_PAD_LEFT);
+//            $this->fecha_antecedente=substr($this->pagoAnticipado->orden_compra->fecha,0,10);
+//            $this->observaciones_antecedente=$this->pagoAnticipado->orden_compra->observaciones;
+//            $this->referencia=$this->pagoAnticipado->orden_compra->referencia;
+//
+//            $this->iva=number_format($this->pagoAnticipado->orden_compra->impuesto,2,".",",");
+//            $this->monto=$this->pagoAnticipado->orden_compra->monto;
+//            $this->subtotal=number_format(doubleval($this->monto)-doubleval($this->iva),2,".",",");
+//
+//            $this->total_format="$ ".number_format($this->monto,2,".", ",");
+//
+//        }
+
+
+        /*Costos*/
+//        $this->monto=$this->pagoAnticipado->monto;
+//        $this->total_format=$this->pagoAnticipado->monto_format;
+//        $this->subtotal=number_format( doubleval($this->monto)*0.84,2,'.',',');
+//        $this->iva=number_format(doubleval($this->monto)*0.16,2,'.',',');
+//
+//        $this->encabezado_pdf = utf8_decode('Solicitud de Pago Anticipado');
+//
+//
+//        $this->SetAutoPageBreak(true, 5);
+        $this->WidthTotal = $this->GetPageWidth() - 2;
+//        $this->txtTitleTam = 18;
+//        $this->txtSubtitleTam = 13;
+//        $this->txtSeccionTam = 9;
+//        $this->txtContenidoTam = 11;
+//        $this->txtFooterTam = 6;
+//
+//
+//        $this->nombre_obra = $this->obra->nombre;
+//        $this->razon_social = $this->obra->facturar;
+//
+//        $this->empresa = $this->obra->facturar;
+//
+//
+//        $this->empresa_direccion = $this->obra->direccion;
+//        $this->rfc = strtoupper($this->obra->rfc);
+
+
+    }
+    function logo() {
+        $data = $this->obra->getLogoAttribute();
+        $data = pack('H*', hex2bin($data));
+        $file = public_path('/img/logo_temp.png');
+        if (file_put_contents($file, $data) !== false) {
+            list($width, $height) = $this->resizeToFit($file);
+            $this->Image($file, 1, 1, $width-2, $height-1);
+            unlink($file);
+        }
+    }
+    function Header()
+    {
+        $this->logo();
+
+        $this->setXY(7, 2);
+        $this->SetFont('Arial', 'B', 16);
+        $this->CellFitScale(1* $this->WidthTotal, 0.1, $this->encabezado_pdf, '', 'CB');
+
+        $this->setXY(10, 3.5);
+        $this->SetFont('Arial', 'B', 14);
+        $this->CellFitScale(1* $this->WidthTotal, 0.1,  utf8_decode("Cuerpo de Estimación"), '', 'CB');
+
+        $y_inicial = $this->getY() - 2;
+        $x_inicial = $this->GetPageWidth() / 1.51;
+        $this->setY($y_inicial);
+        $this->setX($x_inicial);
+
+        $this->SetFont('Arial', 'B', 12);
+        $this->SetX($x_inicial);
+        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('Folio SAO'), 'LT, LR, LB', 0, 'L');
+        $this->SetFont('Arial', 'B', "SDASDA");
+        $this->Cell(0.207 * $this->WidthTotal, 0.5, utf8_decode("#".$this->numero_folio), 'RT, RB', 1, 'R');
+
+        $this->SetFont('Arial', 'B', 12);
+        $this->SetX($x_inicial);
+        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('No. Estimación'), 'L, LR, LB', 0, 'L');
+        $this->SetFont('Arial', 'B', "");
+        $this->Cell(0.207 * $this->WidthTotal, 0.5, $this->folio_consecutivo, 'RB', 1, 'R');
+
+        $this->SetFont('Arial', 'B', 9);
+        $this->SetX($x_inicial);
+        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('Semana de Contrato'), 'LB, LR', 0, 'L');
+        $this->SetFont('Arial', 'B',  10);
+        $this->Cell(0.207 * $this->WidthTotal, 0.5,utf8_decode(""), 'RB', 1, 'R');
+
+        $this->SetFont('Arial', 'B', 9);
+        $this->SetX($x_inicial);
+        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('Fecha'), 'LB, LR', 0, 'L');
+        $this->SetFont('Arial', 'B',  10);
+        $this->Cell(0.207 * $this->WidthTotal, 0.5,utf8_decode($this->fecha), 'RB', 1, 'R');
+
+        $this->SetFont('Arial', 'B', 9);
+        $this->SetX($x_inicial);
+        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('Periodo'), 'LB, LR', 0, 'L');
+        $this->SetFont('Arial', 'B',  10);
+        $this->Cell(0.207 * $this->WidthTotal, 0.5,utf8_decode("De: ".$this->fecha_inicial. " A: ".$this->fecha_final), 'RB', 1, 'R');
+
+
+
+        $this->SetFont('Arial', 'B', 9);
+        $this->setXY(1, 4.2);
+        $this->Cell(0.250 * $this->WidthTotal, 0.5, utf8_decode('Organización:'), 'LB, LR, LT', 0, 'L');
+        $this->SetFont('Arial', 'B', '#' . 10);
+        $this->Cell(0.757 * $this->WidthTotal, 0.5,utf8_decode($this->obra->nombre), 'RB, LT', 1, 'C');
+
+        $this->SetFont('Arial', 'B', 9);
+//        $this->setXY(1, 4.2);
+        $this->Cell(0.250 * $this->WidthTotal, 0.5, utf8_decode('Contratista:'), 'LB, LR, LT', 0, 'L');
+        $this->SetFont('Arial', 'B', '#' . 10);
+        $this->Cell(0.757* $this->WidthTotal, 0.5,utf8_decode($this->contratista), 'RB, LT', 1, 'C');
+
+        $this->SetFont('Arial', 'B', 9);
+//        $this->setXY(1, 4.2);
+        $this->Cell(0.250 * $this->WidthTotal, 0.5, utf8_decode('No. de Contrato:'), 'LB, LR, LT', 0, 'L');
+        $this->SetFont('Arial', 'B', '#' . 10);
+        $this->Cell(0.757 * $this->WidthTotal, 0.5,utf8_decode($this->no_contrato), 'RB, LT', 1, 'C');
+
+        $this->tableHeader();
+        $currentPage = $this->PageNo();
+
+        if($currentPage>1){
+
+            $this->Ln();
+
+        }
+
+
+
+    }
+
+    public function tableHeader(){
+
+
+        $this->Ln();
+
+        $this->SetFills(180,180,180);
+        $this->SetFont('Arial', 'B', 7);
+        $this->SetFillColor(180,180,180);
+        $this->Cell(0.250 * $this->WidthTotal,0.8,'Concepto','RTLB',0,'C',180);   // empty cell with left,top, and right borders
+        $this->Cell(0.05 * $this->WidthTotal,0.8,'U.M.','RTLB',0,'C',180);
+        $this->Cell(0.06 * $this->WidthTotal,0.8,'P.U.','RTLB',0,'C',180);
+        $this->Cell(0.130 * $this->WidthTotal,0.4,'Contrato y Aditamentos ','BTLR',0,'C',180);
+        $this->Cell(0.130 * $this->WidthTotal,0.4,utf8_decode("Acum. A Estimación Anterior"),'BTLR',0,'C',180);
+        $this->Cell(0.130 * $this->WidthTotal,0.4,utf8_decode("Esta Estimación "),'BTLR',0,'C',180);
+        $this->Cell(0.130 * $this->WidthTotal,0.4,utf8_decode("Acum. A Esta Estimación "),'BTLR',0,'C',180);
+        $this->Cell(0.128 * $this->WidthTotal,0.4,utf8_decode("Saldo por Estimar "),'BTLR',0,'C',180);
+//    $this->Cell(3,1,'','RTB',0,'L',180);
+
+
+        $this->setXY(10.97, 6.6);
+//    $this->Cell(2,0.4,'','BLR',0,'C',180);  // cell with left and right borders
+        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
+
+
+        $this->setXY(10.97+(0.130 * $this->WidthTotal), 6.6);
+        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
+
+
+        $this->setXY(10.97+(0.130 * $this->WidthTotal)*2, 6.6);
+        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
+
+
+        $this->setXY(10.97+(0.130 * $this->WidthTotal)*3, 6.6);
+        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.130 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
+
+        $this->setXY(10.97+(0.130 * $this->WidthTotal)*4, 6.6);
+        $this->Cell((0.128 * $this->WidthTotal)/2,0.4,'Cantidad','LRBT',0,'C',180);
+        $this->Cell((0.128 * $this->WidthTotal)/2,0.4,'Importe','LRBT',0,'C',180);
+
+
+
+        $this->setXY(1, 7);
+        $this->Cell(0.250 * $this->WidthTotal,0.4,'OBRA EJECUTADA',0,0,'L',0);
+
+        $this->setXY(1+(0.300 * $this->WidthTotal), 7);
+        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
+
+        $this->setXY(1+(0.428* $this->WidthTotal), 7);
+        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
+
+
+        $this->setXY(1+(0.558* $this->WidthTotal), 7);
+        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
+
+        $this->setXY(1+(0.688* $this->WidthTotal), 7);
+        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
+
+        $this->setXY(1+(0.818* $this->WidthTotal), 7);
+        $this->Cell(0.06 * $this->WidthTotal,0.4, $this->moneda,0,0,'C',0);
+
+        $this->setXY(1+(0.948* $this->WidthTotal), 7);
+        $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
+
+    }
+public function partidas(){
+
+
+
+
+
+        foreach ($this->items as $i => $p) {
+//          dd($p->concepto->descripcion);
+
+
+            $this->Ln();
+            $this->SetFont('Arial', '', 5);
+            $item_antecedente = $p->contrato->id_concepto;
+            //   dd($p->contrato->id_concepto);
+            $this->tran_antecedentes = Item::where('item_antecedente', '=', $item_antecedente)->where("id_transaccion", '<', $this->id)->get()->sum('cantidad');
+            //dd($tran_antecedentes);
+            $this->Cell(0.250 * $this->WidthTotal, 0.3, mb_strtoupper($p->concepto->descripcion), 'RTLB', 0, 'L', 0);   // empty cell with left,top, and right borders
+            $this->Cell(0.05 * $this->WidthTotal, 0.3, mb_strtoupper($p->contrato->unidad), 'RTLB', 0, 'C', 0);
+            $this->Cell(0.06 * $this->WidthTotal, 0.3, number_format($p->precio_unitario, 3, ".", ","), 'RTLB', 0, 'R', 0);
+            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($p->contrato->cantidad_original, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->contrato_importe = $p->precio_unitario * $p->contrato->cantidad_original;
+            $this->suma_contrato += $this->contrato_importe;
+            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->contrato_importe, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->tran_antecedentes, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->importe_antecedentes = $this->tran_antecedentes * $p->precio_unitario;
+            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_antecedentes, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->suma_estimacionAnterior += $this->importe_antecedentes;
+            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($p->cantidad, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($p->importe, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->suma_estimacion += $p->importe;
+            $this->cantidad_acumulada = $this->tran_antecedentes + $p->cantidad;
+            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->cantidad_acumulada, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->importe_acumulado = $this->importe_antecedentes + $p->importe;
+            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_acumulado, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->suma_acumulada += $this->importe_acumulado;
+            $this->cantidad_restante = $p->contrato->cantidad_original - $this->cantidad_acumulada;
+            $this->Cell((0.128 * $this->WidthTotal) / 2, 0.3, number_format($this->cantidad_restante, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->importe_restante = $p->precio_unitario * $this->cantidad_restante;
+            $this->Cell((0.128 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_restante, 3, ".", ","), 'BTLR', 0, 'R', 0);
+            $this->suma_porEstimar += $this->importe_restante;
+        }
+//    for($i = 0; $i < 50; $i++) {
+//
+//
+//    $this->Ln();
+//    $this->Cell(0.250 * $this->WidthTotal,0.3,mb_strtoupper('Socio'),'RTLB',0,'L',0);   // empty cell with left,top, and right borders
+//    $this->Cell(0.05 * $this->WidthTotal,0.3,mb_strtoupper('hr'),'RTLB',0,'C',0);
+//    $this->Cell(0.06 * $this->WidthTotal,0.3,'P.U.','RTLB',0,'R',0);
+//    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'Contrato ','BTLR',0,'R',0);
+//    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'Aditamentos ','BTLR',0,'R',0);
+//    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'Contrato ','BTLR',0,'R',0);
+//    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'Aditamentos ','BTLR',0,'R',0);
+//    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'Contrato ','BTLR',0,'R',0);
+//    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'Aditamentos ','BTLR',0,'R',0);
+//    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'Contrato ','BTLR',0,'R',0);
+//    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'Aditamentos ','BTLR',0,'R',0);
+//    $this->Cell((0.128 * $this->WidthTotal)/2,0.3,'Contrato ','BTLR',0,'R',0);
+//    $this->Cell((0.128 * $this->WidthTotal)/2,0.3,'Aditamentos ','BTLR',0,'R',0);
+//
+//
+//
+//
+//    }
+
+
+/*Footer partidas*/
+    $this->Ln();
+    $this->SetFills(180,180,180);
+    $this->SetFont('Arial', '', 5);
+    $this->SetFillColor(180,180,180);
+    $this->Cell(0.250 * $this->WidthTotal,0.3,"Sub-totales Obra Ejecutada",'RTLB',0,'R',180);   // empty cell with left,top, and right borders
+    $this->Cell(0.05 * $this->WidthTotal,0.3,"",'RTLB',0,'C',180);
+    $this->Cell(0.06 * $this->WidthTotal,0.3,'','RTLB',0,'R',180);
+    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,' ','BTLR',0,'R',180);
+    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,number_format($this->suma_contrato,3, ".",","),'BTLR',0,'R',180);
+    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'','BTLR',0,'R',180);
+    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,number_format($this->suma_estimacionAnterior,3, ".",","),'BTLR',0,'R',180);
+    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,' ','BTLR',0,'R',180);
+    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,number_format($this->suma_estimacion,3, ".",","),'BTLR',0,'R',180);
+    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,' ','BTLR',0,'R',180);
+    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,number_format($this->suma_acumulada,3, ".",","),'BTLR',0,'R',180);
+    $this->Cell((0.128 * $this->WidthTotal)/2,0.3,'','BTLR',0,'R',180);
+    $this->Cell((0.128 * $this->WidthTotal)/2,0.3,number_format($this->suma_porEstimar,3, ".",","),'BTLR',0,'R',180);
+
+    }
+
+
+
+    function pixelsToCM($val) {
+        return ($val * self::MM_IN_INCH / self::DPI) / 10;
+    }
+
+
+    function resizeToFit($imgFilename) {
+        list($width, $height) = getimagesize($imgFilename);
+        $widthScale = self::MAX_WIDTH / $width;
+        $heightScale = self::MAX_HEIGHT / $height;
+        $scale = min($widthScale, $heightScale);
+        return [
+            round($this->pixelsToCM($scale * $width)),
+            round($this->pixelsToCM($scale * $height))
+        ];
+    }
+
+
+
+    function firmas() {
+
+        $this->SetY(-3.5);
+        $this->SetTextColor('0', '0', '0');
+        $this->SetFont('Arial', '', 6);
+        $this->SetFillColor(180, 180, 180);
+
+
+
+        $this->SetFont('Arial', 'B', 4.5);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode(''), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('ELABORÓ'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('AVALÓ'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('REVISÓ'), 'TRLB', 1, 'C', 1);
+
+
+        $this->SetXY(14.75,-3.5);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Vo.Bo.'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('REVISÓ'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('AUTORIZÓ'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('REVISÓ/RECIBIÓ'), 'TRLB', 0, 'C', 1);
+
+        $this->Ln();
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 0, 'C');
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRL', 0, 'C');
+
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
+
+        $this->SetXY(14.75,-3.1);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
+        $this->SetXY(18.19, -3.1);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
+        $this->SetXY(18.19+0.73+($this->GetPageWidth() - 8) / 8, -3.1);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
+        $this->SetXY(18.19+(0.73+($this->GetPageWidth() - 8) / 8)*2, -3.1);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 1.2, '', 'TRLB', 1, 'C');
+
+
+
+
+
+
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('CONCILIADOR'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('DEPARTAMENTO'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('SUPERINTENDENCIA DE OBRA'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('CALIDAD'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.71);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('SUBCONTRATOS'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('SUPERINTENDENCIA TÉCNICA'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('GERENCIA DE PROYECTO'), 'TRLB', 0, 'C', 1);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
+
+
+
+        $this->SetXY(7.89,-2.3);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Victor Luis Gurrola Deras'), '', 0, 'C', 0);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Aurelio Aguilar Ramos'), '', 0, 'C', 0);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Francisco Resendiz Flores'), '', 0, 'C', 0);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. José Luis Gaona Aburto'), '', 0, 'C', 0);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('Ing. Victor Manuel Orozco Muñoz'), '', 0, 'C', 0);
+        $this->Cell(0.73);
+        $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4, utf8_decode('C.P. Eleazar Ortega Valerio'), '', 0, 'C', 0);
+
+
+    }
+
+    function Footer(){
+        $this->firmas();
+        $this->SetY($this->GetPageHeight() - 1);
+        $this->SetFont('Arial', '', 6);
+
+        $this->SetFont('Arial', 'B', 6);
+        $this->SetTextColor('100,100,100');
+        $this->SetY(28.5);
+        $this->Cell(19.5, .4, utf8_decode('Sistema de Administración de Obra'), 0, 0, 'R');
+
+        $this->SetFont('Arial', 'BI', 6);
+        $this->SetY(28.5);
+        $this->setX(1);
+        $this->SetTextColor('0,0,0');
+    //    $this->Cell(7, .4, utf8_decode('Formato generado desde el módulo de Solicitud de Pagos Anticipados. Fecha de registro: '.date("Y-m-d H:m:s", strtotime($this->fecha_solicitud))), 0, 0, 'L');
+
+        $this->Ln(.5);
+        $this->SetY(-0.9);
+        $this->SetTextColor('0,0,0');
+        $this->SetFont('Arial', 'BI', 6);
+        $this->Cell(28.5, .5, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
+    }
+
+    function create() {
+        $this->SetMargins(1, 0.5, 1);
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->SetAutoPageBreak(true,3.75);
+        $this->partidas();
+        try {
+            $this->Output('I', 'Formato - Pago Anticipado.pdf', 1);
+        } catch (\Exception $ex) {
+            dd("error",$ex);
+        }
+        exit;
+    }
+}
