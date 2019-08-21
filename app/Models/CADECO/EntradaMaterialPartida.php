@@ -24,4 +24,9 @@ class EntradaMaterialPartida extends Item
     {
         return $this->belongsTo(EntradaMaterial::class, 'id_transaccion', 'id_transaccion');
     }
+
+    public function inventario()
+    {
+        return $this->belongsTo(Inventario::class, 'id_item', 'id_item');
+    }
 }

@@ -29,4 +29,9 @@ class EntradaMaterial extends Transaccion
                 break;
         }
     }
+
+    public function partidas()
+    {
+        return $this->hasMany(EntradaMaterialPartida::class, 'id_transaccion', 'id_transaccion');
+    }
 }

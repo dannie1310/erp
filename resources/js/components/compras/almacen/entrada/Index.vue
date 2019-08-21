@@ -89,7 +89,7 @@
                             buttons: $.extend({}, {
                                 id: entrada.id,
                                 estado: entrada.estado,
-                                delete: true
+                                delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
                             })
                         })
                     });
