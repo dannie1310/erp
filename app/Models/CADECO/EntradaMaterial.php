@@ -27,7 +27,7 @@ class EntradaMaterial extends Transaccion
 
         self::deleting(function ($entrada) {
 
-           dd("aqui esperando para eliminar....");
+           dd("aqui esperando para eliminar....", $entrada);
         });
     }
 
@@ -49,10 +49,8 @@ class EntradaMaterial extends Transaccion
     {
         $this->validar();
         $this->respaldar($motivo);
-
-        dd("aqui esperando para eliminar...."  );
+        $this->revisar_respaldos();
         $this->delete();
-
     }
 
     private function validar()
@@ -107,7 +105,9 @@ class EntradaMaterial extends Transaccion
                     ]
                 );
 
-                // Respaldar el Item
+                /**
+                 * Respaldar el Item
+                 */
                 $respaldo_item = ItemEntradaEliminada::query()->create(
                     [
                         'id_item' => $partida['id_item'],
@@ -132,8 +132,12 @@ class EntradaMaterial extends Transaccion
                         'precio_original1' => $partida['precio_original1'],
                         'id_asignacion' => $partida['id_asignacion']
                     ]
-                );
+               );
             }
+
+            /**
+             * Respaldo de Entrada Almacén
+             */
             $respaldo_entrada = EntradaEliminada::query()->create(
                 [
                     'id_transaccion' => $this->id_transaccion,
@@ -169,26 +173,39 @@ class EntradaMaterial extends Transaccion
     }
 
 
-    private function reset_cambios()
+    private function revisar_respaldos()
     {
-        //resetear los cambios de
         $partidas = $this->partidas()->get()->toArray();
         foreach ($partidas as $partida) {
-            // Respaldar el Inventario
-            $inventario = Inventario::query()->where('id_item', $partida['id_item'])->first()->toArray();
 
-            if (InventarioEliminado::query()->where('id_item', $inventario['id_item'])->first()->toArray() == []) {
-                InventarioEliminado::destroy($inventario['id_lote']);
+            $inventario = InventarioEliminado::query()->where('id_item', $partida['id_item'])->first();
+            if ($inventario == null) {
+                $this->eliminar_respaldo();
+                abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
             }
 
+            $item = ItemEntradaEliminada::query()->where('id_item', $partida['id_item'])->first();
+            if ($item == null) {
+                $this->eliminar_respaldo();
+                abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
+            }
         }
-        // Revisar el respaldo del Inventario
 
-        // Eliminar el inventario
+        $entrada = EntradaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
+        if ($entrada == null) {
+            $this->eliminar_respaldo();
+            abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
+        }
+    }
 
-
-        // Revisar el respaldo del Item
-
-        // Eliminar el Item
+    private function eliminar_respaldo()
+    {
+        $partidas = $this->partidas()->get()->toArray();
+        foreach ($partidas as $partida) {
+            $inventario = Inventario::query()->where('id_item', $partida['id_item'])->first()->toArray();
+            InventarioEliminado::destroy($inventario['id_lote']);
+            ItemEntradaEliminada::destroy($partida['id_item']);
+        }
+        EntradaEliminada::destroy($this->id_transaccion);
     }
 }
