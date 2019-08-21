@@ -86,7 +86,7 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group row error-content">
-                                                     <label for="motivo" class="col-sm-2 col-form-label">Motivo: </label>
+                                                     <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
                                                     <div class="col-sm-10">
                                                         <textarea
                                                                 name="motivo"
@@ -107,7 +107,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-danger":disabled="errors.count() > 0" >Eliminar</button>
+                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''">Eliminar</button>
                         </div>
                     </form>
                 </div>
@@ -147,12 +147,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        // if(this.motivo == '') {
-                        //     swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
-                        // }
-                        // else {
+                        if(this.motivo == '') {
+                            swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
+                        }
+                        else {
                             this.eliminar()
-                        // }
+                        }
                     }
                 });
             },
