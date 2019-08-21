@@ -60,4 +60,8 @@ class ConfiguracionObra extends Model
     {
         return $this->belongsTo(TipoProyecto::class, 'id_tipo_proyecto');
     }
+    public function scopeObraTerminada($query)
+    {
+        return $query->where('tipo_obra', '!=', 2);
+    }
 }

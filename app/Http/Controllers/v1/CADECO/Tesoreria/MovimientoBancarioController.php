@@ -49,6 +49,11 @@ class MovimientoBancarioController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_movimiento_bancario')->only(['paginate','show']);
+        $this->middleware('permiso:editar_movimiento_bancario')->only(['update']);
+        $this->middleware('permiso:eliminar_movimiento_bancario')->only(['delete','destroy']);
+        $this->middleware('permiso:registrar_movimiento_bancario')->only(['store','create']);
+
 
         $this->fractal = $fractal;
         $this->service = $service;

@@ -63,12 +63,12 @@
                                                 <th>#</th>
                                                 <th>Concepto</th>
                                                 <th>Beneficiario</th>
-                                                <th>Importe Moneda Original</th>
+                                               <!-- <th>Importe Moneda Original</th>
                                                 <th>Moneda</th>
-                                                <th>Importe en Pesos</th>
+                                                <th>Importe en Pesos</th>-->
                                                 <th>Importe a Pagar en Pesos</th>
-                                                <th>Cuenta Abono</th>
                                                 <th>Cuenta Cargo</th>
+                                                <th>Cuenta Abono</th>
                                                 <th>Seleccionar</th>
                                             </tr>
                                             </thead>
@@ -76,29 +76,12 @@
                                                 <tr v-for="(doc, i) in documentos">
                                                     <td>{{i+1}}</td>
                                                     <td>{{doc.concepto}}</td>
-                                                    <td v-if="doc.empresa">{{doc.empresa.razon_social}}</td>
-                                                    <td class="text-danger" v-else>No registrado en cátalogo de Empresas SAO</td>
-                                                    <td class="text-right">{{doc.monto_total_format}}</td>
-                                                    <td>{{doc.moneda.abreviatura}}</td>
-                                                    <td class="text-right">{{doc.saldo_moneda_nacional_format}}</td>
+                                                    <td v-if="doc.beneficiario != null">{{doc.beneficiario}}</td>
+                                                    <td class="text-danger" v-else>No registrado</td>
+                                                    <!--<td class="text-right">{{doc.monto_total_format}}</td>-->
+                                                    <!--<td>{{doc.moneda.abreviatura}}</td>-->
+                                                    <!--<td class="text-right">{{doc.saldo_moneda_nacional_format}}</td>-->
                                                     <td class="text-right">${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
-                                                    <td v-if = "doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 " style="width: 15%;">
-                                                        <select class="form-control"
-                                                              :name="`id_cuenta_abono[${i}]`"
-                                                              v-model="doc.id_cuenta_abono"
-                                                              v-validate="{required: doc.selected == true ? true:false}"
-                                                              data-vv-as="Cuenta Abono"
-                                                              :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
-                                                        >
-                                                             <option value>-- Selecciona una cuenta --</option>
-                                                             <option v-for="cuenta in doc.empresa.cuentasBancariasProveedor.data" :value="cuenta.id">{{getCuentaAbono(cuenta)}}</option>
-                                                        </select>
-                                                        <div class="invalid-feedback"
-                                                            v-show="errors.has(`id_cuenta_abono[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
-                                                        </div>
-                                                    </td>
-                                                    <td class="text-danger" style="width: 15%;" v-else-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length == 0">Beneficiario sin cuentas bancarias registradas</td>
-                                                    <td class="text-danger"  style="width: 15%;" v-else>Beneficiario no registrado en cátalogo de Empresas SAO</td>
                                                     <td style="width: 15%;">
                                                         <select
                                                                 class="form-control"
@@ -115,8 +98,41 @@
                                                              v-show="errors.has(`id_cuenta_cargo[${i}]`)">{{ errors.first(`id_cuenta_cargo[${i}]`) }}
                                                         </div>
                                                     </td>
+                                                    <td v-if = "doc.tipo_documento != 12 && doc.empresa && getCuentasActivas(doc.empresa.cuentas_bancarias.data).length > 0" style="width: 15%;">
+                                                        <select class="form-control"
+                                                                :name="`id_cuenta_abono[${i}]`"
+                                                                v-model="doc.id_cuenta_abono"
+                                                                v-validate="{required: doc.selected == true ? true:false}"
+                                                                data-vv-as="Cuenta Abono"
+                                                                :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
+                                                        >
+                                                             <option value>-- Selecciona una cuenta --</option>
+                                                             <option v-for="cuenta in getCuentasActivas(doc.empresa.cuentas_bancarias.data)" :value="cuenta.id">{{getCuentaAbono(cuenta)}}</option>
+                                                        </select>
+                                                        <div class="invalid-feedback"
+                                                             v-show="errors.has(`id_cuenta_abono[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
+                                                        </div>
+                                                    </td>
+                                                    <td v-else-if="doc.tipo_documento == 12 && doc.fondo && doc.fondo.empresa && getCuentasActivas(doc.fondo.empresa.cuentas_bancarias.data).length > 0 " style="width: 15%;">
+                                                        <select class="form-control"
+                                                                :name="`id_cuenta_abono[${i}]`"
+                                                                v-model="doc.id_cuenta_abono"
+                                                                v-validate="{required: doc.selected == true ? true:false}"
+                                                                data-vv-as="Cuenta Abono"
+                                                                :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
+                                                        >
+                                                             <option value>-- Selecciona una cuenta --</option>
+                                                             <option v-for="cuenta in getCuentasActivas(doc.fondo.empresa.cuentas_bancarias.data)" :value="cuenta.id">{{getCuentaAbono(cuenta)}}</option>
+                                                        </select>
+                                                        <div class="invalid-feedback"
+                                                             v-show="errors.has(`id_cuenta_abono[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-danger" style="width: 15%;" v-else-if="doc.tipo_documento != 12 && doc.empresa && getCuentasActivas(doc.empresa.cuentas_bancarias.data).length == 0">Beneficiario sin cuentas bancarias registradas</td>
+                                                    <td class="text-danger" style="width: 15%;" v-else-if="doc.tipo_documento == 12 && doc.fondo && doc.fondo.empresa && getCuentasActivas(doc.fondo.empresa.cuentas_bancarias.data).length == 0">Beneficiario de fondo sin cuentas bancarias registradas</td>
+                                                    <td class="text-danger"  style="width: 15%;" v-else>Beneficiario no registrado en cátalogo de Empresas SAO</td>
 
-                                                    <td class="text-center" v-if="doc.empresa && doc.empresa.cuentasBancariasProveedor.data.length > 0 && doc.tipo_cambio == 1"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                                    <td class="text-center" v-if="doc.empresa && getCuentasActivas(doc.empresa.cuentas_bancarias.data).length > 0 && doc.tipo_cambio == 1 || doc.fondo && doc.fondo.empresa && getCuentasActivas(doc.fondo.empresa.cuentas_bancarias.data).length > 0 && doc.tipo_cambio == 1 "><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                                     <td class="text-center" v-else-if="doc.tipo_cambio != 1"><i class="fa fa-exclamation-triangle" style="color: orange" title="Partida en moneda extranjera no seleccionable por el momento."></i></td>
                                                     <td class="text-center" v-else><i class="fa fa-exclamation-triangle" style="color: red" title="No seleccionable por datos faltantes."></i></td>
                                                 </tr>
@@ -144,15 +160,15 @@
                                                                             <td style="width:15%" align="right"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th style="width:20%">Distribuciones Anteriores (MXP):</th>
+                                                                            <th style="width:20%">Dispersiones Anteriores (MXP):</th>
                                                                             <td style="width:15%" align="right"><b>$&nbsp; {{(parseFloat(monto_distribuido_anteriormente)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th class="bg-gray-light">Distribucion Actual (MXP):</th>
+                                                                            <th class="bg-gray-light">Dispersión Actual (MXP):</th>
                                                                             <td align="right" class="bg-gray-light"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th>Restante por Distribuir (MXP):</th>
+                                                                            <th>Restante por Dispersar (MXP):</th>
                                                                             <td align="right"> <b>$&nbsp;{{(parseFloat(monto_total_remesa-(sumaSeleccionImportes + monto_distribuido_anteriormente)).formatMoney(2,'.',','))}}</b></td>
                                                                         </tr>
                                                                     </tbody>
@@ -235,6 +251,11 @@
             }
         },
         methods: {
+            getCuentasActivas(cuentas){
+                return cuentas.filter(function (value, index,arr) {
+                    return parseInt(value.estado) === 1
+                })
+            },
             getRemesas() {
                 this.cargando = true;
                 let self = this
@@ -274,7 +295,7 @@
                 let self = this
                 return self.$store.dispatch('cadeco/cuenta/index', {
                     params: {
-                        scope: 'paraTraspaso'
+                        scope: ['paraTraspaso', 'pagadora'],
                     }
                 })
                     .then(data => {
@@ -295,7 +316,7 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documentosDisponibles', 'documentosDisponibles.empresa.cuentasBancariasProveedor.banco', 'documentosDisponibles.moneda', 'remesaLiberada']
+                        include: ['documentosDisponibles', 'documentosDisponibles.empresa.cuentas_bancarias.banco.ctgBanco', 'documentosDisponibles.moneda', 'remesaLiberada', 'documentosDisponibles.fondo.empresa.cuentas_bancarias.banco']
                     }
                 })
                     .then(data => {
@@ -324,8 +345,8 @@
             },
 
             getCuentaAbono(cuenta){
-                if(cuenta.banco.complemento){
-                    return cuenta.banco.complemento.nombre_corto+" "+ cuenta.cuenta;
+                if(cuenta.banco.ctgBanco){
+                    return cuenta.banco.ctgBanco.nombre_corto+" "+ cuenta.cuenta;
                 }
                 return  "----- "+ cuenta.cuenta;
             },

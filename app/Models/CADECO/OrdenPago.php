@@ -11,6 +11,20 @@ namespace App\Models\CADECO;
 
 class OrdenPago extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = 67;
+
+    protected $fillable = [
+        'id_antecedente',
+        'id_referente',
+        'fecha',
+        'id_obra',
+        'monto',
+        'referencia',
+        'tipo_transaccion',
+        "id_empresa",
+        "id_moneda"
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -19,6 +33,11 @@ class OrdenPago extends Transaccion
             return $query->where('tipo_transaccion', '=', 68)
                 ->where('opciones', '=', 0)
                 ->where('estado', '!=', -2);
+        });
+        self::creating(function ($model) {
+            $model->tipo_transaccion = 68;
+            $model->opciones = 0;
+            $model->fecha = date('Y-m-d');
         });
     }
 }

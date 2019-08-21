@@ -32,6 +32,14 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
         });
 
+        $api->group(['prefix'=>'banco'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\BancoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\BancoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\BancoController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@update')->where(['id' => '[0-9]+']);
+        });
+
         // CONCEPTOS
         $api->group(['prefix' => 'concepto'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ConceptoController@index');
@@ -51,6 +59,8 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\CuentaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\CuentaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\CuentaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\CuentaController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\CuentaController@update')->where(['id' => '[0-9]+']);
 
         });
 
@@ -59,6 +69,8 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\EmpresaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\EmpresaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\EmpresaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\EmpresaController@store');
+
         });
 
         // FONDOS
@@ -66,6 +78,8 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\FondoController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\FondoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\FondoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\FondoController@store');
+
         });
 
         // MATERIALES
@@ -84,7 +98,20 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'obra'], function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@show');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ObraController@update');
+            $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
         });
+
+        // SUCURSAL
+        $api->group(['prefix' => 'sucursal'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\SucursalController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\SucursalController@paginate');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\SucursalController@store');
+        });
+
+
+
     });
 
     /**
@@ -331,14 +358,10 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {
 
         /**
-         * SOLICITUD DE PAGO ANTICIPADO
+         * CUENTA BANCARIA EMPRESA
          */
-        $api->group(['prefix' => 'solicitud-pago-anticipado'], function ($api) {
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@paginate');
-            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
-            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
-            $api->get('pdf/{id}','App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id'=>'[0-9]+']);
+        $api->group(['prefix' => 'cuenta-bancaria-empresa'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaEmpresaController@index');
         });
 
         /**
@@ -356,6 +379,65 @@ $api->version('v1', function ($api) {
         });
 
         /**
+         * FONDO
+         */
+
+        $api->group(['prefix'=>'fondo'],function ($api){
+
+            $api->get('tipo-fondo','App\Http\Controllers\v1\CADECO\Finanzas\CtgTipoFondoController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CtgTipoFondoController@show')->where(['id' => '[0-9]+']);
+
+        });
+
+        /**
+         * GESTIÓN CUENTAS BANCARIAS
+         */
+        $api->group(['prefix' => 'gestion-cuenta-bancaria'], function ($api){
+
+            /**
+             * SOLICITUD DE ALTA
+             */
+            $api->group(['prefix' => 'solicitud-alta'], function ($api) {
+                $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@paginate');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@show')->where(['id' => '[0-9]+']);
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@store');
+                $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@pdf');
+                $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@autorizar')->where(['id' => '[0-9]+']);
+                $api->get('{id}/rechazar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@rechazar')->where(['id' => '[0-9]+']);
+                $api->get('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@cancelar')->where(['id' => '[0-9]+']);
+            });
+
+            /**
+             * SOLICITUD DE BAJA
+             */
+            $api->group(['prefix' => 'solicitud-baja'], function ($api) {
+               $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@store');
+                $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@paginate');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@show')->where(['id' => '[0-9]+']);
+                $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@pdf')->where(['id' => '[0-9]+']);                $api->get('{id}/rechazar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudAltaCuentaBancariaController@rechazar')->where(['id' => '[0-9]+']);
+                $api->get('{id}/rechazar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@rechazar')->where(['id' => '[0-9]+']);
+                $api->get('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@cancelar')->where(['id' => '[0-9]+']);
+                $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@autorizar')->where(['id' => '[0-9]+']);
+            });
+        });
+
+        /**
+         * GESTIÓN PAGOS
+         */
+        $api->group(['prefix' => 'gestion-pago'], function ($api){
+            $api->post('registrar_pagos', 'App\Http\Controllers\v1\CADECO\Finanzas\GestionPagoController@registrarPagos');
+            $api->post('bitacora', 'App\Http\Controllers\v1\CADECO\Finanzas\GestionPagoController@presentaBitacora');
+        });
+
+
+        /***
+         * PAGOS
+         */
+        $api->group(['prefix' => 'pago'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@paginate');
+        });
+
+        /**
          * REMESA
          */
         $api->group(['prefix' => 'remesa'], function ($api){
@@ -363,12 +445,16 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@show')->where(['id' => '[0-9]+']);
         });
 
-       /**
-        * CUENTA BANCARIA PROVEEDOR
-        */
-       $api->group(['prefix' => 'cuenta-bancaria-proveedor'], function ($api){
-          $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaProveedorController@index');
-       });
+        /**
+         * SOLICITUD DE PAGO ANTICIPADO
+         */
+        $api->group(['prefix' => 'solicitud-pago-anticipado'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}','App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id'=>'[0-9]+']);
+        });
     });
 
     /**
@@ -423,6 +509,7 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'configuracion-obra'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@index');
+            $api->get('contexto', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@contexto');
         });
 
         $api->group(['prefix' => 'google-2fa'], function ($api) {
@@ -464,6 +551,14 @@ $api->version('v1', function ($api) {
             $api->get('code', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@code');
             $api->post('check', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@check');
             $api->get('isVerified', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@isVerified');
+        });
+
+        $api->group(['prefix'=>'ctg_banco'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgBancoController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgBancoController@show');
+        });
+        $api->group(['prefix'=>'ctg_plaza'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgPlazaController@index');
         });
     });
 

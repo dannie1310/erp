@@ -30,21 +30,26 @@ class Permiso
      * @return mixed|\Symfony\Component\HttpFoundation\Response
      * @throws \Exception
      */
-    public function handle($request, Closure $next, $permisos)
+    public function handle($request, Closure $next, $permisos, $requireAll = false)
     {
         if (!is_array($permisos)) {
             $permisos = explode(self::DELIMITER, $permisos);
         }
 
-        if ($this->auth->guest() || !$request->user()->can($permisos)) {
+        if ($this->auth->guest() || !$request->user()->can($permisos, $requireAll)) {
             abort(403, 'No cuentas con los permisos necesarios para realizar la acción solicitada');
         }
+
+        app( Lectura::class )->handle( $request, function ($request) use ($next) {
+            return $next($request);
+        }, $permisos);
 
         if ($google_auth = \App\Models\SEGURIDAD_ERP\Permiso::query()->whereIn('name', $permisos)->where('requiere_autorizacion', '=', true)->first()) {
             return app(TwoFactorAuth::class)->handle($request, function ($request) use ($next) {
                 return $next($request);
             });
         }
+
         return $next($request);
     }
 }

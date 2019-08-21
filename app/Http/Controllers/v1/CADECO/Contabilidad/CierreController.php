@@ -49,8 +49,11 @@ class CierreController extends Controller
      */
     public function __construct(CierreService $service, Manager $fractal, CierreTransformer $transformer)
     {
-       $this->middleware('auth:api');
+        $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_cierre_periodo')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:editar_cierre_periodo')->only(['abrir','cerrar']);
+        $this->middleware('permiso:generar_cierre_periodo')->only('store');
 
         $this->service = $service;
         $this->fractal = $fractal;

@@ -68,6 +68,7 @@ class Kernel extends HttpKernel
         'esquemaPersonalizado' => \App\Http\Middleware\EsquemaPersonalizado::class,
         'addAccessToken' => \App\Http\Middleware\AddHeaderAccessToken::class,
         'googleAuth' => \App\Http\Middleware\TwoFactorAuth::class,
+        'lectura' => \App\Http\Middleware\Lectura::class,
     ];
 
     /**

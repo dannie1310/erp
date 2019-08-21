@@ -17,6 +17,18 @@ export default {
         },
         SET_META(state, data) {
             state.meta = data
+        },
+        UPDATE_CUENTA(state, data) {
+            state.cuentas = state.cuentas.map(cuenta => {
+                if (cuenta.id === data.id) {
+                    return Object.assign([], cuenta, data)
+                }
+                return cuenta
+            })
+            state.currentCuenta = state.currentCuenta ? data : null
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentCuenta[data.attribute] = data.value
         }
     },
 
@@ -57,6 +69,84 @@ export default {
                     })
                     .catch(error => {
                         reject(error);
+                    });
+            });
+        },
+        store(context,payload){
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar cuenta",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cuenta registrada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+
+        },
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cuenta Bancaria",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cuenta bancaria actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
                     });
             });
         }

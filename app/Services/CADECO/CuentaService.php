@@ -9,8 +9,10 @@
 namespace App\Services\CADECO;
 
 
+use App\Models\CADECO\Contabilidad\Cierre;
 use App\Models\CADECO\Cuenta;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\DB;
 
 class CuentaService
 {
@@ -35,11 +37,25 @@ class CuentaService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        if(isset($data['id'])){
+            return $this->repository->where([['id_empresa','=', $data['id']]])->paginate();
+        }else{
+            return $this->repository->paginate();
+        }
     }
 
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function store(array $data)
+    {
+            return $this->repository->create($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
     }
 }

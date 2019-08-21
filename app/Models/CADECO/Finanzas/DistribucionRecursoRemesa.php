@@ -28,7 +28,10 @@ class DistribucionRecursoRemesa extends Model
             'monto_autorizado',
             'monto_distribuido',
             'usuario_registro',
-            'estado'
+            'estado',
+            'usuario_autorizo',
+            'fecha_hora_autorizacion',
+            'fecha_hora_cancelacion'
     ];
 
     protected static function boot()
@@ -44,13 +47,8 @@ class DistribucionRecursoRemesa extends Model
             $model->id_obra = Context::getIdObra();
             $model->folio = $count +1;
             $model->usuario_registro = auth()->id();
-            $model->fecha_hora_registro = date('Y-m-d h:i:s');
+            $model->fecha_hora_registro = date('Y-m-d H:i:s');
             $model->estado = 0;
-        });
-
-        self::created(function($query)
-        {
-
         });
     }
     public function cancelar(){
@@ -62,10 +60,19 @@ class DistribucionRecursoRemesa extends Model
                 $partida->cancelar();
             }
             $this->usuario_cancelo = auth()->id();
+            $this->fecha_hora_cancelacion = date('Y-m-d h:i:s');
             $this->estado = -1;
             $this->save();
             return $this;
         }
+    }
+
+    public function remesaLayout(){
+        return $this->hasOne(DistribucionRecursoRemesaLayout::class, 'id_distrubucion_recurso', 'id');
+    }
+
+    public function remesaLog(){
+        return $this->hasMany(DistribucionRecursoRemesaLog::class, 'id_recurso_remesa', 'id');
     }
 
     public function remesaPagable(){
@@ -84,6 +91,10 @@ class DistribucionRecursoRemesa extends Model
         return $this->belongsTo(Usuario::class, 'usuario_cancelo', 'idusuario');
     }
 
+    public function usuarioAutorizo() {
+        return $this->belongsTo(Usuario::class, 'usuario_autorizo', 'idusuario');
+    }
+
     public function estatus(){
         return $this->belongsTo(CtgEstadoDistribucionRecursoRemesa::class, 'estado', 'estado');
     }
@@ -99,6 +110,9 @@ class DistribucionRecursoRemesa extends Model
     public function remesaValidaEstado(){
         switch ($this->estado){
             case 0:
+                abort(400, 'La distribucion de recurso de remesa no ha sido autorizada.');
+                break;
+            case 1:
                 abort(400, 'Archivo de distribución de recurso no ha sido descargado.');
                 break;
             case 3:
@@ -123,6 +137,8 @@ class DistribucionRecursoRemesa extends Model
                 $partida->autorizar();
             }
             $this->estado = 1;
+            $this->usuario_autorizo = auth()->id();
+            $this->fecha_hora_autorizacion = date('Y-m-d h:i:s');
             $this->save();
             return $this;
         }

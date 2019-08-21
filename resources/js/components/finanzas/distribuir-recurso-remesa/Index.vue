@@ -4,7 +4,7 @@
             <button  @click="create" title="Crear" class="btn btn-app btn-info pull-right" >
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
-                Registrar Distribución
+                Registrar Dispersión
             </button>
         </div>
         <div class="col-12">
@@ -36,7 +36,7 @@
                     { title: 'Folio', field: 'folio', sortable: true },
                     { title: 'Remesa Liberada', field: 'remesa', sortable: false },
                     { title: 'Monto Remesa', field: 'monto_autorizado', tdClass: 'money',sortable: true },
-                    { title: 'Monto Distribuido', field: 'monto_distribuido', tdClass: 'money', sortable: true },
+                    { title: 'Monto Dispersado', field: 'monto_distribuido', tdClass: 'money', sortable: true },
                     { title: 'Estatus', field: 'estado', tdComp: require('./partials/DistribuirEstatus'), sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons') },
                 ],
@@ -101,9 +101,10 @@
                                 autorizar: self.$root.can('autorizar_distribucion_recursos_remesa') ? true : false,
                                 pagar: self.$root.can('pagar_distribucion_recursos_remesa') ? true : false,
                                 cancelar: self.$root.can('cancelar_distribucion_recursos_remesa') ? true : false,
+                                descargar: self.$root.can('descargar_distribucion_recursos_remesa') ? true : false,
+                                cargar: self.$root.can('cargar_distribucion_recursos_remesa') ? true : false,
                                 id: distribucion.id,
                                 estado: distribucion.estado.estado
-
                             })
                         })
                     });

@@ -50,6 +50,11 @@ class CuentaEmpresaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_cuenta_empresa')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:registrar_cuenta_empresa')->only('store');
+        $this->middleware('permiso:editar_cuenta_empresa')->only('update');
+        $this->middleware('permiso:eliminar_cuenta_empresa')->only('destroy');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;

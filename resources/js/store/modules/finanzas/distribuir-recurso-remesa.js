@@ -48,7 +48,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar la Distribucion de Recurso de Remesa",
+                    title: "Registrar la Dispersión de Recurso de Remesa",
                     text: "¿Estás seguro/a de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -68,7 +68,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Distribución de recurso registrada correctamente", {
+                                    swal("Dispersión de recurso registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
@@ -86,8 +86,8 @@ export default {
         cancel(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Cancelar distribución de recurso autorizado de remesa",
-                    text: "¿Está seguro/a de que desea cancelar esta distribución?",
+                    title: "Cancelar dispersión de recurso autorizado de remesa",
+                    text: "¿Está seguro/a de que desea cancelar esta dispersión?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -107,7 +107,7 @@ export default {
                                 .patch(URI+ payload.id +'/cancelar',{id:payload.id}, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Distribución cancelada correctamente", {
+                                    swal("Dispersión cancelada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -139,7 +139,7 @@ export default {
         autorizar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Autorización de distribución de recurso de remesa",
+                    title: "Autorización de dispersión de recurso de remesa",
                     text: "¿Está seguro/a de que desea autorizar está distribución?",
                     icon: "warning",
                     buttons: {
@@ -159,7 +159,7 @@ export default {
                                 .get(URI + payload.id + '/autorizar', {params: payload.params})
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Distribución autorizada correctamente", {
+                                    swal("Dispersión autorizada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -178,8 +178,8 @@ export default {
         salir(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Cerrar distribución de recurso autorizado de remesa",
-                    text: "¿Está seguro/a de que desea cerrar esta distribución? Perderá los cambios no guardados.",
+                    title: "Cerrar dispersión de recurso autorizado de remesa",
+                    text: "¿Está seguro/a de que desea cerrar esta dispersión? Perderá los cambios no guardados.",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -206,7 +206,7 @@ export default {
                     .get(URI + payload.id + '/layout')
                     .then(r => r.data)
                     .then(data => {
-                        swal("Layout de pago de distribucion de remesa fue generado en el repositorio remosor correctamente", {
+                        swal("Layout de pago de dispersión de remesa fue generado en el repositorio remoto correctamente", {
                             icon: "success",
                             timer: 1500,
                             buttons: false
@@ -219,6 +219,45 @@ export default {
                     .catch(error => {
                         reject(error);
                     })
+            });
+        },
+        cargaManualLayout(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar Layout manual de pagos",
+                    text: "¿Está seguro/a de que desea generar los pagos?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Generar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + '/cargaLayoutManual', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Pagos registrados correctamente", {
+                                        icon: "success",
+                                        timer: 3000,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_DISTRIBUCION', data);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject('Archivo no procesable');
+                                })
+                        }
+                    });
             });
         },
         descarga(context, payload) {
@@ -245,7 +284,7 @@ export default {
                             }
                         }else{
                             return new Promise((resolve, reject) => {
-                                swal("Layout de distribucion de recurso descargado previemente", {
+                                swal("Layout de dispersión de recurso descargado previemente", {
                                     icon: "warning",
                                     timer: 3000,
                                     buttons: false
@@ -281,7 +320,7 @@ export default {
                             }
                         }else{
                             return new Promise((resolve, reject) => {
-                                swal("Layout de distribucion de recurso descargado previemente", {
+                                swal("Layout de dispersión de recurso descargado previemente", {
                                     icon: "warning",
                                     timer: 3000,
                                     buttons: false

@@ -50,6 +50,10 @@ class CuentaMaterialController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_cuenta_material')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:registrar_cuenta_material')->only('store');
+        $this->middleware('permiso:editar_cuenta_material')->only('update');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;

@@ -11,6 +11,8 @@ namespace App\Models\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaFondo;
+use App\Models\CADECO\Finanzas\CtgTipoFondo;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Fondo extends Model
@@ -22,8 +24,19 @@ class Fondo extends Model
     public $timestamps = false;
     public $searchable = [
         'descripcion',
+        'nombre',
         'saldo',
         'cuentaFondo.cuenta'
+    ];
+    protected $fillable = [
+        'id_obra',
+        'id_tipo',
+        'id_responsable',
+        'descripcion',
+        'nombre',
+        'fecha',
+        'fondo_obra',
+        'id_costo'
     ];
 
     protected static function boot()
@@ -31,6 +44,15 @@ class Fondo extends Model
         parent::boot();
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
+        });
+
+        self::creating(function ($model){
+            if(Fondo::query()->where([['id_tipo',$model->id_tipo],['id_responsable',$model->id_responsable]])->get()->toArray() == []){
+                $model -> id_obra = Context::getIdObra();
+                $model->fecha = Carbon::now()->format('Y-m-d');
+            }else{
+                throw New \Exception('El responsable ya tiene un fondo del tipo seleccionado');
+            }
         });
     }
 
@@ -40,8 +62,28 @@ class Fondo extends Model
             ->where('Contabilidad.cuentas_fondos.estatus', '=', 1);
     }
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_responsable', 'id_empresa');
+    }
+
+    public function tipoFondo()
+    {
+        return $this->belongsTo(CtgTipoFondo::class, 'id_tipo', 'id');
+    }
+    public function costo()
+    {
+        return$this->belongsTo(Costo::class, 'id_costo','id_costo');
+    }
+
     public function scopeSinCuenta($query)
     {
         return $query->doesntHave('cuentaFondo');
     }
+
+    public function scopeConResponsable($query)
+    {
+        return $query->where('id_responsable', '>', 0);
+    }
+
 }
