@@ -30,6 +30,7 @@
                     { title: 'Almacen', field: 'almacen', sortable: false },
                     { title: 'Referencia', field: 'referencia', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
+                    { title: 'Operación', field: 'operacion', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
@@ -85,7 +86,8 @@
                             fecha: salida.fecha_format,
                             referencia: salida.referencia,
                             observaciones: salida.observaciones,
-                            estado: salida.estado,
+                            operacion: salida.operacion,
+                            estado: salida.estado_format,
                             almacen: salida.almacen.descripcion,
                             buttons: $.extend({}, {
                                 show: true,

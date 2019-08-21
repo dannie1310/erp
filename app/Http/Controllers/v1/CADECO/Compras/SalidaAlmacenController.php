@@ -40,7 +40,7 @@ class SalidaAlmacenController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:consultar_salida_almacen')->only('paginate');
+        $this->middleware('permiso:consultar_salida_almacen')->only(['show','paginate','index','find']);
 
         $this->fractal = $fractal;
         $this->service = $service;

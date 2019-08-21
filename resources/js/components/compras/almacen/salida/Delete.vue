@@ -1,8 +1,82 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Rechazar">
+        <button @click="find" type="button" class="btn btn-sm btn-outline-danger" title="Rechazar">
             <i class="fa fa-trash"></i>
         </button>
+        <div class="modal fade" ref="modal" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-trash"></i> ELIMINAR ENTRADA A ALMACÉN</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row"  v-if="salida">
+                            <div class="col-12">
+                                <div class="invoice p-3 mb-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5>Datos de la Entrada Almacén</h5>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="table-responsive col-md-12">
+                                            <table class="table table-striped">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="bg-gray-light"><b>Folio:</b></td>
+                                                        <td class="bg-gray-light">{{salida.folio_format}}</td>
+                                                        <td class="bg-gray-light"><b>Almacén:</b></td>
+                                                        <td class="bg-gray-light">{{salida.almacen.descripcion}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-gray-light"><b>Referencia:</b></td>
+                                                        <td class="bg-gray-light">{{salida.referencia}}</td>
+                                                        <td class="bg-gray-light"><b>Observaciones:</b></td>
+                                                        <td class="bg-gray-light">{{salida.observaciones}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-gray-light"><b>Fecha:</b></td>
+                                                        <td class="bg-gray-light">{{salida.fecha_format}}</td>
+                                                        <td class="bg-gray-light"><b>Estado:</b></td>
+                                                        <td class="bg-gray-light">{{salida.estado_format}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group row error-content">
+                                                 <label for="motivo" class="col-sm-2 col-form-label">Motivo: </label>
+                                                <div class="col-sm-10">
+                                                    <textarea
+                                                            name="motivo"
+                                                            id="motivo"
+                                                            class="form-control"
+                                                            v-model="motivo"
+                                                            v-validate="{required: true}"
+                                                            data-vv-as="Motivo"
+                                                            :class="{'is-invalid': errors.has('motivo')}"
+                                                    ></textarea>
+                                                    <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-danger":disabled="errors.count() > 0 || motivo ==''">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </span>
 </template>
 
@@ -12,51 +86,24 @@
         props: ['id'],
         data() {
             return {
-                observaciones: ''
+                motivo: ''
             }
         },
         methods: {
-            find(id) {
-                this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', null);
-                return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/find', {
-                    id: id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
+            find() {
+                this.$store.commit('compras/salida-almacen/SET_SALIDA', null);
+                return this.$store.dispatch('compras/salida-almacen/find', {
+                    id: this.id,
+                    params: {include: 'almacen'}
                 }).then(data => {
-                    this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', data);
+                    this.$store.commit('compras/salida-almacen/SET_SALIDA', data);
                     $(this.$refs.modal).modal('show');
                 })
-            },
-            init() {
-                this.pdf()
-            },
-            pdf(){
-                var url = '/api/finanzas/gestion-cuenta-bancaria/solicitud-baja/pdf/' + this.id +'?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
-                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE ALTA DE CUENTA BANCARIA</iframe>');
-                $(this.$refs.modalPDF).modal('show');
-            },
-            validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        this.rechazar()
-                    }
-                });
-            },
-            rechazar() {
-                return this.$store.dispatch('finanzas/solicitud-baja-cuenta-bancaria/rechazar', {
-                    id: this.id,
-                    params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','mov_estado','movimientos.usuario','movimiento_solicitud'], data:[this.$data.observaciones]}
-                }).then(data => {
-                    this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/UPDATE_CUENTA', data)
-                    $(this.$refs.modal).modal('hide');
-                })
-                    .finally( ()=>{
-                        this.cargando = false;
-                    });
             }
         },
         computed: {
-            solicitudBaja() {
-                return this.$store.getters['finanzas/solicitud-baja-cuenta-bancaria/currentCuenta'];
+            salida() {
+                return this.$store.getters['compras/salida-almacen/currentSalida'];
             }
         }
     }
