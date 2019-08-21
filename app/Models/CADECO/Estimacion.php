@@ -13,6 +13,8 @@ use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Moneda;
 use Illuminate\Support\Facades\DB;
 
 class Estimacion extends Transaccion
@@ -216,7 +218,7 @@ class Estimacion extends Transaccion
         }
 
         DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");
-        
+
         return $this;
     }
 
@@ -286,4 +288,18 @@ class Estimacion extends Transaccion
             + ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteAnticipoLiberar : 0)
         );
     }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function moneda(){
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function item(){
+        return $this->hasMany(Item::class, 'id_transaccion');
+    }
+
 }

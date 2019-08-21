@@ -13,6 +13,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Item;
 use App\Models\CADECO\Obra;
+use App\PDF\EstimacionFormato;
 use App\PDF\OrdenPagoEstimacion;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
@@ -146,5 +147,12 @@ class EstimacionService
             DB::connection('cadeco')->rollBack();
             throw $e;
         }
+    }
+
+
+    public function pdfEstimacion($id)
+    {
+        $pdf = new EstimacionFormato($id);
+        return $pdf;
     }
 }
