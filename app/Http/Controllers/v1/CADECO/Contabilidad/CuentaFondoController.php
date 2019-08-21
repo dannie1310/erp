@@ -51,6 +51,10 @@ class CuentaFondoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_cuenta_fondo')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:registrar_cuenta_fondo')->only('store');
+        $this->middleware('permiso:editar_cuenta_fondo')->only('update');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;

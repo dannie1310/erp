@@ -42,6 +42,9 @@ class NaturalezaPolizaController extends Controller
      */
     public function __construct(NaturalezaPolizaService $service, Manager $fractal, NaturalezaPolizaTransformer $transformer)
     {
+        $this->middleware('auth:api');
+        $this->middleware('context');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;

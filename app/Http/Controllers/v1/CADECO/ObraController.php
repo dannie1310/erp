@@ -48,6 +48,7 @@ class ObraController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context', ['except' => ['authPaginate']]);
+        $this->middleware('permiso:administracion_configuracion_obra')->only(['update']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -69,5 +70,10 @@ class ObraController extends Controller
     {
         $obras = $this->service->getObrasPorUsuario($user_id);
         return $this->respondWithCollection($obras);
+    }
+    public function actualizarEstado(Request $request, $id)
+    {
+        $obras = $this->service->actualizarEstado($request->all(),$id);
+        return $this->updateTrait($request, $id);
     }
 }

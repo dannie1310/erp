@@ -1,0 +1,271 @@
+<template>
+    <span>
+        <button @click="show" v-if="$root.can('editar_cuenta_corriente')" type="button" class="btn btn-sm btn-outline-primary" title="Editar Cuenta">
+            <i class="fa fa-pencil"></i>
+        </button>
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> EDICIÓN DE CUENTA BANCARIA</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="cleanData">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form" @submit.prevent="validate">
+                        <div class="modal-body" v-if="cuenta">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="form-group error-content">
+                                            <label for="numero">Número:</label>
+                                            <input
+                                                type="number"
+                                                name="numero"
+                                                data-vv-as="Número de Cuenta"
+                                                v-validate="{required: true,  min:9, max:18}"
+                                                class="form-control"
+                                                id="numero"
+                                                placeholder="Cuenta Contable"
+                                                v-model="cuenta.numero"
+                                                :class="{'is-invalid': errors.has('numero')}">
+                                        <div class="invalid-feedback" v-show="errors.has('numero')">{{ errors.first('numero') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_moneda">Moneda:</label>
+                                            <select
+                                                type="text"
+                                                name="id_moneda"
+                                                data-vv-as="Moneda"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="id_moneda"
+                                                v-model="cuenta.id_moneda"
+                                                :class="{'is-invalid': errors.has('id_moneda')}">
+                                                <option value>-- SELECCIONE --</option>
+                                                <option v-for="moneda in monedas" :value="moneda.id">{{moneda.nombre}} ({{moneda.abreviatura}})</option>
+                                            </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-1 text-left" >
+                                      <label class="text-secondary">Apertura </label>
+                                       <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group error-content">
+                                        <label><b>Fecha:</b></label>
+                                            <datepicker v-model = "fecha"
+                                                        :value="fecha"
+                                                        name = "fecha"
+                                                        :language = "es"
+                                                        :format = "formatoFecha"
+                                                        :bootstrap-styling = "true"
+                                                        class = "form-control"
+                                                        v-validate="{required: true}"
+                                                        :class="{'is-invalid': errors.has('fecha')}"
+                                            ></datepicker>
+                                         <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group error-content">
+                                        <label for="saldo_inicial">Saldo Inicial:</label>
+                                        <input type="text" class="form-control"
+                                               name="saldo_inicial"
+                                               data-vv-as="Saldo Inicial"
+                                               v-model="cuenta.saldo_inicial"
+                                               v-validate="{required: true,  min_value:0, max_value: 999999999999999, decimal:4}"
+                                               :class="{'is-invalid': errors.has('saldo_inicial')}"
+                                               id="saldo_inicial">
+                                        <div class="invalid-feedback" v-show="errors.has('saldo_inicial')">{{ errors.first('saldo_inicial') }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-1 text-center" >
+                                    <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group error-content">
+                                        <label for="abreviatura">Abreviatura:</label>
+                                        <input type="text" class="form-control"
+                                               name="abreviatura"
+                                               data-vv-as="Abreviatura"
+                                               v-model="cuenta.abreviatura"
+                                               v-validate="{required: true, max:16}"
+                                               :class="{'is-invalid': errors.has('abreviatura')}"
+                                               id="abreviatura">
+                                        <div class="invalid-feedback" v-show="errors.has('abreviatura')">{{ errors.first('abreviatura') }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <br>
+                                        <input type="checkbox" class="form-check-imput" id="chequera" v-model="chk_chequera">
+                                        <label class="form-check-label" for="chequera"><b>   Manejo de Chequera </b></label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="form-group error-content">
+                                            <label for="abreviatura">Tipo de Cuenta:</label>
+                                            <button type="button" @click="tipoCuenta(1)"
+                                                    :class="{'btn btn-secondary': cuenta.id_tipo_cuentas_obra != 1,'btn btn-primary': cuenta.id_tipo_cuentas_obra == 1}">Pagadora</button>
+                                            <button type="button" @click="tipoCuenta(2)"
+                                                    :class="{'btn btn-secondary': cuenta.id_tipo_cuentas_obra != 2,'btn btn-primary': cuenta.id_tipo_cuentas_obra == 2}">Concentradora</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="cleanData">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 ">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </span>
+</template>
+
+
+<script>
+    import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale'
+    export default {
+        name: "cuenta-edit",
+        props: ['id'],
+        components: {Datepicker},
+        data() {
+            return {
+                es: es,
+                cuenta:{
+                    numero:'',
+                    id_moneda:'',
+                    fecha_inicial:'',
+                    saldo_inicial:0,
+                    chequera:0,
+                    abreviatura:'',
+                    id_tipo_cuentas_obra:1,
+                },
+                id_cuenta:'',
+                fecha:'',
+                chk_chequera:false,
+                monedas:[]
+            }
+        },
+        computed: {
+        },
+        mounted(){
+            // this.getMonedas();
+        },
+        methods:{
+            cleanData(){
+                this.cuenta={
+                    numero:'',
+                    id_moneda:'',
+                    fecha_inicial:'',
+                    saldo_inicial:0,
+                    chequera:0,
+                    abreviatura:'',
+                    id_tipo_cuentas_obra:1,
+                };
+            },
+            formatoFecha(date){
+                return moment(date).format('YYYY-MM-DD');
+            },
+            getMonedas(){
+                this.cargando = true;
+                this.$store.commit('cadeco/moneda/SET_MONEDAS', null);
+                return this.$store.dispatch('cadeco/moneda/index', {
+                }).then(data => {
+                    this.monedas = data.data;
+                }).finally(()=>{
+
+                })
+            },
+            loadData(data){
+                var fecha = data.fecha.split('/');
+                this.id_cuenta = data.id;
+                this.cuenta.id_empresa = data.empresa;
+                this.cuenta.numero = data.numero;
+                this.cuenta.id_moneda = data.moneda.id;
+                this.fecha = new Date(fecha[2], fecha[1]-1, fecha[0])
+                this.cuenta.saldo_inicial = Number(data.saldo.replace(/[^0-9\.-]+/g,""));
+                this.cuenta.chequera = data.chequera;
+                this.chk_chequera = data.chequera;
+                this.cuenta.abreviatura = data.abreviatura;
+                this.cuenta.id_tipo_cuentas_obra = data.tiposCuentasObra?data.tiposCuentasObra.id:1;
+            },
+            show() {
+                this.cargando = true;
+                this.getMonedas();
+                this.$store.commit('cadeco/cuenta/SET_CUENTA', null);
+                return this.$store.dispatch('cadeco/cuenta/find', {
+                    id: this.id,
+                    params: { include: 'moneda,tiposCuentasObra' }
+                }).then(data => {
+                    this.loadData(data);
+                    this.cargando=false;
+                    $(this.$refs.modal).modal('show')
+                })
+            },
+            tipoCuenta(tipo) {
+                this.cuenta.id_tipo_cuentas_obra = tipo;
+            },
+            update(){
+                return this.$store.dispatch('cadeco/cuenta/update', {
+                    id: this.id_cuenta,
+                    params: { include: 'moneda,tiposCuentasObra' },
+                    data: this.cuenta
+                })
+                    .then(data => {
+                        this.$store.commit('cadeco/cuenta/UPDATE_CUENTA', data);
+                        $(this.$refs.modal).modal('hide');
+                    })
+            },
+            valChequera(value){
+                return value == 1?'Si':'No'
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.update()
+                    }
+                });
+            },
+        },
+        watch:{
+            chk_chequera(value) {
+                this.cuenta.chequera = value?1:0;
+            },
+            fecha(value) {
+                var d = 0;
+                var m = 0;
+                var y = 0;
+
+                if(value){
+                    var date =  new Date (value);
+                    d = date.getDate();
+                    m = date.getMonth() + 1;
+                    y = date.getFullYear();
+                    if (d < 10) {
+                        d = '0' + d;
+                    }
+                    if (m < 10) {
+                        m = '0' + m;
+                    }
+                    this.cuenta.fecha_inicial = y+'-'+ m+'-'+d+' 00:00:00.000';
+                }
+            },
+        }
+
+    }
+</script>
+
+<style scoped>
+
+</style>

@@ -535,6 +535,273 @@ export const routes = [
                 }
             },
             {
+                path:'banco',
+                component: require('./components/finanzas/banco/Layout.vue'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'banco',
+                        component: require('./components/finanzas/banco/Index.vue'),
+                        meta:{
+                            title: 'Bancos',
+                            breadcrumb: {name: 'GESTIÓN DE BANCOS', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'banco-create',
+                        component: require('./components/finanzas/banco/Create'),
+                        meta: {
+                            title: 'Registrar Banco',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_banco'
+                        }
+                    },
+                    {
+                        path: 'show',
+                        name: 'banco-show',
+                        props: true,
+                        component: require('./components/finanzas/banco/Show'),
+                        meta: {
+                            title: 'Ver Banco',
+                            breadcrumb: {name: 'VER', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'banco-edit',
+                        props: true,
+                        component: require('./components/finanzas/banco/Edit'),
+                        meta: {
+                            title: 'Edición de Bancos',
+                            breadcrumb: {name: 'EDICIÓN DE BANCOS', parent: 'banco'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: '/',
+                        name: 'sucursal',
+                        component: require('./components/finanzas/banco/sucursal/Index.vue'),
+                        meta: {
+                            title: 'Sucursales',
+                            breadcrumb: { name: 'SUCURSALES', parent: 'banco'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_sucursal_banco'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'sucursal-create',
+                        component: require('./components/finanzas/banco/sucursal/Create'),
+                        meta: {
+                            title: 'Registrar Sucursal',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'banco'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_sucursal_banco'
+
+                        }
+                    },
+                    {
+                        path: 'show',
+                        name: 'sucursal-show',
+                        component: require('./components/finanzas/banco/sucursal/Show'),
+                        meta: {
+                            title: 'Ver Sucursal',
+                            breadcrumb: {name: 'VER', parent: 'banco'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_sucursal_banco'
+
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'distribuir-recurso-remesa',
+                component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'distribuir-recurso-remesa',
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
+                        meta: {
+                            title: 'Dispersión de Recursos Autorizados de Remesa',
+                            breadcrumb: {name: 'DISPERSIÓN RECURSOS AUTORIZADOS DE REMESA', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'distribuir-recurso-remesa-create',
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
+                        meta: {
+                            title: 'Registrar Dispersión de Recursos Autorizados',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'distribuir-recurso-remesa-show',
+                        props: true,
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Show'),
+                        meta: {
+                            title: 'Consultar Dispersión de Recursos Autorizados',
+                            breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: ':id/autorizar',
+                        name: 'distribuir-recurso-remesa-autorizar',
+                        props: true,
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Autorizar'),
+                        meta: {
+                            title: 'Autorizar Dispersión de Recursos Autorizados',
+                            breadcrumb: {name: 'AUTORIZAR', parent: 'distribuir-recurso-remesa'},
+                            middleware: [auth, context, permission],
+                            permission: 'autorizar_distribucion_recursos_remesa'
+                        }
+                    }
+                ]
+            },
+            {
+                path:'fondo',
+                component: require('./components/finanzas/fondo/Layout.vue'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'fondo',
+                        component: require('./components/finanzas/fondo/Index.vue'),
+                        meta: {
+                            title: 'Fondos',
+                            breadcrumb: {name: 'FONDOS', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_fondos'
+                        }
+
+                    },
+                    {
+                        path: 'create',
+                        name: 'fondo-create',
+                        component: require('./components/finanzas/fondo/Create'),
+                        meta: {
+                            title: 'Registrar Fondo',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_fondos'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'fondo-show',
+                        props: true,
+                        component: require('./components/finanzas/fondo/Show'),
+                        meta: {
+                            title: 'Ver Fondo',
+                            breadcrumb: {name: 'VER', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_fondos'
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'gestion-cuenta-bancaria',
+                component: require('./components/finanzas/gestion-cuenta-bancaria/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'gestion-cuenta-bancaria',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/Index'),
+                        meta: {
+                            title: 'Gestión de Cuentas Bancarias',
+                            breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE CUENTAS BANCARIAS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'solicitud-alta',
+                        name: 'solicitud-alta',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-alta/Index'),
+                        meta: {
+                            title: 'Solicitud de Alta de Cuenta Bancaria',
+                            breadcrumb: {
+                                parent: 'gestion-cuenta-bancaria',
+                                name: 'SOLICITUD DE ALTA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_alta_cuenta_bancaria_empresa'
+                        }
+                    },
+                    {
+                        path: 'solicitud-baja',
+                        name: 'solicitud-baja',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-baja/Index'),
+                        meta: {
+                            title: 'Solicitud de Baja de Cuenta Bancaria',
+                            breadcrumb: {
+                                parent: 'gestion-cuenta-bancaria',
+                                name: 'SOLICITUD DE BAJA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_baja_cuenta_bancaria_empresa'
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'gestion-pago',
+                component: require('./components/finanzas/gestion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'gestion-pago',
+                        component: require('./components/finanzas/gestion/Index'),
+                        meta: {
+                            title: 'Gestión de Pagos',
+                            breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'pago',
+                        name: 'pago',
+                        component: require('./components/finanzas/gestion/pago/Index'),
+                        meta: {
+                            title: 'Gestión de Pagos',
+                            breadcrumb: {
+                                parent: 'gestion-pago',
+                                name: 'PAGOS'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'pago-create',
+                        component: require('./components/finanzas/gestion/pago/Create'),
+                        meta: {
+                            title: 'Registrar Pagos con Bitácora Bancaria (SANTANDER)',
+                            breadcrumb: {name: 'REGISTRAR (BITÁCORA BSANT)', parent: 'pago'},
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'solicitud',
                 component: require('./components/finanzas/solicitud/Layout'),
                 children: [
@@ -563,58 +830,6 @@ export const routes = [
                             permission: 'consultar_solicitud_pago_anticipado'
                         }
                     },
-                ]
-            },
-            {
-                path: 'distribuir-recurso-remesa',
-                component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'distribuir-recurso-remesa',
-                        component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
-                        meta: {
-                            title: 'Distribuir Recursos Autorizados de Remesa',
-                            breadcrumb: {name: 'DISTRIBUIR RECURSOS DE REMESA', parent: 'finanzas'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_distribucion_recursos_remesa'
-                        }
-                    },
-                    {
-                        path: 'create',
-                        name: 'distribuir-recurso-remesa-create',
-                        component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
-                        meta: {
-                            title: 'Registrar Distribución de Recursos Autorizados',
-                            breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
-                            middleware: [auth, context, permission],
-                            permission: 'registrar_distribucion_recursos_remesa'
-                        }
-                    },
-                    {
-                        path: ':id',
-                        name: 'distribuir-recurso-remesa-show',
-                        props: true,
-                        component: require('./components/finanzas/distribuir-recurso-remesa/Show'),
-                        meta: {
-                            title: 'Consultar Distribución de Recursos Autorizados',
-                            breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_distribucion_recursos_remesa'
-                        }
-                    },
-                    {
-                        path: ':id/autorizar',
-                        name: 'distribuir-recurso-remesa-autorizar',
-                        props: true,
-                        component: require('./components/finanzas/distribuir-recurso-remesa/Autorizar'),
-                        meta: {
-                            title: 'Autorizar Distribución de Recursos Autorizados',
-                            breadcrumb: {name: 'AUTORIZAR', parent: 'distribuir-recurso-remesa'},
-                            middleware: [auth, context, permission],
-                            permission: 'autorizar_distribucion_recursos_remesa'
-                        }
-                    }
                 ]
             },
         ]

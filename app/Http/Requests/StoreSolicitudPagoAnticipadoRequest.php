@@ -42,6 +42,7 @@ class StoreSolicitudPagoAnticipadoRequest extends FormRequest
         return [
             'vencimiento' => ['required', 'date_format:"Y-m-d"'],
             'cumplimiento' => ['required', 'date_format:"Y-m-d"'],
+            'importe' => ['required' ],
             'observaciones' => ['required', 'string'],
             'id_antecedente' => ['required'],
             'id_costo' => ['required', 'exists:cadeco.dbo.costos,id_costo']

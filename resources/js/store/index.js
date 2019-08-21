@@ -3,8 +3,9 @@ import Vuex from 'vuex';
 import auth from './modules/auth';
 
 //CADECO
-import obras from './modules/cadeco/obras';
+
 import almacen from './modules/cadeco/almacen';
+import banco from './modules/cadeco/banco';
 import concepto from './modules/cadeco/concepto';
 import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
@@ -12,6 +13,9 @@ import empresa from './modules/cadeco/empresa';
 import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
+import obras from './modules/cadeco/obras';
+import sucursal from './modules/cadeco/sucursal';
+
 
 //COMPRAS
 import solicitudCompra from './modules/compras/solicitud-compra';
@@ -48,10 +52,15 @@ import subcontrato from './modules/contratos/subcontrato';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
 
 //FINANZAS
-import cuenta_bancaria_proveedor from './modules/finanzas/cuenta-bancaria-proveedor';
+import ctg_tipo_fondo from './modules/finanzas/ctg-tipo-fondo';
+import cuenta_bancaria_empresa from './modules/finanzas/cuenta-bancaria-empresa';
 import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
+import gestion_pago from './modules/finanzas/gestion-pago';
+import pago from './modules/finanzas/pago';
 import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
 import remesa from './modules/finanzas/remesa';
+import solicitud_alta from './modules/finanzas/solicitud-alta-cuenta-bancaria';
+import solicitud_baja from './modules/finanzas/solicitud-baja-cuenta-bancaria';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
@@ -60,6 +69,8 @@ import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
+import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
+import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -76,8 +87,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
-        'cadeco/obras': obras,
         'cadeco/almacen': almacen,
+        'cadeco/banco': banco,
         'cadeco/concepto': concepto,
         'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
@@ -85,6 +96,8 @@ export default new Vuex.Store({
         'cadeco/fondo': fondo,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
+        'cadeco/obras': obras,
+        'cadeco/sucursal': sucursal,
 
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
@@ -97,10 +110,16 @@ export default new Vuex.Store({
         'contratos/subcontrato': subcontrato,
         'contratos/contrato-proyectado': contratoProyectado,
 
-        'finanzas/cuenta-bancaria-proveedor': cuenta_bancaria_proveedor,
+        'finanzas/ctg-tipo-fondo': ctg_tipo_fondo,
+        'finanzas/cuenta-bancaria-empresa': cuenta_bancaria_empresa,
         'finanzas/distribuir-recurso-remesa': distribuir_recurso_remesa,
+        'finanzas/gestion-pago': gestion_pago,
+        'finanzas/pago': pago,
         'finanzas/solicitud-pago-anticipado': pago_anticipado,
         'finanzas/remesa': remesa,
+        'finanzas/solicitud-alta-cuenta-bancaria' : solicitud_alta,
+        'finanzas/solicitud-baja-cuenta-bancaria' : solicitud_baja,
+
 
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
@@ -128,6 +147,8 @@ export default new Vuex.Store({
         'tesoreria/tipo-movimiento': tipoMovimiento,
         'tesoreria/traspaso-entre-cuentas': traspaso,
 
+        'seguridad/finanzas/ctg-banco': ctgbanco,
+        'seguridad/finanzas/ctg-plaza': ctgplaza,
         'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,

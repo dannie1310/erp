@@ -48,8 +48,8 @@ class SolicitudPagoAnticipadoService
                 'id_moneda' => $antecedente->id_moneda,
                 'cumplimiento' => $data['cumplimiento'],
                 'vencimiento' => $data['vencimiento'],
-                'monto' => $antecedente->monto,
-                'saldo' => $antecedente->saldo,
+                'monto' => $data['importe'],
+                'saldo' => $data['importe'],
                 'destino' => $antecedente->destino,
                 'observaciones' => $data['observaciones'],
                 'fecha' => $data['cumplimiento'],
@@ -95,8 +95,7 @@ class SolicitudPagoAnticipadoService
         return $this->repository->show($id);
     }
     public function cancelar(array $data, $id){
-        $solicitud = $this->repository;
-        $solicitud = $solicitud->cancelar($id);
+        $solicitud = $this->repository->cancelar($id);
         return $solicitud;
     }
 

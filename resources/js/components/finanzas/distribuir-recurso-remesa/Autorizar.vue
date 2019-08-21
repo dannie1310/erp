@@ -4,27 +4,22 @@
             <div class="invoice p-3 mb-3">
                 <div class="row">
                     <div class="col-12">
-                        <h4> <i class="fa fa-list-alt"></i> DISTRIBUCIÓN DE RECURSOS AUTORIZADOS DE LA REMESA </h4>
+                        <h4> <i class="fa fa-list-alt"></i> DISPERSIÓN DE RECURSOS AUTORIZADOS DE LA REMESA </h4>
                     </div>
                 </div>
-                <div class="modal-body">
+<!--                <div class="modal-body">-->
                     <div v-if="distribucion" class="row">
                         <div class="table-responsive col-12">
                             <table class="table table-striped">
                                 <tbody>
                                 <tr>
                                     <td class="bg-gray-light">
-                                        <b>Folio Distribución:</b>
+                                        <b>Folio Dispersión:</b>
                                     </td>
                                     <td class="bg-gray-light">
                                         {{distribucion.folio}}
                                     </td>
-                                    <td class="bg-gray-light">
-                                        <b>Fecha de Registro:</b>
-                                    </td>
-                                    <td class="bg-gray-light">
-                                        {{distribucion.fecha_registro}}
-                                    </td>
+
                                     <td class="bg-gray-light">
                                         <b>Monto Total de Remesa:</b>
                                     </td>
@@ -32,34 +27,43 @@
                                         $&nbsp; {{(parseFloat(distribucion.monto_autorizado)).formatMoney(2,'.',',')}}
                                     </td>
                                     <td class="bg-gray-light">
-                                        <b>Monto de Está Distribución:</b>
+                                        <b>Monto de Está Dispersion:</b>
                                     </td>
                                     <td class="bg-gray-light text-right">
                                         $ {{(parseFloat(distribucion.monto_distribuido)).formatMoney(2,'.',',')}}
                                     </td>
+                                    <td class="bg-gray-light"><b>Estado:</b><br> </td>
+                                    <td class="bg-gray-light"><estatus-label :value="distribucion.estado"></estatus-label></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2" class="bg-gray-light"><b>Estado:</b><br> </td>
-                                    <td colspan="2" class="bg-gray-light"><estatus-label :value="distribucion.estado"></estatus-label></td>
-
                                     <td colspan="2" class="bg-gray-light">
-                                        <b>Usuario de Registro:</b>
+                                        <b>Registró:</b>
                                     </td>
                                     <td colspan="2" class="bg-gray-light">
                                         {{distribucion.usuario_registro.nombre}}
                                     </td>
+                                    <td colspan="2" class="bg-gray-light">
+                                        <b>Fecha de Registro:</b>
+                                    </td>
+                                    <td colspan="2" class="bg-gray-light">
+                                        {{distribucion.fecha_registro}}
+                                    </td>
                                 </tr>
                                 <tr v-if="distribucion.estado.estado == -1">
                                     <td colspan="4" class="bg-gray-light">
-                                        <b>Usuario de Cancelación</b>
+                                        <b>Canceló</b>
                                     </td>
                                     <td colspan="4" class="bg-gray-light">
                                         {{distribucion.usuario_cancelo.nombre}}
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td colspan="8" class="bg-gray-light"><b>Información de la Remesa</b></td>
-                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-responsive col-12">
+                            <h5><i class="fa fa-info-circle" style="padding-right: 3px"></i>Información de la Remesa</h5>
+                            <table class="table table-striped">
+                                <tbody>
                                 <tr>
                                     <td colspan="2" class="bg-gray-light">
                                         <b>Año:</b><br>
@@ -81,6 +85,7 @@
                             </table>
                         </div>
                     </div>
+                    <h5><i class="fa fa-list" style="padding-right: 3px"></i>Partidas de la Dispersión</h5>
                     <div v-if="distribucion" class="row">
                         <div  class="col-12 table-responsive">
                             <table class="table table-striped">
@@ -89,13 +94,13 @@
                                     <th>#</th>
                                     <th>Concepto</th>
                                     <th>Beneficiario</th>
-                                    <th>Importe</th>
+                                 <!-- <th>Importe</th>
                                     <th>Tipo Cambio</th>
                                     <th>Importe con TC</th>
-                                    <th>Tipo Cambio Actual</th>
+                                    <th>Tipo Cambio Actual</th>-->
                                     <th>Importe Pesos</th>
-                                    <th>Cuenta Abono</th>
                                     <th>Cuenta Cargo</th>
+                                    <th>Cuenta Abono</th>
                                     <th>Estado</th>
                                 </tr>
                                 </thead>
@@ -103,21 +108,21 @@
                                 <tr v-for="(doc, i) in distribucion.partidas.data">
                                     <td>{{i+1}}</td>
                                     <td>{{doc.documento.concepto}}</td>
-                                    <td>{{doc.documento.empresa ? doc.documento.empresa.razon_social : ''}}</td>
-                                    <td class="text-right">{{doc.documento.monto_total_format}}</td>
+                                    <td>{{doc.documento.beneficiario}}</td>
+                                    <!--<td class="text-right">{{doc.documento.monto_total_format}}</td>
                                     <td class="text-right">{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
                                     <td class="text-right">{{doc.documento.saldo_moneda_nacional_format}}</td>
-                                    <td class="text-right">{{doc.moneda && doc.moneda.tipo != 1? parseFloat(doc.moneda.tipo_cambio).formatMoney(2, '.', ',') : '1.00'}}</td>
+                                    <td class="text-right">{{doc.moneda && doc.moneda.tipo != 1? parseFloat(doc.moneda.tipo_cambio).formatMoney(2, '.', ',') : '1.00'}}</td>-->
                                     <td class="text-right">${{doc.moneda && doc.moneda.tipo != 1? parseFloat((doc.documento.monto_total * doc.moneda.tipo_cambio)).formatMoney(2, '.', ',') : parseFloat((doc.documento.monto_total)).formatMoney(2, '.', ',')}}</td>
-                                    <td>{{doc.cuentaAbono.banco.complemento.nombre_corto}} {{doc.cuentaAbono.cuenta}}</td>
                                     <td>{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
+                                    <td>{{getCuentaAbono(doc.cuentaAbono)}}</td>
                                     <td><partida-estatus :value="doc.estado"></partida-estatus></td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
+<!--                </div>-->
 
                 <div class="modal-footer">
                     <button v-if="cargando==false" type="button" class="btn btn-secondary pull-right" v-on:click="salir">Cerrar</button>
@@ -156,7 +161,7 @@
                 this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/find', {
                     id: this.id,
-                    params: {include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa', 'partidas.cuentaAbono.banco', 'partidas.transaccion', 'usuario_cancelo']}
+                    params: {include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa', 'partidas.cuentaAbono.banco.ctgBanco', 'partidas.transaccion', 'usuario_cancelo']}
                 }).then(data => {
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);
                 }).finally(() => {
@@ -173,6 +178,13 @@
 
             salir(){
                 this.$router.push({name: 'distribuir-recurso-remesa'});
+            },
+
+            getCuentaAbono(cuenta){
+                if(cuenta.banco && cuenta.banco.ctgBanco){
+                    return cuenta.banco.ctgBanco.nombre_corto+" "+ cuenta.cuenta;
+                }
+                return  "----- "+ cuenta.cuenta;
             }
         },
         computed: {

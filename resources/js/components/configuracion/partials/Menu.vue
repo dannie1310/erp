@@ -40,6 +40,13 @@
                 </a>
             </li>
 
+            <li class="nav-item" v-if="$root.can('actualizar_estado_obra')">
+                <a href="#estado-obra" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Estado de Obra</p>
+                </a>
+            </li>
+
             <li class="nav-header" v-if="$root.can('habilitar_deshabilitar_sistema')"><a href="#configuracion-sistema">CONFIGURACIÓN SISTEMAS</a></li>
             <li class="nav-item" v-if="$root.can('habilitar_deshabilitar_sistema')">
                 <a href="#configuracion-sistema" class="nav-link">

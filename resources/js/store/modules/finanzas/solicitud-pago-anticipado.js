@@ -30,7 +30,10 @@ export default {
                 }
                 return solicitud
             })
-            state.currentSolicitud != null ? data : null;
+            state.currentSolicitud = data;
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentSolicitud[data.attribute] = data.value
         }
     },
 
@@ -124,7 +127,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cuenta registrada correctamente", {
+                                    swal("Solicitud registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false

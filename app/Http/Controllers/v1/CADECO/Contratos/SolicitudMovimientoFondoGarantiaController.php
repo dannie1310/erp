@@ -56,7 +56,12 @@ class SolicitudMovimientoFondoGarantiaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-
+        $this->middleware('permiso:autorizar_solicitud_movimiento_fondo_garantia')->only('autorizar');
+        $this->middleware('permiso:cancelar_solicitud_movimiento_fondo_garantia')->only('cancelar');
+        $this->middleware('permiso:consultar_solicitud_movimiento_fondo_garantia')->only(['show','paginate','index']);
+        $this->middleware('permiso:rechazar_solicitud_movimiento_fondo_garantia')->only('rechazar');
+        $this->middleware('permiso:registrar_solicitud_movimiento_fondo_garantia')->only('store');
+        $this->middleware('permiso:revertir_autorizacion_solicitud_movimiento_fondo_garantia')->only('revertirAutorizacion');
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
