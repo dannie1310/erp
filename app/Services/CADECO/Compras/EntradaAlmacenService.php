@@ -37,4 +37,9 @@ class EntradaAlmacenService
     {
         return $this->repository->show($id);
     }
+
+    public function delete($data, $id)
+    {
+        dd($data, $id);
+    }
 }

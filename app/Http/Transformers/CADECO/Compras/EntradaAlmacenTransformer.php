@@ -10,7 +10,6 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\ItemTransformer;
 use App\Models\CADECO\EntradaMaterial;
 use League\Fractal\TransformerAbstract;
 
@@ -68,7 +67,7 @@ class EntradaAlmacenTransformer extends TransformerAbstract
      */
     public function includePartidas(EntradaMaterial $model)
     {
-        if($partida = $model->items)
+        if($partida = $model->partidas)
         {
             return $this->collection($partida, new EntradaAlmacenPartidaTransformer);
         }

@@ -18,4 +18,19 @@ class Inventario extends Model
     protected $primaryKey = 'id_lote';
 
     public $timestamps = false;
+
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
+    }
+
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'id_material', 'id_material');
+    }
+
+    public function item()
+    {
+        return $this->hasMany(Item::class, 'id_item', 'id_item');
+    }
 }
