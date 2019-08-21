@@ -99,6 +99,7 @@ export default{
                                     })
                                 })
                                 .catch(error => {
+                                    console.log("qq",error);
                                     reject(error);
                                 })
                         }

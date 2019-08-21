@@ -134,6 +134,7 @@
                     params: { include: ['empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario'] }
                 }).then(data => {
                     this.$store.commit('compras/entrada-almacen/SET_ENTRADA', data);
+                    this.partidas = this.entrada.partidas.data;
                     $(this.$refs.modal).modal('show');
                 })
             },
