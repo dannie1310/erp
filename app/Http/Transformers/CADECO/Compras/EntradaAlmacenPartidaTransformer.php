@@ -84,7 +84,7 @@ class EntradaAlmacenPartidaTransformer extends TransformerAbstract
     {
         if($inventario = $model->inventario)
         {
-            return $this->item($inventario, new InventarioTransformer);
+            return $this->collection($inventario, new InventarioTransformer);
         }
         return null;
     }

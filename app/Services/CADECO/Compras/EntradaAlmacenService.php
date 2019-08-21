@@ -40,6 +40,6 @@ class EntradaAlmacenService
 
     public function delete($data, $id)
     {
-        dd($data, $id);
+        return $this->show($id)->delete();
     }
 }

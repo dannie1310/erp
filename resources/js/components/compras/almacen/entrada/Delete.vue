@@ -128,6 +128,8 @@
         },
         methods: {
             find(){
+                this.motivo = '';
+                this.partidas = '';
                 this.$store.commit('compras/entrada-almacen/SET_ENTRADA', null);
                 return this.$store.dispatch('compras/entrada-almacen/find', {
                     id: this.id,
@@ -139,7 +141,7 @@
                 })
             },
             eliminar() {
-                return this.$store.dispatch('compras/entrada-almacen/delete', {id: this.id, data: this.$data})
+                return this.$store.dispatch('compras/entrada-almacen/delete', {id: this.id})
                     .then(data => {
                         $(this.$refs.modal).modal('hide');
                     })

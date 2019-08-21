@@ -65,7 +65,6 @@ export default{
         },
 
         delete(context, payload) {
-            console.log("aqui", payload);
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar la Entrada de Almacén",
@@ -99,7 +98,6 @@ export default{
                                     })
                                 })
                                 .catch(error => {
-                                    console.log("qq",error);
                                     reject(error);
                                 })
                         }
