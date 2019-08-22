@@ -5,6 +5,7 @@ namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Compras\DeleteSalidaAlmacenRequest;
 use App\Http\Transformers\CADECO\Compras\SalidaAlmacenTransformer;
 use App\Services\CADECO\Compras\SalidaAlmacenService;
 use App\Traits\ControllerTrait;
@@ -12,7 +13,9 @@ use League\Fractal\Manager;
 
 class SalidaAlmacenController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait {
+        destroy as traitDestroy;
+    }
 
     /**
      * @var Manager
@@ -45,6 +48,11 @@ class SalidaAlmacenController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function destroy(DeleteSalidaAlmacenRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);
     }
 
 }

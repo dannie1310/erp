@@ -292,6 +292,8 @@ $api->version('v1', function ($api) {
             $api->group(['prefix' => 'salida'], function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SalidaAlmacenController@paginate');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\SalidaAlmacenController@show')->where(['id' => '[0-9]+']);
+                $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Compras\SalidaAlmacenController@destroy')->where(['id' => '[0-9]+']);
+
 
             });
         });

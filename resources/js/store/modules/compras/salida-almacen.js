@@ -12,11 +12,27 @@ export default {
         SET_SALIDAS(state, data) {
             state.salidas = data
         },
+
         SET_SALIDA(state, data) {
             state.currentSalida = data;
         },
+
         SET_META(state, data) {
             state.meta = data
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentEntrada, data.attribute, data.value);
+        },
+
+        UPDATE_SALIDA(state, data) {
+            state.salidas = state.salidas.map(salida => {
+                if (salida.id === data.id) {
+                    return Object.assign({}, salida, data)
+                }
+                return salida
+            })
+            state.currentSalida = data;
         },
     },
 
@@ -48,6 +64,48 @@ export default {
                     })
             });
         },
+
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar la Salida/Transferencia de Almacén",
+                    text: "¿Estás seguro/a de que desea eliminar esta transacción?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Transacción eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        }
     },
 
     getters: {

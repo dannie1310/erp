@@ -12,6 +12,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                <form role="form" @submit.prevent="validate">
                     <div class="modal-body">
                         <div class="row"  v-if="salida">
                             <div class="col-12">
@@ -59,7 +60,7 @@
                                                         <tr>
                                                             <th>#</th>
                                                             <th>Material</th>
-                                                            <th>Almacén</th>
+                                                            <th v-if="salida.opciones == 65537">Almacén</th>
                                                             <th>Cantidad</th>
                                                             <th v-if="salida.opciones == 1">Cantidad en Movimiento</th>
                                                             <th>Cantidad en Inventario</th>
@@ -85,8 +86,6 @@
                                                             <td>{{i+1}}</td>
                                                             <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun material</td>
-                                                            <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun almacén</td>
                                                             <td>{{doc.cantidad_format}}</td>
                                                             <td v-if="doc.movimiento">{{doc.movimiento.cantidad_format}}</td>
                                                             <td v-if="doc.movimiento.inventario">{{doc.movimiento.inventario.cantidad_format}}</td>
@@ -123,9 +122,10 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-danger":disabled="errors.count() > 0 || motivo ==''">Eliminar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-danger":disabled="errors.count() > 0 || motivo ==''">Eliminar</button>
                     </div>
+                </form>
                 </div>
             </div>
         </div>
@@ -151,7 +151,30 @@
                     this.$store.commit('compras/salida-almacen/SET_SALIDA', data);
                     $(this.$refs.modal).modal('show');
                 })
-            }
+            },
+
+            eliminar() {
+                return this.$store.dispatch('compras/salida-almacen/eliminar', {
+                    id: this.id,
+                    params: {data: [this.$data.motivo]}
+                })
+                    .then(data => {
+                        $(this.$refs.modal).modal('hide');
+                    })
+            },
+
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        if(this.motivo == '') {
+                            swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
+                        }
+                        else {
+                            this.eliminar()
+                        }
+                    }
+                });
+            },
         },
         computed: {
             salida() {
