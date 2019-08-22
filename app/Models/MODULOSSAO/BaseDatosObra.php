@@ -23,4 +23,8 @@ class BaseDatosObra extends Model
         });
     }
 
+    public function proyectoUnificado(){
+        return $this->belongsTo(UnificacionObra::class, 'IDBaseDatos', 'IDBaseDatos');
+    }
+
 }
