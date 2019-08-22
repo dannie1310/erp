@@ -70,8 +70,10 @@
                                                     <tbody>
                                                         <tr v-for="(doc, i) in entrada.partidas.data">
                                                             <td>{{i+1}}</td>
-                                                            <td>{{doc.material.descripcion}}</td>
-                                                            <td>{{doc.almacen.descripcion}}</td>
+                                                            <td v-if="doc.material">{{doc.material.descripcion}}</td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun material asignado</td>
+                                                            <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
                                                             <td>{{doc.cantidad}}</td>
                                                             <td v-if="doc.inventario">{{doc.inventario.cantidad}}</td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
