@@ -174,12 +174,18 @@ class PermisoService
                              AS factor_orden
                      FROM (SEGURIDAD_ERP.dbo.vwUsuariosIntranet vwUsuariosIntranet
                            INNER JOIN
-                           (SELECT role_user.[user_id],
-                                   COUNT (DISTINCT permission_role.permission_id)
-                                      AS cantidad_permisos
-                              FROM SEGURIDAD_ERP.dbo.role_user role_user
-                                   INNER JOIN SEGURIDAD_ERP.dbo.permission_role permission_role
-                                      ON (role_user.role_id = permission_role.role_id)
+                           (SELECT
+                            role_user.[user_id],
+                            COUNT (DISTINCT permission_role.permission_id)
+                                   AS cantidad_permisos
+                               FROM SEGURIDAD_ERP.dbo.role_user role_user
+                               INNER JOIN SEGURIDAD_ERP.dbo.permission_role permission_role
+                               ON (role_user.role_id = permission_role.role_id)
+                                inner join SEGURIDAD_ERP.dbo.roles
+                                on (roles.id = permission_role.role_id)
+                                inner join SEGURIDAD_ERP.dbo.configuracion_obra as co
+                                on (co.id_obra = role_user.id_obra and co.id_proyecto = role_user.id_proyecto)
+                                where co.tipo_obra != 2
                             GROUP BY role_user.[user_id]) Subquery
                               ON (vwUsuariosIntranet.idusuario = Subquery.[user_id]))
                           INNER JOIN
