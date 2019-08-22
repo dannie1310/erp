@@ -14,6 +14,7 @@ use App\Http\Requests\Compras\DeleteEntradaAlmacenRequest;
 use App\Http\Transformers\CADECO\Compras\EntradaAlmacenTransformer;
 use App\Services\CADECO\Compras\EntradaAlmacenService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class EntradaAlmacenController extends Controller
