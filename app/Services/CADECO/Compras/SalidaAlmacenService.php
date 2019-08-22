@@ -32,6 +32,6 @@ class SalidaAlmacenService
 
     public function delete($data, $id)
     {
-//        return $this->show($id)->eliminar($data['data'][0]);
+        return $this->show($id)->eliminar($data['data'][0]);
     }
 }

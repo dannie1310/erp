@@ -48,4 +48,34 @@ class SalidaAlmacen extends Transaccion
         }
     }
 
+    public function eliminar($motivo)
+    {
+        dd($motivo,$this->id_transaccion,$this->opciones);
+//        $this->validar();
+//        $this->respaldar($motivo);
+//        $this->revisar_respaldos();
+//        $this->delete();
+    }
+
+    private function validar()
+    {
+        $items = $this->partidas()->get()->toArray();
+        foreach ($items as $item){
+            $inventario = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
+            if($inventario == []){
+                abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
+            }
+            if(count($inventario) > 1){
+                abort(400, 'Existen varios inventarios, por lo tanto, no puede ser eliminada.');
+            }
+            if($inventario[0]['cantidad'] != $inventario[0]['saldo']){
+                abort(400, 'Existen movimientos en el inventario, por lo tanto, no puede ser eliminada.');
+            }
+            $factura = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->get()->toArray();
+            if($factura != []){
+                abort(400, 'Existen una factura asociada a esta entrada de almacén.');
+            }
+        }
+    }
+
 }
