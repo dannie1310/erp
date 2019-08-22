@@ -115,7 +115,7 @@
                                                     type="number"
                                                     name="cuenta"
                                                     data-vv-as="Cuenta"
-                                                    v-validate="{required: true, min:9, max:18}"
+                                                    v-validate="{required: true, min:11, max:18}"
                                                     class="form-control"
                                                     id="cuenta"
                                                     placeholder="Cuenta"
@@ -263,8 +263,8 @@
                 cuenta: '',
                 id_tipo: '',
                 tipos: {
-                    1: "Interbancaria",
-                    2: "Mismo Banco"
+                    2: "Interbancaria",
+                    1: "Mismo Banco"
                 },
                 id_moneda: '',
                 monedas: [],
@@ -377,16 +377,16 @@
                 this.getPlaza();
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if (this.id_tipo == 1 && this.cuenta.length < 18) {
+                        if (this.id_tipo == 2 && this.cuenta.length < 18) {
                             swal('¡Error!', 'La cuenta tipo interbancaria debe contar con 18 digitos.', 'error')
                         }
-                        else if (this.id_tipo == 2 && this.cuenta.length > 9) {
-                            swal('¡Error!', 'La cuenta de mismo banco debe contar con 9 digitos.', 'error')
+                        else if (this.id_tipo == 1 && this.cuenta.length > 11) {
+                            swal('¡Error!', 'La cuenta de mismo banco debe contar con 11 digitos.', 'error')
                         }
-                        else if (this.id_tipo == 1 && this.cuenta.length == 18 && this.cuenta.substring(0, 3) != this.banco_clave) {
+                        else if (this.id_tipo == 2 && this.cuenta.length == 18 && this.cuenta.substring(0, 3) != this.banco_clave) {
                             swal('¡Error!', 'La cuenta no corresponde con la clave del banco.', 'error');
                         }
-                        else if (this.id_tipo == 1 && this.cuenta.length == 18 && this.cuenta.substring(3, 6) != this.plaza_clave) {
+                        else if (this.id_tipo == 2 && this.cuenta.length == 18 && this.cuenta.substring(3, 6) != this.plaza_clave) {
                             swal('¡Error!', 'La cuenta no corresponde con la clave de la plaza.', 'error')
                         }else if(this.archivo == null){
                             swal('¡Error!', 'Error al cargar el archivo, favor de seleccionarlo nuevamente.', 'error')
