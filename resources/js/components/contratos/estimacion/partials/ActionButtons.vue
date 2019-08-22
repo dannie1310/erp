@@ -11,6 +11,7 @@
                 <i v-if="revirtiendo" class="fa fa-spin fa-spinner"></i>
                 <i v-else class="fa fa-thumbs-down"></i>
             </button>
+                <PDF v-bind:id="value.id" @click="value.id"></PDF>
         </div>
 
         <!-- Modal -->
@@ -83,8 +84,10 @@
 </template>
 
 <script>
+    import PDF from '../FormatoEstimacion';
     export default {
         name: "action-buttons",
+        components: {PDF},
         props: ['value'],
         data() {
             return {
