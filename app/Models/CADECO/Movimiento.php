@@ -18,4 +18,16 @@ class Movimiento extends Model
     protected $primaryKey = 'id_movimiento';
 
     public $timestamps = false;
+
+
+    public function inventario()
+    {
+        return $this->belongsTo(Inventario::class, 'lote_antecedente', 'id_lote');
+    }
+
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad,3,'.', '');
+
+    }
 }

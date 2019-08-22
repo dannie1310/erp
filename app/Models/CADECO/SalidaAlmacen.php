@@ -22,6 +22,11 @@ class SalidaAlmacen extends Transaccion
         return $this->belongsTo(Almacen::class,'id_almacen','id_almacen');
     }
 
+    public function partidas()
+    {
+        return $this->hasMany(SalidaAlmacenPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function getEstadoFormatAttribute()
     {
         switch ($this->estado){

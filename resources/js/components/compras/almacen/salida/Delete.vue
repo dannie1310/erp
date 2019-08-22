@@ -18,7 +18,7 @@
                                 <div class="invoice p-3 mb-3">
                                     <div class="row">
                                         <div class="col-12">
-                                            <h5>Datos de la Entrada Almacén</h5>
+                                            <h5>Datos de la Salida Almacén</h5>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -47,6 +47,58 @@
                                             </table>
                                         </div>
                                     </div>
+                                     <div class="row">
+                                        <div class="col-12">
+                                            <h6><b>Detalle de las partidas</b></h6>
+                                        </div>
+                                     </div>
+                                    <div class="row">
+                                            <div class="table-responsive col-md-12">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Material</th>
+                                                            <th>Almacén</th>
+                                                            <th>Cantidad</th>
+                                                            <th v-if="salida.opciones == 1">Cantidad en Movimiento</th>
+                                                            <th>Cantidad en Inventario</th>
+                                                            <th>Saldo en Inventario</th>
+                                                            <th>Unidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody v-if="salida.opciones == 65537">
+                                                        <tr v-for="(doc, i) in salida.partidas.data">
+                                                            <td>{{i+1}}</td>
+                                                            <td>{{doc.material.descripcion}}</td>
+                                                            <td>{{doc.almacen.descripcion}}</td>
+                                                            <td>{{doc.cantidad}}</td>
+                                                            <td v-if="doc.inventario">{{doc.inventario.cantidad_format}}</td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
+                                                            <td v-if="doc.inventario">{{doc.inventario.saldo}}</td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
+                                                            <td>{{doc.unidad}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tbody v-else-if="salida.opciones == 1">
+                                                        <tr v-for="(doc, i) in salida.partidas.data">
+                                                            <td>{{i+1}}</td>
+                                                            <td v-if="doc.material">{{doc.material.descripcion}}</td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun material</td>
+                                                            <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun almacén</td>
+                                                            <td>{{doc.cantidad_format}}</td>
+                                                            <td v-if="doc.movimiento">{{doc.movimiento.cantidad_format}}</td>
+                                                            <td v-if="doc.movimiento.inventario">{{doc.movimiento.inventario.cantidad_format}}</td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
+                                                            <td v-if="doc.movimiento.inventario">{{doc.movimiento.inventario.saldo_format}}</td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
+                                                            <td>{{doc.unidad}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
@@ -94,7 +146,7 @@
                 this.$store.commit('compras/salida-almacen/SET_SALIDA', null);
                 return this.$store.dispatch('compras/salida-almacen/find', {
                     id: this.id,
-                    params: {include: 'almacen'}
+                    params: {include: ['almacen','partidas.movimiento.inventario','partidas.inventario','partidas.almacen','partidas.material']}
                 }).then(data => {
                     this.$store.commit('compras/salida-almacen/SET_SALIDA', data);
                     $(this.$refs.modal).modal('show');

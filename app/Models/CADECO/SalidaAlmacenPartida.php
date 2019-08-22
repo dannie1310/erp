@@ -24,4 +24,14 @@ class SalidaAlmacenPartida extends Item
     {
         return $this->belongsTo(SalidaAlmacen::class, 'id_transaccion', 'id_transaccion');
     }
+
+    public function inventario()
+    {
+        return $this->belongsTo(Inventario::class, 'id_item', 'id_item');
+    }
+
+    public function movimiento()
+    {
+        return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
+    }
 }

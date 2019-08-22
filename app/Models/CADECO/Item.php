@@ -51,4 +51,10 @@ class Item extends Model
     {
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
+
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad,3,'.', '');
+
+    }
 }
