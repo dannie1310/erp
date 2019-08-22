@@ -26,8 +26,22 @@ class EntradaMaterial extends Transaccion
         });
 
         self::deleting(function ($entrada) {
+            try {
+                DB::connection('cadeco')->beginTransaction();
+                $items = $entrada->partidas()->get()->toArray();
+                foreach ($items as $item) {
+                    $inventario = Inventario::query()->where('id_item', $item['id_item'])->first()->toArray();
+                    Inventario::destroy($inventario['id_lote']);
+                    Item::destroy($item['id_item']);
+                }
 
-           dd("aqui esperando para eliminar....", $entrada);
+                DB::connection('cadeco')->commit();
+            }catch (\Exception $e) {
+                DB::connection('cadeco')->rollBack();
+                $entrada->eliminar_respaldo();
+                abort(400, $e->getMessage());
+                throw $e;
+            }
         });
     }
 
