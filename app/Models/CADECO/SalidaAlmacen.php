@@ -9,7 +9,6 @@ use App\Models\CADECO\Compras\ItemSalidaEliminada;
 use App\Models\CADECO\Compras\MovimientoEliminado;
 use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Contabilidad\Poliza;
-use App\Models\CADECO\Transaccion;
 use Illuminate\Support\Facades\DB;
 
 class SalidaAlmacen extends Transaccion
@@ -29,6 +28,18 @@ class SalidaAlmacen extends Transaccion
                 foreach ($items as $item) {
                     if($salida->opciones == 65537 ) {
                         $inventario = Inventario::query()->where( 'id_item', $item['id_item'] )->first()->toArray();
+                        foreach ($inventario as $inv) {
+                            try {
+                                DB::connection( 'cadeco' )->beginTransaction();
+                                Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->update( ['saldo' => $inv['cantidad']] );
+                                DB::connection('cadeco')->commit();
+                            }catch (\Exception $e) {
+                                DB::connection('cadeco')->rollBack();
+                                $salida->eliminar_respaldos();
+                                abort(400, $e->getMessage());
+                                throw $e;
+                            }
+                        }
                         Inventario::destroy( $inventario['id_lote'] );
                     }
                     if ($salida->opciones == 1){
@@ -38,18 +49,17 @@ class SalidaAlmacen extends Transaccion
                                 DB::connection( 'cadeco' )->beginTransaction();
                                 $inventarios = Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->get()->toArray();
                                 foreach ($inventarios as $inv) {
-                                    if (($inv['saldo'] + $mov['cantidad']) < $inv['cantidad']) {
-                                        Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->update( ['saldo' => 0] );
-                                    }
+                                    Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->update( ['saldo' => $mov['cantidad']] );
+
                                 }
                             DB::connection('cadeco')->commit();
                             }catch (\Exception $e) {
                                 DB::connection('cadeco')->rollBack();
-                                $salida->eliminar_respaldo();
+                                $salida->eliminar_respaldos();
                                 abort(400, $e->getMessage());
                                 throw $e;
                             }
-                            Movimiento::destroy($mov['id_movimiento']);
+                            Movimiento::destroy($mov['id_movivbvmiento']);
                         }
                     }
                     Item::destroy($item['id_item']);
@@ -58,7 +68,7 @@ class SalidaAlmacen extends Transaccion
                 DB::connection('cadeco')->commit();
             }catch (\Exception $e) {
                 DB::connection('cadeco')->rollBack();
-                $salida->eliminar_respaldo();
+                $salida->eliminar_respaldos();
                 abort(400, $e->getMessage());
                 throw $e;
             }
@@ -113,31 +123,33 @@ class SalidaAlmacen extends Transaccion
         $items = $this->partidas()->get()->toArray();
 
         foreach ($items as $item){
-            if ($this->opciones == 1){
-                $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
-                if($movimiento == []){
-                    abort(400, 'No existe un movimiento, por lo tanto, no puede ser eliminada.');
-                }
-            }else if ($this->opciones == 65537){
-               $inventarios = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
+            if ($this->opciones == 65537){
+                $inventarios = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
                 if($inventarios == []){
                     abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
                 }
-                foreach($inventarios as $inventario){
+                foreach ($inventarios as $inventario){
                     if($inventario['cantidad'] != $inventario['saldo']){
-                        $invs_antecedente = Inventario::query()->where('lote_antecedente', $inventario['id_lote'])->get()->toArray();
-                        if($invs_antecedente == []){
-                            abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
-                        }
-                        foreach ($invs_antecedente as $inv){
-                            if ($inv['cantidad'] != $inv['saldo']){
-                                abort(400, 'Existen movimientos en el inventario, por lo tanto, no puede ser eliminada.');
-                            }
-                        }
+                        abort(400, 'Error en el proceso de eliminación de salida de almacén.');
+                    }
+                    $inventario_antecedente = Inventario::query()->where('id_lote', $inventario['lote_antecedente'])->get()->toArray();
+                    if($inventario_antecedente[0]['saldo']+$inventario['cantidad'] > $inventario_antecedente[0]['cantidad']){
+                        abort(400, 'Error en el proceso de eliminación de salida de almacén.');
                     }
                 }
             }
-
+            if ($this->opciones == 1){
+                $movimientos = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
+                if($movimientos == []){
+                    abort(400, 'No existe movimiento, por lo tanto, no puede ser eliminada.');
+                }
+                foreach ($movimientos as $movimiento){
+                    $inv_antecedente = Inventario::query()->where('id_lote',$movimiento['lote_antecedente'])->get()->toArray();
+                    if($inv_antecedente[0]['saldo']+$movimiento['cantidad'] > $inv_antecedente[0]['cantidad']){
+                        abort(400, 'Error en el proceso de eliminación de salida de almacén.');
+                    }
+                }
+            }
             $factura = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->get()->toArray();
             if($factura != []){
                 abort(400, 'Existen una factura asociada a esta entrada de almacén.');
@@ -271,7 +283,7 @@ class SalidaAlmacen extends Transaccion
             if($this->opciones == 65537) {
                 $inventario = InventarioEliminado::query()->where( 'id_item', $partida['id_item'] )->first();
                 if ($inventario == null) {
-                    $this->eliminar_respaldo();
+                    $this->eliminar_respaldos();
                     abort( 400, 'Error en el proceso de eliminación de salida de almacén.' );
                 }
             }
@@ -279,26 +291,26 @@ class SalidaAlmacen extends Transaccion
             if($this->opciones == 1){
                 $movimiento = MovimientoEliminado::query()->where('id_item', $partida['id_item'])->first();
                 if ($movimiento == null) {
-                    $this->eliminar_respaldo();
+                    $this->eliminar_respaldos();
                     abort(400, 'Error en el proceso de eliminación de salida de almacén.');
                 }
             }
 
             $item = ItemSalidaEliminada::query()->where('id_item', $partida['id_item'])->first();
             if ($item == null) {
-                $this->eliminar_respaldo();
+                $this->eliminar_respaldos();
                 abort(400, 'Error en el proceso de eliminación de salida de almacén.');
             }
         }
 
         $salida = SalidaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
         if ($salida == null) {
-            $this->eliminar_respaldo();
+            $this->eliminar_respaldos();
             abort(400, 'Error en el proceso de eliminación de salida de almacén.');
         }
     }
 
-    private function eliminar_respaldo()
+    private function eliminar_respaldos()
     {
         $partidas = $this->partidas()->get()->toArray();
         foreach ($partidas as $partida) {
