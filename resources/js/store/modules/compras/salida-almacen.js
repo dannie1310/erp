@@ -68,7 +68,7 @@ export default {
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar la Salida/Transferencia de Almacén",
+                    title: "Eliminar Salida/Transferencia de Almacén",
                     text: "¿Estás seguro/a de que desea eliminar esta transacción?",
                     icon: "warning",
                     closeOnClickOutside: false,

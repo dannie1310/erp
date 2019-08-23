@@ -27,7 +27,7 @@ class SalidaAlmacen extends Transaccion
                 $items = $salida->partidas()->get()->toArray();
                 foreach ($items as $item) {
                     if($salida->opciones == 65537 ) {
-                        $inventario = Inventario::query()->where( 'id_item', $item['id_item'] )->first()->toArray();
+                        $inventario = Inventario::query()->where( 'id_item', $item['id_item'] )->get()->toArray();
                         foreach ($inventario as $inv) {
                             try {
                                 DB::connection( 'cadeco' )->beginTransaction();
@@ -40,7 +40,7 @@ class SalidaAlmacen extends Transaccion
                                 throw $e;
                             }
                         }
-                        Inventario::destroy( $inventario['id_lote'] );
+                        Inventario::destroy( $inventario[0]['id_lote'] );
                     }
                     if ($salida->opciones == 1){
                         $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
@@ -50,7 +50,6 @@ class SalidaAlmacen extends Transaccion
                                 $inventarios = Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->get()->toArray();
                                 foreach ($inventarios as $inv) {
                                     Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->update( ['saldo' => $mov['cantidad']] );
-
                                 }
                             DB::connection('cadeco')->commit();
                             }catch (\Exception $e) {
@@ -59,7 +58,7 @@ class SalidaAlmacen extends Transaccion
                                 abort(400, $e->getMessage());
                                 throw $e;
                             }
-                            Movimiento::destroy($mov['id_movivbvmiento']);
+                            Movimiento::destroy($mov['id_movimiento']);
                         }
                     }
                     Item::destroy($item['id_item']);
@@ -118,17 +117,22 @@ class SalidaAlmacen extends Transaccion
     {
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->get()->toArray();
         if ($poliza != []){
-            abort(400, 'Existen una póliza asociada a esta entrada de almacén.');
+            abort(400, 'Existen una póliza asociada a esta salida de almacén.');
         }
         $items = $this->partidas()->get()->toArray();
 
         foreach ($items as $item){
             if ($this->opciones == 65537){
+
                 $inventarios = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
                 if($inventarios == []){
                     abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
                 }
                 foreach ($inventarios as $inventario){
+                    $movimientos = Movimiento::query()->where('lote_antecedente','=', 69185)->get()->toArray();
+                    if($movimientos != []){
+                        abort(400, 'No se puede eliminar transferencia, existe en una salida de almacén');
+                    }
                     if($inventario['cantidad'] != $inventario['saldo']){
                         abort(400, 'Error en el proceso de eliminación de salida de almacén.');
                     }
@@ -152,7 +156,7 @@ class SalidaAlmacen extends Transaccion
             }
             $factura = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->get()->toArray();
             if($factura != []){
-                abort(400, 'Existen una factura asociada a esta entrada de almacén.');
+                abort(400, 'Existen una factura asociada a esta salida de almacén.');
             }
         }
     }
@@ -173,24 +177,22 @@ class SalidaAlmacen extends Transaccion
                      * Respaldar el Inventario
                      */
                     $inventario = Inventario::query()->where('id_item', $partida['id_item'])->first()->toArray();
-                    if (!InventarioEliminado::query()->where('id_lote', $inventario['id_lote'])->first()->toArray()) {
-                        $respaldo_inventario = InventarioEliminado::query()->create(
-                            [
-                                'id_lote' => $inventario['id_lote'],
-                                'lote_antecedente' => $inventario['lote_antecedente'],
-                                'id_almacen' => $inventario['id_almacen'],
-                                'id_material' => $inventario['id_material'],
-                                'id_item' => $inventario['id_item'],
-                                'saldo' => $inventario['saldo'],
-                                'monto_total' => $inventario['monto_total'],
-                                'monto_pagado' => $inventario['monto_pagado'],
-                                'monto_aplicado' => $inventario['monto_aplicado'],
-                                'fecha_desde' => $inventario['fecha_desde'],
-                                'referencia' => $inventario['referencia'],
-                                'monto_original' => $inventario['monto_original']
-                            ]
-                        );
-                    }
+                    $respaldo_inventario = InventarioEliminado::query()->create(
+                        [
+                            'id_lote' => $inventario['id_lote'],
+                            'lote_antecedente' => $inventario['lote_antecedente'],
+                            'id_almacen' => $inventario['id_almacen'],
+                            'id_material' => $inventario['id_material'],
+                            'id_item' => $inventario['id_item'],
+                            'saldo' => $inventario['saldo'],
+                            'monto_total' => $inventario['monto_total'],
+                            'monto_pagado' => $inventario['monto_pagado'],
+                            'monto_aplicado' => $inventario['monto_aplicado'],
+                            'fecha_desde' => $inventario['fecha_desde'],
+                            'referencia' => $inventario['referencia'],
+                            'monto_original' => $inventario['monto_original']
+                        ]
+                    );
                 }
 
                 if($this->opciones == 1){

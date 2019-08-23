@@ -6,20 +6,22 @@
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-trash"></i> ELIMINAR ENTRADA A ALMACÉN</h5>
+                    <div class="modal-header" v-if="salida">
+                        <h5 class="modal-title" id="exampleModalLongTitle" v-if="salida.opciones == 1"> <i class="fa fa-trash"></i> ELIMINA SALIDA DE  ALMACÉN</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle" v-else> <i class="fa fa-trash"></i> ELIMINAR TRANSFERENCIA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                 <form role="form" @submit.prevent="validate">
                     <div class="modal-body">
-                        <div class="row"  v-if="salida">
+                        <div class="row" v-if="salida">
                             <div class="col-12">
                                 <div class="invoice p-3 mb-3">
                                     <div class="row">
                                         <div class="col-12">
-                                            <h5>Datos de la Salida Almacén</h5>
+                                            <h5 v-if="salida.opciones == 1">Datos de Consumo</h5>
+                                            <h5 v-else>Datos de Transferencia</h5>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -29,20 +31,15 @@
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Folio:</b></td>
                                                         <td class="bg-gray-light">{{salida.folio_format}}</td>
-                                                        <td class="bg-gray-light"><b>Almacén:</b></td>
-                                                        <td class="bg-gray-light">{{salida.almacen.descripcion}}</td>
+                                                        <td class="bg-gray-light"><b>Fecha:</b></td>
+                                                        <td class="bg-gray-light">{{salida.fecha_format}}</td>
+
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Referencia:</b></td>
                                                         <td class="bg-gray-light">{{salida.referencia}}</td>
-                                                        <td class="bg-gray-light"><b>Observaciones:</b></td>
-                                                        <td class="bg-gray-light">{{salida.observaciones}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="bg-gray-light"><b>Fecha:</b></td>
-                                                        <td class="bg-gray-light">{{salida.fecha_format}}</td>
-                                                        <td class="bg-gray-light"><b>Estado:</b></td>
-                                                        <td class="bg-gray-light">{{salida.estado_format}}</td>
+                                                        <td class="bg-gray-light"><b>Almacén:</b></td>
+                                                        <td class="bg-gray-light">{{salida.almacen.descripcion}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -59,40 +56,22 @@
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
+                                                            <th>No. de Parte</th>
                                                             <th>Material</th>
-                                                            <th v-if="salida.opciones == 65537">Almacén</th>
-                                                            <th>Cantidad</th>
-                                                            <th v-if="salida.opciones == 1">Cantidad en Movimiento</th>
-                                                            <th>Cantidad en Inventario</th>
-                                                            <th>Saldo en Inventario</th>
                                                             <th>Unidad</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Destino</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody v-if="salida.opciones == 65537">
+                                                    <tbody>
                                                         <tr v-for="(doc, i) in salida.partidas.data">
                                                             <td>{{i+1}}</td>
-                                                            <td>{{doc.material.descripcion}}</td>
-                                                            <td>{{doc.almacen.descripcion}}</td>
-                                                            <td>{{doc.cantidad}}</td>
-                                                            <td v-if="doc.inventario">{{doc.inventario.cantidad_format}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
-                                                            <td v-if="doc.inventario">{{doc.inventario.saldo}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
-                                                            <td>{{doc.unidad}}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                    <tbody v-else-if="salida.opciones == 1">
-                                                        <tr v-for="(doc, i) in salida.partidas.data">
-                                                            <td>{{i+1}}</td>
+                                                            <td v-if="doc.material">{{doc.material.numero_parte}}</td>
                                                             <td v-if="doc.material">{{doc.material.descripcion}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun material</td>
-                                                            <td>{{doc.cantidad_format}}</td>
-                                                            <td v-if="doc.movimiento">{{doc.movimiento.cantidad_format}}</td>
-                                                            <td v-if="doc.movimiento.inventario">{{doc.movimiento.inventario.cantidad_format}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
-                                                            <td v-if="doc.movimiento.inventario">{{doc.movimiento.inventario.saldo_format}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
                                                             <td>{{doc.unidad}}</td>
+                                                            <td>{{doc.cantidad_format}}</td>
+                                                            <td v-if="salida.opciones == 1">{{doc.concepto.descripcion}}</td>
+                                                            <td v-else>{{doc.almacen.descripcion}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -146,7 +125,7 @@
                 this.$store.commit('compras/salida-almacen/SET_SALIDA', null);
                 return this.$store.dispatch('compras/salida-almacen/find', {
                     id: this.id,
-                    params: {include: ['almacen','partidas.movimiento.inventario','partidas.inventario','partidas.almacen','partidas.material']}
+                    params: {include: ['almacen','partidas.movimiento.inventario','partidas.inventario','partidas.almacen','partidas.material','partidas.concepto']}
                 }).then(data => {
                     this.$store.commit('compras/salida-almacen/SET_SALIDA', data);
                     $(this.$refs.modal).modal('show');
@@ -154,13 +133,18 @@
             },
 
             eliminar() {
+                this.cargando = true;
                 return this.$store.dispatch('compras/salida-almacen/eliminar', {
                     id: this.id,
                     params: {data: [this.$data.motivo]}
                 })
                     .then(data => {
+                        this.$store.commit('compras/salida-almacen/UPDATE_SALIDA', data)
                         $(this.$refs.modal).modal('hide');
                     })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
             },
 
             validate() {

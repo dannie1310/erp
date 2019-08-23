@@ -5,6 +5,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\AlmacenTransformer;
+use App\Http\Transformers\CADECO\ConceptoTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\SalidaAlmacenPartida;
 use League\Fractal\TransformerAbstract;
@@ -19,6 +20,7 @@ class SalidaAlmacenPartidasTransformer extends TransformerAbstract
         'inventario',
         'movimiento',
         'almacen',
+        'concepto',
         'material'
     ];
 
@@ -70,6 +72,16 @@ class SalidaAlmacenPartidasTransformer extends TransformerAbstract
         }
         return null;
     }
+
+    public function includeConcepto(SalidaAlmacenPartida $model)
+    {
+        if($concepto = $model->concepto)
+        {
+            return $this->item($concepto, new ConceptoTransformer);
+        }
+        return null;
+    }
+
 
     public function includeMovimiento(SalidaAlmacenPartida $model)
     {

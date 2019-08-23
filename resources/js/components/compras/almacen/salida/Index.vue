@@ -27,11 +27,9 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'folio', sortable: false },
                     { title: 'Fecha', field: 'fecha', sortable: false },
-                    { title: 'Almacen', field: 'almacen', sortable: false },
                     { title: 'Referencia', field: 'referencia', sortable: false },
-                    { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Operación', field: 'operacion', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: false },
+                    { title: 'Almacen', field: 'almacen', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
