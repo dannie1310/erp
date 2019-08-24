@@ -25,11 +25,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio', sortable: false },
-                    { title: 'Fecha', field: 'fecha', sortable: false },
-                    { title: 'Referencia', field: 'referencia', sortable: false },
-                    { title: 'Operación', field: 'operacion', sortable: false },
-                    { title: 'Almacen', field: 'almacen', sortable: false },
+                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Operación', field: 'opciones', sortable: true},
+                    { title: 'Almacen', field: 'id_almacen', sortable: true, thComp: require('../../../globals/th-Filter')},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
@@ -80,13 +80,13 @@
                     salidas.forEach(function (salida, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: salida.folio_format,
+                            numero_folio: salida.folio_format,
                             fecha: salida.fecha_format,
                             referencia: salida.referencia,
                             observaciones: salida.observaciones,
-                            operacion: salida.operacion,
+                            opciones: salida.operacion,
                             estado: salida.estado_format,
-                            almacen: salida.almacen.descripcion,
+                            id_almacen: salida.almacen.descripcion,
                             buttons: $.extend({}, {
                                 show: true,
                                 borrar: self.$root.can('eliminar_salida_almacen') ? true : false,

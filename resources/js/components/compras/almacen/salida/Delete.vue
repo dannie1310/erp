@@ -117,7 +117,10 @@
         props: ['id'],
         data() {
             return {
-                motivo: ''
+                data: [],
+                motivo: '',
+                query: {include: ['almacen']}
+
             }
         },
         methods: {
@@ -139,8 +142,13 @@
                     params: {data: [this.$data.motivo]}
                 })
                     .then(data => {
-                        this.$store.commit('compras/salida-almacen/UPDATE_SALIDA', data)
+                        this.$store.commit('compras/salida-almacen/DELETE_SALIDA', {id: this.id})
                         $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('compras/salida-almacen/paginate', {params: this.query})
+                            .then(data => {
+                                this.$store.commit('compras/salida-almacen/SET_SALIDAS', data.data);
+                                this.$store.commit('compras/salida-almacen/SET_META', data.meta);
+                            })
                     })
                     .finally( ()=>{
                         this.cargando = false;

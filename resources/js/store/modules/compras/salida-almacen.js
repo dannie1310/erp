@@ -21,19 +21,31 @@ export default {
             state.meta = data
         },
 
-        UPDATE_ATTRIBUTE(state, data) {
-            _.set(state.currentEntrada, data.attribute, data.value);
-        },
+        // UPDATE_ATTRIBUTE(state, data) {
+        //     _.set(state.currentEntrada, data.attribute, data.value);
+        // },
 
         UPDATE_SALIDA(state, data) {
             state.salidas = state.salidas.map(salida => {
                 if (salida.id === data.id) {
-                    return Object.assign({}, salida, data)
+                    return Object.assign([], salida, data)
                 }
                 return salida
             })
-            state.currentSalida = data;
+            if (state.currentSalida) {
+                state.currentSalida = data
+            }
         },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentSalida[data.attribute] = data.value
+        },
+
+        DELETE_SALIDA(state, id) {
+            state.salidas = state.salidas.filter(salida => {
+                return salida.id != id
+            });
+        }
     },
 
     actions: {
