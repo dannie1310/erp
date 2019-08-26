@@ -26,7 +26,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../../globals/th-Date')},
                     { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../../globals/th-Filter')},
                     { title: 'Operación', field: 'opciones', sortable: true},
                     { title: 'Almacen', field: 'id_almacen', sortable: true, thComp: require('../../../globals/th-Filter')},
