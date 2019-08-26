@@ -338,6 +338,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/getConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@getConceptos')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@paginate');
             $api->get('{id}/formato-estimacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfEstimacion')->where(['id' => '[0-9]+']);
+            $api->get('estimaAnterior', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@estimaAnterior');
 
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION

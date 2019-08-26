@@ -14,6 +14,7 @@ use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Item;
 use App\Models\CADECO\Moneda;
 use Illuminate\Support\Facades\DB;
 
@@ -275,6 +276,7 @@ class Estimacion extends Transaccion
         return $sumatoria + $this->SumMontoRetencion;
     }
 
+
     public function getMontoAPagarAttribute()
     {
         return (
@@ -301,5 +303,7 @@ class Estimacion extends Transaccion
     public function item(){
         return $this->hasMany(Item::class, 'id_transaccion');
     }
+
+
 
 }

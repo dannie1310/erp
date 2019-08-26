@@ -155,4 +155,9 @@ class EstimacionService
         $pdf = new EstimacionFormato($id);
         return $pdf;
     }
+
+    public function estimaAnterior($data)
+    {
+        return Item::where('item_antecedente', '=', $data['antecedente'])->where("id_transaccion", '<', $data['id'])->get()->sum('cantidad');
+    }
 }
