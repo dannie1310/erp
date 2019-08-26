@@ -36,6 +36,9 @@ class EntradaAlmacenService
         if(isset($data['numero_folio'])) {
             $salida = $salida->where( [['numero_folio', 'LIKE', '%' . request( 'numero_folio' ) . '%']] );
         }
+        if(isset($data['fecha'])) {
+            $salida = $salida->where( [['fecha', '=', request( 'fecha' )]] );
+        }
         if(isset($data['referencia'])) {
             $salida = $salida->where( [['referencia', 'LIKE', '%' . request( 'referencia' ) . '%']] );
         }
@@ -45,7 +48,7 @@ class EntradaAlmacenService
                 $salida = $salida->whereOr([['id_empresa', '=', $a->id_empresa]]);
             }
         }
-        
+
         return $salida->paginate($data);
     }
 
