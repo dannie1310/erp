@@ -33,6 +33,11 @@ export default{
             })
             state.currentEntrada = data;
         },
+        DELETE_ENTRADA(state, id) {
+            state.entradas = state.entradas.filter(entrada => {
+                return entrada.id != id
+            });
+        }
     },
 
     actions: {

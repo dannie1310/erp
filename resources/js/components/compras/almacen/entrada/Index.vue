@@ -24,12 +24,12 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio', sortable: false },
-                    { title: 'Fecha', field: 'fecha', sortable: false },
-                    { title: 'Empresa', field: 'empresa', sortable: false},
-                    { title: 'Referencia', field: 'referencia'},
-                    { title: 'Observaciones', field: 'observaciones', sortable: false},
-                    { title: 'Estatus', field: 'estado'},
+                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Empresa', field: 'id_empresa',sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Observaciones', field: 'observaciones', sortable: true},
+                    { title: 'Estatus', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
@@ -80,9 +80,9 @@
                     entradas.forEach(function (entrada, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: entrada.numero_folio_format,
+                            numero_folio: entrada.numero_folio_format,
                             fecha: entrada.fecha_registro,
-                            empresa: entrada.empresa.razon_social,
+                            id_empresa: entrada.empresa.razon_social,
                             referencia: entrada.referencia,
                             observaciones: entrada.observaciones,
                             estado: entrada.estado_format,
