@@ -26,22 +26,12 @@ class EntradaMaterial extends Transaccion
         });
 
         self::deleting(function ($entrada) {
-            try {
-                DB::connection('cadeco')->beginTransaction();
                 $items = $entrada->partidas()->get()->toArray();
                 foreach ($items as $item) {
                     $inventario = Inventario::query()->where('id_item', $item['id_item'])->first()->toArray();
                     Inventario::destroy($inventario['id_lote']);
                     Item::destroy($item['id_item']);
                 }
-
-                DB::connection('cadeco')->commit();
-            }catch (\Exception $e) {
-                DB::connection('cadeco')->rollBack();
-                $entrada->eliminar_respaldo();
-                abort(400, $e->getMessage());
-                throw $e;
-            }
         });
     }
 
@@ -61,10 +51,19 @@ class EntradaMaterial extends Transaccion
 
     public function eliminar($motivo)
     {
-        $this->validar();
-        $this->respaldar($motivo);
-        $this->revisar_respaldos();
-        $this->delete();
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validar();
+            $this->respaldar($motivo);
+            $this->revisar_respaldos();
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            //$entrada->eliminar_respaldo();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 
     private function validar()
@@ -93,8 +92,6 @@ class EntradaMaterial extends Transaccion
      */
     private function respaldar($motivo)
     {
-        try {
-            DB::connection('cadeco')->beginTransaction();
             $partidas = $this->partidas()->get()->toArray();
             foreach ($partidas as $partida) {
                 /**
@@ -175,15 +172,6 @@ class EntradaMaterial extends Transaccion
                     'motivo_eliminacion' => $motivo
                 ]
             );
-
-
-            DB::connection('cadeco')->commit();
-
-        }catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
     }
 
 
