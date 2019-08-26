@@ -59,27 +59,23 @@
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
+                                                            <th>No. de Parte</th>
                                                             <th>Material</th>
-                                                            <th>Almacén</th>
-                                                            <th>Cantidad</th>
-                                                            <th>Cantidad en Inventario</th>
-                                                            <th>Saldo en Inventario</th>
                                                             <th>Unidad</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Destino</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="(doc, i) in entrada.partidas.data">
                                                             <td>{{i+1}}</td>
+                                                            <td>{{doc.material.numero_parte}}</td>
                                                             <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun material asignado</td>
+                                                            <td>{{doc.unidad}}</td>
+                                                            <td>{{doc.cantidad}}</td>
                                                             <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
-                                                            <td>{{doc.cantidad}}</td>
-                                                            <td v-if="doc.inventario">{{doc.inventario.cantidad}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
-                                                            <td v-if="doc.inventario">{{doc.inventario.saldo}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
-                                                            <td>{{doc.unidad}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
