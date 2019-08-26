@@ -98,4 +98,12 @@ class EstimacionController extends Controller
         $estimacion = $this->service->revertirAprobacion($id);
         return $this->respondWithItem($estimacion);
     }
+    public function pdfEstimacion($id)
+    {
+        return $this->service->pdfEstimacion($id)->create();
+    }
+    public function estimaAnterior(Request $request)
+    {
+        return $this->service->estimaAnterior($request);
+    }
 }

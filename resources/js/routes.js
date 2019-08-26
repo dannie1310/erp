@@ -450,6 +450,18 @@ export const routes = [
                         }
                     },
                     {
+                        path: ':id',
+                        name: 'estimacion-show',
+                        component: require('./components/contratos/estimacion/Show'),
+                        meta: {
+                            title: 'INFORMACIÓN DE ESTIMACIÓN',
+                            breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
+                            middleware: [auth, context,],
+
+                        }
+                    },
+
+                    {
                         path: 'formato-orden-pago',
                         name: 'formato-orden-pago',
                         component: require('./components/contratos/estimacion/formato-orden-pago/Index'),

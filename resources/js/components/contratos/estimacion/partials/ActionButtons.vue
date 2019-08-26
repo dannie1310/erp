@@ -11,6 +11,8 @@
                 <i v-if="revirtiendo" class="fa fa-spin fa-spinner"></i>
                 <i v-else class="fa fa-thumbs-down"></i>
             </button>
+ <button @click="show"  type="button" class="btn btn-sm btn-outline-secondary" title="Ver Estimación "><i class="fa fa-eye"></i></button>
+                <PDF v-bind:id="value.id" @click="value.id" ></PDF>
         </div>
 
         <!-- Modal -->
@@ -83,8 +85,12 @@
 </template>
 
 <script>
+    import PDF from '../FormatoEstimacion';
+    import EstimacionShow from '../Show';
+
     export default {
         name: "action-buttons",
+        components: {EstimacionShow, PDF},
         props: ['value'],
         data() {
             return {
@@ -130,6 +136,9 @@
                         this.guardando = false;
                         $(this.$refs.resumen).modal('hide');
                     })
+            },
+            show(){
+                this.$router.push({ name:'estimacion-show', params: {id: this.value.id} });
             }
         }
     }
