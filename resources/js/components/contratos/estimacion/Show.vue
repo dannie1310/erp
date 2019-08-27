@@ -131,8 +131,26 @@
                                 <td class="text-center">{{ estimacion.moneda.nombre }}</td>
                             </tr>
 
-                            <!--Items de la Estimación -->
-                   <tr v-for="data in items">
+                            <!--Niveeles de Items de la Estimación -->
+
+                            <template v-for="data in items">
+                               <tr v-for="(nivel,index) in data.nivel" >
+                                <td>{{ nivel }}</td>
+                                <td class="text-center"></td>
+                                <td class="text-right"> </td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                            </tr>
+
+                   <tr>
 
                                 <th v-if="data">{{ data.concepto }}</th>
                                 <td class="text-center">{{ data.unidad }}</td>
@@ -148,7 +166,7 @@
                                 <td class="text-right">{{ data.cantidad_estimar}} </td>
                                 <td class="text-right">{{ data.importe_estimar }}</td>
                             </tr>
-
+</template>
                     <!--Sumas totales de la s partidas-->
 
                               <tr class="bg-dark">
@@ -231,9 +249,10 @@
                 return this.$store.dispatch('contratos/estimacion/find', {
                     id: this.id,
                     params: {
-                        include: ['empresa', 'subcontratoEstimacion', 'moneda', 'item', 'item.concepto', 'item.contrato', 'subcontrato',]
+                        include: ['empresa', 'subcontratoEstimacion', 'moneda', 'item', 'item.concepto.hijos', 'item.contrato', 'subcontrato',]
                     }
                 }).then(data => {
+
                     this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
 
                 }).finally(() => {
@@ -255,7 +274,7 @@
             remakeItems() {
 
                 this.estimacion.item.data.forEach((item) => {
-                    console.log(item);
+                 
 
                     this.getAcumulada(item.item_antecedente).then((estimaAnterior) => {
 
@@ -264,6 +283,11 @@
                         this.suma_estimacion += parseFloat(item.cantidad * item.precio_unitario);
                         this.suma_acumulada += (parseFloat(estimaAnterior) + parseFloat(item.cantidad) * item.precio_unitario);
                         this.suma_porEstimar += parseFloat(((item.contrato.cantidad_original) - (parseFloat(estimaAnterior) + parseFloat(item.cantidad))) * item.precio_unitario)
+                        var arreglo = item.concepto.path.split('->');
+                         arreglo.pop();
+
+
+
                         this.items.push({
                             'concepto': item.concepto.descripcion,
                             'unidad': item.contrato.unidad,
@@ -278,8 +302,10 @@
                             'acumuladaImporte': (parseFloat(estimaAnterior) + parseFloat(item.cantidad) * item.precio_unitario).formatMoney(3, '.', ','),
                             'cantidad_estimar': parseFloat((item.contrato.cantidad_original) - (parseFloat(estimaAnterior) + parseFloat(item.cantidad))).formatMoney(3, '.', ','),
                             'importe_estimar': parseFloat(((item.contrato.cantidad_original) - (parseFloat(estimaAnterior) + parseFloat(item.cantidad))) * item.precio_unitario).formatMoney(3, '.', ','),
+                            'nivel': arreglo
                         });
                         this.totales();
+
                     });
                     ;
 
