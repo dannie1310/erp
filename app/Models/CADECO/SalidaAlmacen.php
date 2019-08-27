@@ -22,58 +22,15 @@ class SalidaAlmacen extends Transaccion
         });
 
         self::deleting(function ($salida) {
-            try {
-                DB::connection('cadeco')->beginTransaction();
-                $items = $salida->partidas()->get()->toArray();
-                foreach ($items as $item) {
-                    if($salida->opciones == 65537 ) {
-                        $inventario = Inventario::query()->where( 'id_item', $item['id_item'] )->get()->toArray();
-                        foreach ($inventario as $inv) {
-                            try {
-                                DB::connection( 'cadeco' )->beginTransaction();
-                                Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->update( ['saldo' => $inv['cantidad']] );
-                                DB::connection('cadeco')->commit();
-                            }catch (\Exception $e) {
-                                DB::connection('cadeco')->rollBack();
-                                $salida->eliminar_respaldos();
-                                abort(400, $e->getMessage());
-                                throw $e;
-                            }
-                        }
-                        Inventario::destroy( $inventario[0]['id_lote'] );
-                    }
-                    if ($salida->opciones == 1){
-                        $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
-                        foreach ($movimiento as $mov){
-                            try {
-                                DB::connection( 'cadeco' )->beginTransaction();
-                                $inventarios = Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->get()->toArray();
-                                foreach ($inventarios as $inv) {
-                                    Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->update( ['saldo' => $mov['cantidad']] );
-                                }
-                            DB::connection('cadeco')->commit();
-                            }catch (\Exception $e) {
-                                DB::connection('cadeco')->rollBack();
-                                $salida->eliminar_respaldos();
-                                abort(400, $e->getMessage());
-                                throw $e;
-                            }
-                            Movimiento::destroy($mov['id_movimiento']);
-                        }
-                    }
-                    Item::destroy($item['id_item']);
-                }
-
-                DB::connection('cadeco')->commit();
-            }catch (\Exception $e) {
-                DB::connection('cadeco')->rollBack();
-                $salida->eliminar_respaldos();
-                abort(400, $e->getMessage());
-                throw $e;
+            if($salida->opciones == 65537 ) {
+                $salida->eliminar_transferencia();
             }
+            if ($salida->opciones == 1){
+                $salida->eliminar_salida();
+                }
         });
     }
-
+    
     public function almacen()
     {
         return $this->belongsTo(Almacen::class,'id_almacen','id_almacen');
@@ -105,12 +62,49 @@ class SalidaAlmacen extends Transaccion
         }
     }
 
+    private function eliminar_salida(){
+        $items = $this->partidas()->get()->toArray();
+        foreach ($items as $item) {
+            $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
+            foreach ($movimiento as $mov){
+                $inventarios = Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->get()->toArray();
+                foreach ($inventarios as $inv) {
+                    $saldo = $inv['saldo'] + $mov['cantidad'];
+                    Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->update( ['saldo' => $saldo] );
+                }
+                Movimiento::destroy($mov['id_movimiento']);
+            }
+            Item::destroy($item['id_item']);
+        }
+    }
+    private function eliminar_transferencia(){
+        $items = $this->partidas()->get()->toArray();
+        foreach ($items as $item) {
+            $inventario = Inventario::query()->where( 'id_item', $item['id_item'] )->get()->toArray();
+            foreach ($inventario as $inv) {
+                $saldo = $inv['saldo'] + $inventario[0]['cantidad'];
+                Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->update( ['saldo' => $inv['cantidad']] );
+            }
+            Inventario::destroy( $inventario[0]['id_lotde'] );
+            Item::destroy($item['id_item']);
+        }
+
+    }
+
     public function eliminar($motivo)
     {
-        $this->validar();
-        $this->respaldar($motivo);
-        $this->revisar_respaldos();
-        $this->delete();
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validar();
+            $this->respaldar($motivo);
+            $this->revisar_respaldos();
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 
     private function validar()
@@ -166,8 +160,7 @@ class SalidaAlmacen extends Transaccion
      */
     private function respaldar($motivo)
     {
-        try {
-            DB::connection('cadeco')->beginTransaction();
+
             $partidas = $this->partidas()->get()->toArray();
             foreach ($partidas as $partida) {
 
@@ -267,14 +260,6 @@ class SalidaAlmacen extends Transaccion
                 ]
             );
 
-
-            DB::connection('cadeco')->commit();
-
-        }catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
     }
 
     private function revisar_respaldos()
