@@ -40,7 +40,7 @@ class SolicitudBaja extends Solicitud
     {
         if(CuentaBancariaEmpresa::query()->where('id_empresa', '=', $this->id_empresa)->where('cuenta_clabe', '=', $this->cuenta_clabe)->where('estatus','>=',0)->get()->toArray() == [])
         {
-            abort(400, 'No existe está baja bancaria empresa.');
+            abort(400, 'No existe está cuenta bancaria empresa.');
         }
 
         if(SolicitudBaja::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray() != [])
@@ -98,6 +98,40 @@ class SolicitudBaja extends Solicitud
             $this->update([
                 'estado' => 2
             ]);
+        });
+        return $this;
+    }
+
+    public function cancelar($observaciones){
+        DB::connection('cadeco')->transaction(function() use($observaciones){
+            $movimiento = SolicitudMovimiento::query()->where( 'id_solicitud', '=', $this->id )->first();
+            $id = $movimiento->id;
+            $movs = SolicitudMovimiento::query()->create( [
+                'id_solicitud' => $this->id,
+                'id_movimiento_antecedente' => $id,
+                'id_tipo_movimiento' => 3,
+                'observaciones' => $observaciones
+            ] );
+            $this->update( [
+                'estado' => -1
+            ] );
+        });
+        return $this;
+    }
+
+    public function rechazar($observaciones){
+        DB::connection('cadeco')->transaction(function() use($observaciones){
+            $movimiento = SolicitudMovimiento::query()->where( 'id_solicitud', '=', $this->id )->first();
+            $id = $movimiento->id;
+            $movs = SolicitudMovimiento::query()->create( [
+                'id_solicitud' => $this->id,
+                'id_movimiento_antecedente' => $id,
+                'id_tipo_movimiento' => 4,
+                'observaciones' => $observaciones
+            ] );
+            $this->update( [
+                'estado' => -2
+            ] );
         });
         return $this;
     }
