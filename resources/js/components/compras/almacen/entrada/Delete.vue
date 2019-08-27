@@ -118,7 +118,7 @@
 <script>
     export default {
         name: "entrada-almacen-delete",
-        props: ['id'],
+        props: ['id' , 'pagina'],
         data() {
             return {
                 motivo: '',
@@ -150,7 +150,7 @@
                         $(this.$refs.modal).modal('hide');
                         this.$store.dispatch('compras/entrada-almacen/paginate', {
                             params: {
-                                include: 'empresa', sort: 'numero_folio', order: 'desc'
+                                include: 'empresa', sort: 'numero_folio', order: 'asc', limit:10, offset:this.pagina
                             }
                         })
                             .then(data => {

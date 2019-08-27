@@ -34,7 +34,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: { include: 'empresa', sort: 'numero_folio', order: 'desc'},
+                query: { include: 'empresa', sort: 'numero_folio', order: 'asc'},
                 estado: "",
                 cargando: false
             }
@@ -89,6 +89,7 @@
                             buttons: $.extend({}, {
                                 id: entrada.id,
                                 estado: entrada.estado,
+                                pagina: self.query.offset,
                                 delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
                             })
                         })
