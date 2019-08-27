@@ -29,4 +29,14 @@ class EntradaMaterialPartida extends Item
     {
         return $this->belongsTo(Inventario::class, 'id_item', 'id_item');
     }
+
+    public function concepto()
+    {
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function movimiento()
+    {
+        return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
+    }
 }

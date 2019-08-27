@@ -12,6 +12,7 @@ namespace App\Models\CADECO;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\InventarioEliminado;
 use App\Models\CADECO\Compras\ItemEntradaEliminada;
+use App\Models\CADECO\Compras\MovimientoEliminado;
 use Illuminate\Support\Facades\DB;
 
 class EntradaMaterial extends Transaccion
@@ -29,6 +30,8 @@ class EntradaMaterial extends Transaccion
                 $items = $entrada->partidas()->get()->toArray();
                 foreach ($items as $item) {
                     $inventario = Inventario::query()->where('id_item', $item['id_item'])->first()->toArray();
+                    $entregas = Entrega::query()->where('id_item', $item['item_antecedente'])->first();
+                    $entregas = $entregas->update( ['surtida' => $entregas['surtida']-$inventario['saldo']]);
                     Inventario::destroy($inventario['id_lote']);
                     Item::destroy($item['id_item']);
                 }
@@ -60,7 +63,7 @@ class EntradaMaterial extends Transaccion
             DB::connection('cadeco')->commit();
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
-            //$entrada->eliminar_respaldo();
+            $this->eliminar_respaldo();
             abort(400, $e->getMessage());
             throw $e;
         }
@@ -71,18 +74,27 @@ class EntradaMaterial extends Transaccion
         $items = $this->partidas()->get()->toArray();
         foreach ($items as $item){
             $inventario = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
-            if($inventario == []){
-                abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
-            }
-            if(count($inventario) > 1){
-                abort(400, 'Existen varios inventarios, por lo tanto, no puede ser eliminada.');
-            }
-            if($inventario[0]['cantidad'] != $inventario[0]['saldo']){
-                abort(400, 'Existen movimientos en el inventario, por lo tanto, no puede ser eliminada.');
-            }
+            $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
+
             $factura = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->get()->toArray();
             if($factura != []){
                 abort(400, 'Existen una factura asociada a esta entrada de almacén.');
+            }
+
+            if($inventario == [] && $movimiento == []){
+                abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
+            }
+
+            if(count($inventario) > 1){
+                abort(400, 'Existen varios inventarios, por lo tanto, no puede ser eliminada.');
+            }
+
+            if(count($movimiento) > 1){
+                abort(400, 'Existen varios movimientos, por lo tanto, no puede ser eliminada.');
+            }
+
+            if($inventario != [] && $inventario[0]['cantidad'] != $inventario[0]['saldo']){
+                abort(400, 'Existen movimientos en el inventario, por lo tanto, no puede ser eliminada.');
             }
         }
     }
@@ -94,27 +106,53 @@ class EntradaMaterial extends Transaccion
     {
             $partidas = $this->partidas()->get()->toArray();
             foreach ($partidas as $partida) {
+
                 /**
-                 * Respaldar el Inventario
+                 * Respaldar el Inventario (existe cuando se envia la entrada un almacén)
                  */
                 $inventario = Inventario::query()->where('id_item', $partida['id_item'])->first()->toArray();
 
-                $respaldo_inventario = InventarioEliminado::query()->create(
-                    [
-                        'id_lote' => $inventario['id_lote'],
-                        'lote_antecedente' => $inventario['lote_antecedente'],
-                        'id_almacen' => $inventario['id_almacen'],
-                        'id_material' => $inventario['id_material'],
-                        'id_item' => $inventario['id_item'],
-                        'saldo' => $inventario['saldo'],
-                        'monto_total' => $inventario['monto_total'],
-                        'monto_pagado' => $inventario['monto_pagado'],
-                        'monto_aplicado' => $inventario['monto_aplicado'],
-                        'fecha_desde' => $inventario['fecha_desde'],
-                        'referencia' => $inventario['referencia'],
-                        'monto_original' => $inventario['monto_original']
-                    ]
-                );
+                if($inventario != [])
+                {
+                    $respaldo_inventario = InventarioEliminado::query()->create(
+                        [
+                            'id_lote' => $inventario['id_lote'],
+                            'lote_antecedente' => $inventario['lote_antecedente'],
+                            'id_almacen' => $inventario['id_almacen'],
+                            'id_material' => $inventario['id_material'],
+                            'id_item' => $inventario['id_item'],
+                            'saldo' => $inventario['saldo'],
+                            'monto_total' => $inventario['monto_total'],
+                            'monto_pagado' => $inventario['monto_pagado'],
+                            'monto_aplicado' => $inventario['monto_aplicado'],
+                            'fecha_desde' => $inventario['fecha_desde'],
+                            'referencia' => $inventario['referencia'],
+                            'monto_original' => $inventario['monto_original']
+                        ]
+                    );
+                }
+
+                /**
+                 * Respaldar el Movimiento (existe cuando se envia la entrada un concepto)
+                 */
+                $movimiento = Movimiento::query()->where('id_item', $partida['id_item'])->first()->toArray();
+
+                if($movimiento != [])
+                {
+                    $respaldo_movimiento = MovimientoEliminado::query()->create(
+                        [
+                            'id_movimiento' => $movimiento['id_movimiento'],
+                            'id_concepto' => $movimiento['id_concepto'],
+                            'id_item' => $movimiento['id_item'],
+                            'id_material' => $movimiento['id_material'],
+                            'cantidad' => $movimiento['cantidad'],
+                            'monto_total' => $movimiento['monto_total'],
+                            'monto_pagado' => $movimiento['monto_pagado'],
+                            'monto_original' => $movimiento['monto_original'],
+                            'creado' => $movimiento['creado']
+                        ]
+                    );
+                }
 
                 /**
                  * Respaldar el Item
@@ -181,21 +219,30 @@ class EntradaMaterial extends Transaccion
         foreach ($partidas as $partida) {
 
             $inventario = InventarioEliminado::query()->where('id_item', $partida['id_item'])->first();
-            if ($inventario == null) {
-                $this->eliminar_respaldo();
+            if ($inventario == null)
+            {
+//                $this->eliminar_respaldo();
                 abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
             }
 
-            $item = ItemEntradaEliminada::query()->where('id_item', $partida['id_item'])->first();
-            if ($item == null) {
-                $this->eliminar_respaldo();
+            $movimiento = MovimientoEliminado::query()->where('id_item', $partida['id_item'])->first();
+            if($movimiento == null)
+            {
+//                $this->eliminar_respaldo();
+                abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
+            }
+
+            $item = ItemEntradaEliminada::query()->where('id_ietem', $partida['id_item'])->first();
+            if ($item == null)
+            {
+//                $this->eliminar_respaldo();
                 abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
             }
         }
 
         $entrada = EntradaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
         if ($entrada == null) {
-            $this->eliminar_respaldo();
+//            $this->eliminar_respaldo();
             abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
         }
     }

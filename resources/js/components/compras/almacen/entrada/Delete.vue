@@ -75,6 +75,7 @@
                                                             <td>{{doc.unidad}}</td>
                                                             <td>{{doc.cantidad}}</td>
                                                             <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
+                                                            <td v-else-if="doc.concepto">{{doc.concepto.descripcion}}</td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
                                                         </tr>
                                                     </tbody>
@@ -131,7 +132,7 @@
                 this.$store.commit('compras/entrada-almacen/SET_ENTRADA', null);
                 return this.$store.dispatch('compras/entrada-almacen/find', {
                     id: this.id,
-                    params: { include: ['empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario'] }
+                    params: { include: ['empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario', 'partidas.concepto', 'partidas.movimiento'] }
                 }).then(data => {
                     this.$store.commit('compras/entrada-almacen/SET_ENTRADA', data);
                     this.partidas = this.entrada.partidas.data;

@@ -12,5 +12,9 @@ class Entrega extends Model
     protected $table = 'dbo.entregas';
     protected $primaryKey = 'id_item';
 
+    protected $fillable = [
+        'surtida'
+    ];
+
     public $timestamps = false;
 }
