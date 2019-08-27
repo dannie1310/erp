@@ -26,7 +26,9 @@ class ContratoTransformer extends TransformerAbstract
     public function transform(Contrato $model)
     {
         return [
-              'id_concepto' => $model->concepto,
+              'id_transaccion'=>$model->id_transaccion,
+              'id_concepto' => $model->id_concepto,
+              'descripcion'=>$model->descripcion,
               'unidad' => $model->unidad,
               'cantidad_original' => $model->cantidad_original,
         ];
