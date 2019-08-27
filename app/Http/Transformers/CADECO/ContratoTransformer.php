@@ -28,6 +28,7 @@ class ContratoTransformer extends TransformerAbstract
         return [
               'id_transaccion'=>$model->id_transaccion,
               'id_concepto' => $model->id_concepto,
+              'nivel' => $model->nivel,
               'descripcion'=>$model->descripcion,
               'unidad' => $model->unidad,
               'cantidad_original' => $model->cantidad_original,
