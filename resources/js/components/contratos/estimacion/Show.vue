@@ -83,11 +83,13 @@
                     </table>
 
                     <!-- Partidas--->
-                                <div class="col-12 mt-5">
+
+                                <div class="col-12 mt-5" >
 
             <table class="table table-hover table-bordered">
 
                         <thead class="thead-dark text-center">
+
                             <tr>
                                 <th rowspan="2">Concepto</th>
                                 <th rowspan="2">U.M.</th>
@@ -135,7 +137,7 @@
 
                             <template v-for="data in items">
                                <tr v-for="(nivel,index) in data.nivel" >
-                                <td>{{ nivel }}</td>
+                                <td>{{ nivel.descripcion }}</td>
                                 <td class="text-center"></td>
                                 <td class="text-right"> </td>
                                 <td class="text-right"></td>
@@ -210,10 +212,10 @@
         // props: ['id'],
         data() {
             return {
-                cargando: false,
                 logo: '',
                 obra: [],
                 items: [],
+                conceptoAnterior:0,
                 estimaciones: [],
                 estimaAnterior: 0,
                 suma_contrato: 0,
@@ -227,9 +229,11 @@
                 suma_porEstimar: 0,
                 sumaPorEstimar: '',
                 id: '',
+
             }
         },
         mounted() {
+
             this.obra = this.$session.get('obra');
             this.id = this.$route.params.id;
             this.form = JSON.parse(JSON.stringify(this.obra));
@@ -239,11 +243,10 @@
                 }
             }, 100);
             this.find();
+
         },
         methods: {
             find() {
-
-                this.cargando = true;
 
                 this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
                 return this.$store.dispatch('contratos/estimacion/find', {
@@ -257,6 +260,7 @@
 
                 }).finally(() => {
                     this.remakeItems();
+
                 });
             },
             getAcumulada(item) {
@@ -271,10 +275,22 @@
                     })
 
             },
+            getNiveles(item,anterior){
+                return this.$store.dispatch('contratos/contrato-proyectado/niveles', {
+                    params: {
+                        id_transaccion: item.contrato.id_transaccion,
+                        id_concepto: item.contrato.id_concepto,
+                        conceptoAnterior: anterior,
+                    }
+                })
+                    .then(data => {
+                        return data;
+                    })
+            },
             remakeItems() {
 
                 this.estimacion.item.data.forEach((item) => {
-                 
+
 
                     this.getAcumulada(item.item_antecedente).then((estimaAnterior) => {
 
@@ -287,9 +303,10 @@
                          arreglo.pop();
 
 
+                    this.getNiveles(item, this.conceptoAnterior).then((niveles)=>{
 
                         this.items.push({
-                            'concepto': item.concepto.descripcion,
+                            'concepto': item.contrato.descripcion,
                             'unidad': item.contrato.unidad,
                             'precio_unitario': parseFloat(item.precio_unitario).formatMoney(3, '.', ','),
                             'cantidad_original': parseFloat(item.contrato.cantidad_original).formatMoney(3, '.', ','),
@@ -302,14 +319,17 @@
                             'acumuladaImporte': (parseFloat(estimaAnterior) + parseFloat(item.cantidad) * item.precio_unitario).formatMoney(3, '.', ','),
                             'cantidad_estimar': parseFloat((item.contrato.cantidad_original) - (parseFloat(estimaAnterior) + parseFloat(item.cantidad))).formatMoney(3, '.', ','),
                             'importe_estimar': parseFloat(((item.contrato.cantidad_original) - (parseFloat(estimaAnterior) + parseFloat(item.cantidad))) * item.precio_unitario).formatMoney(3, '.', ','),
-                            'nivel': arreglo
+                            'nivel': niveles
                         });
-                        this.totales();
 
                     });
-                    ;
+                        this.totales();
+                        this.conceptoAnterior=item.contrato.id_concepto;
+                    });
+
 
                 });
+
             },
             totales() {
                 this.contratoSuma = this.suma_contrato.formatMoney(3, '.', ',');
