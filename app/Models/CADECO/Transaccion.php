@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\SEGURIDAD_ERP\CtgContratista;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
@@ -32,6 +33,13 @@ class Transaccion extends Model
         parent::boot();
 
         self::addGlobalScope(function ($query) {
+            if(auth()->user()->id_contratista){
+                if($contratista = CtgContratista::query()->find(auth()->user()->id_contratista)){
+                    $query->where('id_empresa', '=', $contratista->empresa->id_empresa);
+                }else{
+                    abort(403, 'Contratista no registrado.');
+                }
+            }
             return $query->where('id_obra', '=', Context::getIdObra());
         });
 
