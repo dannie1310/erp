@@ -150,7 +150,7 @@
                         $(this.$refs.modal).modal('hide');
                         this.$store.dispatch('compras/entrada-almacen/paginate', {
                             params: {
-                                include: 'empresa', sort: 'numero_folio', order: 'asc', limit:10, offset:this.pagina
+                                include: 'empresa', sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
                             }
                         })
                             .then(data => {

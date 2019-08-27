@@ -34,7 +34,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: { include: 'empresa', sort: 'numero_folio', order: 'asc'},
+                query: { include: 'empresa', sort: 'numero_folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }
