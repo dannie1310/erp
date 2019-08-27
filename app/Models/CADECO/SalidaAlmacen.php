@@ -30,7 +30,7 @@ class SalidaAlmacen extends Transaccion
                 }
         });
     }
-    
+
     public function almacen()
     {
         return $this->belongsTo(Almacen::class,'id_almacen','id_almacen');
