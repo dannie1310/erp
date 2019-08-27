@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-danger" title="Rechazar">
+        <button @click="find" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
             <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header" v-if="salida">
-                        <h5 class="modal-title" id="exampleModalLongTitle" v-if="salida.opciones == 1"> <i class="fa fa-trash"></i> ELIMINA SALIDA DE  ALMACÉN</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle" v-if="salida.opciones == 1"> <i class="fa fa-trash"></i> ELIMINAR SALIDA DE  ALMACÉN</h5>
                         <h5 class="modal-title" id="exampleModalLongTitle" v-else> <i class="fa fa-trash"></i> ELIMINAR TRANSFERENCIA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -51,32 +51,35 @@
                                         </div>
                                      </div>
                                     <div class="row">
-                                            <div class="table-responsive col-md-12">
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>No. de Parte</th>
-                                                            <th>Material</th>
-                                                            <th>Unidad</th>
-                                                            <th>Cantidad</th>
-                                                            <th>Destino</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr v-for="(doc, i) in salida.partidas.data">
-                                                            <td>{{i+1}}</td>
-                                                            <td v-if="doc.material">{{doc.material.numero_parte}}</td>
-                                                            <td v-if="doc.material">{{doc.material.descripcion}}</td>
-                                                            <td>{{doc.unidad}}</td>
-                                                            <td>{{doc.cantidad_format}}</td>
-                                                            <td v-if="salida.opciones == 1">{{doc.concepto.descripcion}}</td>
-                                                            <td v-else>{{doc.almacen.descripcion}}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                        <div class="table-responsive col-md-12">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>No. de Parte</th>
+                                                        <th>Material</th>
+                                                        <th>Unidad</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Destino</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(doc, i) in salida.partidas.data">
+                                                        <td>{{i+1}}</td>
+                                                        <td v-if="doc.material">{{doc.material.numero_parte}}</td>
+                                                        <td v-if="doc.material">{{doc.material.descripcion}}</td>
+                                                        <td>{{doc.unidad}}</td>
+                                                        <td>{{doc.cantidad_format}}</td>
+                                                        <td v-if="salida.opciones == 1">{{doc.concepto.descripcion}}</td>
+                                                        <td v-else>{{doc.almacen.descripcion}}</td>
+                                                    </tr>
+                                                    <tr v-if="salida.observaciones" class="invoice p-3 mb-3">
+                                                        <td colspan="6"><b>Observaciones: </b>{{salida.observaciones}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
@@ -119,7 +122,7 @@
             return {
                 data: [],
                 motivo: '',
-                query: {include: ['almacen']}
+                query: {include: ['almacen'], sort: 'numero_folio', order: 'desc'}
 
             }
         },
