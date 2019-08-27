@@ -66,7 +66,7 @@ class SalidaAlmacen extends Transaccion
     private function eliminar_salida(){
         $items = $this->partidas()->get()->toArray();
         foreach ($items as $item) {
-            $contratista  = ItemContratista::query()->delete($item['id_item']);
+            $contratista  = ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
 
             $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
             foreach ($movimiento as $mov){
