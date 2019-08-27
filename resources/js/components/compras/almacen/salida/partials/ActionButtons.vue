@@ -1,6 +1,6 @@
 <template>
     <div class="btn-group">
-        <EliminarSalida v-bind:id="value.id"/>
+        <EliminarSalida v-bind:id="value.id" v-bind:pagina="value.pagina"/>
     </div>
 </template>
 

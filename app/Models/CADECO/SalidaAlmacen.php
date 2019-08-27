@@ -114,7 +114,7 @@ class SalidaAlmacen extends Transaccion
     {
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->get()->toArray();
         if ($poliza != []){
-            abort(400, 'Existen una póliza asociada a esta salida de almacén.');
+            abort(400, 'No se puede eliminar la salida de almacén debido a que esta asociada con la prepóliza #'.$poliza[0]['id_int_poliza']);
         }
         $items = $this->partidas()->get()->toArray();
 
@@ -122,13 +122,22 @@ class SalidaAlmacen extends Transaccion
             if ($this->opciones == 65537){
 
                 $inventarios = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
+
                 if($inventarios == []){
                     abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
                 }
                 foreach ($inventarios as $inventario){
                     $movimientos = Movimiento::query()->where('lote_antecedente','=', $inventario['id_lote'])->get()->toArray();
                     if($movimientos != []){
-                        abort(400, 'No se puede eliminar transferencia, existe en una salida de almacén');
+
+                        foreach ($movimientos as $mov){
+                            $partida =Item::query()->where('id_item','=',$mov['id_item'])->first();
+                            $transa = Transaccion::query()->where('id_transaccion','=',$partida['id_transaccion'])->first();
+                            if($mov != []){
+                                abort(400, 'No se puede eliminar la transferencia, existen transacciones con dependencias de sus inventarios: Folio #'.$transa['numero_folio']);
+                                }
+                        }
+
                     }
                     if($inventario['cantidad'] != $inventario['saldo']){
                         abort(400, 'Error en el proceso de eliminación de salida de almacén.');

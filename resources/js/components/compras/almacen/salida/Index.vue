@@ -89,6 +89,7 @@
                             id_almacen: salida.almacen.descripcion,
                             buttons: $.extend({}, {
                                 show: true,
+                                pagina: self.query.offset,
                                 borrar: self.$root.can('eliminar_salida_almacen') ? true : false,
                                 id: salida.id
 
