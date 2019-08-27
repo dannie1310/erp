@@ -6,6 +6,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Compras\InventarioEliminado;
 use App\Models\CADECO\Compras\ItemSalidaEliminada;
+use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Compras\MovimientoEliminado;
 use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Contabilidad\Poliza;
@@ -65,6 +66,8 @@ class SalidaAlmacen extends Transaccion
     private function eliminar_salida(){
         $items = $this->partidas()->get()->toArray();
         foreach ($items as $item) {
+            $contratista  = ItemContratista::query()->delete($item['id_item']);
+
             $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
             foreach ($movimiento as $mov){
                 $inventarios = Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->get()->toArray();
@@ -85,7 +88,7 @@ class SalidaAlmacen extends Transaccion
                 $saldo = $inv['saldo'] + $inventario[0]['cantidad'];
                 Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->update( ['saldo' => $inv['cantidad']] );
             }
-            Inventario::destroy( $inventario[0]['id_lotde'] );
+            Inventario::destroy( $inventario[0]['id_lote'] );
             Item::destroy($item['id_item']);
         }
 
@@ -123,7 +126,7 @@ class SalidaAlmacen extends Transaccion
                     abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
                 }
                 foreach ($inventarios as $inventario){
-                    $movimientos = Movimiento::query()->where('lote_antecedente','=', 69185)->get()->toArray();
+                    $movimientos = Movimiento::query()->where('lote_antecedente','=', $inventario['id_lote'])->get()->toArray();
                     if($movimientos != []){
                         abort(400, 'No se puede eliminar transferencia, existe en una salida de almacén');
                     }
