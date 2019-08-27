@@ -33,4 +33,16 @@ class Inventario extends Model
     {
         return $this->hasMany(Item::class, 'id_item', 'id_item');
     }
+
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad,3,'.', '');
+
+    }
+
+    public function getSaldoFormatAttribute()
+    {
+        return number_format($this->saldo,3,'.', '');
+
+    }
 }

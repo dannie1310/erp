@@ -59,27 +59,24 @@
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
+                                                            <th>No. de Parte</th>
                                                             <th>Material</th>
-                                                            <th>Almacén</th>
-                                                            <th>Cantidad</th>
-                                                            <th>Cantidad en Inventario</th>
-                                                            <th>Saldo en Inventario</th>
                                                             <th>Unidad</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Destino</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="(doc, i) in entrada.partidas.data">
                                                             <td>{{i+1}}</td>
+                                                            <td>{{doc.material.numero_parte}}</td>
                                                             <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun material asignado</td>
-                                                            <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
-                                                            <td>{{doc.cantidad}}</td>
-                                                            <td v-if="doc.inventario">{{doc.inventario.cantidad}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
-                                                            <td v-if="doc.inventario">{{doc.inventario.saldo}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
                                                             <td>{{doc.unidad}}</td>
+                                                            <td>{{doc.cantidad}}</td>
+                                                            <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
+                                                            <td v-else-if="doc.concepto">{{doc.concepto.descripcion}}</td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -121,7 +118,7 @@
 <script>
     export default {
         name: "entrada-almacen-delete",
-        props: ['id'],
+        props: ['id' , 'pagina'],
         data() {
             return {
                 motivo: '',
@@ -135,7 +132,7 @@
                 this.$store.commit('compras/entrada-almacen/SET_ENTRADA', null);
                 return this.$store.dispatch('compras/entrada-almacen/find', {
                     id: this.id,
-                    params: { include: ['empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario'] }
+                    params: { include: ['empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario', 'partidas.concepto', 'partidas.movimiento'] }
                 }).then(data => {
                     this.$store.commit('compras/entrada-almacen/SET_ENTRADA', data);
                     this.partidas = this.entrada.partidas.data;
@@ -143,13 +140,27 @@
                 })
             },
             eliminar() {
+                this.cargando = true;
                 return this.$store.dispatch('compras/entrada-almacen/eliminar', {
                     id: this.id,
                     params: {data: [this.$data.motivo]}
                 })
                     .then(data => {
+                        this.$store.commit('compras/entrada-almacen/DELETE_ENTRADA', {id: this.id})
                         $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('compras/entrada-almacen/paginate', {
+                            params: {
+                                include: 'empresa', sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('compras/entrada-almacen/SET_ENTRADAS', data.data);
+                                this.$store.commit('compras/entrada-almacen/SET_META', data.meta);
+                            })
                     })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
             },
             validate() {
                 this.$validator.validate().then(result => {

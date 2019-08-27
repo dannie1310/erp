@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\AlmacenTransformer;
+use App\Http\Transformers\CADECO\ConceptoTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\EntradaMaterialPartida;
 use League\Fractal\TransformerAbstract;
@@ -23,8 +24,10 @@ class EntradaAlmacenPartidaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'almacen',
+        'concepto',
         'material',
-        'inventario'
+        'inventario',
+        'movimiento'
     ];
 
     /**
@@ -85,6 +88,34 @@ class EntradaAlmacenPartidaTransformer extends TransformerAbstract
         if($inventario = $model->inventario)
         {
             return $this->item($inventario, new InventarioTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Concepto
+     * @param EntradaMaterialPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeConcepto(EntradaMaterialPartida $model)
+    {
+        if($concepto = $model->concepto)
+        {
+            return $this->item($concepto, new ConceptoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Movimiento
+     * @param EntradaMaterialPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMovimiento(EntradaMaterialPartida $model)
+    {
+        if($mov = $model->movimiento)
+        {
+            return $this->item($mov, new MovimientoTransformer);
         }
         return null;
     }

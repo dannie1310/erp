@@ -12,7 +12,8 @@ use PhpParser\Node\Scalar\String_;
 class SalidaAlmacenTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'almacen'
+        'almacen',
+        'partidas'
     ];
 
     public function transform(SalidaAlmacen $model) {
@@ -23,7 +24,10 @@ class SalidaAlmacenTransformer extends TransformerAbstract
             'referencia' => (string) $model->referencia,
             'observaciones' => (string) $model->observaciones,
             'estado' => $model->estado,
+            'estado_format' => $model->estado_format,
             'folio' => $model->numero_folio,
+            'operacion' => $model->operacion,
+            'opciones' => $model->opciones,
             'folio_format' => $model->numero_folio_format_orden
         ];
     }
@@ -33,6 +37,15 @@ class SalidaAlmacenTransformer extends TransformerAbstract
         if($almacen = $model->almacen)
         {
             return $this->item($almacen, new AlmacenTransformer);
+        }
+        return null;
+    }
+
+    public function includePartidas(SalidaAlmacen $model)
+    {
+        if($partida = $model->partidas)
+        {
+            return $this->collection($partida, new SalidaAlmacenPartidasTransformer);
         }
         return null;
     }

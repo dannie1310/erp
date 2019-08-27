@@ -18,4 +18,16 @@ class MovimientoEliminado extends Model
     protected $primaryKey = 'id_movimiento';
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'id_movimiento',
+        'id_concepto',
+        'id_item',
+        'id_material',
+        'cantidad',
+        'monto_total',
+        'monto_pagado',
+        'monto_original',
+        'creado'
+    ];
 }

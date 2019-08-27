@@ -40,6 +40,8 @@ class InventarioTransformer extends TransformerAbstract
             'saldo' => $model->saldo,
             'monto_total' => $model->monto_total,
             'monto_pagado' => $model->monto_pagado,
+            'cantidad_format' => $model->cantidad_format,
+            'saldo_format' => $model->saldo_format,
             'monto_aplicado' => $model->monto_aplicado
         ];
     }
