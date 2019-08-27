@@ -105,11 +105,19 @@ class ContratoProyectadoService
 
     public function niveles($data)
     {
+        $list=array();
+        $first=4;
+        $size = strlen($data['nivel']);
 
-       if($data['conceptoAnterior']!=0){
-           return Contrato::where('id_transaccion','=', $data['id_transaccion'])->where('id_concepto','<',$data['id_concepto'])->where('id_concepto','>',$data['conceptoAnterior'])->get();
-       }
-        return Contrato::where('id_transaccion','=', $data['id_transaccion'])->where('id_concepto','<',$data['id_concepto'])->get();
+        while($first<$size){
+            $nivel=substr($data['nivel'],0,$first);
+            $result=Contrato::where('id_transaccion','=',$data['id_transaccion'])->where('id_concepto','<',$data['id_concepto'])->where('nivel','LIKE',$nivel)->get();
+            array_push($list,$result[0]->descripcion);
+            $first+=4;
+        }
+
+        return $list;
+
     }
 
 }
