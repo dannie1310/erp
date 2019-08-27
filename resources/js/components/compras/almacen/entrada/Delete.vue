@@ -140,13 +140,27 @@
                 })
             },
             eliminar() {
+                this.cargando = true;
                 return this.$store.dispatch('compras/entrada-almacen/eliminar', {
                     id: this.id,
                     params: {data: [this.$data.motivo]}
                 })
                     .then(data => {
+                        this.$store.commit('compras/entrada-almacen/DELETE_ENTRADA', {id: this.id})
                         $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('compras/entrada-almacen/paginate', {
+                            params: {
+                                include: 'empresa', sort: 'numero_folio', order: 'desc'
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('compras/entrada-almacen/SET_ENTRADAS', data.data);
+                                this.$store.commit('compras/entrada-almacen/SET_META', data.meta);
+                            })
                     })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
             },
             validate() {
                 this.$validator.validate().then(result => {

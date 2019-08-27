@@ -30,8 +30,8 @@ class EntradaMaterial extends Transaccion
 
         self::deleting(function ($entrada) {
                 $items = $entrada->partidas()->get()->toArray();
-                $partidas_eliminar = $entrada->eliminar_partidas($items);
-                $entrada = $entrada->liberarOrdenCompra();
+                $entrada->eliminar_partidas($items);
+                $entrada->liberarOrdenCompra();
         });
     }
 

@@ -20,10 +20,6 @@ export default{
             state.currentEntrada = data
         },
 
-        UPDATE_ATTRIBUTE(state, data) {
-            _.set(state.currentEntrada, data.attribute, data.value);
-        },
-
         UPDATE_ENTRADA(state, data) {
             state.entradas = state.entradas.map(entrada => {
                 if (entrada.id === data.id) {
@@ -31,8 +27,15 @@ export default{
                 }
                 return entrada
             })
-            state.currentEntrada = data;
+            if (state.currentEntrada) {
+                state.currentEntrada = data
+            }
         },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentEntrada[data.attribute] = data.value
+        },
+
         DELETE_ENTRADA(state, id) {
             state.entradas = state.entradas.filter(entrada => {
                 return entrada.id != id
