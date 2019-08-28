@@ -1,6 +1,6 @@
 <template>
     <span>
-         <button @click="find" type="button" class="btn btn-sm btn-outline-danger ">
+         <button @click="find" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar">
              <i class="fa fa-trash"></i>
          </button>
         <div class="modal fade" ref="modal" role="dialog">
@@ -29,20 +29,20 @@
                                                         <tr>
                                                             <td class="bg-gray-light"><b>Folio:</b></td>
                                                             <td class="bg-gray-light">{{entrada.numero_folio_format}}</td>
-                                                            <td  colspan="2" class="bg-gray-light"><b>Empresa:</b></td>
-                                                            <td  colspan="2" class="bg-gray-light">{{entrada.empresa.razon_social}}</td>
+                                                            <td class="bg-gray-light"><b>Empresa:</b></td>
+                                                            <td class="bg-gray-light">{{entrada.empresa.razon_social}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bg-gray-light"><b>Orden de Compra:</b></td>
+                                                            <td class="bg-gray-light">{{entrada.orden_compra.numero_folio_format}}</td>
                                                             <td class="bg-gray-light"><b>Referencia:</b></td>
                                                             <td class="bg-gray-light">{{entrada.referencia}}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td  colspan="2" class="bg-gray-light"><b>Observaciones:</b></td>
-                                                            <td  colspan="6" class="bg-gray-light">{{entrada.observaciones}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="2" class="bg-gray-light"><b>Fecha:</b></td>
-                                                            <td colspan="2" class="bg-gray-light">{{entrada.fecha_registro}}</td>
-                                                            <td colspan="2" class="bg-gray-light"><b>Estado:</b></td>
-                                                            <td colspan="2" class="bg-gray-light">{{entrada.estado_format}}</td>
+                                                            <td class="bg-gray-light"><b>Fecha:</b></td>
+                                                            <td class="bg-gray-light">{{entrada.fecha_format}}</td>
+                                                            <td class="bg-gray-light"><b>Estado:</b></td>
+                                                            <td class="bg-gray-light">{{entrada.estado_format}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -59,30 +59,35 @@
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
+                                                            <th>No. de Parte</th>
                                                             <th>Material</th>
-                                                            <th>Almacén</th>
-                                                            <th>Cantidad</th>
-                                                            <th>Cantidad en Inventario</th>
-                                                            <th>Saldo en Inventario</th>
                                                             <th>Unidad</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Destino</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="(doc, i) in entrada.partidas.data">
                                                             <td>{{i+1}}</td>
+                                                            <td>{{doc.material.numero_parte}}</td>
                                                             <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun material asignado</td>
-                                                            <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
-                                                            <td>{{doc.cantidad}}</td>
-                                                            <td v-if="doc.inventario">{{doc.inventario.cantidad}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
-                                                            <td v-if="doc.inventario">{{doc.inventario.saldo}}</td>
-                                                            <td class="text-danger"  v-else>No se encuentra ningun inventario</td>
                                                             <td>{{doc.unidad}}</td>
+                                                            <td>{{doc.cantidad}}</td>
+                                                            <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
+                                                            <td v-else-if="doc.concepto" :title="`${doc.concepto.path}`"><u>{{doc.concepto.descripcion}}</u></td>
+                                                            <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <h6><b>Observaciones:</b></h6>
+                                            </div>
+                                            <div class="col-sm-10">
+                                               <h6>{{entrada.observaciones}}</h6>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -95,6 +100,7 @@
                                                                 id="motivo"
                                                                 class="form-control"
                                                                 v-model="motivo"
+                                                                v-validate="{required: true}"
                                                                 data-vv-as="Motivo"
                                                                 :class="{'is-invalid': errors.has('motivo')}"
                                                         ></textarea>
@@ -121,7 +127,7 @@
 <script>
     export default {
         name: "entrada-almacen-delete",
-        props: ['id'],
+        props: ['id' , 'pagina'],
         data() {
             return {
                 motivo: '',
@@ -135,7 +141,7 @@
                 this.$store.commit('compras/entrada-almacen/SET_ENTRADA', null);
                 return this.$store.dispatch('compras/entrada-almacen/find', {
                     id: this.id,
-                    params: { include: ['empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario'] }
+                    params: { include: ['orden_compra', 'empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario', 'partidas.concepto', 'partidas.movimiento'] }
                 }).then(data => {
                     this.$store.commit('compras/entrada-almacen/SET_ENTRADA', data);
                     this.partidas = this.entrada.partidas.data;
@@ -143,13 +149,27 @@
                 })
             },
             eliminar() {
+                this.cargando = true;
                 return this.$store.dispatch('compras/entrada-almacen/eliminar', {
                     id: this.id,
                     params: {data: [this.$data.motivo]}
                 })
                     .then(data => {
+                        this.$store.commit('compras/entrada-almacen/DELETE_ENTRADA', {id: this.id})
                         $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('compras/entrada-almacen/paginate', {
+                            params: {
+                                include: 'empresa', sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('compras/entrada-almacen/SET_ENTRADAS', data.data);
+                                this.$store.commit('compras/entrada-almacen/SET_META', data.meta);
+                            })
                     })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
             },
             validate() {
                 this.$validator.validate().then(result => {

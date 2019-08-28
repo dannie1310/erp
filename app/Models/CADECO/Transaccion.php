@@ -20,6 +20,10 @@ class Transaccion extends Model
     protected $table = 'transacciones';
     protected $primaryKey = 'id_transaccion';
 
+    protected $fillable = [
+        'estado'
+    ];
+
     public $timestamps = false;
 
     protected $dates = ['cumplimiento'];
