@@ -5,6 +5,7 @@
            <estado-obra :obra="obra"></estado-obra>
             <configuracion-sistema  v-if="$root.can('habilitar_deshabilitar_sistema')"></configuracion-sistema>
             <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>
+            <configuracion-estimaciones></configuracion-estimaciones>
             <!-- ESTE COMPONENTE CONTIENE LAS ASIGNACIONES PARA EL ESQUEMA GLOBAL, PARA EL ESQUEMA PERSONALIZADO SE DEBERÁ CREAR EL CORRESPONDIENTE COMPONENTE -->
             <configuracion-seguridad v-if="obra.configuracion.esquema_permisos == 1"></configuracion-seguridad>
             <configuracion-seguridad-personalizado v-else-if="obra.configuracion.esquema_permisos == 2"></configuracion-seguridad-personalizado>
@@ -16,12 +17,13 @@
     import ConfiguracionObra from "./partials/Obra";
     import EstadoObra from "./partials/EstadoObra";
     import ConfiguracionContable from "./partials/Contable";
+    import ConfiguracionEstimaciones from "./partials/Estimaciones";
     import ConfiguracionSeguridad from "./seguridad/global/Index";
     import ConfiguracionSeguridadPersonalizado from "./seguridad/personalizado/Index";
     import ConfiguracionSistema from "./partials/Sistema";
     export default {
         name: "configuracion",
-        components: {ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra, ConfiguracionSeguridadPersonalizado, ConfiguracionSistema, EstadoObra},
+        components: {ConfiguracionEstimaciones,ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra, ConfiguracionSeguridadPersonalizado, ConfiguracionSistema, EstadoObra},
         data() {
             return {
                 obra: null

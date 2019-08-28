@@ -63,6 +63,14 @@
                 </a>
             </li>
 
+            <li class="nav-header" v-if="$root.can('editar_configuracion_contable')"><a href="#configuracion-finanzas">CONFIGURACIÓN FINANZAS</a></li>
+            <li class="nav-item" v-if="$root.can('editar_configuracion_contable')">
+                <a href="#estimaciones" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Estimaciones</p>
+                </a>
+            </li>
+
             <li class="nav-header" v-if="$root.can(['asignar_roles','registrar_roles','asignar_permisos'])">
                 <a href="#configuracion-seguridad">ROLES Y PERMISOS</a></li>
             <li class="nav-item" v-if="$root.can('asignar_roles')">

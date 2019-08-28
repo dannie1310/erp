@@ -1,7 +1,7 @@
 <template>
-    <div class="card" id="configuracion-contable" v-if="$root.can('editar_configuracion_contable')">
+    <div class="card" id="configuracion-estimaciones" v-if="$root.can('editar_configuracion_contable')">
         <div class="card-header">
-            <h3 class="card-title">Configuración Contable</h3>
+            <h3 class="card-title">Configuración finanzas</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse">
                     <i class="fa fa-minus"></i>
@@ -14,7 +14,7 @@
                 {{ mensaje }}
             </div>
 
-            <fieldset class="form-group">
+            <fieldset class="form-group" id="estimaciones">
                 <div class="row">
                     <legend class="col-form-label col-sm-2 pt-0"><b>Afectación Contable de Almacenes</b></legend>
                     <div class="col-sm-10">
@@ -46,52 +46,52 @@
                 </div>
             </fieldset>
 
-<!--            <fieldset class="form-group">-->
-<!--                <div class="row">-->
-<!--                    <legend class="col-form-label col-sm-2 pt-0"><b>Retención de Fondo de Garantía</b></legend>-->
-<!--                    <div class="col-sm-10">-->
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">-->
-<!--                            <label class="form-check-label"> Antes de IVA</label>-->
-<!--                        </div>-->
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">-->
-<!--                            <label class="form-check-label"> Después de IVA</label>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </fieldset>-->
-<!--            <fieldset class="form-group">-->
-<!--                <div class="row">-->
-<!--                    <legend class="col-form-label col-sm-2 pt-0"><b>Aplicación de Deductivas</b></legend>-->
-<!--                    <div class="col-sm-10">-->
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="radio" name="deductiva_antes_iva1" value="1" v-model="form.deductiva_antes_iva" :disabled="guardadosPreviamente">-->
-<!--                            <label class="form-check-label"> Antes de IVA</label>-->
-<!--                        </div>-->
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="radio" name="deductiva_antes_iva2" value="0" v-model="form.deductiva_antes_iva" :disabled="guardadosPreviamente">-->
-<!--                            <label class="form-check-label"> Después de IVA</label>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </fieldset>-->
+            <fieldset class="form-group">
+                <div class="row">
+                    <legend class="col-form-label col-sm-2 pt-0"><b>Retención de Fondo de Garantía</b></legend>
+                    <div class="col-sm-10">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="form-group">
+                <div class="row">
+                    <legend class="col-form-label col-sm-2 pt-0"><b>Aplicación de Deductivas</b></legend>
+                    <div class="col-sm-10">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="deductiva_antes_iva1" value="1" v-model="form.deductiva_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="deductiva_antes_iva2" value="0" v-model="form.deductiva_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
 
-<!--            <fieldset class="form-group">-->
-<!--                <div class="row">-->
-<!--                    <legend class="col-form-label col-sm-2 pt-0"><b>Amortización de Anticipo</b></legend>-->
-<!--                    <div class="col-sm-10">-->
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="radio" name="amortizacion_antes_iva1" value="1" v-model="form.amortizacion_antes_iva" :disabled="guardadosPreviamente">-->
-<!--                            <label class="form-check-label"> Antes de IVA</label>-->
-<!--                        </div>-->
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="radio" name="amortizacion_antes_iva0" value="0" v-model="form.amortizacion_antes_iva" :disabled="guardadosPreviamente">-->
-<!--                            <label class="form-check-label"> Después de IVA</label>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </fieldset>-->
+            <fieldset class="form-group">
+                <div class="row">
+                    <legend class="col-form-label col-sm-2 pt-0"><b>Amortización de Anticipo</b></legend>
+                    <div class="col-sm-10">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="amortizacion_antes_iva1" value="1" v-model="form.amortizacion_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="amortizacion_antes_iva0" value="0" v-model="form.amortizacion_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
 
 
             <hr>
@@ -121,9 +121,9 @@
                     >
                     <div class="invalid-feedback" v-show="errors.has('NumobraContPaq')">{{ errors.first('NumobraContPaq') }}</div>
                 </div>
-<!--            </div>
+                <!--            </div>
 
-            <div class="form-group row">-->
+                            <div class="form-group row">-->
                 <label for="FormatoCuenta" class="col-sm-2 col-form-label">Formato de Cuentas</label>
                 <div class="col-sm-4">
                     <input type="text" class="form-control" id="FormatoCuenta" v-model="form.FormatoCuenta" :disabled="guardadosPreviamente"
@@ -149,7 +149,7 @@
 <script>
     export default {
         props: ['datosContables'],
-        name: "configuracion-contable",
+        name: "configuracion-estimaciones",
         data() {
             return {
                 form: null
