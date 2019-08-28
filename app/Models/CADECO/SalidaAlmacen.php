@@ -129,6 +129,7 @@ class SalidaAlmacen extends Transaccion
                 if($inventarios == []){
                     abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
                 }
+                $cadena='';
                 foreach ($inventarios as $inventario){
                     $movimientos = Movimiento::query()->where('lote_antecedente','=', $inventario['id_lote'])->get()->toArray();
                     if($movimientos != []){
@@ -137,19 +138,22 @@ class SalidaAlmacen extends Transaccion
                             $partida =Item::query()->where('id_item','=',$mov['id_item'])->first();
                             $transa = Transaccion::query()->where('id_transaccion','=',$partida['id_transaccion'])->first();
                             if($mov != []){
-                                abort(400, 'No se puede eliminar la transferencia, existen transacciones con dependencias de sus inventarios: Folio #'.$transa['numero_folio']);
+                                $cadena.='Folio #'.
+                                    $transa['numero_folio'].'
+                           ';
+
                                 }
                         }
 
                     }
                     if($inventario['cantidad'] != $inventario['saldo']){
-                        abort(400, 'Error en el proceso de eliminación de salida de almacén.');
+//                        abort(400, 'Error en el proceso de eliminación de salida de almacén.');
                     }
                     $inventario_antecedente = Inventario::query()->where('id_lote', $inventario['lote_antecedente'])->get()->toArray();
                     if($inventario_antecedente[0]['saldo']+$inventario['cantidad'] > $inventario_antecedente[0]['cantidad']){
                         abort(400, 'Error en el proceso de eliminación de salida de almacén.');
                     }
-                }
+                }   abort(400, 'No se puede eliminar la transferencia, existen transacciones con dependencias de sus inventarios:'.$cadena);
             }
             if ($this->opciones == 1){
                 $movimientos = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
