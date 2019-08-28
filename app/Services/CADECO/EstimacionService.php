@@ -114,6 +114,7 @@ class EstimacionService
     {
         $estimacion= $this->repository->show($id);
         $numEstimacion=$estimacion->subcontratoEstimacion;
+        
         $partidas=$estimacion->item;
 
         $suma_contrato=0;
@@ -169,7 +170,7 @@ class EstimacionService
             'fecha_inicial'=>Carbon::parse($estimacion->cumplimiento)->format('d-m-Y'),
             'fecha_final'=>Carbon::parse($estimacion->vencimiento)->format('d-m-Y'),
             'estimacion'=>$estimacion->toArray(),
-            'numEstimacion'=>$numEstimacion->toArray(),
+            'numEstimacion'=>$numEstimacion,
             'empresa' => $estimacion->empresa->toArray(),
             'subcontrato' =>$estimacion->subcontrato->toArray(),
             'moneda' =>$estimacion->moneda->toArray(),
