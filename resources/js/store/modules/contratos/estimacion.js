@@ -35,7 +35,7 @@ export default {
         },
 
         REVERTIR_APROBACION(state, id) {
-            console.log('entro');
+
             state.estimaciones.forEach(estimacion => {
                 if(estimacion.id == id) {
                     console.log('encontrata')
@@ -105,6 +105,20 @@ export default {
                     })
             });
         },
+        showEstimacionTable (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id+ '/showEstimacionTable', { params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
 
         getConceptos(context, payload) {
             return new Promise((resolve, reject) => {

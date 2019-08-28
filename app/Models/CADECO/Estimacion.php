@@ -301,7 +301,7 @@ class Estimacion extends Transaccion
     }
 
     public function item(){
-        return $this->hasMany(Item::class, 'id_transaccion');
+        return $this->hasMany(EstimacionPartida::class, 'id_transaccion');
     }
 
 
