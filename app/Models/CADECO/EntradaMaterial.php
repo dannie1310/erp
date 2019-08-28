@@ -78,12 +78,12 @@ class EntradaMaterial extends Transaccion
         $mensaje = "";
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != null){
-            $mensaje = "-Poliza: #".$poliza->id_int_poliza;
+            $mensaje = "-Prepoliza: #".$poliza->id_int_poliza;
         }
         $items = $this->partidas()->get()->toArray();
         foreach ($items as $item){
-            $inventario = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
-            $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
+            $inventario = Inventario::query()->where('id_item', $item['id_item'])->first();
+            $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->first();
 
             $factura_part = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->first();
             if($factura_part != null) {
@@ -94,29 +94,15 @@ class EntradaMaterial extends Transaccion
                 $mensaje = $mensaje."-Factura: # ". $factura->numero_folio;
             }
 
-            if($inventario == [] && $movimiento == []){
+            if($inventario == null && $movimiento == null){
                 if($mensaje != ""){
                     $mensaje = $mensaje." \n";
                 }
                 $mensaje = $mensaje."No existe un inventario ni movimiento";
             }
 
-            if(count($inventario) > 1){
-                if($mensaje != ""){
-                    $mensaje = $mensaje." \n";
-                }
-                $mensaje = $mensaje."Existen ".count($inventario)." en el inventario.";
-            }
-
-            if(count($movimiento) > 1){
-                if($mensaje != ""){
-                    $mensaje = $mensaje." \n";
-                }
-                $mensaje = $mensaje."Existen ".count($movimiento)." en el movimiento.";
-            }
-
-            if($inventario != [] && $inventario[0]['cantidad'] != $inventario[0]['saldo']){
-                $movimiento_salida = Movimiento::query()->where('lote_antecedente', $inventario[0]['id_lote'])->first();
+            if($inventario != null && $inventario->cantidad != $inventario->saldo){
+                $movimiento_salida = Movimiento::query()->where('lote_antecedente', $inventario->id_lote)->first();
 
                 if($movimiento_salida != null) {
                     $item_salida = SalidaAlmacenPartida::query()->where('id_item', $movimiento_salida->id_item)->first();
@@ -135,7 +121,7 @@ class EntradaMaterial extends Transaccion
                     if($mensaje != ""){
                         $mensaje = $mensaje." \n";
                     }
-                    $mensaje = $mensaje."-Las cantidades (Cantidad = ".$inventario[0]['cantidad']." Saldo=  ".$inventario[0]['saldo'].") no concuerdan y no se encuentra ninguna salida relacionada.";
+                    $mensaje = $mensaje."-Las cantidades (Cantidad = ".$inventario->cantidad." Saldo=  ".$inventario->saldo.") no concuerdan y no se encuentra ninguna salida relacionada.";
                 }
             }
         }
