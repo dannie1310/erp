@@ -44,6 +44,11 @@ class EntradaMaterial extends Transaccion
         }
     }
 
+    public function ordenCompra()
+    {
+        return $this->belongsTo(OrdenCompra::class, 'id_antecedente','id_transaccion');
+    }
+
     public function partidas()
     {
         return $this->hasMany(EntradaMaterialPartida::class, 'id_transaccion', 'id_transaccion');

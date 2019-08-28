@@ -29,20 +29,20 @@
                                                         <tr>
                                                             <td class="bg-gray-light"><b>Folio:</b></td>
                                                             <td class="bg-gray-light">{{entrada.numero_folio_format}}</td>
-                                                            <td  colspan="2" class="bg-gray-light"><b>Empresa:</b></td>
-                                                            <td  colspan="2" class="bg-gray-light">{{entrada.empresa.razon_social}}</td>
+                                                            <td class="bg-gray-light"><b>Empresa:</b></td>
+                                                            <td class="bg-gray-light">{{entrada.empresa.razon_social}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bg-gray-light"><b>Orden de Compra:</b></td>
+                                                            <td class="bg-gray-light">{{entrada.orden_compra.numero_folio_format}}</td>
                                                             <td class="bg-gray-light"><b>Referencia:</b></td>
                                                             <td class="bg-gray-light">{{entrada.referencia}}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td  colspan="2" class="bg-gray-light"><b>Observaciones:</b></td>
-                                                            <td  colspan="6" class="bg-gray-light">{{entrada.observaciones}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="2" class="bg-gray-light"><b>Fecha:</b></td>
-                                                            <td colspan="2" class="bg-gray-light">{{entrada.fecha_registro}}</td>
-                                                            <td colspan="2" class="bg-gray-light"><b>Estado:</b></td>
-                                                            <td colspan="2" class="bg-gray-light">{{entrada.estado_format}}</td>
+                                                            <td class="bg-gray-light"><b>Fecha:</b></td>
+                                                            <td class="bg-gray-light">{{entrada.fecha_registro}}</td>
+                                                            <td class="bg-gray-light"><b>Estado:</b></td>
+                                                            <td class="bg-gray-light">{{entrada.estado_format}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -80,6 +80,14 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <h6><b>Observaciones:</b></h6>
+                                            </div>
+                                            <div class="col-sm-10">
+                                               <h6>{{entrada.observaciones}}</h6>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -133,7 +141,7 @@
                 this.$store.commit('compras/entrada-almacen/SET_ENTRADA', null);
                 return this.$store.dispatch('compras/entrada-almacen/find', {
                     id: this.id,
-                    params: { include: ['empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario', 'partidas.concepto', 'partidas.movimiento'] }
+                    params: { include: ['orden_compra', 'empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario', 'partidas.concepto', 'partidas.movimiento'] }
                 }).then(data => {
                     this.$store.commit('compras/entrada-almacen/SET_ENTRADA', data);
                     this.partidas = this.entrada.partidas.data;
