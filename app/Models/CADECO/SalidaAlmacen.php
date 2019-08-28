@@ -74,6 +74,10 @@ class SalidaAlmacen extends Transaccion
                 foreach ($inventarios as $inv) {
                     $saldo = $inv['saldo'] + $mov['cantidad'];
                     Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->update( ['saldo' => $saldo] );
+                    $saldo_inventario = Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->first();
+                    if($saldo_inventario->saldo != $saldo){
+                        DB::connection('cadeco')->rollBack();
+                    }
                 }
                 Movimiento::destroy($mov['id_movimiento']);
             }
@@ -89,6 +93,10 @@ class SalidaAlmacen extends Transaccion
                 foreach ($inv_antecedente as $inv_ant){
                     $saldo = $inv['cantidad'] + $inv_ant['saldo'];
                     Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->update( ['saldo' => $saldo] );
+                    $saldo_inventario = Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->first();
+                    if($saldo_inventario->saldo != $saldo){
+                        DB::connection('cadeco')->rollBack();
+                    }
                 }
             }
             Inventario::destroy( $inventario[0]['id_lote'] );
@@ -115,61 +123,79 @@ class SalidaAlmacen extends Transaccion
 
     private function validar()
     {
-        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->get()->toArray();
-        if ($poliza != []){
-            abort(400, 'No se puede eliminar la salida de almacén debido a que esta asociada con la prepóliza #'.$poliza[0]['id_int_poliza']);
+        $mensaje = '';
+        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+        if ($poliza != null){
+            $mensaje = "-Prepoliza: #".$poliza->id_int_poliza." \n";
         }
         $items = $this->partidas()->get()->toArray();
 
         foreach ($items as $item){
+            $factura_part = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->first();
+            if($factura_part != null){
+                $factura = Factura::query()->where('id_transaccion', $factura_part->id_transaccion)->first();
+                $mensaje = $mensaje."-Factura: # ". $factura->numero_folio." \n";
+            }
             if ($this->opciones == 65537){
 
                 $inventarios = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
 
                 if($inventarios == []){
-                    abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
+                    $mensaje = $mensaje."-No existe inventario\n";
                 }
-                $cadena='';
+                $cadena='-Existen transacciones relacionadas:
+                ';
                 foreach ($inventarios as $inventario){
                     $movimientos = Movimiento::query()->where('lote_antecedente','=', $inventario['id_lote'])->get()->toArray();
                     if($movimientos != []){
-
+                        $i=0;
                         foreach ($movimientos as $mov){
+                            $i++;
                             $partida =Item::query()->where('id_item','=',$mov['id_item'])->first();
                             $transa = Transaccion::query()->where('id_transaccion','=',$partida['id_transaccion'])->first();
                             if($mov != []){
-                                $cadena.='Folio #'.
-                                    $transa['numero_folio'].'
-                           ';
-
+                                if($transa['tipo_transaccion'] == 34 && $transa['opciones'] == 1){
+                                    $cadena.=$i.') Salida: #'.
+                                        $transa['numero_folio'].'
+                                        ';
                                 }
+                                if($transa['tipo_transaccion'] == 34 && $transa['opciones'] == 65537){
+                                    $cadena.=$i.') Transferencia: #'.
+                                        $transa['numero_folio'].'
+                                        ';
+                                }
+                                $mensaje = $cadena;
+                            }
                         }
-
                     }
                     if($inventario['cantidad'] != $inventario['saldo']){
-//                        abort(400, 'Error en el proceso de eliminación de salida de almacén.');
+                        $mensaje = $mensaje."-La cantidad es diferente al saldo del inventario\n";
                     }
                     $inventario_antecedente = Inventario::query()->where('id_lote', $inventario['lote_antecedente'])->get()->toArray();
                     if($inventario_antecedente[0]['saldo']+$inventario['cantidad'] > $inventario_antecedente[0]['cantidad']){
-                        abort(400, 'Error en el proceso de eliminación de salida de almacén.');
+                        $mensaje = $mensaje."-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }
-                }   abort(400, 'No se puede eliminar la transferencia, existen transacciones con dependencias de sus inventarios:'.$cadena);
+                }
+                if($mensaje != "")
+                {
+                    abort(400, "No se puede eliminar la salida de almacén debido a las siguientes razones:\n". $mensaje);
+                }
             }
             if ($this->opciones == 1){
                 $movimientos = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
                 if($movimientos == []){
-                    abort(400, 'No existe movimiento, por lo tanto, no puede ser eliminada.');
+                    $mensaje = $mensaje."-No existe movimiento\n";
                 }
                 foreach ($movimientos as $movimiento){
                     $inv_antecedente = Inventario::query()->where('id_lote',$movimiento['lote_antecedente'])->get()->toArray();
                     if($inv_antecedente[0]['saldo']+$movimiento['cantidad'] > $inv_antecedente[0]['cantidad']){
-                        abort(400, 'Error en el proceso de eliminación de salida de almacén.');
+                        $mensaje = $mensaje."-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }
                 }
-            }
-            $factura = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->get()->toArray();
-            if($factura != []){
-                abort(400, 'Existen una factura asociada a esta salida de almacén.');
+                if($mensaje != "")
+                {
+                    abort(400, "No se puede eliminar la salida de almacén debido a las siguientes razones:\n". $mensaje);
+                }
             }
         }
     }
@@ -289,7 +315,6 @@ class SalidaAlmacen extends Transaccion
             if($this->opciones == 65537) {
                 $inventario = InventarioEliminado::query()->where( 'id_item', $partida['id_item'] )->first();
                 if ($inventario == null) {
-                    $this->eliminar_respaldos();
                     abort( 400, 'Error en el proceso de eliminación de salida de almacén.' );
                 }
             }
@@ -297,41 +322,22 @@ class SalidaAlmacen extends Transaccion
             if($this->opciones == 1){
                 $movimiento = MovimientoEliminado::query()->where('id_item', $partida['id_item'])->first();
                 if ($movimiento == null) {
-                    $this->eliminar_respaldos();
                     abort(400, 'Error en el proceso de eliminación de salida de almacén.');
                 }
             }
 
             $item = ItemSalidaEliminada::query()->where('id_item', $partida['id_item'])->first();
             if ($item == null) {
-                $this->eliminar_respaldos();
                 abort(400, 'Error en el proceso de eliminación de salida de almacén.');
             }
         }
 
         $salida = SalidaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
         if ($salida == null) {
-            $this->eliminar_respaldos();
             abort(400, 'Error en el proceso de eliminación de salida de almacén.');
         }
     }
 
-    private function eliminar_respaldos()
-    {
-        $partidas = $this->partidas()->get()->toArray();
-        foreach ($partidas as $partida) {
-            if($this->opciones == 65537) {
-                $inventario = Inventario::query()->where('id_item', $partida['id_item'])->first()->toArray();
-                InventarioEliminado::destroy($inventario['id_lote']);
-            }
-            if($this->opciones == 1) {
-                $movimiento = Movimiento::query()->where( 'id_item', $partida['id_item'] )->first()->toArray();
-                MovimientoEliminado::destroy( $movimiento['id_movimiento'] );
-            }
-            ItemSalidaEliminada::destroy($partida['id_item']);
-        }
-        SalidaEliminada::destroy($this->id_transaccion);
-    }
 
 
 }
