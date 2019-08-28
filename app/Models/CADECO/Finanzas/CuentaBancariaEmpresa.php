@@ -31,7 +31,8 @@ class CuentaBancariaEmpresa extends Model
         'sucursal',
         'tipo_cuenta',
         'id_plaza',
-        'id_moneda'
+        'id_moneda',
+        'estatus'
     ];
     protected static function boot()
     {
