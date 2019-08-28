@@ -39,7 +39,7 @@ class EntradaAlmacenTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'fecha_registro' => $model->fechaHoraRegistroFormat,
+            'fecha_format' => $model->fecha_format,
             'observaciones' => $model->observaciones,
             'estado' => $model->estado,
             'estado_format' => $model->estadoFormat,

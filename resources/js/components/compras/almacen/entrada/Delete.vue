@@ -40,7 +40,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td class="bg-gray-light"><b>Fecha:</b></td>
-                                                            <td class="bg-gray-light">{{entrada.fecha_registro}}</td>
+                                                            <td class="bg-gray-light">{{entrada.fecha_format}}</td>
                                                             <td class="bg-gray-light"><b>Estado:</b></td>
                                                             <td class="bg-gray-light">{{entrada.estado_format}}</td>
                                                         </tr>
