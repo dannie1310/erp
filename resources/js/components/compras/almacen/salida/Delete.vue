@@ -117,13 +117,11 @@
 <script>
     export default {
         name: "salida-almacen-delete",
-        props: ['id'],
+        props: ['id','pagina'],
         data() {
             return {
                 data: [],
-                motivo: '',
-                query: {include: ['almacen'], sort: 'numero_folio', order: 'desc'}
-
+                motivo: ''
             }
         },
         methods: {
@@ -147,7 +145,11 @@
                     .then(data => {
                         this.$store.commit('compras/salida-almacen/DELETE_SALIDA', {id: this.id})
                         $(this.$refs.modal).modal('hide');
-                        this.$store.dispatch('compras/salida-almacen/paginate', {params: this.query})
+                        this.$store.dispatch('compras/salida-almacen/paginate', {
+                            params: {
+                                include: 'almacen', sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
+                            }
+                        })
                             .then(data => {
                                 this.$store.commit('compras/salida-almacen/SET_SALIDAS', data.data);
                                 this.$store.commit('compras/salida-almacen/SET_META', data.meta);
