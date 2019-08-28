@@ -64,6 +64,11 @@ class Google2faController extends Controller
         ]);
     }
 
+    public function secretCode()
+    {
+        return auth()->user()->google2faSecret->secret;
+    }
+
     public function code(Request $request)
     {
         $g = new GoogleAuthenticator();
