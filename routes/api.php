@@ -325,7 +325,7 @@ $api->version('v1', function ($api) {
             $api->get('getArea', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@getArea');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@paginate');
             $api->patch('{id}/actualizar', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@actualiza');
-            $api->get('niveles','App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@niveles');
+
         });
 
         /**
@@ -339,7 +339,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/getConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@getConceptos')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@paginate');
             $api->get('{id}/formato-estimacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfEstimacion')->where(['id' => '[0-9]+']);
-            $api->get('estimaAnterior', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@estimaAnterior');
+            $api->get('{id}/showEstimacionTable','App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@showEstimacionTable');
 
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION

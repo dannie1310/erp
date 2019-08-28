@@ -68,8 +68,5 @@ class ContratoProyectadoController extends Controller
         return $this->respondWithItem($contrato_proyectado);
     }
 
-    public function niveles(Request $request)
-    {
-        return $this->service->niveles($request);
-    }
+
 }

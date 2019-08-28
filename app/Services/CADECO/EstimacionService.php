@@ -10,6 +10,7 @@ namespace App\Services\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Item;
 use App\Models\CADECO\Obra;
@@ -17,6 +18,7 @@ use App\PDF\EstimacionFormato;
 use App\PDF\OrdenPagoEstimacion;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class EstimacionService
 {
@@ -108,6 +110,80 @@ class EstimacionService
     {
         return $this->repository->show($id);
     }
+    public function showEstimacionTable($id)
+    {
+        $estimacion= $this->repository->show($id);
+        $numEstimacion=$estimacion->subcontratoEstimacion;
+        $partidas=$estimacion->item;
+
+        $suma_contrato=0;
+        $suma_estimadoAnterior=0;
+        $suma_estimacion=0;
+        $suma_acumulado=0;
+        $suma_porEstimar=0;
+
+        $items=array();
+
+        foreach ($partidas as $item ){
+
+
+            foreach($item->ancestros as $ancestro){
+                $items[$ancestro[1]]=$ancestro[0];
+
+            }
+
+            $precioUnitario=$item->precio_unitario;
+            $cantidadContrato=$item->contrato->cantidad_original;
+            $cantidadEstimadoAnterior=$item->estimadoAnterior;
+            $cantidadEstimacion=$item->cantidad;
+
+            $items[$item->contrato->nivel] = Array (
+                'concepto'=>$item->contrato->descripcion,
+                'unidad' => $item->contrato->unidad,
+                'precioUnitario' => $item->precio_unitario,
+                'cantidadContrato'=> $item->contrato->cantidad_original,
+                'importeContrato' => $cantidadContrato * $precioUnitario,
+                'cantidadEstimadoAnterior'=> $item->estimadoAnterior,
+                'importeEstimadoAnterior' => $cantidadEstimadoAnterior * $precioUnitario,
+                'cantidadEstimacion' => $item->cantidad,
+                'importeEstimacion'=> $cantidadEstimacion * $precioUnitario,
+                'cantidadAcumulado'=> ($cantidadEstimadoAnterior + $cantidadEstimacion),
+                'importeAcumulado' => ($cantidadEstimadoAnterior + $cantidadEstimacion) * $precioUnitario,
+                'cantidadPorEstimar'=> $cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion),
+                'importePorEstimar'=> ($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion)) * $precioUnitario,
+        );
+
+
+        /*Totales */
+         $suma_contrato+= $cantidadContrato * $precioUnitario;
+         $suma_estimadoAnterior+=$cantidadEstimadoAnterior * $precioUnitario;
+         $suma_estimacion+=$cantidadEstimacion * $precioUnitario;
+         $suma_acumulado+=($cantidadEstimadoAnterior + $cantidadEstimacion) * $precioUnitario;
+         $suma_porEstimar+=($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion)) * $precioUnitario;
+
+
+
+      }
+
+        $result=array(
+            'fecha_inicial'=>Carbon::parse($estimacion->cumplimiento)->format('d-m-Y'),
+            'fecha_final'=>Carbon::parse($estimacion->vencimiento)->format('d-m-Y'),
+            'estimacion'=>$estimacion->toArray(),
+            'numEstimacion'=>$numEstimacion->toArray(),
+            'empresa' => $estimacion->empresa->toArray(),
+            'subcontrato' =>$estimacion->subcontrato->toArray(),
+            'moneda' =>$estimacion->moneda->toArray(),
+            'items'=>$items,
+            'suma_contrato'=>number_format($suma_contrato,4),
+            'suma_estimadoAnterior'=> number_format($suma_estimadoAnterior,4),
+            'suma_estimacion'=>number_format($suma_estimacion,4),
+            'suma_acumulado'=>number_format($suma_acumulado,4),
+            'suma_porEstimar'=>number_format($suma_porEstimar,4),
+        );
+
+        return $result;
+
+    }
 
     public function paginate()
     {
@@ -156,8 +232,5 @@ class EstimacionService
         return $pdf;
     }
 
-    public function estimaAnterior($data)
-    {
-        return Item::where('item_antecedente', '=', $data['antecedente'])->where("id_transaccion", '<', $data['id'])->get()->sum('cantidad');
-    }
+
 }

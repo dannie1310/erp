@@ -11,9 +11,7 @@
                                                 <div class="col-8">
                                                     <div class="row">
                                                         <div class="col-4">
-
                                 <!--                    <img v-bind:src="logo" class="img-thumbnail">-->
-
                                                 </div>
                                                 <div class="col-8 text-center mt-5">
 
@@ -28,14 +26,14 @@
                                   <thead>
                                     <tr>
                                       <th scope="col">Folio SAO</th>
-                                      <th class="text-right" scope="col">#{{ estimacion.folio }}</th>
+                                      <th class="text-right" scope="col">#{{ estimacion.estimacion.numero_folio.padStart(5,"0") }}</th>
 
                                     </tr>
                                   </thead>
                                   <tbody>
                                     <tr>
                                       <th scope="row">No. Estimación</th>
-                                      <td class="text-right"> {{ estimacion.subcontratoEstimacion.NumeroFolioConsecutivo }}</td>
+                                      <td class="text-right"> {{ estimacion.numEstimacion.NumeroFolioConsecutivo }}</td>
 
                                     </tr>
                                     <tr>
@@ -45,7 +43,7 @@
                                     </tr>
                                     <tr>
                                       <th scope="row">Fecha</th>
-                                      <td class="text-right"> {{ estimacion.fecha }}</td>
+                                      <td class="text-right"> {{ estimacion.estimacion.fecha }}</td>
 
                                     </tr>
                                       <tr>
@@ -133,11 +131,12 @@
                                 <td class="text-center">{{ estimacion.moneda.nombre }}</td>
                             </tr>
 
-                            <!--Niveles de Items de la Estimación -->
+                            <template  v-for="(item,index) in estimacion.items">
 
-                            <template v-for="data in items">
-                               <tr v-for="(nivel,index) in data.nivel" >
-                                <td>{{ identacionTabla(index) }}{{ nivel }}</td>
+                               <tr v-if="!isObject(item)">
+
+
+                                <th>{{ identacionTabla(index) }} {{ item }}</th>
 
                                 <td class="text-center"></td>
                                 <td class="text-right"> </td>
@@ -153,21 +152,21 @@
                                 <td class="text-right"></td>
                             </tr>
 
-                   <tr>
+                   <tr v-else>
 
-                                <th v-if="data">{{ identacionItem(data.nivel.length) }} {{ data.concepto }}</th>
-                                <td class="text-center">{{ data.unidad }}</td>
-                                <td class="text-right">{{ data.precio_unitario }} </td>
-                                <td class="text-right">{{ data.cantidad_original }}</td>
-                                <td class="text-right">{{ data.contrato_importe }}</td>
-                                <td class="text-right">{{ data.estimaAnterior }}</td>
-                                <td class="text-right">{{ data.anteriorImporte }}</td>
-                                <td class="text-right">{{ data.cantidad }}</td>
-                                <td class="text-right">{{ data.importe }}</td>
-                                <td class="text-right">{{ data.acumulada }}</td>
-                                <td class="text-right">{{ data.acumuladaImporte }}</td>
-                                <td class="text-right">{{ data.cantidad_estimar}} </td>
-                                <td class="text-right">{{ data.importe_estimar }}</td>
+                                <td>{{ identacionItem(index.length/4) }} {{ item.concepto }}</td>
+                                <td class="text-center">{{ item.unidad }}</td>
+                                <td class="text-right">{{ parseFloat(item.precioUnitario).formatMoney(4,'.',',') }} </td>
+                                <td class="text-right">{{  parseFloat(item.cantidadContrato).formatMoney(4,'.',',') }}</td>
+                                <td class="text-right">{{  parseFloat(item.importeContrato).formatMoney(4,'.',',') }}</td>
+                                <td class="text-right">{{  parseFloat(item.cantidadEstimadoAnterior).formatMoney(4,'.',',')  }}</td>
+                                <td class="text-right">{{  parseFloat(item.importeEstimadoAnterior).formatMoney(4,'.',',') }}</td>
+                                <td class="text-right">{{  parseFloat(item.cantidadEstimacion).formatMoney(4,'.',',') }}</td>
+                                <td class="text-right">{{  parseFloat(item.importeEstimacion).formatMoney(4,'.',',')  }}</td>
+                                <td class="text-right">{{  parseFloat(item.cantidadAcumulado).formatMoney(4,'.',',') }}</td>
+                                <td class="text-right">{{  parseFloat(item.importeAcumulado).formatMoney(4,'.',',') }}</td>
+                                <td class="text-right">{{  parseFloat(item.cantidadPorEstimar).formatMoney(4,'.',',') }} </td>
+                                <td class="text-right">{{  parseFloat(item.importePorEstimar).formatMoney(4,'.',',')  }}</td>
                             </tr>
 </template>
                     <!--Sumas totales de la s partidas-->
@@ -177,15 +176,15 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td class="text-right">{{ contratoSuma }}</td>
+                                <td class="text-right">{{estimacion.suma_contrato }}</td>
                                 <td></td>
-                                <td class="text-right"> {{ sumaAnterior }}</td>
+                                <td class="text-right"> {{ estimacion.suma_estimadoAnterior }}</td>
                                 <td></td>
-                                <td class="text-right"> {{ sumaEstimacion }}</td>
+                                <td class="text-right"> {{ estimacion.suma_estimacion }}</td>
                                 <td></td>
-                                <td class="text-right"> {{ sumaAcumulada }}</td>
+                                <td class="text-right"> {{ estimacion.suma_acumulado }}</td>
                                 <td> </td>
-                                <td class="text-right">{{ sumaPorEstimar }}</td>
+                                <td class="text-right">{{ estimacion.suma_porEstimar }}</td>
                             </tr>
 
 
@@ -215,21 +214,8 @@
             return {
                 logo: '',
                 obra: [],
-                items: [],
-                estimaciones: [],
-                estimaAnterior: 0,
-                suma_contrato: 0,
-                contratoSuma: '',
-                suma_anteriorAcumulada: 0,
-                sumaAnterior: '',
-                suma_estimacion: 0,
-                sumaEstimacion: '',
-                suma_acumulada: 0,
-                sumaAcumulada: '',
-                suma_porEstimar: 0,
-                sumaPorEstimar: '',
                 id: '',
-                guiones:'__',
+                guiones:'\xa0\xa0',
                 identacion:'',
                 itemIdentacion:'',
 
@@ -239,115 +225,33 @@
 
             this.obra = this.$session.get('obra');
             this.id = this.$route.params.id;
-            this.form = JSON.parse(JSON.stringify(this.obra));
-            setTimeout(() => {
-                if (this.form.configuracion.logotipo_original) {
-                    this.logo = `data:image/png;base64,${this.form.configuracion.logotipo_original}`;
-                }
-            }, 100);
             this.find();
 
         },
         methods: {
             find() {
                 this.$store.commit('contratos/estimacion/SET_ESTIMACION', null);
-                return this.$store.dispatch('contratos/estimacion/find', {
+                return this.$store.dispatch('contratos/estimacion/showEstimacionTable', {
                     id: this.id,
-                    params: {
-                        include: ['empresa', 'subcontratoEstimacion', 'moneda', 'item', 'item.concepto.hijos', 'item.contrato', 'subcontrato',]
-                    }
                 }).then(data => {
 
                     this.$store.commit('contratos/estimacion/SET_ESTIMACION', data);
 
-                }).finally(() => {
-                    this.remakeItems();
-
-                });
-            },
-            getAcumulada(item) {
-                return this.$store.dispatch('contratos/estimacion/estimaAnterior', {
-                    params: {
-                        id: this.id,
-                        antecedente: item
-                    }
                 })
-                    .then(data => {
-                        return data;
-                    })
-
             },
-            getNiveles(item,anterior){
-                return this.$store.dispatch('contratos/contrato-proyectado/niveles', {
-                    params: {
-                        id_transaccion: item.contrato.id_transaccion,
-                        id_concepto: item.contrato.id_concepto,
-                        nivel: item.contrato.nivel,
-                    }
-                })
-                    .then(data => {
-                        return data;
-                    })
+            isObject(item){
+                    return typeof item === 'object'
             },
-            remakeItems() {
 
-                this.estimacion.item.data.forEach((item) => {
-
-
-                    this.getAcumulada(item.item_antecedente).then((estimaAnterior) => {
-
-                        this.suma_contrato += parseFloat(item.precio_unitario * item.contrato.cantidad_original);
-                        this.suma_anteriorAcumulada += parseFloat(estimaAnterior * item.precio_unitario);
-                        this.suma_estimacion += parseFloat(item.cantidad * item.precio_unitario);
-                        this.suma_acumulada += (parseFloat(estimaAnterior) + parseFloat(item.cantidad) * item.precio_unitario);
-                        this.suma_porEstimar += parseFloat(((item.contrato.cantidad_original) - (parseFloat(estimaAnterior) + parseFloat(item.cantidad))) * item.precio_unitario)
-                        var arreglo = item.concepto.path.split('->');
-                         arreglo.pop();
-
-
-                    this.getNiveles(item).then((niveles)=>{
-
-
-
-                        this.items.push({
-                            'concepto': item.contrato.descripcion,
-                            'unidad': item.contrato.unidad,
-                            'precio_unitario': parseFloat(item.precio_unitario).formatMoney(3, '.', ','),
-                            'cantidad_original': parseFloat(item.contrato.cantidad_original).formatMoney(3, '.', ','),
-                            'contrato_importe': parseFloat(item.precio_unitario * item.contrato.cantidad_original).formatMoney(3, '.', ','),
-                            'cantidad': parseFloat(item.cantidad).formatMoney(3, '.', ','),
-                            'importe': parseFloat(item.cantidad * item.precio_unitario).formatMoney(3, '.', ','),
-                            'estimaAnterior': parseFloat(estimaAnterior).formatMoney(3, '.', ','),
-                            'anteriorImporte': parseFloat(estimaAnterior * item.precio_unitario).formatMoney(3, '.', ','),
-                            'acumulada': (parseFloat(estimaAnterior) + parseFloat(item.cantidad)).formatMoney(3, '.', ','),
-                            'acumuladaImporte': (parseFloat(estimaAnterior) + parseFloat(item.cantidad) * item.precio_unitario).formatMoney(3, '.', ','),
-                            'cantidad_estimar': parseFloat((item.contrato.cantidad_original) - (parseFloat(estimaAnterior) + parseFloat(item.cantidad))).formatMoney(3, '.', ','),
-                            'importe_estimar': parseFloat(((item.contrato.cantidad_original) - (parseFloat(estimaAnterior) + parseFloat(item.cantidad))) * item.precio_unitario).formatMoney(3, '.', ','),
-                            'nivel': niveles
-                        });
-
-                    });
-                        this.totales();
-
-                    });
-
-
-                });
-
-            },
-            totales() {
-                this.contratoSuma = this.suma_contrato.formatMoney(3, '.', ',');
-                this.sumaAnterior = this.suma_anteriorAcumulada.formatMoney(3, '.', ',');
-                this.sumaEstimacion = this.suma_estimacion.formatMoney(3, '.', ',');
-                this.sumaAcumulada = this.suma_acumulada.formatMoney(3, '.', ',');
-                this.sumaPorEstimar = this.suma_porEstimar.formatMoney(3, '.', ',');
-            },
             identacionTabla(val){
-                 return this.guiones.repeat(val);
+                var cant=val.length/4;
+
+                return this.guiones.repeat(cant-1);
+
             },
             identacionItem(val){
 
-                return this.guiones.repeat(val);
+                return this.guiones.repeat(val-1);
             }
 
 
