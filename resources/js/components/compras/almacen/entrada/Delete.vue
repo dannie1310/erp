@@ -1,6 +1,6 @@
 <template>
     <span>
-         <button @click="find" type="button" class="btn btn-sm btn-outline-danger ">
+         <button @click="find" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar">
              <i class="fa fa-trash"></i>
          </button>
         <div class="modal fade" ref="modal" role="dialog">
@@ -75,7 +75,7 @@
                                                             <td>{{doc.unidad}}</td>
                                                             <td>{{doc.cantidad}}</td>
                                                             <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
-                                                            <td v-else-if="doc.concepto">{{doc.concepto.descripcion}}</td>
+                                                            <td v-else-if="doc.concepto" :title="`${doc.concepto.path}`"><u>{{doc.concepto.descripcion}}</u></td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
                                                         </tr>
                                                     </tbody>
