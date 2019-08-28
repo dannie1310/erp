@@ -85,8 +85,11 @@ class SalidaAlmacen extends Transaccion
         foreach ($items as $item) {
             $inventario = Inventario::query()->where( 'id_item', $item['id_item'] )->get()->toArray();
             foreach ($inventario as $inv) {
-                $saldo = $inv['saldo'] + $inventario[0]['cantidad'];
-                Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->update( ['saldo' => $inv['cantidad']] );
+                $inv_antecedente = Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->get()->toArray();
+                foreach ($inv_antecedente as $inv_ant){
+                    $saldo = $inv['cantidad'] + $inv_ant['saldo'];
+                    Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->update( ['saldo' => $saldo] );
+                }
             }
             Inventario::destroy( $inventario[0]['id_lote'] );
             Item::destroy($item['id_item']);
