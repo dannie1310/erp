@@ -33,15 +33,7 @@ class Item extends Model
         'precio_mano_obra',
     ];
 
-    public function contrato()
-    {
-        return $this->belongsTo(Contrato::class, 'item_antecedente', 'id_concepto');
-    }
 
-    public function concepto()
-    {
-        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
-    }
 
 
 }

@@ -242,7 +242,7 @@ public function partidas(){
 
             $this->tran_antecedentes = Item::where('item_antecedente', '=', $item_antecedente)->where("id_transaccion", '<', $this->id)->get()->sum('cantidad');
 
-            $this->Cell(0.250 * $this->WidthTotal, 0.3, mb_strtoupper($p->concepto->descripcion), 'RTLB', 0, 'L', 0);   // empty cell with left,top, and right borders
+            $this->Cell(0.250 * $this->WidthTotal, 0.3, mb_strtoupper($p->contrato->descripcion), 'RTLB', 0, 'L', 0);   // empty cell with left,top, and right borders
             $this->Cell(0.05 * $this->WidthTotal, 0.3, mb_strtoupper($p->contrato->unidad), 'RTLB', 0, 'C', 0);
             $this->Cell(0.06 * $this->WidthTotal, 0.3, number_format($p->precio_unitario, 3, ".", ","), 'RTLB', 0, 'R', 0);
             $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($p->contrato->cantidad_original, 3, ".", ","), 'BTLR', 0, 'R', 0);
