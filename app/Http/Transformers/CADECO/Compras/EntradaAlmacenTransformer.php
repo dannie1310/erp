@@ -22,7 +22,8 @@ class EntradaAlmacenTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'empresa',
-        'partidas'
+        'partidas',
+        'orden_compra'
     ];
 
     /**
@@ -38,7 +39,7 @@ class EntradaAlmacenTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'fecha_registro' => $model->fechaHoraRegistroFormat,
+            'fecha_format' => $model->fecha_format,
             'observaciones' => $model->observaciones,
             'estado' => $model->estado,
             'estado_format' => $model->estadoFormat,
@@ -70,6 +71,19 @@ class EntradaAlmacenTransformer extends TransformerAbstract
         if($partida = $model->partidas)
         {
             return $this->collection($partida, new EntradaAlmacenPartidaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param EntradaMaterial $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeOrdenCompra(EntradaMaterial $model)
+    {
+        if($orden = $model->ordenCompra)
+        {
+            return $this->item($orden, new OrdenCompraTransformer);
         }
         return null;
     }

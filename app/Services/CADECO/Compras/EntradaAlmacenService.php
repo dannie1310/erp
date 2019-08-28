@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Compras;
 
 
+use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EntradaMaterial;
 use App\Repositories\Repository;
 
@@ -30,7 +31,25 @@ class EntradaAlmacenService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $salida = $this->repository;
+
+        if(isset($data['numero_folio'])) {
+            $salida = $salida->where( [['numero_folio', 'LIKE', '%' . request( 'numero_folio' ) . '%']] );
+        }
+        if(isset($data['fecha'])) {
+            $salida = $salida->where( [['fecha', '=', request( 'fecha' )]] );
+        }
+        if(isset($data['referencia'])) {
+            $salida = $salida->where( [['referencia', 'LIKE', '%' . request( 'referencia' ) . '%']] );
+        }
+        if(isset($data['id_empresa'])){
+            $empresas = Empresa::query()->where([['razon_social', 'LIKE', '%'.request('id_empresa').'%']])->get();
+            foreach ($empresas as $a){
+                $salida = $salida->whereOr([['id_empresa', '=', $a->id_empresa]]);
+            }
+        }
+
+        return $salida->paginate($data);
     }
 
     public function show($id)
