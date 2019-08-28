@@ -86,22 +86,27 @@ class EntradaMaterial extends Transaccion
 
             $factura = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->get()->toArray();
             if($factura != []){
+                DB::connection('cadeco')->rollBack();
                 abort(400, 'Existen una factura asociada a esta entrada de almacén.');
             }
 
             if($inventario == [] && $movimiento == []){
+                DB::connection('cadeco')->rollBack();
                 abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
             }
 
             if(count($inventario) > 1){
+                DB::connection('cadeco')->rollBack();
                 abort(400, 'Existen varios inventarios, por lo tanto, no puede ser eliminada.');
             }
 
             if(count($movimiento) > 1){
+                DB::connection('cadeco')->rollBack();
                 abort(400, 'Existen varios movimientos, por lo tanto, no puede ser eliminada.');
             }
 
             if($inventario != [] && $inventario[0]['cantidad'] != $inventario[0]['saldo']){
+                DB::connection('cadeco')->rollBack();
                 abort(400, 'Existen movimientos en el inventario, por lo tanto, no puede ser eliminada.');
             }
         }
@@ -233,18 +238,21 @@ class EntradaMaterial extends Transaccion
             $movimiento = MovimientoEliminado::query()->where('id_item', $partida['id_item'])->first();
             if ($inventario == null && $movimiento == null)
             {
+                DB::connection('cadeco')->rollBack();
                 abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
             }
 
             $item = ItemEntradaEliminada::query()->where('id_item', $partida['id_item'])->first();
             if ($item == null)
             {
+                DB::connection('cadeco')->rollBack();
                 abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
             }
         }
 
         $entrada = EntradaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
         if ($entrada == null) {
+            DB::connection('cadeco')->rollBack();
             abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
         }
     }
@@ -284,6 +292,7 @@ class EntradaMaterial extends Transaccion
                 if($entregas == true) {
                     Inventario::destroy($inventario['id_lote']);
                 }else{
+                    DB::connection('cadeco')->rollBack();
                     abort(400, 'Error al cambiar los saldos en la orden de compra');
                 }
             }
@@ -294,6 +303,7 @@ class EntradaMaterial extends Transaccion
                 if($entregas == true) {
                     Movimiento::destroy($movimiento['id_movimiento']);
                 }else{
+                    DB::connection('cadeco')->rollBack();
                     abort(400, 'Error al cambiar los saldos en la orden de compra');
                 }
             }
