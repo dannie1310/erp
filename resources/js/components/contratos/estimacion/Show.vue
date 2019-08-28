@@ -5,7 +5,7 @@
 
         <div class="col-12 mb-5">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" v-if="estimacion">
                         <div class="row mt-5 mb-5">
 
                                                 <div class="col-8">
@@ -33,7 +33,9 @@
                                   <tbody>
                                     <tr>
                                       <th scope="row">No. Estimación</th>
-                                      <td class="text-right"> {{ estimacion.numEstimacion.NumeroFolioConsecutivo }}</td>
+                                      <td class="text-right" v-if="estimacion.numEstimacion"> {{ estimacion.numEstimacion.NumeroFolioConsecutivo }}</td>
+                                        <td class="text-right" v-else></td>
+
 
                                     </tr>
                                     <tr>
@@ -258,7 +260,6 @@
         },
         computed: {
             estimacion() {
-                this.estimaciones = this.$store.getters['contratos/estimacion/currentEstimacion']
                 return this.$store.getters['contratos/estimacion/currentEstimacion']
             },
 
