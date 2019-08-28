@@ -92,6 +92,7 @@
                                                                 id="motivo"
                                                                 class="form-control"
                                                                 v-model="motivo"
+                                                                v-validate="{required: true}"
                                                                 data-vv-as="Motivo"
                                                                 :class="{'is-invalid': errors.has('motivo')}"
                                                         ></textarea>
