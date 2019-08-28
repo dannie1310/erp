@@ -75,41 +75,76 @@ class EntradaMaterial extends Transaccion
      */
     private function validarParaEliminar()
     {
-        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->get()->toArray();
-        if ($poliza != []){
-            abort(400, 'Existen una póliza asociada a esta entrada de almacén.');
+        $mensaje = "";
+        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+        if ($poliza != null){
+            $mensaje = "-Poliza: #".$poliza->id_int_poliza;
         }
         $items = $this->partidas()->get()->toArray();
         foreach ($items as $item){
             $inventario = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
             $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
 
-            $factura = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->get()->toArray();
-            if($factura != []){
-                DB::connection('cadeco')->rollBack();
-                abort(400, 'Existen una factura asociada a esta entrada de almacén.');
+            $factura_part = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->first();
+            if($factura_part != null) {
+                $factura = Factura::query()->where('id_transaccion', $factura_part->id_transaccion)->first();
+                if($mensaje != ""){
+                    $mensaje = $mensaje." \n";
+                }
+                $mensaje = $mensaje."-Factura: # ". $factura->numero_folio;
             }
 
             if($inventario == [] && $movimiento == []){
-                DB::connection('cadeco')->rollBack();
-                abort(400, 'No existe un inventario, por lo tanto, no puede ser eliminada.');
+                if($mensaje != ""){
+                    $mensaje = $mensaje." \n";
+                }
+                $mensaje = $mensaje."No existe un inventario ni movimiento";
             }
 
             if(count($inventario) > 1){
-                DB::connection('cadeco')->rollBack();
-                abort(400, 'Existen varios inventarios, por lo tanto, no puede ser eliminada.');
+                if($mensaje != ""){
+                    $mensaje = $mensaje." \n";
+                }
+                $mensaje = $mensaje."Existen ".count($inventario)." en el inventario.";
             }
 
             if(count($movimiento) > 1){
-                DB::connection('cadeco')->rollBack();
-                abort(400, 'Existen varios movimientos, por lo tanto, no puede ser eliminada.');
+                if($mensaje != ""){
+                    $mensaje = $mensaje." \n";
+                }
+                $mensaje = $mensaje."Existen ".count($movimiento)." en el movimiento.";
             }
 
             if($inventario != [] && $inventario[0]['cantidad'] != $inventario[0]['saldo']){
-                DB::connection('cadeco')->rollBack();
-                abort(400, 'Existen movimientos en el inventario, por lo tanto, no puede ser eliminada.');
+                $movimiento_salida = Movimiento::query()->where('lote_antecedente', $inventario[0]['id_lote'])->first();
+
+                if($movimiento_salida != null) {
+                    $item_salida = SalidaAlmacenPartida::query()->where('id_item', $movimiento_salida->id_item)->first();
+                    $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
+
+                    if ($mensaje != "") {
+                        $mensaje = $mensaje . " \n";
+                    }
+                    if($salida->tipo_transaccion== 34 && $salida->opciones == 1){
+                        $mensaje = $mensaje . "-Salida (Consumo) #".$salida->numero_folio;
+                    }
+                    if($salida->tipo_transaccion== 34 && $salida->opciones == 65537){
+                        $mensaje = $mensaje . "-Salida (Transferencia) #".$salida->numero_folio;
+                    }
+                }else{
+                    if($mensaje != ""){
+                        $mensaje = $mensaje." \n";
+                    }
+                    $mensaje = $mensaje."-Las cantidades (Cantidad = ".$inventario[0]['cantidad']." Saldo=  ".$inventario[0]['saldo'].") no concuerdan y no se encuentra ninguna salida relacionada.";
+                }
             }
         }
+
+        if($mensaje != "")
+        {
+            abort(400, 'No se puede eliminar la entrada de almacén debido a que existen transacciones relacionadas:'."\n". $mensaje);
+        }
+
     }
 
     /**
