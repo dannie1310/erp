@@ -81,7 +81,7 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             numero_folio: entrada.numero_folio_format,
-                            fecha: entrada.fecha_registro,
+                            fecha: entrada.fecha_format,
                             id_empresa: entrada.empresa.razon_social,
                             referencia: entrada.referencia,
                             observaciones: entrada.observaciones,
