@@ -78,7 +78,7 @@ class EntradaMaterial extends Transaccion
         $mensaje = "";
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != null){
-            $mensaje = "-Prepoliza: #".$poliza->id_int_poliza;
+            $mensaje = "-Prepoliza: #".$poliza->id_int_poliza." \n";
         }
         $items = $this->partidas()->get()->toArray();
         foreach ($items as $item){
@@ -88,17 +88,11 @@ class EntradaMaterial extends Transaccion
             $factura_part = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->first();
             if($factura_part != null) {
                 $factura = Factura::query()->where('id_transaccion', $factura_part->id_transaccion)->first();
-                if($mensaje != ""){
-                    $mensaje = $mensaje." \n";
-                }
-                $mensaje = $mensaje."-Factura: # ". $factura->numero_folio;
+                $mensaje = $mensaje."-Factura: # ". $factura->numero_folio." \n";
             }
 
             if($inventario == null && $movimiento == null){
-                if($mensaje != ""){
-                    $mensaje = $mensaje." \n";
-                }
-                $mensaje = $mensaje."No existe un inventario ni movimiento";
+                $mensaje = $mensaje."-No existe un inventario ni movimiento \n";
             }
 
             if($inventario != null && $inventario->cantidad != $inventario->saldo){
@@ -108,19 +102,13 @@ class EntradaMaterial extends Transaccion
                     $item_salida = SalidaAlmacenPartida::query()->where('id_item', $movimiento_salida->id_item)->first();
                     $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
 
-                    if ($mensaje != "") {
-                        $mensaje = $mensaje . " \n";
-                    }
                     if($salida->tipo_transaccion== 34 && $salida->opciones == 1){
-                        $mensaje = $mensaje . "-Salida (Consumo) #".$salida->numero_folio;
+                        $mensaje = $mensaje . "-Salida (Consumo) #".$salida->numero_folio." \n";
                     }
                     if($salida->tipo_transaccion== 34 && $salida->opciones == 65537){
-                        $mensaje = $mensaje . "-Salida (Transferencia) #".$salida->numero_folio;
+                        $mensaje = $mensaje . "-Salida (Transferencia) #".$salida->numero_folio." \n";
                     }
                 }else{
-                    if($mensaje != ""){
-                        $mensaje = $mensaje." \n";
-                    }
                     $mensaje = $mensaje."-Las cantidades (Cantidad = ".$inventario->cantidad." Saldo=  ".$inventario->saldo.") no concuerdan y no se encuentra ninguna salida relacionada.";
                 }
             }
@@ -128,7 +116,7 @@ class EntradaMaterial extends Transaccion
 
         if($mensaje != "")
         {
-            abort(400, 'No se puede eliminar la entrada de almacén debido a que existen transacciones relacionadas:'."\n". $mensaje);
+            abort(400, "No se puede eliminar la entrada de almacén debido a que existen transacciones relacionadas:\n". $mensaje);
         }
 
     }
