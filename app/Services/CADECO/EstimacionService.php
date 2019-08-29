@@ -112,10 +112,11 @@ class EstimacionService
     }
     public function showEstimacionTable($id)
     {
+
         $estimacion= $this->repository->show($id);
         $numEstimacion=$estimacion->subcontratoEstimacion;
-        
-        $partidas=$estimacion->item;
+
+        $partidas=$estimacion->subcontrato->partidas;
 
         $suma_contrato=0;
         $suma_estimadoAnterior=0;
@@ -125,46 +126,77 @@ class EstimacionService
 
         $items=array();
 
-        foreach ($partidas as $item ){
+        foreach ($partidas as $partida ){
 
 
-            foreach($item->ancestros as $ancestro){
+            foreach($partida->ancestros as $ancestro){
                 $items[$ancestro[1]]=$ancestro[0];
 
             }
 
-            $precioUnitario=$item->precio_unitario;
-            $cantidadContrato=$item->contrato->cantidad_original;
-            $cantidadEstimadoAnterior=$item->estimadoAnterior;
-            $cantidadEstimacion=$item->cantidad;
 
-            $items[$item->contrato->nivel] = Array (
-                'concepto'=>$item->contrato->descripcion,
-                'unidad' => $item->contrato->unidad,
-                'precioUnitario' => $item->precio_unitario,
-                'cantidadContrato'=> $item->contrato->cantidad_original,
-                'importeContrato' => $cantidadContrato * $precioUnitario,
-                'cantidadEstimadoAnterior'=> $item->estimadoAnterior,
-                'importeEstimadoAnterior' => $cantidadEstimadoAnterior * $precioUnitario,
-                'cantidadEstimacion' => $item->cantidad,
-                'importeEstimacion'=> $cantidadEstimacion * $precioUnitario,
-                'cantidadAcumulado'=> ($cantidadEstimadoAnterior + $cantidadEstimacion),
-                'importeAcumulado' => ($cantidadEstimadoAnterior + $cantidadEstimacion) * $precioUnitario,
-                'cantidadPorEstimar'=> $cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion),
-                'importePorEstimar'=> ($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion)) * $precioUnitario,
-        );
+           if($item = $partida->getEstimacionPartidaAttribute($id)) {
 
+               $precioUnitario = $item->precio_unitario;
+               $cantidadContrato = $partida->cantidad;
+               $cantidadEstimadoAnterior = $item->getEstimadoAnteriorAttribute($id);
+               $cantidadEstimacion = $item->cantidad;
 
-        /*Totales */
-         $suma_contrato+= $cantidadContrato * $precioUnitario;
-         $suma_estimadoAnterior+=$cantidadEstimadoAnterior * $precioUnitario;
-         $suma_estimacion+=$cantidadEstimacion * $precioUnitario;
-         $suma_acumulado+=($cantidadEstimadoAnterior + $cantidadEstimacion) * $precioUnitario;
-         $suma_porEstimar+=($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion)) * $precioUnitario;
+               $items[$item->contrato->nivel] = Array(
+                   'concepto' => $item->contrato->descripcion,
+                   'unidad' => $item->contrato->unidad,
+                   'precioUnitario' =>  $precioUnitario,
+                   'cantidadContrato' => $cantidadContrato ,
+                   'importeContrato' => $cantidadContrato * $precioUnitario,
+                   'cantidadEstimadoAnterior' =>$cantidadEstimadoAnterior ,
+                   'importeEstimadoAnterior' => $cantidadEstimadoAnterior * $precioUnitario,
+                   'cantidadEstimacion' => $item->cantidad,
+                   'importeEstimacion' => $cantidadEstimacion * $precioUnitario,
+                   'cantidadAcumulado' => ($cantidadEstimadoAnterior + $cantidadEstimacion),
+                   'importeAcumulado' => ($cantidadEstimadoAnterior + $cantidadEstimacion) * $precioUnitario,
+                   'cantidadPorEstimar' => $cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion),
+                   'importePorEstimar' => ($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion)) * $precioUnitario,
+               );
 
 
+               /*Totales */
+               $suma_contrato += $cantidadContrato * $precioUnitario;
+               $suma_estimadoAnterior += $cantidadEstimadoAnterior * $precioUnitario;
+               $suma_estimacion += $cantidadEstimacion * $precioUnitario;
+               $suma_acumulado += ($cantidadEstimadoAnterior + $cantidadEstimacion) * $precioUnitario;
+               $suma_porEstimar += ($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion)) * $precioUnitario;
 
+           }else{
+               $precioUnitario = $partida->precio_unitario;
+               $cantidadContrato = $partida->cantidad;
+               $cantidadEstimadoAnterior = $partida->getEstimadoAnteriorAttribute($id);
+               $cantidadEstimacion = $partida->cantidad;
+
+               $items[$partida->contrato->nivel] = Array(
+                   'id_concepto' => $partida->contrato->id_concepto,
+                   'concepto' => $partida->contrato->descripcion,
+                   'unidad' => $partida->contrato->unidad,
+                   'precioUnitario' => $precioUnitario,
+                   'cantidadContrato' => $cantidadContrato,
+                   'importeContrato' => $cantidadContrato * $precioUnitario,
+                   'cantidadEstimadoAnterior' => $cantidadEstimadoAnterior,
+                   'importeEstimadoAnterior' => $cantidadEstimadoAnterior * $precioUnitario,
+                   'cantidadEstimacion' => 0,
+                   'importeEstimacion' => 0,
+                   'cantidadAcumulado' => ($cantidadEstimadoAnterior),
+                   'importeAcumulado' => ($cantidadEstimadoAnterior ) * $precioUnitario,
+                   'cantidadPorEstimar' => $cantidadContrato - ($cantidadEstimadoAnterior),
+                   'importePorEstimar' => ($cantidadContrato - ($cantidadEstimadoAnterior)) * $precioUnitario,
+               );
+               $suma_contrato += $cantidadContrato * $precioUnitario;
+               $suma_estimadoAnterior += $cantidadEstimadoAnterior * $precioUnitario;
+               $suma_acumulado += ($cantidadEstimadoAnterior) * $precioUnitario;
+               $suma_porEstimar += ($cantidadContrato - ($cantidadEstimadoAnterior)) * $precioUnitario;
+
+           }
       }
+
+
 
         $result=array(
             'fecha_inicial'=>Carbon::parse($estimacion->cumplimiento)->format('d-m-Y'),
