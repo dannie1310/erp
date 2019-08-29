@@ -14,6 +14,7 @@ use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use App\Models\SEGURIDAD_ERP\CtgContratista;
+use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use Illuminate\Support\Facades\DB;
 
 class Estimacion extends Transaccion
@@ -46,7 +47,26 @@ class Estimacion extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 52);
+            return $query->where('tipo_transaccion', '=', 52)
+
+                ->where(function ($q3) {
+                    return $q3
+                        ->whereHas('subcontrato', function ($q) {
+                            return $q
+                                ->whereHas('contratoProyectado', function ($q2){
+                                    return $q2
+                                        ->whereHas('areasSubcontratantes', function ($q4){
+
+                                            return $q4
+                                                ->whereHas('usuariosAreasSubcontratantes', function ($q5) {
+//                                                    dd('koala', auth()->id());
+                                                    return $q5
+                                                        ->where('id_usuario', '=', auth()->id());
+                                                });
+                                        })->orHas('areasSubcontratantes', '=', 0);
+                                });
+                        });
+                });
         });
 
         self::creating(function ($estimacion) {
@@ -80,7 +100,7 @@ class Estimacion extends Transaccion
     public function subcontrato()
     {
         # return $this->belongsTo(Subcontrato::class,'id_transaccion', 'id_antecedente');
-        return $this->hasOne(Subcontrato::class, 'id_transaccion', 'id_antecedente');
+        return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function descuentos()
