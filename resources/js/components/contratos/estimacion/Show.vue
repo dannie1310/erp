@@ -45,7 +45,7 @@
                                     </tr>
                                     <tr>
                                       <th scope="row">Fecha</th>
-                                      <td class="text-right"> {{ estimacion.estimacion.fecha }}</td>
+                                      <td class="text-right"> {{ estimacion.fecha }}</td>
 
                                     </tr>
                                       <tr>
