@@ -116,7 +116,7 @@ class EstimacionService
         $estimacion= $this->repository->show($id);
         $numEstimacion=$estimacion->subcontratoEstimacion;
 
-        $partidas=$estimacion->subcontrato->partidas;
+        $partidas=$estimacion->subcontrato->partidasOrdenadas;
 
         $suma_contrato=0;
         $suma_estimadoAnterior=0;
@@ -134,13 +134,14 @@ class EstimacionService
 
             }
 
-
            if($item = $partida->getEstimacionPartidaAttribute($id)) {
 
                $precioUnitario = $item->precio_unitario;
                $cantidadContrato = $partida->cantidad;
                $cantidadEstimadoAnterior = $item->getEstimadoAnteriorAttribute($id);
                $cantidadEstimacion = $item->cantidad;
+
+
 
                $items[$item->contrato->nivel] = Array(
                    'concepto' => $item->contrato->descripcion,

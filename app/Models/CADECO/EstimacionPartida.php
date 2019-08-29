@@ -33,6 +33,7 @@ class EstimacionPartida extends Item
 
         $list=array();
         $size = strlen($this->contrato->nivel)/4;
+        $size = strlen($this->contrato->nivel)/4;
         $first=4;
 
             for($i=0; $i<$size-1;$i++){
