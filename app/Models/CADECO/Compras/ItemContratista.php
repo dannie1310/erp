@@ -1,20 +1,17 @@
 <?php
 
 
-namespace App\Models\CADECO;
+namespace App\Models\CADECO\Compras;
 
 
 use Illuminate\Database\Eloquent\Model;
 
-class Entrega extends Model
+class ItemContratista extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'dbo.entregas';
+    protected $table = 'Compras.ItemsXContratista';
     protected $primaryKey = 'id_item';
 
-    protected $fillable = [
-        'surtida'
-    ];
-
     public $timestamps = false;
+
 }
