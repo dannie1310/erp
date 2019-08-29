@@ -54,6 +54,7 @@ import contratoProyectado from './modules/contratos/contrato-proyectado';
 //FINANZAS
 import ctg_tipo_fondo from './modules/finanzas/ctg-tipo-fondo';
 import cuenta_bancaria_empresa from './modules/finanzas/cuenta-bancaria-empresa';
+import datosEstimaciones from './modules/finanzas/datos-estimaciones';
 import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
 import gestion_pago from './modules/finanzas/gestion-pago';
 import pago from './modules/finanzas/pago';
@@ -112,6 +113,7 @@ export default new Vuex.Store({
 
         'finanzas/ctg-tipo-fondo': ctg_tipo_fondo,
         'finanzas/cuenta-bancaria-empresa': cuenta_bancaria_empresa,
+        'finanzas/datos-estimaciones' : datosEstimaciones,
         'finanzas/distribuir-recurso-remesa': distribuir_recurso_remesa,
         'finanzas/gestion-pago': gestion_pago,
         'finanzas/pago': pago,

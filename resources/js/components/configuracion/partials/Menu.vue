@@ -63,8 +63,8 @@
                 </a>
             </li>
 
-            <li class="nav-header" v-if="$root.can('editar_configuracion_contable')"><a href="#configuracion-finanzas">CONFIGURACIÓN FINANZAS</a></li>
-            <li class="nav-item" v-if="$root.can('editar_configuracion_contable')">
+            <li class="nav-header" v-if="$root.can('editar_configuracion_finanzas')"><a href="#configuracion-estimaciones">CONFIGURACIÓN FINANZAS</a></li>
+            <li class="nav-item" v-if="$root.can('editar_configuracion_finanzas')">
                 <a href="#estimaciones" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Estimaciones</p>

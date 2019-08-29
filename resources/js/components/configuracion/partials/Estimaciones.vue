@@ -1,7 +1,7 @@
 <template>
-    <div class="card" id="configuracion-estimaciones" v-if="$root.can('editar_configuracion_contable')">
+    <div class="card" id="configuracion-estimaciones" v-if="$root.can('editar_configuracion_finanzas')">
         <div class="card-header">
-            <h3 class="card-title">Configuración finanzas</h3>
+            <h3 class="card-title">Configuración Finanzas</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse">
                     <i class="fa fa-minus"></i>
@@ -13,42 +13,11 @@
                 <h5><i class="icon fa fa-warning"></i>¡Atención!</h5>
                 {{ mensaje }}
             </div>
-
-            <fieldset class="form-group" id="estimaciones">
-                <div class="row">
-                    <legend class="col-form-label col-sm-2 pt-0"><b>Afectación Contable de Almacenes</b></legend>
-                    <div class="col-sm-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="manejo_almacenes1" value="1" v-model="form.manejo_almacenes" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> Si</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="manejo_almacenes0" value="0" v-model="form.manejo_almacenes" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> No</label>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
+            <h5 id="estimaciones">Estimaciones</h5>
 
             <fieldset class="form-group">
                 <div class="row">
-                    <legend class="col-form-label col-sm-2 pt-0"><b>Aplicación de Costo</b></legend>
-                    <div class="col-sm-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="costo_en_tipo_gasto1" value="1" v-model="form.costo_en_tipo_gasto" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> Por Tipo de Gasto</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="costo_en_tipo_gasto0" value="0" v-model="form.costo_en_tipo_gasto" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> Por Conceptos Presupuesto</label>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset class="form-group">
-                <div class="row">
-                    <legend class="col-form-label col-sm-2 pt-0"><b>Retención de Fondo de Garantía</b></legend>
+                    <legend class="col-form-label col-sm-2 pt-0"><b>Penalización / Devolución Penalización</b></legend>
                     <div class="col-sm-10">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
@@ -61,9 +30,10 @@
                     </div>
                 </div>
             </fieldset>
+
             <fieldset class="form-group">
                 <div class="row">
-                    <legend class="col-form-label col-sm-2 pt-0"><b>Aplicación de Deductivas</b></legend>
+                    <legend class="col-form-label col-sm-2 pt-0"><b>Retenciones / Devolución de Retenciones</b></legend>
                     <div class="col-sm-10">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="deductiva_antes_iva1" value="1" v-model="form.deductiva_antes_iva" :disabled="guardadosPreviamente">
@@ -79,7 +49,7 @@
 
             <fieldset class="form-group">
                 <div class="row">
-                    <legend class="col-form-label col-sm-2 pt-0"><b>Amortización de Anticipo</b></legend>
+                    <legend class="col-form-label col-sm-2 pt-0"><b>Préstamos de Materiales (Sin IVA)</b></legend>
                     <div class="col-sm-10">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="amortizacion_antes_iva1" value="1" v-model="form.amortizacion_antes_iva" :disabled="guardadosPreviamente">
@@ -93,48 +63,54 @@
                 </div>
             </fieldset>
 
+            <fieldset class="form-group">
+                <div class="row">
+                    <legend class="col-form-label col-sm-2 pt-0"><b>Retención de Fondo de Garantía (mas IVA)</b></legend>
+                    <div class="col-sm-10">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
 
-            <hr>
-            <h5 id="contpaq">ContPaq</h5>
+            <fieldset class="form-group">
+                <div class="row">
+                    <legend class="col-form-label col-sm-2 pt-0"><b>Descuento por Préstamo de Materiales (sin IVA)</b></legend>
+                    <div class="col-sm-10">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
 
-            <div class="form-group row">
-                <label for="BDContPaq" class="col-sm-2 col-form-label">Base de Datos CONTPAQ</label>
+            <fieldset class="form-group">
+            <div class="row">
+                <legend class="col-form-label col-sm-2 pt-0"><b>Descuento por Otros Prestamos</b></legend>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="BDContPaq" v-model="form.BDContPaq" :disabled="guardadosPreviamente"
-                           v-validate="{ max: 255 }"
-                           name="BDContPaq"
-                           data-vv-as="Base de Datos CONTPAQ"
-                           :class="{'is-invalid': errors.has('BDContPaq')}"
-                    >
-                    <div class="invalid-feedback" v-show="errors.has('BDContPaq')">{{ errors.first('BDContPaq') }}</div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                        <label class="form-check-label"> Antes de IVA</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                        <label class="form-check-label"> Después de IVA</label>
+                    </div>
                 </div>
             </div>
+        </fieldset>
 
-            <div class="form-group row">
-                <label for="NumobraContPaq" class="col-sm-2 col-form-label">Número de Obra CONTPAQ</label>
-                <div class="col-sm-4">
-                    <input type="number" class="form-control" id="NumobraContPaq" v-model="form.NumobraContPaq" :disabled="guardadosPreviamente"
-                           v-validate="{ integer: true }"
-                           name="NumobraContPaq"
-                           data-vv-as="Número de Obra CONTPAQ"
-                           :class="{'is-invalid': errors.has('NumobraContPaq')}"
-                    >
-                    <div class="invalid-feedback" v-show="errors.has('NumobraContPaq')">{{ errors.first('NumobraContPaq') }}</div>
-                </div>
-                <!--            </div>
-
-                            <div class="form-group row">-->
-                <label for="FormatoCuenta" class="col-sm-2 col-form-label">Formato de Cuentas</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control" id="FormatoCuenta" v-model="form.FormatoCuenta" :disabled="guardadosPreviamente"
-                           v-validate="{ regex: '^\#[\#\-]+\#$' }"
-                           name="FormatoCuenta"
-                           data-vv-as="Formato de Cuentas"
-                           :class="{'is-invalid': errors.has('FormatoCuenta')}"
-                    >
-                    <div class="invalid-feedback" v-show="errors.has('FormatoCuenta')">{{ errors.first('FormatoCuenta') }}</div>
-                </div>
-            </div>
             <div class="form-group row">
                 <div class="col">
                     <button type="submit" @click="validate" class="btn btn-outline-primary pull-right" :disabled="!cambio">
