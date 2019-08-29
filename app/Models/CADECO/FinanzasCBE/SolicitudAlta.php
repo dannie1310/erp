@@ -93,17 +93,14 @@ class SolicitudAlta extends Solicitud
                     'id_moneda' => $this->id_moneda
                 ]);
             } else if ($cuenta->estatus == -1) {
-
-                $cuenta = $cuenta->update([
-                    'id_empresa' => $this->id_empresa,
-                    'id_banco' => $this->id_banco,
-                    'sucursal' => $this->sucursal,
-                    'tipo_cuenta' => $this->tipo_cuenta,
-                    'id_solicitud_origen_alta' => $this->id,
-                    'id_plaza' => $this->id_plaza,
-                    'id_moneda' => $this->id_moneda,
-                    'estatus' => 1
-                ]);
+                if($this->id_empresa == $cuenta->id_empresa && $this->id_banco == $cuenta->id_banco && $this->sucursal == $cuenta->sucursal && $this->tipo_cuenta == $cuenta->tipo_cuenta && $this->id_plaza == $cuenta->id_plaza && $this->id_moneda == $cuenta->id_moneda) {
+                    $cuenta = $cuenta->update([
+                        'id_solicitud_origen_alta' => $this->id,
+                        'estatus' => 1
+                    ]);
+                }else{
+                    abort(400, 'La solicitud no puede ser autorizada porque existe este número de cuenta registrado previamente con otros datos.');
+                }
             } else {
                 abort(400, 'Ya existe está cuenta bancaria.');
             }
