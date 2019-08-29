@@ -71,6 +71,10 @@ class Subcontrato extends Transaccion
         return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function partidas(){
+        return $this->hasMany(SubcontratoPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function fondo_garantia()
     {
         return $this->hasOne(FondoGarantia::class, 'id_subcontrato', 'id_transaccion');
