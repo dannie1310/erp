@@ -22,7 +22,10 @@ class SubcontratoPartida extends Item
 
     public function getEstimadoAnteriorAttribute($id)
     {
-        return Item::where('item_antecedente', '=', $this->id_concepto)->where("id_transaccion", '<', $id)->where('id_concepto', '!=', null)->get()->sum('cantidad');
+//        dd(Item::where('item_antecedente', '=', $this->id_concepto)->where("id_transaccion", '<', $id)->where("id_antecedente", '<', $this->id_transaccion)
+//            ->where('id_conceptos', '!=', null)->get()->sum('cantidad'));
+        return Item::where('item_antecedente', '=', $this->id_concepto)->where("id_transaccion", '<', $id)->where("id_antecedente", '=', $this->id_transaccion)
+            ->where('id_concepto', '!=', null)->get()->sum('cantidad');
     }
 
     public function getAncestrosAttribute(){
