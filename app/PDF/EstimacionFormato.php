@@ -18,6 +18,7 @@ class EstimacionFormato extends Rotation
     protected $obra;
     protected $estimacion;
     private $encabezado_pdf = '';
+    protected $extgstates = array();
 
 
     const DPI = 96;
@@ -42,6 +43,7 @@ class EstimacionFormato extends Rotation
          $this->id=$id;
          $this->encabezado_pdf = utf8_decode($this->obra->facturar);
          $this->estimacion = Estimacion::with('empresa','subcontratoEstimacion','moneda','item','item.concepto', 'item.contrato')->find($id);
+
          $this->contratista =$this->estimacion->empresa->razon_social;
          $this->folio_consecutivo=$this->estimacion->subcontratoEstimacion->NumeroFolioConsecutivo;
 
@@ -87,6 +89,8 @@ class EstimacionFormato extends Rotation
     function Header()
     {
         $this->logo();
+
+
 
         $this->setXY(7, 2);
         $this->SetFont('Arial', 'B', 16);
@@ -228,11 +232,45 @@ class EstimacionFormato extends Rotation
         $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
 
     }
+
+
+    public function setWaterText($txt1="fdsgfd", $txt2="dfgsfds"){
+        $this->_outerText1 = $txt1;
+        $this->_outerText2 = $txt2;
+    }
 public function partidas(){
 
 
+//    $this->SetFont('Arial','B',40);
+//    $this->SetTextColor(255,192,203);
+////        $this->SetAlpha(0.5);
+//    $this->RotatedText(35,190, $this->_outerText1, 45);
+//    $this->RotatedText(75,190, $this->_outerText2, 45);
+//    $this->setWaterText("w a t e r M a r k d e m o ", "s e c o n d L i n e o f t e x t");
+//    $this->sin_texto=public_path('pdf/clausulados/SinTexto.jpg');
+//    $img = $this->image(public_path('pdf/clausulados/SinTexto.jpg'), 0, 5, 21);
+//    $this->RotatedImage($img,85,60,40,16,45);
+//    $this->sin_texto=public_path('pdf/clausulados/SinTexto.jpg');
+//    $this->image($this->sin_texto, 0, 5, 21);
+//    $this->RotatedText(100,60,'Hello!',45);
+
+//
+//    $this->Cell(($this->GetPageWidth() - 8) / 8, 0.4,  utf8_decode('CONCILIADOR'), 'TRLB', 0, 'C', 1);
+//    $this->SetAlpha(0.5);
 
 
+//    $watermark = $this->Water(public_path('pdf/clausulados/SinTexto.jpg'));
+//
+//    // Customize some options
+//    $watermark->setFontSize(48)
+//        ->setRotation(30)
+//        ->setOpacity(.4);
+//
+//    // Watermark with Text
+//    $watermark->withText('ajaxray.com', 'path/to/output.jpg');
+//
+//    // Watermark with Image
+//    $watermark->withImage('path/to/logo.png', 'path/to/output.jpg');
 
         foreach ($this->items as $i => $p) {
 
@@ -288,6 +326,7 @@ public function partidas(){
     $this->Cell((0.130 * $this->WidthTotal)/2,0.3,number_format($this->suma_acumulada,3, ".",","),'BTLR',0,'R',180);
     $this->Cell((0.128 * $this->WidthTotal)/2,0.3,'','BTLR',0,'R',180);
     $this->Cell((0.128 * $this->WidthTotal)/2,0.3,number_format($this->suma_porEstimar,3, ".",","),'BTLR',0,'R',180);
+
 
     }
 
@@ -628,6 +667,7 @@ public function partidas(){
 
     function Footer(){
         $this->firmas();
+
         $this->SetY($this->GetPageHeight() - 1);
         $this->SetFont('Arial', '', 6);
 
@@ -651,14 +691,34 @@ public function partidas(){
         $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de estimaciones. Fecha de registro: ' . date("d-m-Y", strtotime($this->fecha))), 0, 0, 'L');
         $this->SetXY(24,-0.9);
         $this->Cell(5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
-
+        $this->estatus();
     }
 
-    function create() {
+
+
+
+
+public function estatus(){
+
+        if($this->estimacion->estado ==='0') {
+
+            $this->SetFont('Arial', 'B', 60);
+            $this->SetTextColor(155, 155, 155);
+            $this->SetAlpha(0.25);
+            $this->RotatedText(10, 15, utf8_decode("NO APROBADA"), 45);
+            $this->SetTextColor('0,0,0');
+        }
+}
+
+    public function create() {
         $this->SetMargins(1, 0.5, 1);
         $this->AliasNbPages();
         $this->AddPage();
+
+
+
         $this->SetAutoPageBreak(true,3.75);
+
         $this->partidas();
         try {
             $this->Output('I', 'Formato - Estimacion.pdf', 1);
@@ -667,4 +727,66 @@ public function partidas(){
         }
         exit;
     }
+
+// alpha: real value from 0 (transparent) to 1 (opaque)
+    // bm:    blend mode, one of the following:
+    //          Normal, Multiply, Screen, Overlay, Darken, Lighten, ColorDodge, ColorBurn,
+    //          HardLight, SoftLight, Difference, Exclusion, Hue, Saturation, Color, Luminosity
+    public  function SetAlpha($alpha, $bm='Normal')
+    {
+        // set alpha for stroking (CA) and non-stroking (ca) operations
+        $gs = $this->AddExtGState(array('ca'=>$alpha, 'CA'=>$alpha, 'BM'=>'/'.$bm));
+        $this->SetExtGState($gs);
+    }
+
+    public function AddExtGState($parms)
+    {
+        $n = count($this->extgstates)+1;
+        $this->extgstates[$n]['parms'] = $parms;
+        return $n;
+    }
+
+    public function SetExtGState($gs)
+    {
+        $this->_out(sprintf('/GS%d gs', $gs));
+    }
+
+    public function _enddoc()
+    {
+        if(!empty($this->extgstates) && $this->PDFVersion<'1.4')
+            $this->PDFVersion='1.4';
+        parent::_enddoc();
+    }
+
+    public function _putextgstates()
+    {
+        for ($i = 1; $i <= count($this->extgstates); $i++)
+        {
+            $this->_newobj();
+            $this->extgstates[$i]['n'] = $this->n;
+            $this->_put('<</Type /ExtGState');
+            $parms = $this->extgstates[$i]['parms'];
+            $this->_put(sprintf('/ca %.3F', $parms['ca']));
+            $this->_put(sprintf('/CA %.3F', $parms['CA']));
+            $this->_put('/BM '.$parms['BM']);
+            $this->_put('>>');
+            $this->_put('endobj');
+        }
+    }
+
+    public  function _putresourcedict()
+    {
+        parent::_putresourcedict();
+        $this->_put('/ExtGState <<');
+        foreach($this->extgstates as $k=>$extgstate)
+            $this->_put('/GS'.$k.' '.$extgstate['n'].' 0 R');
+        $this->_put('>>');
+    }
+
+    public function _putresources()
+    {
+        $this->_putextgstates();
+        parent::_putresources();
+    }
+
 }

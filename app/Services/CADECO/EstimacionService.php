@@ -114,7 +114,7 @@ class EstimacionService
     {
         $estimacion= $this->repository->show($id);
         $numEstimacion=$estimacion->subcontratoEstimacion;
-        
+
         $partidas=$estimacion->item;
 
         $suma_contrato=0;
