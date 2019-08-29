@@ -244,7 +244,7 @@ public function partidas(){
 
 
 
-        foreach ($this->estimacion->subcontrato->partidas as $i => $p) {
+        foreach ($this->estimacion->subcontrato->partidasOrdenadas as $i => $p) {
 
             $this->Ln();
             $this->SetFont('Arial', '', 5);
@@ -287,9 +287,13 @@ public function partidas(){
             /*Acumulada*/
             if($estimacionItem) {
                 $this->cantidad_acumulada = $this->tran_antecedentes + $estimacionItem->cantidad;
+
+//                dd($this->cantidad_acumulada);
                 $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->cantidad_acumulada, 3, ".", ","), 'BTLR', 0, 'R', 0);
                 $this->importe_acumulado = $this->importe_antecedentes + $estimacionItem->importe;
                 $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_acumulado, 3, ".", ","), 'BTLR', 0, 'R', 0);
+
+
                 $this->suma_acumulada += $this->importe_acumulado;
                 $this->cantidad_restante = $p->cantidad- $this->cantidad_acumulada;
 
@@ -301,6 +305,7 @@ public function partidas(){
                 $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_acumulado, 3, ".", ","), 'BTLR', 0, 'R', 0);
                 $this->suma_acumulada += $this->importe_acumulado;
                 $this->cantidad_restante = $p->cantidad - $this->cantidad_acumulada;
+
 
 
             }
