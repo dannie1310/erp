@@ -76,6 +76,7 @@ class EntradaMaterial extends Transaccion
     private function validarParaEliminar()
     {
         $mensaje = "";
+        $mensaje_items = [];
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != null){
             $mensaje = "-Prepoliza: #".$poliza->id_int_poliza." \n";
@@ -88,11 +89,12 @@ class EntradaMaterial extends Transaccion
             $factura_part = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->first();
             if($factura_part != null) {
                 $factura = Factura::query()->where('id_transaccion', $factura_part->id_transaccion)->first();
-                $mensaje = $mensaje."-Factura: # ". $factura->numero_folio." \n";
+                $contra_recibo = ContraRecibo::query()->where('id_transaccion', $factura->id_antecedente)->first();
+                array_push($mensaje_items,  "-ContraRecibo: # " . $contra_recibo->numero_folio . " Factura: # " . $factura->numero_folio ." \n" );
             }
 
             if($inventario == null && $movimiento == null){
-                $mensaje = $mensaje."-No existe un inventario ni movimiento \n";
+                array_push($mensaje_items,  "-No existe un inventario ni movimiento \n");
             }
 
             if($inventario != null && $inventario->cantidad != $inventario->saldo){
@@ -103,22 +105,32 @@ class EntradaMaterial extends Transaccion
                     $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
 
                     if($salida->tipo_transaccion== 34 && $salida->opciones == 1){
-                        $mensaje = $mensaje . "-Salida (Consumo) #".$salida->numero_folio." \n";
+                        array_push($mensaje_items,  "-Salida (Consumo) #".$salida->numero_folio." \n");
                     }
                     if($salida->tipo_transaccion== 34 && $salida->opciones == 65537){
-                        $mensaje = $mensaje . "-Salida (Transferencia) #".$salida->numero_folio." \n";
+                        array_push($mensaje_items,   "-Salida (Transferencia) #".$salida->numero_folio." \n");
                     }
                 }else{
-                    $mensaje = $mensaje."-Las cantidades (Cantidad = ".$inventario->cantidad." Saldo=  ".$inventario->saldo.") no concuerdan y no se encuentra ninguna salida relacionada.";
+                    array_push($mensaje_items,"-Las cantidades (Cantidad = ".$inventario->cantidad." Saldo=  ".$inventario->saldo.") no concuerdan y no se encuentra ninguna salida relacionada.\n");
                 }
             }
+        }
+
+        $mensaje_items = array_unique($mensaje_items);
+
+        if($mensaje_items != [])
+        {
+            $mensaje_fin = "";
+            foreach ($mensaje_items as $mensaje_item) {
+                $mensaje_fin = $mensaje_fin . $mensaje_item;
+            }
+            $mensaje = $mensaje.$mensaje_fin;
         }
 
         if($mensaje != "")
         {
             abort(400, "No se puede eliminar la entrada de almacén debido a que existen transacciones relacionadas:\n". $mensaje);
         }
-
     }
 
     /**
