@@ -41,7 +41,7 @@ class SubcontratoPartida extends Item
     }
 
     public function getEstimacionPartidaAttribute($id){
-       // dd($id);
-        return EstimacionPartida::query()->where('id_antecedente', '=',$this->id_transaccion)->where('item_antecedente', '=', $this->id_concepto)->where('id_transaccion','=', $id)->first();
+        return EstimacionPartida::query()->where('id_antecedente', '=',$this->id_transaccion)->where('item_antecedente', '=', $this->id_concepto)
+            ->where('id_transaccion','=', $id)->first();
     }
 }
