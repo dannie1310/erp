@@ -291,7 +291,7 @@ public function partidas(){
                 $this->importe_acumulado = $this->importe_antecedentes + $estimacionItem->importe;
                 $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_acumulado, 3, ".", ","), 'BTLR', 0, 'R', 0);
                 $this->suma_acumulada += $this->importe_acumulado;
-                $this->cantidad_restante = $estimacionItem->cantidad - $this->cantidad_acumulada;
+                $this->cantidad_restante = $p->cantidad- $this->cantidad_acumulada;
 
 
             }else{
