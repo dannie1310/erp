@@ -199,6 +199,7 @@ class EstimacionService
         $result=array(
             'fecha_inicial'=>Carbon::parse($estimacion->cumplimiento)->format('d-m-Y'),
             'fecha_final'=>Carbon::parse($estimacion->vencimiento)->format('d-m-Y'),
+            'fecha'=>Carbon::parse($estimacion->fecha)->format('d-m-Y'),
             'estimacion'=>$estimacion->toArray(),
             'numEstimacion'=>$numEstimacion,
             'empresa' => $estimacion->empresa->toArray(),
