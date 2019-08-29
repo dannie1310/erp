@@ -54,7 +54,7 @@ class Item extends Model
 
     public function getCantidadFormatAttribute()
     {
-        return number_format($this->cantidad,3,'.', '');
+        return number_format($this->cantidad,2,'.', '');
 
     }
 }
