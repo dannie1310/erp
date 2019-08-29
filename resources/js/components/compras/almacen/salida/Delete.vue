@@ -70,7 +70,7 @@
                                                         <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                         <td>{{doc.unidad}}</td>
                                                         <td>{{doc.cantidad_format}}</td>
-                                                        <td v-if="salida.opciones == 1">{{doc.concepto.descripcion}}</td>
+                                                        <td v-if="salida.opciones == 1" :title="`${doc.concepto.path}`"><u>{{doc.concepto.descripcion}}</u></td>
                                                         <td v-else>{{doc.almacen.descripcion}}</td>
                                                     </tr>
                                                     <tr v-if="salida.observaciones" class="invoice p-3 mb-3">
@@ -117,13 +117,11 @@
 <script>
     export default {
         name: "salida-almacen-delete",
-        props: ['id'],
+        props: ['id','pagina'],
         data() {
             return {
                 data: [],
-                motivo: '',
-                query: {include: ['almacen'], sort: 'numero_folio', order: 'desc'}
-
+                motivo: ''
             }
         },
         methods: {
@@ -147,7 +145,11 @@
                     .then(data => {
                         this.$store.commit('compras/salida-almacen/DELETE_SALIDA', {id: this.id})
                         $(this.$refs.modal).modal('hide');
-                        this.$store.dispatch('compras/salida-almacen/paginate', {params: this.query})
+                        this.$store.dispatch('compras/salida-almacen/paginate', {
+                            params: {
+                                include: 'almacen', sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
+                            }
+                        })
                             .then(data => {
                                 this.$store.commit('compras/salida-almacen/SET_SALIDAS', data.data);
                                 this.$store.commit('compras/salida-almacen/SET_META', data.meta);
