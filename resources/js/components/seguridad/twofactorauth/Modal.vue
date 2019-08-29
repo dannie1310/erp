@@ -20,14 +20,17 @@
                     </center>
                     <br>
                     <ul>
-                        <li>En caso de que no se pueda escanear el código de barras:</li>
+                        <li>En caso de que no se pueda escanear el código de barras, Seleccione <b>Introducción manual</b> ó <b>Ingresa la clave proporcionada</b>:</li>
                         <ul>
-                            <li>Seleccione <b>Escanear código de barras</b> <b>Ingresa la clave proporcionada</b></li>
+                            <li>Ingrese la siguiente información:</li>
+                            <ul>
+                                <li>Cuenta: <b>SAO-ERP({{code_secret.user}})</b></li>
+                                <li>Clave: <b>{{code_secret.code}}</b></li>
+                            </ul>
                         </ul>
-                        <li>Seleccione <b>Escanear código de barras</b> y escanee el siguiente código: </li>
                     </ul>
                     <ul>
-                        <li>Una vez escaneado, ingrese el <b>código de verificación</b> que le proporcionó la APP</li>
+                        <li>Una vez registrado, ingrese el <b>código de verificación</b> que le proporcionó la APP</li>
                     </ul>
                     <br>
                     <center>
@@ -97,9 +100,9 @@
                                 buttons: false
                             });
                         } else {
+                            this.secretCode();
                             $(this.$refs.modal2fa).modal('show');
                             $(this.$refs.codeInput).pincodeInput().data('plugin_pincodeInput').focus();
-                            this.secretCode();
                         }
                     })
                     .finally(() => {
