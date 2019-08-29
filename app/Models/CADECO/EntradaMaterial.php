@@ -98,19 +98,24 @@ class EntradaMaterial extends Transaccion
             }
 
             if($inventario != null && $inventario->cantidad != $inventario->saldo){
-                $movimiento_salida = Movimiento::query()->where('lote_antecedente', $inventario->id_lote)->first();
+                $movimientos_salidas = Movimiento::query()->where('lote_antecedente', $inventario->id_lote)->get();
+                $inventarios_transferencias =  Inventario::query()->where('lote_antecedente', $inventario->id_lote)->get();
 
-                if($movimiento_salida != null) {
-                    $item_salida = SalidaAlmacenPartida::query()->where('id_item', $movimiento_salida->id_item)->first();
-                    $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
-
-                    if($salida->tipo_transaccion== 34 && $salida->opciones == 1){
-                        array_push($mensaje_items,  "-Salida (Consumo) #".$salida->numero_folio." \n");
+                if($movimientos_salidas->toArray() != []) {
+                    foreach ($movimientos_salidas as $movimientos_salida) {
+                        $item_salida = SalidaAlmacenPartida::query()->where('id_item', $movimientos_salida->id_item)->first();
+                        $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
+                        array_push($mensaje_items, "-Salida (Consumo) #" . $salida->numero_folio . " \n");
                     }
-                    if($salida->tipo_transaccion== 34 && $salida->opciones == 65537){
-                        array_push($mensaje_items,   "-Salida (Transferencia) #".$salida->numero_folio." \n");
+                }
+                if($inventarios_transferencias->toArray() != []){
+                    foreach ($inventarios_transferencias as $inventarios_transferencia) {
+                        $item_salida = SalidaAlmacenPartida::query()->where('id_item', $inventarios_transferencia->id_item)->first();
+                        $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
+                        array_push($mensaje_items, "-Salida (Transferencia) #" . $salida->numero_folio . " \n");
                     }
-                }else{
+                }
+                if($movimientos_salidas->toArray() == [] && $inventarios_transferencias->toArray() == []){
                     $material = Material::query()->where('id_material', $item['id_material'])->first();
                     array_push($mensaje_items,"-Las cantidades del insumo ".$material->descripcion." (Entrada = ".$inventario->cantidad.", Saldo=  ".$inventario->saldo.") no concuerdan y no se encuentra ninguna salida relacionada.\n");
                 }
@@ -130,7 +135,7 @@ class EntradaMaterial extends Transaccion
 
         if($mensaje != "")
         {
-            abort(400, "No se puede eliminar la entrada de almacén debido a las siguientes razones:\n". $mensaje. "Favor de comunicarse con Soporte a Aplicaciones y Coordinación SAO.");
+            abort(400, "No se puede eliminar la entrada de almacén debido a que existen las siguientes transacciones relacionadas:\n". $mensaje. "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
         }
     }
 
