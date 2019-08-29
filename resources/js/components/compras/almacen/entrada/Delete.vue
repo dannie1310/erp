@@ -73,7 +73,7 @@
                                                             <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun material asignado</td>
                                                             <td>{{doc.unidad}}</td>
-                                                            <td>{{doc.cantidad}}</td>
+                                                            <td>{{doc.cantidad_format}}</td>
                                                             <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
                                                             <td v-else-if="doc.concepto" :title="`${doc.concepto.path}`"><u>{{doc.concepto.descripcion}}</u></td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>

@@ -46,6 +46,7 @@ class EntradaAlmacenPartidaTransformer extends TransformerAbstract
             'unidad' => $model->unidad,
             'cantidad' => $model->cantidad,
             'cantidad_material' => $model->cantidad_material,
+            'cantidad_format' => $model->cantidad_format,
             'saldo' => $model->saldo
         ];
     }
