@@ -48,24 +48,9 @@ class Estimacion extends Transaccion
 
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 52)
-
                 ->where(function ($q3) {
                     return $q3
-                        ->whereHas('subcontrato', function ($q) {
-                            return $q
-                                ->whereHas('contratoProyectado', function ($q2){
-                                    return $q2
-                                        ->whereHas('areasSubcontratantes', function ($q4){
-
-                                            return $q4
-                                                ->whereHas('usuariosAreasSubcontratantes', function ($q5) {
-//                                                    dd('koala', auth()->id());
-                                                    return $q5
-                                                        ->where('id_usuario', '=', auth()->id());
-                                                });
-                                        })->orHas('areasSubcontratantes', '=', 0);
-                                });
-                        });
+                        ->whereHas('subcontrato');
                 });
         });
 
