@@ -111,7 +111,8 @@ class EntradaMaterial extends Transaccion
                         array_push($mensaje_items,   "-Salida (Transferencia) #".$salida->numero_folio." \n");
                     }
                 }else{
-                    array_push($mensaje_items,"-Las cantidades (Cantidad = ".$inventario->cantidad." Saldo=  ".$inventario->saldo.") no concuerdan y no se encuentra ninguna salida relacionada.\n");
+                    $material = Material::query()->where('id_material', $item['id_material'])->first();
+                    array_push($mensaje_items,"-Las cantidades del insumo ".$material->descripcion." (Entrada = ".$inventario->cantidad.", Saldo=  ".$inventario->saldo.") no concuerdan y no se encuentra ninguna salida relacionada.\n");
                 }
             }
         }
@@ -129,7 +130,7 @@ class EntradaMaterial extends Transaccion
 
         if($mensaje != "")
         {
-            abort(400, "No se puede eliminar la entrada de almacén debido a que existen transacciones relacionadas:\n". $mensaje);
+            abort(400, "No se puede eliminar la entrada de almacén debido a que existen transacciones relacionadas:\n". $mensaje. "Favor de comunicarse con Soporte a Aplicaciones y Coordinación SAO.");
         }
     }
 
