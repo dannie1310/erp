@@ -135,7 +135,6 @@ class EstimacionService
             }
 
            if($item = $partida->getEstimacionPartidaAttribute($id)) {
-
                $precioUnitario = $item->precio_unitario;
                $cantidadContrato = $partida->cantidad;
                $cantidadEstimadoAnterior = $item->getEstimadoAnteriorAttribute($id);
@@ -159,7 +158,6 @@ class EstimacionService
                    'importePorEstimar' => ($cantidadContrato - ($cantidadEstimadoAnterior + $cantidadEstimacion)) * $precioUnitario,
                );
 
-
                /*Totales */
                $suma_contrato += $cantidadContrato * $precioUnitario;
                $suma_estimadoAnterior += $cantidadEstimadoAnterior * $precioUnitario;
@@ -172,7 +170,6 @@ class EstimacionService
                $cantidadContrato = $partida->cantidad;
                $cantidadEstimadoAnterior = $partida->getEstimadoAnteriorAttribute($id);
                $cantidadEstimacion = $partida->cantidad;
-
                $items[$partida->contrato->nivel] = Array(
                    'id_concepto' => $partida->contrato->id_concepto,
                    'concepto' => $partida->contrato->descripcion,
