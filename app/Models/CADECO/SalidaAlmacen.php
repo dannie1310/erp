@@ -126,7 +126,7 @@ class SalidaAlmacen extends Transaccion
         $mensaje = '';
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != []){
-            $mensaje = "-La salida se encuentra a la Prepoliza: #".$poliza->id_int_poliza." \n";
+            $mensaje = "-La salida se encuentra asociada a la Prepoliza: #".$poliza->id_int_poliza." \n";
         }
         $items = $this->partidas()->get()->toArray();
 
