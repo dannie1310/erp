@@ -193,7 +193,7 @@ class SalidaAlmacen extends Transaccion
         }
         if($mensaje != "")
         {
-            abort(400, "No se puede eliminar la salida de almacén debido a las siguientes razones:\n" . $mensaje . "Favor de comunicarse con Soporte a Aplicaciones y Coordinación SAO.");
+            abort(400, "No se puede eliminar la salida de almacén debido a las siguientes razones:\n" . $mensaje . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
         }
     }
 
