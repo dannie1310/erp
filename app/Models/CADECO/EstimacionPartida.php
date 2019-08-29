@@ -23,9 +23,10 @@ class EstimacionPartida extends Item
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 
-    public function getEstimadoAnteriorAttribute()
+    public function getEstimadoAnteriorAttribute($id)
     {
-        return Item::where('item_antecedente', '=', $this->item_antecedente)->where("id_transaccion", '<', $this->id_transaccion)->get()->sum('cantidad');
+
+       return Item::where('item_antecedente', '=', $this->item_antecedente)->where("id_transaccion", '<', $id)->where('id_concepto', '!=', null)->get()->sum('cantidad');
     }
 
     public function getAncestrosAttribute(){

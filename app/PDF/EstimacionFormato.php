@@ -702,10 +702,10 @@ public function estatus(){
 
         if($this->estimacion->estado ==='0') {
 
-            $this->SetFont('Arial', 'B', 60);
+            $this->SetFont('Arial', 'B', 91);
             $this->SetTextColor(155, 155, 155);
-            $this->SetAlpha(0.25);
-            $this->RotatedText(10, 15, utf8_decode("NO APROBADA"), 45);
+            $this->SetAlpha(0.30);
+            $this->RotatedText(7, 20, utf8_decode("NO APROBADA"), 45);
             $this->SetTextColor('0,0,0');
         }
 }
