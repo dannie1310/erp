@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
+use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use Illuminate\Support\Facades\DB;
 
 class Subcontrato extends Transaccion
@@ -47,7 +48,18 @@ class Subcontrato extends Transaccion
         self::addGlobalScope('tipo',function ($query) {
             return $query->where('tipo_transaccion', '=', 51)
                 ->where('opciones', '=', 2)
-                ->whereIn('estado', [0, 1]);
+                ->whereIn('estado', [0, 1])
+                ->where(function ($q3) {
+                    return $q3
+                        ->whereHas('areasSubcontratantes', function ($q) {
+                            return $q
+                                ->whereHas('usuariosAreasSubcontratantes', function ($q2) {
+                                    return $q2
+                                        ->where('id_usuario', '=', auth()->id());
+                                });
+                        })
+                        ->orHas('areasSubcontratantes', '=', 0);
+                });
         });
         self::creating(function ($subcontrato) {
 
@@ -60,6 +72,15 @@ class Subcontrato extends Transaccion
                 $subcontrato->generaFondoGarantia();
             }
         });
+    }
+
+    public function areasSubcontratantes()
+    {
+        return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante', 'id_antecedente');
+    }
+    public function contratoProyectado()
+    {
+        return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function estimacion(){
