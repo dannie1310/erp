@@ -9,9 +9,13 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 
+use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\CADECO\ItemTransformer;
 use App\Http\Transformers\CADECO\SubcontratosEstimaciones\SubcontratoEstimacionTrasnformer;
 use App\Models\CADECO\Estimacion;
 use League\Fractal\TransformerAbstract;
+use Carbon\Carbon;
 
 class EstimacionTransformer extends TransformerAbstract
 {
@@ -22,7 +26,11 @@ class EstimacionTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'subcontratoEstimacion',
-        'subcontrato'
+        'subcontrato',
+        'empresa',
+        'moneda',
+        'item',
+
     ];
 
     /**
@@ -37,10 +45,14 @@ class EstimacionTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
+            'folio'=> str_pad($model->numero_folio,6, 0, STR_PAD_LEFT),
             'observaciones' => $model->observaciones,
             'impuesto' => $model->impuesto,
             'monto' => $model->monto,
-            'estado' => $model->estado
+            'estado' => $model->estado,
+            'fecha' => Carbon::parse($model->fecha)->format('d-m-Y'),
+            'fecha_inicial'=>Carbon::parse($model->cumplimiento)->format('d-m-Y'),
+            'fecha_final' =>Carbon::parse($model->vencimiento)->format('d-m-Y'),
         ];
     }
 
@@ -59,4 +71,32 @@ class EstimacionTransformer extends TransformerAbstract
         }
         return null;
     }
+
+    public function includeEmpresa(Estimacion $model)
+    {
+        if($empresa = $model->empresa) {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    public function includeMoneda(Estimacion $model)
+    {
+        if($moneda = $model->moneda) {
+            return $this->item($moneda, new MonedaTransformer);
+
+        }
+        return null;
+    }
+
+    public function includeItem(Estimacion $model)
+    {
+        if($item= $model->item){
+            return $this->collection($item, new ItemTransformer);
+        }
+        return null;
+    }
+
+
+
 }

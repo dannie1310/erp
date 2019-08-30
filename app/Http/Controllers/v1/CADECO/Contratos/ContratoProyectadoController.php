@@ -67,4 +67,6 @@ class ContratoProyectadoController extends Controller
         $contrato_proyectado = $this->service->actualiza($request->all(), $id);
         return $this->respondWithItem($contrato_proyectado);
     }
+
+
 }

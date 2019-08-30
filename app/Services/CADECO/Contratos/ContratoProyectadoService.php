@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Contratos;
 
 
+use App\Models\CADECO\Contrato;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Repositories\Repository;
@@ -48,7 +49,7 @@ class ContratoProyectadoService
     {
         $cp_area = new ContratoProyectado\AreasSubcontratantes();
         $cp = $this->repository;
-        
+
         if(isset($data['id_area_subcontratante'])){
             $area = TipoAreaSubcontratante::query()->where([['descripcion', 'LIKE', '%'.request('id_area_subcontratante').'%']])->get();
 
@@ -101,5 +102,23 @@ class ContratoProyectadoService
             }
         }
     }
+
+//    public function niveles($data)
+//    {
+//        $list=array();
+//        $first=4;
+//        $size = strlen($data['nivel']);
+//
+//        while($first<$size){
+//            $nivel=substr($data['nivel'],0,$first);
+//            $result=Contrato::where('id_transaccion','=',$data['id_transaccion'])->where('id_concepto','<',$data['id_concepto'])->where('nivel','LIKE',$nivel)->get();
+//            array_push($list,[$result[0]->descripcion, $result[0]->nivel]);
+//            $first+=4;
+//        }
+//
+//        return $list;
+//
+//    }
+
 
 }

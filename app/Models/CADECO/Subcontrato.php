@@ -92,6 +92,10 @@ class Subcontrato extends Transaccion
         return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function partidas(){
+        return $this->hasMany(SubcontratoPartida::class, 'id_transaccion');
+    }
+
     public function fondo_garantia()
     {
         return $this->hasOne(FondoGarantia::class, 'id_subcontrato', 'id_transaccion');
@@ -118,6 +122,12 @@ class Subcontrato extends Transaccion
         }
     }
 
+
+    public function partidasOrdenadas(){
+        return $this->partidas()->join('dbo.contratos','contratos.id_concepto', 'items.id_concepto')
+            ->where('items.id_transaccion', '=', $this->id_transaccion)
+            ->orderBy('contratos.nivel', 'asc')->select('items.*');
+    }
     public function getSubtotalAttribute()
     {
         return $this->monto-$this->impuesto;
