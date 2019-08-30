@@ -100,4 +100,17 @@ class CuentaBancariaEmpresa extends Model
             abort(400, 'La solicitud no puede ser autorizada, la empresa tiene una cuenta activa');
         }
     }
+
+    public function getEstadoFormatAttribute()
+    {
+        switch($this->estatus){
+            case 1:
+                return 'Registrada';
+                break;
+
+            case -1:
+                return 'Cancelada';
+                break;
+        }
+    }
 }

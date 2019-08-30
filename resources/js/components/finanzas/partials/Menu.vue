@@ -34,6 +34,12 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_solicitud_alta_cuenta_bancaria_empresa')">
+                        <router-link :to="{name: 'cuenta-empresa-bancaria'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-empresa-bancaria'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Cuenta Empresa</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_solicitud_alta_cuenta_bancaria_empresa')">
                         <router-link :to="{name: 'solicitud-alta'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-alta'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Solicitud de Alta</p>

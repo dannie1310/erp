@@ -787,6 +787,20 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'cuenta-empresa-bancaria',
+                        name: 'cuenta-empresa-bancaria',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/cuenta-empresa/Index'),
+                        meta: {
+                            title: 'Cuenta Bancaria Empresa',
+                            breadcrumb: {
+                                parent: 'gestion-cuenta-bancaria',
+                                name: 'CUENTA BANCARIA EMPRESA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_alta_cuenta_bancaria_empresa'
+                        }
+                    },
+                    {
                         path: 'solicitud-alta',
                         name: 'solicitud-alta',
                         component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-alta/Index'),
