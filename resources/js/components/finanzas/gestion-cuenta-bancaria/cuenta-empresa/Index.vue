@@ -24,11 +24,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Beneficiario', field: 'empresa', sortable: false},
+                    { title: 'Beneficiario', field: 'id_empresa', thComp: require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Tipo Beneficiaro', field: 'tipo_empresa', sortable: false},
-                    { title: 'Banco', field: 'banco', sortable: false},
-                    { title: 'Cuenta/CLABE', field: 'cuenta', sortable: false},
-                    { title: 'Estatus', field: 'estado', sortable: false},
+                    { title: 'Banco', field: 'id_banco', thComp: require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Cuenta/CLABE', field: 'cuenta_clabe', thComp: require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Estatus', field: 'estatus', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
@@ -78,11 +78,11 @@
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            empresa: cuenta.empresa.razon_social,
+                            id_empresa: cuenta.empresa.razon_social,
                             tipo_empresa: cuenta.empresa.tipo_empresa,
-                            banco: cuenta.banco.razon_social,
-                            cuenta: cuenta.cuenta,
-                            estado: cuenta.estado_format,
+                            id_banco: cuenta.banco.razon_social,
+                            cuenta_clabe: cuenta.cuenta,
+                            estatus: cuenta.estado_format,
                             buttons: $.extend({}, {
                                 show: true,
                                 id: cuenta.id,
