@@ -102,4 +102,9 @@ class EstimacionController extends Controller
     {
         return $this->service->pdfEstimacion($id)->create();
     }
+
+    public function showEstimacionTable($id)
+    {
+        return $this->service->showEstimacionTable($id);
+    }
 }

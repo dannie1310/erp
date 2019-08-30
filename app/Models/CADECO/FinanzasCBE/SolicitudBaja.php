@@ -43,7 +43,7 @@ class SolicitudBaja extends Solicitud
             abort(400, 'No existe está cuenta bancaria empresa.');
         }
 
-        if(SolicitudBaja::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('id_empresa', '=', $this->id_empresa)->where('estado','>=',0)->get()->toArray() != [])
+        if(SolicitudBaja::query()->where('cuenta_clabe', $this->cuenta_clabe)->where('id_empresa', '=', $this->id_empresa)->where('estado',1)->get()->toArray() != [])
         {
             abort(400, 'Ya existe una solicitud de baja para está cuenta bancaria.');
         }

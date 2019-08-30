@@ -13,7 +13,10 @@ use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
+use App\Models\SEGURIDAD_ERP\CtgContratista;
+use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Item;
 use App\Models\CADECO\Moneda;
 use Illuminate\Support\Facades\DB;
 
@@ -47,7 +50,11 @@ class Estimacion extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 52);
+            return $query->where('tipo_transaccion', '=', 52)
+                ->where(function ($q3) {
+                    return $q3
+                        ->whereHas('subcontrato');
+                });
         });
 
         self::creating(function ($estimacion) {
@@ -81,7 +88,7 @@ class Estimacion extends Transaccion
     public function subcontrato()
     {
         # return $this->belongsTo(Subcontrato::class,'id_transaccion', 'id_antecedente');
-        return $this->hasOne(Subcontrato::class, 'id_transaccion', 'id_antecedente');
+        return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function descuentos()
@@ -298,8 +305,7 @@ class Estimacion extends Transaccion
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
-    public function item(){
-        return $this->hasMany(Item::class, 'id_transaccion');
+    public function items(){
+        return $this->hasMany(EstimacionPartida::class, 'id_transaccion');
     }
-
 }
