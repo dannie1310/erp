@@ -54,7 +54,7 @@ class EstimacionFormato extends Rotation
 
 
          $this->moneda = $this->estimacion->moneda->nombre;
-         $this->items = $this->estimacion->item;
+         $this->items = $this->estimacion->items;
 
 
 
