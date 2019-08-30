@@ -46,54 +46,6 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-group">
-                <div class="row">
-                    <legend class="col-form-label col-sm-2 pt-0"><b>Retención de Fondo de Garantía</b></legend>
-                    <div class="col-sm-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> Antes de IVA</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> Después de IVA</label>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-            <fieldset class="form-group">
-                <div class="row">
-                    <legend class="col-form-label col-sm-2 pt-0"><b>Aplicación de Deductivas</b></legend>
-                    <div class="col-sm-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="deductiva_antes_iva1" value="1" v-model="form.deductiva_antes_iva" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> Antes de IVA</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="deductiva_antes_iva2" value="0" v-model="form.deductiva_antes_iva" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> Después de IVA</label>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset class="form-group">
-                <div class="row">
-                    <legend class="col-form-label col-sm-2 pt-0"><b>Amortización de Anticipo</b></legend>
-                    <div class="col-sm-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="amortizacion_antes_iva1" value="1" v-model="form.amortizacion_antes_iva" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> Antes de IVA</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="amortizacion_antes_iva0" value="0" v-model="form.amortizacion_antes_iva" :disabled="guardadosPreviamente">
-                            <label class="form-check-label"> Después de IVA</label>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-
-
             <hr>
             <h5 id="contpaq">ContPaq</h5>
 
@@ -199,7 +151,7 @@
                 return JSON.stringify(this.form) != JSON.stringify(this.datosContables);
             },
             guardadosPreviamente() {
-                return Boolean(this.datosContables.FormatoCuenta) && Boolean(this.datosContables.BDContPaq) && Boolean(this.datosContables.NumobraContPaq);
+                return Boolean(this.datosContables);
             },
             mensaje() {
                 return this.guardadosPreviamente ? 'Los datos no pueden ser modificados porque ya han sido guardados previamente' : 'Una vez guardados los datos no va a ser posible editarlos';
