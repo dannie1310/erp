@@ -247,7 +247,7 @@ class EstimacionFormato extends Rotation
 public function partidas(){
 
     $this->Ln();
-    $this->SetFont('Arial', '', 6);
+    $this->SetFont('Arial', '', 5);
     $this->SetFillColor(180, 180, 180);
     $this->SetWidths([6.92, 1.39, 1.67, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.78, 1.78]);
     $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
@@ -261,18 +261,23 @@ public function partidas(){
 
     foreach ($this->estimacion->subcontrato->partidasOrdenadas as $i => $p) {
         $item_antecedente = $p->contrato->id_concepto;
-        $this->tran_antecedentes = $p->getEstimadoAnteriorAttribute($this->id);
+
 
         $this->contrato_importe = $p->precio_unitario * $p->cantidad;
         $this->suma_contrato += $this->contrato_importe;
 
         $this->tran_antecedentes = $p->getEstimadoAnteriorAttribute($this->id);
+
+
         $this->importe_antecedentes = $this->tran_antecedentes * $p->precio_unitario;
 
 
 
         $estimacionItem=$p->getEstimacionPartidaAttribute($this->id);
         $aux=0;
+
+
+
         if($estimacionItem) {
             $this->suma_estimacion += $estimacionItem->importe;
             $this->cantidad_acumulada = $this->tran_antecedentes + $estimacionItem->cantidad;
@@ -322,9 +327,9 @@ public function partidas(){
                 number_format($this->importe_restante, 3, ".", ","),
             ]);
         }
-
-
     }
+
+
 
 
     /*Footer partidas*/
@@ -333,7 +338,7 @@ public function partidas(){
     $this->SetFont('Arial', '', 5);
     $this->SetFillColor(180,180,180);
 
-    //6.92, 1.39, 1.67, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.78, 1.78
+
     $this->Cell( 6.92,0.3,"Sub-totales Obra Ejecutada",'RTLB',0,'R',180);   // empty cell with left,top, and right borders
     $this->Cell(1.39,0.3,"",'RTLB',0,'C',180);
     $this->Cell(1.67,0.3,'','RTLB',0,'R',180);
@@ -347,6 +352,8 @@ public function partidas(){
     $this->Cell(1.80,0.3,number_format($this->suma_acumulada,3, ".",","),'BTLR',0,'R',180);
     $this->Cell(1.78,0.3,'','BTLR',0,'R',180);
     $this->Cell(1.78,0.3,number_format($this->suma_porEstimar,3, ".",","),'BTLR',0,'R',180);
+
+
 
 
     }
@@ -726,7 +733,8 @@ public function estatus(){
             $this->SetFont('Arial', 'B', 91);
             $this->SetTextColor(155, 155, 155);
             $this->SetAlpha(0.30);
-            $this->RotatedText(7, 20, utf8_decode("NO APROBADA"), 45);
+            $this->RotatedText(4, 17, utf8_decode("PROPUESTA DE "), 35);
+            $this->RotatedText(9, 17, utf8_decode("ESTIMACIÓN"), 35);
             $this->SetTextColor('0,0,0');
         }
 }
