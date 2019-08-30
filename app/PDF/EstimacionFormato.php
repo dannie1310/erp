@@ -332,19 +332,21 @@ public function partidas(){
     $this->SetFills(180,180,180);
     $this->SetFont('Arial', '', 5);
     $this->SetFillColor(180,180,180);
-    $this->Cell(0.250 * $this->WidthTotal,0.3,"Sub-totales Obra Ejecutada",'RTLB',0,'R',180);   // empty cell with left,top, and right borders
-    $this->Cell(0.05 * $this->WidthTotal,0.3,"",'RTLB',0,'C',180);
-    $this->Cell(0.06 * $this->WidthTotal,0.3,'','RTLB',0,'R',180);
-    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,' ','BTLR',0,'R',180);
-    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,number_format($this->suma_contrato,3, ".",","),'BTLR',0,'R',180);
-    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,'','BTLR',0,'R',180);
-    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,number_format($this->suma_estimacionAnterior,3, ".",","),'BTLR',0,'R',180);
-    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,' ','BTLR',0,'R',180);
-    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,number_format($this->suma_estimacion,3, ".",","),'BTLR',0,'R',180);
-    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,' ','BTLR',0,'R',180);
-    $this->Cell((0.130 * $this->WidthTotal)/2,0.3,number_format($this->suma_acumulada,3, ".",","),'BTLR',0,'R',180);
-    $this->Cell((0.128 * $this->WidthTotal)/2,0.3,'','BTLR',0,'R',180);
-    $this->Cell((0.128 * $this->WidthTotal)/2,0.3,number_format($this->suma_porEstimar,3, ".",","),'BTLR',0,'R',180);
+
+    //6.92, 1.39, 1.67, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.78, 1.78
+    $this->Cell( 6.92,0.3,"Sub-totales Obra Ejecutada",'RTLB',0,'R',180);   // empty cell with left,top, and right borders
+    $this->Cell(1.39,0.3,"",'RTLB',0,'C',180);
+    $this->Cell(1.67,0.3,'','RTLB',0,'R',180);
+    $this->Cell(1.80,0.3,' ','BTLR',0,'R',180);
+    $this->Cell(1.80,0.3,number_format($this->suma_contrato,3, ".",","),'BTLR',0,'R',180);
+    $this->Cell(1.80,0.3,'','BTLR',0,'R',180);
+    $this->Cell(1.80,0.3,number_format($this->suma_estimacionAnterior,3, ".",","),'BTLR',0,'R',180);
+    $this->Cell(1.80,0.3,' ','BTLR',0,'R',180);
+    $this->Cell(1.80,0.3,number_format($this->suma_estimacion,3, ".",","),'BTLR',0,'R',180);
+    $this->Cell(1.80,0.3,' ','BTLR',0,'R',180);
+    $this->Cell(1.80,0.3,number_format($this->suma_acumulada,3, ".",","),'BTLR',0,'R',180);
+    $this->Cell(1.78,0.3,'','BTLR',0,'R',180);
+    $this->Cell(1.78,0.3,number_format($this->suma_porEstimar,3, ".",","),'BTLR',0,'R',180);
 
 
     }
