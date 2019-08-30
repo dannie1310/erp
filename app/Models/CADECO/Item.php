@@ -10,7 +10,6 @@ namespace App\Models\CADECO;
 
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Item extends Model
 {
@@ -36,4 +35,22 @@ class Item extends Model
 
 
 
+}
+
+
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
+    }
+
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'id_material', 'id_material');
+    }
+
+    public function getCantidadFormatAttribute()
+    {
+        return number_format($this->cantidad,2,'.', '');
+
+    }
 }
