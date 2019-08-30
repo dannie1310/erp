@@ -20,7 +20,6 @@ class DatosEstimaciones extends Model
         'id_obra',
         'penalizacion_antes_iva',
         'retenciones_antes_iva',
-        'prest_mat_antes_iva',
         'ret_fon_gar_antes_iva',
         'desc_pres_mat_antes_iva',
         'desc_otros_prest_antes_iva'
