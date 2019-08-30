@@ -10,7 +10,7 @@
                 </div>
                 <div class="modal-body">
                     <ul>
-                        <li>Descarga la APP desde <b><a target="_blank" href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google Authenticator</a></b></li>
+                        <li>Descarga la APP fffdesde <b><a target="_blank" href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google Authenticator</a></b></li>
                         <li>Dentro la APP selecciona <b>COMENZAR</b></li>
                         <li>Seleccione <b>Escanear código de barras</b> y escanee el siguiente código: </li>
                     </ul>
@@ -20,7 +20,17 @@
                     </center>
                     <br>
                     <ul>
-                        <li>Una vez escaneado, ingrese el <b>código de verificación</b> que le proporcionó la APP</li>
+                        <li>En caso de que no se pueda escanear el código de barras, Seleccione <b>Introducción manual</b> ó <b>Ingresa la clave proporcionada</b>:</li>
+                        <ul>
+                            <li>Ingrese la siguiente información:</li>
+                            <ul>
+                                <li>Cuenta: <b>SAO-ERP({{code_secret.user}})</b></li>
+                                <li>Clave: <b>{{code_secret.code}}</b></li>
+                            </ul>
+                        </ul>
+                    </ul>
+                    <ul>
+                        <li>Una vez registrado, ingrese el <b>código de verificación</b> que le proporcionó la APP</li>
                     </ul>
                     <br>
                     <center>
@@ -41,6 +51,7 @@
         data() {
             return {
                 cargando: false,
+                code_secret: ""
             }
         },
 
@@ -89,6 +100,7 @@
                                 buttons: false
                             });
                         } else {
+                            this.secretCode();
                             $(this.$refs.modal2fa).modal('show');
                             $(this.$refs.codeInput).pincodeInput().data('plugin_pincodeInput').focus();
                         }
@@ -111,7 +123,21 @@
                             reject(error)
                         });
                 });
-            }
+            },
+
+            secretCode() {
+                return new Promise((resolve, reject) => {
+                    axios.get('/api/SEGURIDAD_ERP/google-2fa/secret-code', {
+                    })
+                        .then(r => r.data)
+                        .then(data => {
+                            this.code_secret = data;
+                        })
+                        .catch(error => {
+                            reject(error)
+                        });
+                });
+            },
         }
     }
 </script>
