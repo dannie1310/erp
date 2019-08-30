@@ -239,89 +239,94 @@ class EstimacionFormato extends Rotation
         $this->_outerText1 = $txt1;
         $this->_outerText2 = $txt2;
     }
+
+
+
+
+
 public function partidas(){
 
+    $this->Ln();
+    $this->SetFont('Arial', '', 6);
+    $this->SetFillColor(180, 180, 180);
+    $this->SetWidths([6.92, 1.39, 1.67, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.80, 1.78, 1.78]);
+    $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'FD', 'FD', 'DF', 'DF', 'FD', 'FD', 'DF']);
+    $this->SetRounds(['1', '', '', '', '', '', '', '', '', '', '', '', '2']);
+    $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0]);
+    $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+    $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+    $this->SetHeights([0.4]);
+    $this->SetAligns(['L', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
+
+
+    foreach ($this->estimacion->subcontrato->partidasOrdenadas as $i => $p) {
+        $item_antecedente = $p->contrato->id_concepto;
+        $this->tran_antecedentes = $p->getEstimadoAnteriorAttribute($this->id);
+
+        $this->contrato_importe = $p->precio_unitario * $p->cantidad;
+        $this->suma_contrato += $this->contrato_importe;
+
+        $this->tran_antecedentes = $p->getEstimadoAnteriorAttribute($this->id);
+        $this->importe_antecedentes = $this->tran_antecedentes * $p->precio_unitario;
 
 
 
-        foreach ($this->estimacion->subcontrato->partidasOrdenadas as $i => $p) {
-
-            $this->Ln();
-            $this->SetFont('Arial', '', 5);
-            $item_antecedente = $p->contrato->id_concepto;
-
-//            $this->tran_antecedentes = Item::where('item_antecedente', '=', $item_antecedente)->where("id_transaccion", '<', $this->id)->get()->sum('cantidad');
-            $this->tran_antecedentes = $p->getEstimadoAnteriorAttribute($this->id);
-
-
-            /*Contrato*/
-            $this->Cell(0.250 * $this->WidthTotal, 0.3, mb_strtoupper($p->contrato->descripcion), 'RTLB', 0, 'L', 0);   // empty cell with left,top, and right borders
-            $this->Cell(0.05 * $this->WidthTotal, 0.3, mb_strtoupper($p->contrato->unidad), 'RTLB', 0, 'C', 0);
-            $this->Cell(0.06 * $this->WidthTotal, 0.3, number_format($p->precio_unitario, 3, ".", ","), 'RTLB', 0, 'R', 0);
-            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($p->cantidad, 3, ".", ","), 'BTLR', 0, 'R', 0);
-            $this->contrato_importe = $p->precio_unitario * $p->cantidad;
-            $this->suma_contrato += $this->contrato_importe;
-            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->contrato_importe, 3, ".", ","), 'BTLR', 0, 'R', 0);
-            /*Estimaciones Anteriores*/
-
-            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->tran_antecedentes, 3, ".", ","), 'BTLR', 0, 'R', 0);
-            $this->importe_antecedentes = $this->tran_antecedentes * $p->precio_unitario;
-            $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_antecedentes, 3, ".", ","), 'BTLR', 0, 'R', 0);
-            $this->suma_estimacionAnterior += $this->importe_antecedentes;
-
-            /*Estimación*/
-
-            $estimacionItem=$p->getEstimacionPartidaAttribute($this->id);
-            $aux=0;
-            if($estimacionItem) {
-                $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($estimacionItem->cantidad, 3, ".", ","), 'BTLR', 0, 'R', 0);
-                $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($estimacionItem->importe, 3, ".", ","), 'BTLR', 0, 'R', 0);
-                $this->suma_estimacion += $estimacionItem->importe;
-            }else{
-
-                $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($aux, 3, ".", ","), 'BTLR', 0, 'R', 0);
-                $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($aux, 3, ".", ","), 'BTLR', 0, 'R', 0);
-            }
-
-
-            /*Acumulada*/
-            if($estimacionItem) {
-                $this->cantidad_acumulada = $this->tran_antecedentes + $estimacionItem->cantidad;
-
-                $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->cantidad_acumulada, 3, ".", ","), 'BTLR', 0, 'R', 0);
-                $this->importe_acumulado = $this->importe_antecedentes + $estimacionItem->importe;
-                $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_acumulado, 3, ".", ","), 'BTLR', 0, 'R', 0);
-
-
-                $this->suma_acumulada += $this->importe_acumulado;
-                $this->cantidad_restante = $p->cantidad- $this->cantidad_acumulada;
-
-
-            }else{
-                $this->cantidad_acumulada = $this->tran_antecedentes + $aux;
-                $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->cantidad_acumulada, 3, ".", ","), 'BTLR', 0, 'R', 0);
-                $this->importe_acumulado = $this->importe_antecedentes + $p->importe;
-                $this->Cell((0.130 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_acumulado, 3, ".", ","), 'BTLR', 0, 'R', 0);
-                $this->suma_acumulada += $this->importe_acumulado;
-                $this->cantidad_restante = $p->cantidad - $this->cantidad_acumulada;
-
-
-
-            }
-
-
-
-
-            $this->Cell((0.128 * $this->WidthTotal) / 2, 0.3, number_format($this->cantidad_restante, 3, ".", ","), 'BTLR', 0, 'R', 0);
+        $estimacionItem=$p->getEstimacionPartidaAttribute($this->id);
+        $aux=0;
+        if($estimacionItem) {
+            $this->suma_estimacion += $estimacionItem->importe;
+            $this->cantidad_acumulada = $this->tran_antecedentes + $estimacionItem->cantidad;
+            $this->importe_acumulado = $this->importe_antecedentes + $estimacionItem->importe;
+            $this->suma_acumulada += $this->importe_acumulado;
+            $this->cantidad_restante = $p->cantidad- $this->cantidad_acumulada;
             $this->importe_restante = $p->precio_unitario * $this->cantidad_restante;
-            $this->Cell((0.128 * $this->WidthTotal) / 2, 0.3, number_format($this->importe_restante, 3, ".", ","), 'BTLR', 0, 'R', 0);
-            $this->suma_porEstimar += $this->importe_restante;
+            $this->Row([
+                mb_strtoupper($p->contrato->descripcion),
+                mb_strtoupper($p->contrato->unidad),
+                number_format($p->precio_unitario, 3, ".", ","),
+                number_format($p->cantidad, 3, ".", ","),
+                number_format($this->contrato_importe,3, ".", ","),
+                number_format($this->tran_antecedentes, 3, ".", ","),
+                number_format($this->importe_antecedentes, 3, ".", ","),
+                number_format($estimacionItem->cantidad, 3, ".", ","),
+                number_format($estimacionItem->importe, 3, ".", ","),
+                number_format($this->cantidad_acumulada, 3, ".", ","),
+                number_format($this->importe_acumulado, 3, ".", ","),
+                number_format($this->cantidad_restante, 3, ".", ","),
+                number_format($this->importe_restante, 3, ".", ","),
+            ]);
+
+
+
+        }else{
+            $this->cantidad_acumulada = $this->tran_antecedentes + $aux;
+            $this->importe_acumulado = $this->importe_antecedentes + $p->importe;
+            $this->suma_acumulada += $this->importe_acumulado;
+            $this->cantidad_restante = $p->cantidad - $this->cantidad_acumulada;
+            $this->importe_restante = $p->precio_unitario * $this->cantidad_restante;
+            $this->Row([
+                mb_strtoupper($p->contrato->descripcion),
+                mb_strtoupper($p->contrato->unidad),
+                number_format($p->precio_unitario, 3, ".", ","),
+                number_format($p->cantidad, 3, ".", ","),
+                number_format($this->contrato_importe,3, ".", ","),
+                number_format($this->tran_antecedentes, 3, ".", ","),
+                number_format($this->importe_antecedentes, 3, ".", ","),
+                number_format($aux, 3, ".", ","),
+                number_format($aux, 3, ".", ","),
+                number_format($this->cantidad_acumulada, 3, ".", ","),
+                number_format($this->importe_acumulado, 3, ".", ","),
+                number_format($this->cantidad_restante, 3, ".", ","),
+                number_format($this->importe_restante, 3, ".", ","),
+            ]);
         }
 
 
+    }
 
-/*Footer partidas*/
-    $this->Ln();
+
+    /*Footer partidas*/
+
     $this->SetFills(180,180,180);
     $this->SetFont('Arial', '', 5);
     $this->SetFillColor(180,180,180);
