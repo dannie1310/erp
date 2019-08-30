@@ -4,10 +4,6 @@
         <SolicitudPagoAnticipadoEdit v-if="value.edit" v-bind:id="value.id" />
         <PDF  v-if="value.id" v-bind:id="value.id" @click="value.id"></PDF>
         <button @click="cancelar"  v-if="value.cancelar && value.estado === 0" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar"><i class="fa fa-ban"></i></button>
-
-
-
-
     </div>
 </template>
 
