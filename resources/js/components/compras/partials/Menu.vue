@@ -7,7 +7,7 @@
             <li class="nav-header">MÓDULOS</li>
 
 
-            <li class="nav-item" v-if="$root.can(['consultar_solicitud_compra'])">
+            <li class="nav-item" v-if="gestion_solicitud">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>
                         Gestión de Solicitudes
@@ -15,7 +15,7 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" >
+                    <li class="nav-item" v-if="$root.can(['consultar_solicitud_compra'])">
                         <router-link :to="{name: 'solicitud-compra'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-compra'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Solicitudes</p>
@@ -23,7 +23,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="gestion_orden_compra">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <p>
                         Gestión de OC
@@ -40,7 +40,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="almacen">
+            <li class="nav-item" v-if="gestion_almacen">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-server"></i>
                     <p>
@@ -76,10 +76,20 @@
         name: "compras-menu",
 
         computed: {
-            almacen() {
+            gestion_almacen() {
                 return this.$root.can([
                     'consultar_entrada_almacen',
                     'consultar_salida_almacen'
+                ])
+            },
+            gestion_orden_compra(){
+                return this.$root.can([
+                    'consultar_orden_compra'
+                ])
+            },
+            gestion_solicitud(){
+                return this.$root.can([
+                    'consultar_solicitud_compra'
                 ])
             }
         },
