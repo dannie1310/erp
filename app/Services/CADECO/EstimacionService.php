@@ -217,9 +217,15 @@ class EstimacionService
 
     }
 
-    public function paginate()
+    public function paginate($data)
     {
-        return $this->repository->paginate();
+        $estimaciones = $this->repository;
+
+        if(isset($data['numero_folio'])){
+        $estimaciones = $estimaciones->where([['numero_folio','=',$data['numero_folio']]]);
+        }
+
+        return $estimaciones->paginate($data);
     }
 
     /**
