@@ -33,7 +33,9 @@ class DatosEstimaciones extends Model
             $model->validar();
             $model->id_obra =  Context::getIdObra();
             $model->usuario_crea = auth()->id();
+            $model->usuario_actualiza = auth()->id();
             $model->created_at = date('Y-m-d h:i:s');
+            $model->updated_at = date('Y-m-d h:i:s');
         });
     }
 
