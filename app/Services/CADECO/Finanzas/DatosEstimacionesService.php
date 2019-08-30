@@ -23,15 +23,7 @@ class DatosEstimacionesService
     }
 
     public function store($data){
-        $datos = [
-          "penalizacion_antes_iva" => $data['data']['penalizacion_antes_iva'],
-          "retenciones_antes_iva" => $data['data']['retenciones_antes_iva'],
-          "prest_mat_antes_iva" => $data['data']['prest_mat_antes_iva'],
-          "ret_fon_gar_antes_iva" => $data['data']['ret_fon_gar_antes_iva'],
-          "desc_pres_mat_antes_iva" => $data['data']['desc_pres_mat_antes_iva'],
-          "desc_otros_prest_antes_iva" => $data['data']['desc_otros_prest_antes_iva']
-        ];
-        return $this->repository->create($datos);
+        return $this->repository->create($data['data']);
     }
 
 }
