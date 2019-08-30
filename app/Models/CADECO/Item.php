@@ -31,13 +31,7 @@ class Item extends Model
         'precio_material',
         'precio_mano_obra',
     ];
-
-
-
-
-}
-
-
+    
     public function almacen()
     {
         return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
