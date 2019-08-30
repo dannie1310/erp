@@ -536,11 +536,6 @@ $api->version('v1', function ($api) {
             $api->get('contexto', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@contexto');
         });
 
-        $api->group(['prefix' => 'google-2fa'], function ($api) {
-            $api->get('qr', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@qr');
-            $api->post('check', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@check');
-        });
-
         $api->group(['prefix' => 'permiso'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@index');
             $api->get('por-usuario/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@porUsuario')->where(['id' => '[0-9]+']);
@@ -575,6 +570,7 @@ $api->version('v1', function ($api) {
             $api->get('code', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@code');
             $api->post('check', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@check');
             $api->get('isVerified', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@isVerified');
+            $api->get('secret-code', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Google2faController@secretCode');
         });
 
         $api->group(['prefix'=>'ctg_banco'], function ($api){
