@@ -12,7 +12,7 @@ namespace App\Services\CADECO\Finanzas;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Finanzas\CuentaBancariaEmpresa\Repository;
 
 class CuentaBancariaEmpresaService
 {
@@ -58,7 +58,14 @@ class CuentaBancariaEmpresaService
             $cuentas = $cuentas->where([['cuenta_clabe', 'LIKE', '%'.$data['cuenta_clabe'].'%']]);
         }
 
-        return $cuentas->withoutGlobalScopes()->paginate($data);
+//        if($data['sort'] == 'empresa__tipo_empresa'){
+//            $empresa = Empresa::query()->orderBy('tipo_empresa',$data['order'])->get();
+//            foreach ($empresa as $e){
+//                $cuentas = $cuentas->whereOr([['id_empresa', '=', $e->id_empresa]]);
+//            }
+//        }
+
+        return $cuentas->withoutGlobalScopes()->paginate_especial($data);
     }
 
     public function show($id)

@@ -28,7 +28,7 @@ class EmpresaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'razon_social' => $model->razon_social,
-            'tipo_empresa' => $model->tipo,
+            'tipo' => $model->tipo,
             'rfc' => $model->rfc,
             'UsuarioRegistro' => $model->UsuarioRegistro,
             'FechaHoraRegistro' => $model->FechaHoraRegistro,
