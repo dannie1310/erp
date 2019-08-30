@@ -280,6 +280,7 @@ public function partidas(){
             $this->suma_acumulada += $this->importe_acumulado;
             $this->cantidad_restante = $p->cantidad- $this->cantidad_acumulada;
             $this->importe_restante = $p->precio_unitario * $this->cantidad_restante;
+            $this->suma_porEstimar+=$this->importe_restante;
             $this->Row([
                 mb_strtoupper($p->contrato->descripcion),
                 mb_strtoupper($p->contrato->unidad),
@@ -304,6 +305,7 @@ public function partidas(){
             $this->suma_acumulada += $this->importe_acumulado;
             $this->cantidad_restante = $p->cantidad - $this->cantidad_acumulada;
             $this->importe_restante = $p->precio_unitario * $this->cantidad_restante;
+            $this->suma_porEstimar+=$this->importe_restante;
             $this->Row([
                 mb_strtoupper($p->contrato->descripcion),
                 mb_strtoupper($p->contrato->unidad),
