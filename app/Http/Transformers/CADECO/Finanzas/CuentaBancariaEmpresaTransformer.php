@@ -47,7 +47,8 @@ class CuentaBancariaEmpresaTransformer extends TransformerAbstract
             'id_tipo' => $model->tipo_cuenta,
             'estado' => (string) $model->estatus,
             'fecha' => $model->fecha_hora_registro,
-            'estado_format' => $model->estadoFormat
+            'estado_format' => $model->estadoFormat,
+            'sucursal_format' => $model->sucursalFormat
         ];
     }
 

@@ -35,6 +35,11 @@ class CuentaBancariaEmpresaService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        return $this->repository->withoutGlobalScopes()->paginate($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->withoutGlobalScopes()->show($id);
     }
 }

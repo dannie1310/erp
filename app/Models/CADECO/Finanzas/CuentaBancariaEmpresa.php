@@ -113,4 +113,8 @@ class CuentaBancariaEmpresa extends Model
                 break;
         }
     }
+
+    public function getSucursalFormatAttribute(){
+        return str_pad($this->sucursal, 3,"0",STR_PAD_LEFT);
+    }
 }
