@@ -19,6 +19,16 @@
                             </center>
                             <br>
                             <ul>
+                                <li>En caso de que no se pueda escanear el código de barras, Seleccione <b>Introducción manual</b> ó <b>Ingresa la clave proporcionada</b>:</li>
+                                <ul>
+                                    <li>Ingrese la siguiente información:</li>
+                                    <ul>
+                                        <li>Cuenta: <b>SAO-ERP({{code_secret.user}})</b></li>
+                                        <li>Clave: <b>{{code_secret.code}}</b></li>
+                                    </ul>
+                                </ul>
+                            </ul>
+                            <ul>
                                 <li>Una vez escaneado, ingrese el <b>código de verificación</b> que le proporcionó la APP</li>
                             </ul>
                             <br>
@@ -41,11 +51,13 @@
         data() {
             return {
                 valid: false,
-                verified: this.$router.currentRoute.query.verified == 'false' ? false : true
+                verified: this.$router.currentRoute.query.verified == 'false' ? false : true,
+                code_secret: ""
             }
         },
 
         mounted() {
+            this.secretCode();
             this.init();
         },
 
@@ -68,6 +80,7 @@
                                         buttons: false
                                     })
                                         .then(() => {
+                                            this.secretCode();
                                             $(this.$refs.code).pincodeInput().data('plugin_pincodeInput').clear();
                                             // report succees
                                             opener.postMessage({ result: value }, location.origin);
@@ -91,6 +104,20 @@
                         .then(r => r.data)
                         .then(data => {
                             resolve(data)
+                        })
+                        .catch(error => {
+                            reject(error)
+                        });
+                });
+            },
+
+            secretCode() {
+                return new Promise((resolve, reject) => {
+                    axios.get('/api/SEGURIDAD_ERP/google-2fa/secret-code', {
+                    })
+                        .then(r => r.data)
+                        .then(data => {
+                            this.code_secret = data;
                         })
                         .catch(error => {
                             reject(error)
