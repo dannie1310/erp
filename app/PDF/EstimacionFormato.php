@@ -92,19 +92,20 @@ class EstimacionFormato extends Rotation
         $this->logo();
 
 
-
-        $this->setXY(7, 2);
-
-
-        if(strlen($this->encabezado_pdf)>30){
-            $this->setXY(6.2, 2);
-            $this->SetFont('Arial', 'B', 12);
-            $this->CellFitScale(1* $this->WidthTotal, 0.1, $this->encabezado_pdf, '', 'CB');
-
+        if(strlen($this->encabezado_pdf)>30&&strlen($this->encabezado_pdf)<60){
+            $this->setXY(6,2);
+            $this->SetFont('Arial', '', 16);
+            $this->MultiCell(12, 0.5, $this->encabezado_pdf, '', 'C');
+        }else if(strlen($this->encabezado_pdf)>60){
+            $this->setXY(6,1.5);
+            $this->SetFont('Arial', '', 10);
+            $this->MultiCell(12, 0.5, $this->encabezado_pdf, '', 'C');
         }else{
-            $this->SetFont('Arial', 'B', 16);
-            $this->CellFitScale(1* $this->WidthTotal, 0.1, $this->encabezado_pdf, '', 'CB');
+            $this->SetFont('Arial', '', 14);
+            $this->MultiCell(12, 0.5, $this->encabezado_pdf, '', 'C');
         }
+
+
 
         $this->setXY(10, 3.5);
         $this->SetFont('Arial', 'B', 14);
