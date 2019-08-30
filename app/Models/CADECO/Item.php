@@ -37,10 +37,6 @@ class Item extends Model
 
 }
 
-    public function concepto()
-    {
-        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
-    }
 
     public function almacen()
     {
