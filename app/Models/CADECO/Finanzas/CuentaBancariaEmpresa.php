@@ -34,6 +34,15 @@ class CuentaBancariaEmpresa extends Model
         'id_moneda',
         'estatus'
     ];
+
+
+    /**
+     * @var array
+     */
+    public $searchable = [
+        'empresa.tipo_empresa'
+    ];
+
     protected static function boot()
     {
         parent::boot();

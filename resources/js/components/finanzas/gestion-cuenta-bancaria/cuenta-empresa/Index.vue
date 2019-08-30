@@ -25,7 +25,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Beneficiario', field: 'id_empresa', thComp: require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Tipo Beneficiaro', field: 'tipo_empresa', sortable: false},
+                    { title: 'Tipo Beneficiaro', field: 'empresa__tipo_empresa', sortable: true},
                     { title: 'Banco', field: 'id_banco', thComp: require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Cuenta/CLABE', field: 'cuenta_clabe', thComp: require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Estatus', field: 'estatus', sortable: true},
@@ -79,7 +79,7 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             id_empresa: cuenta.empresa.razon_social,
-                            tipo_empresa: cuenta.empresa.tipo_empresa,
+                            empresa__tipo_empresa: cuenta.empresa.tipo,
                             id_banco: cuenta.banco.razon_social,
                             cuenta_clabe: cuenta.cuenta,
                             estatus: cuenta.estado_format,
