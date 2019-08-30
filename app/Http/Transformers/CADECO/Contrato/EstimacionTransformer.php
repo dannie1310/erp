@@ -29,7 +29,7 @@ class EstimacionTransformer extends TransformerAbstract
         'subcontrato',
         'empresa',
         'moneda',
-        'item',
+        'items',
 
     ];
 
@@ -89,7 +89,7 @@ class EstimacionTransformer extends TransformerAbstract
         return null;
     }
 
-    public function includeItem(Estimacion $model)
+    public function includeItems(Estimacion $model)
     {
         if($item= $model->item){
             return $this->collection($item, new ItemTransformer);

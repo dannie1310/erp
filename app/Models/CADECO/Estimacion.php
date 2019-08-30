@@ -305,10 +305,7 @@ class Estimacion extends Transaccion
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
-    public function item(){
+    public function items(){
         return $this->hasMany(EstimacionPartida::class, 'id_transaccion');
     }
-
-
-
 }
