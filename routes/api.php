@@ -388,6 +388,11 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaEmpresaController@index');
         });
 
+        // DATOS ESTIMACIONES
+        $api->group(['prefix' => 'datos-estimaciones'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DatosEstimacionesController@store');
+        });
+
         /**
          * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
          */

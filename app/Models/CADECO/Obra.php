@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\DatosContables;
+use App\Models\CADECO\Finanzas\DatosEstimaciones;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use Illuminate\Database\Eloquent\Model;
 
@@ -57,6 +58,11 @@ class Obra extends Model
     public function datosContables()
     {
         return $this->hasOne(DatosContables::class, 'id_obra');
+    }
+
+    public function datosEstimaciones()
+    {
+        return $this->hasOne(DatosEstimaciones::class, 'id_obra');
     }
 
     public function configuracion()
