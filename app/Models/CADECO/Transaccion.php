@@ -34,7 +34,7 @@ class Transaccion extends Model
 
         self::addGlobalScope(function ($query) {
             if(auth()->user()->id_contratista){
-                if($contratista = CtgContratista::query()->find(auth()->user()->id_contratista)){
+                if(($contratista = CtgContratista::query()->find(auth()->user()->id_contratista)) && auth()->user()->usuario_estado == 3){
                     $query->where('id_empresa', '=', $contratista->empresa->id_empresa);
                 }else{
                     abort(403, 'Contratista no registrado.');
