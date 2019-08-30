@@ -3,11 +3,11 @@ const URI = '/api/finanzas/datos-estimaciones/';
 export default {
     namespaced: true,
     actions: {
-        update(context, payload) {
+        store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Estás seguro?",
-                    text: "Actualizar Datos Contables",
+                    text: "Actualizar Datos Financieros",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -23,10 +23,10 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id, payload.data)
+                                .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Datos Contables actualizados correctamente", {
+                                    swal("Datos Financieros actualizados correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

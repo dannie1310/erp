@@ -8,23 +8,38 @@
                 </button>
             </div>
         </div>
-        <div class="card-body" v-if="form">
-            <div class="alert alert-warning">
+        <div class="card-body">
+            <div class="alert alert-warning" v-if="form || bandera == 0">
                 <h5><i class="icon fa fa-warning"></i>¡Atención!</h5>
                 {{ mensaje }}
             </div>
+            <div class="alert alert-warning" v-else>
+                <h5><i class="icon fa fa-warning"></i>¡Atención!</h5>
+                {{mensaje_store}}
+            </div>
             <h5 id="estimaciones">Estimaciones</h5>
+
 
             <fieldset class="form-group">
                 <div class="row">
                     <legend class="col-form-label col-sm-2 pt-0"><b>Penalización / Devolución Penalización</b></legend>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" v-if="form && bandera == 0">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="penalizacion_antes_iva1" value="1" v-model="form.penalizacion_antes_iva" :disabled="!bandera">
                             <label class="form-check-label"> Antes de IVA</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="penalizacion_antes_iva0" value="0" v-model="form.penalizacion_antes_iva" :disabled="!bandera">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-10" v-else>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="penalizacion_antes_iva1" v-model="data.penalizacion_antes_iva" value="1" :disabled="!bandera">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="penalizacion_antes_iva0" v-model="data.penalizacion_antes_iva" value="0" :disabled="!bandera">
                             <label class="form-check-label"> Después de IVA</label>
                         </div>
                     </div>
@@ -34,29 +49,50 @@
             <fieldset class="form-group">
                 <div class="row">
                     <legend class="col-form-label col-sm-2 pt-0"><b>Retenciones / Devolución de Retenciones</b></legend>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" v-if="form && bandera == 0">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="deductiva_antes_iva1" value="1" v-model="form.deductiva_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="retenciones_antes_iva1" value="1" v-model="form.retenciones_antes_iva" :disabled="!bandera">
                             <label class="form-check-label"> Antes de IVA</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="deductiva_antes_iva2" value="0" v-model="form.deductiva_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="retenciones_antes_iva0" value="0" v-model="form.retenciones_antes_iva"  :disabled="!bandera">
                             <label class="form-check-label"> Después de IVA</label>
                         </div>
                     </div>
+                    <div class="col-sm-10" v-else>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="retenciones_antes_iva1" v-model="data.retenciones_antes_iva" value="1" :disabled="!bandera">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="retenciones_antes_iva0" v-model="data.retenciones_antes_iva" value="0" :disabled="!bandera">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+
                 </div>
             </fieldset>
 
             <fieldset class="form-group">
                 <div class="row">
                     <legend class="col-form-label col-sm-2 pt-0"><b>Préstamos de Materiales (Sin IVA)</b></legend>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" v-if="form && bandera == 0">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="amortizacion_antes_iva1" value="1" v-model="form.amortizacion_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="prest_mat_antes_iva1" value="1" v-model="form.prest_mat_antes_iva" :disabled="!bandera">
                             <label class="form-check-label"> Antes de IVA</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="amortizacion_antes_iva0" value="0" v-model="form.amortizacion_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="prest_mat_antes_iva0" value="0" v-model="form.prest_mat_antes_iva"  :disabled="!bandera">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-10" v-else>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="prest_mat_antes_iva1" v-model="data.prest_mat_antes_iva" value="1" :disabled="!bandera">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="prest_mat_antes_iva0" v-model="data.prest_mat_antes_iva" value="0" :disabled="!bandera">
                             <label class="form-check-label"> Después de IVA</label>
                         </div>
                     </div>
@@ -66,13 +102,23 @@
             <fieldset class="form-group">
                 <div class="row">
                     <legend class="col-form-label col-sm-2 pt-0"><b>Retención de Fondo de Garantía (mas IVA)</b></legend>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" v-if="form && bandera == 0">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva1" value="1" v-model="form.ret_fon_gar_antes_iva" :disabled="!bandera">
                             <label class="form-check-label"> Antes de IVA</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva0" value="0" v-model="form.ret_fon_gar_antes_iva" :disabled="!bandera">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-10" v-else>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva1" v-model="data.ret_fon_gar_antes_iva" value="1" :disabled="!bandera">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="ret_fon_gar_antes_iva0" v-model="data.ret_fon_gar_antes_iva" value="0" :disabled="!bandera">
                             <label class="form-check-label"> Después de IVA</label>
                         </div>
                     </div>
@@ -82,13 +128,23 @@
             <fieldset class="form-group">
                 <div class="row">
                     <legend class="col-form-label col-sm-2 pt-0"><b>Descuento por Préstamo de Materiales (sin IVA)</b></legend>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" v-if="form && bandera == 0">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="desc_pres_mat_antes_iva1" value="1" v-model="form.desc_pres_mat_antes_iva"  :disabled="!bandera">
                             <label class="form-check-label"> Antes de IVA</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                            <input class="form-check-input" type="radio" name="desc_pres_mat_antes_iva0" value="0" v-model="form.desc_pres_mat_antes_iva"  :disabled="!bandera">
+                            <label class="form-check-label"> Después de IVA</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-10" v-else>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="desc_pres_mat_antes_iva1" v-model="data.desc_pres_mat_antes_iva" value="1" :disabled="!bandera">
+                            <label class="form-check-label"> Antes de IVA</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="desc_pres_mat_antes_iva0" v-model="data.desc_pres_mat_antes_iva" value="0" :disabled="!bandera">
                             <label class="form-check-label"> Después de IVA</label>
                         </div>
                     </div>
@@ -98,13 +154,23 @@
             <fieldset class="form-group">
             <div class="row">
                 <legend class="col-form-label col-sm-2 pt-0"><b>Descuento por Otros Prestamos</b></legend>
-                <div class="col-sm-10">
+                <div class="col-sm-10" v-if="form && bandera == 0">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="retencion_antes_iva1" value="1" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                        <input class="form-check-input" type="radio" name="desc_otros_prest_antes_iva1" value="1" v-model="form.desc_otros_prest_antes_iva"  :disabled="!bandera">
                         <label class="form-check-label"> Antes de IVA</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="retencion_antes_iva0" value="0" v-model="form.retencion_antes_iva" :disabled="guardadosPreviamente">
+                        <input class="form-check-input" type="radio" name="desc_otros_prest_antes_iva0" value="0" v-model="form.desc_otros_prest_antes_iva"  :disabled="!bandera">
+                        <label class="form-check-label"> Después de IVA</label>
+                    </div>
+                </div>
+                <div class="col-sm-10" v-else>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="desc_otros_prest_antes_iva1" v-model="data.desc_otros_prest_antes_iva" value="1" :disabled="!bandera">
+                        <label class="form-check-label"> Antes de IVA</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="desc_otros_prest_antes_iva0" v-model="data.desc_otros_prest_antes_iva" value="0" :disabled="!bandera">
                         <label class="form-check-label"> Después de IVA</label>
                     </div>
                 </div>
@@ -124,62 +190,86 @@
 
 <script>
     export default {
-        props: ['datosContables'],
+        props: ['datosEstimaciones'],
         name: "configuracion-estimaciones",
         data() {
             return {
-                form: null
+                form: null,
+                data:{
+                    penalizacion_antes_iva: '',
+                    retenciones_antes_iva: '',
+                    prest_mat_antes_iva: '',
+                    ret_fon_gar_antes_iva: '',
+                    desc_pres_mat_antes_iva: '',
+                    desc_otros_prest_antes_iva: '',
+                },
+                bandera: 1
             }
         },
         mounted() {
-            this.form = JSON.parse(JSON.stringify(this.datosContables))
+            if (typeof this.datosEstimaciones !== 'undefined') {
+                this.form = JSON.parse(JSON.stringify(this.datosEstimaciones))
+                this.bandera = 0;
+            }
         },
 
         methods: {
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.update()
+                        this.store()
                     }
                 });
             },
 
-            update() {
+            store() {
                 this.guardando = true;
-                return this.$store.dispatch('contabilidad/datos-contables/update', {
-                    id: this.datosContables.id,
-                    data: this.form
+                return this.$store.dispatch('finanzas/datos-estimaciones/store', {
+                    data: this.data
                 })
                     .then(data => {
                         if(data) {
                             this.$store.dispatch('cadeco/obras/find', {
-                                id: this.datosContables.id_obra,
-                                params: { include: ['configuracion', 'datosContables'] }
+                                id: this.currentObra.id_obra,
+                                params: { include: ['configuracion', 'datosEstimaciones'] }
                             })
                                 .then(data => {
                                     if(data) {
                                         this.$store.commit('auth/setObra', { obra: data });
+                                        this.bandera = 0;
                                     }
                                 })
-                            this.$emit('update:datosContables', data);
+                            this.$emit('create:datosEstimaciones', data);
                         }
                     })
                     .finally(() => {
                         this.guardando = false;
                     })
-            }
+            },
         },
 
         computed: {
+            currentObra(){
+                return this.$store.getters['auth/currentObra']
+            },
             cambio() {
-                return JSON.stringify(this.form) != JSON.stringify(this.datosContables);
+                return JSON.stringify(this.form) != JSON.stringify(this.datosEstimaciones);
+            },
+            cambio_store() {
+                return Boolean(this.data.prest_mat_antes_iva)&&Boolean(this.data.penalizacion_antes_iva)&&Boolean(this.data.retenciones_antes_iva)&&Boolean(this.data.desc_pres_mat_antes_iva)&&Boolean(this.data.ret_fon_gar_antes_iva)&&Boolean(this.data.desc_otros_prest_antes_iva);
             },
             guardadosPreviamente() {
-                return Boolean(this.datosContables.FormatoCuenta) && Boolean(this.datosContables.BDContPaq) && Boolean(this.datosContables.NumobraContPaq);
+                return Boolean(this.datosEstimaciones);
             },
             mensaje() {
                 return this.guardadosPreviamente ? 'Los datos no pueden ser modificados porque ya han sido guardados previamente' : 'Una vez guardados los datos no va a ser posible editarlos';
+            },
+            mensaje_modificado() {
+                return 'Los datos no pueden ser modificados porque ya han sido guardados';
+            },
+            mensaje_store() {
+                return 'Una vez guardados los datos no va a ser posible editarlos';
             }
-        }
+        },
     }
 </script>

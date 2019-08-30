@@ -151,7 +151,7 @@
                 return JSON.stringify(this.form) != JSON.stringify(this.datosContables);
             },
             guardadosPreviamente() {
-                return Boolean(this.datosContables.FormatoCuenta) && Boolean(this.datosContables.BDContPaq) && Boolean(this.datosContables.NumobraContPaq);
+                return Boolean(this.datosContables);
             },
             mensaje() {
                 return this.guardadosPreviamente ? 'Los datos no pueden ser modificados porque ya han sido guardados previamente' : 'Una vez guardados los datos no va a ser posible editarlos';
