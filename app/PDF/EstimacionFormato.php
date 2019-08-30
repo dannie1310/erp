@@ -91,25 +91,13 @@ class EstimacionFormato extends Rotation
     {
         $this->logo();
 
-
-        if(strlen($this->encabezado_pdf)>30&&strlen($this->encabezado_pdf)<60){
-            $this->setXY(6,2);
-            $this->SetFont('Arial', '', 16);
-            $this->MultiCell(12, 0.5, $this->encabezado_pdf, '', 'C');
-        }else if(strlen($this->encabezado_pdf)>60){
-            $this->setXY(6,1.5);
-            $this->SetFont('Arial', '', 10);
-            $this->MultiCell(12, 0.5, $this->encabezado_pdf, '', 'C');
-        }else{
-            $this->SetFont('Arial', '', 14);
-            $this->MultiCell(12, 0.5, $this->encabezado_pdf, '', 'C');
-        }
-
-
+        $this->setXY(5.2, 1.5);
+        $this->SetFont('Arial', 'B', 12);
+        $this->MultiCell(14, 0.5, $this->encabezado_pdf, '', 'C');
 
         $this->setXY(10, 3.5);
         $this->SetFont('Arial', 'B', 14);
-        $this->CellFitScale(1* $this->WidthTotal, 0.1,  utf8_decode("Cuerpo de Estimación"), '', 'CB');
+        $this->CellFitScale(1* $this->WidthTotal, 0.1,  utf8_decode("Estimación"), '', 'CB');
 
         $y_inicial = $this->getY() - 2;
         $x_inicial = $this->GetPageWidth() / 1.51;
@@ -241,6 +229,8 @@ class EstimacionFormato extends Rotation
 
         $this->setXY(1+(0.948* $this->WidthTotal), 7);
         $this->Cell(0.06 * $this->WidthTotal,0.4,$this->moneda,0,0,'C',0);
+        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+
 
     }
 
@@ -760,7 +750,7 @@ public function estatus(){
 
         $this->partidas();
         try {
-            $this->Output('I', 'Formato - Estimacion.pdf', 1);
+            $this->Output('I', "Formato - Estimacion_#$this->numero_folio.pdf", 1);
         } catch (\Exception $ex) {
             dd("error",$ex);
         }
