@@ -83,6 +83,10 @@ class Concepto extends Model
         return $this->where('nivel', '=', $this->nivel_padre)->first()->descripcion;
     }
 
+    public function nivel_padre(){
+        return $this->where('nivel', '=', $this->nivel)->first()->descripcion;
+    }
+
     public function hijos()
     {
         return $this->hasMany(self::class, 'id_obra', 'id_obra')
