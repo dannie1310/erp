@@ -239,7 +239,7 @@ class OrdenPagoEstimacion extends Rotation
             $this->SetHeights([0.35]);
             $this->SetAligns(['L', 'L', 'R', 'L', 'L', 'L']);
             $this->encola = 'partidas';
-            $this->Row(['', utf8_decode($item->contrato->descripcion), '$ ' . number_format($item->importe, 2, '.', ','), utf8_decode($item->concepto ? $item->concepto->padre() : ''),'', '']);
+            $this->Row(['', utf8_decode($item->contrato->descripcion), '$ ' . number_format($item->importe, 2, '.', ','), utf8_decode($item->concepto && strlen($item->concepto->nivel)/4 > 1 ? $item->concepto->padre() : $item->concepto->nivel_padre()),'', '']);
         }
 
         $this->SetFont('Arial', '', 7);
