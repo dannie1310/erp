@@ -6,6 +6,7 @@ namespace App\Services\CADECO\Finanzas;
 
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Finanzas\BitacoraSantander;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
@@ -56,7 +57,7 @@ class GestionPagoService
                 $pago_a_generar = 'Pago a Cuenta (Requiere Aplicación Manual)';
                 break;
         }
-
+dd($data);
         return array(
             'id_documento' => $data->IDDocumento,
             'id_distribucion_recurso' => $data->partidas->id_distribucion_recurso,
@@ -122,7 +123,15 @@ class GestionPagoService
     public function registrarPagos($pagos){
         try {
             DB::connection('cadeco')->beginTransaction();
-            foreach ($pagos as $pago) {
+            // TODO registro de bitacora santander en sistema
+            $file_fingerprint = hash_file('md5', $pagos->file_interbancario);
+            $reg_bitacora = BitacoraSantander::query()->where('hash_file_bitacora', '=', $file_fingerprint)->first();
+            if($reg_bitacora){
+                abort(403, 'Archivo de bitácora procesado previamente');
+            }
+
+            dd($reg_bitacora);
+            foreach ($pagos->bitacora as $pago) {
                 if($pago['pagable']) {
 
                     if ($pago['id_documento'] && $pago['id_distribucion_recurso']) {
@@ -256,17 +265,20 @@ class GestionPagoService
 
             }
 
+
+
             DB::connection('cadeco')->commit();
             return $pagos;
 
         }catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
+            dd($e);
             abort(400, "Error archivo de entrada inválido.");
             throw $pago;
         }
     }
 
-    public function resumenBitacora($data){
+    public function resumenBitacora($data, $nombre){
         $pagables = 0;
         $monto_pagar = 0;
         foreach ($data as $dato){
@@ -277,11 +289,12 @@ class GestionPagoService
         }
         return array(
             'pagables' => $pagables,
-            'monto_a_pagar' => $monto_pagar
+            'monto_a_pagar' => $monto_pagar,
+            'nombre_bitacora' => explode('.',$nombre)[0]
         );
     }
 
-    public function validarBitacora($bitacora){
+    public function validarBitacora($bitacora, $bitacora_nombre){
         $registros_bitacora = array();
         $doctos_repetidos = [];
         foreach ($this->getTxtData($bitacora) as $key => $pago){
@@ -371,7 +384,7 @@ class GestionPagoService
         }
         return array(
             'data' => $registros_bitacora,
-            'resumen' => $this->resumenBitacora($registros_bitacora)
+            'resumen' => $this->resumenBitacora($registros_bitacora, $bitacora_nombre)
         );
     }
 
