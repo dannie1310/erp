@@ -68,7 +68,7 @@ class DistribucionRecursoRemesa extends Model
     }
 
     public function remesaLayout(){
-        return $this->hasOne(DistribucionRecursoRemesaLayout::class, 'id_distrubucion_recurso', 'id');
+        return $this->hasOne(DistribucionRecursoRemesaLayout::class, 'id_distribucion_recurso', 'id');
     }
 
     public function remesaLog(){
