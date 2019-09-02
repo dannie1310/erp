@@ -42,7 +42,7 @@ class CuentaBancariaEmpresaService
         if(isset($data['id_empresa'])){
             $empresa = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['id_empresa'].'%']])->get();
             foreach ($empresa as $e){
-                $cuentas = $cuentas->whereOr([['id_empresa', '=', $e->id_empresa]]);
+                $cuentas = $cuentas->whereOr([['empresas.id_empresa', '=', $e->id_empresa]]);
             }
         }
 
