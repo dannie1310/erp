@@ -154,8 +154,8 @@ class DistribucionRecursoRemesaManual
         //echo $string;
         //$string = trim($string);
         $string = str_replace(
-            array('á', 'à', 'ä', 'â', 'ª', 'Á', 'À', 'Â', 'Ä'),
-            array('a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A'),
+            array('á', 'à', 'ä', 'â', 'ã', 'å', 'ª', 'Á', 'À', 'Â', 'Ä', 'Å', 'Ã', 'Æ'),
+            array('a', 'a', 'a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A', 'A', 'A', 'A'),
             $string
         );
         $string = str_replace(
@@ -168,8 +168,8 @@ class DistribucionRecursoRemesaManual
             $string
         );
         $string = str_replace(
-            array('ó', 'ò', 'ö', 'ô', 'Ó', 'Ò', 'Ö', 'Ô'),
-            array('o', 'o', 'o', 'o', 'O', 'O', 'O', 'O'),
+            array('ó', 'ò', 'ö', 'ô', 'ð', 'õ', 'ø', 'Ó', 'Ò', 'Ö', 'Ô', 'Õ', 'Ø'),
+            array('o', 'o', 'o', 'o', 'o', 'o', 'o', 'O', 'O', 'O', 'O', 'O', 'O'),
             $string
         );
         $string = str_replace(
@@ -178,8 +178,8 @@ class DistribucionRecursoRemesaManual
             $string
         );
         $string = str_replace(
-            array('ñ', 'Ñ', 'ç', 'Ç'),
-            array('n', 'N', 'c', 'C'),
+            array('ñ', 'Ñ', 'ç', 'Ç', 'Ð' ,'Ý', 'æ', 'ý', 'ÿ', 'Ÿ', 'Š', 'š'),
+            array('n', 'N', 'c', 'C', 'D', 'Y', 'e', 'y', 'y', 'Y', 'S', 's'),
             $string
         );
         $string = str_replace(
@@ -196,7 +196,18 @@ class DistribucionRecursoRemesaManual
                 "¿", "[", "^", "`", "]",
                 "+", "}", "{", "¨", "´",
                 ">", "<", ";", ",", ":",
-                "."),
+                ".", "=", "`", "¢", "£",
+                "¤", "¥", "¦", "§", "¨",
+                "©", "ª", "«", "¬", "®",
+                "¯", "°", "±", "²", "³",
+                "´", "µ", "¶", "·", "¸",
+                "¹", "º", "»", "¼", "½",
+                "¾", "¿", "×", "Þ", "ß",
+                "÷", "þ", "Œ", "œ", "ƒ",
+                "–", "—", "‘", "’", "‚",
+                "“", "”", "„", "†", "‡",
+                "•", "…", "‰", "€", "™"
+            ),
             '',
             $string
         );
