@@ -34,7 +34,7 @@ class DistribucionRecursoRemesa
         foreach ($this->data as $dat){$a .= $dat . "\n";}
         Storage::disk('h2h_in')->put($file_nombre.'.in', $a);
 
-        $reg_layout = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $this->id)->first();
+        $reg_layout = DistribucionRecursoRemesaLayout::where('id_distribucion_recurso', '=', $this->id)->first();
 
         if($reg_layout){
             $reg_layout->contador_descarga = $reg_layout->contador_descarga + 1;
@@ -45,7 +45,7 @@ class DistribucionRecursoRemesa
 
         }else{
             $reg_layout = new DistribucionRecursoRemesaLayout();
-            $reg_layout->id_distrubucion_recurso =$this->id;
+            $reg_layout->id_distribucion_recurso =$this->id;
             $reg_layout->usuario_descarga = auth()->id();
             $reg_layout->contador_descarga = 1;
             $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');

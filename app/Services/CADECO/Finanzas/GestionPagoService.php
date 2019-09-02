@@ -215,7 +215,7 @@ class GestionPagoService
                             $partida_remesa->folio_partida_bancaria = $pago['referencia'];
                             $partida_remesa->save();
 
-                            $distribucion_layout = DistribucionRecursoRemesaLayout::query()->where('id_distrubucion_recurso', '=', $pago['id_distribucion_recurso'])->first();
+                            $distribucion_layout = DistribucionRecursoRemesaLayout::query()->where('id_distribucion_recurso', '=', $pago['id_distribucion_recurso'])->first();
                             $distribucion_layout->usuario_carga = auth()->id();
                             $distribucion_layout->fecha_hora_carga = date('Y-m-d');
                             $distribucion_layout->folio_confirmacion_bancaria = date('Y-m-d');

@@ -31,9 +31,9 @@ class DistribucionRecursoRemesaManual
     function create(){
         try {
             DB::connection('cadeco')->beginTransaction();
-            $reg_layout = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $this->id)->first();
+            $reg_layout = DistribucionRecursoRemesaLayout::where('id_distribucion_recurso', '=', $this->id)->first();
             if ($reg_layout) {
-                return "Layout de distribucion de remesa descargado previamente.";
+                return "Layout de distribución de remesa descargado previamente.";
             }
 
             $this->generar();
@@ -55,7 +55,7 @@ class DistribucionRecursoRemesaManual
 
             if (count($this->data_mismo) > 0) {
                 $reg_layout = new DistribucionRecursoRemesaLayout();
-                $reg_layout->id_distrubucion_recurso = $this->id;
+                $reg_layout->id_distribucion_recurso = $this->id;
                 $reg_layout->usuario_descarga = auth()->id();
                 $reg_layout->contador_descarga = 1;
                 $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
@@ -64,7 +64,7 @@ class DistribucionRecursoRemesaManual
             }
             if (count($this->data_inter) > 0) {
                 $reg_layout = new DistribucionRecursoRemesaLayout();
-                $reg_layout->id_distrubucion_recurso = $this->id;
+                $reg_layout->id_distribucion_recurso = $this->id;
                 $reg_layout->usuario_descarga = auth()->id();
                 $reg_layout->contador_descarga = 1;
                 $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
@@ -107,7 +107,7 @@ class DistribucionRecursoRemesaManual
             }
 
             DB::connection('cadeco')->rollBack();
-            return "No se pudo generar el archivo de layout de distribucion de recursos de remesa.";
+            return "No se pudo generar el archivo de layout de distribución de recursos de remesa.";
 
         }catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
@@ -116,7 +116,7 @@ class DistribucionRecursoRemesaManual
     }
 
     public function generar(){
-        if($this->remesa->estado != 1){ dd("Layout de distribucion de remesa no disponible.". PHP_EOL . "Estado: " . $this->remesa->estatus->descripcion );}
+        if($this->remesa->estado != 1){ dd("Layout de distribución de remesa no disponible.". PHP_EOL . "Estado: " . $this->remesa->estatus->descripcion );}
         foreach ($this->remesa->partida as $key => $partida){
             if($partida->cuentaAbono->tipo_cuenta == 1){
                 $cuenta_cargo = str_pad(substr($partida->cuentaCargo->numero, 0, 16), 16, ' ', STR_PAD_RIGHT);
