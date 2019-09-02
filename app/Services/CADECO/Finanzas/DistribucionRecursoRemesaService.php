@@ -157,7 +157,7 @@ class DistribucionRecursoRemesaService
 
 
             /** @var  $dist_layout_registro, Actualizacion del registro del layout */
-            $dist_layout_registro = DistribucionRecursoRemesaLayout::where('id_distrubucion_recurso', '=', $id_distribucion)->first();
+            $dist_layout_registro = DistribucionRecursoRemesaLayout::where('id_distribucion_recurso', '=', $id_distribucion)->first();
             $dist_layout_registro->usuario_carga = auth()->id();
             $dist_layout_registro->fecha_hora_carga = date('Y-m-d h:i:s');
             $dist_layout_registro->folio_confirmacion_bancaria = $val_bloque;
@@ -315,7 +315,7 @@ class DistribucionRecursoRemesaService
             $distribucion = DistribucionRecursoRemesa::query()->find($id);
             $distribucion->estado = 3;
             $distribucion->save();
-            $distribucion_layout = DistribucionRecursoRemesaLayout::query()->where('id_distrubucion_recurso', '=', $id)->first();
+            $distribucion_layout = DistribucionRecursoRemesaLayout::query()->where('id_distribucion_recurso', '=', $id)->first();
             $distribucion_layout->usuario_carga = auth()->id();
             $distribucion_layout->fecha_hora_carga = date('Y-m-d');
             $distribucion_layout->folio_confirmacion_bancaria = date('Y-m-d');

@@ -71,7 +71,7 @@ dd($data);
             'beneficiario' => $data->Destinatario,
             'monto' => $pago['monto'],
             'cuenta_cargo' => ['id_cuenta_cargo' => $data->partidas->cuentaCargo->id_cuenta, 'numero'=> $data->partidas->cuentaCargo->numero, 'abreviatura'=> $data->partidas->cuentaCargo->abreviatura, 'nombre' => $data->partidas->cuentaCargo->empresa->razon_social, 'id_empresa' => $data->empresa->id_empresa],
-            'cuenta_abono' => ['id_cuenta_abono' => $data->partidas->cuentaAbono->id, 'numero'=> $data->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $data->partidas->cuentaAbono->complemento->nombre_corto, 'nombre' => $data->partidas->cuentaAbono->banco->razon_social],
+            'cuenta_abono' => ['id_cuenta_abono' => $data->partidas->cuentaAbono->id, 'numero'=> $data->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $data->partidas->cuentaAbono->banco->ctg_banco->nombre_corto, 'nombre' => $data->partidas->cuentaAbono->banco->razon_social],
             'referencia' => $pago['referencia'],
             'referencia_docto' => $data->Referencia,
             'origen_docto' => $data->origenDocumento->OrigenDocumento,
@@ -224,7 +224,7 @@ dd($data);
                             $partida_remesa->folio_partida_bancaria = $pago['referencia'];
                             $partida_remesa->save();
 
-                            $distribucion_layout = DistribucionRecursoRemesaLayout::query()->where('id_distrubucion_recurso', '=', $pago['id_distribucion_recurso'])->first();
+                            $distribucion_layout = DistribucionRecursoRemesaLayout::query()->where('id_distribucion_recurso', '=', $pago['id_distribucion_recurso'])->first();
                             $distribucion_layout->usuario_carga = auth()->id();
                             $distribucion_layout->fecha_hora_carga = date('Y-m-d');
                             $distribucion_layout->folio_confirmacion_bancaria = date('Y-m-d');

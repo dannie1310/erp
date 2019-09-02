@@ -9,7 +9,9 @@ use App\Models\CADECO\Compras\ItemSalidaEliminada;
 use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Compras\MovimientoEliminado;
 use App\Models\CADECO\Compras\SalidaEliminada;
+use App\Models\CADECO\Contabilidad\HistPoliza;
 use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use Illuminate\Support\Facades\DB;
 
 class SalidaAlmacen extends Transaccion
@@ -64,6 +66,16 @@ class SalidaAlmacen extends Transaccion
     }
 
     private function eliminar_salida(){
+        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+        if ($poliza != []){
+            $poliza_historico = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+            $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+
+            Poliza::query()->where('id_int_poliza',$poliza->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+            HistPoliza::query()->where('id_int_poliza',$poliza_historico->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+            PolizaMovimiento::query()->where('id_int_poliza',$poliza_movimiento->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+        }
+
         $items = $this->partidas()->get()->toArray();
         foreach ($items as $item) {
             $contratista  = ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
@@ -85,6 +97,15 @@ class SalidaAlmacen extends Transaccion
         }
     }
     private function eliminar_transferencia(){
+        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+        if ($poliza != []){
+            $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+            $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+
+            HistPoliza::query()->where('id_int_poliza',$poliza->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+            Poliza::query()->where('id_int_poliza',$poliza_historico->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+            PolizaMovimiento::query()->where('id_int_poliza',$poliza_movimiento->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+        }
         $items = $this->partidas()->get()->toArray();
         foreach ($items as $item) {
             $inventario = Inventario::query()->where( 'id_item', $item['id_item'] )->get()->toArray();
@@ -125,8 +146,11 @@ class SalidaAlmacen extends Transaccion
     {
         $mensaje = '';
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-        if ($poliza != []){
-            $mensaje = "-La salida se encuentra asociada a la Prepoliza: #".$poliza->id_int_poliza." \n";
+
+        if ($poliza != null){
+            if($poliza->estatus != -3) {
+                $mensaje = "-La salida se encuentra asociada a la Prepoliza: #" . $poliza->id_int_poliza . " \n";
+            };
         }
         $items = $this->partidas()->get()->toArray();
 
