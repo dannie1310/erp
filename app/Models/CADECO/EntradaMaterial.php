@@ -14,7 +14,9 @@ use App\Models\CADECO\Compras\InventarioEliminado;
 use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Compras\ItemEntradaEliminada;
 use App\Models\CADECO\Compras\MovimientoEliminado;
+use App\Models\CADECO\Contabilidad\HistPoliza;
 use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use Illuminate\Support\Facades\DB;
 
 class EntradaMaterial extends Transaccion
@@ -79,7 +81,9 @@ class EntradaMaterial extends Transaccion
         $mensaje_items = [];
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != null){
-            $mensaje = "-Prepoliza: #".$poliza->id_int_poliza." \n";
+            if($poliza->estatus != -3) {
+                $mensaje = "-Prepoliza: #".$poliza->id_int_poliza." \n";
+            };
         }
         $items = $this->partidas()->get()->toArray();
         foreach ($items as $item){
@@ -309,6 +313,15 @@ class EntradaMaterial extends Transaccion
      */
     private function eliminar_partidas($partidas)
     {
+        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+        if ($poliza != []){
+            $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+            $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+
+            HistPoliza::query()->where('id_int_poliza',$poliza->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+            Poliza::query()->where('id_int_poliza',$poliza_historico->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+            PolizaMovimiento::query()->where('id_int_poliza',$poliza_movimiento->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+        }
         foreach ($partidas as $item) {
             $inventario = Inventario::query()->where('id_item', $item['id_item'])->first();
             $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->first();
