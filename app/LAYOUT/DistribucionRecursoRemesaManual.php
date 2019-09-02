@@ -178,8 +178,8 @@ class DistribucionRecursoRemesaManual
             $string
         );
         $string = str_replace(
-            array('ñ', 'Ñ', 'ç', 'Ç', 'Ð' ,'Ý', 'æ', 'ý', 'ÿ'),
-            array('n', 'N', 'c', 'C', 'D', 'Y', 'e', 'y', 'y'),
+            array('ñ', 'Ñ', 'ç', 'Ç', 'Ð' ,'Ý', 'æ', 'ý', 'ÿ', 'Ÿ', 'Š', 'š'),
+            array('n', 'N', 'c', 'C', 'D', 'Y', 'e', 'y', 'y', 'Y', 'S', 's'),
             $string
         );
         $string = str_replace(
@@ -203,7 +203,11 @@ class DistribucionRecursoRemesaManual
                 "´", "µ", "¶", "·", "¸",
                 "¹", "º", "»", "¼", "½",
                 "¾", "¿", "×", "Þ", "ß",
-                "÷", "þ"),
+                "÷", "þ", "Œ", "œ", "ƒ",
+                "–", "—", "‘", "’", "‚",
+                "“", "”", "„", "†", "‡",
+                "•", "…", "‰", "€", "™"
+            ),
             '',
             $string
         );
