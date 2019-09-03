@@ -449,7 +449,7 @@
                         this.getFondoFijo();
                     }
                     if(value == 4){
-                        this.getTipo4();
+                        this.getDestajistas();
                     }
                 }
             },
