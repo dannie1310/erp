@@ -67,7 +67,7 @@ class SalidaAlmacen extends Transaccion
 
     private function eliminar_salida(){
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-        if ($poliza != []){
+        if ($poliza != null){
             $poliza_historico = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
             $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
 

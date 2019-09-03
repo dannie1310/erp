@@ -314,7 +314,7 @@ class EntradaMaterial extends Transaccion
     private function eliminar_partidas($partidas)
     {
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-        if ($poliza != []){
+        if ($poliza != null){
             $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
             $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
 
