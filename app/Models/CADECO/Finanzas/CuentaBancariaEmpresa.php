@@ -125,4 +125,11 @@ class CuentaBancariaEmpresa extends Model
     public function getSucursalFormatAttribute(){
         return str_pad($this->sucursal, 3,"0",STR_PAD_LEFT);
     }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_registro);
+        return date_format($date,"d/m/Y");
+
+    }
 }

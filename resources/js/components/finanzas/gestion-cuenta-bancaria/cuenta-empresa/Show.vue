@@ -52,12 +52,9 @@
                                                         <th>Tipo:</th>
                                                         <td>{{cuentaEmpresa.tipo}}</td>
                                                     </tr>
-                                                    <tr v-if="cuentaEmpresa.solicitud_alta">
-
-                                                    </tr>
-                                                    <tr v-if="cuentaEmpresa.solicitud_alta && cuentaEmpresa.solicitud_alta.movimientos" v-for="(mov,r) in cuentaEmpresa.solicitud_alta.movimientos.data">
-                                                        <th v-if="mov.id_tipo_movimiento == 2">Fecha de Autorización:</th>
-                                                        <td v-if="mov.id_tipo_movimiento == 2">{{mov.fecha_format}}</td>
+                                                    <tr>
+                                                        <th>Fecha Registro:</th>
+                                                        <td>{{cuentaEmpresa.fecha_format}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
