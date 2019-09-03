@@ -80,7 +80,6 @@ class Transaccion extends Model
     {
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
-
     }
 
     public function tipo()

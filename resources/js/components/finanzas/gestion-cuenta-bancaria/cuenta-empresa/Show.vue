@@ -22,7 +22,7 @@
                                                 <tbody>
                                                     <tr>
                                                         <th>Tipo de Beneficiario:</th>
-                                                        <td>{{cuentaEmpresa.empresa.tipo_empresa}}</td>
+                                                        <td>{{cuentaEmpresa.empresa.tipo}}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Beneficiario:</th>
@@ -37,7 +37,7 @@
                                                         <td>{{cuentaEmpresa.cuenta}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Modena:</th>
+                                                        <th>Moneda:</th>
                                                         <td>{{cuentaEmpresa.moneda.nombre}}</td>
                                                     </tr>
                                                     <tr>
@@ -52,9 +52,45 @@
                                                         <th>Tipo:</th>
                                                         <td>{{cuentaEmpresa.tipo}}</td>
                                                     </tr>
+                                                    <tr>
+                                                        <th>Fecha de Registro:</th>
+                                                        <td>{{cuentaEmpresa.fecha_format}}</td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
+                                    </div>
+                                    <div class="table-responsive col-12" v-if="cuentaEmpresa.solicitud_alta">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                            <tr>
+                                                <th colspan="2">Solicitud de Alta:</th>
+                                                <td colspan="2">{{cuentaEmpresa.solicitud_alta.numero_folio_format_orden}}</td>
+                                            </tr>
+                                            <tr v-for="(mov,i) in cuentaEmpresa.solicitud_alta.movimientos.data"  v-if="mov && mov.id_tipo_movimiento == 2">
+                                                <th>Fecha de Autorización:</th>
+                                                <td>{{mov.fecha_format}}</td>
+                                                <th>Autorizó:</th>
+                                                <td>{{mov.usuario.nombre}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="table-responsive col-12" v-if="cuentaEmpresa.solicitud_baja">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                            <tr>
+                                                <th colspan="2">Solicitud de Baja:</th>
+                                                <td colspan="2">{{cuentaEmpresa.solicitud_baja.numero_folio_format_orden}}</td>
+                                            </tr>
+                                            <tr v-for="(mov_baja,i) in cuentaEmpresa.solicitud_baja.movimientos.data" v-if="mov_baja && mov_baja.id_tipo_movimiento == 2">
+                                                <th>Fecha de Autorización:</th>
+                                                <td>{{mov_baja.fecha_format}}</td>
+                                                <th>Autorizó:</th>
+                                                <td>{{mov_baja.usuario.nombre}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -78,7 +114,7 @@
                 this.$store.commit('finanzas/cuenta-bancaria-empresa/SET_CUENTA', null);
                 return this.$store.dispatch('finanzas/cuenta-bancaria-empresa/find', {
                     id: id,
-                    params: { include: ['empresa', 'tipo', 'banco', 'plaza', 'moneda']}
+                    params: { include: ['empresa', 'tipo', 'banco', 'plaza', 'moneda', 'solicitud_alta.movimientos.usuario', 'solicitud_baja.movimientos.usuario']}
                 }).then(data => {
                     this.$store.commit('finanzas/cuenta-bancaria-empresa/SET_CUENTA', data);
                     $(this.$refs.modal).modal('show');
