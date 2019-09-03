@@ -251,7 +251,8 @@
                 id_tipo_empresa: '',
                 tipos_empresas: {
                     1: "Proveedor / Contratista",
-                    2: "Responsable de Fondo Fijo"
+                    2: "Responsable de Fondo Fijo",
+                    4: "Destajistas"
                 },
                 id_empresa: '',
                 empresas: [],
@@ -364,6 +365,17 @@
                         this.bandera_empresa = 1;
                     })
             },
+            getDestajistas(){
+                return this.$store.dispatch('cadeco/empresa/index', {
+                    params: {
+                        scope: 'destajistas'
+                    }
+                })
+                    .then(data => {
+                        this.empresas = data.data;
+                        this.bandera_empresa = 1;
+                    })
+            },
             store() {
                 return this.$store.dispatch('finanzas/solicitud-alta-cuenta-bancaria/store', this.$data)
                     .then(data => {
@@ -435,6 +447,9 @@
                     }
                     if(value == 2){
                         this.getFondoFijo();
+                    }
+                    if(value == 4){
+                        this.getTipo4();
                     }
                 }
             },
