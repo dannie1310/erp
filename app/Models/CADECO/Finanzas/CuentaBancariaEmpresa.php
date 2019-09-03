@@ -12,6 +12,8 @@ namespace App\Models\CADECO\Finanzas;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\FinanzasCBE\Solicitud;
+use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
+use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\Moneda;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgPlaza;
@@ -68,18 +70,14 @@ class CuentaBancariaEmpresa extends Model
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
-    public function complemento(){
-        return $this->hasOne(BancoComplemento::class, 'id_empresa', 'id_banco');
-    }
-
     public function solicitudAlta()
     {
-        return $this->belongsTo(Solicitud::class, 'id_solicitud_origen_alta', 'id');
+        return $this->belongsTo(SolicitudAlta::class, 'id_solicitud_origen_alta', 'id');
     }
 
     public function solicitudBaja()
     {
-        return $this->belongsTo(Solicitud::class, 'id_solicitud_origen_baja', 'id');
+        return $this->belongsTo(SolicitudBaja::class, 'id_solicitud_origen_baja', 'id');
     }
 
     public function moneda()
