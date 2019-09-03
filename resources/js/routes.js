@@ -495,6 +495,18 @@ export const routes = [
                         }
                     },
                     {
+                        path: ':id',
+                        name: 'estimacion-show',
+                        component: require('./components/contratos/estimacion/Show'),
+                        meta: {
+                            title: 'INFORMACIÓN DE ESTIMACIÓN',
+                            breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
+                            middleware: [auth, context,],
+
+                        }
+                    },
+
+                    {
                         path: 'formato-orden-pago',
                         name: 'formato-orden-pago',
                         component: require('./components/contratos/estimacion/formato-orden-pago/Index'),
@@ -772,6 +784,20 @@ export const routes = [
                             breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE CUENTAS BANCARIAS'},
                             middleware: [auth, context],
 
+                        }
+                    },
+                    {
+                        path: 'cuenta-empresa-bancaria',
+                        name: 'cuenta-empresa-bancaria',
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/cuenta-empresa/Index'),
+                        meta: {
+                            title: 'Cuentas Bancarias',
+                            breadcrumb: {
+                                parent: 'gestion-cuenta-bancaria',
+                                name: 'CUENTAS BANCARIAS'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_alta_cuenta_bancaria_empresa'
                         }
                     },
                     {

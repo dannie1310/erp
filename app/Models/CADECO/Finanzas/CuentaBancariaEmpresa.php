@@ -12,6 +12,8 @@ namespace App\Models\CADECO\Finanzas;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\FinanzasCBE\Solicitud;
+use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
+use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\Moneda;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgPlaza;
@@ -31,8 +33,18 @@ class CuentaBancariaEmpresa extends Model
         'sucursal',
         'tipo_cuenta',
         'id_plaza',
-        'id_moneda'
+        'id_moneda',
+        'estatus'
     ];
+
+
+    /**
+     * @var array
+     */
+    public $searchable = [
+        'empresa.tipo_empresa'
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -58,18 +70,14 @@ class CuentaBancariaEmpresa extends Model
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
-    public function complemento(){
-        return $this->hasOne(BancoComplemento::class, 'id_empresa', 'id_banco');
-    }
-
     public function solicitudAlta()
     {
-        return $this->belongsTo(Solicitud::class, 'id_solicitud_origen_alta', 'id');
+        return $this->belongsTo(SolicitudAlta::class, 'id_solicitud_origen_alta', 'id');
     }
 
     public function solicitudBaja()
     {
-        return $this->belongsTo(Solicitud::class, 'id_solicitud_origen_baja', 'id');
+        return $this->belongsTo(SolicitudBaja::class, 'id_solicitud_origen_baja', 'id');
     }
 
     public function moneda()
@@ -99,5 +107,29 @@ class CuentaBancariaEmpresa extends Model
         if($cuentaBancaria != []){
             abort(400, 'La solicitud no puede ser autorizada, la empresa tiene una cuenta activa');
         }
+    }
+
+    public function getEstadoFormatAttribute()
+    {
+        switch($this->estatus){
+            case 1:
+                return 'Registrada';
+                break;
+
+            case -1:
+                return 'Baja';
+                break;
+        }
+    }
+
+    public function getSucursalFormatAttribute(){
+        return str_pad($this->sucursal, 3,"0",STR_PAD_LEFT);
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_registro);
+        return date_format($date,"d/m/Y");
+
     }
 }

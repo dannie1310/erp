@@ -77,30 +77,51 @@ class SolicitudAlta extends Solicitud
     }
 
     public function autorizar(){
-        DB::connection('cadeco')->transaction(function() {
-            $cuenta = CuentaBancariaEmpresa::query()->create( [
-                'id_empresa' => $this->id_empresa,
-                'id_banco' => $this->id_banco,
-                'cuenta_clabe' => $this->cuenta_clabe,
-                'sucursal' => $this->sucursal,
-                'tipo_cuenta' => $this->tipo_cuenta,
-                'id_solicitud_origen_alta' => $this->id,
-                'id_plaza' => $this->id_plaza,
-                'id_moneda' => $this->id_moneda
-            ] );
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $cuenta = CuentaBancariaEmpresa::query()->withoutGlobalScopes()->where('cuenta_clabe', '=', $this->cuenta_clabe)->first();
 
-            $movimiento = SolicitudMovimiento::query()->where( 'id_solicitud', '=', $this->id )->first();
-            $id = $movimiento->id;
-            $movs = SolicitudMovimiento::query()->create( [
+            if ($cuenta == null) {
+                $cuenta = CuentaBancariaEmpresa::query()->create([
+                    'id_empresa' => $this->id_empresa,
+                    'id_banco' => $this->id_banco,
+                    'cuenta_clabe' => $this->cuenta_clabe,
+                    'sucursal' => $this->sucursal,
+                    'tipo_cuenta' => $this->tipo_cuenta,
+                    'id_solicitud_origen_alta' => $this->id,
+                    'id_plaza' => $this->id_plaza,
+                    'id_moneda' => $this->id_moneda
+                ]);
+            } else if ($cuenta->estatus == -1) {
+                if($this->id_empresa == $cuenta->id_empresa && $this->id_banco == $cuenta->id_banco && $this->sucursal == $cuenta->sucursal && $this->tipo_cuenta == $cuenta->tipo_cuenta && $this->id_plaza == $cuenta->id_plaza && $this->id_moneda == $cuenta->id_moneda) {
+                    $cuenta = $cuenta->update([
+                        'id_solicitud_origen_alta' => $this->id,
+                        'estatus' => 1
+                    ]);
+                }else{
+                    abort(400, 'La solicitud no puede ser autorizada porque existe este número de cuenta registrado previamente con otros datos.');
+                }
+            } else {
+                abort(400, 'Ya existe está cuenta bancaria.');
+            }
+
+            $movimiento = SolicitudMovimiento::query()->where('id_solicitud', '=', $this->id)->first();
+            $movs = SolicitudMovimiento::query()->create([
                 'id_solicitud' => $this->id,
-                'id_movimiento_antecedente' => $id,
+                'id_movimiento_antecedente' => $movimiento->id,
                 'id_tipo_movimiento' => 2,
-            ] );
-            $this->update( [
+            ]);
+            $this->update([
                 'estado' => 2
-            ] );
-        });
-        return $this;
+            ]);
+
+            DB::connection('cadeco')->commit();
+            return $this;
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 
     public function rechazar($observaciones){

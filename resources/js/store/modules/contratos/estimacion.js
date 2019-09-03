@@ -4,7 +4,9 @@ export default {
     namespaced: true,
     state: {
         estimaciones: [],
-        meta: {}
+        currentEstimacion: null,
+        meta: {},
+
     },
 
     mutations: {
@@ -12,8 +14,16 @@ export default {
             state.estimaciones = data
         },
 
+        SET_ESTIMACION(state, data) {
+          state.currentEstimacion = data;
+        },
+
         SET_META(state, data) {
             state.meta = data
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentBanco, data.attribute, data.value);
         },
 
         APROBAR_ESTIMACION(state, id) {
@@ -25,7 +35,7 @@ export default {
         },
 
         REVERTIR_APROBACION(state, id) {
-            console.log('entro');
+
             state.estimaciones.forEach(estimacion => {
                 if(estimacion.id == id) {
                     console.log('encontrata')
@@ -95,6 +105,20 @@ export default {
                     })
             });
         },
+        showEstimacionTable (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id+ '/showEstimacionTable', { params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
 
         getConceptos(context, payload) {
             return new Promise((resolve, reject) => {
@@ -114,6 +138,20 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+
+        estimaAnterior (context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'estimaAnterior', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -215,6 +253,10 @@ export default {
 
         meta(state) {
             return state.meta
+        },
+
+        currentEstimacion(state) {
+            return state.currentEstimacion;
         }
     }
 }
