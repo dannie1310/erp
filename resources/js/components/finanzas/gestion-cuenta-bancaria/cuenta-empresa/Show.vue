@@ -53,7 +53,7 @@
                                                         <td>{{cuentaEmpresa.tipo}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Fecha Registro:</th>
+                                                        <th>Fecha de Registro:</th>
                                                         <td>{{cuentaEmpresa.fecha_format}}</td>
                                                     </tr>
                                                 </tbody>

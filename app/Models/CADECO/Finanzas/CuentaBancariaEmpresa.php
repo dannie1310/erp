@@ -117,7 +117,7 @@ class CuentaBancariaEmpresa extends Model
                 break;
 
             case -1:
-                return 'Cancelada';
+                return 'Baja';
                 break;
         }
     }
