@@ -27,7 +27,9 @@ class CuentaBancariaEmpresaTransformer extends TransformerAbstract
         'empresa',
         'banco',
         'moneda',
-        'plaza'
+        'plaza',
+        'solicitud_alta',
+        'solicitud_baja'
     ];
 
     /**
@@ -100,6 +102,34 @@ class CuentaBancariaEmpresaTransformer extends TransformerAbstract
         if($plaza = $model->plaza)
         {
             return $this->item($plaza, new CtgPlazaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param CuentaBancariaEmpresa $model
+     * Include Solicitud Alta
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSolicitudAlta(CuentaBancariaEmpresa $model)
+    {
+        if($alta = $model->solicitudAlta)
+        {
+            return $this->item($alta, new SolicitudAltaCuentaBancariaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param CuentaBancariaEmpresa $model
+     * Include Solicitud Baja
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSolicitudBaja(CuentaBancariaEmpresa $model)
+    {
+        if($baja = $model->solicitudBaja)
+        {
+            return $this->item($baja, new SolicitudBajaCuentaBancariaTransformer);
         }
         return null;
     }
