@@ -52,12 +52,6 @@ class CuentaBancariaEmpresa extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('estatus', '>=', 0);
         });
-
-        self::creating(function ($model) {
-            $model->validar();
-            $model->fecha_hora_registro = date('Y-m-d h:i:s');
-            $model->registro =  auth()->id();
-        });
     }
 
     public function banco()
