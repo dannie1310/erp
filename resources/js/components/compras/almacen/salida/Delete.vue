@@ -70,8 +70,9 @@
                                                         <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                         <td>{{doc.unidad}}</td>
                                                         <td>{{doc.cantidad_format}}</td>
-                                                        <td v-if="salida.opciones == 1" :title="`${doc.concepto.path}`"><u>{{doc.concepto.descripcion}}</u></td>
-                                                        <td v-else>{{doc.almacen.descripcion}}</td>
+                                                        <td v-if="doc.concepto" :title="`${doc.concepto.path}`"><u>{{doc.concepto.descripcion}}</u></td>
+                                                        <td v-else-if="doc.almacen">{{doc.almacen.descripcion}}</td>
+                                                        <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
                                                     </tr>
                                                     <tr v-if="salida.observaciones" class="invoice p-3 mb-3">
                                                         <td colspan="6"><b>Observaciones: </b>{{salida.observaciones}}</td>
