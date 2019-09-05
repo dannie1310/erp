@@ -20,13 +20,4 @@ class DistribucionRecursoRemesaLog extends Model
         'mac_address',
         'ip_address'
     ];
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->id_usuario = auth()->id();
-        });
-    }
-
 }
