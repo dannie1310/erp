@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
+use App\Observers\CADECO\Finanzas\ConfiguracionEstimacionObserver;
 use App\Observers\CADECO\Finanzas\CuentaBancariaEmpresaObserver;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaObserver;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
@@ -17,8 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        DistribucionRecursoRemesa::observe(DistribucionRecursoRemesaObserver::class);
+        ConfiguracionEstimacion::observe(ConfiguracionEstimacionObserver::class);
         CuentaBancariaEmpresa::observe(CuentaBancariaEmpresaObserver::class);
+        DistribucionRecursoRemesa::observe(DistribucionRecursoRemesaObserver::class);
     }
 
     /**
