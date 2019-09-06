@@ -1,10 +1,7 @@
 <template>
-    <div class="card" id="configuracion-remesa" v-if="$root.can('editar_configuracion_finanzas_remesas')">
-        <div class="card-body">
+        <div id="configuracion-remesa" v-if="$root.can('editar_configuracion_finanzas_remesas')">
             <h5 id="remesa">Remesa</h5>
-
-            <fieldset class="form-group">
-                <div class="row">
+             <div class="row">
                     <legend class="col-form-label col-sm-4 pt-0"><b>¿El proyecto acepta documentos manuales en remesa?</b></legend>
                     <div class="col-sm-8" v-if="remesa">
                         <div class="form-check form-check-inline">
@@ -29,7 +26,6 @@
                         </div>
                     </div>
                 </div>
-            </fieldset>
             <div class="form-group row">
                 <div class="col">
                     <button type="submit" @click="crear" class="btn btn-outline-primary pull-right" :disabled="!cambio" v-if="!remesa">
@@ -41,7 +37,6 @@
                 </div>
             </div>
         </div>
-    </div>
 </template>
 
 <script>
