@@ -208,7 +208,7 @@
 
             store() {
                 this.guardando = true;
-                return this.$store.dispatch('finanzas/datos-estimaciones/store', {
+                return this.$store.dispatch('finanzas/estimacion/store', {
                     data: this.data
                 })
                     .then(data => {
