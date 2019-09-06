@@ -29,6 +29,7 @@ use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;
 use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
 use App\Models\CADECO\Seguridad\AuditoriaRolUser;
 use App\Models\CADECO\Seguridad\Rol;
+use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
@@ -58,6 +59,7 @@ use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaPermisoRolObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
 use App\Observers\CADECO\Seguridad\RolObserver;
+use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -125,6 +127,10 @@ class AppServiceProvider extends ServiceProvider
             AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
             Rol::observe(RolObserver::class);
 
+            /**
+             * SubcontratosEstimaciones
+             */
+            FolioPorSubcontrato::observe(FolioPorSubcontratoObserver::class);
 
     }
 
