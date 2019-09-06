@@ -26,6 +26,9 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;
+use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
+use App\Models\CADECO\Seguridad\AuditoriaRolUser;
+use App\Models\CADECO\Seguridad\Rol;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
@@ -52,6 +55,9 @@ use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaPartidaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudAltaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudBajaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
+use App\Observers\CADECO\Seguridad\AuditoriaPermisoRolObserver;
+use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
+use App\Observers\CADECO\Seguridad\RolObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -64,49 +70,62 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         /**
-         * Compras
+         * CADECO
          */
-        EntradaEliminada::observe(EntradaEliminadaObserver::class);
-        SalidaEliminada::observe(SalidaEliminadaObserver::class);
 
-        /**
-         *Contabilidad
-         */
-        Apertura::observe(AperturaObserver::class);
-        Cierre::observe(CierreObserver::class);
-        CuentaAlmacen::observe(CuentaAlmacenObserver::class);
-        CuentaBanco::observe(CuentaBancoObserver::class);
-        CuentaConcepto::observe(CuentaConceptoObserver::class);
-        CuentaContable::observe(CuentaContableObserver::class);
-        CuentaCosto::observe(CuentaCostoObserver::class);
-        CuentaEmpresa::observe(CuentaEmpresaObserver::class);
-        CuentaFondo::observe(CuentaFondoObserver::class);
-        CuentaGeneral::observe(CuentaGeneralObserver::class);
-        CuentaMaterial::observe(CuentaMaterialObserver::class);
-        Poliza::observe(PolizaObserver::class);
-        PolizaMovimiento::observe(PolizaMovimientoObserver::class);
-        TipoCuentaContable::observe(TipoCuentaContableObserver::class);
+            /**
+             * Compras
+             */
+            EntradaEliminada::observe(EntradaEliminadaObserver::class);
+            SalidaEliminada::observe(SalidaEliminadaObserver::class);
 
-        /**
-         * Contratos
-         */
-        AreaSubcontratante::observe(AreaSubcontratanteObserver::class);
+            /**
+             *Contabilidad
+             */
+            Apertura::observe(AperturaObserver::class);
+            Cierre::observe(CierreObserver::class);
+            CuentaAlmacen::observe(CuentaAlmacenObserver::class);
+            CuentaBanco::observe(CuentaBancoObserver::class);
+            CuentaConcepto::observe(CuentaConceptoObserver::class);
+            CuentaContable::observe(CuentaContableObserver::class);
+            CuentaCosto::observe(CuentaCostoObserver::class);
+            CuentaEmpresa::observe(CuentaEmpresaObserver::class);
+            CuentaFondo::observe(CuentaFondoObserver::class);
+            CuentaGeneral::observe(CuentaGeneralObserver::class);
+            CuentaMaterial::observe(CuentaMaterialObserver::class);
+            Poliza::observe(PolizaObserver::class);
+            PolizaMovimiento::observe(PolizaMovimientoObserver::class);
+            TipoCuentaContable::observe(TipoCuentaContableObserver::class);
 
-        /**
-         * Finanzas
-         */
-        ConfiguracionEstimacion::observe(ConfiguracionEstimacionObserver::class);
-        CuentaBancariaEmpresa::observe(CuentaBancariaEmpresaObserver::class);
-        DistribucionRecursoRemesa::observe(DistribucionRecursoRemesaObserver::class);
-        DistribucionRecursoRemesaLog::observe(DistribucionRecursoRemesaLogObserver::class);
-        DistribucionRecursoRemesaPartida::observe(DistribucionRecursoRemesaPartidaObserver::class);
+            /**
+             * Contratos
+             */
+            AreaSubcontratante::observe(AreaSubcontratanteObserver::class);
 
-        /**
-         * FinanzasCBE
-         */
-        SolicitudAlta::observe(SolicitudAltaObserver::class);
-        SolicitudBaja::observe(SolicitudBajaObserver::class);
-        SolicitudMovimiento::observe(SolicitudMovimientoObserver::class);
+            /**
+             * Finanzas
+             */
+            ConfiguracionEstimacion::observe(ConfiguracionEstimacionObserver::class);
+            CuentaBancariaEmpresa::observe(CuentaBancariaEmpresaObserver::class);
+            DistribucionRecursoRemesa::observe(DistribucionRecursoRemesaObserver::class);
+            DistribucionRecursoRemesaLog::observe(DistribucionRecursoRemesaLogObserver::class);
+            DistribucionRecursoRemesaPartida::observe(DistribucionRecursoRemesaPartidaObserver::class);
+
+            /**
+             * FinanzasCBE
+             */
+            SolicitudAlta::observe(SolicitudAltaObserver::class);
+            SolicitudBaja::observe(SolicitudBajaObserver::class);
+            SolicitudMovimiento::observe(SolicitudMovimientoObserver::class);
+
+            /**
+             * Seguridad
+             */
+            AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
+            AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
+            Rol::observe(RolObserver::class);
+
+
     }
 
     /**
