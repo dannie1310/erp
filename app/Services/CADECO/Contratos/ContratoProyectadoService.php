@@ -10,7 +10,6 @@ namespace App\Services\CADECO\Contratos;
 
 
 use App\Models\CADECO\ContratoProyectado;
-use App\Models\CADECO\Contratos;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +22,8 @@ class ContratoProyectadoService
     protected $repository;
 
     /**
-     * EstimacionService constructor.
+     * ContratoProyectadoService constructor.
+     * @param ContratoProyectado $model
      */
     public function __construct(ContratoProyectado $model)
     {

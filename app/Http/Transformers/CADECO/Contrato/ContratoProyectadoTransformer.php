@@ -10,7 +10,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 
 use App\Http\Transformers\SEGURIDAD_ERP\TipoAreaSubcontratanteTransformer;
-use App\Models\CADECO\Contratos;
+use App\Models\CADECO\ContratoProyectado;
 use League\Fractal\TransformerAbstract;
 
 class ContratoProyectadoTransformer extends TransformerAbstract
