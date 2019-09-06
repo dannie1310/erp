@@ -23,6 +23,9 @@ use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLog;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
+use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
+use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
+use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
@@ -46,6 +49,9 @@ use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaLogObserver;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaObserver;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaPartidaObserver;
+use App\Observers\CADECO\FinanzasCBE\SolicitudAltaObserver;
+use App\Observers\CADECO\FinanzasCBE\SolicitudBajaObserver;
+use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -94,6 +100,13 @@ class AppServiceProvider extends ServiceProvider
         DistribucionRecursoRemesa::observe(DistribucionRecursoRemesaObserver::class);
         DistribucionRecursoRemesaLog::observe(DistribucionRecursoRemesaLogObserver::class);
         DistribucionRecursoRemesaPartida::observe(DistribucionRecursoRemesaPartidaObserver::class);
+
+        /**
+         * FinanzasCBE
+         */
+        SolicitudAlta::observe(SolicitudAltaObserver::class);
+        SolicitudBaja::observe(SolicitudBajaObserver::class);
+        SolicitudMovimiento::observe(SolicitudMovimientoObserver::class);
     }
 
     /**
