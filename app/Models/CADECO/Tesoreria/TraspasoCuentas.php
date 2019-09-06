@@ -46,14 +46,6 @@ class TraspasoCuentas extends Model
         self::addGlobalScope(function($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
-
-        static::creating(function ($model) {
-            $mov = TraspasoCuentas::query()->orderBy('numero_folio', 'DESC')->first();
-            $folio = $mov ? $mov->numero_folio + 1 : 1;
-            $model->estatus = 1;
-            $model->id_obra = Context::getIdObra();
-            $model->numero_folio = $folio;
-        });
     }
 
     public function cuentaDestino()

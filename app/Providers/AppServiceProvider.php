@@ -36,6 +36,8 @@ use App\Models\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantia;
 use App\Models\CADECO\SubcontratosFG\MovimientoSolicitudMovimientoFondoGarantia;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia;
+use App\Models\CADECO\Tesoreria\MovimientoBancario;
+use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
@@ -72,6 +74,8 @@ use App\Observers\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantiaObserver
 use App\Observers\CADECO\SubcontratosFG\MovimientoSolicitudMovimientoFondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\RetencionFondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantiaObserver;
+use App\Observers\CADECO\Tesoreria\MovimientoBancarioObserver;
+use App\Observers\CADECO\Tesoreria\TraspasoCuentasObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -153,6 +157,12 @@ class AppServiceProvider extends ServiceProvider
             MovimientoSolicitudMovimientoFondoGarantia::observe(MovimientoSolicitudMovimientoFondoGarantiaObserver::class);
             RetencionFondoGarantia::observe(RetencionFondoGarantiaObserver::class);
             SolicitudMovimientoFondoGarantia::observe(SolicitudMovimientoFondoGarantiaObserver::class);
+
+            /**
+             * Tesoreria
+             */
+            MovimientoBancario::observe(MovimientoBancarioObserver::class);
+            TraspasoCuentas::observe(TraspasoCuentasObserver::class);
     }
 
     /**
