@@ -6,7 +6,7 @@ namespace App\Models\CADECO\ContratoProyectado;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AreasSubcontratantes extends Model
+class AreaSubcontratante extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Contratos.cp_areas_subcontratantes';
@@ -34,7 +34,7 @@ class AreasSubcontratantes extends Model
     }
 
     public function actualiza($id, $id_area){
-        $contrato = AreasSubcontratantes::find($id);
+        $contrato = AreaSubcontratante::find($id);
         $contrato->id_area_subcontratante = $id_area;
         $contrato->timestamp_registro = date('Y-m-d h:i:s');
         $contrato->id_usuario = auth()->id();
