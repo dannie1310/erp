@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Contabilidad\Apertura;
@@ -19,6 +20,12 @@ use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use App\Models\CADECO\Contabilidad\TipoCuentaContable;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
+use App\Models\CADECO\Credito;
+use App\Models\CADECO\Cuenta;
+use App\Models\CADECO\Debito;
+use App\Models\CADECO\DescuentoFondoGarantia;
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\EmpresaFondoFijo;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLog;
@@ -38,6 +45,7 @@ use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia;
 use App\Models\CADECO\Tesoreria\MovimientoBancario;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
+use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
@@ -55,6 +63,12 @@ use App\Observers\CADECO\Contabilidad\PolizaMovimientoObserver;
 use App\Observers\CADECO\Contabilidad\PolizaObserver;
 use App\Observers\CADECO\Contabilidad\TipoCuentaContableObserver;
 use App\Observers\CADECO\Contratos\AreaSubcontratanteObserver;
+use App\Observers\CADECO\CreditoObserver;
+use App\Observers\CADECO\CuentaObserver;
+use App\Observers\CADECO\DebitoObserver;
+use App\Observers\CADECO\DescuentoFondoGarantiaObserver;
+use App\Observers\CADECO\EmpresaFondoFijoObserver;
+use App\Observers\CADECO\EmpresaObserver;
 use App\Observers\CADECO\Finanzas\ConfiguracionEstimacionObserver;
 use App\Observers\CADECO\Finanzas\CuentaBancariaEmpresaObserver;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaLogObserver;
@@ -163,6 +177,14 @@ class AppServiceProvider extends ServiceProvider
              */
             MovimientoBancario::observe(MovimientoBancarioObserver::class);
             TraspasoCuentas::observe(TraspasoCuentasObserver::class);
+
+            Banco::observe(BancoObserver::class);
+            Credito::observe(CreditoObserver::class);
+            Cuenta::observe(CuentaObserver::class);
+            Debito::observe(DebitoObserver::class);
+            DescuentoFondoGarantia::observe(DescuentoFondoGarantiaObserver::class);
+            Empresa::observe(EmpresaObserver::class);
+            EmpresaFondoFijo::observe(EmpresaFondoFijoObserver::class);
     }
 
     /**
