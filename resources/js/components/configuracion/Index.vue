@@ -6,7 +6,6 @@
             <configuracion-sistema  v-if="$root.can('habilitar_deshabilitar_sistema')"></configuracion-sistema>
             <configuracion-contable @update:datosContables="obra.datosContables = $event" :datos-contables="obra.datosContables"></configuracion-contable>
             <configuracion-estimaciones @create:datosEstimaciones="obra.datosEstimaciones = $event" :datos-estimaciones="obra.datosEstimaciones"></configuracion-estimaciones>
-            <configuracion-remesa></configuracion-remesa>
             <!-- ESTE COMPONENTE CONTIENE LAS ASIGNACIONES PARA EL ESQUEMA GLOBAL, PARA EL ESQUEMA PERSONALIZADO SE DEBERÁ CREAR EL CORRESPONDIENTE COMPONENTE -->
             <configuracion-seguridad v-if="obra.configuracion.esquema_permisos == 1"></configuracion-seguridad>
             <configuracion-seguridad-personalizado v-else-if="obra.configuracion.esquema_permisos == 2"></configuracion-seguridad-personalizado>
@@ -16,9 +15,8 @@
 
 <script>
     import ConfiguracionContable from "./partials/Contable";
-    import ConfiguracionEstimaciones from "./partials/Estimaciones";
     import ConfiguracionObra from "./partials/Obra";
-    import ConfiguracionRemesa from "./partials/Remesa";
+    import ConfiguracionEstimaciones from "./partials/Estimaciones";
     import ConfiguracionSeguridad from "./seguridad/global/Index";
     import ConfiguracionSeguridadPersonalizado from "./seguridad/personalizado/Index";
     import ConfiguracionSistema from "./partials/Sistema";
@@ -26,7 +24,7 @@
 
     export default {
         name: "configuracion",
-        components: {ConfiguracionEstimaciones,ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra, ConfiguracionSeguridadPersonalizado, ConfiguracionSistema, EstadoObra, ConfiguracionRemesa},
+        components: {ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra, ConfiguracionSeguridadPersonalizado, ConfiguracionSistema, EstadoObra, ConfiguracionEstimaciones},
         data() {
             return {
                 obra: null

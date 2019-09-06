@@ -168,12 +168,17 @@
                     </button>
                 </div>
             </div>
+            <hr>
+            <configuracion-remesa id="configuracion-remesa"></configuracion-remesa>
         </div>
+
     </div>
 </template>
 
 <script>
+    import ConfiguracionRemesa from "./Remesa";
     export default {
+        components: {ConfiguracionRemesa},
         props: ['datosEstimaciones'],
         name: "configuracion-estimaciones",
         data() {
