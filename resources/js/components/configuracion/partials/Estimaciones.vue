@@ -1,5 +1,5 @@
 <template>
-    <div class="card" id="configuracion-estimaciones" v-if="$root.can('editar_configuracion_finanzas')">
+    <div class="card" id="configuracion-estimaciones" v-if="$root.can('editar_configuracion_finanzas_estimaciones')">
         <div class="card-header">
             <h3 class="card-title">Configuración Finanzas</h3>
             <div class="card-tools">
