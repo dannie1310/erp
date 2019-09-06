@@ -14,7 +14,6 @@ use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 
 class ConfiguracionEstimacionObserver
 {
-
     /**
      * @param ConfiguracionEstimacion $configuracionEstimacion
      */

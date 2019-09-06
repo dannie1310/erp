@@ -33,16 +33,6 @@ class CuentaFondo extends Model
         'fondo.saldo'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->registro = auth()->id();
-            $model->estatus = 1;
-        });
-    }
-
     public function fondo()
     {
         return $this->belongsTo(Fondo::class, 'id_fondo');
