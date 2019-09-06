@@ -18,6 +18,7 @@ use App\Models\CADECO\Contabilidad\CuentaMaterial;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use App\Models\CADECO\Contabilidad\TipoCuentaContable;
+use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLog;
@@ -38,6 +39,7 @@ use App\Observers\CADECO\Contabilidad\CuentaMaterialObserver;
 use App\Observers\CADECO\Contabilidad\PolizaMovimientoObserver;
 use App\Observers\CADECO\Contabilidad\PolizaObserver;
 use App\Observers\CADECO\Contabilidad\TipoCuentaContableObserver;
+use App\Observers\CADECO\Contratos\AreaSubcontratanteObserver;
 use App\Observers\CADECO\Finanzas\ConfiguracionEstimacionObserver;
 use App\Observers\CADECO\Finanzas\CuentaBancariaEmpresaObserver;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaLogObserver;
@@ -78,6 +80,11 @@ class AppServiceProvider extends ServiceProvider
         Poliza::observe(PolizaObserver::class);
         PolizaMovimiento::observe(PolizaMovimientoObserver::class);
         TipoCuentaContable::observe(TipoCuentaContableObserver::class);
+
+        /**
+         * Contratos
+         */
+        AreaSubcontratante::observe(AreaSubcontratanteObserver::class);
 
         /**
          * Finanzas
