@@ -10,7 +10,7 @@ namespace App\PDF;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\Contratos;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Subcontrato;

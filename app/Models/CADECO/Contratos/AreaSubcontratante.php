@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Models\CADECO\ContratoProyectado;
+namespace App\Models\CADECO\Contratos;
 
 
 use Illuminate\Database\Eloquent\Model;
