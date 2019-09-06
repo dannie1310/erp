@@ -64,7 +64,7 @@
             </li>
 
             <li class="nav-header" v-if="configuracion_finanzas"><a href="#configuracion-estimaciones">CONFIGURACIÓN FINANZAS</a></li>
-            <li class="nav-item" v-if="$root.can('editar_configuracion_finanzas')">
+            <li class="nav-item" v-if="$root.can('editar_configuracion_finanzas_estimaciones')">
                 <a href="#estimaciones" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Estimaciones</p>
@@ -117,7 +117,7 @@
         computed: {
             configuracion_finanzas() {
                 return this.$root.can([
-                    'editar_configuracion_finanzas',
+                    'editar_configuracion_finanzas_estimaciones',
                     'editar_configuracion_finanzas_remesas'
                 ]);
             }
