@@ -27,22 +27,6 @@ class MovimientoFondoGarantia extends Model
                             ];
     public $timestamps = false;
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function($movimiento_fg)
-        {
-            $movimiento_fg->created_at = date('Y-m-d h:i:s');
-            $movimiento_fg->importe = ($movimiento_fg->tipo->naturaleza == 2)? abs($movimiento_fg->importe) * -1 : $movimiento_fg->importe;
-        });
-        self::created(function($movimiento_fg)
-        {
-            $movimiento_fg->fondo_garantia->actualizaSaldo();
-        });
-
-    }
-
     public function fondo_garantia()
     {
         return $this->belongsTo(FondoGarantia::class,'id_fondo_garantia');
@@ -82,5 +66,4 @@ class MovimientoFondoGarantia extends Model
     {
         return $this->fondo_garantia->movimientos()->where("id","<=",$this->id)->sum('importe');
     }
-
 }

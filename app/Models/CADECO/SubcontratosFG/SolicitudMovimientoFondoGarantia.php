@@ -29,24 +29,6 @@ class SolicitudMovimientoFondoGarantia extends Model
     public $timestamps = false;
     protected $with = array('movimientos');
     protected $appends = array('ultimo_movimiento', 'movimiento_autorizacion');
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($solicitud_movimiento_fg) {
-            $solicitud_movimiento_fg->created_at = date('Y-m-d h:i:s');
-            if (!$solicitud_movimiento_fg->validaNoSolicitudesPendientes()) {
-                throw New \Exception('Hay una solicitud de movimiento a fondo de garantía pendiente de autorizar, la solicitud actual no puede registrarse');
-            }
-            if (!$solicitud_movimiento_fg->validaMontoSolicitud()) {
-                throw New \Exception('El monto de la solicitud sobrepasa el monto disponible del fondo de garantía: $ '.number_format($solicitud_movimiento_fg->fondo_garantia->saldo,2).'.');
-            }
-        });
-        self::created(function($solicitud_movimiento_fg){
-            $solicitud_movimiento_fg->generaMovimientoSolicitud(1, $solicitud_movimiento_fg->usuario_registra);
-        });
-
-    }
 
     public function getNumeroFolioFormatAttribute()
     {

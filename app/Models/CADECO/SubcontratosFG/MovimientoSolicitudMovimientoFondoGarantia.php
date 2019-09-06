@@ -23,24 +23,6 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
                             ];
     public $timestamps = false;
     protected $with = array('movimiento_antecedente');
-    protected static function boot()
-    {
-        parent::boot();
-        self::creating(function ($movimiento_solicitud) {
-            $movimiento_solicitud->created_at = date('Y-m-d h:i:s');
-            $movimiento_solicitud->id_movimiento_antecedente = ($movimiento_solicitud->solicitud_movimiento->movimiento_autorizacion)?$movimiento_solicitud->solicitud_movimiento->movimiento_autorizacion->id:NULL;
-            if(!$movimiento_solicitud->validaNoExistenciaDeMovimientoPrevio())
-            {
-                throw New \Exception('Ya existe un movimiento del mismo tipo, el movimiento no puede registrarse');
-            }
-            if(!$movimiento_solicitud->validaTipoMovimiento())
-            {
-                throw New \Exception('El tipo de movimiento: '. $movimiento_solicitud->tipo->descripcion .' no puede registrarse si es precedido por el tipo de movimiento: '. $movimiento_solicitud->solicitud_movimiento->
-                ultimo_movimiento->tipo->descripcion);
-            }
-        });
-
-    }
 
     public function movimiento_antecedente()
     {

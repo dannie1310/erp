@@ -16,13 +16,4 @@ class CtgTipoMovimientoFondoGarantia extends Model
     protected $table = 'SubcontratosFG.ctg_tipos_mov';
     protected $fillable = ['descripcion'];
     public $timestamps = false;
-
-    protected static function boot()
-    {
-        parent::boot();
-
-    }
-
-
-
 }

@@ -30,6 +30,12 @@ use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
 use App\Models\CADECO\Seguridad\AuditoriaRolUser;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
+use App\Models\CADECO\SubcontratosFG\FondoGarantia;
+use App\Models\CADECO\SubcontratosFG\MovimientoFondoGarantia;
+use App\Models\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantia;
+use App\Models\CADECO\SubcontratosFG\MovimientoSolicitudMovimientoFondoGarantia;
+use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
+use App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
@@ -60,6 +66,12 @@ use App\Observers\CADECO\Seguridad\AuditoriaPermisoRolObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
 use App\Observers\CADECO\Seguridad\RolObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
+use App\Observers\CADECO\SubcontratosFG\FondoGarantiaObserver;
+use App\Observers\CADECO\SubcontratosFG\MovimientoFondoGarantiaObserver;
+use App\Observers\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantiaObserver;
+use App\Observers\CADECO\SubcontratosFG\MovimientoSolicitudMovimientoFondoGarantiaObserver;
+use App\Observers\CADECO\SubcontratosFG\RetencionFondoGarantiaObserver;
+use App\Observers\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantiaObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -132,6 +144,15 @@ class AppServiceProvider extends ServiceProvider
              */
             FolioPorSubcontrato::observe(FolioPorSubcontratoObserver::class);
 
+            /**
+             * SubcontratosFG
+             */
+            FondoGarantia::observe(FondoGarantiaObserver::class);
+            MovimientoFondoGarantia::observe(MovimientoFondoGarantiaObserver::class);
+            MovimientoRetencionFondoGarantia::observe(MovimientoRetencionFondoGarantiaObserver::class);
+            MovimientoSolicitudMovimientoFondoGarantia::observe(MovimientoSolicitudMovimientoFondoGarantiaObserver::class);
+            RetencionFondoGarantia::observe(RetencionFondoGarantiaObserver::class);
+            SolicitudMovimientoFondoGarantia::observe(SolicitudMovimientoFondoGarantiaObserver::class);
     }
 
     /**
