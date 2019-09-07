@@ -6,6 +6,7 @@ namespace App\Services\CADECO\Finanzas;
 
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Finanzas\BitacoraSantander;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLayout;
@@ -122,12 +123,21 @@ class GestionPagoService
     public function registrarPagos($pagos){
         try {
             DB::connection('cadeco')->beginTransaction();
-            foreach ($pagos as $pago) {
+            // TODO registro de bitacora santander en sistema
+            $file_fingerprint = hash_file('md5', $pagos->file_interbancario);
+            if(BitacoraSantander::query()->where('hash_file_bitacora', '=', $file_fingerprint)->first()){
+                abort(403, 'Archivo de bitácora procesado previamente');
+            }
+
+            $archivo_bitacora = BitacoraSantander::query()->create(['nombre_bitacora' => $pagos->resumen['nombre_bitacora'] ,
+                'monto_bitacora' => $pagos->resumen['monto_a_pagar'],
+                'hash_file_bitacora' => $file_fingerprint]);
+            $partida_remesa = null;
+            foreach ($pagos->bitacora as $pago) {
                 if($pago['pagable']) {
 
                     if ($pago['id_documento'] && $pago['id_distribucion_recurso']) {
 //                        $dist_remesa = DistribucionRecursoRemesa::find($pago['id_distribucion_recurso'])->first();
-//                        dd('panda3',$dist_remesa,  $pago);
 //                        DistribucionRecursoRemesa::find($pago['id_distribucion_recurso'])->remesaValidaEstado();
 
                         $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $pago['id_distribucion_recurso'])->where('id_documento', '=', $pago['id_documento'])->first();
@@ -228,20 +238,20 @@ class GestionPagoService
                             'rfc' => '']
                         );
 
-                        $cuenta = CuentaBancariaEmpresa::query()->create([
-                            'id_empresa' => $empresa->id_empresa,
-                            'id_banco' => $pago['cuenta_cargo']['id_empresa'],
-                            'cuenta_clabe' => $pago['cuenta_abono']['numero'],
-                            'sucursal' => '',
-                            'tipo' => '',
-                            'plaza' => '',
-                            'id_moneda' => 1
-                        ]);
+//                        $cuenta = CuentaBancariaEmpresa::query()->create([
+//                            'id_empresa' => $empresa->id_empresa,
+//                            'id_banco' => $pago['cuenta_cargo']['id_empresa'],
+//                            'cuenta_clabe' => $pago['cuenta_abono']['numero'],
+//                            'sucursal' => '',
+//                            'tipo' => '',
+//                            'plaza' => '',
+//                            'id_moneda' => 1
+//                        ]);
 
                         $data = array(
                             "id_cuenta" => $pago['cuenta_cargo']['id_cuenta_cargo'],
                             "id_empresa" => $empresa->id_empresa,
-                            "id_moneda" => $cuenta->id_moneda,
+                            "id_moneda" => 1,
                             "monto" => -1 * abs($pago['monto']),
                             "saldo" => -1 * abs($pago['monto']),
                             "referencia" => $pago['referencia'],
@@ -252,9 +262,21 @@ class GestionPagoService
                         $pago_remesa = PagoACuenta::query()->create($data);
 
                     }
+                    $archivo_bitacora->partidas()->create([
+                        'id_distribucion_recursos_rem_partida' => $partida_remesa?$partida_remesa->id:$partida_remesa,
+                        'id_transaccion_pago' => $pago_remesa->id_transaccion,
+                        'monto_pagado' => $pago['monto'],
+                        'referencia_pago' => $pago['referencia'],
+                        'cuenta_abono' => $pago['cuenta_abono']['numero'],
+                        'id_cuenta_abono' => $pago['cuenta_abono']['id_cuenta_abono']?$pago['cuenta_abono']['id_cuenta_abono']:null,
+                        'cuenta_cargo' => $pago['cuenta_cargo']['numero'],
+                        'id_cuenta_cargo' => $pago['cuenta_cargo']['id_cuenta_cargo']
+                    ]);
                 }
-
             }
+
+            $archivo_bitacora->estado = 1;
+            $archivo_bitacora->save();
 
             DB::connection('cadeco')->commit();
             return $pagos;
@@ -266,7 +288,7 @@ class GestionPagoService
         }
     }
 
-    public function resumenBitacora($data){
+    public function resumenBitacora($data, $nombre){
         $pagables = 0;
         $monto_pagar = 0;
         foreach ($data as $dato){
@@ -277,11 +299,17 @@ class GestionPagoService
         }
         return array(
             'pagables' => $pagables,
-            'monto_a_pagar' => $monto_pagar
+            'monto_a_pagar' => $monto_pagar,
+            'nombre_bitacora' => explode('.',$nombre)[0]
         );
     }
 
-    public function validarBitacora($bitacora){
+    public function validarBitacora($bitacora, $bitacora_nombre){
+        $file_fingerprint = hash_file('md5', $bitacora);
+        if(BitacoraSantander::query()->where('hash_file_bitacora', '=', $file_fingerprint)->first()){
+            abort(403, 'Archivo de bitácora procesado previamente.');
+        }
+
         $registros_bitacora = array();
         $doctos_repetidos = [];
         foreach ($this->getTxtData($bitacora) as $key => $pago){
@@ -349,7 +377,7 @@ class GestionPagoService
                                         'id_empresa' => $cta_cargo->empresa->id_empresa],
                                     'cuenta_abono' => [
                                         'id_cuenta_abono' => $cuenta_abono?$cuenta_abono->id:null,
-                                        'numero' => $cuenta_abono?$cuenta_abono->cuenta_clabe:null,
+                                        'numero' => $cuenta_abono?$cuenta_abono->cuenta_clabe:$pago['cuenta_abono'],
                                         'abreviatura' => $pago['cuenta_abono'],
                                         'nombre' => ''],
                                     'referencia' => $pago['referencia'],
@@ -371,7 +399,7 @@ class GestionPagoService
         }
         return array(
             'data' => $registros_bitacora,
-            'resumen' => $this->resumenBitacora($registros_bitacora)
+            'resumen' => $this->resumenBitacora($registros_bitacora, $bitacora_nombre)
         );
     }
 
