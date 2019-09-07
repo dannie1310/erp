@@ -14,7 +14,6 @@ class BitacoraSantander extends Model
     protected $fillable = [
         'nombre_bitacora',
         'monto_bitacora',
-        'estado',
         'hash_file_bitacora',
     ];
 
@@ -27,6 +26,7 @@ class BitacoraSantander extends Model
         self::creating(function ($model) {
             $model->id_usuario_carga = auth()->id();
             $model->fecha_hora_carga = date('Y-m-d H:i:s');
+            $model->estado = 0;
         });
     }
 

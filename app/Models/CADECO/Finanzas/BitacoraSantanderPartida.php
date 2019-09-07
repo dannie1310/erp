@@ -18,13 +18,13 @@ class BitacoraSantanderPartida extends Model
     protected $fillable = [
         'id_bitacora_santander',
         'id_distribucion_recursos_rem_partida',
-        'id_documento_remesa',
         'id_transaccion_pago',
         'monto_pagado',
         'referencia_pago',
+        'cuenta_abono',
         'id_cuenta_abono',
-        'id_cuenta_cargo',
-        'tipo_pago',
+        'cuenta_cargo',
+        'id_cuenta_cargo'
     ];
 
     protected static function boot()
