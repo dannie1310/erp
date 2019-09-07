@@ -56,7 +56,7 @@ import contratoProyectado from './modules/contratos/contrato-proyectado';
 //FINANZAS
 import ctg_tipo_fondo from './modules/finanzas/ctg-tipo-fondo';
 import cuenta_bancaria_empresa from './modules/finanzas/cuenta-bancaria-empresa';
-import datosEstimaciones from './modules/finanzas/datos-estimaciones';
+import datosEstimaciones from './modules/finanzas/estimacion';
 import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
 import gestion_pago from './modules/finanzas/gestion-pago';
 import pago from './modules/finanzas/pago';
@@ -72,6 +72,7 @@ import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
+import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
 import permiso from './modules/seguridad/permiso';
@@ -117,7 +118,7 @@ export default new Vuex.Store({
 
         'finanzas/ctg-tipo-fondo': ctg_tipo_fondo,
         'finanzas/cuenta-bancaria-empresa': cuenta_bancaria_empresa,
-        'finanzas/datos-estimaciones' : datosEstimaciones,
+        'finanzas/estimacion' : datosEstimaciones,
         'finanzas/distribuir-recurso-remesa': distribuir_recurso_remesa,
         'finanzas/gestion-pago': gestion_pago,
         'finanzas/pago': pago,
@@ -156,6 +157,7 @@ export default new Vuex.Store({
         'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
         'seguridad/configuracion-obra': configuracionObra,
+        'seguridad/finanzas/configuracion-remesa': configuracionRemesa,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/rol-personalizado': rolPersonalizado,

@@ -14,16 +14,17 @@
 </template>
 
 <script>
-    import ConfiguracionObra from "./partials/Obra";
-    import EstadoObra from "./partials/EstadoObra";
     import ConfiguracionContable from "./partials/Contable";
+    import ConfiguracionObra from "./partials/Obra";
     import ConfiguracionEstimaciones from "./partials/Estimaciones";
     import ConfiguracionSeguridad from "./seguridad/global/Index";
     import ConfiguracionSeguridadPersonalizado from "./seguridad/personalizado/Index";
     import ConfiguracionSistema from "./partials/Sistema";
+    import EstadoObra from "./partials/EstadoObra";
+
     export default {
         name: "configuracion",
-        components: {ConfiguracionEstimaciones,ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra, ConfiguracionSeguridadPersonalizado, ConfiguracionSistema, EstadoObra},
+        components: {ConfiguracionSeguridad, ConfiguracionContable, ConfiguracionObra, ConfiguracionSeguridadPersonalizado, ConfiguracionSistema, EstadoObra, ConfiguracionEstimaciones},
         data() {
             return {
                 obra: null
