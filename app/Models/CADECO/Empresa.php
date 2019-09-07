@@ -88,6 +88,11 @@ class Empresa extends Model
         return $query->whereIn('tipo_empresa',[1,2,3]);
     }
 
+    public function scopeDestajistas($query)
+    {
+        return $query->where('tipo_empresa',4);
+    }
+
     public function getTipoAttribute()
     {
         if($this->tipo_empresa == 1){
@@ -98,6 +103,9 @@ class Empresa extends Model
         }
         if($this->tipo_empresa == 3){
             return 'Proveedor y Contratista';
+        }
+        if($this->tipo_empresa == 4){
+            return 'Destajistas';
         }
         if($this->tipo_empresa == 32){
             return 'Responsables Fondos Fijos';

@@ -1,4 +1,4 @@
-const URI = '/api/finanzas/datos-estimaciones/';
+const URI = '/api/finanzas/estimacion/';
 
 export default {
     namespaced: true,
