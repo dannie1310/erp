@@ -32,6 +32,7 @@ class Transaccion extends Model
     public const CREATED_AT = 'FechaHoraRegistro';
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
+
     protected static function boot()
     {
         parent::boot();
@@ -46,24 +47,11 @@ class Transaccion extends Model
             }
             return $query->where('id_obra', '=', Context::getIdObra());
         });
-
-        self::creating(function ($model) {
-            $model->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-            $model->FechaHoraRegistro = date('Y-m-d h:i:s');
-            $model->id_obra = Context::getIdObra();
-        });
-        self::creating(function ($model) {
-            if (!$model->validaTipoAntecedente()) {
-                throw New \Exception('La transacción antecedente no es válida');
-            }
-        });
-
     }
 
     public function getNumeroFolioFormatAttribute()
     {
         return '# ' . sprintf("%05d", $this->numero_folio);
-
     }
 
     public function getNumeroFolioFormatOrdenAttribute(){
@@ -73,7 +61,6 @@ class Transaccion extends Model
     public function getMontoFormatAttribute()
     {
         return '$ ' . number_format($this->monto,2);
-
     }
 
     public function getFechaFormatAttribute()
@@ -87,11 +74,13 @@ class Transaccion extends Model
         return $this->belongsTo(TipoTransaccion::class, 'tipo_transaccion', 'tipo_transaccion');
     }
 
-    public function items(){
+    public function items()
+    {
         return $this->hasMany(Item::class, 'id_transaccion', 'id_transaccion');
     }
 
-    protected function validaTipoAntecedente(){
+    public function validaTipoAntecedente()
+    {
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
             $antecedente = Transaccion::query()->withoutGlobalScope('tipo')->find($this->id_antecedente);

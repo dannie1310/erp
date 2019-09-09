@@ -41,10 +41,6 @@ class Poliza extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra_cadeco', '=', Context::getIdObra());
         });
-
-        static::creating(function ($model) {
-            $model->id_obra_cadeco = Context::getIdObra();
-        });
     }
 
     public function estatusPrepoliza()

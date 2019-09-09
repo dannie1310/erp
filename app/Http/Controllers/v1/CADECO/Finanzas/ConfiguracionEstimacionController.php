@@ -5,17 +5,17 @@ namespace App\Http\Controllers\v1\CADECO\Finanzas;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Finanzas\DatosEstimacionesTransformer;
-use App\Services\CADECO\Finanzas\DatosEstimacionesService;
+use App\Http\Transformers\CADECO\Finanzas\ConfiguracionEstimacionTransformer;
+use App\Services\CADECO\Finanzas\ConfiguracionEstimacionService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
 
-class DatosEstimacionesController extends Controller
+class ConfiguracionEstimacionController extends Controller
 {
     use ControllerTrait;
 
     /**
-     * @var DatosEstimacionesService
+     * @var ConfiguracionEstimacionService
      */
     private $service;
 
@@ -25,17 +25,17 @@ class DatosEstimacionesController extends Controller
     private $fractal;
 
     /**
-     * @var DatosEstimacionesTransformer
+     * @var ConfiguracionEstimacionTransformer
      */
     private $transformer;
 
     /**
-     * DatosEstimacionesController constructor.
-     * @param DatosEstimacionesService $service
+     * ConfiguracionEstimacionController constructor.
+     * @param ConfiguracionEstimacionService $service
      * @param Manager $fractal
-     * @param DatosEstimacionesTransformer $transformer
+     * @param ConfiguracionEstimacionTransformer $transformer
      */
-    public function __construct(DatosEstimacionesService $service, Manager $fractal, DatosEstimacionesTransformer $transformer){
+    public function __construct(ConfiguracionEstimacionService $service, Manager $fractal, ConfiguracionEstimacionTransformer $transformer){
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:editar_configuracion_finanzas_estimaciones');

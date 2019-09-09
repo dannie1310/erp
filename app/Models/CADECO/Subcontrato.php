@@ -61,17 +61,6 @@ class Subcontrato extends Transaccion
                         ->orHas('areasSubcontratantes', '=', 0);
                 });
         });
-        self::creating(function ($subcontrato) {
-
-            $subcontrato->tipo_transaccion = 51;
-            $subcontrato->opciones = 2;
-
-        });
-        self::created(function ($subcontrato) {
-            if ($subcontrato->retencion > 0) {
-                $subcontrato->generaFondoGarantia();
-            }
-        });
     }
 
     public function areasSubcontratantes()

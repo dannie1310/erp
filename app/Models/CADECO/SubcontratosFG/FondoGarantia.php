@@ -9,7 +9,6 @@
 namespace App\Models\CADECO\SubcontratosFG;
 
 use App\Models\CADECO\Subcontrato;
-use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -23,52 +22,6 @@ class FondoGarantia extends Model
     public $usuario_registra = 0;
     public $incrementing = false;
     protected $with = array('movimientos', 'subcontrato');
-    protected static function boot()
-    {
-        parent::boot();
-        self::creating(function ($fondo) {
-            /*
-             * se valida que la retención establecida en el subcontrato sea mayor a 0 para que el fondo de garantía pueda ser generado
-             * */
-            $subcontrato = Subcontrato::find($fondo->id_subcontrato);
-            if(!(float) $subcontrato->retencion>0){
-                throw New \Exception('La retención de fondo de garantía establecida en el subcontrato no es mayor a 0, el fondo de garantía no puede generarse');
-            }
-
-            /*
-             * se valida que no exista un fondo de garantía registrado previamente para el subcontrato
-             * */
-            $fondo_previo = Subcontrato::find($fondo->id_subcontrato)->fondo_garantia;
-            if($fondo_previo){
-                throw New \Exception('El subcontrato selecciondo ya tiene un fondo de garantía generado');
-            }
-
-            $fondo->created_at = date('Y-m-d h:i:s');
-            $fondo->usuario_registra = $subcontrato->usuario_registra;
-        });
-        self::updating(function($fondo)
-        {
-            /*
-             * se valida que el saldo del fondo de garantía no sea menor a 0 al momento de actualizarlo
-             * */
-            if($fondo->saldo<0)
-            {
-                throw New \Exception('El saldo del fondo de garantía no puede ser menor a 0');
-            }
-            /*
-             * se valida que el saldo del fondo de garantía no sea mayor al subtotal del subcontrato al momento de actualizarlo
-             * */
-            if($fondo->saldo> $fondo->subcontrato->subtotal)
-            {
-                throw New \Exception('El saldo del fondo de garantía no puede ser mayor al subtotal del subcontrato');
-            }
-
-        });
-        self::created(function($fondo)
-        {
-            $fondo->generaMovimientoRegistro();
-        });
-    }
 
     public function getSaldoFormatAttribute()
     {
@@ -201,5 +154,4 @@ class FondoGarantia extends Model
         }
         return true;
     }
-
 }

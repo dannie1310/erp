@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\DB;
 
 class EntradaMaterial extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = 19;
+
     protected static function boot()
     {
         parent::boot();
@@ -28,12 +30,6 @@ class EntradaMaterial extends Transaccion
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 33)
                 ->where('opciones', '=', 1);
-        });
-
-        self::deleting(function ($entrada) {
-                $items = $entrada->partidas()->get()->toArray();
-                $entrada->eliminar_partidas($items);
-                $entrada->liberarOrdenCompra();
         });
     }
 
@@ -300,7 +296,7 @@ class EntradaMaterial extends Transaccion
     /**
      * Antes de eliminar liberar la orden de compra
      */
-    private function liberarOrdenCompra()
+    public function liberarOrdenCompra()
     {
         $oc = OrdenCompra::query()->where('id_transaccion', $this->id_antecedente)->first();
         if($oc->estado == 2){
@@ -311,7 +307,7 @@ class EntradaMaterial extends Transaccion
     /**
      * Elimina las partidas
      */
-    private function eliminar_partidas($partidas)
+    public function eliminar_partidas($partidas)
     {
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != null){

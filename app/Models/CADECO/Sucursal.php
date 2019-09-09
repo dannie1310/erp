@@ -27,21 +27,4 @@ class Sucursal extends Model
         'casa_central',
 
     ];
-
-    protected static function boot(){
-        parent::boot();
-
-        self::creating(function ($model){
-            $model->UsuarioRegistro = auth()->id();
-            $model->descripcion = mb_strtoupper($model->descripcion);
-            $model->direccion = mb_strtoupper($model->direccion);
-            $model->ciudad = mb_strtoupper($model->ciudad);
-            $model->estado = mb_strtoupper($model->estado);
-            $model->contacto = mb_strtoupper($model->contacto);
-
-        });
-    }
-
-
-
 }
