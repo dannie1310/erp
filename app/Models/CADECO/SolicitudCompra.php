@@ -9,6 +9,8 @@ use App\Models\IGH\Usuario;
 
 class SolicitudCompra extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = null;
+
     protected static function boot()
     {
         parent::boot();

@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 
 class SalidaAlmacen extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = null;
+
     protected static function boot()
     {
         parent::boot();

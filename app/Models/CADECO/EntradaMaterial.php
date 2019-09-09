@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\DB;
 
 class EntradaMaterial extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = 19;
+
     protected static function boot()
     {
         parent::boot();

@@ -32,6 +32,7 @@ class Transaccion extends Model
     public const CREATED_AT = 'FechaHoraRegistro';
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
+
     protected static function boot()
     {
         parent::boot();
