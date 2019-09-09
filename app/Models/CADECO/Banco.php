@@ -8,7 +8,6 @@
 
 namespace App\Models\CADECO;
 
-use App\Models\CADECO\Finanzas\BancoComplemento;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgBanco;
 use App\Models\CADECO\Sucursal;
