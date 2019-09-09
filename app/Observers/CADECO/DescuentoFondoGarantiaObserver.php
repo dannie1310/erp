@@ -9,6 +9,7 @@
 namespace App\Observers\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\DescuentoFondoGarantia;
 use App\Models\CADECO\Subcontrato;
 
@@ -25,5 +26,8 @@ class DescuentoFondoGarantiaObserver
         $descuentoFondoGarantia->estado = 1;
         $descuentoFondoGarantia->id_empresa = $subcontrato->id_empresa;
         $descuentoFondoGarantia->id_moneda = $subcontrato->id_moneda;
+        $descuentoFondoGarantia->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
+        $descuentoFondoGarantia->FechaHoraRegistro = date('Y-m-d h:i:s');
+        $descuentoFondoGarantia->id_obra = Context::getIdObra();
     }
 }

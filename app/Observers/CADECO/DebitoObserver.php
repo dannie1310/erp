@@ -25,6 +25,9 @@ class DebitoObserver
         $debito->opciones = 1;
         $debito->tipo_transaccion = 84;
         $debito->vencimiento = $debito->cumplimiento;
+        $debito->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
+        $debito->FechaHoraRegistro = date('Y-m-d h:i:s');
+        $debito->id_obra = Context::getIdObra();
     }
 
     public function updating(Debito $debito)

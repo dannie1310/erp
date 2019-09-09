@@ -21,5 +21,6 @@ class BancoObserver
         $banco->tipo_empresa = 8;
         $banco->UsuarioRegistro = auth()->id();
         $banco->razon_social = mb_strtoupper($banco->razon_social);
+        $banco->FechaHoraRegistro = date('Y-m-d h:i:s');
     }
 }

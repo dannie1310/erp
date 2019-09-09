@@ -9,7 +9,6 @@
 namespace App\Models\CADECO;
 
 
-use App\Facades\Context;
 
 class Debito extends Transaccion
 {

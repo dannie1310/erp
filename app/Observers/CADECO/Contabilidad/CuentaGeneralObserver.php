@@ -9,6 +9,7 @@
 namespace App\Observers\CADECO\Contabilidad;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaGeneral;
 
 class CuentaGeneralObserver
@@ -19,5 +20,6 @@ class CuentaGeneralObserver
     public function creating(CuentaGeneral $cuentaGeneral)
     {
         $cuentaGeneral->estatus = 1;
+        $cuentaGeneral->id_obra = Context::getIdObra();
     }
 }

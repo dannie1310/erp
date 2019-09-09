@@ -21,5 +21,6 @@ class EmpresaFondoFijoObserver
         $empresa->tipo_empresa = 32;
         $empresa->razon_social= mb_strtoupper($empresa->razon_social);
         $empresa->UsuarioRegistro = auth()->id();
+        $empresa->FechaHoraRegistro = date('Y-m-d h:i:s');
     }
 }
