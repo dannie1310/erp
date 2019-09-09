@@ -1,5 +1,5 @@
 <template>
-    <div class="card" id="configuracion-estimaciones" v-if="$root.can('editar_configuracion_finanzas')">
+    <div class="card" id="configuracion-estimaciones">
         <div class="card-header">
             <h3 class="card-title">Configuración Finanzas</h3>
             <div class="card-tools">
@@ -8,7 +8,7 @@
                 </button>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body" v-if="$root.can('editar_configuracion_finanzas_estimaciones')">
             <div class="alert alert-warning" v-if="form || bandera == 0">
                 <h5><i class="icon fa fa-warning"></i>¡Atención!</h5>
                 {{ mensaje }}
@@ -169,11 +169,18 @@
                 </div>
             </div>
         </div>
+        <hr>
+        <div class="card-body">
+            <configuracion-remesa id="configuracion-remesa"></configuracion-remesa>
+        </div>
+
     </div>
 </template>
 
 <script>
+    import ConfiguracionRemesa from "./Remesa";
     export default {
+        components: {ConfiguracionRemesa},
         props: ['datosEstimaciones'],
         name: "configuracion-estimaciones",
         data() {
@@ -208,7 +215,7 @@
 
             store() {
                 this.guardando = true;
-                return this.$store.dispatch('finanzas/datos-estimaciones/store', {
+                return this.$store.dispatch('finanzas/estimacion/store', {
                     data: this.data
                 })
                     .then(data => {

@@ -60,13 +60,19 @@ class SalidaAlmacen extends Transaccion
 
     public function eliminar_salida(){
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-        if ($poliza != []){
-            $poliza_historico = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-            $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+        if ($poliza != null){
+            $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+            $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->get();
 
+            if($poliza_historico != null) {
+                HistPoliza::query()->where('id_int_poliza', $poliza_historico->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
+            }
+            if($poliza_movimiento != null) {
+                foreach ($poliza_movimiento as $i) {
+                    PolizaMovimiento::query()->where('id_int_poliza_movimiento', $i->id_int_poliza_movimiento)->update(['id_transaccion_sao' => NULL]);
+                }
+            }
             Poliza::query()->where('id_int_poliza',$poliza->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
-            HistPoliza::query()->where('id_int_poliza',$poliza_historico->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
-            PolizaMovimiento::query()->where('id_int_poliza',$poliza_movimiento->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
         }
 
         $items = $this->partidas()->get()->toArray();
