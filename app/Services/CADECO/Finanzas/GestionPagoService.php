@@ -18,10 +18,8 @@ use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Repositories\Repository;
-use function GuzzleHttp\Psr7\get_message_body_summary;
 use Illuminate\Support\Facades\DB;
-use mysql_xdevapi\Exception;
-use NumberFormatter;
+use Illuminate\Support\Facades\Storage;
 
 class GestionPagoService
 {
@@ -117,7 +115,12 @@ class GestionPagoService
         }catch (\Exception $e){
             throw New \Exception('Error al procesar el archivo: ' . $e->getMessage());
         }
-        return [];
+    }
+
+    public function guardar_bitacora($bitacora){
+        $nombre = hash_file('md5', $bitacora);
+        $file_bitacora = fopen($bitacora, "r") or die("Unable to open file!");
+        Storage::disk('portal_carga')->put($nombre . '.txt', $file_bitacora);
     }
 
     public function registrarPagos($pagos){
@@ -277,6 +280,8 @@ class GestionPagoService
 
             $archivo_bitacora->estado = 1;
             $archivo_bitacora->save();
+
+            $this->guardar_bitacora($pagos->file_interbancario);
 
             DB::connection('cadeco')->commit();
             return $pagos;
