@@ -9,6 +9,7 @@
 namespace App\Observers\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Subcontrato;
 
@@ -19,6 +20,9 @@ class EstimacionObserver
      */
     public function creating(Estimacion $estimacion)
     {
+        if (!$estimacion->validaTipoAntecedente()) {
+            throw New \Exception('La transacción antecedente no es válida');
+        }
         $subcontrato = Subcontrato::query()->find($estimacion->id_antecedente);
 
         $estimacion->tipo_transaccion = 52;
@@ -27,7 +31,10 @@ class EstimacionObserver
         $estimacion->saldo = $estimacion->monto;
         $estimacion->retencion = $subcontrato->retencion;
         $estimacion->fecha = date('Y-m-d');
-        $estimacion->numero_folio = self::calcularFolio();
+        $estimacion->numero_folio = $estimacion->calcularFolio();
+        $estimacion->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
+        $estimacion->FechaHoraRegistro = date('Y-m-d h:i:s');
+        $estimacion->id_obra = Context::getIdObra();
     }
 
     public function created(Estimacion $estimacion)

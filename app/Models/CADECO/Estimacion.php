@@ -99,7 +99,7 @@ class Estimacion extends Transaccion
         ]);
     }
 
-    private static function calcularFolio()
+    public static function calcularFolio()
     {
         $est = Transaccion::query()->where('tipo_transaccion', '=', 52)->orderBy('numero_folio', 'DESC')->first();
         return $est ? $est->numero_folio + 1 : 1;
