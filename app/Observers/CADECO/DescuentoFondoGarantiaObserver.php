@@ -17,9 +17,13 @@ class DescuentoFondoGarantiaObserver
 {
     /**
      * @param DescuentoFondoGarantia $descuentoFondoGarantia
+     * @throws \Exception
      */
     public function creating(DescuentoFondoGarantia $descuentoFondoGarantia)
     {
+        if (!$descuentoFondoGarantia->validaTipoAntecedente()) {
+            throw New \Exception('La transacción antecedente no es válida');
+        }
         $subcontrato = Subcontrato::find($descuentoFondoGarantia->id_antecedente);
         $descuentoFondoGarantia->tipo_transaccion = 53;
         $descuentoFondoGarantia->opciones = 1;

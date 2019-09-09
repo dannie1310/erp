@@ -17,9 +17,13 @@ class CreditoObserver
 {
     /**
      * @param Credito $credito
+     * @throws \Exception
      */
     public function creating(Credito $credito)
     {
+        if (!$credito->validaTipoAntecedente()) {
+            throw New \Exception('La transacción antecedente no es válida');
+        }
         $credito->estado = 1;
         $credito->id_moneda = Obra::query()->find(Context::getIdObra())->id_moneda;
         $credito->opciones = 1;

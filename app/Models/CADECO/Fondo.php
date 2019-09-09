@@ -45,15 +45,6 @@ class Fondo extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
-
-        self::creating(function ($model){
-            if(Fondo::query()->where([['id_tipo',$model->id_tipo],['id_responsable',$model->id_responsable]])->get()->toArray() == []){
-                $model -> id_obra = Context::getIdObra();
-                $model->fecha = Carbon::now()->format('Y-m-d');
-            }else{
-                throw New \Exception('El responsable ya tiene un fondo del tipo seleccionado');
-            }
-        });
     }
 
     public function cuentaFondo()
@@ -85,5 +76,4 @@ class Fondo extends Model
     {
         return $query->where('id_responsable', '>', 0);
     }
-
 }

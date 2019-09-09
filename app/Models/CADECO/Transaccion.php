@@ -48,16 +48,13 @@ class Transaccion extends Model
         });
 
         self::creating(function ($model) {
+            if (!$model->validaTipoAntecedente()) {
+                throw New \Exception('La transacción antecedente no es válida');
+            }
             $model->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
             $model->FechaHoraRegistro = date('Y-m-d h:i:s');
             $model->id_obra = Context::getIdObra();
         });
-        self::creating(function ($model) {
-            if (!$model->validaTipoAntecedente()) {
-                throw New \Exception('La transacción antecedente no es válida');
-            }
-        });
-
     }
 
     public function getNumeroFolioFormatAttribute()

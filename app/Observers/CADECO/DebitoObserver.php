@@ -17,9 +17,13 @@ class DebitoObserver
 {
     /**
      * @param Debito $debito
+     * @throws \Exception
      */
     public function creating(Debito $debito)
     {
+        if (!$debito->validaTipoAntecedente()) {
+            throw New \Exception('La transacción antecedente no es válida');
+        }
         $debito->estado = 1;
         $debito->id_moneda = Obra::query()->find(Context::getIdObra())->id_moneda;
         $debito->opciones = 1;

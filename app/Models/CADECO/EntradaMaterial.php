@@ -29,12 +29,6 @@ class EntradaMaterial extends Transaccion
             return $query->where('tipo_transaccion', '=', 33)
                 ->where('opciones', '=', 1);
         });
-
-        self::deleting(function ($entrada) {
-                $items = $entrada->partidas()->get()->toArray();
-                $entrada->eliminar_partidas($items);
-                $entrada->liberarOrdenCompra();
-        });
     }
 
     public function getEstadoFormatAttribute()
