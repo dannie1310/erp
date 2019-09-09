@@ -34,7 +34,7 @@ class RetencionFondoGarantia extends Model
 
     }
 
-    private function generaMovimientoRegistro()
+    public function generaMovimientoRegistro()
     {
 
         MovimientoRetencionFondoGarantia::create(

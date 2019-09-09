@@ -78,7 +78,7 @@ class Transaccion extends Model
         return $this->hasMany(Item::class, 'id_transaccion', 'id_transaccion');
     }
 
-    protected function validaTipoAntecedente()
+    public function validaTipoAntecedente()
     {
         if(!is_null($this::TIPO_ANTECEDENTE))
         {

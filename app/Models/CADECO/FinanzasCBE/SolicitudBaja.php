@@ -23,7 +23,7 @@ class SolicitudBaja extends Solicitud
         });
     }
 
-    private function validar()
+    public function validar()
     {
         if(CuentaBancariaEmpresa::query()->where('id_empresa', '=', $this->id_empresa)->where('cuenta_clabe', '=', $this->cuenta_clabe)->where('estatus','>=',0)->get()->toArray() == [])
         {

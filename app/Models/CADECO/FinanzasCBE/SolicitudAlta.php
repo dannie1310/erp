@@ -23,7 +23,7 @@ class SolicitudAlta extends Solicitud
         });
     }
 
-    private function validar()
+    public function validar()
     {
         if(CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $this->cuenta_clabe)->where('estatus','>=',0)->get()->toArray() != []){
             abort(400, 'Ya existe está cuenta bancaria registrada.');

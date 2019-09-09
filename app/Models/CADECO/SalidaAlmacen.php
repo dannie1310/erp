@@ -56,7 +56,7 @@ class SalidaAlmacen extends Transaccion
         }
     }
 
-    private function eliminar_salida(){
+    public function eliminar_salida(){
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != []){
             $poliza_historico = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
@@ -87,7 +87,7 @@ class SalidaAlmacen extends Transaccion
             Item::destroy($item['id_item']);
         }
     }
-    private function eliminar_transferencia(){
+    public function eliminar_transferencia(){
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != []){
             $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();

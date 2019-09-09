@@ -25,7 +25,8 @@ class ConfiguracionEstimacion extends Model
         'desc_otros_prest_antes_iva'
     ];
 
-    public function validar(){
+    public function validar()
+    {
         if(ConfiguracionEstimacion::query()->where('id_obra',Context::getIdObra())->first() != null)
         {
             abort(400,'La Configuracion Finanzas ya fue registrada anteriormente');

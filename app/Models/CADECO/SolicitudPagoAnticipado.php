@@ -71,7 +71,7 @@ class SolicitudPagoAnticipado extends Transaccion
         return $solicitud;
     }
 
-    private function generaTransaccionRubro()
+    public function generaTransaccionRubro()
     {
         TransaccionRubro::create(
             [
@@ -82,7 +82,7 @@ class SolicitudPagoAnticipado extends Transaccion
         $this->refresh();
     }
 
-    private function validarAntecedente(){
+    public function validarAntecedente(){
         $orden = $this->orden_compra()->first();
         $subcontrato = $this->subcontrato()->first();
 

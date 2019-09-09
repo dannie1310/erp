@@ -48,7 +48,7 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
         return $this->belongsTo(CtgTipoMovimientoSolicitud::class,"id_tipo_movimiento");
     }
 
-    private function validaNoExistenciaDeMovimientoPrevio()
+    public function validaNoExistenciaDeMovimientoPrevio()
     {
         $movimientos = MovimientoSolicitudMovimientoFondoGarantia::where("id_solicitud",$this->id_solicitud)->where("id_tipo_movimiento",$this->id_tipo_movimiento)->get();
         if(count($movimientos)>0)
@@ -58,7 +58,7 @@ class MovimientoSolicitudMovimientoFondoGarantia extends Model
         return true;
     }
 
-    private function validaTipoMovimiento()
+    public function validaTipoMovimiento()
     {
         $tipo_ultimo_movimiento = ($this->solicitud_movimiento->ultimo_movimiento)?$this->solicitud_movimiento->ultimo_movimiento->id_tipo_movimiento:NULL;
         $tipo_movimiento_actual = $this->id_tipo_movimiento;
