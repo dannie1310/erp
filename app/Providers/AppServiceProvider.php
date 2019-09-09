@@ -38,9 +38,16 @@ use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;
 use App\Models\CADECO\Fondo;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\OrdenCompra;
+use App\Models\CADECO\OrdenPago;
+use App\Models\CADECO\Pago;
+use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\PagoVario;
+use App\Models\CADECO\SalidaAlmacen;
 use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
 use App\Models\CADECO\Seguridad\AuditoriaRolUser;
 use App\Models\CADECO\Seguridad\Rol;
+use App\Models\CADECO\SolicitudPagoAnticipado;
+use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\CADECO\SubcontratosFG\MovimientoFondoGarantia;
@@ -48,8 +55,13 @@ use App\Models\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantia;
 use App\Models\CADECO\SubcontratosFG\MovimientoSolicitudMovimientoFondoGarantia;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use App\Models\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantia;
+use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Tesoreria\MovimientoBancario;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
+use App\Models\CADECO\Transaccion;
+use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
@@ -88,9 +100,16 @@ use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
 use App\Observers\CADECO\FondoObserver;
 use App\Observers\CADECO\LiberacionFondoGarantiaObserver;
 use App\Observers\CADECO\OrdenCompraObserver;
+use App\Observers\CADECO\OrdenPagoObserver;
+use App\Observers\CADECO\PagoACuentaObserver;
+use App\Observers\CADECO\PagoObserver;
+use App\Observers\CADECO\PagoVarioObserver;
+use App\Observers\CADECO\SalidaAlmacenObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaPermisoRolObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
 use App\Observers\CADECO\Seguridad\RolObserver;
+use App\Observers\CADECO\SolicitudPagoAnticipadoObserver;
+use App\Observers\CADECO\SubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
 use App\Observers\CADECO\SubcontratosFG\FondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\MovimientoFondoGarantiaObserver;
@@ -98,8 +117,13 @@ use App\Observers\CADECO\SubcontratosFG\MovimientoRetencionFondoGarantiaObserver
 use App\Observers\CADECO\SubcontratosFG\MovimientoSolicitudMovimientoFondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\RetencionFondoGarantiaObserver;
 use App\Observers\CADECO\SubcontratosFG\SolicitudMovimientoFondoGarantiaObserver;
+use App\Observers\CADECO\SucursalObserver;
 use App\Observers\CADECO\Tesoreria\MovimientoBancarioObserver;
 use App\Observers\CADECO\Tesoreria\TraspasoCuentasObserver;
+use App\Observers\CADECO\TransaccionObserver;
+use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
+use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
+use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -200,6 +224,24 @@ class AppServiceProvider extends ServiceProvider
             Fondo::observe(FondoObserver::class);
             LiberacionFondoGarantia::observe(LiberacionFondoGarantiaObserver::class);
             OrdenCompra::observe(OrdenCompraObserver::class);
+            OrdenPago::observe(OrdenPagoObserver::class);
+            Pago::observe(PagoObserver::class);
+            PagoACuenta::observe(PagoACuentaObserver::class);
+            PagoVario::observe(PagoVarioObserver::class);
+            SalidaAlmacen::observe(SalidaAlmacenObserver::class);
+            SolicitudPagoAnticipado::observe(SolicitudPagoAnticipadoObserver::class);
+            Subcontrato::observe(SubcontratoObserver::class);
+            Sucursal::observe(SucursalObserver::class);
+            Transaccion::observe(TransaccionObserver::class);
+
+        /**
+         * SEGURIDAD_ERP
+         */
+        \App\Models\SEGURIDAD_ERP\AuditoriaPermisoRol::observe(\App\Observers\SEGURIDAD_ERP\AuditoriaPermisoRolObserver::class);
+        AuditoriaRolUsuario::observe(AuditoriaRolUsuarioObserver::class);
+        ConfiguracionObra::observe(ConfiguracionObraObserver::class);
+        \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
+        UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
     }
 
     /**

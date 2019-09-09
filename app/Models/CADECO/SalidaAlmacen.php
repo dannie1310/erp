@@ -23,15 +23,6 @@ class SalidaAlmacen extends Transaccion
         self::addGlobalScope('tipo',function ($query) {
             return $query->where('tipo_transaccion', '=', 34);
         });
-
-        self::deleting(function ($salida) {
-            if($salida->opciones == 65537 ) {
-                $salida->eliminar_transferencia();
-            }
-            if ($salida->opciones == 1){
-                $salida->eliminar_salida();
-                }
-        });
     }
 
     public function almacen()
@@ -358,7 +349,4 @@ class SalidaAlmacen extends Transaccion
             abort(400, 'Error en el proceso de eliminación de salida de almacén.');
         }
     }
-
-
-
 }

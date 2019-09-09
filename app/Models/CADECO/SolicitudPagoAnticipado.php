@@ -46,19 +46,6 @@ class SolicitudPagoAnticipado extends Transaccion
             return $query->where('tipo_transaccion', '=', 72)
                 ->where('opciones', '=', 327681);
         });
-
-        self::creating(function ($solicitud) {
-            $solicitud->validarAntecedente();
-            $solicitud->tipo_transaccion = 72;
-            $solicitud->opciones = 327681;
-            $solicitud->estado = 0;
-            $solicitud->id_usuario = auth()->id();
-        });
-
-        self::created(function($query)
-        {
-            $query->generaTransaccionRubro();
-        });
     }
 
     public function transaccion_rubro(){

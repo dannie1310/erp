@@ -43,12 +43,6 @@ class ConfiguracionObra extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
-
-        static::creating(function ($model) {
-            $model->id_user =  auth()->id();
-            $model->id_proyecto = Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey();
-            $model->id_obra = Context::getIdObra();
-        });
     }
 
     public function proyecto()
@@ -60,6 +54,7 @@ class ConfiguracionObra extends Model
     {
         return $this->belongsTo(TipoProyecto::class, 'id_tipo_proyecto');
     }
+
     public function scopeObraTerminada($query)
     {
         return $query->where('tipo_obra', '!=', 2);

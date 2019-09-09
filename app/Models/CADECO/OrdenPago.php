@@ -34,10 +34,5 @@ class OrdenPago extends Transaccion
                 ->where('opciones', '=', 0)
                 ->where('estado', '!=', -2);
         });
-        self::creating(function ($model) {
-            $model->tipo_transaccion = 68;
-            $model->opciones = 0;
-            $model->fecha = date('Y-m-d');
-        });
     }
 }

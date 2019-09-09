@@ -43,13 +43,6 @@ class Pago extends Transaccion
                 ->where('opciones', '=', 0)
                 ->where('estado', '!=', -2);
         });
-        self::creating(function ($model) {
-            $model->tipo_transaccion = 82;
-            $model->opciones = 0;
-            $model->fecha = date('Y-m-d');
-            $model->cumplimiento =  date('Y-m-d');
-            $model->vencimiento = date('Y-m-d');
-        });
     }
     public function moneda(){
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
