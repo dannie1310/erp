@@ -2,11 +2,11 @@
 
 
 namespace App\Services\CADECO\Finanzas;
-use App\Models\CADECO\Finanzas\DatosEstimaciones;
+use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Repositories\Repository;
 
 
-class DatosEstimacionesService
+class ConfiguracionEstimacionService
 {
     /**
      * @var Repository
@@ -14,10 +14,10 @@ class DatosEstimacionesService
     protected $repository;
 
     /**
-     * DatosEstimacionesService constructor.
-     * @param DatosEstimaciones $model
+     * ConfiguracionEstimacionService constructor.
+     * @param ConfiguracionEstimacion $model
      */
-    public function __construct(DatosEstimaciones $model)
+    public function __construct(ConfiguracionEstimacion $model)
     {
         $this->repository = new Repository($model);
     }

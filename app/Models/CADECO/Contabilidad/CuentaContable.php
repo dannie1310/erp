@@ -34,10 +34,6 @@ class CuentaContable extends Model
             return $query->where('id_obra', '=', Context::getIdObra())
                 ->where('estatus', '=', 1);
         });
-
-        self::creating(function ($model) {
-            $model->id_obra = Context::getIdObra();
-        });
     }
 
     public function tipo()

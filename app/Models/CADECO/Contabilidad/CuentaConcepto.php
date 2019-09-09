@@ -30,16 +30,6 @@ class CuentaConcepto extends Model
         'concepto.clave_concepto',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->registro = auth()->id();
-            $model->estatus = 1;
-        });
-    }
-
     public function concepto()
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');

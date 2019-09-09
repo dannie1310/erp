@@ -17,13 +17,4 @@ class UsuarioAreaSubcontratante extends Model
         'id_usuario',
         'id_area_subcontratante',
         ];
-
-    protected static function boot(){
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->registro = auth()->id();
-            $model->timestamp_registro = date('Y-m-d h:i:s');
-        });
-    }
 }

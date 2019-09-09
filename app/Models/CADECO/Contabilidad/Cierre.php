@@ -31,11 +31,6 @@ class Cierre extends Model
         static::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
-
-        self::creating(function ($model) {
-            $model->id_obra = Context::getIdObra();
-            $model->registro = auth()->id();
-        });
     }
 
     public function getAbiertoAttribute()

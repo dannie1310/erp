@@ -11,7 +11,6 @@ namespace App\Models\CADECO\Finanzas;
 
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\FinanzasCBE\Solicitud;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\Moneda;
@@ -51,12 +50,6 @@ class CuentaBancariaEmpresa extends Model
 
         self::addGlobalScope(function ($query) {
             return $query->where('estatus', '>=', 0);
-        });
-
-        self::creating(function ($model) {
-            $model->validar();
-            $model->fecha_hora_registro = date('Y-m-d h:i:s');
-            $model->registro =  auth()->id();
         });
     }
 

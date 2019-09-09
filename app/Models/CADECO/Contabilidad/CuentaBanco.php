@@ -36,12 +36,6 @@ class CuentaBanco extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
-
-        self::creating(function ($model) {
-            $model->estatus = 1;
-            $model->registro = auth()->id();
-            $model->id_obra = Context::getIdObra();
-        });
     }
 
     public function cuentaContable(){

@@ -40,16 +40,6 @@ class CuentaAlmacen extends Model
         'almacen.descripcion'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->registro = auth()->id();
-            $model->estatus = 1;
-        });
-    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

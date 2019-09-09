@@ -392,7 +392,7 @@ $api->version('v1', function ($api) {
 
         // DATOS ESTIMACIONES
         $api->group(['prefix' => 'estimacion'], function ($api){
-            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DatosEstimacionesController@store');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
         });
 
         /**
@@ -541,11 +541,6 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'configuracion-obra'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@index');
             $api->get('contexto', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@contexto');
-        });
-
-        $api->group(['prefix' => 'configuracion-remesa'], function($api) {
-            $api->get('find', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\ConfiguracionRemesaController@show');
-            $api->patch('actualizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\ConfiguracionRemesaController@actualizar');
         });
 
         $api->group(['prefix' => 'permiso'], function ($api) {

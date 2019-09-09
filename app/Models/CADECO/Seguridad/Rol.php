@@ -11,7 +11,6 @@ namespace App\Models\CADECO\Seguridad;
 
 use App\Facades\Context;
 use App\Models\SEGURIDAD_ERP\Permiso;
-use App\Utils\Normalizar;
 use Illuminate\Database\Eloquent\Model;
 
 class Rol extends Model
@@ -35,11 +34,7 @@ class Rol extends Model
     protected static function boot()
     {
         parent::boot();
-        self::creating(function ($model) {
-            $name = Normalizar::normaliza($model->display_name);
-            $model->name = str_replace(' ', '_', $name);
-            $model->id_obra = Context::getIdObra();
-        });
+
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });

@@ -9,7 +9,6 @@
 namespace App\Models\CADECO\Finanzas;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\IGH\Usuario;
 use App\Models\MODULOSSAO\ControlRemesas\RemesaLiberada;
@@ -34,23 +33,6 @@ class DistribucionRecursoRemesa extends Model
             'fecha_hora_cancelacion'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::addGlobalScope(function ($query) {
-        });
-
-        self::creating(function ($model) {
-            $count = DistribucionRecursoRemesa::query()->count('id');
-
-            $model->id_obra = Context::getIdObra();
-            $model->folio = $count +1;
-            $model->usuario_registro = auth()->id();
-            $model->fecha_hora_registro = date('Y-m-d H:i:s');
-            $model->estado = 0;
-        });
-    }
     public function cancelar(){
         if($this->estado != 0 ){
             throw New \Exception('La distribución de recurso autorizado de remesa no puede ser cancelada, porque no tiene el estatus "generada" ');

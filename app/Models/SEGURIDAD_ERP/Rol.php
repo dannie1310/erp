@@ -35,16 +35,6 @@ class Rol extends Model
         'display_name',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $name = Normalizar::normaliza($model->display_name);
-            $model->name = str_replace(' ', '_', $name);
-        });
-    }
-
     public function permisos()
     {
         return $this->belongsToMany(Permiso::class, 'dbo.permission_role', 'role_id', 'permission_id');

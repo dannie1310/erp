@@ -61,6 +61,4 @@ class Permiso extends Model
             return $q->where('id', '=', $role_id);
         });
     }
-
-
 }
