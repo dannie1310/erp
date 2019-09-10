@@ -166,6 +166,25 @@ export const routes = [
         }
     },
     {
+        path: '/sao/almacenes',
+        components: {
+            default: require('./components/almacenes/partials/Layout.vue'),
+            menu: require('./components/almacenes/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'almacenes',
+                component: require('./components/almacenes/Index'),
+                meta: {
+                    title: 'Almacenes',
+                    breadcrumb: {parent:'home', name: 'ALMACENES'},
+                    middleware: [auth, context, access]
+                }
+            },
+        ]
+    },
+    {
         path: '/sao/compras',
         components: {
             default: require('./components/compras/partials/Layout.vue'),
