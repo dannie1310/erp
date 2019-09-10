@@ -22,14 +22,11 @@
                     </li>
                 </ul>
             </li>
-
-            <li class="nav-item" v-if="$root.can('administracion_configuracion_obra')">
-                <a href="#inventario-fisico" class="nav-link">
-                    <router-link :to="{name: 'inventario-fisico'}" class="nav-link" :class="{active: this.$route.name == 'inventario-fisico'}">
-                        <i class="fa fa-circle-o nav-icon"></i>
-                        <p>Inventario Fisico</p>
-                    </router-link>
-                </a>
+            <li class="nav-item" v-if="$root.can('consultar_distribucion_recursos_remesa')">
+                <router-link :to="{name: 'inventario-fisico'}" class="nav-link">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>Inventario Fisico</p>
+                </router-link>
             </li>
         </ul>
     </nav>
