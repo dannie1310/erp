@@ -123,7 +123,6 @@ $api->version('v1', function ($api) {
         $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
     });
 
-
     /**
      * CONFIGURACION
      */
@@ -146,7 +145,6 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@paginate');
         });
     });
-
 
     /**
      * CONTABILIDAD
