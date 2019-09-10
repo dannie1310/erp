@@ -9,8 +9,8 @@
 namespace App\Services\CADECO\Contratos;
 
 
-use App\Models\CADECO\Contrato;
 use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +23,8 @@ class ContratoProyectadoService
     protected $repository;
 
     /**
-     * EstimacionService constructor.
+     * ContratoProyectadoService constructor.
+     * @param ContratoProyectado $model
      */
     public function __construct(ContratoProyectado $model)
     {
@@ -47,7 +48,7 @@ class ContratoProyectadoService
 
     public function paginate($data)
     {
-        $cp_area = new ContratoProyectado\AreasSubcontratantes();
+        $cp_area = new AreaSubcontratante();
         $cp = $this->repository;
 
         if(isset($data['id_area_subcontratante'])){
@@ -78,7 +79,7 @@ class ContratoProyectadoService
         $transaccion = $this->repository->show($id);
         $transaccion_area = $transaccion->areasSubcontratantes;
         if(count($transaccion_area) > 0){
-            $solicitud = ContratoProyectado\AreasSubcontratantes::find($id);
+            $solicitud = AreaSubcontratante::find($id);
             $solicitud = $solicitud->actualiza($id, $data['id_area']);
             $transaccion->refresh();
             return $transaccion;
@@ -90,7 +91,7 @@ class ContratoProyectadoService
                     'id_area_subcontratante' => $area,
                     'id_transaccion' => $id,
                 ];
-                $solicitud = ContratoProyectado\AreasSubcontratantes::query()->create($datos);
+                $solicitud = AreaSubcontratante::query()->create($datos);
 
                 DB::connection('cadeco')->commit();
                 $transaccion->refresh();

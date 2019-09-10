@@ -21,22 +21,9 @@ class SolicitudBaja extends Solicitud
         self::addGlobalScope(function ($query) {
             return $query->where('id_tipo_solicitud', '=', 2);
         });
-
-        self::creating(function ($solicitud){
-            $solicitud->validar();
-            $solicitud->numero_folio = $solicitud->folio();
-            $solicitud->id_tipo_solicitud = 2;
-            $solicitud->fecha = date('Y-m-d H:i:s');
-            $solicitud->usuario_registra = auth()->id();
-            $solicitud->estado = 1;
-        });
-
-        self::created(function ($sol){
-            $sol->generaMovimiento(1);
-        });
     }
 
-    private function validar()
+    public function validar()
     {
         if(CuentaBancariaEmpresa::query()->where('id_empresa', '=', $this->id_empresa)->where('cuenta_clabe', '=', $this->cuenta_clabe)->where('estatus','>=',0)->get()->toArray() == [])
         {

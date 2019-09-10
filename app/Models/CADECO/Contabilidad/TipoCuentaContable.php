@@ -32,21 +32,6 @@ class TipoCuentaContable extends Model
         'id_naturaleza_poliza'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        /*self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
-        });*/
-
-        static::creating(function($model) {
-            $model->tipo = 1;
-            $model->registro = auth()->id();
-            //$model->id_obra = Context::getIdObra();
-        });
-    }
-
     public function cuentaContable()
     {
         return $this->hasOne(CuentaContable::class, 'id_int_tipo_cuenta_contable');

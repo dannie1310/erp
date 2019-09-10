@@ -38,12 +38,5 @@ class PagoACuenta extends Transaccion
                 ->where('opciones', '=', 327681)
                 ->where('estado', '!=', -2);
         });
-        self::creating(function ($model) {
-            $model->tipo_transaccion = 82;
-            $model->opciones = 327681;
-            $model->fecha = date('Y-m-d');
-            $model->cumplimiento =  date('Y-m-d');
-            $model->vencimiento = date('Y-m-d');
-        });
     }
 }

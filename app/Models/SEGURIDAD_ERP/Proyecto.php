@@ -27,5 +27,4 @@ class Proyecto extends Model
     {
         return $this->belongsTo(ConfiguracionObra::class, 'id_proyecto');
     }
-
 }

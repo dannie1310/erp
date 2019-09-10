@@ -24,17 +24,6 @@ class Apertura extends Model
         'estatus'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->estatus = 1;
-            $model->registro = auth()->id();
-            $model->inicio_apertura = Carbon::now()->toDateTimeString();
-        });
-    }
-
     public function cierre()
     {
         return $this->belongsTo(Cierre::class, 'id_cierre');

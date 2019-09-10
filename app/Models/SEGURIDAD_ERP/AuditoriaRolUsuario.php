@@ -19,14 +19,4 @@ class AuditoriaRolUsuario extends Model
         'id_obra',
         'action'
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->usuario_registro = auth()->id();
-            $model->created_at = date('Y-m-d h:i:s');
-        });
-    }
 }

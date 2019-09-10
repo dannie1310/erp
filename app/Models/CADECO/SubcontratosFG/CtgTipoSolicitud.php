@@ -16,13 +16,4 @@ class CtgTipoSolicitud extends Model
     protected $table = 'SubcontratosFG.ctg_tipos_solicitud';
     protected $fillable = ['descripcion'];
     public $timestamps = false;
-
-    protected static function boot()
-    {
-        parent::boot();
-
-    }
-
-
-
 }
