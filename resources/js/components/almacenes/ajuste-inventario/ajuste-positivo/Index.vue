@@ -48,10 +48,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/entrada-almacen/paginate', { params: this.query})
+                return this.$store.dispatch('almacenes/ajuste-positivo/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('compras/entrada-almacen/SET_ENTRADAS', data.data);
-                        this.$store.commit('compras/entrada-almacen/SET_META', data.meta);
+                        this.$store.commit('almacenes/ajuste-positivo/SET_AJUSTES', data.data);
+                        this.$store.commit('almacenes/ajuste-positivo/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -59,36 +59,36 @@
             }
         },
         computed: {
-            entradas(){
-                return this.$store.getters['compras/entrada-almacen/entradas'];
+            ajustes(){
+                return this.$store.getters['almacenes/ajuste-positivo/ajustes'];
             },
             meta(){
-                return this.$store.getters['compras/entrada-almacen/meta'];
+                return this.$store.getters['almacenes/ajuste-positivo/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            entradas: {
-                handler(entradas) {
+            ajustes: {
+                handler(ajustes) {
                     let self = this
                     self.$data.data = []
-                    entradas.forEach(function (entrada, i) {
+                    ajustes.forEach(function (ajustes, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: entrada.numero_folio_format,
-                            fecha: entrada.fecha_format,
-                            id_empresa: entrada.empresa.razon_social,
-                            referencia: entrada.referencia,
-                            observaciones: entrada.observaciones,
-                            estado: entrada.estado_format,
-                            buttons: $.extend({}, {
-                                id: entrada.id,
-                                estado: entrada.estado,
-                                pagina: self.query.offset,
-                                delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
-                            })
+                            // numero_folio: entrada.numero_folio_format,
+                            // fecha: entrada.fecha_format,
+                            // id_empresa: entrada.empresa.razon_social,
+                            // referencia: entrada.referencia,
+                            // observaciones: entrada.observaciones,
+                            // estado: entrada.estado_format,
+                            // buttons: $.extend({}, {
+                            //     id: entrada.id,
+                            //     estado: entrada.estado,
+                            //     pagina: self.query.offset,
+                            //     delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
+                            // })
                         })
                     });
                 },
