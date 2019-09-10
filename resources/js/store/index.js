@@ -2,6 +2,10 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import auth from './modules/auth';
 
+//ALMACENES
+import ajuste_positivo from './modules/almacenes/ajuste-positivo';
+import inventario_fisico from './modules/almacenes/inventario-fisico';
+
 //CADECO
 
 import almacen from './modules/cadeco/almacen';
@@ -91,6 +95,9 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
+        'almacenes/ajuste-positivo' : ajuste_positivo,
+        'almacenes/inventario-fisico' : inventario_fisico,
+
         'cadeco/almacen': almacen,
         'cadeco/banco': banco,
         'cadeco/concepto': concepto,

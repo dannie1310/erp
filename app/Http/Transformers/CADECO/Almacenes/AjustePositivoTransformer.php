@@ -9,8 +9,8 @@
 namespace App\Http\Transformers\CADECO\Almacenes;
 
 
+use App\Http\Transformers\CADECO\AlmacenTransformer;
 use App\Models\CADECO\AjustePositivo;
-use App\Models\CADECO\Almacen;
 use League\Fractal\TransformerAbstract;
 
 class AjustePositivoTransformer extends TransformerAbstract
@@ -50,7 +50,7 @@ class AjustePositivoTransformer extends TransformerAbstract
     {
         if($almacen = $model->almacen)
         {
-            return $this->item(new Almacen);
+            return $this->item($almacen, new AlmacenTransformer);
         }
         return null;
     }
