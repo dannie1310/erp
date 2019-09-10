@@ -56,10 +56,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/entrada-almacen/paginate', { params: this.query})
+                return this.$store.dispatch('almacenes/inventario-fisico/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('compras/entrada-almacen/SET_ENTRADAS', data.data);
-                        this.$store.commit('compras/entrada-almacen/SET_META', data.meta);
+                        this.$store.commit('almacenes/inventario-fisico/SET_ENTRADAS', data.data);
+                        this.$store.commit('almacenes/inventario-fisico/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -68,10 +68,10 @@
         },
         computed: {
             entradas(){
-                return this.$store.getters['compras/entrada-almacen/entradas'];
+                return this.$store.getters['almacenes/inventario-fisico/entradas'];
             },
             meta(){
-                return this.$store.getters['compras/entrada-almacen/meta'];
+                return this.$store.getters['almacenes/inventario-fisico/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
