@@ -25,8 +25,10 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Almacén', field: 'id_almacen',sortable: true, thComp: require('../../../globals/th-Date')},
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../../globals/th-Date')},
+                    { title: 'Almacén', field: 'id_almacen',sortable: true, thComp: require('../../../globals/th-Filter')},
                     { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../../globals/th-Filter')},
                     { title: 'Estatus', field: 'estado', sortable: true},
                 ],
                 data: [],
@@ -77,18 +79,12 @@
                     ajustes.forEach(function (ajustes, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            // numero_folio: entrada.numero_folio_format,
-                            // fecha: entrada.fecha_format,
-                            // id_empresa: entrada.empresa.razon_social,
-                            // referencia: entrada.referencia,
-                            // observaciones: entrada.observaciones,
-                            // estado: entrada.estado_format,
-                            // buttons: $.extend({}, {
-                            //     id: entrada.id,
-                            //     estado: entrada.estado,
-                            //     pagina: self.query.offset,
-                            //     delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
-                            // })
+                            numero_folio: ajustes.numero_folio_format,
+                            fecha: ajustes.fecha_format,
+                            id_almacen: ajustes.almacen.descripcion,
+                            referencia: ajustes.referencia,
+                            observaciones: ajustes.observaciones,
+                            estado: ajustes.estado_format
                         })
                     });
                 },
