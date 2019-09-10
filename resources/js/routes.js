@@ -213,6 +213,24 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path: 'inventario-fisico',
+                component: require('./components/almacenes/inventario-fisico/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'inventario-fisico',
+                        component: require('./components/almacenes/inventario-fisico/Index'),
+                        meta: {
+                            title: 'Inventario Fisico',
+                            breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FISICO'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_entrada_almacen'
+
+                        }
+                    }
+                ]
+            },
         ]
     },
     {

@@ -22,6 +22,15 @@
                     </li>
                 </ul>
             </li>
+
+            <li class="nav-item" v-if="$root.can('administracion_configuracion_obra')">
+                <a href="#inventario-fisico" class="nav-link">
+                    <router-link :to="{name: 'inventario-fisico'}" class="nav-link" :class="{active: this.$route.name == 'inventario-fisico'}">
+                        <i class="fa fa-circle-o nav-icon"></i>
+                        <p>Inventario Fisico</p>
+                    </router-link>
+                </a>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->

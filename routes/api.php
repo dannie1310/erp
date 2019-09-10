@@ -123,6 +123,7 @@ $api->version('v1', function ($api) {
         $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
     });
 
+
     /**
      * CONFIGURACION
      */
@@ -135,6 +136,17 @@ $api->version('v1', function ($api) {
             $api->post('asignacion-areas-subcontratantes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@asignacionAreas');
         });
     });
+
+    /**
+     * ALMACENES
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'almacenes'], function ($api) {
+        $api->group(['prefix' => 'inventario-fisico'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@paginate');
+        });
+    });
+
 
     /**
      * CONTABILIDAD
