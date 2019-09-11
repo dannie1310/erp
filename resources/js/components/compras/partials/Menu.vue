@@ -9,6 +9,7 @@
 
             <li class="nav-item" v-if="gestion_solicitud">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-server"></i>
                     <p>
                         Gestión de Solicitudes
                         <i class="right fa fa-angle-left"></i>
@@ -25,6 +26,7 @@
             </li>
             <li class="nav-item" v-if="gestion_orden_compra">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-server"></i>
                     <p>
                         Gestión de OC
                         <i class="right fa fa-angle-left"></i>
