@@ -225,7 +225,7 @@ export const routes = [
                             title: 'Inventario Fisico',
                             breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FÍSICO'},
                             middleware: [auth, context, permission],
-                            permission: 'consultar_entrada_almacen'
+                            permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
 
                         }
                     }

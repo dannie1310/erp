@@ -34,6 +34,7 @@
                     { title: 'Fecha/Hora Inicio', field: 'fecha_hora_inicio', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Cantidad de Marbetes', field: 'cantidad_marbetes', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Estado', field: 'estado', sortable: true},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
@@ -88,7 +89,10 @@
                             fecha_hora_inicio: inventario.fecha_hora_inicio_format,
                             cantidad_marbetes: inventario.cantidad_marbetes,
                             usuario_inicia: inventario.usuario.nombre,
-                            estado: inventario.estado_format
+                            estado: inventario.estado_format,
+                            buttons: $.extend({}, {
+                                show: true,
+                            })
                         })
                     });
                 },
