@@ -32,4 +32,14 @@ class AjustePositivoService
     {
         return $this->repository->paginate($data);
     }
+
+    public function store(array $data)
+    {
+        $datos = [
+            'id_almacen' => $data['id_almacen'],
+            'referencia' => $data['referencia'],
+            'items' =>  $data['items']
+        ];
+       dd($datos);
+    }
 }

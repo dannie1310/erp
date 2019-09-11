@@ -1,7 +1,11 @@
 <template>
     <div class="row">
-        <div class="col-12">
-            <create @created="paginate()"></create>
+        <div class="col-12"  v-if="$root.can('registrar_distribucion_recursos_remesa')" :disabled="cargando">
+            <button @click="create" class="btn btn-app btn-info pull-right">
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-plus" v-else></i>
+                Registrar Ajuste
+            </button>
         </div>
         <div class="col-12">
             <div class="card">
@@ -63,7 +67,10 @@
                     .finally(() => {
                         this.cargando = false;
                     })
-            }
+            },
+            create() {
+                this.$router.push({name: 'ajuste-positivo-create'});
+            },
         },
         computed: {
             ajustes(){
