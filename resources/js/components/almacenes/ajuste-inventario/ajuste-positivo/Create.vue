@@ -65,7 +65,22 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
-                                                        <td></td>
+                                                        <td>
+                                                             <select
+                                                                     class="form-control"
+                                                                     :name="`numero_parte[${i}]`"
+                                                                     v-model="item.numero_parte"
+                                                                     v-validate="{required: true }"
+                                                                     data-vv-as="No de Parte"
+                                                                     :class="{'is-invalid': errors.has(`numero_parte[${i}]`)}"
+                                                             >
+                                                                 <option value>-- Selecciona una cuenta --</option>
+                                                                 <option v-for="cuenta in cuenta_cargo" :value="cuenta.id">{{ cuenta.abreviatura }} ({{cuenta.numero}})</option>
+                                                            </select>
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`numero_parte[${i}]`)">{{ errors.first(`numero_parte[${i}]`) }}
+                                                            </div>
+                                                        </td>
                                                         <td></td>
                                                         <td></td>
                                                         <td>
@@ -146,6 +161,8 @@
                 items: [
 
                 ],
+                numero_partes: [],
+                materiales: []
             }
         },
         mounted(){
@@ -169,6 +186,31 @@
                         this.almacenes = data.data;
                     })
             },
+            getMateriales(id_almacen){
+                this.materiales = [];
+                this.numero_partes = [];
+                return this.$store.dispatch('cadeco/material/index', {
+                    params: {
+                        scope: ['materialInventario:'+id_almacen],
+                        sort: 'descripcion',
+                        order: 'asc'
+                    }
+                })
+                    .then(data => {
+                        this.materiales = data.data;
+                    })
+
+                return this.$store.dispatch('cadeco/material/index', {
+                    params: {
+                        scope: ['materialInventario:'+id_almacen],
+                        sort: 'numero_parte',
+                        order: 'asc'
+                    }
+                })
+                    .then(data => {
+                        this.numero_partes = data.data;
+                    })
+            },
             agregar() {
                 var array = {
                     'id' : this.items.length + 1,
@@ -189,6 +231,13 @@
                     return e !== item;
                 } );
             },
+        },
+        watch: {
+            id_almacen(value){
+                if(value != ''){
+                    this.getMateriales(value)
+                }
+            }
         }
     }
 </script>

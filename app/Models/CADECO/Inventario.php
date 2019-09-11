@@ -37,12 +37,10 @@ class Inventario extends Model
     public function getCantidadFormatAttribute()
     {
         return number_format($this->cantidad,3,'.', '');
-
     }
 
     public function getSaldoFormatAttribute()
     {
         return number_format($this->saldo,3,'.', '');
-
     }
 }
