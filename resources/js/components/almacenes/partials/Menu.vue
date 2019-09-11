@@ -25,7 +25,7 @@
             <li class="nav-item" v-if="$root.can('consultar_distribucion_recursos_remesa')">
                 <router-link :to="{name: 'inventario-fisico'}" class="nav-link">
                     <i class="nav-icon fa fa-server"></i>
-                    <p>Inventario Fisico</p>
+                    <p>Inventario Físico</p>
                 </router-link>
             </li>
         </ul>

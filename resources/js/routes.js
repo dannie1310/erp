@@ -223,7 +223,7 @@ export const routes = [
                         component: require('./components/almacenes/inventario-fisico/Index'),
                         meta: {
                             title: 'Inventario Fisico',
-                            breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FISICO'},
+                            breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FÍSICO'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_entrada_almacen'
 
