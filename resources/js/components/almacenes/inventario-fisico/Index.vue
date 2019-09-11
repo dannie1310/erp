@@ -30,14 +30,14 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Tipo', field: 'id_tipo', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Fecha Inicio', field: 'fecha_hora_inicio', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Usuario Inicio', field: 'usuario_inicia', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Estatus', field: 'estado', sortable: true},
+                    { title: 'Usuario Inició', field: 'usuario_inicia', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Fecha/Hora Inicio', field: 'fecha_hora_inicio', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Cantidad de Marbetes', field: 'cantidad_marbetes', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Estado', field: 'estado', sortable: true},
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'folio', order: 'desc'},
+                query: {include: ['usuario'],sort: 'folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -83,15 +83,12 @@
                     inventarios.forEach(function (inventario, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: inventario.folio,
+                            numero_folio: inventario.folio_format,
                             id_tipo: inventario.id_tipo,
-                            fecha_hora_inicio: inventario.fecha_hora_inicio,
-                            usuario_inicia: inventario.usuario_inicia,
-                            estado: inventario.estado,
-                            buttons: $.extend({}, {
-                                id: inventario.id,
-                                estado: inventario.estado,
-                            })
+                            fecha_hora_inicio: inventario.fecha_hora_inicio_format,
+                            cantidad_marbetes: inventario.cantidad_marbetes,
+                            usuario_inicia: inventario.usuario.nombre,
+                            estado: inventario.estado_format
                         })
                     });
                 },

@@ -29,9 +29,7 @@ class InventarioFisicoService
 
     public function store($data)
     {
-//        dd($data);
-        $registro = $this->repository->create(['folio' => 66]);
-        return $registro;
+        return $this->repository->create($data);
     }
 
 }

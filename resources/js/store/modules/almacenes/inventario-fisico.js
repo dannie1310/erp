@@ -19,22 +19,6 @@ export default{
         SET_INVETARIO(state, data){
             state.currentInventario = data
         },
-
-        // UPDATE_AJUSTE(state, data) {
-        //     state.ajustes = state.ajustes.map(ajuste => {
-        //         if (ajuste.id === data.id) {
-        //             return Object.assign({}, ajuste, data)
-        //         }
-        //         return ajuste
-        //     })
-        //     if (state.currentAjuste) {
-        //         state.currentAjuste = data
-        //     }
-        // },
-        //
-        // UPDATE_ATTRIBUTE(state, data) {
-        //     state.currentAjuste[data.attribute] = data.value
-        // },
     },
 
     actions: {
@@ -55,7 +39,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar inventario fisico",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Estás seguro/a de que quieres registrar un nuevo inventario físico?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -74,7 +58,7 @@ export default{
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Inventario fisico registrado correctamente", {
+                                    swal("Inventario físico registrado correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
