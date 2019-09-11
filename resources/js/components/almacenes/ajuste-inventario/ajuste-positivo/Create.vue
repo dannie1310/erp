@@ -68,20 +68,35 @@
                                                         <td>
                                                              <select
                                                                      class="form-control"
-                                                                     :name="`numero_parte[${i}]`"
-                                                                     v-model="item.numero_parte"
+                                                                     :name="`id_material[${i}]`"
+                                                                     v-model="item.id_material"
                                                                      v-validate="{required: true }"
                                                                      data-vv-as="No de Parte"
-                                                                     :class="{'is-invalid': errors.has(`numero_parte[${i}]`)}"
+                                                                     :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                              >
-                                                                 <option value>-- Selecciona una cuenta --</option>
-                                                                 <option v-for="cuenta in cuenta_cargo" :value="cuenta.id">{{ cuenta.abreviatura }} ({{cuenta.numero}})</option>
+
+                                                                 <option v-for="numero in numero_partes" :value="numero.id">{{ numero.numero_parte }}</option>
                                                             </select>
                                                             <div class="invalid-feedback"
-                                                                 v-show="errors.has(`numero_parte[${i}]`)">{{ errors.first(`numero_parte[${i}]`) }}
+                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
                                                             </div>
                                                         </td>
-                                                        <td></td>
+                                                        <td>
+                                                              <select
+                                                                      class="form-control"
+                                                                      :name="`id_material[${i}]`"
+                                                                      v-model="item.id_material"
+                                                                      v-validate="{required: true }"
+                                                                      data-vv-as="No de Parte"
+                                                                      :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
+                                                              >
+
+                                                                 <option v-for="material in materiales" :value="material.id">{{ material.descripcion }}</option>
+                                                            </select>
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
+                                                            </div>
+                                                        </td>
                                                         <td></td>
                                                         <td>
                                                             <input
@@ -188,7 +203,6 @@
             },
             getMateriales(id_almacen){
                 this.materiales = [];
-                this.numero_partes = [];
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: ['materialInventario:'+id_almacen],
@@ -199,7 +213,9 @@
                     .then(data => {
                         this.materiales = data.data;
                     })
-
+            },
+            getNumeroPartes(id_almacen) {
+                this.numero_partes = [];
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: ['materialInventario:'+id_almacen],
@@ -236,6 +252,7 @@
             id_almacen(value){
                 if(value != ''){
                     this.getMateriales(value)
+                    this.getNumeroPartes(value)
                 }
             }
         }
