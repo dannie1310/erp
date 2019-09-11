@@ -65,6 +65,9 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
                                                         <td>
                                                             <input
                                                                     type="number"
@@ -79,7 +82,42 @@
                                                                     placeholder="cantidad">
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
-                                                        </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                    type="number"
+                                                                    step="any"
+                                                                    :name="`monto_total[${i}]`"
+                                                                    v-model="item.monto_total"
+                                                                    data-vv-as="Monto Total"
+                                                                    v-validate="{required: true, numeric:true}"
+                                                                    class="form-control"
+                                                                    :class="{'is-invalid': errors.has(`monto_total[${i}]`)}"
+                                                                    id="monto_total"
+                                                                    placeholder="monto_total">
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`monto_total[${i}]`)">{{ errors.first(`monto_total[${i}]`) }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                    type="number"
+                                                                    step="any"
+                                                                    :name="`monto_pagado[${i}]`"
+                                                                    v-model="item.monto_pagado"
+                                                                    data-vv-as="Monto Pagado"
+                                                                    v-validate="{required: true, numeric:true}"
+                                                                    class="form-control"
+                                                                    :class="{'is-invalid': errors.has(`monto_pagado[${i}]`)}"
+                                                                    id="monto_pagado"
+                                                                    placeholder="monto_pagado">
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`monto_pagado[${i}]`)">{{ errors.first(`monto_pagado[${i}]`) }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <button class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -142,6 +180,14 @@
                     'monto_pagado' : 0
                 }
                 this.items.push(array);
+            },
+            destroy(dato){
+                this.items = removeItemFromArr( this.items, dato);
+            },
+            removeItemFromArr( arr, item ) {
+                return arr.filter( function( e ) {
+                    return e !== item;
+                } );
             },
         }
     }
