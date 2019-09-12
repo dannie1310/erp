@@ -10,6 +10,7 @@ use App\Services\CADECO\Almacenes\InventarioFisicoService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
 
+
 class InventarioFisicoController extends Controller
 {
     use ControllerTrait;
@@ -46,6 +47,11 @@ class InventarioFisicoController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function descargaLayout($id)
+    {
+        return $this->service->descargaLayout($id);
     }
 
 }
