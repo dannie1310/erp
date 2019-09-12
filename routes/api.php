@@ -151,6 +151,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'inventario-fisico'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@paginate');
+            $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@descargaLayout');
         });
     });
 
