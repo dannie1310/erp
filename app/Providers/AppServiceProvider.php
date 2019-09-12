@@ -36,6 +36,7 @@ use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;
 use App\Models\CADECO\Fondo;
+use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\OrdenPago;
@@ -98,6 +99,7 @@ use App\Observers\CADECO\FinanzasCBE\SolicitudAltaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudBajaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
 use App\Observers\CADECO\FondoObserver;
+use App\Observers\CADECO\Inventarios\InventarioFisicoObserver;
 use App\Observers\CADECO\LiberacionFondoGarantiaObserver;
 use App\Observers\CADECO\OrdenCompraObserver;
 use App\Observers\CADECO\OrdenPagoObserver;
@@ -183,6 +185,12 @@ class AppServiceProvider extends ServiceProvider
             SolicitudAlta::observe(SolicitudAltaObserver::class);
             SolicitudBaja::observe(SolicitudBajaObserver::class);
             SolicitudMovimiento::observe(SolicitudMovimientoObserver::class);
+
+            /**
+             * Inventarios
+             */
+            InventarioFisico::observe(InventarioFisicoObserver::class);
+
 
             /**
              * Seguridad
