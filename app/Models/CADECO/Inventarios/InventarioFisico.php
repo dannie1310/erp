@@ -29,7 +29,7 @@ class InventarioFisico extends Model
 
     public function getNumeroFolioFormatAttribute()
     {
-        return 'T '. str_pad($this->folio, 3,"0",STR_PAD_LEFT);
+        return $this->tipoInventario->nombre_corto." ".str_pad($this->folio, 3,"0",STR_PAD_LEFT);
     }
 
     public static function calcularFolio()
@@ -53,6 +53,10 @@ class InventarioFisico extends Model
             abort(400,'Existen inventarios físicos no finalizados');
         }
         return true;
+    }
+
+    public function tipoInventario(){
+        return $this->belongsTo(CtgTipoInventario::class, 'id_tipo', 'id');
     }
 
     public function usuario(){
