@@ -15,7 +15,6 @@ class Rubro extends Model
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.rubros';
 
-
     public function tipo_rubro (){
         return $this->belongsTo(TipoRubro::class, 'id_tipo', 'id');
     }

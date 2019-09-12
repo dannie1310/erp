@@ -13,10 +13,7 @@ use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
-use App\Models\SEGURIDAD_ERP\CtgContratista;
-use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Item;
 use App\Models\CADECO\Moneda;
 use Illuminate\Support\Facades\DB;
 
@@ -56,25 +53,6 @@ class Estimacion extends Transaccion
                         ->whereHas('subcontrato');
                 });
         });
-
-        self::creating(function ($estimacion) {
-            $subcontrato = Subcontrato::query()->find($estimacion->id_antecedente);
-
-            $estimacion->tipo_transaccion = 52;
-            $estimacion->id_empresa = $subcontrato->id_empresa;
-            $estimacion->id_moneda = $subcontrato->id_moneda;
-            $estimacion->saldo = $estimacion->monto;
-            $estimacion->retencion = $subcontrato->retencion;
-            $estimacion->fecha = date('Y-m-d');
-            $estimacion->numero_folio = self::calcularFolio();
-        });
-
-        self::created(function ($estimacion) {
-            if ($estimacion->retencion > 0) {
-                $estimacion->generaRetencion();
-            }
-            $estimacion->creaSubcontratoEstimacion();
-        });
     }
 
     /**
@@ -87,7 +65,6 @@ class Estimacion extends Transaccion
 
     public function subcontrato()
     {
-        # return $this->belongsTo(Subcontrato::class,'id_transaccion', 'id_antecedente');
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
@@ -122,7 +99,7 @@ class Estimacion extends Transaccion
         ]);
     }
 
-    private static function calcularFolio()
+    public static function calcularFolio()
     {
         $est = Transaccion::query()->where('tipo_transaccion', '=', 52)->orderBy('numero_folio', 'DESC')->first();
         return $est ? $est->numero_folio + 1 : 1;

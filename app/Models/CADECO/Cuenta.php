@@ -12,7 +12,6 @@ namespace App\Models\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaBanco;
 use App\Models\CADECO\Finanzas\CtgTipoCuentaObra;
-use function foo\func;
 use Illuminate\Database\Eloquent\Model;
 
 class Cuenta extends Model
@@ -43,20 +42,6 @@ class Cuenta extends Model
             return $query->whereHas('cuentasObra', function ($q) {
                 $q->where('id_obra', '=', Context::getIdObra());
             });
-        });
-
-        self::creating(function ($model) {
-            if(!cuenta::query()->where('numero', '=',  $model->numero)->first()) {
-                $model->saldo_real = $model->saldo_inicial;
-                $model->fecha_real = $model->fecha_inicial;
-                $model->fecha_estado = $model->fecha_inicial;
-                $model->estado = 0;
-            }else {
-                throw New \Exception('Ya existe un registro con el mismo número de cuenta.');
-            }
-        });
-        self::created(function ($model){
-            $model->cuentasObra()->create(['id_obra'=>Context::getIdObra(), 'id_cuenta'=> $model->id_cuenta]);
         });
     }
 

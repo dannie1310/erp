@@ -29,24 +29,6 @@ class SolicitudMovimientoFondoGarantia extends Model
     public $timestamps = false;
     protected $with = array('movimientos');
     protected $appends = array('ultimo_movimiento', 'movimiento_autorizacion');
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($solicitud_movimiento_fg) {
-            $solicitud_movimiento_fg->created_at = date('Y-m-d h:i:s');
-            if (!$solicitud_movimiento_fg->validaNoSolicitudesPendientes()) {
-                throw New \Exception('Hay una solicitud de movimiento a fondo de garantía pendiente de autorizar, la solicitud actual no puede registrarse');
-            }
-            if (!$solicitud_movimiento_fg->validaMontoSolicitud()) {
-                throw New \Exception('El monto de la solicitud sobrepasa el monto disponible del fondo de garantía: $ '.number_format($solicitud_movimiento_fg->fondo_garantia->saldo,2).'.');
-            }
-        });
-        self::created(function($solicitud_movimiento_fg){
-            $solicitud_movimiento_fg->generaMovimientoSolicitud(1, $solicitud_movimiento_fg->usuario_registra);
-        });
-
-    }
 
     public function getNumeroFolioFormatAttribute()
     {
@@ -190,7 +172,7 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @param $tipo_movimiento
      * @return mixed
      */
-    private function generaMovimientoSolicitud($tipo_movimiento, $usuario, $observaciones = null)
+    public function generaMovimientoSolicitud($tipo_movimiento, $usuario, $observaciones = null)
     {
         $movimiento_solicitud = MovimientoSolicitudMovimientoFondoGarantia::create([
                 'id_solicitud'=>$this->id,
@@ -207,7 +189,7 @@ class SolicitudMovimientoFondoGarantia extends Model
     /**
      * Se actualiza el estado de la solicitud de acuerdo a su último movimiento registrado
      */
-    private function actualizarEstado()
+    public function actualizarEstado()
     {
         $this->estado = $this->ultimo_movimiento->tipo->estado_resultante;
         $this->save();
@@ -218,7 +200,7 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @return mixed
      * Se genera la transacción de movimiento a fondo de garantía tomando los datos de la solicitud autorizada
      */
-    private function generaTransaccionMovimientoFG()
+    public function generaTransaccionMovimientoFG()
     {
         if($this->id_tipo_solicitud == 1)
         {
@@ -312,7 +294,7 @@ class SolicitudMovimientoFondoGarantia extends Model
      * @return bool
      */
 
-    private function validaNoSolicitudesPendientes()
+    public function validaNoSolicitudesPendientes()
     {
         $solicitudes = SolicitudMovimientoFondoGarantia::where("id_fondo_garantia",$this->id_fondo_garantia)->where("estado",0)->get();
         if(count($solicitudes)>0)
@@ -326,7 +308,7 @@ class SolicitudMovimientoFondoGarantia extends Model
      * El  monto de la solicitud no puede ser mayor al monto disponible del fondo de garantía
      * @return bool
      */
-    private function validaMontoSolicitud()
+    public function validaMontoSolicitud()
     {
 
         $this->refresh();

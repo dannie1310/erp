@@ -20,10 +20,6 @@ class CuentaGeneral extends CuentaContable
                 return $query->where('tipo', '=', 1);
             });
         });
-
-        self::creating(function ($model) {
-            $model->estatus = 1;
-        });
     }
 
     protected $fillable = [

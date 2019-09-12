@@ -8,7 +8,7 @@ use App\Models\CADECO\Obra;
 use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
 
-class DatosEstimaciones extends Model
+class ConfiguracionEstimacion extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.configuracion_estimaciones';
@@ -25,22 +25,9 @@ class DatosEstimaciones extends Model
         'desc_otros_prest_antes_iva'
     ];
 
-    protected static function boot()
+    public function validar()
     {
-        parent::boot();
-
-        self::creating(function ($model) {
-            $model->validar();
-            $model->id_obra =  Context::getIdObra();
-            $model->usuario_crea = auth()->id();
-            $model->usuario_actualiza = auth()->id();
-            $model->created_at = date('Y-m-d h:i:s');
-            $model->updated_at = date('Y-m-d h:i:s');
-        });
-    }
-
-    public function validar(){
-        if(DatosEstimaciones::query()->where('id_obra',Context::getIdObra())->first() != null)
+        if(ConfiguracionEstimacion::query()->where('id_obra',Context::getIdObra())->first() != null)
         {
             abort(400,'La Configuracion Finanzas ya fue registrada anteriormente');
         }
@@ -50,5 +37,4 @@ class DatosEstimaciones extends Model
     {
         return $this->belongsTo(Obra::class, 'id_obra');
     }
-
 }

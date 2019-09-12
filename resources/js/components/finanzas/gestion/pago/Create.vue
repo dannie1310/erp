@@ -137,7 +137,8 @@
                 bitacora:[],
                 resumen:[],
                 cargando: false,
-                file_interbancario : null
+                file_interbancario : null,
+                file_interbancario_name : ''
             }
         },
         mounted() {
@@ -150,6 +151,7 @@
                 this.cargando = true;
                 var formData = new FormData();
                 formData.append('bitacora',  this.file_interbancario);
+                formData.append('bitacora_nombre',  this.file_interbancario_name);
                 return this.$store.dispatch('finanzas/gestion-pago/cargarBitacora',
                     {
                         data: formData,
@@ -192,6 +194,7 @@
                 if (!files.length)
                     return;
                 if(e.target.id == 'carga_bitacora') {
+                    this.file_interbancario_name = files[0].name;
                     this.createImage(files[0]);
                 }
                 setTimeout(() => {
@@ -207,7 +210,7 @@
             },
 
             store() {
-                return this.$store.dispatch('finanzas/gestion-pago/store', this.$data.bitacora)
+                return this.$store.dispatch('finanzas/gestion-pago/store', this.$data)
                     .then((data) => {
                         this.$router.push({name: 'pago'});
                     });

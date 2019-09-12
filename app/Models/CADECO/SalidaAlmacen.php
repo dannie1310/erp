@@ -16,21 +16,14 @@ use Illuminate\Support\Facades\DB;
 
 class SalidaAlmacen extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = null;
+
     protected static function boot()
     {
         parent::boot();
 
         self::addGlobalScope('tipo',function ($query) {
             return $query->where('tipo_transaccion', '=', 34);
-        });
-
-        self::deleting(function ($salida) {
-            if($salida->opciones == 65537 ) {
-                $salida->eliminar_transferencia();
-            }
-            if ($salida->opciones == 1){
-                $salida->eliminar_salida();
-                }
         });
     }
 
@@ -65,7 +58,7 @@ class SalidaAlmacen extends Transaccion
         }
     }
 
-    private function eliminar_salida(){
+    public function eliminar_salida(){
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != null){
             $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
@@ -102,7 +95,7 @@ class SalidaAlmacen extends Transaccion
             Item::destroy($item['id_item']);
         }
     }
-    private function eliminar_transferencia(){
+    public function eliminar_transferencia(){
         $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
         if ($poliza != []){
             $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
@@ -364,7 +357,4 @@ class SalidaAlmacen extends Transaccion
             abort(400, 'Error en el proceso de eliminación de salida de almacén.');
         }
     }
-
-
-
 }

@@ -10,7 +10,7 @@ namespace App\Http\Transformers\CADECO;
 
 
 use App\Http\Transformers\CADECO\Contabilidad\DatosContablesTransformer;
-use App\Http\Transformers\CADECO\Finanzas\DatosEstimacionesTransformer;
+use App\Http\Transformers\CADECO\Finanzas\ConfiguracionEstimacionTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\ConfiguracionObraTransformer;
 use App\Models\CADECO\Obra;
 use League\Fractal\TransformerAbstract;
@@ -80,7 +80,7 @@ class ObraTransformer extends TransformerAbstract
     public function includeDatosEstimaciones(Obra $model)
     {
         if ($estimaciones = $model->datosEstimaciones) {
-            return $this->item($estimaciones, new DatosEstimacionesTransformer);
+            return $this->item($estimaciones, new ConfiguracionEstimacionTransformer);
         }
     }
 }

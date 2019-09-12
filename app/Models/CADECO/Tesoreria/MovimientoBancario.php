@@ -45,36 +45,6 @@ class MovimientoBancario extends Model
         self::addGlobalScope(function ($query) {
             return $query->where('id_obra', '=', Context::getIdObra());
         });
-
-        self::creating(function ($model) {
-            $mov = self::orderBy('numero_folio', 'DESC')->first();
-            $folio = $mov ? $mov->numero_folio + 1 : 1;
-
-            $model->estatus = 1;
-            $model->registro = auth()->id();
-            $model->id_obra = Context::getIdObra();
-            $model->numero_folio = $folio;
-
-            $tipo = TipoMovimiento::query()->find($model->id_tipo_movimiento);
-
-            if ($tipo->naturaleza == 2) {
-                $model->importe = -1 * abs($model->importe);
-                $model->impuesto = -1 * abs($model->impuesto);
-            }
-        });
-
-        self::updating(function ($model) {
-            $tipo = TipoMovimiento::query()->find($model->id_tipo_movimiento);
-
-            if ($tipo->naturaleza == 2) {
-                $model->importe = -1 * abs($model->importe);
-                $model->impuesto = -1 * abs($model->impuesto);
-            }
-        });
-
-        self::deleting(function ($model) {
-            $model->transacciones()->update(['estado' => '-2']);
-        });
     }
 
     public function tipo()

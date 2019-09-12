@@ -18,13 +18,4 @@ class CtgTipoMovimientoSolicitud extends Model
                            'estado_resultante',
                            'estado_resultante_desc'];
     public $timestamps = false;
-
-    protected static function boot()
-    {
-        parent::boot();
-
-    }
-
-
-
 }
