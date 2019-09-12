@@ -92,6 +92,7 @@
                             estado: inventario.estado_format,
                             buttons: $.extend({}, {
                                 show: true,
+                                id: inventario.id,
                             })
                         })
                     });

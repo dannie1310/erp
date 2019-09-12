@@ -3,8 +3,10 @@
 
 namespace App\Services\CADECO\Almacenes;
 
+
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Repositories\Repository;
+
 
 class InventarioFisicoService
 {
@@ -30,6 +32,11 @@ class InventarioFisicoService
     public function store($data)
     {
         return $this->repository->create($data);
+    }
+
+    public function descargaLayout($id)
+    {
+        return $this->repository->show($id)->descargaLayout();
     }
 
 }
