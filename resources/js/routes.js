@@ -182,6 +182,55 @@ export const routes = [
                     middleware: [auth, context, access]
                 }
             },
+            {
+                path: 'ajuste-inventario',
+                component: require('./components/almacenes/ajuste-inventario/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'ajuste-inventario',
+                        component: require('./components/almacenes/ajuste-inventario/Index'),
+                        meta: {
+                            title: 'Ajuste de Inventarios',
+                            breadcrumb: {parent: 'almacenes', name: 'AJUSTE DE INVENTARIOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'ajuste-positivo',
+                        name: 'ajuste-positivo',
+                        component: require('./components/almacenes/ajuste-inventario/ajuste-positivo/Index'),
+                        meta: {
+                            title: 'Ajuste Positivo (+)',
+                            breadcrumb: {
+                                parent: 'ajuste-inventario',
+                                name: 'AJUSTE POSITIVO (+)'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_entrada_almacen'
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'inventario-fisico',
+                component: require('./components/almacenes/inventario-fisico/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'inventario-fisico',
+                        component: require('./components/almacenes/inventario-fisico/Index'),
+                        meta: {
+                            title: 'Inventario Fisico',
+                            breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FÍSICO'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+
+                        }
+                    }
+                ]
+            },
         ]
     },
     {

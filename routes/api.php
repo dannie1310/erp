@@ -137,6 +137,24 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * ALMACENES
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'almacenes'], function ($api) {
+
+        //AJUSTE POSITIVO (+)
+        $api->group(['prefix' => 'ajuste-positivo'], function ($api) {
+//            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@paginate');
+        });
+
+        //INVENTARIO FISICO
+        $api->group(['prefix' => 'inventario-fisico'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@paginate');
+        });
+    });
+
+    /**
      * CONTABILIDAD
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad'], function ($api) {
