@@ -5,12 +5,13 @@ namespace App\PDF;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Inventarios\InventarioFisico;
 use Ghidev\Fpdf\Rotation;
 use Illuminate\Support\Facades\DB;
 
 class InventarioMarbete extends Rotation
 {
-    protected $materiales;
+    protected $inventario;
     protected $y = 0;
 
 
@@ -22,56 +23,12 @@ class InventarioMarbete extends Rotation
     const MAX_WIDTH = 225;
     const MAX_HEIGHT = 180;
 
-    public function __construct()
+    public function __construct(InventarioFisico $inventario)
     {
-
         parent::__construct('L', 'cm', 'Letter');
 
         $this->WidthTotal = $this->GetPageWidth() - 2;
-
-        $this->materiales = DB::connection('cadeco')->select(DB::raw("SELECT obras.nombre AS obra,
-      materiales.descripcion AS material,
-      materiales.unidad,
-      materiales.numero_parte,
-      familias.descripcion AS familia,
-      almacenes.descripcion AS almacen,
-      SUM (inventarios.saldo) AS existencia_sistema,
-      substring (materiales.nivel, 1, 4) AS nivel_familia,
-      almacenes.id_almacen,
-      materiales.id_material
- FROM (((dbo.materiales materiales
-         INNER JOIN
-         (SELECT materiales.id_material,
-                 materiales.nivel,
-                 materiales.descripcion,
-                 materiales.tipo_material,
-                 len (nivel) AS longitud_nivel
-            FROM dbo.materiales materiales
-           WHERE (materiales.tipo_material IN (1, 4)) AND (len (nivel) = 4))
-         familias
-            ON     (substring (materiales.nivel, 1, 4) = familias.nivel)
-               AND (materiales.tipo_material = familias.tipo_material))
-        INNER JOIN dbo.inventarios inventarios
-           ON (materiales.id_material = inventarios.id_material))
-       INNER JOIN dbo.almacenes almacenes
-          ON (almacenes.id_almacen = inventarios.id_almacen))
-      INNER JOIN dbo.obras obras
-         ON (almacenes.id_obra = obras.id_obra)
-WHERE     (inventarios.saldo > 0.01)
-      AND (almacenes.id_obra = 1)
-      AND (almacenes.tipo_almacen IN (0, 5))
-      AND (materiales.tipo_material IN (1, 4))
-GROUP BY materiales.id_material,
-        materiales.descripcion,
-        almacenes.id_almacen,
-        almacenes.descripcion,
-        materiales.numero_parte,
-        materiales.unidad,
-        familias.descripcion,
-        materiales.nivel,
-        obras.nombre
-          order by 1;"));
-//        dd('polar',  $this->materiales[0]->unidad);
+        $this->inventario = $inventario;
     }
 
     function Header()
@@ -84,80 +41,79 @@ GROUP BY materiales.id_material,
         $this->SetTextColor('0', '0', '0');
         $this->SetFillColor(255, 255, 255);
 
-        foreach ($this->materiales as $key => $material) {
-
-            $marbete = 'T 001 000 ' . str_pad($key + 1, 3, 0, 0);
+        foreach ($this->inventario->marbetes as $key => $material) {
+            $marbete = $material;
+            $folio_format = str_pad($marbete->folio, '6', 0, 0);
+            $marb = $this->inventario->getNumeroFolioFormatAttribute() .' '. chunk_split($folio_format, 3);
             $this->SetFont('Arial', 'B', 11);
-            $w_celda = $this->WidthTotal / 9;
-//            dd($w_celda, ($w_celda * 2) - 0.3, $this->GetPageWidth()-2.2);
             $this->Cell(4.5);
-            $this->Cell(3, 0.55, utf8_decode($marbete), '', 0, 'R', 1);
+            $this->Cell(3, 0.55, utf8_decode($marb), '', 0, 'R', 1);
             $this->Cell(5);
-            $this->Cell(4.3, 0.55, utf8_decode($marbete), '', 0, 'R', 1);
+            $this->Cell(4.3, 0.55, utf8_decode($marb), '', 0, 'R', 1);
             $this->Cell(5.2);
-            $this->Cell(3.7, 0.55, utf8_decode($marbete), '', 0, 'R', 1);
+            $this->Cell(3.7, 0.55, utf8_decode($marb), '', 0, 'R', 1);
 
             $this->SetY($this->GetY() + 0.6);
             $this->SetFont('Arial', 'B', 6);
             $this->Cell(2.35);
-            $this->Cell(5.15, 0.45, utf8_decode($material->obra), '', 0, 'C', 1);
+            $this->Cell(5.15, 0.45, utf8_decode($this->inventario->obra->nombre), '', 0, 'C', 1);
             $this->Cell(2.5);
-            $this->Cell(6.8, 0.45, utf8_decode($material->almacen), '', 0, 'C', 1);
+            $this->Cell(6.8, 0.45, utf8_decode($marbete->almacen->descripcion), '', 0, 'C', 1);
             $this->Cell(2.65);
-            $this->Cell(6.25, 0.45, utf8_decode($material->almacen), '', 0, 'C', 1);
+            $this->Cell(6.25, 0.45, utf8_decode($marbete->almacen->descripcion), '', 0, 'C', 1);
 
             $this->SetY($this->GetY() + 0.45);
             $this->SetFont('Arial', 'B', 5.5);
             $this->Cell(2.35);
-            $this->Cell(5.15, 0.65, utf8_decode($material->almacen), '', 0, 'C', 1);
+            $this->Cell(5.15, 0.65, utf8_decode($marbete->almacen->descripcion), '', 0, 'C', 1);
             $this->Cell(2.5);
             $this->SetFont('Arial', 'B', 8);
-            $this->Cell(2.8, 0.65, utf8_decode($material->numero_parte), '', 0, 'C', 1);
+            $this->Cell(2.8, 0.65, utf8_decode($marbete->material->numero_parte), '', 0, 'C', 1);
             $this->Cell(1.4);
-            $this->Cell(2.6, 0.65, utf8_decode($material->unidad), '', 0, 'C', 1);
+            $this->Cell(2.6, 0.65, utf8_decode($marbete->material->unidad), '', 0, 'C', 1);
             $this->Cell(2.65);
-            $this->Cell(2.8, 0.65, utf8_decode($material->numero_parte), '', 0, 'C', 1);
+            $this->Cell(2.8, 0.65, utf8_decode($marbete->material->numero_parte), '', 0, 'C', 1);
             $this->Cell(1.4);
-            $this->Cell(2, 0.65, utf8_decode($material->unidad), '', 0, 'C', 1);
+            $this->Cell(2, 0.65, utf8_decode($marbete->material->unidad), '', 0, 'C', 1);
 
             $this->SetY($this->GetY() + 0.7);
             $this->SetFont('Arial', 'B', 5.5);
             $this->Cell(2.35);
-            $this->Cell(5.15, 0.65, utf8_decode($material->familia), '', 0, 'C', 1);
+            $this->Cell(5.15, 0.65, utf8_decode($marbete->material->familia), '', 0, 'C', 1);
             $this->SetFont('Arial', '', 6);
             $this->Cell(1.15);
-            $this->MultiAlignCell(8.25, 0.25, utf8_decode('                '.$material->material), '', 0, 'L');
+            $this->MultiAlignCell(8.25, 0.25, utf8_decode('                '.$marbete->material->descripcion), '', 0, 'L');
             $this->SetFont('Arial', '', 6.5);
             $this->Cell(1.05);
-            $this->MultiAlignCell(7.85, 0.3, utf8_decode('                '.$material->material),  '', 0, 'L');
+            $this->MultiAlignCell(7.85, 0.3, utf8_decode('                '.$marbete->material->descripcion),  '', 0, 'L');
 
             $this->SetY($this->GetY() + 0.65);
             $this->SetFont('Arial', '', 6.5);
             $this->Cell(2.35);
-            $this->Cell(2.15, 0.65, utf8_decode($material->numero_parte), '', 0, 'C', 1);
+            $this->Cell(2.15, 0.65, utf8_decode($marbete->material->numero_parte), '', 0, 'C', 1);
             $this->Cell(1.35);
-            $this->Cell(1.65, 0.65, utf8_decode($material->id_material), '', 0, 'C', 1);
+            $this->Cell(1.65, 0.65, utf8_decode($marbete->material->id_material), '', 0, 'C', 1);
 
             $this->SetY($this->GetY() + 0.6);
             $this->SetFont('Arial', '', 6.5);
             $this->Cell(2.35);
             $this->Cell(2.15, 0.7, utf8_decode(''), '', 0, 'C', 1);
             $this->Cell(1.35);
-            $this->Cell(1.65, 0.7, utf8_decode($material->unidad), '', 0, 'C', 1);
+            $this->Cell(1.65, 0.7, utf8_decode($marbete->material->unidad), '', 0, 'C', 1);
 
             $this->SetY($this->GetY() + 0.75);
             $this->SetFont('Arial', '', 6);
             $this->Cell(1);
-            $this->MultiAlignCell(6.55, 0.28, utf8_decode('                '.$material->material), '', 0, 'L');
+            $this->MultiAlignCell(6.55, 0.28, utf8_decode('                '.$marbete->material->descripcion), '', 0, 'L');
 
             $this->SetY($this->GetY() + 1.7);
             $this->SetFont('Arial', 'B', 9);
             $this->Cell(0.9);
-            $this->Code39($this->GetX() + 1.6,$this->GetY() +0.1, strval(str_pad($material->id_material, '6', 0, 0)) );
+            $this->Code39($this->GetX() + 1.6,$this->GetY() +0.1, strval(str_pad($marbete->material->id_material, '6', 0, 0)) );
             $this->Cell(1.05);
-            $this->Code39($this->GetX() + 9.2,$this->GetY() +0.1, strval(str_pad($material->id_material, '6', 0, 0)) );
+            $this->Code39($this->GetX() + 9.2,$this->GetY() +0.1, strval(str_pad($marbete->material->id_material, '6', 0, 0)) );
             $this->Cell(1.05);
-            $this->Code39($this->GetX() + 17 ,$this->GetY() +0.1, strval(str_pad($material->id_material, '6', 0, 0)) );
+            $this->Code39($this->GetX() + 17 ,$this->GetY() +0.1, strval(str_pad($marbete->material->id_material, '6', 0, 0)) );
             $this->setFillColor('255','255','255');
 
             $this->SetY($this->GetY() +1.35);
@@ -170,7 +126,7 @@ GROUP BY materiales.id_material,
         $this->AddPage();
         $this->partidas();
         try {
-            $this->Output('I', "Formato - Estimacion_#7.pdf", 1);
+            $this->Output('D', "Marbetes Inventario #".$this->inventario->getNumeroFolioFormatAttribute().".pdf", 1);
         } catch (\Exception $ex) {
             dd("error",$ex);
         }

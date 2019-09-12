@@ -5,7 +5,9 @@ namespace App\Models\CADECO\Inventarios;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Obra;
 use App\Models\IGH\Usuario;
+use App\PDF\InventarioMarbete;
 use Illuminate\Database\Eloquent\Model;
 
 class InventarioFisico extends Model
@@ -38,6 +40,15 @@ class InventarioFisico extends Model
 
     public function marbetes(){
         return $this->hasMany(Marbete::class, 'id_inventario_fisico','id');
+    }
+
+    public function obra(){
+        return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
+    }
+
+    public function pdf_marbetes(){
+        $marbetes = new InventarioMarbete($this);
+        return $marbetes->create();
     }
 
     public function validar(){

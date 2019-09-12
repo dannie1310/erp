@@ -5,6 +5,7 @@ namespace App\Services\CADECO\Almacenes;
 
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Repositories\Repository;
+use PhpParser\Node\Stmt\Return_;
 
 class InventarioFisicoService
 {
@@ -30,6 +31,10 @@ class InventarioFisicoService
     public function store($data)
     {
         return $this->repository->create($data);
+    }
+
+    public function generar_marbetes($id){
+        return $this->repository->show($id)->pdf_marbetes();
     }
 
 }
