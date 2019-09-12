@@ -18,7 +18,7 @@ class AjustePositivo extends Transaccion
     protected $fillable = [
         'id_almacen',
         'referencia',
-        'observaciones',
+        'observaciones'
     ];
 
     protected static function boot()
@@ -56,6 +56,7 @@ class AjustePositivo extends Transaccion
             $partida->registrar($data['items'], $ajusteTransaccion->id_almacen, $ajusteTransaccion->id_transaccion);
 
             DB::connection('cadeco')->commit();
+            return $this;
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
@@ -66,11 +67,20 @@ class AjustePositivo extends Transaccion
     public function validarPartidas($partidas, $id)
     {
         foreach ($partidas as  $partida) {
-            $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])->where('id_almacen', '=', $id)
+            $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])
+                ->where('id_almacen', '=', $id)
                 ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();
             if($inventarios['cantidad'] < $inventarios['saldo'])
             {
                 abort(400, "No se puede registrar el ajuste de inentario debido a que los saldos no concuerdan.");
+            }
+            if($inventarios['cantidad'] < $partida['cantidad'])
+            {
+                abort(400, "La cantidad solicitada es mayor a lo existente en inventarios.");
+            }
+            if($inventarios['cantidad'] == $inventarios['saldo'])
+            {
+                abort(400, "Inventarios completos de este material");
             }
         }
     }

@@ -19,6 +19,6 @@ class AjustePositivoPartidaObserver
      */
     public function creating(AjustePositivoPartida $partida)
     {
-        $partida->esado = 0;
+        $partida->estado = 0;
     }
 }
