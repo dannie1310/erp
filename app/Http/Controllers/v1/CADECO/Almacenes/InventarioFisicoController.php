@@ -42,6 +42,7 @@ class InventarioFisicoController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_inventario_fisico')->only('paginate');
         $this->middleware('permiso:iniciar_conteo_inventario_fisico')->only('store');
+        $this->middleware('permiso:descarga_layout_captura_conteos')->only('descargaLayout');
 
 
         $this->service = $service;

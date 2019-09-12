@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
         <button type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
-        <button @click="descargaLayout" type="button" class="btn btn-sm btn-outline-success" title="Descargar Layout"><i class="fa fa-file-excel-o"></i> </button>
+        <button @click="descargaLayout"  v-if="$root.can('descarga_layout_captura_conteos')" type="button" class="btn btn-sm btn-outline-success" title="Descargar Layout"><i class="fa fa-file-excel-o"></i> </button>
 
     </div>
 </template>
