@@ -42,6 +42,7 @@ class InventarioFisicoController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_inventario_fisico')->only('paginate');
         $this->middleware('permiso:iniciar_inventario_fisico')->only('store');
+        $this->middleware('permiso:generar_marbetes')->only('pdf_marbetes');
 
 
         $this->service = $service;
