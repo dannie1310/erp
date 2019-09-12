@@ -23,8 +23,12 @@ class AjustePositivoObserver
         if (!$ajustePositivo->validaTipoAntecedente()) {
             throw New \Exception('La transacción antecedente no es válida');
         }
+        $ajustePositivo->tipo_transaccion = 35;
+        $ajustePositivo->opciones = 0;
+        $ajustePositivo->estado = 0;
         $ajustePositivo->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $ajustePositivo->FechaHoraRegistro = date('Y-m-d h:i:s');
         $ajustePositivo->id_obra = Context::getIdObra();
+        $ajustePositivo->fecha = date('Y-m-d h:i:s');
     }
 }

@@ -19,6 +19,10 @@ class Inventario extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'saldo'
+    ];
+
     public function almacen()
     {
         return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');

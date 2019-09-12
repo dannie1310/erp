@@ -70,7 +70,9 @@ class Material extends Model
 
     public function scopeMaterialInventario($query, $id)
     {
-        $materiales =  Material::query()->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)->pluck('materiales.id_material');
+        $materiales =  Material::query()->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
+             ->whereRaw('inventarios.saldo != inventarios.cantidad')
+            ->pluck('materiales.id_material');
         return $query->whereIn('id_material',array_unique($materiales->toArray()));
     }
 }

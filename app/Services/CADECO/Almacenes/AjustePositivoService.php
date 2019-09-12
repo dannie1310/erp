@@ -10,7 +10,7 @@ namespace App\Services\CADECO\Almacenes;
 
 
 use App\Models\CADECO\AjustePositivo;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\AjustePositivo\Repository;
 
 class AjustePositivoService
 {
@@ -38,8 +38,10 @@ class AjustePositivoService
         $datos = [
             'id_almacen' => $data['id_almacen'],
             'referencia' => $data['referencia'],
+            'observaciones' => $data['observaciones'],
             'items' =>  $data['items']
         ];
-       dd($datos);
+
+        return $this->repository->create($datos);
     }
 }
