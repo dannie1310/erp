@@ -4,9 +4,13 @@
 namespace App\Models\CADECO\Inventarios;
 
 
+use App\CSV\InventarioFisicoLayout;
 use App\Facades\Context;
+use App\Models\CADECO\Obra;
 use App\Models\IGH\Usuario;
+use App\PDF\InventarioMarbete;
 use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InventarioFisico extends Model
 {
@@ -36,8 +40,22 @@ class InventarioFisico extends Model
         return $est ? $est->folio + 1 : 1;
     }
 
+    public function descargaLayout()
+    {
+        return Excel::download(new InventarioFisicoLayout($this), 'LayoutConteo.csv');
+    }
+
     public function marbetes(){
         return $this->hasMany(Marbete::class, 'id_inventario_fisico','id');
+    }
+
+    public function obra(){
+        return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
+    }
+
+    public function pdf_marbetes(){
+        $marbetes = new InventarioMarbete($this);
+        return $marbetes->create();
     }
 
     public function validar(){

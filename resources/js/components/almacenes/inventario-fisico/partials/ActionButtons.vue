@@ -1,6 +1,8 @@
 <template>
     <div class="btn-group">
-        <button type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
+        <button type="button" class="btn btn-sm btn-outline-primary" title="Descargar Marbetes" v-if="value.marbete" @click="pdf_marbetes(value.id)"><i class="fa fa-file-pdf-o"></i> </button>
+        <button @click="descargaLayout"  v-if="$root.can('descarga_layout_captura_conteos')" type="button" class="btn btn-sm btn-outline-success" title="Descargar Layout"><i class="fa fa-file-excel-o"></i> </button>
+
     </div>
 </template>
 
@@ -8,7 +10,21 @@
     export default {
         name: "action-buttons",
         components: {},
-        props: ['value']
+        props: ['value'],
+        methods:{
+            pdf_marbetes(id) {
+                return this.$store.dispatch('almacenes/inventario-fisico/pdf_marbetes', {id:id})
+                    .then(data => {
+                    }).finally( ()=>{
+                    });
+            },
+            descargaLayout() {
+                return this.$store.dispatch('almacenes/inventario-fisico/descargaLayout', {id: this.value.id})
+                    .then(() => {
+                        this.$emit('success')
+                    })
+            }
+        }
     }
 
 </script>

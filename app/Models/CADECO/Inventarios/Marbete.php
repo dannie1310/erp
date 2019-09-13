@@ -28,12 +28,12 @@ class Marbete extends  Model
         return $this->hasMany(Conteo::class, 'id_marbete', 'id');
     }
 
-    public function inventarios(){
-        return $this->hasMany(Almacen::class,'id_almacen','id_almacen');
+    public function almacen(){
+        return $this->belongsTo(Almacen::class,'id_almacen','id_almacen');
     }
 
-    public function materiales(){
-        return $this->hasMany(Material::class,'id_material','id_material');
+    public function material(){
+        return $this->belongsTo(Material::class,'id_material','id_material');
     }
 
 }

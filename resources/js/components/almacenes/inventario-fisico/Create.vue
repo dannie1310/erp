@@ -14,14 +14,14 @@
         data() {
             return {
                 cargando: false,
-                data: null
+                dato:''
             }
         },
         mounted(){
         },
         methods:{
             store() {
-                return this.$store.dispatch('almacenes/inventario-fisico/store', this.$data.data)
+                return this.$store.dispatch('almacenes/inventario-fisico/store', this.dato)
                     .then(data => {
                         this.$emit('created', data);
                     }).finally( ()=>{
