@@ -14,8 +14,42 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
+                                <!--Almacen-->
+                                <div class="col-md-12">
+                                    <div class="form-group error-content">
+                                        <label for="id_almacen">Almacen</label>
+                                               <select
+                                                   class="form-control"
+                                                   name="id_almacen"
+                                                   data-vv-as="Almacen"
+                                                   id="id_almacen">
+                                            <option value>-- Seleccione un Almacen --</option>
+                                            <option  v-for="">
+
+                                            </option>
+
+                                        </select>
+                                    </div>
+                                </div>
 
 
+                                <!--Material-->
+                                     <div class="col-md-12">
+                                    <div class="form-group error-content">
+                                        <label for="id_material">Material</label>
+                                               <select
+                                                   class="form-control"
+                                                   name="id_material"
+                                                   data-vv-as="Material"
+                                                   id="id_material">
+                                            <option value>-- Seleccione un Material --</option>
+                                            <option  v-for="">
+
+                                            </option>
+
+                                        </select>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -38,14 +72,14 @@
         components: {Index},
         data() {
             return {
-
+                almacenes:[],
 
 
             }
         },
 
         mounted() {
-            // this.getBancos()
+            this.getAlmacenes()
 
 
         },
@@ -62,6 +96,15 @@
                 //     .then(data => {
                 //         this.bancos= data.data;
                 //     })
+            },
+            getAlmacenes() {
+                return this.$store.dispatch('cadeco/almacen/index', {
+                params: {sort: 'descripcion', order: 'asc', }
+                })
+                    .then(data => {
+                        this.almacenes = data;
+                    })
+
             },
             validate() {
                 // this.$validator.validate().then(result => {
