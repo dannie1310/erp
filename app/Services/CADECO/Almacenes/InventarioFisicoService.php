@@ -29,7 +29,8 @@ class InventarioFisicoService
 
     public function store($data)
     {
-        return $this->repository->create($data);
+        $inventario = $this->repository->create($data);
+        return $this->repository->show($inventario->id);
     }
 
 }
