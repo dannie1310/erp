@@ -44,7 +44,7 @@ class InventarioMarbete extends Rotation
         foreach ($this->inventario->marbetes as $key => $material) {
             $marbete = $material;
             $folio_format = str_pad($marbete->folio, '6', 0, 0);
-            $marb = $this->inventario->getNumeroFolioFormatAttribute() .' '. chunk_split($folio_format, 3);
+            $marb = $this->inventario->getNumeroFolioFormatAttribute() .' - '. chunk_split($folio_format, 3);
             $this->SetFont('Arial', 'B', 11);
             $this->Cell(4.5);
             $this->Cell(3, 0.55, utf8_decode($marb), '', 0, 'R', 1);
