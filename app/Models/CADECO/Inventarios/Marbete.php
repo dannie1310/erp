@@ -32,4 +32,8 @@ class Marbete extends  Model
         return $this->belongsTo(Material::class,'id_material','id_material');
     }
 
+    public function conteos(){
+        return $this->hasMany(Conteo::class, 'id_marbete', 'id');
+    }
+
 }

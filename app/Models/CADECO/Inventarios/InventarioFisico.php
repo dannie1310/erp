@@ -5,6 +5,7 @@ namespace App\Models\CADECO\Inventarios;
 
 
 use App\CSV\InventarioFisicoLayout;
+use App\CSV\InventarioFisicoLayoutResumen;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\IGH\Usuario;
@@ -43,6 +44,10 @@ class InventarioFisico extends Model
     public function descargaLayout()
     {
         return Excel::download(new InventarioFisicoLayout($this), 'LayoutConteo.csv');
+    }
+
+    public function generar_resumen_conteos(){
+        return Excel::download(new InventarioFisicoLayoutResumen($this), 'Inventario_Resumen.csv');
     }
 
     public function marbetes(){
