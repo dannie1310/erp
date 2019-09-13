@@ -59,10 +59,14 @@ export default{
                                 .post(URI + 'layout', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Conteos registrados correctamente", {
-                                        icon: "success",
-                                        timer: 3000,
-                                        buttons: false
+                                    console.log(data);
+                                    swal("No se pudieron insertar los siguientes conteos:"+data, {
+                                        buttons: {
+                                            confirm: {
+                                                text: 'Aceptar',
+                                                closeModal: true,
+                                            }
+                                        }
                                     }).then(() => {
                                         resolve(data);
                                     })

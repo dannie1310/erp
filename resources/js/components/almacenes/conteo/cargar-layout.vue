@@ -1,6 +1,10 @@
 <template>
     <span>
-        <button @click="load" class="btn btn-app btn-info pull-right" title="Cargar" :disabled="cargando">
+        <button @click="load" class="btn btn-sm btn-outline-success" title="Cargar Layout" :disabled="cargando" v-if="id">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-upload" v-else></i>
+        </button>
+        <button @click="load" class="btn btn-app btn-info pull-right" title="Cargar Layout" :disabled="cargando" v-else-if="$root.can('cargar_layout_captura_conteos')">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-upload" v-else></i>
             Cargar Layout
@@ -51,6 +55,7 @@
 <script>
     export default {
         name: "cargar-layout",
+        props: ['id'],
         data() {
             return {
                 cargando: false,
@@ -61,14 +66,6 @@
         mounted(){
         },
         methods:{
-            store() {
-                return this.$store.dispatch('almacenes/inventario-fisico/store', this.$data.data)
-                    .then(data => {
-                        this.$emit('created', data);
-                    }).finally( ()=>{
-                        this.cargando = false;
-                    });
-            },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result){
@@ -106,8 +103,8 @@
                             params: { _method: 'POST'}
                         }
                     })
-                    .then(() => {
-                        this.$emit('success')
+                    .then(data => {
+                        this.$emit('change', data);
                     }).finally(() => {
                         this.$refs.carga_layout = '';
                         this.file = null;

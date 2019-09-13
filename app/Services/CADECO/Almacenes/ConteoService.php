@@ -73,9 +73,9 @@ class ConteoService
 
         if($mensaje != "")
         {
-            abort(300 , $mensaje. "\n\n\n\nFavor de revisar el Layout de conteos.");
+            return $mensaje;
         }
-        return true;
+        return [];
     }
     public function getCsvData($file){
         $myfile = fopen($file, "r") or die("Unable to open file!");

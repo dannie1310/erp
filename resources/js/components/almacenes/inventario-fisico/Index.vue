@@ -93,6 +93,7 @@
                             buttons: $.extend({}, {
                                 id:inventario.id,
                                 marbete: self.$root.can('generar_marbetes'),
+                                estado: inventario.estado,
                             })
                         })
                     });

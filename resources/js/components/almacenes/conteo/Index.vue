@@ -1,7 +1,7 @@
 <template>
    <div class="row">
       <div class="col-12">
-         <Layout @created="paginate()"></Layout>
+         <Layout @change="paginate()"></Layout>
       </div>
       <div class="col-12">
          <div class="card">
