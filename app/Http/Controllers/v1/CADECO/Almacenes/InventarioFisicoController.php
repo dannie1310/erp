@@ -45,6 +45,7 @@ class InventarioFisicoController extends Controller
         $this->middleware('permiso:generar_marbetes')->only('pdf_marbetes');
         $this->middleware('permiso:descarga_layout_captura_conteos')->only('descargaLayout');
         $this->middleware('permiso:descargar_resumen_conteos')->only('descargar_resumen_conteo');
+        $this->middleware('permiso:cerrar_inventario_fisico')->only('actualizar');
 
 
         $this->service = $service;
@@ -60,6 +61,13 @@ class InventarioFisicoController extends Controller
     {
         return $this->service->descargaLayout($id);
     }
+
+    public function actualizar($id)
+    {
+        $item = $this->service->actualizar($id);
+        return $this->respondWithItem($item);
+    }
+
 
     public function descargar_resumen_conteo($id){
         return $this->service->generar_resumen_conteos($id);

@@ -94,6 +94,9 @@
                                 id:inventario.id,
                                 marbete: self.$root.can('generar_marbetes'),
                                 resumen: self.$root.can('descargar_resumen_conteos'),
+                                estado: inventario.estado,
+                                actualizar: self.$root.can('cerrar_inventario_fisico')
+                                ,
                             })
                         })
                     });

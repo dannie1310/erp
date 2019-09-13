@@ -154,6 +154,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/pdf_marbetes', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@pdf_marbetes')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@descargaLayout');
             $api->get('{id}/descargar_resumen_conteo', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@descargar_resumen_conteo');
+            $api->patch('{id}/actualizar', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@actualizar')->where(['id' => '[0-9]+']);
         });
     });
 

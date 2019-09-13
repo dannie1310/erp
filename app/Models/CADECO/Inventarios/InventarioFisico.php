@@ -19,6 +19,9 @@ class InventarioFisico extends Model
     protected $table = 'Inventarios.inventario_fisico';
     protected $primaryKey = 'id';
 
+    protected $fillable = [
+        'estado'
+    ];
     public $timestamps = false;
 
     protected static function boot()

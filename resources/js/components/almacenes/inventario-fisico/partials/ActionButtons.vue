@@ -11,6 +11,7 @@
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-download" v-else></i>
         </button>
+        <button @click="update" v-if="$root.can('cerrar_inventario_fisico') && value.estado == 0" type="button" class="btn btn-sm btn-outline-success" title="Cerrar Inventario Físico"><i class="fa fa-lock"></i> </button>
 
     </div>
 </template>
@@ -48,6 +49,12 @@
                         this.$emit('success')
                     }).finally(() => {
                         this.cargando = false;
+                    })
+            },
+            update() {
+                return this.$store.dispatch('almacenes/inventario-fisico/update', {id: this.value.id})
+                    .then(() => {
+                        this.$emit('success')
                     })
             }
         }

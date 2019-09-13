@@ -34,6 +34,12 @@ class InventarioFisicoService
         return $this->repository->show($inventario->id);
     }
 
+    public function actualizar($id){
+        $dato = ['estado' => 1];
+        $this->repository->show($id)->update($dato);
+        return $this->repository->show($id);
+    }
+
     public function generar_marbetes($id){
         return $this->repository->show($id)->pdf_marbetes();
     }
