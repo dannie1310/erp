@@ -24,6 +24,10 @@ class Marbete extends  Model
         'folio'
     ];
 
+    public function conteos(){
+        return $this->hasMany(Conteo::class, 'id_marbete', 'id');
+    }
+
     public function inventarios(){
         return $this->hasMany(Almacen::class,'id_almacen','id_almacen');
     }

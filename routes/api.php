@@ -152,6 +152,11 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@paginate');
         });
+
+        $api->group(['prefix' => 'conteo'], function ($api) {
+            $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
+//            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@paginate');
+        });
     });
 
     /**

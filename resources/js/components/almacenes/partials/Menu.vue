@@ -28,6 +28,12 @@
                     <p>Inventario Físico</p>
                 </router-link>
             </li>
+            <li class="nav-item" v-if="$root.can('consultar_inventario_fisico')">
+                <router-link :to="{name: 'conteo'}" class="nav-link">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>Conteos</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->

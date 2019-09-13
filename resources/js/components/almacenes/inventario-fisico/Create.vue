@@ -13,14 +13,15 @@
         name: "inventario-fisico-create",
         data() {
             return {
-                // cargando: false
+                cargando: false,
+                data: null
             }
         },
         mounted(){
         },
         methods:{
             store() {
-                return this.$store.dispatch('almacenes/inventario-fisico/store', this.$data)
+                return this.$store.dispatch('almacenes/inventario-fisico/store', this.$data.data)
                     .then(data => {
                         this.$emit('created', data);
                     }).finally( ()=>{

@@ -1,23 +1,23 @@
-const URI = '/api/almacenes/inventario-fisico/';
+const URI = '/api/almacenes/conteo/';
 export default{
     namespaced: true,
     state: {
-        inventarios: [],
-        currentInventario: null,
+        conteos: [],
+        currentConteo: null,
         meta: {}
     },
 
     mutations: {
-        SET_INVETARIOS(state, data){
-            state.inventarios = data
+        SET_CONTEOS(state, data){
+            state.conteos = data
         },
 
         SET_META(state, data){
             state.meta = data
         },
 
-        SET_INVETARIO(state, data){
-            state.currentInventario = data
+        SET_CONTEO(state, data){
+            state.currentConteo = data
         },
     },
 
@@ -35,19 +35,19 @@ export default{
                     })
             });
         },
-        store(context, payload) {
+        cargaManualLayout(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar inventario fisico",
-                    text: "¿Está seguro/a de que quiere registrar un nuevo inventario físico?",
-                    icon: "info",
+                    title: "Cargar Layout manual de conteo",
+                    text: "¿Está seguro/a de que desea generar conteo?",
+                    icon: "warning",
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Registrar',
+                            text: 'Si, Generar',
                             closeModal: false,
                         }
                     }
@@ -55,20 +55,20 @@ export default{
                     .then((value) => {
                         if (value) {
                             axios
-                                .post(URI, payload)
+                                .post(URI + 'layout', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Inventario físico registrado correctamente", {
+                                    swal("Conteos registrados correctamente", {
                                         icon: "success",
-                                        timer: 2000,
+                                        timer: 3000,
                                         buttons: false
                                     }).then(() => {
                                         resolve(data);
                                     })
                                 })
                                 .catch(error => {
-                                    reject(error);
-                                });
+                                    reject('Archivo no procesable');
+                                })
                         }
                     });
             });
@@ -76,16 +76,16 @@ export default{
     },
 
     getters: {
-        inventarios(state) {
-            return state.inventarios
+        conteos(state) {
+            return state.conteos
         },
 
         meta(state) {
             return state.meta
         },
 
-        currentInventario(state) {
-            return state.currentInventario
+        currentConteo(state) {
+            return state.currentConteo
         }
     }
 }

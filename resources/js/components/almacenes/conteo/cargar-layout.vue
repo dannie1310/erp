@@ -1,0 +1,153 @@
+<template>
+    <span>
+        <button @click="load" class="btn btn-app btn-info pull-right" title="Cargar" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-upload" v-else></i>
+            Cargar Layout
+        </button>
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Selecciona archivo de layout.</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form" @submit.prevent="validate">
+
+                        <div class="modal-body">
+                            <div class="row justify-content-between">
+                                <div class="col-md-8">
+                                     <label for="carga_layout" class="col-lg-12 col-form-label">Cargar Layout</label>
+                                    <div class="col-lg-12">
+                                        <input type="file" class="form-control" id="carga_layout"
+                                               @change="onFileChange"
+                                               row="3"
+                                               v-validate="{ ext: ['csv']}"
+                                               name="carga_layout"
+                                               data-vv-as="Layout"
+                                               ref="carga_layout"
+                                               :class="{'is-invalid': errors.has('carga_layout')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" @click="validate">Cargar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </span>
+</template>
+
+<script>
+    export default {
+        name: "cargar-layout",
+        data() {
+            return {
+                cargando: false,
+                data: null,
+                file: null,
+            }
+        },
+        mounted(){
+        },
+        methods:{
+            store() {
+                return this.$store.dispatch('almacenes/inventario-fisico/store', this.$data.data)
+                    .then(data => {
+                        this.$emit('created', data);
+                    }).finally( ()=>{
+                        this.cargando = false;
+                    });
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result){
+                        this.cargarLayout()
+                    }else{
+                        if(this.$refs.carga_layout.value !== ''){
+                            this.$refs.carga_layout.value = '';
+                            this.file = null;
+                        }
+                        this.$validator.errors.clear();
+                        swal('¡Error!', 'Error archivos de entrada invalidos.', 'error')
+                    }
+                });
+            },
+            load() {
+                this.$refs.carga_layout = '';
+                this.file = null;
+                this.$validator.errors.clear();
+
+                $(this.$refs.modal).modal('show');
+            },
+            cerrarModal(event) {
+                this.$refs.carga_layout = '';
+                this.file = null;
+                this.$validator.errors.clear();
+                $(this.$refs.modal).modal('hide')
+            },
+            cargarLayout(){
+                var formData = new FormData();
+                formData.append('file',  this.file);
+                return this.$store.dispatch('almacenes/conteo/cargaManualLayout',
+                    {
+                        data: formData,
+                        config: {
+                            params: { _method: 'POST'}
+                        }
+                    })
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.$refs.carga_layout = '';
+                        this.file = null;
+                        this.file_name = '';
+                        this.$validator.errors.clear();
+                        setTimeout(() => {
+                            $(this.$refs.modal).modal('hide');
+
+                        }, 100);
+                    });
+            },
+            createImage(file, tipo) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.file = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+            },
+
+            onFileChange(e){
+                this.file = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                if(e.target.id == 'carga_layout') {
+                    this.createImage(files[0]);
+                }
+            },
+        }
+    }
+</script>
+
+<style>
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+    }
+</style>
