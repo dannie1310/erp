@@ -35,7 +35,6 @@ class AjustePositivoPartida extends Item
                     if($cantidad_total > $disponible) {
                         $inventario->saldo = $inventario->saldo + $disponible;
                         $inventario->save();
-                        dd(($inventario->monto_total/$inventario->cantidad)($disponible),$inventario->monto_total,$inventario->cantidad,$disponible);
                         $data = [
                                 'id_transaccion' => $ajuste,
                                 'item_antecedente' => $inventario->id_lote,
