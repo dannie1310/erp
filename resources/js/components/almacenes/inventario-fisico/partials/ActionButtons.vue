@@ -12,7 +12,6 @@
             <i class="fa fa-download" v-else></i>
         </button>
         <button @click="update" v-if="$root.can('cerrar_inventario_fisico') && value.estado == 0" type="button" class="btn btn-sm btn-outline-success" title="Cerrar Inventario Físico"><i class="fa fa-lock"></i> </button>
-
     </div>
 </template>
 
