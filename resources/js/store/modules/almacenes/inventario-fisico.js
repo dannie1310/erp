@@ -73,6 +73,17 @@ export default{
                     });
             });
         },
+        pdf_marbetes(context, payload) {
+            var URL = '/api/almacenes/inventario-fisico/' + payload.id +'/pdf_marbetes?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(URL, "_blank");
+            win.onbeforeunload = ()=> {
+                swal("Marbetes descargados correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
         descargaLayout(context, payload){
             return new Promise((resolve, reject) => {
                 axios
