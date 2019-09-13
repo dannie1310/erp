@@ -29,15 +29,14 @@
              HeaderSettings: false,
              columns: [
                 { title: '#', field: 'index', sortable: false },
-                { title: 'Folio', field: 'id', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Folio', field: 'folio', sortable: true, thComp: require('../../globals/th-Filter')},
                 { title: 'Tipo Conteo', field: 'tipo_conteo', sortable: true, thComp: require('../../globals/th-Filter')},
-                { title: 'Cantidad Usados', field: 'cantidad_usados', sortable: true, thComp: require('../../globals/th-Filter')},
-                { title: 'Cantidad Nuevos', field: 'cantidad_nuevo', sortable: true, thComp: require('../../globals/th-Filter')},
-                { title: 'Cantidad inservibles', field: 'cantidad_inservible', sortable: true, thComp: require('../../globals/th-Filter')},
-                { title: 'Total', field: 'total', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Cantidad Usados', field: 'cantidad_usados', sortable: true},
+                { title: 'Cantidad Nuevos', field: 'cantidad_nuevo', sortable: true},
+                { title: 'Cantidad inservibles', field: 'cantidad_inservible', sortable: true},
+                { title: 'Total', field: 'total', sortable: true},
                 { title: 'Iniciales', field: 'iniciales', sortable: true, thComp: require('../../globals/th-Filter')},
                 { title: 'Observaciones', field: 'observaciones', sortable: true},
-                // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
              ],
              data: [],
              total: 0,
@@ -87,17 +86,14 @@
                    self.$data.data.push({
                      index: (i + 1) + self.query.offset,
                      id : conteo.id,
-                     tipo_conteo : conteo.tipo_conteo,
+                     tipo_conteo : conteo.tipo_conteo_format,
+                     folio : conteo.folio_marbete,
                      cantidad_usados : conteo.cantidad_usados,
                      cantidad_nuevo : conteo.cantidad_nuevo,
                      cantidad_inservible : conteo.cantidad_inservible,
                      total : conteo.total,
                      iniciales : conteo.iniciales,
-                     observaciones : conteo.observaciones,
-                      buttons: $.extend({}, {
-                         id:conteo.id,
-                         marbete: self.$root.can('generar_marbetes'),
-                      })
+                     observaciones : conteo.observaciones
                    })
                 });
              },

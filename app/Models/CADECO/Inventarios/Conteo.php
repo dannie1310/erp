@@ -31,4 +31,21 @@ class Conteo extends Model
         return $this->belongsTo(Marbete::class,'id_marbete','id');
     }
 
+    public function getTipoConteoFormatAttribute()
+    {
+        if($this->tipo_conteo == 1){
+            return 'Primero';
+        }else if($this->tipo_conteo == 2){
+            return 'Segundo';
+        }else if($this->tipo_conteo == 3){
+            return 'Tercero';
+        }else{
+            return 'Extra';
+        }
+
+    }
+    public function getFolioMarbeteAttribute(){
+        return $this->marbete->invetarioFisico->numero_folio_format."-".$this->marbete->folio_format;
+    }
+
 }

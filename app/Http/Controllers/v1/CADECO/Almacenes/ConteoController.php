@@ -35,8 +35,7 @@ class ConteoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-//        $this->middleware('permiso:consultar_inventario_fisico')->only('paginate');
-//        $this->middleware('permiso:iniciar_inventario_fisico')->only('store');
+        $this->middleware('permiso:cargar_layout_captura_conteos')->only('cargaLayout');
 
 
         $this->service = $service;

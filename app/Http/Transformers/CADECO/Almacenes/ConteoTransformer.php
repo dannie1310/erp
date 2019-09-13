@@ -18,6 +18,8 @@ class ConteoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'tipo_conteo' => $model->tipo_conteo,
+            'tipo_conteo_format' => $model->tipo_conteo_format,
+            'folio_marbete' => $model->folio_marbete,
             'cantidad_usados' => $model->cantidad_usados,
             'cantidad_nuevo' => $model->cantidad_nuevo,
             'cantidad_inservible' => $model->cantidad_inservible,
