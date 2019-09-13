@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\CADECO\AjustePositivo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\SalidaEliminada;
@@ -63,6 +64,7 @@ use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
+use App\Observers\CADECO\AjustePositivoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
@@ -220,6 +222,7 @@ class AppServiceProvider extends ServiceProvider
             MovimientoBancario::observe(MovimientoBancarioObserver::class);
             TraspasoCuentas::observe(TraspasoCuentasObserver::class);
 
+            AjustePositivo::observe(AjustePositivoObserver::class);
             Banco::observe(BancoObserver::class);
             Credito::observe(CreditoObserver::class);
             Cuenta::observe(CuentaObserver::class);

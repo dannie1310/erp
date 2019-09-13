@@ -43,6 +43,7 @@ class AjustePositivoTransformer extends TransformerAbstract
             'folio' => $model->numero_folio,
             'numero_folio_format' => $model->numero_folio_format_orden,
             'referencia' => $model->referencia,
+            'estado_format' => $model->estatus
         ];
     }
 

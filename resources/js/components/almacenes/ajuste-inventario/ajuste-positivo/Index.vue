@@ -1,5 +1,12 @@
 <template>
     <div class="row">
+        <div class="col-12"  v-if="$root.can('registrar_ajuste_positivo')" :disabled="cargando">
+            <button @click="create" class="btn btn-app btn-info pull-right">
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-plus" v-else></i>
+                Registrar Ajuste
+            </button>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -17,8 +24,10 @@
 </template>
 
 <script>
+    import Create from "./Create";
     export default {
         name: "ajuste-positivo-index",
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
@@ -33,7 +42,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {sort: 'numero_folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -58,7 +67,10 @@
                     .finally(() => {
                         this.cargando = false;
                     })
-            }
+            },
+            create() {
+                this.$router.push({name: 'ajuste-positivo-create'});
+            },
         },
         computed: {
             ajustes(){
@@ -81,7 +93,7 @@
                             index: (i + 1) + self.query.offset,
                             numero_folio: ajustes.numero_folio_format,
                             fecha: ajustes.fecha_format,
-                            id_almacen: ajustes.almacen.descripcion,
+                            id_almacen: typeof ajustes.almacen !== 'undefined' ?  ajustes.almacen.descripcion : '',
                             referencia: ajustes.referencia,
                             observaciones: ajustes.observaciones,
                             estado: ajustes.estado_format

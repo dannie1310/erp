@@ -208,9 +208,20 @@ export const routes = [
                                 name: 'AJUSTE POSITIVO (+)'
                             },
                             middleware: [auth, context, permission],
-                            permission: 'consultar_entrada_almacen'
+                            permission: 'consultar_ajuste_positivo'
                         }
-                    }
+                    },
+                    {
+                        path: 'create',
+                        name: 'ajuste-positivo-create',
+                        component: require('./components/almacenes/ajuste-inventario/ajuste-positivo/Create'),
+                        meta: {
+                            title: 'Registrar Ajuste Positivo (+) de Inventario',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'ajuste-inventario'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_ajuste_positivo'
+                        }
+                    },
                 ]
             },
             {
