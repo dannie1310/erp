@@ -35,6 +35,7 @@ export default{
                     })
             });
         },
+
         cargaManualLayout(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

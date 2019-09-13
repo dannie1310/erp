@@ -29,20 +29,100 @@
              HeaderSettings: false,
              columns: [
                 { title: '#', field: 'index', sortable: false },
-                { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
-                { title: 'Usuario Inició', field: 'usuario_inicia', sortable: true, thComp: require('../../globals/th-Filter')},
-                { title: 'Fecha/Hora Inicio', field: 'fecha_hora_inicio', sortable: true, thComp: require('../../globals/th-Filter')},
-                { title: 'Cantidad de Marbetes', field: 'cantidad_marbetes', sortable: true, thComp: require('../../globals/th-Filter')},
-                { title: 'Estado', field: 'estado', sortable: true},
+                { title: 'Folio', field: 'id', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Tipo Conteo', field: 'tipo_conteo', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Cantidad Usados', field: 'cantidad_usados', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Cantidad Nuevos', field: 'cantidad_nuevo', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Cantidad inservibles', field: 'cantidad_inservible', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Total', field: 'total', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Iniciales', field: 'iniciales', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Observaciones', field: 'observaciones', sortable: true},
                 // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
              ],
              data: [],
              total: 0,
-             query: {include: ['usuario'],sort: 'folio', order: 'desc'},
+             query: {include: ['marbete'],sort: 'id_marbete', order: 'desc'},
              estado: "",
              cargando: false
           }
        },
+       mounted() {
+          this.$Progress.start();
+          this.paginate()
+                  .finally(() => {
+                     this.$Progress.finish();
+                  })
+       },
+
+       methods: {
+          paginate() {
+             this.cargando = true;
+             return this.$store.dispatch('almacenes/conteo/paginate', { params: this.query})
+                     .then(data => {
+                        this.$store.commit('almacenes/conteo/SET_CONTEOS', data.data);
+                        this.$store.commit('almacenes/conteo/SET_META', data.meta);
+                     })
+                     .finally(() => {
+                        this.cargando = false;
+                     })
+          }
+       },
+       computed: {
+          conteos(){
+             return this.$store.getters['almacenes/conteo/conteos'];
+          },
+          meta(){
+             return this.$store.getters['almacenes/conteo/meta'];
+          },
+          tbodyStyle() {
+             return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+          }
+       },
+       watch: {
+          conteos: {
+             handler(conteos) {
+                let self = this
+                self.$data.data = []
+                conteos.forEach(function (conteo, i) {
+                   self.$data.data.push({
+                     index: (i + 1) + self.query.offset,
+                     id : conteo.id,
+                     tipo_conteo : conteo.tipo_conteo,
+                     cantidad_usados : conteo.cantidad_usados,
+                     cantidad_nuevo : conteo.cantidad_nuevo,
+                     cantidad_inservible : conteo.cantidad_inservible,
+                     total : conteo.total,
+                     iniciales : conteo.iniciales,
+                     observaciones : conteo.observaciones,
+                      buttons: $.extend({}, {
+                         id:conteo.id,
+                         marbete: self.$root.can('generar_marbetes'),
+                      })
+                   })
+                });
+             },
+             deep: true
+          },
+          meta: {
+             handler(meta) {
+                let total = meta.pagination.total
+                this.$data.total = total
+             },
+             deep: true
+          },
+          query: {
+             handler(query) {
+                this.paginate(query)
+             },
+             deep: true
+          },
+          cargando(val) {
+             $('tbody').css({
+                '-webkit-filter': val ? 'blur(2px)' : '',
+                'pointer-events': val ? 'none' : ''
+             });
+          }
+       }
     }
 </script>
 <style>

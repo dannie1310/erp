@@ -5,9 +5,9 @@ namespace App\Http\Controllers\v1\CADECO\Almacenes;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Transformers\CADECO\Almacenes\ConteoTransformer;
 use App\Http\Transformers\CADECO\Almacenes\InventarioFisicoTransformer;
 use App\Services\CADECO\Almacenes\ConteoService;
-use App\Services\CADECO\Almacenes\InventarioFisicoService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
@@ -16,6 +16,9 @@ class ConteoController extends Controller
 {
     use ControllerTrait;
 
+    /**
+     * @var ConteoService
+     */
     protected $service;
 
     /**
@@ -24,11 +27,11 @@ class ConteoController extends Controller
     protected $fractal;
 
     /**
-     * @var InventarioFisicoTransformer
+     * @var ConteoTransformer
      */
     protected $transformer;
 
-    public function __construct(ConteoService $service, Manager $fractal, InventarioFisicoTransformer $transformer)
+    public function __construct(ConteoService $service, Manager $fractal, ConteoTransformer $transformer)
     {
         $this->middleware('auth:api');
         $this->middleware('context');

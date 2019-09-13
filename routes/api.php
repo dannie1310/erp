@@ -157,7 +157,7 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'conteo'], function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
-//            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@paginate');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@paginate');
         });
     });
 
