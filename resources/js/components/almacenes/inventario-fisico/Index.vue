@@ -92,7 +92,7 @@
                             estado: inventario.estado_format,
                             buttons: $.extend({}, {
                                 id:inventario.id,
-                                show: self.$root.can('generar_marbetes'),
+                                marbete: self.$root.can('generar_marbetes'),
                             })
                         })
                     });
