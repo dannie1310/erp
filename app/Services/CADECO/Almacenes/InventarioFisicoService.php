@@ -37,4 +37,9 @@ class InventarioFisicoService
         return $this->repository->show($id)->pdf_marbetes();
     }
 
+    public function descargaLayout($id)
+    {
+        return $this->repository->show($id)->descargaLayout();
+    }
+
 }
