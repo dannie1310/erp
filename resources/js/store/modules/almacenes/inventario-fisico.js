@@ -19,6 +19,16 @@ export default{
         SET_INVETARIO(state, data){
             state.currentInventario = data
         },
+
+        UPDATE_INVENTARIOS(state, data) {
+            state.inventarios = state.inventarios.map(inventario => {
+                if (inventario.id === data.id) {
+                    return Object.assign({}, inventario, data)
+                }
+                return inventario
+            })
+            state.currentInventario != null ? data : null;
+        }
     },
 
     actions: {
@@ -101,7 +111,48 @@ export default{
                         reject(error);
                     })
             });
-        }
+        },
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Cerrar Inventario Físico",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cerrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/actualizar', payload.data, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Inventario Físico cerrado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_INVENTARIOS',data);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

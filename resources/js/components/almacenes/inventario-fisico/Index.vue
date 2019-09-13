@@ -30,8 +30,8 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Usuario Inició', field: 'usuario_inicia', sortable: true, thComp: require('../../globals/th-Date')},
-                    { title: 'Fecha/Hora Inicio', field: 'fecha_hora_inicio', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Usuario Inició', field: 'usuario_inicia', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Fecha/Hora Inicio', field: 'fecha_hora_inicio', sortable: true, thComp: require('../../globals/th-Date')},
                     { title: 'Cantidad de Marbetes', field: 'cantidad_marbetes', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
@@ -94,6 +94,8 @@
                                 id:inventario.id,
                                 marbete: self.$root.can('generar_marbetes'),
                                 estado: inventario.estado,
+                                actualizar: self.$root.can('cerrar_inventario_fisico')
+                                ,
                             })
                         })
                     });
