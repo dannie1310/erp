@@ -68,6 +68,11 @@ class Material extends Model
         return $query->where('tipo_material', '=', $tipo);
     }
 
+    public function getDisponibleInventarioAtributte()
+    {
+        return $this->inventarios()->sum('cantidad') - $this->inventarios()->sum('saldo') ;
+    }
+
     public function scopeMaterialInventario($query, $id)
     {
         $materiales =  Material::query()->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)

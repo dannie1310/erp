@@ -35,19 +35,20 @@ class AjustePositivoPartida extends Item
                     if($cantidad_total > $disponible) {
                         $inventario->saldo = $inventario->saldo + $disponible;
                         $inventario->save();
+                        dd(($inventario->monto_total/$inventario->cantidad)($disponible),$inventario->monto_total,$inventario->cantidad,$disponible);
                         $data = [
                                 'id_transaccion' => $ajuste,
                                 'item_antecedente' => $inventario->id_lote,
                                 'id_almacen' => $id_almacen,
                                 'id_material' => $inventario->id_material,
                                 'cantidad' => $disponible,
-                                'importe' => $partida['monto_pagado'],
+                                'importe' => ($inventario->monto_total/$inventario->cantidad)*($disponible),
                                 'referencia' => $partida['id_material']['unidad']
                             ];
                         $registro_partida = $this->create($data);
                         $cantidad_total -= $disponible;
                     } else{
-                        $inventario->saldo = $cantidad_total;
+                        $inventario->saldo =  $inventario->saldo + $cantidad_total;
                         $inventario->save();
                         $data = [
                             'id_transaccion' => $ajuste,
@@ -55,7 +56,7 @@ class AjustePositivoPartida extends Item
                             'id_almacen' => $id_almacen,
                             'id_material' => $inventario->id_material,
                             'cantidad' => $cantidad_total,
-                            'importe' => $partida['monto_pagado'],
+                            'importe' => ($inventario->monto_total/$inventario->cantidad)*($cantidad_total),
                             'referencia' => $partida['id_material']['unidad']
                         ];
                         $registro_partida = $this->create($data);

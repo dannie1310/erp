@@ -68,8 +68,6 @@
                                                         <th class="bg-gray-light">Item</th>
                                                         <th class="bg-gray-light">Unidad</th>
                                                         <th class="bg-gray-light">Cantidad</th>
-                                                        <th class="bg-gray-light">Monto Total</th>
-                                                        <th class="bg-gray-light">Monto Pagado</th>
                                                         <th class="bg-gray-light">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar">
                                                                 <i class="fa fa-plus"></i>
@@ -117,50 +115,19 @@
                                                         </td>
                                                         <td>
                                                             <input
+                                                                    :disabled = "!item.id_material"
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`cantidad[${i}]`"
                                                                     v-model="item.cantidad"
                                                                     data-vv-as="Cantidad"
-                                                                    v-validate="{required: true, numeric:true}"
+                                                                    v-validate="{required: true,min_value: 0, max_value: item.id_material.disponible}"
                                                                     class="form-control"
                                                                     :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                                     id="cantidad"
                                                                     placeholder="Cantidad">
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                    type="number"
-                                                                    step="any"
-                                                                    :name="`monto_total[${i}]`"
-                                                                    v-model="item.monto_total"
-                                                                    data-vv-as="Monto Total"
-                                                                    v-validate="{required: true, numeric:true}"
-                                                                    class="form-control"
-                                                                    :class="{'is-invalid': errors.has(`monto_total[${i}]`)}"
-                                                                    id="monto_total"
-                                                                    placeholder="Monto Total">
-                                                            <div class="invalid-feedback"
-                                                                 v-show="errors.has(`monto_total[${i}]`)">{{ errors.first(`monto_total[${i}]`) }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                    type="number"
-                                                                    step="any"
-                                                                    :name="`monto_pagado[${i}]`"
-                                                                    v-model="item.monto_pagado"
-                                                                    data-vv-as="Monto Pagado"
-                                                                    v-validate="{required: true, numeric:true}"
-                                                                    class="form-control"
-                                                                    :class="{'is-invalid': errors.has(`monto_pagado[${i}]`)}"
-                                                                    id="monto_pagado"
-                                                                    placeholder="Monto Pagado">
-                                                            <div class="invalid-feedback"
-                                                                 v-show="errors.has(`monto_pagado[${i}]`)">{{ errors.first(`monto_pagado[${i}]`) }}
                                                             </div>
                                                         </td>
                                                         <td>
@@ -271,8 +238,6 @@
                 var array = {
                     'id_material' : '',
                     'cantidad' : '',
-                    'monto_total' : '',
-                    'monto_pagado' : ''
                 }
                 this.items.push(array);
             },
