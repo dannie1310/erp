@@ -21,7 +21,7 @@ class StoreAjustePositivoRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('registrar_distribucion_recursos_remesa');
+        return auth()->user()->can('registrar_ajuste_positivo');
     }
 
     /**

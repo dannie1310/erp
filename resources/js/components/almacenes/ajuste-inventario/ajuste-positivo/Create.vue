@@ -80,6 +80,7 @@
                                                         <td>{{ i + 1}}</td>
                                                         <td>
                                                              <select
+                                                                     :disabled = "!bandera"
                                                                      class="form-control"
                                                                      :name="`id_material[${i}]`"
                                                                      v-model="item.id_material"
@@ -96,6 +97,7 @@
                                                         </td>
                                                         <td>
                                                               <select
+                                                                      :disabled = "!bandera"
                                                                       class="form-control"
                                                                       :name="`id_material[${i}]`"
                                                                       v-model="item.id_material"
@@ -184,7 +186,8 @@
                 almacenes: [],
                 items: [],
                 numero_partes: [],
-                materiales: []
+                materiales: [],
+                bandera: 0
             }
         },
         mounted(){
@@ -232,6 +235,7 @@
                 })
                     .then(data => {
                         this.numero_partes = data.data;
+                        this.bandera = 1;
                     })
             },
             agregar() {

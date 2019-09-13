@@ -14,7 +14,7 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_entrada_almacen')">
+                    <li class="nav-item" v-if="$root.can('consultar_ajuste_positivo')">
                         <router-link :to="{name: 'ajuste-positivo'}" class="nav-link" :class="{active: this.$route.name == 'ajuste-positivo'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Ajuste Positivo (+)</p>
@@ -40,7 +40,7 @@
         computed: {
             ajuste_inventario() {
                 return this.$root.can([
-                    'consultar_entrada_almacen'
+                    'consultar_ajuste_positivo'
                 ])
             },
         },

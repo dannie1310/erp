@@ -45,7 +45,7 @@ class AjustePositivoService
         if (isset($data['id_almacen'])) {
             $almacen = Almacen::query()->where([['descripcion', 'LIKE', '%'.$data['id_almacen'].'%']])->get();
             foreach ($almacen as $a){
-                $cuentas = $ajuste->whereOr([['id_almacen', '=', $a->id_almacen]]);
+                $ajuste = $ajuste->whereOr([['id_almacen', '=', $a->id_almacen]]);
             }
         }
 

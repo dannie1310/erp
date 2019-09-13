@@ -208,7 +208,7 @@ export const routes = [
                                 name: 'AJUSTE POSITIVO (+)'
                             },
                             middleware: [auth, context, permission],
-                            permission: 'consultar_entrada_almacen'
+                            permission: 'consultar_ajuste_positivo'
                         }
                     },
                     {
@@ -219,7 +219,7 @@ export const routes = [
                             title: 'Registrar Ajuste Positivo (+) de Inventario',
                             breadcrumb: {name: 'REGISTRAR', parent: 'ajuste-inventario'},
                             middleware: [auth, context, permission],
-                            permission: 'registrar_distribucion_recursos_remesa'
+                            permission: 'registrar_ajuste_positivo'
                         }
                     },
                 ]
