@@ -22,7 +22,7 @@
 <script>
     import Create from "./Create";
     export default {
-        name: "inventario-fisico",
+        name: "inventario-fisico-index",
         components: {Create},
         data() {
             return {
@@ -30,16 +30,15 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Tipo', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Fecha Inicio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Usuario Inicio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Fecha Cierre', field: 'id_almacen',sortable: true, thComp: require('../../globals/th-Date')},
-                    { title: 'Usuario Cierre', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Estatus', field: 'estado', sortable: true},
+                    { title: 'Usuario Inició', field: 'usuario_inicia', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Fecha/Hora Inicio', field: 'fecha_hora_inicio', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Cantidad de Marbetes', field: 'cantidad_marbetes', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Estado', field: 'estado', sortable: true},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {include: ['usuario'],sort: 'folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -56,10 +55,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/entrada-almacen/paginate', { params: this.query})
+                return this.$store.dispatch('almacenes/inventario-fisico/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('compras/entrada-almacen/SET_ENTRADAS', data.data);
-                        this.$store.commit('compras/entrada-almacen/SET_META', data.meta);
+                        this.$store.commit('almacenes/inventario-fisico/SET_INVETARIOS', data.data);
+                        this.$store.commit('almacenes/inventario-fisico/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -67,42 +66,39 @@
             }
         },
         computed: {
-            entradas(){
-                return this.$store.getters['compras/entrada-almacen/entradas'];
+            inventarios(){
+                return this.$store.getters['almacenes/inventario-fisico/inventarios'];
             },
             meta(){
-                return this.$store.getters['compras/entrada-almacen/meta'];
+                return this.$store.getters['almacenes/inventario-fisico/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            entradas: {
-                handler(entradas) {
+            inventarios: {
+                handler(inventarios) {
                     let self = this
                     self.$data.data = []
-                    entradas.forEach(function (entrada, i) {
+                    inventarios.forEach(function (inventario, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: entrada.numero_folio_format,
-                            fecha: entrada.fecha_format,
-                            id_empresa: entrada.empresa.razon_social,
-                            referencia: entrada.referencia,
-                            observaciones: entrada.observaciones,
-                            estado: entrada.estado_format,
+                            numero_folio: inventario.folio_format,
+                            id_tipo: inventario.id_tipo,
+                            fecha_hora_inicio: inventario.fecha_hora_inicio_format,
+                            cantidad_marbetes: inventario.cantidad_marbetes,
+                            usuario_inicia: inventario.usuario.nombre,
+                            estado: inventario.estado_format,
                             buttons: $.extend({}, {
-                                id: entrada.id,
-                                estado: entrada.estado,
-                                pagina: self.query.offset,
-                                delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
+                                show: true,
+                                id: inventario.id,
                             })
                         })
                     });
                 },
                 deep: true
             },
-
             meta: {
                 handler(meta) {
                     let total = meta.pagination.total
@@ -116,18 +112,6 @@
                 },
                 deep: true
             },
-            search(val) {
-                if (this.timer) {
-                    clearTimeout(this.timer);
-                    this.timer = null;
-                }
-                this.timer = setTimeout(() => {
-                    this.query.search = val;
-                    this.query.offset = 0;
-                    this.paginate();
-
-                }, 500);
-            },
             cargando(val) {
                 $('tbody').css({
                     '-webkit-filter': val ? 'blur(2px)' : '',
@@ -137,7 +121,9 @@
         }
     }
 </script>
-
-<style scoped>
-
+<style>
+    .money
+    {
+        text-align: right;
+    }
 </style>

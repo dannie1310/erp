@@ -19,22 +19,6 @@ export default{
         SET_INVETARIO(state, data){
             state.currentInventario = data
         },
-
-        // UPDATE_AJUSTE(state, data) {
-        //     state.ajustes = state.ajustes.map(ajuste => {
-        //         if (ajuste.id === data.id) {
-        //             return Object.assign({}, ajuste, data)
-        //         }
-        //         return ajuste
-        //     })
-        //     if (state.currentAjuste) {
-        //         state.currentAjuste = data
-        //     }
-        // },
-        //
-        // UPDATE_ATTRIBUTE(state, data) {
-        //     state.currentAjuste[data.attribute] = data.value
-        // },
     },
 
     actions: {
@@ -51,6 +35,62 @@ export default{
                     })
             });
         },
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar inventario fisico",
+                    text: "¿Estás seguro/a de que quieres registrar un nuevo inventario físico?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Inventario físico registrado correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+        descargaLayout(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'descargaLayout/'+ payload.id, { params: payload.params, responseType:'blob', })
+                    .then(r => r.data)
+                    .then(data => {
+                        const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'Layout-'+payload.id+'.csv');
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        }
     },
 
     getters: {
