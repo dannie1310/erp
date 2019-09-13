@@ -10,6 +10,7 @@ namespace App\Services\CADECO\Almacenes;
 
 
 use App\Models\CADECO\AjustePositivo;
+use App\Models\CADECO\Almacen;
 use App\Repositories\CADECO\AjustePositivo\Repository;
 
 class AjustePositivoService
@@ -30,7 +31,33 @@ class AjustePositivoService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $ajuste = $this->repository;
+
+
+        if (isset($data['numero_folio'])) {
+            $ajuste = $ajuste->where([['numero_folio', 'LIKE', '%' . $data['numero_folio'] . '%']]);
+        }
+
+        if (isset($data['fecha'])) {
+            $ajuste = $ajuste->where( [['fecha', '=', request( 'fecha' )]] );
+        }
+
+        if (isset($data['id_almacen'])) {
+            $almacen = Almacen::query()->where([['descripcion', 'LIKE', '%'.$data['id_almacen'].'%']])->get();
+            foreach ($almacen as $a){
+                $cuentas = $ajuste->whereOr([['id_almacen', '=', $a->id_almacen]]);
+            }
+        }
+
+        if (isset($data['referencia'])) {
+            $ajuste = $ajuste->where([['referencia', 'LIKE', '%' . $data['referencia'] . '%']]);
+        }
+
+        if (isset($data['observaciones'])) {
+            $ajuste = $ajuste->where([['observaciones', 'LIKE', '%' . $data['observaciones'] . '%']]);
+        }
+
+        return $ajuste->paginate($data);
     }
 
     public function store(array $data)

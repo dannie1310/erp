@@ -93,7 +93,7 @@
                             index: (i + 1) + self.query.offset,
                             numero_folio: ajustes.numero_folio_format,
                             fecha: ajustes.fecha_format,
-                            id_almacen: ajustes.almacen.descripcion,
+                            id_almacen: typeof ajustes.almacen !== 'undefined' ?  ajustes.almacen.descripcion : '',
                             referencia: ajustes.referencia,
                             observaciones: ajustes.observaciones,
                             estado: ajustes.estado_format

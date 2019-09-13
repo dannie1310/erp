@@ -84,4 +84,14 @@ class AjustePositivo extends Transaccion
             }
         }
     }
+
+    public function getEstatusAttribute()
+    {
+        if($this->estado == 0){
+            return 'Registro';
+        }
+        if($this->estado == -1){
+            return 'Cancelación';
+        }
+    }
 }
