@@ -127,11 +127,11 @@
 <script>
     export default {
         name: "ajuste-positivo-create",
-        propos:['id_almacen2'],
+        propos:['id_almacen'],
         data() {
             return {
                 cargando: false,
-                id_almacen: this.$attrs.id_almacen2,
+                id_almacen: this.$attrs.id_almacen,
                 referencia: '',
                 observaciones: '',
                 items: [],
@@ -191,6 +191,8 @@
                     'id_material' : '',
                     'cantidad' : '',
                 }
+                this.getMateriales(this.id_almacen);
+                this.getNumeroPartes(this.id_almacen);
                 this.items.push(array);
             },
             validate() {
@@ -216,15 +218,6 @@
             salir(){
                 this.$router.push({name: 'ajuste-positivo'});
             }
-        },
-        watch: {
-            id_almacen2(value){
-                console.log('panda'.value);
-                if(value != ''){
-                    this.getMateriales(value)
-                    this.getNumeroPartes(value)
-                }
-            },
         }
     }
 </script>

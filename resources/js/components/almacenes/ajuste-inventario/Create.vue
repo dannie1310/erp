@@ -75,7 +75,7 @@
 
             <div class="tab-content" id="nav-tabContent">
                 <div aria-labelledby="nav-home-tab" class="tab-pane fade show active" id="nav-home" role="tabpanel">
-                    <ajuste-positivo v-bind:id_almacen2="id_almacen" :key="id_almacen" ></ajuste-positivo>
+                    <ajuste-positivo v-bind:id_almacen="id_almacen" :key="id_almacen" ></ajuste-positivo>
                 </div>
                 <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
 <!--                    <index-cuenta v-bind:id="id"></index-cuenta>-->
