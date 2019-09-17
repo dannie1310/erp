@@ -1,4 +1,4 @@
-const URI = '/api/almacenes/ajuste-positivo/';
+const URI = '/api/almacenes/ajuste-inventario/positivo/';
 export default{
     namespaced: true,
     state: {

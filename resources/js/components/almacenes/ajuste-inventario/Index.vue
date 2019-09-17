@@ -37,6 +37,7 @@
                     { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date')},
                     { title: 'Almacén', field: 'id_almacen',sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Tipo', field: 'tipo', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Estatus', field: 'estado', sortable: true},
                 ],
@@ -58,10 +59,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('almacenes/ajuste-positivo/paginate', { params: this.query})
+                return this.$store.dispatch('almacenes/ajuste-inventario/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('almacenes/ajuste-positivo/SET_AJUSTES', data.data);
-                        this.$store.commit('almacenes/ajuste-positivo/SET_META', data.meta);
+                        this.$store.commit('almacenes/ajuste-inventario/SET_AJUSTES', data.data);
+                        this.$store.commit('almacenes/ajuste-inventario/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -73,10 +74,10 @@
         },
         computed: {
             ajustes(){
-                return this.$store.getters['almacenes/ajuste-positivo/ajustes'];
+                return this.$store.getters['almacenes/ajuste-inventario/ajustes'];
             },
             meta(){
-                return this.$store.getters['almacenes/ajuste-positivo/meta'];
+                return this.$store.getters['almacenes/ajuste-inventario/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -94,6 +95,7 @@
                             fecha: ajustes.fecha_format,
                             id_almacen: typeof ajustes.almacen !== 'undefined' ?  ajustes.almacen.descripcion : '',
                             referencia: ajustes.referencia,
+                            tipo: ajustes.tipo,
                             observaciones: ajustes.observaciones,
                             estado: ajustes.estado_format
                         })

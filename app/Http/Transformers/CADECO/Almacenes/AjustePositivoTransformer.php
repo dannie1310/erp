@@ -9,30 +9,11 @@
 namespace App\Http\Transformers\CADECO\Almacenes;
 
 
-use App\Http\Transformers\CADECO\AlmacenTransformer;
 use App\Models\CADECO\AjustePositivo;
 use League\Fractal\TransformerAbstract;
 
 class AjustePositivoTransformer extends TransformerAbstract
 {
-    /**
-     * List of resources possible to include
-     *
-     * @var array
-     */
-    protected $availableIncludes = [
-        'almacen'
-    ];
-
-    /**
-     * List of resources to automatically include
-     *
-     * @var array
-     */
-    protected $defaultIncludes = [
-        'almacen'
-    ];
-
     public function transform(AjustePositivo $model)
     {
         return [
@@ -45,14 +26,5 @@ class AjustePositivoTransformer extends TransformerAbstract
             'referencia' => $model->referencia,
             'estado_format' => $model->estatus
         ];
-    }
-
-    public function includeAlmacen(AjustePositivo $model)
-    {
-        if($almacen = $model->almacen)
-        {
-            return $this->item($almacen, new AlmacenTransformer);
-        }
-        return null;
     }
 }
