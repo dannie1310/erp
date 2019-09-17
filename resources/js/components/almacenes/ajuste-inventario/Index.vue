@@ -40,6 +40,7 @@
                     { title: 'Tipo', field: 'tipo', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Estatus', field: 'estado', sortable: true},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
@@ -88,16 +89,20 @@
                 handler(ajustes) {
                     let self = this
                     self.$data.data = []
-                    ajustes.forEach(function (ajustes, i) {
+                    ajustes.forEach(function (ajuste, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: ajustes.numero_folio_format,
-                            fecha: ajustes.fecha_format,
-                            id_almacen: typeof ajustes.almacen !== 'undefined' ?  ajustes.almacen.descripcion : '',
-                            referencia: ajustes.referencia,
-                            tipo: ajustes.tipo,
-                            observaciones: ajustes.observaciones,
-                            estado: ajustes.estado_format
+                            numero_folio: ajuste.numero_folio_format,
+                            fecha: ajuste.fecha_format,
+                            id_almacen: typeof ajuste.almacen !== 'undefined' ?  ajuste.almacen.descripcion : '',
+                            referencia: ajuste.referencia,
+                            tipo: ajuste.tipo,
+                            observaciones: ajuste.observaciones,
+                            estado: ajuste.estado_format,
+                            buttons: $.extend({}, {
+                                show: true,
+                                id: ajuste.id
+                            })
                         })
                     });
                 },
