@@ -115,7 +115,7 @@
                          </div>
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || referencia == '' || items.length == 0 || observaciones == ''">Registrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 || observaciones == ''">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -127,7 +127,7 @@
 <script>
     export default {
         name: "ajuste-positivo-create",
-        propos:['id_almacen'],
+        propos:['id_almacen', 'referencia'],
         data() {
             return {
                 cargando: false,
@@ -144,7 +144,6 @@
         methods: {
             init() {
                 this.cargando = true;
-
             },
             getAlmacen(){
                 this.almacenes = [];
@@ -191,16 +190,23 @@
                     'id_material' : '',
                     'cantidad' : '',
                 }
-                this.getMateriales(this.id_almacen);
-                this.getNumeroPartes(this.id_almacen);
+                if(this.numero_partes.length === 0 && this.materiales.length === 0 ) {
+                    this.getMateriales(this.id_almacen);
+                    this.getNumeroPartes(this.id_almacen);
+                }
+                this.referencia = this.$attrs.referencia;
                 this.items.push(array);
             },
             validate() {
+                this.referencia = this.$attrs.referencia;
                 this.$validator.validate().then(result => {
                     if (result) {
                         if(this.items.length == 0){
                             swal('¡Error!', 'Debe agregar ajustes de inventarios.', 'error')
-                        }else {
+                        } else if(this.referencia == ''){
+                            swal('¡Error!', 'Debe agregar una referencia.', 'error')
+                        }
+                        else {
                             this.store()
                         }
                     }
@@ -209,14 +215,14 @@
             store() {
                 return this.$store.dispatch('almacenes/ajuste-positivo/store', this.$data)
                     .then((data) => {
-                        this.$router.push({name: 'ajuste-positivo'});
+                        this.$router.push({name: 'ajuste-inventario'});
                     });
             },
             destroy(index){
                 this.items.splice(index, 1);
             },
             salir(){
-                this.$router.push({name: 'ajuste-positivo'});
+                this.$router.push({name: 'ajuste-inventario'});
             }
         }
     }
