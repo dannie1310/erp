@@ -4,14 +4,18 @@
             <i class="fa fa-file-pdf-o"></i>
         </button>
         <button @click="descargaLayout"  v-if="value.estado == 0 && $root.can('descarga_layout_captura_conteos')" type="button" class="btn btn-sm btn-outline-success" title="Descargar Layout">
-            <i class="fa fa-file-excel-o"></i>
+            <i class="fa fa-download"></i>
         </button>
-        <button @click="descarga_resumen"  v-if="value.resumen" type="button" class="btn btn-sm btn-outline-success" title="Descargar Resumen Conteos">
-            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-download" v-else></i>
-        </button>
-        <button @click="update" v-if="$root.can('cerrar_inventario_fisico') && value.estado == 0" type="button" class="btn btn-sm btn-outline-success" title="Cerrar Inventario Físico"><i class="fa fa-lock"></i> </button>
         <Layout v-if="value.estado == 0 && $root.can('cargar_layout_captura_conteos')" v-bind:id="value.id">{{value.estado}}</Layout>
+        <button @click="descarga_resumen"  v-if="value.resumen" type="button" class="btn btn-sm btn-outline-primary" title="Descargar Resumen Conteos">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-file-excel-o" v-else></i>
+        </button>
+        <button @click="update" v-if="$root.can('cerrar_inventario_fisico') && value.estado == 0" type="button" class="btn btn-sm btn-outline-danger" title="Cerrar Inventario Físico"><i class="fa fa-lock"></i> </button>
+
+
+
+
     </div>
 </template>
 
