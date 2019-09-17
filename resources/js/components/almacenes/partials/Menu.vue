@@ -46,7 +46,7 @@
         computed: {
             ajuste_inventario() {
                 return this.$root.can([
-                    'consultar_ajuste_positivo'
+                    'consultar_entrada_almacen'
                 ])
             },
         },
