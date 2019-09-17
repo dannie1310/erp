@@ -242,6 +242,25 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path: 'conteo',
+                component: require('./components/almacenes/conteo/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'conteo',
+                        component: require('./components/almacenes/conteo/Index'),
+                        meta: {
+                            title: 'Conteos',
+                            breadcrumb: {parent: 'almacenes', name: 'CONTEOS'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+
+                        }
+                    }
+                ]
+            },
+
         ]
     },
     {
