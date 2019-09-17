@@ -24,6 +24,14 @@ class Marbete extends  Model
         'folio'
     ];
 
+    public function conteos(){
+        return $this->hasMany(Conteo::class, 'id_marbete', 'id');
+    }
+
+    public function invetarioFisico(){
+        return $this->hasOne(InventarioFisico::class, 'id', 'id_inventario_fisico');
+    }
+
     public function almacen(){
         return $this->belongsTo(Almacen::class,'id_almacen','id_almacen');
     }
@@ -32,8 +40,8 @@ class Marbete extends  Model
         return $this->belongsTo(Material::class,'id_material','id_material');
     }
 
-    public function conteos(){
-        return $this->hasMany(Conteo::class, 'id_marbete', 'id');
+    public function getFolioFormatAttribute(){
+        return chunk_split(str_pad($this->folio, 6,0,0),3,' ');
     }
 
 }

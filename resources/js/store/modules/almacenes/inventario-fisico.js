@@ -49,7 +49,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar inventario fisico",
-                    text: "¿Estás seguro/a de que quieres registrar un nuevo inventario físico?",
+                    text: "¿Está seguro/a de que quiere registrar un nuevo inventario físico?",
                     icon: "info",
                     buttons: {
                         cancel: {

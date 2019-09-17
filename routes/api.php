@@ -156,6 +156,11 @@ $api->version('v1', function ($api) {
             $api->get('{id}/descargar_resumen_conteo', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@descargar_resumen_conteo');
             $api->patch('{id}/actualizar', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@actualizar')->where(['id' => '[0-9]+']);
         });
+
+        $api->group(['prefix' => 'conteo'], function ($api) {
+            $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@paginate');
+        });
     });
 
     /**
