@@ -48,4 +48,9 @@ class ConteoController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function cancelar($id){
+        $respuesta = $this->service->cancelar($id);
+        return response()->json($respuesta, 200);
+    }
+
 }

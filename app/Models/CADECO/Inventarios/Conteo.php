@@ -48,4 +48,8 @@ class Conteo extends Model
         return $this->marbete->invetarioFisico->numero_folio_format."-".$this->marbete->folio_format;
     }
 
+    public function respaldar(){
+        dd($this);
+    }
+
 }

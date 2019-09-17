@@ -23,6 +23,15 @@ class ConteoService
         return $this->repository->paginate($data);
     }
 
+    public function cancelar($id){
+        $motivo = array();
+        $this->repository->delete($motivo, $id);
+    }
+
+    public function show($id){
+        return $this->repository->show($id);
+    }
+
     public function cargaLayout($file){
         $conteos = $this->getCsvData($file);
         $layout = LayoutConteo::query()->create();

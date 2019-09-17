@@ -37,6 +37,7 @@
                 { title: 'Total', field: 'total', sortable: true},
                 { title: 'Iniciales', field: 'iniciales', sortable: true, thComp: require('../../globals/th-Filter')},
                 { title: 'Observaciones', field: 'observaciones', sortable: true},
+                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
              ],
              data: [],
              total: 0,
@@ -93,7 +94,11 @@
                      cantidad_inservible : conteo.cantidad_inservible,
                      total : conteo.total,
                      iniciales : conteo.iniciales,
-                     observaciones : conteo.observaciones
+                     observaciones : conteo.observaciones,
+                     buttons: $.extend({}, {
+                           id:conteo.id,
+                           cancelar: true,//self.$root.can('generar_marbetes')
+                       })
                    })
                 });
              },

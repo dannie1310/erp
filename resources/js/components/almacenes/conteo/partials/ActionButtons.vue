@@ -1,0 +1,19 @@
+<template>
+    <cancelar v-bind:id="value.id"></cancelar>
+</template>
+
+<script>
+    import Layout from "../../conteo/cargar-layout";
+    import Cancelar from "../../conteo/Cancelar";
+    export default {
+        name: "action-buttons",
+        components: {Layout, Cancelar},
+        props: ['value'],
+        data() {
+            return {
+                cargando: false
+            }
+        }
+    }
+
+</script>
