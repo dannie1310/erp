@@ -1,37 +1,38 @@
 <template>
-
     <span>
-    <nav>
-                 <div class="col-md-12"  v-if="banco">
-                                              <div class="form-group">
-                                                        <label><b>Banco:</b></label>
-                                                        {{ banco.razon_social }}
-                                                    </div>
-                                     </div>
-
-                                          <nav>
-                      <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Identificación</a>
-                        <a class="nav-item nav-link" v-if="$root.can('consultar_cuenta_corriente')" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Cuentas</a>
-                        <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false" v-if="$root.can('consultar_sucursal_banco')">Sucursales</a>
-                      </div>
-                    </nav>
-
-                <div class="tab-content" id="nav-tabContent">
-
-                  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                      <edit-banco v-bind:id="id"></edit-banco>
-                  </div>
-                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" v-if="$root.can('consultar_cuenta_corriente')">
-                      <index-cuenta v-bind:id="id"></index-cuenta>
-                  </div>
-                  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" style="display:block;" v-if="$root.can('consultar_sucursal_banco')">
-                      <index-sucursal  v-bind:id="id"></index-sucursal>
-                  </div>
+        <nav>
+            <div class="col-md-12" v-if="banco">
+                <div class="form-group">
+                    <label><b>Banco:</b></label>
+                    {{ banco.razon_social }}
                 </div>
-    </nav>
-    </span>
+            </div>
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a aria-controls="nav-home" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-home"
+                       id="nav-home-tab" role="tab">Identificación</a>
+                    <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
+                       href="#nav-profile" id="nav-profile-tab" role="tab" v-if="$root.can('consultar_cuenta_corriente')">Cuentas</a>
+                    <a aria-controls="nav-contact" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-contact"
+                       id="nav-contact-tab" role="tab" v-if="$root.can('consultar_sucursal_banco')">Sucursales</a>
+                </div>
+            </nav>
 
+            <div class="tab-content" id="nav-tabContent">
+                <div aria-labelledby="nav-home-tab" class="tab-pane fade show active" id="nav-home" role="tabpanel">
+                    <edit-banco v-bind:id="id"></edit-banco>
+                </div>
+                <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel"
+                         v-if="$root.can('consultar_cuenta_corriente')">
+                    <index-cuenta v-bind:id="id"></index-cuenta>
+                </div>
+                <div aria-labelledby="nav-contact-tab" class="tab-pane fade" id="nav-contact" role="tabpanel" style="display:block;"
+                        v-if="$root.can('consultar_sucursal_banco')">
+                    <index-sucursal v-bind:id="id"></index-sucursal>
+                </div>
+            </div>
+        </nav>
+    </span>
 </template>
 <script>
     import IndexCuenta from "./cuenta/Index";
