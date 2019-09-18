@@ -105,4 +105,8 @@ class DistribucionRecursoRemesaPartida extends Model
     public function getPagableAttribute(){
         return $this->estado == 1;
     }
+
+    public function scopeTransaccionPago($query){
+        return $query->whereNull('id_transaccion_pago');
+    }
 }
