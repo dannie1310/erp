@@ -106,7 +106,7 @@ class InventarioMarbete extends Rotation
             $this->SetY($this->GetY() + 0.75);
             $this->SetFont('Arial', '', 6);
             $this->Cell(0.9);
-            $this->MultiAlignCell(6.55, 0.28, utf8_decode('                '.$marbete->material->descripcion . ' - ' . $this->y), '', 0, 'L');
+            $this->MultiAlignCell(6.55, 0.28, utf8_decode('                '.$marbete->material->descripcion ), '', 0, 'L');
 
             $this->SetY($this->GetY() + 1.7);
             $this->SetFont('Arial', 'B', 9);
