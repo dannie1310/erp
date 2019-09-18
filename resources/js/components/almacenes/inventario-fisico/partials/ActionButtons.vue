@@ -3,6 +3,7 @@
         <button type="button" class="btn btn-sm btn-outline-primary" title="Descargar Marbetes" v-if="value.estado == 0 && value.marbete" @click="pdf_marbetes(value.id)">
             <i class="fa fa-file-pdf-o"></i>
         </button>
+        <CreateMarbete v-if="$root.can('registrar_marbetes_manualmente')  @click="value.id" v-bind:id="value.id"/>
         <button @click="descargaLayout"  v-if="value.estado == 0 && $root.can('descarga_layout_captura_conteos')" type="button" class="btn btn-sm btn-outline-success" title="Descargar Layout">
             <i class="fa fa-download"></i>
         </button>
@@ -13,17 +14,15 @@
         </button>
         <button @click="update" v-if="$root.can('cerrar_inventario_fisico') && value.estado == 0" type="button" class="btn btn-sm btn-outline-danger" title="Cerrar Inventario Físico"><i class="fa fa-lock"></i> </button>
 
-
-
-
     </div>
 </template>
 
 <script>
+    import CreateMarbete from "../CreateMarbete";
     import Layout from "../../conteo/cargar-layout";
     export default {
         name: "action-buttons",
-        components: {Layout},
+        components: {CreateMarbete, Layout},
         props: ['value'],
         data() {
             return {
@@ -60,8 +59,12 @@
                     .then(() => {
                         this.$emit('success')
                     })
+            },
+            show() {
+                this.$router.push({name: 'create-marbete', params: {id: this.value.id}});
+            },
+
             }
-        }
     }
 
 </script>

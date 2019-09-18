@@ -45,4 +45,8 @@ class Inventario extends Model
         return number_format($this->saldo,3,'.', '');
 
     }
+//    public function materialAlmacen($id_almacen)
+//    {
+//        return $this->hasMany(Material::class, 'id_material', 'id_material')->where('id_almacen','=', $id_almacen);
+//    }
 }

@@ -1,0 +1,51 @@
+<?php
+
+
+namespace App\Http\Controllers\v1\CADECO\Almacenes;
+
+
+use App\Http\Controllers\Controller;
+use App\Http\Transformers\CADECO\Almacenes\MarbeteTransformer;
+use App\Services\CADECO\Almacenes\MarbeteService;
+use App\Traits\ControllerTrait;
+use League\Fractal\Manager;
+
+class MarbeteController extends Controller
+{
+    use ControllerTrait;
+
+    /**
+     * @var MarbeteService
+     */
+    protected $service;
+
+
+
+    /**
+     * @var Manager
+     */
+    protected $fractal;
+
+    /**
+     * @var MarbeteTransformer
+     */
+    protected $transformer;
+    /**
+     * MarbeteController constructor
+     * @param MarbeteService $service
+     * @param Manager $fractal
+     * @param MarbeteTransformer $transformer
+     */
+
+    public function __construct(MarbeteService $service, Manager $fractal, MarbeteTransformer $transformer)
+    {
+        $this->middleware('auth:api');
+        $this->middleware('context');
+        $this->middleware('permiso:registrar_marbetes_manualmente')->only(['store']);
+
+
+        $this->service = $service;
+        $this->fractal = $fractal;
+        $this->transformer = $transformer;
+    }
+}
