@@ -1,6 +1,6 @@
 <template>
         <span>
- <button @click="init"  v-if="$root.can('registrar_marbetes_manualmente')" type="button" class="btn btn-sm btn-outline-info" title="Crear Marbete"><i class="fa fa-newspaper-o"></i> </button>
+ <button @click="init" type="button" class="btn btn-sm btn-outline-info" title="Crear Marbete"><i class="fa fa-newspaper-o"></i> </button>
 
                <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
