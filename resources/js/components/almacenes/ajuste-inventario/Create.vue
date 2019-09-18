@@ -81,7 +81,7 @@
 <!--                    <index-cuenta v-bind:id="id"></index-cuenta>-->
                 </div>
                 <div aria-labelledby="nav-contact-tab" class="tab-pane fade" id="nav-contact" role="tabpanel" style="display:block;">
-<!--                    <index-sucursal v-bind:id="id"></index-sucursal>-->
+                    <nuevo-lote v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia"></nuevo-lote>
                 </div>
             </div>
         </nav>
@@ -90,9 +90,10 @@
 
 <script>
     import AjustePositivo from "./ajuste-positivo/Create";
+    import NuevoLote from "./nuevo-lote/Create";
     export default {
         name: "ajuste-create",
-        components: {AjustePositivo},
+        components: {AjustePositivo, NuevoLote},
         data() {
             return {
                 cargando: false,
