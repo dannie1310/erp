@@ -19,6 +19,16 @@ export default{
         SET_CONTEO(state, data){
             state.currentConteo = data
         },
+
+        UPDATE_CONTEO(state, data) {
+            state.conteos = state.conteos.map(conteo => {
+                if (conteo.id === data.id) {
+                    return Object.assign({}, conteo, data)
+                }
+                return conteo
+            })
+            state.currentConteo = data;
+        },
     },
 
     actions: {
@@ -39,9 +49,10 @@ export default{
         cancelar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Está seguro?",
-                    text: "Cancelar Conteo",
+                    title: "Cancelar Conteo",
+                    text: "¿Está seguro/a que quiere cancelar el conteo?",
                     icon: "warning",
+                    closeOnClickOutside: false,
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
@@ -52,29 +63,27 @@ export default{
                             closeModal: false,
                         }
                     }
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .get(URI + payload.id + '/cancelar', payload.data, { params: payload.params })
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("Conteo cancelado correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    }).then(() => {
-                                        context.commit('UPDATE_INVENTARIOS',data);
-                                        resolve(data);
-                                    })
+                }) .then((value) => {
+                    if (value) {
+                        axios
+                            .get(URI + payload.id + '/cancelar', {params: payload.params})
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("La cancelación ha sido aplicada exitosamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
                                 })
-                                .catch(error => {
-                                    reject(error);
-                                })
-                        } else {
-                            reject();
-                        }
-                    });
+                            })
+                            .catch(error =>  {
+                                reject(error);
+                            });
+                    } else {
+                        reject();
+                    }
+                });
             });
         },
 

@@ -13,7 +13,4 @@ class ConteoObserver
         $conteo->fecha_hora_registro =  date('Y-m-d h:i:s');
 
     }
-     public function deleting (Conteo $conteo){
-         $conteo->respaldar();
-     }
 }

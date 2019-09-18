@@ -23,9 +23,9 @@ class ConteoService
         return $this->repository->paginate($data);
     }
 
-    public function cancelar($id){
-        $motivo = array();
-        $this->repository->delete($motivo, $id);
+    public function cancelar($data,$id){
+        $observaciones = $data['data'][0];
+        $this->repository->show($id)->cancelar($observaciones);
     }
 
     public function show($id){

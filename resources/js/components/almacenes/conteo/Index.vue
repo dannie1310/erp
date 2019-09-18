@@ -96,8 +96,9 @@
                      iniciales : conteo.iniciales,
                      observaciones : conteo.observaciones,
                      buttons: $.extend({}, {
-                           id:conteo.id,
-                           cancelar: true,//self.$root.can('generar_marbetes')
+                        id:conteo.id,
+                        pagina: self.query.offset,
+                        cancelar:true,
                        })
                    })
                 });

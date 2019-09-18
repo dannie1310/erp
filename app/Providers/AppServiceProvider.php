@@ -37,6 +37,7 @@ use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;
 use App\Models\CADECO\Fondo;
 use App\Models\CADECO\Inventarios\Conteo;
+use App\Models\CADECO\Inventarios\ConteoCancelado;
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
@@ -103,6 +104,7 @@ use App\Observers\CADECO\FinanzasCBE\SolicitudBajaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
 use App\Observers\CADECO\FondoObserver;
 use App\Observers\CADECO\Inventarios\ConteoObserver;
+use App\Observers\CADECO\Inventarios\ConteoCanceladoObserver;
 use App\Observers\CADECO\Inventarios\InventarioFisicoObserver;
 use App\Observers\CADECO\Inventarios\LayoutConteoObserver;
 use App\Observers\CADECO\Inventarios\LayoutConteoPartidaObserver;
@@ -199,6 +201,7 @@ class AppServiceProvider extends ServiceProvider
             LayoutConteo::observe(LayoutConteoObserver::class);
             LayoutConteoPartida::observe(LayoutConteoPartidaObserver::class);
             Conteo::observe(ConteoObserver::class);
+            ConteoCancelado::observe(ConteoCanceladoObserver::class);
 
 
             /**

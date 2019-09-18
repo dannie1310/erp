@@ -35,7 +35,9 @@ class ConteoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_conteos')->only(['paginate','index','show']);
         $this->middleware('permiso:cargar_layout_captura_conteos')->only('cargaLayout');
+        $this->middleware('permiso:eliminar_conteos')->only('cancelar');
 
 
         $this->service = $service;
@@ -48,8 +50,8 @@ class ConteoController extends Controller
         return response()->json($respuesta, 200);
     }
 
-    public function cancelar($id){
-        $respuesta = $this->service->cancelar($id);
+    public function cancelar(Request $request,$id){
+        $respuesta = $this->service->cancelar($request->all(), $id);
         return response()->json($respuesta, 200);
     }
 
