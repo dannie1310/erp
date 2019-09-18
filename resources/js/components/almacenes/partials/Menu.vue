@@ -28,11 +28,16 @@
                     <p>Inventario Físico</p>
                 </router-link>
             </li>
+<!--            <li class="nav-item" v-if="$root.can('consultar_inventario_fisico')">-->
+<!--                <router-link :to="{name: 'conteo'}" class="nav-link">-->
+<!--                    <i class="nav-icon fa fa-server"></i>-->
+<!--                    <p>Conteos</p>-->
+<!--                </router-link>-->
+<!--            </li>-->
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
 </template>
-
 <script>
     export default {
         name: "almacenes-menu",
@@ -40,7 +45,7 @@
         computed: {
             ajuste_inventario() {
                 return this.$root.can([
-                    'consultar_entrada_almacen'
+                    'consultar_ajustes_inventario'
                 ])
             },
         },

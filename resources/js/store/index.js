@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import auth from './modules/auth';
 
 //ALMACENES
+import conteo from './modules/almacenes/conteo';
 import ajustePositivo from './modules/almacenes/ajuste-positivo';
 import inventarioFisico from './modules/almacenes/inventario-fisico';
 import marbete from "./modules/almacenes/marbete";
@@ -96,6 +97,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
+        'almacenes/conteo' : conteo,
         'almacenes/ajuste-positivo' : ajustePositivo,
         'almacenes/inventario-fisico' : inventarioFisico,
         'almacenes/marbete': marbete,

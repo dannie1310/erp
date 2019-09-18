@@ -36,7 +36,7 @@ return [
         'cadeco' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST_CADECO', 'localhost'),
-            'port' => env('DB_PORT_CADECO', '1433'),
+            //'port' => env('DB_PORT_CADECO', '1433'),
             'database' => env('DB_DATABASE_CADECO', 'forge'),
             'username' => env('DB_USERNAME_CADECO', 'forge'),
             'password' => env('DB_PASSWORD_CADECO', ''),
@@ -76,7 +76,7 @@ return [
         'seguridad' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST_SEGURIDAD', 'localhost'),
-            'port' => env('DB_PORT_SEGURIDAD', '1433'),
+            //'port' => env('DB_PORT_SEGURIDAD', '1433'),
             'database' => env('DB_DATABASE_SEGURIDAD', 'forge'),
             'username' => env('DB_USERNAME_SEGURIDAD', 'forge'),
             'password' => env('DB_PASSWORD_SEGURIDAD', ''),
