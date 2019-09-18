@@ -328,12 +328,14 @@ class GestionPagoService
                             $registros_bitacora[] = $this->bitacoraPago($documento, $pago);
                         }
                     } else {
+                        $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
                         $documentos = Documento::query()->where('MontoTotalSolicitado', '=', $pago['monto'])->get();
-                        $dist_part = DistribucionRecursoRemesaPartida::query()->whereIn('id_documento', $documentos->pluck('IDDocumento'))
+                        $dist_part = DistribucionRecursoRemesaPartida::query()->transaccionPago()
+                            ->where('id_cuenta_abono', '=', $cuenta_abono->id)
+                            ->whereIn('id_documento', $documentos->pluck('IDDocumento'))
                             ->whereNotIn('id_documento', array_values($doctos_repetidos))->get();
 
                         if(count($dist_part) == 0){
-                            $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
                             $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
                             if($transaccion_pagada){
                                 $registros_bitacora[] = array(
