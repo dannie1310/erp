@@ -11,6 +11,8 @@
 |
 */
 
+
+
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
@@ -30,6 +32,7 @@ $api->version('v1', function ($api) {
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
+            $api->get('{id}/materiales','App\Http\Controllers\v1\CADECO\AlmacenController@materialesAlmacen')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix'=>'banco'], function ($api){
@@ -152,6 +155,11 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@paginate');
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@descargaLayout');
+        });
+
+        //MARBETE
+        $api->group(['prefix'=>'marbete'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@store');
         });
     });
 

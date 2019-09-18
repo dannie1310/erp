@@ -62,4 +62,6 @@ class Material extends Model
     {
         return $query->where('tipo_material', '=', $tipo);
     }
+
+
 }
