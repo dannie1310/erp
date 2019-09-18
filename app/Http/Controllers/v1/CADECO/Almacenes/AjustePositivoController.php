@@ -18,7 +18,8 @@ use League\Fractal\Manager;
 
 class AjustePositivoController extends Controller
 {
-    use ControllerTrait{
+    use ControllerTrait
+    {
         store as protected traitStore;
     }
 

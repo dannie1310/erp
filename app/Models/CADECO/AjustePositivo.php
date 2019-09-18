@@ -65,7 +65,7 @@ class AjustePositivo extends Ajuste
                 ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();
             if($inventarios['cantidad'] < $inventarios['saldo'])
             {
-                abort(400, "No se puede registrar el ajuste de inentario debido a que los saldos no concuerdan.");
+                abort(400, "No se puede registrar el ajuste de inventario debido a que los saldos no concuerdan.");
             }
             if($inventarios['cantidad'] < $partida['cantidad'])
             {

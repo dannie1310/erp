@@ -25,4 +25,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         $this->model = $model;
     }
+
+    public function create(array $data)
+    {
+        return $this->model->registrar($data);
+    }
 }

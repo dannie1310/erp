@@ -2,17 +2,18 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 11/09/2019
- * Time: 05:30 PM
+ * Date: 18/09/2019
+ * Time: 04:15 PM
  */
 
 namespace App\Http\Requests\Almacenes;
+
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAjustePositivoRequest extends FormRequest
+class StoreAjusteNegativoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

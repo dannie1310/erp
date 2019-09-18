@@ -78,7 +78,7 @@
                     <ajuste-positivo v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia"></ajuste-positivo>
                 </div>
                 <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
-<!--                    <index-cuenta v-bind:id="id"></index-cuenta>-->
+                    <ajuste-negativo v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia"></ajuste-negativo>
                 </div>
                 <div aria-labelledby="nav-contact-tab" class="tab-pane fade" id="nav-contact" role="tabpanel" style="display:block;">
 <!--                    <index-sucursal v-bind:id="id"></index-sucursal>-->
@@ -89,10 +89,11 @@
 </template>
 
 <script>
+    import AjusteNegativo from "./ajuste-negativo/Create";
     import AjustePositivo from "./ajuste-positivo/Create";
     export default {
         name: "ajuste-create",
-        components: {AjustePositivo},
+        components: {AjusteNegativo, AjustePositivo},
         data() {
             return {
                 cargando: false,
