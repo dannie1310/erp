@@ -141,17 +141,31 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'almacenes'], function ($api) {
 
-        //AJUSTE POSITIVO (+)
-        $api->group(['prefix' => 'ajuste-positivo'], function ($api) {
-            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@paginate');
+        //AJUSTE INVENTARIOS
+        $api->group(['prefix' => 'ajuste-inventario'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteController@paginate');
+
+            //AJUSTE POSITIVO (+)
+            $api->group(['prefix' => 'positivo'], function ($api) {
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@show')->where(['id' => '[0-9]+']);
+            });
+
         });
 
         //INVENTARIO FISICO
         $api->group(['prefix' => 'inventario-fisico'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@paginate');
+            $api->get('{id}/pdf_marbetes', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@pdf_marbetes')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@descargaLayout');
+            $api->get('{id}/descargar_resumen_conteo', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@descargar_resumen_conteo');
+            $api->patch('{id}/actualizar', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@actualizar')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'conteo'], function ($api) {
+            $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@paginate');
         });
     });
 

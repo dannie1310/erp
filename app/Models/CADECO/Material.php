@@ -32,6 +32,12 @@ class Material extends Model
         return $this->hijos()->count() ? true : false;
     }
 
+    public function familia()
+    {
+        return $this->belongsTo(self::class, 'tipo_material', 'tipo_material')
+            ->where('nivel', 'LIKE', substr($this->nivel, 0, 4));
+    }
+
     public function cuentaMaterial()
     {
         return $this->hasOne(CuentaMaterial::class, 'id_material');

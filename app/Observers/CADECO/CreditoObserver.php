@@ -32,6 +32,7 @@ class CreditoObserver
         $credito->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $credito->FechaHoraRegistro = date('Y-m-d h:i:s');
         $credito->id_obra = Context::getIdObra();
+        $credito->id_usuario = auth()->id();
     }
 
     public function updating(Credito $credito)

@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Almacenes;
 
 
 use App\Http\Transformers\CADECO\AlmacenTransformer;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\AjustePositivo;
 use League\Fractal\TransformerAbstract;
 
@@ -21,7 +22,9 @@ class AjustePositivoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'almacen'
+        'almacen',
+        'partidas',
+        'usuario'
     ];
 
     /**
@@ -30,7 +33,6 @@ class AjustePositivoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'almacen'
     ];
 
     public function transform(AjustePositivo $model)
@@ -47,11 +49,41 @@ class AjustePositivoTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param AjustePositivo $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeAlmacen(AjustePositivo $model)
     {
         if($almacen = $model->almacen)
         {
             return $this->item($almacen, new AlmacenTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param AjustePositivo $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(AjustePositivo $model)
+    {
+        if($partidas = $model->partidas)
+        {
+            return $this->collection($partidas, new AjustePositivoPartidaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param AjustePositivo $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuario(AjustePositivo $model)
+    {
+        if($usuario = $model->usuario)
+        {
+            return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }

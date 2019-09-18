@@ -194,29 +194,14 @@ export const routes = [
                             title: 'Ajuste de Inventarios',
                             breadcrumb: {parent: 'almacenes', name: 'AJUSTE DE INVENTARIOS'},
                             middleware: [auth, context],
-
-                        }
-                    },
-                    {
-                        path: 'ajuste-positivo',
-                        name: 'ajuste-positivo',
-                        component: require('./components/almacenes/ajuste-inventario/ajuste-positivo/Index'),
-                        meta: {
-                            title: 'Ajuste Positivo (+)',
-                            breadcrumb: {
-                                parent: 'ajuste-inventario',
-                                name: 'AJUSTE POSITIVO (+)'
-                            },
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_ajuste_positivo'
                         }
                     },
                     {
                         path: 'create',
-                        name: 'ajuste-positivo-create',
-                        component: require('./components/almacenes/ajuste-inventario/ajuste-positivo/Create'),
+                        name: 'ajuste-create',
+                        component: require('./components/almacenes/ajuste-inventario/Create'),
                         meta: {
-                            title: 'Registrar Ajuste Positivo (+) de Inventario',
+                            title: 'Registrar Ajuste de Inventario',
                             breadcrumb: {name: 'REGISTRAR', parent: 'ajuste-inventario'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_ajuste_positivo'
@@ -242,6 +227,25 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path: 'conteo',
+                component: require('./components/almacenes/conteo/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'conteo',
+                        component: require('./components/almacenes/conteo/Index'),
+                        meta: {
+                            title: 'Conteos',
+                            breadcrumb: {parent: 'almacenes', name: 'CONTEOS'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+
+                        }
+                    }
+                ]
+            },
+
         ]
     },
     {

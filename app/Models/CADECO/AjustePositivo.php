@@ -11,14 +11,13 @@ namespace App\Models\CADECO;
 
 use Illuminate\Support\Facades\DB;
 
-class AjustePositivo extends Transaccion
+class AjustePositivo extends Ajuste
 {
-    public const TIPO_ANTECEDENTE = null;
-
     protected $fillable = [
         'id_almacen',
         'referencia',
-        'observaciones'
+        'observaciones',
+        'id_usuario'
     ];
 
     protected static function boot()
@@ -26,14 +25,8 @@ class AjustePositivo extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 35)
-                ->where('opciones', '=', 0);
+            return $query->where('opciones', '=', 0);
         });
-    }
-
-    public function almacen()
-    {
-        return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
     }
 
     public function partidas()
@@ -82,16 +75,6 @@ class AjustePositivo extends Transaccion
             {
                 abort(400, "Inventarios completos de este material");
             }
-        }
-    }
-
-    public function getEstatusAttribute()
-    {
-        if($this->estado == 0){
-            return 'Registro';
-        }
-        if($this->estado == -1){
-            return 'Cancelación';
         }
     }
 }

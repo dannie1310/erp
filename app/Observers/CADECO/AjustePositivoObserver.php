@@ -30,5 +30,6 @@ class AjustePositivoObserver
         $ajustePositivo->FechaHoraRegistro = date('Y-m-d h:i:s');
         $ajustePositivo->id_obra = Context::getIdObra();
         $ajustePositivo->fecha = date('Y-m-d h:i:s');
+        $ajustePositivo->id_usuario = auth()->id();
     }
 }

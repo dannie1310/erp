@@ -5,56 +5,6 @@
                 <div class="invoice p-3 mb-3">
                      <form role="form" @submit.prevent="validate">
                          <div class="modal-body">
-                             <div class="row justify-content-between">
-                                <div class="col-md-4">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group row error-content">
-                                                <label for="referencia" class="col-sm-2 col-form-label">Referencia: </label>
-                                                <div class="col-sm-10">
-                                                    <input
-                                                            type="text"
-                                                            step="any"
-                                                            name="referencia"
-                                                            data-vv-as="Referencia"
-                                                            v-validate="{required: true}"
-                                                            class="form-control"
-                                                            id="referencia"
-                                                            placeholder="Referencia"
-                                                            v-model="referencia"
-                                                            :class="{'is-invalid': errors.has('referencia')}">
-                                                    <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group row error-content">
-                                                <label for="id_almacen" class="col-sm-2 col-form-label">Almacén: </label>
-                                                <div class="col-sm-10">
-                                                    <select
-                                                            type="text"
-                                                            name="id_almacen"
-                                                            data-vv-as="Almacén"
-                                                            v-validate="{required: true}"
-                                                            class="form-control"
-                                                            id="id_almacen"
-                                                            v-model="id_almacen"
-                                                            :class="{'is-invalid': errors.has('id_almacen')}"
-                                                    >
-                                                            <option value>-- Seleccione un almacén --</option>
-                                                            <option v-for="almacen in almacenes" :value="almacen.id">{{ almacen.descripcion }}</option>
-                                                    </select>
-                                                    <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                              <div class="row" v-if="id_almacen">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
@@ -146,7 +96,7 @@
                               <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones: </label>
+                                        <label for="observaciones" class="col-sm-2 col-form-label">Observaciones:  </label>
                                         <div class="col-sm-10">
                                             <textarea
                                                     name="observaciones"
@@ -165,7 +115,7 @@
                          </div>
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || referencia == '' || items.length == 0 || observaciones == ''">Registrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 || observaciones == ''">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -177,26 +127,23 @@
 <script>
     export default {
         name: "ajuste-positivo-create",
+        propos:['id_almacen', 'referencia'],
         data() {
             return {
                 cargando: false,
-                id_almacen: '',
+                id_almacen: this.$attrs.id_almacen,
                 referencia: '',
                 observaciones: '',
-                almacenes: [],
                 items: [],
                 numero_partes: [],
                 materiales: [],
                 bandera: 0
             }
         },
-        mounted(){
-            this.getAlmacen();
-        },
+
         methods: {
             init() {
                 this.cargando = true;
-                $(this.$refs.modal).modal('show');
             },
             getAlmacen(){
                 this.almacenes = [];
@@ -243,14 +190,23 @@
                     'id_material' : '',
                     'cantidad' : '',
                 }
+                if(this.numero_partes.length === 0 && this.materiales.length === 0 ) {
+                    this.getMateriales(this.id_almacen);
+                    this.getNumeroPartes(this.id_almacen);
+                }
+                this.referencia = this.$attrs.referencia;
                 this.items.push(array);
             },
             validate() {
+                this.referencia = this.$attrs.referencia;
                 this.$validator.validate().then(result => {
                     if (result) {
                         if(this.items.length == 0){
                             swal('¡Error!', 'Debe agregar ajustes de inventarios.', 'error')
-                        }else {
+                        } else if(this.referencia == ''){
+                            swal('¡Error!', 'Debe agregar una referencia.', 'error')
+                        }
+                        else {
                             this.store()
                         }
                     }
@@ -259,23 +215,15 @@
             store() {
                 return this.$store.dispatch('almacenes/ajuste-positivo/store', this.$data)
                     .then((data) => {
-                        this.$router.push({name: 'ajuste-positivo'});
+                        this.$router.push({name: 'ajuste-inventario'});
                     });
             },
             destroy(index){
                 this.items.splice(index, 1);
             },
             salir(){
-                this.$router.push({name: 'ajuste-positivo'});
+                this.$router.push({name: 'ajuste-inventario'});
             }
-        },
-        watch: {
-            id_almacen(value){
-                if(value != ''){
-                    this.getMateriales(value)
-                    this.getNumeroPartes(value)
-                }
-            },
         }
     }
 </script>
