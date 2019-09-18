@@ -28,8 +28,14 @@
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Folio:</b></td>
                                                         <td class="bg-gray-light">{{ajustes.numero_folio_format}}</td>
+                                                        <td class="bg-gray-light"><b>Tipo:</b></td>
+                                                        <td class="bg-gray-light">{{ajustes.tipo}}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <td class="bg-gray-light"><b>Almacén:</b></td>
                                                         <td class="bg-gray-light">{{ajustes.almacen.descripcion}}</td>
+                                                        <td class="bg-gray-light"><b>Tipo de Almacén:</b></td>
+                                                        <td class="bg-gray-light">{{ajustes.almacen.tipo}}</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Referencia:</b></td>
@@ -135,7 +141,15 @@
                 })
             },
             getNegativo(){
-
+                this.$store.commit('almacenes/ajuste-negativo/SET_AJUSTE', null);
+                return this.$store.dispatch('almacenes/ajuste-negativo/find', {
+                    id: this.id,
+                    params: {include: ['almacen', 'partidas.material', 'usuario']}
+                }).then(data => {
+                    this.$store.commit('almacenes/ajuste-negativo/SET_AJUSTE', data);
+                    this.ajustes = data;
+                    $(this.$refs.modal).modal('show');
+                })
             },
             getNuevoLote(){
 
