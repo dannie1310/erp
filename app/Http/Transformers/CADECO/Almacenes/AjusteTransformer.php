@@ -44,10 +44,15 @@ class AjusteTransformer extends TransformerAbstract
             'numero_folio_format' => $model->numero_folio_format_orden,
             'referencia' => $model->referencia,
             'estado_format' => $model->estatus,
-            'tipo' => $model->tipo
+            'tipo' => $model->tipo,
+            'tipo_value' => $model->opciones
         ];
     }
 
+    /**
+     * @param Ajuste $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeAlmacen(Ajuste $model)
     {
         if($almacen = $model->almacen)

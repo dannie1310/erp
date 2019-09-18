@@ -16,7 +16,8 @@ class AjustePositivo extends Ajuste
     protected $fillable = [
         'id_almacen',
         'referencia',
-        'observaciones'
+        'observaciones',
+        'id_usuario'
     ];
 
     protected static function boot()

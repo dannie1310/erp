@@ -59,4 +59,9 @@ class AjusteService
 
         return $ajuste->paginate($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

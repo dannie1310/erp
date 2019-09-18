@@ -148,6 +148,7 @@ $api->version('v1', function ($api) {
             //AJUSTE POSITIVO (+)
             $api->group(['prefix' => 'positivo'], function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@show')->where(['id' => '[0-9]+']);
             });
 
         });

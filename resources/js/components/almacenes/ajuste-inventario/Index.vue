@@ -37,7 +37,7 @@
                     { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date')},
                     { title: 'Almacén', field: 'id_almacen',sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Tipo', field: 'tipo', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Tipo', field: 'tipo', sortable: true},
                     { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Estatus', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
@@ -101,7 +101,9 @@
                             estado: ajuste.estado_format,
                             buttons: $.extend({}, {
                                 show: true,
-                                id: ajuste.id
+                                id: ajuste.id,
+                                pagina: self.query.offset,
+                                tipo: ajuste.tipo_value
                             })
                         })
                     });

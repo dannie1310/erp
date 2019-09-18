@@ -21,6 +21,11 @@ class AjustePositivoPartida extends Item
         'referencia'
     ];
 
+    public function inventario()
+    {
+        return $this->belongsTo(Inventario::class, 'item_antecedente', 'id_lote');
+    }
+
     public function registrar($partidas, $id_almacen, $ajuste)
     {
         foreach ($partidas as $partida){

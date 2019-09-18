@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Almacenes;
 
 
+use App\Models\CADECO\AjustePositivo;
 use App\Repositories\CADECO\AjustePositivo\Repository;
 
 class AjustePositivoService
@@ -17,6 +18,11 @@ class AjustePositivoService
      * @var Repository
      */
     protected $repository;
+
+    public function __construct(AjustePositivo $model)
+    {
+        $this->repository = new Repository($model);
+    }
 
     public function store(array $data)
     {
@@ -28,5 +34,10 @@ class AjustePositivoService
         ];
 
         return $this->repository->create($datos);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
     }
 }
