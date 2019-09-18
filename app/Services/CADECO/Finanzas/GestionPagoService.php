@@ -68,7 +68,7 @@ class GestionPagoService
             'concepto' => $data->Concepto,
             'beneficiario' => $data->Destinatario,
             'monto' => $pago['monto'],
-            'cuenta_cargo' => ['id_cuenta_cargo' => $data->partidas->cuentaCargo->id_cuenta, 'numero'=> $data->partidas->cuentaCargo->numero, 'abreviatura'=> $data->partidas->cuentaCargo->abreviatura, 'nombre' => $data->partidas->cuentaCargo->empresa->razon_social, 'id_empresa' => $data->empresa->id_empresa],
+            'cuenta_cargo' => ['id_cuenta_cargo' => $data->partidas->cuentaCargo->id_cuenta, 'numero'=> $data->partidas->cuentaCargo->numero, 'abreviatura'=> $data->partidas->cuentaCargo->abreviatura, 'nombre' => $data->partidas->cuentaCargo->empresa->razon_social, 'id_empresa' => $data->partidas->cuentaCargo->empresa->id_empresa],
             'cuenta_abono' => ['id_cuenta_abono' => $data->partidas->cuentaAbono->id, 'numero'=> $data->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $data->partidas->cuentaAbono->banco->ctg_banco->nombre_corto, 'nombre' => $data->partidas->cuentaAbono->banco->razon_social],
             'referencia' => $pago['referencia'],
             'referencia_docto' => $data->Referencia,
@@ -392,7 +392,7 @@ class GestionPagoService
                             }
                         }else{
                             if (count($dist_part) == 1) {
-                                $registros_bitacora[] = $this->bitacoraPago($documentos[0], $pago);
+                                $registros_bitacora[] = $this->bitacoraPago($dist_part[0]->documento, $pago);
                             } else {
                                 $doctos_repetidos[$dist_part[0]->id_documento] = $dist_part[0]->id_documento;
                                 $registros_bitacora[] = $this->bitacoraPago($dist_part[0]->documento, $pago);
