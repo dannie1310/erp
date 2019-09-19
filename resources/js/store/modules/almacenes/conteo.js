@@ -59,7 +59,6 @@ export default{
                                 .post(URI + 'layout', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    console.log(data.length);
                                     if(data.length > 0){
                                         swal("No se pudieron insertar los siguientes conteos:"+data, {
                                             buttons: {
