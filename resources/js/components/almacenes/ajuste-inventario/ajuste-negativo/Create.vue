@@ -182,7 +182,9 @@
                 })
                     .then(data => {
                         this.numero_partes = data.data;
-                        this.bandera = 1;
+                        if( this.numero_partes.length != 0 && this.materiales.length != 0 ) {
+                            this.bandera = 1;
+                        }
                     })
             },
             agregar() {

@@ -51,6 +51,7 @@ class AjusteNegativoPartida extends Item
                         $inventario->save();
                         $cantidad_total -= $inventario->saldo;
                     } else{
+
                         $data = [
                             'id_transaccion' => $ajuste,
                             'item_antecedente' => $inventario->id_lote,
@@ -60,6 +61,7 @@ class AjusteNegativoPartida extends Item
                             'importe' => ($inventario->monto_total/$inventario->cantidad)*($cantidad_total),
                             'referencia' => $partida['id_material']['unidad']
                         ];
+
                         $registro_partida = $this->create($data);
                         $inventario->saldo =  $inventario->saldo - $cantidad_total;
                         $inventario->save();

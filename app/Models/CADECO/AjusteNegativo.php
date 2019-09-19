@@ -64,6 +64,7 @@ class AjusteNegativo extends Ajuste
         foreach ($partidas as  $partida) {
             $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])
                 ->where('id_almacen', '=', $id)
+                ->where('saldo', '!=', '0')
                 ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();
 
             if($inventarios['saldo'] < $partida['cantidad'])
