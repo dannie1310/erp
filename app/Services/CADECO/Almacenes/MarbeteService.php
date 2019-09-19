@@ -5,6 +5,7 @@ namespace App\Services\CADECO\Almacenes;
 
 
 use App\Models\CADECO\Inventario;
+use App\Models\CADECO\Inventarios\Conteo;
 use App\Models\CADECO\Inventarios\Marbete;
 use App\Repositories\Repository;
 
@@ -52,6 +53,7 @@ class MarbeteService
     }
     public function delete($data, $id)
     {
-        return $this->repository->delete($data, $id);
+      Conteo::query()->where('id_marbete','=', $id)->delete();
+       return $this->repository->delete($data, $id);
     }
 }
