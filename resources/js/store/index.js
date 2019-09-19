@@ -8,6 +8,7 @@ import ajusteNegativo from './modules/almacenes/ajuste-negativo';
 import ajustePositivo from './modules/almacenes/ajuste-positivo';
 import conteo from './modules/almacenes/conteo';
 import inventarioFisico from './modules/almacenes/inventario-fisico';
+import nuevoLote from  './modules/almacenes/nuevo-lote';
 
 //CADECO
 
@@ -103,6 +104,7 @@ export default new Vuex.Store({
         'almacenes/ajuste-positivo' : ajustePositivo,
         'almacenes/conteo' : conteo,
         'almacenes/inventario-fisico' : inventarioFisico,
+        'almacenes/nuevo-lote' : nuevoLote,
 
         'cadeco/almacen': almacen,
         'cadeco/banco': banco,

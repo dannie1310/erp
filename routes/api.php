@@ -157,6 +157,12 @@ $api->version('v1', function ($api) {
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@show')->where(['id' => '[0-9]+']);
             });
 
+            //NUEVO LOTE
+            $api->group(['prefix' => 'nuevo-lote'], function ($api) {
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@store');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@show')->where(['id' => '[0-9]+']);
+            });
+
         });
 
         //INVENTARIO FISICO
