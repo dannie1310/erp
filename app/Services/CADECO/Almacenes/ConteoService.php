@@ -35,30 +35,36 @@ class ConteoService
             $folio_marbete =  (int)substr(str_replace(' ', '', $c['folio_marbete']), 4, 6);
             $c['folio_marbete'] = $folio_marbete;
             $c['id_layout_conteo'] = $layout->id;
-            $partidas_layout = LayoutConteoPartida::query()->create($c);
 
-            if($marbete = Marbete::query()->find($partidas_layout->id_marbete)){
-                if($marbete->folio == $partidas_layout->folio_marbete){
-                    if($partidas_layout->tipo_conteo <= 3 && $partidas_layout->tipo_conteo > 0){
-                        if(count($marbete->conteos->where('tipo_conteo','=',$partidas_layout->tipo_conteo)) == 0){
-                            $c['id_layout_conteos_partida'] = $partidas_layout->id;
-                            $this->repository->create($c);
+            if(!is_numeric($c['tipo_conteo']) || !is_numeric($c['cantidad_usados']) || !is_numeric($c['cantidad_nuevo']) || !is_numeric($c['cantidad_inservible']) || !is_numeric($c['total'])){
+                $i++;
+                array_push($mensaje_rechazos , " \n\nError al ingresar cantidades en la linea ".($i+1)." del Layout: \n");
+            }else{
+                $partidas_layout = LayoutConteoPartida::query()->create($c);
+                if($marbete = Marbete::query()->find($partidas_layout->id_marbete)){
+                    if($marbete->folio == $partidas_layout->folio_marbete){
+                        if($partidas_layout->tipo_conteo <= 3 && $partidas_layout->tipo_conteo > 0){
+                            if(count($marbete->conteos->where('tipo_conteo','=',$partidas_layout->tipo_conteo)) == 0){
+                                $c['id_layout_conteos_partida'] = $partidas_layout->id;
+                                $this->repository->create($c);
+                            }else{
+                                $i++;
+                                array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Ya existe el registro de la partida");
+                            }
                         }else{
                             $i++;
-                            array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Ya existe el registro de la partida");
+                            array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - El tipo de conteo no es valido");
                         }
                     }else{
                         $i++;
-                        array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - El tipo de conteo no es valido");
+                        array_push($mensaje_rechazos ,  " \n\nError en ".$folio.": \n - El Folio del Marbete no es valido");
                     }
+
                 }else{
                     $i++;
-                    array_push($mensaje_rechazos ,  " \n\nError en ".$folio.": \n - El Folio del Marbete no es valido");
+                    array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Número de Marbete incorrecto");
                 }
 
-            }else{
-                $i++;
-                array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - No se encuentra el registro del Marbete");
             }
         }
         $mensaje_rechazos = array_unique($mensaje_rechazos);
