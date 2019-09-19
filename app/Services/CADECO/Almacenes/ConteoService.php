@@ -38,7 +38,7 @@ class ConteoService
 
             if(!is_numeric($c['tipo_conteo']) || !is_numeric($c['cantidad_usados']) || !is_numeric($c['cantidad_nuevo']) || !is_numeric($c['cantidad_inservible']) || !is_numeric($c['total'])){
                 $i++;
-                array_push($mensaje_rechazos , " \n\nError al ingresar cantidades en la linea ".($i+1)." del Layout: \n");
+                array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Error al ingresar cantidades");
             }else{
                 $partidas_layout = LayoutConteoPartida::query()->create($c);
                 if($marbete = Marbete::query()->find($partidas_layout->id_marbete)){
