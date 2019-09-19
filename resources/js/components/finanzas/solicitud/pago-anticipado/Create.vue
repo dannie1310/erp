@@ -228,7 +228,6 @@
                                                 <costo-select
                                                         name="id_costo"
                                                         data-vv-as="Costo"
-                                                        scope="costoFinanza"
                                                         v-validate="{required: true}"
                                                         id="id_costo"
                                                         v-model="id_costo"
