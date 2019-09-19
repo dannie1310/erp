@@ -23,7 +23,7 @@
                         <div class="modal-body">
                             <div class="row justify-content-between">
                                 <div class="col-md-8">
-                                     <label for="layout" class="col-lg-12 col-form-label">Cargar Layout</label>
+                                     <label for="carga_layout" class="col-lg-12 col-form-label">Cargar Layout</label>
                                     <div class="col-lg-12">
                                         <input type="file" class="form-control" id="carga_layout"
                                                @change="onFileChange"
@@ -42,7 +42,7 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click="cerrarModal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" @click="validate">Cargar</button>
+                            <button type="button" class="btn btn-primary" @click="validate" :disabled="!file">Cargar</button>
                         </div>
                     </form>
                 </div>
