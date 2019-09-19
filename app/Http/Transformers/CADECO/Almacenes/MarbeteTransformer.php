@@ -4,6 +4,8 @@
 namespace App\Http\Transformers\CADECO\Almacenes;
 
 
+use App\Http\Transformers\CADECO\AlmacenTransformer;
+use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\Inventarios\Marbete;
 use League\Fractal\TransformerAbstract;
 
@@ -15,6 +17,8 @@ class MarbeteTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'almacen',
+        'material',
 
     ];
     /**
@@ -37,5 +41,33 @@ class MarbeteTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param Marbete $model
+     * @return \League\Fractal\Resource\Item
+     *
+     */
+    public function includeAlmacen(Marbete $model)
+    {
+        if($almacen = $model->almacen)
+        {
+            return $this->item($almacen, new AlmacenTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Marbete $model
+     * @return \League\Fractal\Resource\Item
+     *
+     */
+    public function includeMaterial(Marbete $model)
+    {
+
+        if($material = $model->material)
+        {
+            return $this->item($material, new MaterialTransformer);
+        }
+        return null;
+    }
 
 }

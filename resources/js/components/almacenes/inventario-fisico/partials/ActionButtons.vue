@@ -3,7 +3,9 @@
         <button type="button" class="btn btn-sm btn-outline-primary" title="Descargar Marbetes" v-if="value.estado == 0 && value.marbete" @click="pdf_marbetes(value.id)">
             <i class="fa fa-file-pdf-o"></i>
         </button>
-        <CreateMarbete v-if="$root.can('registrar_marbetes_manualmente')  @click="value.id" v-bind:id="value.id"/>
+        <CreateMarbete v-if="$root.can('registrar_marbetes_manualmente')"  @click="value.id" v-bind:id="value.id"/>
+        <button type="button" @click="deleteMarbete" class="btn btn-sm btn-outline-danger"  title="Eliminar Marbete"><i class="fa fa-newspaper-o"></i></button>
+
         <button @click="descargaLayout"  v-if="value.estado == 0 && $root.can('descarga_layout_captura_conteos')" type="button" class="btn btn-sm btn-outline-success" title="Descargar Layout">
             <i class="fa fa-download"></i>
         </button>
@@ -20,6 +22,8 @@
 <script>
     import CreateMarbete from "../CreateMarbete";
     import Layout from "../../conteo/cargar-layout";
+    // import DeleteMarbete from "../marbete/index";
+
     export default {
         name: "action-buttons",
         components: {CreateMarbete, Layout},
@@ -63,6 +67,10 @@
             show() {
                 this.$router.push({name: 'create-marbete', params: {id: this.value.id}});
             },
+            deleteMarbete(){
+                // this.$router.push({name: 'banco-edit', params: {id: this.value.id}});
+                this.$router.push({name: 'marbete-delete', params: {id: this.value.id}});
+            }
 
             }
     }

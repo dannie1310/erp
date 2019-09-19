@@ -44,4 +44,9 @@ class Marbete extends  Model
         return chunk_split(str_pad($this->folio, 6,0,0),3,' ');
     }
 
+    public function scopeInventarioFisico($query, $id_inventario)
+    {
+        return $query->where('id_inventario_fisico', $id_inventario);
+    }
+
 }

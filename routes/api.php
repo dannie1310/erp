@@ -168,6 +168,8 @@ $api->version('v1', function ($api) {
         //MARBETE
         $api->group(['prefix'=>'marbete'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@paginate');
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@destroy')->where(['id' => '[0-9]+']);
         });
     });
 

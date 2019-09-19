@@ -46,4 +46,12 @@ class MarbeteService
        return $marbete;
 
     }
+    public function paginate($data)
+    {
+            return $this->repository->paginate();
+    }
+    public function delete($data, $id)
+    {
+        return $this->repository->delete($data, $id);
+    }
 }

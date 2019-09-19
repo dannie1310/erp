@@ -228,9 +228,20 @@ export const routes = [
                             permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
 
                         }
-                    }
-                ]
-            },
+                    },
+                    {
+                        path: ':id',
+                        name: 'marbete-delete',
+                        props:true,
+                        component: require('./components/almacenes/inventario-fisico/marbete/Index'),
+                        meta: {
+                            title: 'Eliminar Marbete',
+                            breadcrumb: { name: 'ELIMINAR MARBETE', parent: 'inventario-fisico'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    ]},
             {
                 path: 'conteo',
                 component: require('./components/almacenes/conteo/Layout'),
