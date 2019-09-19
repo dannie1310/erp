@@ -33,4 +33,16 @@ class NuevoLoteService
     {
         return $this->repository->show($id);
     }
+
+    public function store(array $data)
+    {
+        $datos = [
+            'id_almacen' => $data['id_almacen'],
+            'referencia' => $data['referencia'],
+            'observaciones' => $data['observaciones'],
+            'items' =>  $data['items']
+        ];
+
+        return $this->repository->create($datos);
+    }
 }
