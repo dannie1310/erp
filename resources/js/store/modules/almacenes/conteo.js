@@ -59,17 +59,28 @@ export default{
                                 .post(URI + 'layout', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    console.log(data);
-                                    swal("No se pudieron insertar los siguientes conteos:"+data, {
-                                        buttons: {
-                                            confirm: {
-                                                text: 'Aceptar',
-                                                closeModal: true,
+                                    console.log(data.length);
+                                    if(data.length > 0){
+                                        swal("No se pudieron insertar los siguientes conteos:"+data, {
+                                            buttons: {
+                                                confirm: {
+                                                    text: 'Aceptar',
+                                                    closeModal: true,
+                                                }
                                             }
-                                        }
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
+                                        }).then(() => {
+                                            resolve(data);
+                                        })
+                                    }else{
+                                        swal("Conteos registrados correctamente:"+data, {
+                                            icon: "success",
+                                            timer: 2000,
+                                            buttons: false
+                                        }).then(() => {
+                                            resolve(data);
+                                        })
+                                    }
+
                                 })
                                 .catch(error => {
                                     reject('Archivo no procesable');
