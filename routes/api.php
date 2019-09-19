@@ -141,10 +141,22 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'almacenes'], function ($api) {
 
-        //AJUSTE POSITIVO (+)
-        $api->group(['prefix' => 'ajuste-positivo'], function ($api) {
-//            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@paginate');
+        //AJUSTE INVENTARIOS
+        $api->group(['prefix' => 'ajuste-inventario'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteController@paginate');
+
+            //AJUSTE POSITIVO (+)
+            $api->group(['prefix' => 'positivo'], function ($api) {
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@show')->where(['id' => '[0-9]+']);
+            });
+
+            //AJUSTE NEGATIVO (-)
+            $api->group(['prefix' => 'negativo'], function ($api) {
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@store');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@show')->where(['id' => '[0-9]+']);
+            });
+
         });
 
         //INVENTARIO FISICO

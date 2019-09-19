@@ -1,4 +1,4 @@
-const URI = '/api/almacenes/ajuste-positivo/';
+const URI = '/api/almacenes/ajuste-inventario/positivo/';
 export default{
     namespaced: true,
     state: {
@@ -51,6 +51,57 @@ export default{
                     })
             });
         },
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar el ajuste positivo (+)",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Ajuste positivo registrado correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+        find (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI+payload.id, {params: payload.params})
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        }
     },
 
     getters: {

@@ -33,6 +33,7 @@ class Subcontrato extends Transaccion
         'retencion',
         'referencia',
         'observaciones',
+        'id_usuario'
     ];
     protected $with = array( 'estimacion');
     public $usuario_registra = 1;
