@@ -38,6 +38,7 @@ class ConteoController extends Controller
         $this->middleware('permiso:consultar_conteos')->only(['paginate','index','show']);
         $this->middleware('permiso:cargar_layout_captura_conteos')->only('cargaLayout');
         $this->middleware('permiso:eliminar_conteos')->only('cancelar');
+        $this->middleware('permiso:agregar_conteos_manuales')->only('store');
 
 
         $this->service = $service;

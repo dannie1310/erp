@@ -13,7 +13,9 @@ class MarbeteTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'folio' => $model->folio
+            'folio' => $model->folio,
+            'folio_marbete' => $model->folio_marbete,
+            'id_inventario_fisico' => $model->id_inventario_fisico
         ];
     }
 

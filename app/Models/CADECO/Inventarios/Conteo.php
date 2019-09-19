@@ -77,4 +77,10 @@ class Conteo extends Model
 
     }
 
+    public function validar(){
+        if(count(Conteo::query()->where('id_marbete','=',$this->id_marbete)->where('tipo_conteo','=',$this->tipo_conteo)->get()) > 0){
+            abort(400,'El conteo que intenta registrar ya existe');
+        }
+    }
+
 }

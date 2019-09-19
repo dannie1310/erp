@@ -32,6 +32,11 @@ class ConteoService
         return $this->repository->show($id);
     }
 
+    public function store($data){
+        $conteo = $this->repository->create($data);
+        return $this->repository->show($conteo->id);
+    }
+
     public function cargaLayout($file){
         $conteos = $this->getCsvData($file);
         $layout = LayoutConteo::query()->create();

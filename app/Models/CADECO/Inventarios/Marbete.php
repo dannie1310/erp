@@ -43,5 +43,8 @@ class Marbete extends  Model
     public function getFolioFormatAttribute(){
         return chunk_split(str_pad($this->folio, 6,0,0),3,' ');
     }
+    public function getFolioMarbeteAttribute(){
+        return $this->invetarioFisico->numero_folio_format."-".$this->folio_format;
+    }
 
 }

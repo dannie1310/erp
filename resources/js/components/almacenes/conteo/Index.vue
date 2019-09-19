@@ -1,6 +1,7 @@
 <template>
    <div class="row">
       <div class="col-12">
+         <create @created="paginate()"></create>
          <Layout @change="paginate()"></Layout>
       </div>
       <div class="col-12">
@@ -21,9 +22,10 @@
 
 <script>
    import Layout from "./cargar-layout";
-    export default {
+   import Create from "./Create";
+   export default {
         name: "conteo-index",
-       components: {Layout},
+       components: {Layout, Create},
        data() {
           return {
              HeaderSettings: false,
