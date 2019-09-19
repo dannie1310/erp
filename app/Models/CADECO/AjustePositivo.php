@@ -59,22 +59,41 @@ class AjustePositivo extends Ajuste
 
     public function validarPartidas($partidas, $id)
     {
+        $mensaje_partidas = [];
+        $mensaje = "";
+
         foreach ($partidas as  $partida) {
             $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])
                 ->where('id_almacen', '=', $id)
                 ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();
             if($inventarios['cantidad'] < $inventarios['saldo'])
             {
-                abort(400, "No se puede registrar el ajuste de inventario debido a que los saldos no concuerdan.");
+                array_push($mensaje_partidas, "-Los saldos no soportan el ajuste que desea realizar del material: ".$partida['id_material']['descripcion']."\n");
             }
             if($inventarios['cantidad'] < $partida['cantidad'])
             {
-                abort(400, "La cantidad solicitada es mayor a lo existente en inventarios.");
+                array_push($mensaje_partidas, "-La cantidad solicitada es mayor a lo existente en inventarios: ".$partida['id_material']['descripcion']."\n");
             }
             if($inventarios['cantidad'] == $inventarios['saldo'])
             {
-                abort(400, "Inventarios completos de este material");
+                array_push($mensaje_partidas, "-Inventarios completos de este material ".$partida['id_material']['descripcion']);
             }
+        }
+
+        $mensaje_items = array_unique($mensaje_partidas);
+
+        if($mensaje_items != [])
+        {
+            $mensaje_fin = "";
+            foreach ($mensaje_items as $mensaje_item) {
+                $mensaje_fin = $mensaje_fin . $mensaje_item;
+            }
+            $mensaje = $mensaje.$mensaje_fin;
+        }
+
+        if($mensaje != "")
+        {
+            abort(400, "No se puede registrar el ajuste de inventario debido a:\n". $mensaje);
         }
     }
 }
