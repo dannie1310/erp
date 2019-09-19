@@ -4,8 +4,10 @@ import auth from './modules/auth';
 
 //ALMACENES
 import conteo from './modules/almacenes/conteo';
+import tipoConteo from './modules/almacenes/ctg-tipo-conteo';
 import ajustePositivo from './modules/almacenes/ajuste-positivo';
 import inventarioFisico from './modules/almacenes/inventario-fisico';
+import marbete from './modules/almacenes/marbete';
 
 //CADECO
 
@@ -97,8 +99,10 @@ export default new Vuex.Store({
     modules: {
         auth,
         'almacenes/conteo' : conteo,
+        'almacenes/ctg-tipo-conteo' : tipoConteo,
         'almacenes/ajuste-positivo' : ajustePositivo,
         'almacenes/inventario-fisico' : inventarioFisico,
+        'almacenes/marbete' : marbete,
 
         'cadeco/almacen': almacen,
         'cadeco/banco': banco,

@@ -1,6 +1,7 @@
 <template>
    <div class="row">
       <div class="col-12">
+         <create @created="paginate()"></create>
          <Layout @change="paginate()"></Layout>
       </div>
       <div class="col-12">
@@ -21,9 +22,10 @@
 
 <script>
    import Layout from "./cargar-layout";
-    export default {
+   import Create from "./Create";
+   export default {
         name: "conteo-index",
-       components: {Layout},
+       components: {Layout, Create},
        data() {
           return {
              HeaderSettings: false,
@@ -37,6 +39,7 @@
                 { title: 'Total', field: 'total', sortable: true},
                 { title: 'Iniciales', field: 'iniciales', sortable: true, thComp: require('../../globals/th-Filter')},
                 { title: 'Observaciones', field: 'observaciones', sortable: true},
+                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
              ],
              data: [],
              total: 0,
@@ -93,7 +96,12 @@
                      cantidad_inservible : conteo.cantidad_inservible,
                      total : conteo.total,
                      iniciales : conteo.iniciales,
-                     observaciones : conteo.observaciones
+                     observaciones : conteo.observaciones,
+                     buttons: $.extend({}, {
+                        id:conteo.id,
+                        pagina: self.query.offset,
+                        cancelar:true,
+                       })
                    })
                 });
              },
