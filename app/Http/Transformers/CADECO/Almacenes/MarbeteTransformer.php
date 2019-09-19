@@ -5,6 +5,7 @@ namespace App\Http\Transformers\CADECO\Almacenes;
 
 
 use App\Http\Transformers\CADECO\AlmacenTransformer;
+use App\Http\Transformers\CADECO\Almacenes\InventarioFisicoTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\Inventarios\Marbete;
 use League\Fractal\TransformerAbstract;
@@ -19,6 +20,7 @@ class MarbeteTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'almacen',
         'material',
+        'inventario_fisico',
 
     ];
     /**
@@ -35,6 +37,7 @@ class MarbeteTransformer extends TransformerAbstract
             'id_inventario_fisico'=>$model->id_inventario_fisico,
             'id_almacen' =>$model->id_almacen,
             'id_material'=>$model->id_material,
+            'folio_format'=>str_pad($model->folio,6,0,0),
             'folio'=>$model->folio,
             'saldo'=>$model->saldo,
 
@@ -66,6 +69,22 @@ class MarbeteTransformer extends TransformerAbstract
         if($material = $model->material)
         {
             return $this->item($material, new MaterialTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Marbete $model
+     * @return \League\Fractal\Resource\Item
+     *
+     */
+
+    public function includeInventarioFisico(Marbete $model)
+    {
+
+        if($inventario = $model->inventario_fisico)
+        {
+          return $this->item($inventario, new InventarioFisicoTransformer);
         }
         return null;
     }

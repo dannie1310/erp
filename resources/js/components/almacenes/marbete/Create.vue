@@ -1,9 +1,13 @@
 <template>
-        <span>
- <button @click="init" type="button" class="btn btn-sm btn-outline-info" title="Crear Marbete"><i class="fa fa-newspaper-o"></i> </button>
+    <span>
+        <button @click="init" v-if="" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <i class="fa fa-plus" v-else></i>
+            Crear Marbete
+        </button>
 
-               <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                     <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Registrar Marbete</h5>
@@ -25,7 +29,7 @@
                                                    v-model="id_almacen"
                                                    v-validate="{required: true}"
                                                    :class="{'is-invalid': errors.has('id_almacen')}"
-                                                   id="id_almacen" @change="getMateriales()">
+                                                   id="id_almacen">
                                             <option value>-- Seleccione un Almacen --</option>
                                             <option v-for="(almacen, index) in almacenes" :value="almacen.id">
                                                 {{ almacen.descripcion }}
@@ -39,7 +43,7 @@
 
                                 <!--Material-->
                                      <div class="col-md-12" >
-                                    <div class="form-group error-content" v-if="materiales.length > 0">
+                                    <div class="form-group error-content" v-if="">
                                         <label for="id_material">Material</label>
                                                <select
                                                    class="form-control"
@@ -50,14 +54,14 @@
                                                    id="id_material"
                                                    :class="{'is-invalid': errors.has('id_material')}">
                                             <option value>-- Seleccione un Material --</option>
-                                            <option v-for="(material, index) in materiales" :value="material.id_material">
+                                            <option v-for="(material, index) in materiales" :value="material.id"
+                                                    data-toggle="tooltip" data-placement="left" :title="material.descripcion ">
                                                     {{ material.descripcion }}
                                             </option>
 
                                         </select>
                                          <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                     </div>
-                                         <div class="text-danger" v-if="materiales.length === 0 && aux === 1">No existen materiales en el almacen seleccionado</div>
                                 </div>
 
                             </div>
@@ -70,15 +74,14 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
-        </span>
+    </span>
 </template>
-
 <script>
 
     import Index from '../Index';
     export default {
         name: "create-marbete",
-        props: ['id'],
+        // props: ['id'],
         components: {Index},
         data() {
             return {
@@ -88,12 +91,15 @@
                 id_almacen:'',
                 aux:'',
                 id_inventario_fisico:'',
+                id:'',
 
             }
         },
 
         mounted() {
             this.getAlmacenes()
+            this.getMateriales()
+            this.id = 3
 
         },
 
@@ -106,7 +112,7 @@
             },
             getAlmacenes() {
                 return this.$store.dispatch('cadeco/almacen/index', {
-                params: {sort: 'descripcion', order: 'asc', scope:'AlmacenInventario' }
+                    params: {sort: 'descripcion', order: 'asc', scope:'AlmacenInventario' }
                 })
                     .then(data => {
                         this.almacenes = data.data;
@@ -117,12 +123,12 @@
                 this.aux=1;
                 console.log(this.id_almacen);
 
-                return this.$store.dispatch('cadeco/almacen/materiales',{
+                return this.$store.dispatch('cadeco/material/index',{
                     id: this.id_almacen,
-                    params: { }
+                    params: { sort:'descripcion', order:'asc', scope:'MaterialInventario' }
                 })
                     .then(data => {
-                        this.materiales = data;
+                        this.materiales = data.data;
                     })
 
             },

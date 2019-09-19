@@ -68,4 +68,9 @@ class Material extends Model
     {
         return $query->where('tipo_material', '=', $tipo);
     }
+
+    public function scopeMaterialInventario($query)
+    {
+        return $query->whereIn('tipo_material', array(1,4))->where('descripcion','!=','NULL');
+    }
 }

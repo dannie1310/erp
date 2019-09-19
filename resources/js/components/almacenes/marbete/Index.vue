@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <create @created=""></create>
+<Create></Create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -19,20 +19,21 @@
     </div>
 </template>
 <script>
-    // import DeleteMarbete from "../DeleteMarbete";
+import Create from './Create';
     export default {
         name: "marbete-index",
-        props:['id'],
-        components: {},
+        // props:['id'],
+        components: {Create},
         data () {
             return{
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Folio', field: 'folio', sortable: false},
-                    { title: 'Almacén', field:'id_almacen', sortable: false},
-                    { title: 'Material', field:'id_material', sortable: false},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Folio', field: 'folio',  thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Folio Inventario',  thComp: require('../../globals/th-Filter'), field:'id_inventario_fisico', sortable:true},
+                    { title: 'Almacén', field:'id_almacen',  thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Material', field:'id_material',  thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
@@ -52,11 +53,11 @@
         },
         methods: {
             paginate() {
-
-                this.cargando = true;
+                // scope:'InventarioFisico:'+this.id,
+                    this.cargando = true;
                 return this.$store.dispatch('almacenes/marbete/paginate', {
                     id: this.id,
-                    params:{ scope:'InventarioFisico:'+this.id, include:['almacen','material'], order:'desc', sort:'folio'}
+                    params:{ include:['almacen','material','inventario_fisico',], order:'desc', sort:'folio'}
                 })
                     .then(data => {
                         // console.log(data);
@@ -90,7 +91,8 @@
                     marbetes.forEach(function (marbete, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: marbete.folio,
+                            folio: marbete.folio_format,
+                            id_inventario_fisico: marbete.inventario_fisico.folio_format,
                             id_almacen: marbete.almacen.descripcion,
                             id_material: marbete.material.descripcion,
                             buttons: $.extend({}, {

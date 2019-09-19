@@ -51,8 +51,5 @@ class AlmacenController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function materialesAlmacen($id)
-    {
-        return $this->service->materialesAlmacen($id);
-    }
+
 }

@@ -39,10 +39,4 @@ class AlmacenService
         return $this->repository->show($id);
     }
 
-    public function materialesAlmacen($id)
-    {
-    return  Material::query()->join('inventarios','inventarios.id_material', 'materiales.id_material')
-          ->where('inventarios.id_almacen','=', $id)->whereIn('materiales.tipo_material', array(1,4))
-          ->orderBy('materiales.descripcion','asc')->select('materiales.*')->distinct()->get()->toArray();
-    }
 }

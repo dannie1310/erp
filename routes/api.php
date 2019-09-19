@@ -32,7 +32,6 @@ $api->version('v1', function ($api) {
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
-            $api->get('{id}/materiales','App\Http\Controllers\v1\CADECO\AlmacenController@materialesAlmacen')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix'=>'banco'], function ($api){

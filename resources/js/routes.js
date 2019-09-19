@@ -229,19 +229,27 @@ export const routes = [
 
                         }
                     },
-                    {
-                        path: ':id',
-                        name: 'marbete-delete',
-                        props:true,
-                        component: require('./components/almacenes/inventario-fisico/marbete/Index'),
-                        meta: {
-                            title: 'Eliminar Marbete',
-                            breadcrumb: { name: 'ELIMINAR MARBETE', parent: 'inventario-fisico'},
-                            middleware: [auth, context],
 
+                ]
+            },
+            {
+                path:'marbete',
+                component: require('./components/almacenes/marbete/Layout'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'marbete',
+                        component: require('./components/almacenes/marbete/Index'),
+                        meta: {
+                            title: 'Marbetes',
+                            breadcrumb: {parent: 'almacenes', name: 'MARBETES'},
+                            middleware: [auth, context],
+                           // permission: ['consultar_marbetes']
                         }
-                    },
-                    ]},
+
+                    }
+                ]
+            },
             {
                 path: 'conteo',
                 component: require('./components/almacenes/conteo/Layout'),

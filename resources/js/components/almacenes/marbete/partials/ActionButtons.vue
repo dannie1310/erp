@@ -40,13 +40,13 @@
                         this.cargando = false;
                     })
 
-        },
-        computed: {
+            },
+            computed: {
 
-        },
-        watch:{
+            },
+            watch:{
 
+            }
         }
-    }
     }
 </script>
