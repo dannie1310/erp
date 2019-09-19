@@ -204,7 +204,7 @@ export const routes = [
                             title: 'Registrar Ajuste de Inventario',
                             breadcrumb: {name: 'REGISTRAR', parent: 'ajuste-inventario'},
                             middleware: [auth, context, permission],
-                            permission: 'registrar_ajuste_positivo'
+                            permission: ['registrar_ajuste_positivo','registrar_ajuste_negativo']
                         }
                     },
                 ]

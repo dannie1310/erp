@@ -22,7 +22,7 @@ class StoreAjusteNegativoRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('registrar_ajuste_positivo');
+        return auth()->user()->can('registrar_ajuste_negativo');
     }
 
     /**

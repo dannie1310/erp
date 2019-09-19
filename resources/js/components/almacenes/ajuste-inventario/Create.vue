@@ -65,9 +65,9 @@
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a aria-controls="nav-home" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-home"
-                       id="nav-home-tab" role="tab" >Ajuste (+)</a>
+                       id="nav-home-tab" role="tab" v-if="$root.can('registrar_ajuste_positivo')">Ajuste (+)</a>
                     <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
-                       href="#nav-profile" id="nav-profile-tab" role="tab">Ajuste (-)</a>
+                       href="#nav-profile" id="nav-profile-tab" role="tab" v-if="$root.can('registrar_ajuste_negativo')">Ajuste (-)</a>
                     <a aria-controls="nav-contact" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-contact"
                        id="nav-contact-tab" role="tab">Nuevo Lote</a>
                 </div>
