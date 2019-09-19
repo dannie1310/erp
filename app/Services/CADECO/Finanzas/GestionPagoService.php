@@ -68,7 +68,7 @@ class GestionPagoService
             'concepto' => $data->Concepto,
             'beneficiario' => $data->Destinatario,
             'monto' => $pago['monto'],
-            'cuenta_cargo' => ['id_cuenta_cargo' => $data->partidas->cuentaCargo->id_cuenta, 'numero'=> $data->partidas->cuentaCargo->numero, 'abreviatura'=> $data->partidas->cuentaCargo->abreviatura, 'nombre' => $data->partidas->cuentaCargo->empresa->razon_social, 'id_empresa' => $data->empresa->id_empresa],
+            'cuenta_cargo' => ['id_cuenta_cargo' => $data->partidas->cuentaCargo->id_cuenta, 'numero'=> $data->partidas->cuentaCargo->numero, 'abreviatura'=> $data->partidas->cuentaCargo->abreviatura, 'nombre' => $data->partidas->cuentaCargo->empresa->razon_social, 'id_empresa' => $data->partidas->cuentaCargo->empresa->id_empresa],
             'cuenta_abono' => ['id_cuenta_abono' => $data->partidas->cuentaAbono->id, 'numero'=> $data->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $data->partidas->cuentaAbono->banco->ctg_banco->nombre_corto, 'nombre' => $data->partidas->cuentaAbono->banco->razon_social],
             'referencia' => $pago['referencia'],
             'referencia_docto' => $data->Referencia,
@@ -328,12 +328,14 @@ class GestionPagoService
                             $registros_bitacora[] = $this->bitacoraPago($documento, $pago);
                         }
                     } else {
+                        $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
                         $documentos = Documento::query()->where('MontoTotalSolicitado', '=', $pago['monto'])->get();
-                        $dist_part = DistribucionRecursoRemesaPartida::query()->whereIn('id_documento', $documentos->pluck('IDDocumento'))
+                        $dist_part = DistribucionRecursoRemesaPartida::query()->transaccionPago()
+                            ->where('id_cuenta_abono', '=', $cuenta_abono->id)
+                            ->whereIn('id_documento', $documentos->pluck('IDDocumento'))
                             ->whereNotIn('id_documento', array_values($doctos_repetidos))->get();
 
                         if(count($dist_part) == 0){
-                            $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
                             $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
                             if($transaccion_pagada){
                                 $registros_bitacora[] = array(
@@ -392,7 +394,7 @@ class GestionPagoService
                             }
                         }else{
                             if (count($dist_part) == 1) {
-                                $registros_bitacora[] = $this->bitacoraPago($documentos[0], $pago);
+                                $registros_bitacora[] = $this->bitacoraPago($dist_part[0]->documento, $pago);
                             } else {
                                 $doctos_repetidos[$dist_part[0]->id_documento] = $dist_part[0]->id_documento;
                                 $registros_bitacora[] = $this->bitacoraPago($dist_part[0]->documento, $pago);

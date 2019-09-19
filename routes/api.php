@@ -151,6 +151,12 @@ $api->version('v1', function ($api) {
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@show')->where(['id' => '[0-9]+']);
             });
 
+            //AJUSTE NEGATIVO (-)
+            $api->group(['prefix' => 'negativo'], function ($api) {
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@store');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@show')->where(['id' => '[0-9]+']);
+            });
+
         });
 
         //INVENTARIO FISICO

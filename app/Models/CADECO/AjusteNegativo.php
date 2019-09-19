@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 09/09/2019
- * Time: 08:33 PM
+ * Date: 18/09/2019
+ * Time: 12:43 PM
  */
 
 namespace App\Models\CADECO;
@@ -11,7 +11,7 @@ namespace App\Models\CADECO;
 
 use Illuminate\Support\Facades\DB;
 
-class AjustePositivo extends Ajuste
+class AjusteNegativo extends Ajuste
 {
     protected $fillable = [
         'id_almacen',
@@ -25,13 +25,13 @@ class AjustePositivo extends Ajuste
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('opciones', '=', 0);
+            return $query->where('opciones', '=', 1);
         });
     }
 
     public function partidas()
     {
-        return $this->hasMany(AjustePositivoPartida::class, 'id_transaccion', 'id_transaccion');
+        return $this->hasMany(AjusteNegativoPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function registrar($data)
@@ -44,10 +44,10 @@ class AjustePositivo extends Ajuste
                 'referencia' => $data['referencia'],
                 'observaciones' => $data['observaciones'],
             ];
-            $ajusteTransaccion = $this->create($datos);
-            $partida = new AjustePositivoPartida();
-            $partida->registrar($data['items'], $ajusteTransaccion->id_almacen, $ajusteTransaccion->id_transaccion);
 
+            $ajusteTransaccion = $this->create($datos);
+            $partida = new AjusteNegativoPartida();
+            $partida->registrar($data['items'], $ajusteTransaccion->id_almacen, $ajusteTransaccion->id_transaccion);
             DB::connection('cadeco')->commit();
             return $this;
         }catch (\Exception $e) {
@@ -59,22 +59,22 @@ class AjustePositivo extends Ajuste
 
     public function validarPartidas($partidas, $id)
     {
+        $mensaje = "";
+
         foreach ($partidas as  $partida) {
             $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])
                 ->where('id_almacen', '=', $id)
+                ->where('saldo', '!=', '0')
                 ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();
-            if($inventarios['cantidad'] < $inventarios['saldo'])
+
+            if($inventarios['saldo'] < $partida['cantidad'])
             {
-                abort(400, "No se puede registrar el ajuste de inventario debido a que los saldos no concuerdan, ".$partida['id_material']['descripcion']);
+                $mensaje = $mensaje."-Item: ".$partida['id_material']['descripcion']."\n";
             }
-            if($inventarios['cantidad'] < $partida['cantidad'])
-            {
-                abort(400, "La cantidad solicitada es mayor a lo existente en inventarios, ".$partida['id_material']['descripcion']);
-            }
-            if($inventarios['cantidad'] == $inventarios['saldo'])
-            {
-                abort(400, "Inventarios completos del material:".$partida['id_material']['descripcion']);
-            }
+        }
+        if($mensaje != "")
+        {
+            abort(400, "No se puede registrar el ajuste de inventario debido a que los saldos no soportan el ajuste que desea realizar:\n ".$mensaje);
         }
     }
 }

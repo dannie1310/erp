@@ -2,13 +2,13 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 12/09/2019
- * Time: 01:21 PM
+ * Date: 18/09/2019
+ * Time: 12:39 PM
  */
 
-namespace App\Repositories\CADECO\AjustePositivo;
+namespace App\Repositories\CADECO\AjusteNegativo;
 
-use App\Models\CADECO\AjustePositivo as Model;
+use App\Models\CADECO\AjusteNegativo as Model;
 
 class Repository extends \App\Repositories\Repository implements RepositoryInterface
 {

@@ -25,6 +25,7 @@ class EntradaMaterialObserver
         $entradaMaterial->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $entradaMaterial->FechaHoraRegistro = date('Y-m-d h:i:s');
         $entradaMaterial->id_obra = Context::getIdObra();
+        $entradaMaterial->id_usuario = auth()->id();
     }
 
     public function deleting(EntradaMaterial $entradaMaterial)

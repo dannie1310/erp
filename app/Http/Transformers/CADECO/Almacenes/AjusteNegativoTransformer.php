@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 09/09/2019
- * Time: 08:42 PM
+ * Date: 18/09/2019
+ * Time: 11:54 AM
  */
 
 namespace App\Http\Transformers\CADECO\Almacenes;
@@ -11,10 +11,10 @@ namespace App\Http\Transformers\CADECO\Almacenes;
 
 use App\Http\Transformers\CADECO\AlmacenTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
-use App\Models\CADECO\AjustePositivo;
+use App\Models\CADECO\AjusteNegativo;
 use League\Fractal\TransformerAbstract;
 
-class AjustePositivoTransformer extends TransformerAbstract
+class AjusteNegativoTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -35,7 +35,7 @@ class AjustePositivoTransformer extends TransformerAbstract
     protected $defaultIncludes = [
     ];
 
-    public function transform(AjustePositivo $model)
+    public function transform(AjusteNegativo $model)
     {
         return [
             'id' => $model->getKey(),
@@ -51,10 +51,10 @@ class AjustePositivoTransformer extends TransformerAbstract
     }
 
     /**
-     * @param AjustePositivo $model
+     * @param AjusteNegativo $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeAlmacen(AjustePositivo $model)
+    public function includeAlmacen(AjusteNegativo $model)
     {
         if($almacen = $model->almacen)
         {
@@ -64,23 +64,23 @@ class AjustePositivoTransformer extends TransformerAbstract
     }
 
     /**
-     * @param AjustePositivo $model
+     * @param AjusteNegativo $model
      * @return \League\Fractal\Resource\Collection|null
      */
-    public function includePartidas(AjustePositivo $model)
+    public function includePartidas(AjusteNegativo $model)
     {
         if($partidas = $model->partidas)
         {
-            return $this->collection($partidas, new AjustePositivoPartidaTransformer);
+            return $this->collection($partidas, new AjusteNegativoPartidaTransformer);
         }
         return null;
     }
 
     /**
-     * @param AjustePositivo $model
+     * @param AjusteNegativo $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeUsuario(AjustePositivo $model)
+    public function includeUsuario(AjusteNegativo $model)
     {
         if($usuario = $model->usuario)
         {

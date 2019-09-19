@@ -18,7 +18,8 @@ use League\Fractal\Manager;
 
 class AjustePositivoController extends Controller
 {
-    use ControllerTrait{
+    use ControllerTrait
+    {
         store as protected traitStore;
     }
 
@@ -47,6 +48,9 @@ class AjustePositivoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+
+        $this->middleware('permiso:consultar_ajuste_positivo')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:registrar_ajuste_positivo')->only('store');
 
         $this->service = $service;
         $this->fractal = $fractal;

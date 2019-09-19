@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 17/09/2019
- * Time: 07:36 PM
+ * Date: 18/09/2019
+ * Time: 12:51 PM
  */
 
 namespace App\Http\Transformers\CADECO\Almacenes;
@@ -11,10 +11,10 @@ namespace App\Http\Transformers\CADECO\Almacenes;
 
 use App\Http\Transformers\CADECO\Compras\InventarioTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
-use App\Models\CADECO\AjustePositivoPartida;
+use App\Models\CADECO\AjusteNegativoPartida;
 use League\Fractal\TransformerAbstract;
 
-class AjustePositivoPartidaTransformer extends TransformerAbstract
+class AjusteNegativoPartidaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -34,7 +34,7 @@ class AjustePositivoPartidaTransformer extends TransformerAbstract
     protected $defaultIncludes = [
     ];
 
-    public function transform(AjustePositivoPartida $model)
+    public function transform(AjusteNegativoPartida $model)
     {
         return [
             'id' => $model->getKey(),
@@ -44,16 +44,15 @@ class AjustePositivoPartidaTransformer extends TransformerAbstract
             'saldo' => $model->saldo,
             'importe' => $model->importe,
             'precio_unitario' => $model->precio_unitario,
-            'estado'=> $model->estado,
-            'tipo' => $model->tipo,
-            ];
+            'estado'=> $model->estado
+        ];
     }
 
     /**
-     * @param AjustePositivoPartida $model
+     * @param AjusteNegativoPartida $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeMaterial(AjustePositivoPartida $model)
+    public function includeMaterial(AjusteNegativoPartida $model)
     {
         if($material = $model->material)
         {
@@ -63,10 +62,10 @@ class AjustePositivoPartidaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param AjustePositivoPartida $model
+     * @param AjusteNegativoPartida $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeInventario(AjustePositivoPartida $model)
+    public function includeInventario(AjusteNegativoPartida $model)
     {
         if($inventario = $model->inventario)
         {

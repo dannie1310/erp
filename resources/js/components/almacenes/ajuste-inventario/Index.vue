@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-12"  v-if="$root.can('registrar_ajuste_positivo')" :disabled="cargando">
+        <div class="col-12"  v-if="$root.can('registrar_ajuste_positivo') || $root.can('registrar_ajuste_negativo')" :disabled="cargando">
             <button @click="create" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
@@ -37,7 +37,7 @@
                     { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date')},
                     { title: 'Almacén', field: 'id_almacen',sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Tipo', field: 'tipo', sortable: true},
+                    { title: 'Tipo', field: 'opciones', sortable: true},
                     { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Estatus', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
@@ -96,7 +96,7 @@
                             fecha: ajuste.fecha_format,
                             id_almacen: typeof ajuste.almacen !== 'undefined' ?  ajuste.almacen.descripcion : '',
                             referencia: ajuste.referencia,
-                            tipo: ajuste.tipo,
+                            opciones: ajuste.tipo,
                             observaciones: ajuste.observaciones,
                             estado: ajuste.estado_format,
                             buttons: $.extend({}, {
