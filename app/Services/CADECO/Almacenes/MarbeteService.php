@@ -9,8 +9,15 @@ use App\Repositories\Repository;
 
 class MarbeteService
 {
+    /**
+     * @var Repository
+     */
     protected $repository;
 
+    /**
+     * MarbeteService constructor.
+     * @param Marbete $model
+     */
     public function __construct(Marbete $model)
     {
         $this->repository = new Repository($model);

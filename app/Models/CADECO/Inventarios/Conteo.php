@@ -26,7 +26,6 @@ class Conteo extends Model
         'observaciones'
     ];
 
-
     public function marbete()
     {
         return $this->belongsTo(Marbete::class,'id_marbete','id');

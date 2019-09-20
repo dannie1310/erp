@@ -31,19 +31,20 @@
              HeaderSettings: false,
              columns: [
                 { title: '#', field: 'index', sortable: false },
-                { title: 'Folio', field: 'folio', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Inventario Físico', field: 'inventario_fisico', thComp: require('../../globals/th-Filter')},
+                { title: 'Folio', field: 'id_marbete', sortable: true},
                 { title: 'Tipo Conteo', field: 'tipo_conteo', sortable: true, thComp: require('../../globals/th-Filter')},
                 { title: 'Cantidad Usados', field: 'cantidad_usados', sortable: true},
                 { title: 'Cantidad Nuevos', field: 'cantidad_nuevo', sortable: true},
                 { title: 'Cantidad inservibles', field: 'cantidad_inservible', sortable: true},
                 { title: 'Total', field: 'total', sortable: true},
                 { title: 'Iniciales', field: 'iniciales', sortable: true, thComp: require('../../globals/th-Filter')},
-                { title: 'Observaciones', field: 'observaciones', sortable: true},
+                { title: 'Observaciones', field: 'observaciones'},
                 { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
              ],
              data: [],
              total: 0,
-             query: {include: ['marbete'],sort: 'id_marbete', order: 'desc'},
+             query: {include: ['marbete.inventario_fisico'],sort:'id_marbete', order: 'desc'},
              estado: "",
              cargando: false
           }
@@ -90,10 +91,11 @@
                      index: (i + 1) + self.query.offset,
                      id : conteo.id,
                      tipo_conteo : conteo.tipo_conteo_format,
-                     folio : conteo.folio_marbete,
+                     id_marbete : conteo.folio_marbete,
                      cantidad_usados : conteo.cantidad_usados,
                      cantidad_nuevo : conteo.cantidad_nuevo,
                      cantidad_inservible : conteo.cantidad_inservible,
+                     inventario_fisico : conteo.marbete.inventario_fisico.folio_format,
                      total : conteo.total,
                      iniciales : conteo.iniciales,
                      observaciones : conteo.observaciones,
@@ -101,6 +103,7 @@
                         id:conteo.id,
                         pagina: self.query.offset,
                         cancelar:true,
+                        estado:conteo.marbete.inventario_fisico.estado
                        })
                    })
                 });
