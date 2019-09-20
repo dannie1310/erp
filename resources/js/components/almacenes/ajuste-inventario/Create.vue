@@ -69,7 +69,7 @@
                     <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
                        href="#nav-profile" id="nav-profile-tab" role="tab" v-if="$root.can('registrar_ajuste_negativo')">Ajuste (-)</a>
                     <a aria-controls="nav-contact" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-contact"
-                       id="nav-contact-tab" role="tab">Nuevo Lote</a>
+                       id="nav-contact-tab" role="tab" v-if="$root.can('registrar_nuevo_lote')">Nuevo Lote</a>
                 </div>
             </nav>
 

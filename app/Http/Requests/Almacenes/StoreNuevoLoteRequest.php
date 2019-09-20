@@ -17,7 +17,7 @@ class StoreNuevoLoteRequest extends FormRequest
      */
     public function authorize()
     {
-        return !auth()->user()->can('registrar_nuevo_lote');
+        return auth()->user()->can('registrar_nuevo_lote');
     }
 
     /**

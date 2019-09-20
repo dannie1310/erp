@@ -49,8 +49,8 @@ class NuevoLoteController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-//        $this->middleware('permiso:consultar_ajuste_negativo')->only(['show','paginate','index','find']);
-//        $this->middleware('permiso:registrar_ajuste_negativo')->only('store');
+        $this->middleware('permiso:consultar_nuevo_lote')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:registrar_nuevo_lote')->only('store');
 
         $this->service = $service;
         $this->fractal = $fractal;
