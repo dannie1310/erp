@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-<Create></Create>
+            <Create @created="paginate()"></Create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -19,57 +19,48 @@
     </div>
 </template>
 <script>
-import Create from './Create';
+    import Create from "./Create";
     export default {
-        name: "marbete-index",
-        // props:['id'],
+        name: "conteo-index",
         components: {Create},
-        data () {
-            return{
+        data() {
+            return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Folio', field: 'folio',  thComp: require('../../globals/th-Filter'), sortable: true},
-                    { title: 'Folio Inventario',  thComp: require('../../globals/th-Filter'), field:'id_inventario_fisico', sortable:true},
-                    { title: 'Almacén', field:'id_almacen',  thComp: require('../../globals/th-Filter'), sortable: true},
-                    { title: 'Material', field:'id_material',  thComp: require('../../globals/th-Filter'), sortable: true},
-                    { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
+                    { title: 'Folio Inventario', field:'id_inventario_fisico', sortable:true,  thComp: require('../../globals/th-Filter')},
+                    { title: 'Folio', field: 'folio', sortable: true,  thComp: require('../../globals/th-Filter')},
+                    { title: 'Almacén', field:'id_almacen', sortable: true,  thComp: require('../../globals/th-Filter')},
+                    { title: 'Material', field:'id_material', sortable: true,  thComp: require('../../globals/th-Filter')},
+                   { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                query: {
-
-                },
+                query: {include:['almacen','material','inventario_fisico'], sort:'id', order:'desc'},
+                estado: "",
                 cargando: false
             }
         },
-        mounted(){
-            // console.log("id",this.id);
+        mounted() {
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
                 })
         },
+
         methods: {
             paginate() {
-                // scope:'InventarioFisico:'+this.id,
-                    this.cargando = true;
-                return this.$store.dispatch('almacenes/marbete/paginate', {
-                    id: this.id,
-                    params:{ include:['almacen','material','inventario_fisico',], order:'desc', sort:'folio'}
-                })
+                this.cargando = true;
+                return this.$store.dispatch('almacenes/marbete/paginate', { params: this.query})
                     .then(data => {
-                        // console.log(data);
                         this.$store.commit('almacenes/marbete/SET_MARBETES', data.data);
                         this.$store.commit('almacenes/marbete/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
-
             }
-
         },
         computed: {
             marbetes(){
@@ -81,7 +72,6 @@ import Create from './Create';
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
-
         },
         watch: {
             marbetes: {
@@ -99,9 +89,7 @@ import Create from './Create';
                                 id: marbete.id
                             })
                         })
-
                     });
-
                 },
                 deep: true
             },
@@ -118,18 +106,6 @@ import Create from './Create';
                 },
                 deep: true
             },
-            search(val) {
-                if (this.timer) {
-                    clearTimeout(this.timer);
-                    this.timer = null;
-                }
-                this.timer = setTimeout(() => {
-                    this.query.search = val;
-                    this.query.offset = 0;
-                    this.paginate();
-
-                }, 500);
-            },
             cargando(val) {
                 $('tbody').css({
                     '-webkit-filter': val ? 'blur(2px)' : '',
@@ -137,12 +113,6 @@ import Create from './Create';
                 });
             }
         }
-
-
-
-
-
-
     }
 
 </script>

@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_marbetes_manualmente')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Crear Marbete
@@ -78,20 +78,17 @@
 </template>
 <script>
 
-    import Index from '../Index';
+    import IndexMarbete from '../Index';
     export default {
         name: "create-marbete",
-        // props: ['id'],
-        components: {Index},
+        components: {IndexMarbete},
         data() {
             return {
                 almacenes:[],
                 materiales:[],
                 id_material: '',
                 id_almacen:'',
-                aux:'',
-                id_inventario_fisico:'',
-                id:'',
+                cargando: false
 
             }
         },
@@ -99,14 +96,11 @@
         mounted() {
             this.getAlmacenes()
             this.getMateriales()
-            this.id = 3
 
         },
 
         methods: {
             init() {
-
-                this.id_inventario_fisico = this.id;
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset()
             },
@@ -120,15 +114,14 @@
 
             },
             getMateriales() {
-                this.aux=1;
-                console.log(this.id_almacen);
-
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index',{
                     id: this.id_almacen,
                     params: { sort:'descripcion', order:'asc', scope:'MaterialInventario' }
                 })
                     .then(data => {
                         this.materiales = data.data;
+                        this.cargando = false;
                     })
 
             },
@@ -143,14 +136,14 @@
                 return this.$store.dispatch('almacenes/marbete/store', this.$data)
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
-                        this.$emit('created',data)
+                        this.$emit('created', data)
+
                     })
             }
         },
-
         computed: {
 
-
         }
+
     }
 </script>

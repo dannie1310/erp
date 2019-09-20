@@ -41,7 +41,10 @@ class MarbeteController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_marbetes')->only(['paginate']);
         $this->middleware('permiso:registrar_marbetes_manualmente')->only(['store']);
+        $this->middleware('permiso:eliminar_marbetes_manualmente')->only(['delete']);
+
 
 
         $this->service = $service;

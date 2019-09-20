@@ -9,7 +9,7 @@ use App\Models\CADECO\Material;
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use Illuminate\Database\Eloquent\Model;
 
-class Marbete extends  Model
+class Marbete extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Inventarios.marbetes';

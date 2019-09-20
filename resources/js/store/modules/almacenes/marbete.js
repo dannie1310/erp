@@ -9,17 +9,14 @@ export default{
 
     mutations: {
         SET_MARBETES(state, data){
-            state.marbetes= data
+            state.marbetes = data
         },
-
+        SET_MARBETE(state,data){
+            state.currentMarbete = data
+        },
         SET_META(state, data){
             state.meta = data
         },
-
-        SET_MARBETE(state, data){
-            state.currentMarbete = data
-        },
-
         UPDATE_MARBETE(state, data) {
             state.marbetes = state.marbetes.map(marbete => {
                 if (marbete.id === data.id) {

@@ -243,8 +243,8 @@ export const routes = [
                         meta: {
                             title: 'Marbetes',
                             breadcrumb: {parent: 'almacenes', name: 'MARBETES'},
-                            middleware: [auth, context],
-                           // permission: ['consultar_marbetes']
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_marbetes']
                         }
 
                     }
