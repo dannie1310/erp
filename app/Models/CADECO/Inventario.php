@@ -20,7 +20,12 @@ class Inventario extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'saldo'
+        'id_almacen',
+        'id_material',
+        'cantidad',
+        'saldo',
+        'monto_total',
+        'monto_pagado',
     ];
 
     public function almacen()

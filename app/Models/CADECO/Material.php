@@ -90,11 +90,10 @@ class Material extends Model
         return $query->whereIn('id_material',array_unique($materiales->toArray()));
     }
 
-    public function scopeMaterialAlmacen($query, $id)
+    public function scopeTipos($query, $tipos)
     {
-        $materiales =  Material::query()->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
-            ->whereRaw('inventarios.saldo != 0')
-            ->pluck('materiales.id_material');
-        return $query->whereIn('id_material',array_unique($materiales->toArray()));
+        $tip = explode(',',$tipos);
+//        dd(array_unique($tip));
+        return $query->where('equivalencia', '=', 1)->whereIn('tipo_material', array_unique($tip));
     }
 }

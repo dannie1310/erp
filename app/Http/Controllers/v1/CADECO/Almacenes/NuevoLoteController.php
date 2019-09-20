@@ -10,6 +10,8 @@ namespace App\Http\Controllers\v1\CADECO\Almacenes;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Almacenes\StoreAjusteNegativoRequest;
+use App\Http\Requests\Almacenes\StoreNuevoLoteRequest;
 use App\Http\Transformers\CADECO\Almacenes\NuevoLoteTransformer;
 use App\Services\CADECO\Almacenes\NuevoLoteService;
 use App\Traits\ControllerTrait;
@@ -17,7 +19,9 @@ use League\Fractal\Manager;
 
 class NuevoLoteController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        store as protected traitStore;
+    }
 
     /**
      * @var NuevoLoteService
@@ -51,5 +55,10 @@ class NuevoLoteController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function store(StoreNuevoLoteRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

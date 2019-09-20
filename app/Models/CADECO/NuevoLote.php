@@ -32,19 +32,32 @@ class NuevoLote extends Ajuste
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            dd($data);
-            $this->validarPartidas($data['items'],$data['id_almacen']);
-            $datos = [
+            $transaccion = $this->create([
                 'id_almacen' => $data['id_almacen'],
+//                'monto' => $item['monto_total'],
+//                'saldo' => $item['monto_pagado'],
                 'referencia' => $data['referencia'],
                 'observaciones' => $data['observaciones'],
-            ];
-
-            $ajusteTransaccion = $this->create($datos);
-            $partida = new AjusteNegativoPartida();
-            $partida->registrar($data['items'], $ajusteTransaccion->id_almacen, $ajusteTransaccion->id_transaccion);
+            ]);
+            $monto = 0;
+            $saldo = 0;
+            foreach ($data['items'] as $item){
+                $transaccion->partidas()->create([
+                        'id_almacen' => $data['id_almacen'],
+                        'id_material' => $item['id_material']['id'],
+                        'unidad' => $item['id_material']['unidad'],
+                        'cantidad' => $item['cantidad'],
+                        'importe' => $item['monto_total'],
+                        'saldo' => $item['monto_total'] - $item['monto_pagado'],
+                    ]);
+                $monto += $item['monto_total'];
+                $saldo += $item['monto_pagado'];
+            }
+            $transaccion->monto = $monto;
+            $transaccion->saldo = $saldo;
+            $transaccion->save();
             DB::connection('cadeco')->commit();
-            return $this;
+            return $transaccion;
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());

@@ -12,4 +12,18 @@ namespace App\Models\CADECO;
 class NuevoLotePartida extends Item
 {
 
+    protected $fillable = [
+        'id_item',
+        'id_almacen',
+        'id_material',
+        'unidad',
+        'cantidad',
+        'saldo',
+        'importe',
+    ];
+
+    public function inventario()
+    {
+        return $this->belongsTo(Inventario::class, 'id_item', 'id_item');
+    }
 }
