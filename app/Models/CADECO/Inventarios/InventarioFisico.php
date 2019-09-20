@@ -22,6 +22,10 @@ class InventarioFisico extends Model
     protected $fillable = [
         'estado'
     ];
+
+    protected $searchable = [
+        'fecha_hora_inicio'
+    ];
     public $timestamps = false;
 
     protected static function boot()

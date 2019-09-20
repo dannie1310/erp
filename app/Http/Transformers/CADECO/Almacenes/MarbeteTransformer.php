@@ -9,6 +9,10 @@ use League\Fractal\TransformerAbstract;
 
 class MarbeteTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = [
+        'inventario_fisico'
+    ];
+
     public function transform(Marbete $model)
     {
         return [
@@ -17,6 +21,13 @@ class MarbeteTransformer extends TransformerAbstract
             'folio_marbete' => $model->folio_marbete,
             'id_inventario_fisico' => $model->id_inventario_fisico
         ];
+    }
+
+    public function includeInventarioFisico(Marbete $model){
+        if($invetarioFisico = $model->invetarioFisico){
+            return $this->item($invetarioFisico, new InventarioFisicoTransformer);
+        }
+        return null;
     }
 
 }
