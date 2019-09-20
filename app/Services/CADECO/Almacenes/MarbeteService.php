@@ -33,7 +33,10 @@ class MarbeteService
 
         $inventario = InventarioFisico::query()->where('estado',0)->first();
 
-
+        if (empty($inventario)){
+            abort(400, 'No hay un inventario físico activo');
+        }
+        
         $saldo = Inventario::query()->join('almacenes','almacenes.id_almacen', 'inventarios.id_almacen')
             ->where('inventarios.id_almacen','=', $data['id_almacen'])
             ->where('inventarios.id_material','=', $data['id_material'])->sum('inventarios.saldo');
