@@ -87,4 +87,9 @@ class Almacen extends Model
     {
         return $query->has('cuentaAlmacen', '=', 0);
     }
+
+    public function scopeTipoMaterialYHerramienta($query)
+    {
+        return $query->whereIn('tipo_almacen', [0,5])->where('opciones', 0);
+    }
 }
