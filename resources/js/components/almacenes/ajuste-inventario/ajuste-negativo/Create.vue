@@ -39,7 +39,7 @@
                                                                      :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                              >
 
-                                                                 <option v-for="numero in numero_partes" :value="numero">{{ numero.numero_parte }}</option>
+                                                                 <option v-for="numero in material" :value="numero">{{ numero.numero_parte }}</option>
                                                             </select>
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
@@ -52,7 +52,7 @@
                                                                       :name="`id_material[${i}]`"
                                                                       v-model="item.id_material"
                                                                       v-validate="{required: true }"
-                                                                      data-vv-as="No de Parte"
+                                                                      data-vv-as="Descripcion"
                                                                       :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                               >
 
@@ -135,7 +135,6 @@
                 referencia: '',
                 observaciones: '',
                 items: [],
-                numero_partes: [],
                 materiales: [],
                 bandera: 0
             }
@@ -169,20 +168,7 @@
                 })
                     .then(data => {
                         this.materiales = data.data;
-                    })
-            },
-            getNumeroPartes(id_almacen) {
-                this.numero_partes = [];
-                return this.$store.dispatch('cadeco/material/index', {
-                    params: {
-                        scope: ['materialInventarioGlobal:'+id_almacen],
-                        sort: 'numero_parte',
-                        order: 'asc'
-                    }
-                })
-                    .then(data => {
-                        this.numero_partes = data.data;
-                        if( this.numero_partes.length != 0 && this.materiales.length != 0 ) {
+                        if( this.materiales.length != 0 ) {
                             this.bandera = 1;
                         }
                     })
@@ -192,9 +178,8 @@
                     'id_material' : '',
                     'cantidad' : '',
                 }
-                if(this.numero_partes.length === 0 && this.materiales.length === 0 ) {
+                if(this.materiales.length === 0 ) {
                     this.getMateriales(this.id_almacen);
-                    this.getNumeroPartes(this.id_almacen);
                 }
                 this.referencia = this.$attrs.referencia;
                 this.items.push(array);
