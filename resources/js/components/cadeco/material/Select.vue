@@ -4,7 +4,7 @@
             <div class="col-md-6">
                 <select class="form-control" v-model="tipo_material">
                     <option disabled value>-- Tipo de Material --</option>
-                    <option v-for="tipo in tipos" :value="tipo.id">{{ tipo.descripcion }}</option>
+                    <option v-for="tipo in tiposMaterial()" :value="tipo.id">{{ tipo.descripcion }}</option>
                 </select>
             </div>
 
@@ -33,7 +33,7 @@
 
 <script>
     export default {
-        props: ['value','id', 'multiple', 'error', 'scope', 'disableBranchNodes'],
+        props: ['value','id', 'multiple', 'error', 'scope', 'disableBranchNodes',  'tipos_material'],
         name: "material-select",
         data() {
             return {
@@ -114,6 +114,13 @@
                     .catch(error => {
                         callback(new Error('Failed to load options: network error.'))
                     });
+            },
+            tiposMaterial(){
+                console.log(this.tipos_material);
+                if(typeof this.tipos_material !== 'undefined'){
+                    return this.tipos_material;
+                }
+                return this.tipos;
             }
         },
 

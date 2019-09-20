@@ -18,9 +18,12 @@
                                                         <th class="bg-gray-light">Item</th>
                                                         <th class="bg-gray-light">Unidad</th>
                                                         <th class="bg-gray-light">Cantidad</th>
+                                                        <th class="bg-gray-light">Monto Total</th>
+                                                        <th class="bg-gray-light">Monto Pagado</th>
                                                         <th class="bg-gray-light">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar">
-                                                                <i class="fa fa-plus"></i>
+                                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                                <i class="fa fa-plus" v-else></i>
                                                             </button>
                                                         </th>
                                                     </tr>
@@ -39,7 +42,7 @@
                                                                      :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                              >
 
-                                                                 <option v-for="numero in numero_partes" :value="numero">{{ numero.numero_parte }}</option>
+                                                                 <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
                                                             </select>
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
@@ -52,7 +55,7 @@
                                                                       :name="`id_material[${i}]`"
                                                                       v-model="item.id_material"
                                                                       v-validate="{required: true }"
-                                                                      data-vv-as="No de Parte"
+                                                                      data-vv-as="Item"
                                                                       :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                               >
 
@@ -80,6 +83,40 @@
                                                                     placeholder="Cantidad">
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                    :disabled = "!item.id_material"
+                                                                    type="number"
+                                                                    step="any"
+                                                                    :name="`monto_total[${i}]`"
+                                                                    v-model="item.monto_total"
+                                                                    data-vv-as="Monto Total"
+                                                                    v-validate="{min_value: 0, required:true}"
+                                                                    class="form-control"
+                                                                    :class="{'is-invalid': errors.has(`monto_total[${i}]`)}"
+                                                                    id="monto_total"
+                                                                    placeholder="Monto Total">
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`monto_total[${i}]`)">{{ errors.first(`monto_total[${i}]`) }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                    :disabled = "!item.id_material"
+                                                                    type="number"
+                                                                    step="any"
+                                                                    :name="`monto_pagado[${i}]`"
+                                                                    v-model="item.monto_pagado"
+                                                                    data-vv-as="Monto Pagado"
+                                                                    v-validate="{min_value: 0, max_value:item.monto_total, required:true}"
+                                                                    class="form-control"
+                                                                    :class="{'is-invalid': errors.has(`monto_pagado[${i}]`)}"
+                                                                    id="monto_pagado"
+                                                                    placeholder="Monto Pagado">
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`monto_pagado[${i}]`)">{{ errors.first(`monto_pagado[${i}]`) }}
                                                             </div>
                                                         </td>
                                                         <td>
@@ -115,7 +152,7 @@
                          </div>
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 || observaciones == ''">Registrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 ">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -125,19 +162,25 @@
 </template>
 
 <script>
+    import MaterialSelect from "../../../cadeco/material/Select";
     export default {
-        name: "ajuste-positivo-create",
+        name: "nuevo-lote",
         propos:['id_almacen', 'referencia'],
+        components: {MaterialSelect},
         data() {
             return {
+                id_material:'',
                 cargando: false,
                 id_almacen: this.$attrs.id_almacen,
                 referencia: '',
                 observaciones: '',
                 items: [],
-                numero_partes: [],
                 materiales: [],
-                bandera: 0
+                bandera: 0,
+                tipos:[
+                    {id: 1, descripcion: 'Materiales'},
+                    {id: 4, descripcion: 'Herramienta y Equipo'},
+                ]
             }
         },
 
@@ -156,43 +199,35 @@
                 })
                     .then(data => {
                         this.almacenes = data.data;
+                        this.cargando = false;
                     })
             },
             getMateriales(id_almacen){
+                this.cargando = true;
                 this.materiales = [];
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
-                        scope: ['materialInventario:'+id_almacen],
+                        scope: ['tipos:1,4'],
                         sort: 'descripcion',
                         order: 'asc'
                     }
                 })
                     .then(data => {
                         this.materiales = data.data;
-                    })
-            },
-            getNumeroPartes(id_almacen) {
-                this.numero_partes = [];
-                return this.$store.dispatch('cadeco/material/index', {
-                    params: {
-                        scope: ['materialInventario:'+id_almacen],
-                        sort: 'numero_parte',
-                        order: 'asc'
-                    }
-                })
-                    .then(data => {
-                        this.numero_partes = data.data;
                         this.bandera = 1;
+                        this.cargando = false;
                     })
             },
             agregar() {
                 var array = {
+                    'material':'',
                     'id_material' : '',
                     'cantidad' : '',
+                    'monto_total' : '',
+                    'monto_pagado' : '',
                 }
-                if(this.numero_partes.length === 0 && this.materiales.length === 0 ) {
+                if( this.materiales.length === 0 ) {
                     this.getMateriales(this.id_almacen);
-                    this.getNumeroPartes(this.id_almacen);
                 }
                 this.referencia = this.$attrs.referencia;
                 this.items.push(array);
@@ -213,9 +248,9 @@
                 });
             },
             store() {
-                return this.$store.dispatch('almacenes/ajuste-positivo/store', this.$data)
+                return this.$store.dispatch('almacenes/nuevo-lote/store', this.$data)
                     .then((data) => {
-                        this.$router.push({name: 'ajuste-inventario'});
+                        this.$router.push({name: 'nuevo-lote'});
                     });
             },
             destroy(index){
