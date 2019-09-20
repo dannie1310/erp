@@ -20,7 +20,7 @@
 </template>
 
 <script>
-   import Layout from "./cargar-layout";
+   import Layout from "./CargarLayout";
     export default {
         name: "conteo-index",
        components: {Layout},

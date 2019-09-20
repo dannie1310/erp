@@ -4,6 +4,7 @@
 namespace App\Services\CADECO\Almacenes;
 
 use App\Models\CADECO\Inventarios\InventarioFisico;
+use App\Models\IGH\Usuario;
 use App\Repositories\Repository;
 use PhpParser\Node\Stmt\Return_;
 
@@ -25,7 +26,19 @@ class InventarioFisicoService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $inventario = $this->repository;
+
+        if(isset($data['usuario_inicia'])){
+            $usuario = Usuario::query()->where('nombre', 'LIKE', '%'.$data['usuario_inicia'].'%')
+                ->orWhere('apaterno', 'LIKE', '%'.$data['usuario_inicia'].'%')
+                ->orWhere('amaterno', 'LIKE', '%'.$data['usuario_inicia'].'%')
+                ->get();
+            foreach ($usuario as $u){
+                $inventario = $inventario->whereOr([['usuario_inicia', '=', $u->idusuario]]);
+            }
+        }
+
+        return $inventario->paginate($data);
     }
 
     public function store($data)
