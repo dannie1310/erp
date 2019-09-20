@@ -20,6 +20,7 @@ class Inventario extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'id_item',
         'id_almacen',
         'id_material',
         'cantidad',

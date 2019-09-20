@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\DB;
 
 class NuevoLote extends Ajuste
 {
+    protected $fillable = [
+        'id_almacen',
+        'referencia',
+        'observaciones',
+    ];
 
     protected static function boot()
     {
@@ -34,8 +39,6 @@ class NuevoLote extends Ajuste
             DB::connection('cadeco')->beginTransaction();
             $transaccion = $this->create([
                 'id_almacen' => $data['id_almacen'],
-//                'monto' => $item['monto_total'],
-//                'saldo' => $item['monto_pagado'],
                 'referencia' => $data['referencia'],
                 'observaciones' => $data['observaciones'],
             ]);

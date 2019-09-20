@@ -250,7 +250,7 @@
             store() {
                 return this.$store.dispatch('almacenes/nuevo-lote/store', this.$data)
                     .then((data) => {
-                        this.$router.push({name: 'nuevo-lote'});
+                        this.$router.push({name: 'ajuste-inventario'});
                     });
             },
             destroy(index){
