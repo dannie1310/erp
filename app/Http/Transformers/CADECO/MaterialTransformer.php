@@ -29,6 +29,7 @@ class MaterialTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
+            'tipo_material'=> $model->tipo_material,
             'descripcion' => $model->descripcion,
             'tiene_hijos' => $model->tiene_hijos,
             'numero_parte' => $model->numero_parte
@@ -60,4 +61,6 @@ class MaterialTransformer extends TransformerAbstract
         }
         return null;
     }
+
+
 }

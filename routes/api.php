@@ -11,6 +11,8 @@
 |
 */
 
+
+
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
@@ -160,6 +162,13 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'conteo'], function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@paginate');
+        });
+
+        //MARBETE
+        $api->group(['prefix'=>'marbete'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@paginate');
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@destroy')->where(['id' => '[0-9]+']);
         });
     });
 

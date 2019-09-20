@@ -6,6 +6,7 @@ import auth from './modules/auth';
 import conteo from './modules/almacenes/conteo';
 import ajustePositivo from './modules/almacenes/ajuste-positivo';
 import inventarioFisico from './modules/almacenes/inventario-fisico';
+import marbete from "./modules/almacenes/marbete";
 
 //CADECO
 
@@ -99,6 +100,7 @@ export default new Vuex.Store({
         'almacenes/conteo' : conteo,
         'almacenes/ajuste-positivo' : ajustePositivo,
         'almacenes/inventario-fisico' : inventarioFisico,
+        'almacenes/marbete': marbete,
 
         'cadeco/almacen': almacen,
         'cadeco/banco': banco,

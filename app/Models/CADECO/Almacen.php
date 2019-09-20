@@ -12,9 +12,18 @@ namespace App\Models\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaAlmacen;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Almacen extends Model
 {
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'material',
+    ];
     /**
      * @var string
      */
@@ -87,4 +96,12 @@ class Almacen extends Model
     {
         return $query->has('cuentaAlmacen', '=', 0);
     }
+
+    public function scopeAlmacenInventario($query)
+    {
+        return $query->whereIn("tipo_almacen", array(1,5));
+    }
+
+
+
 }

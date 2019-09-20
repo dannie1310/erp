@@ -92,6 +92,12 @@ class Repository implements RepositoryInterface
         $this->model = $this->model->orWhere($where);
         return $this;
     }
+    public function whereIn($where)
+    {
+
+        $this->model = $this->model->whereIn($where[0], $where[1]);
+        return $this;
+    }
 
     public function create(array $data)
     {

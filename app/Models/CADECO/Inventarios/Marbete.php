@@ -6,9 +6,10 @@ namespace App\Models\CADECO\Inventarios;
 
 use App\Models\CADECO\Almacen;
 use App\Models\CADECO\Material;
+use App\Models\CADECO\Inventarios\InventarioFisico;
 use Illuminate\Database\Eloquent\Model;
 
-class Marbete extends  Model
+class Marbete extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Inventarios.marbetes';
@@ -24,12 +25,14 @@ class Marbete extends  Model
         'folio'
     ];
 
-    public function conteos(){
+    public function conteos()
+    {
         return $this->hasMany(Conteo::class, 'id_marbete', 'id');
     }
 
-    public function invetarioFisico(){
-        return $this->hasOne(InventarioFisico::class, 'id', 'id_inventario_fisico');
+    public function inventario_fisico()
+    {
+        return $this->belongsTo(InventarioFisico::class, 'id_inventario_fisico','id');
     }
 
     public function almacen(){
@@ -40,8 +43,10 @@ class Marbete extends  Model
         return $this->belongsTo(Material::class,'id_material','id_material');
     }
 
+
     public function getFolioFormatAttribute(){
         return chunk_split(str_pad($this->folio, 6,0,0),3,' ');
     }
+
 
 }
