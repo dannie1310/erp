@@ -166,6 +166,93 @@ export const routes = [
         }
     },
     {
+        path: '/sao/almacenes',
+        components: {
+            default: require('./components/almacenes/partials/Layout.vue'),
+            menu: require('./components/almacenes/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'almacenes',
+                component: require('./components/almacenes/Index'),
+                meta: {
+                    title: 'Almacenes',
+                    breadcrumb: {parent:'home', name: 'ALMACENES'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'ajuste-inventario',
+                component: require('./components/almacenes/ajuste-inventario/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'ajuste-inventario',
+                        component: require('./components/almacenes/ajuste-inventario/Index'),
+                        meta: {
+                            title: 'Ajuste de Inventarios',
+                            breadcrumb: {parent: 'almacenes', name: 'AJUSTE DE INVENTARIOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'ajuste-positivo',
+                        name: 'ajuste-positivo',
+                        component: require('./components/almacenes/ajuste-inventario/ajuste-positivo/Index'),
+                        meta: {
+                            title: 'Ajuste Positivo (+)',
+                            breadcrumb: {
+                                parent: 'ajuste-inventario',
+                                name: 'AJUSTE POSITIVO (+)'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_entrada_almacen'
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'inventario-fisico',
+                component: require('./components/almacenes/inventario-fisico/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'inventario-fisico',
+                        component: require('./components/almacenes/inventario-fisico/Index'),
+                        meta: {
+                            title: 'Inventario Fisico',
+                            breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FÍSICO'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'conteo',
+                component: require('./components/almacenes/conteo/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'conteo',
+                        component: require('./components/almacenes/conteo/Index'),
+                        meta: {
+                            title: 'Conteos',
+                            breadcrumb: {parent: 'almacenes', name: 'CONTEOS'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+
+                        }
+                    }
+                ]
+            },
+
+        ]
+    },
+    {
         path: '/sao/compras',
         components: {
             default: require('./components/compras/partials/Layout.vue'),
