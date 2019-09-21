@@ -24,36 +24,32 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Fecha', field: 'fecha',sortable: true, thComp: require('../../../globals/th-Date')},
-                    { title: 'Empresa', field: 'id_empresa',sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Observaciones', field: 'observaciones', sortable: true},
-                    { title: 'Estatus', field: 'estado', sortable: true},
+                    { title: 'Descripción', field: 'descripcion',sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'No. de Parte', field: 'numero_parte', sortable: true, thComp: require('../../../globals/th-Filter')},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: { include: 'empresa', sort: 'numero_folio', order: 'desc'},
+                query: { include: 'hijos', scope:'roots', sort: 'nivel', order: 'desc'},
                 estado: "",
                 cargando: false
             }
         },
         mounted() {
-            // this.$Progress.start();
-            // this.paginate()
-            //     .finally(() => {
-            //         this.$Progress.finish();
-            //     })
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
         },
 
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/entrada-almacen/paginate', { params: this.query})
+                return this.$store.dispatch('cadeco/material/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('compras/entrada-almacen/SET_ENTRADAS', data.data);
-                        this.$store.commit('compras/entrada-almacen/SET_META', data.meta);
+                        this.$store.commit('cadeco/material/SET_MATERIALES', data.data);
+                        this.$store.commit('cadeco/material/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -61,74 +57,70 @@
             }
         },
         computed: {
-            entradas(){
-                return this.$store.getters['compras/entrada-almacen/entradas'];
+            materiales(){
+                return this.$store.getters['cadeco/material/materiales'];
             },
             meta(){
-                return this.$store.getters['compras/entrada-almacen/meta'];
+                return this.$store.getters['cadeco/material/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
-        // watch: {
-        //     entradas: {
-        //         handler(entradas) {
-        //             let self = this
-        //             self.$data.data = []
-        //             entradas.forEach(function (entrada, i) {
-        //                 self.$data.data.push({
-        //                     index: (i + 1) + self.query.offset,
-        //                     numero_folio: entrada.numero_folio_format,
-        //                     fecha: entrada.fecha_format,
-        //                     id_empresa: entrada.empresa.razon_social,
-        //                     referencia: entrada.referencia,
-        //                     observaciones: entrada.observaciones,
-        //                     estado: entrada.estado_format,
-        //                     buttons: $.extend({}, {
-        //                         id: entrada.id,
-        //                         estado: entrada.estado,
-        //                         pagina: self.query.offset,
-        //                         delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
-        //                     })
-        //                 })
-        //             });
-        //         },
-        //         deep: true
-        //     },
-        //
-        //     meta: {
-        //         handler(meta) {
-        //             let total = meta.pagination.total
-        //             this.$data.total = total
-        //         },
-        //         deep: true
-        //     },
-        //     query: {
-        //         handler(query) {
-        //             this.paginate(query)
-        //         },
-        //         deep: true
-        //     },
-        //     search(val) {
-        //         if (this.timer) {
-        //             clearTimeout(this.timer);
-        //             this.timer = null;
-        //         }
-        //         this.timer = setTimeout(() => {
-        //             this.query.search = val;
-        //             this.query.offset = 0;
-        //             this.paginate();
-        //
-        //         }, 500);
-        //     },
-        //     cargando(val) {
-        //         $('tbody').css({
-        //             '-webkit-filter': val ? 'blur(2px)' : '',
-        //             'pointer-events': val ? 'none' : ''
-        //         });
-        //     }
-        // }
+        watch: {
+            materiales: {
+                handler(materiales) {
+                    let self = this
+                    self.$data.data = []
+                    materiales.forEach(function (material, i) {
+                        self.$data.data.push({
+                            index: (i + 1) + self.query.offset,
+                            descripcion: material.descripcion,
+                            numero_parte: material.numero_parte,
+                            // buttons: $.extend({}, {
+                            //     id: entrada.id,
+                            //     estado: entrada.estado,
+                            //     pagina: self.query.offset,
+                            //     delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
+                            // })
+                        })
+                    });
+                },
+                deep: true
+            },
+
+            meta: {
+                handler(meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler(query) {
+                    this.paginate(query)
+                },
+                deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
+        }
     }
 </script>
 <style>
