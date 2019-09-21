@@ -315,6 +315,37 @@ export const routes = [
                 ]
             },
             {
+                path: 'familia',
+                component: require('./components/compras/catalogos/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'familia',
+                        component: require('./components/compras/catalogos/Index'),
+                        meta: {
+                            title: 'Gestión de Familias',
+                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE FAMILIAS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'material-familia',
+                        name: 'material-familia',
+                        component: require('./components/compras/catalogos/familia/Index'),
+                        meta: {
+                            title: 'Gestión de Familia',
+                            breadcrumb: {
+                                parent: 'familia',
+                                name: 'GESTIÓN DE FAMILIA'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue'),
                 meta: {
