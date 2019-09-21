@@ -5,6 +5,30 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
+            <li class="nav-item" v-if="$root.can('consultar_entrada_almacen')">
+                <router-link :to="{name: 'entrada-almacen'}" class="nav-link">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>Entrada de Almacén</p>
+                </router-link>
+            </li>
+            <li class="nav-item" v-if="$root.can('consultar_salida_almacen')">
+                <router-link :to="{name: 'salida-almacen'}" class="nav-link">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>Salida de Almacén</p>
+                </router-link>
+            </li>
+            <li class="nav-item" v-if="$root.can('consultar_inventario_fisico')">
+                <router-link :to="{name: 'inventario-fisico'}" class="nav-link">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>Inventario Físico</p>
+                </router-link>
+            </li>
+<!--            <li class="nav-item" v-if="$root.can('consultar_inventario_fisico')">-->
+<!--                <router-link :to="{name: 'conteo'}" class="nav-link">-->
+<!--                    <i class="nav-icon fa fa-server"></i>-->
+<!--                    <p>Conteos</p>-->
+<!--                </router-link>-->
+<!--            </li>-->
             <li class="nav-item" v-if="ajuste_inventario">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-server"></i>
@@ -22,18 +46,6 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_inventario_fisico')">
-                <router-link :to="{name: 'inventario-fisico'}" class="nav-link">
-                    <i class="nav-icon fa fa-server"></i>
-                    <p>Inventario Físico</p>
-                </router-link>
-            </li>
-<!--            <li class="nav-item" v-if="$root.can('consultar_inventario_fisico')">-->
-<!--                <router-link :to="{name: 'conteo'}" class="nav-link">-->
-<!--                    <i class="nav-icon fa fa-server"></i>-->
-<!--                    <p>Conteos</p>-->
-<!--                </router-link>-->
-<!--            </li>-->
         </ul>
     </nav>
     <!-- /.sidebar-menu -->

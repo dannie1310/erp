@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers\v1\CADECO\Compras;
+namespace App\Http\Controllers\v1\CADECO\Almacenes;
 
 
 use App\Http\Controllers\Controller;

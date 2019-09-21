@@ -214,6 +214,42 @@ export const routes = [
                 ]
             },
             {
+                path: 'entrada-almacen',
+                component: require('./components/almacenes/entrada-almacen/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'entrada-almacen',
+                        component: require('./components/almacenes/entrada-almacen/Index'),
+                        meta: {
+                            title: 'Entrada de Almacén',
+                            breadcrumb: {parent: 'almacenes', name: 'ENTRADA ALMACEN'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_entrada_almacen'
+
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'salida-almacen',
+                component: require('./components/almacenes/salida-almacen/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'salida-almacen',
+                        component: require('./components/almacenes/salida-almacen/Index'),
+                        meta: {
+                            title: 'Salida de Almacén',
+                            breadcrumb: {parent: 'almacenes', name: 'SALIDA ALMACEN'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_salida_almacen'
+
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'inventario-fisico',
                 component: require('./components/almacenes/inventario-fisico/Layout'),
                 children: [
@@ -269,51 +305,51 @@ export const routes = [
                     middleware: [auth, context, access]
                 }
             },
-            {
-                path: 'almacen',
-                component: require('./components/compras/almacen/Layout'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'almacen',
-                        component: require('./components/compras/almacen/Index'),
-                        meta: {
-                            title: 'Gestión de Almacenes',
-                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE ALMACENES'},
-                            middleware: [auth, context],
-
-                        }
-                    },
-                    {
-                        path: 'entrada-almacen',
-                        name: 'entrada-almacen',
-                        component: require('./components/compras/almacen/entrada/Index'),
-                        meta: {
-                            title: 'Entrada de Almacén',
-                            breadcrumb: {
-                                parent: 'almacen',
-                                name: 'ENTRADA DE ALMACÉN'
-                            },
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_entrada_almacen'
-                        }
-                    },
-                    {
-                        path: 'salida-almacen',
-                        name: 'salida-almacen',
-                        component: require('./components/compras/almacen/salida/Index'),
-                        meta: {
-                            title: 'Salida de Almacén',
-                            breadcrumb: {
-                                parent: 'almacen',
-                                name: 'SALIDA DE ALMACÉN'
-                            },
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_salida_almacen'
-                        }
-                    }
-                ]
-            },
+            // {
+            //     path: 'almacen',
+            //     component: require('./components/compras/almacen/Layout'),
+            //     children: [
+            //         {
+            //             path: '/',
+            //             name: 'almacen',
+            //             component: require('./components/compras/almacen/Index'),
+            //             meta: {
+            //                 title: 'Gestión de Almacenes',
+            //                 breadcrumb: {parent: 'compras', name: 'GESTIÓN DE ALMACENES'},
+            //                 middleware: [auth, context],
+            //
+            //             }
+            //         },
+            //         {
+            //             path: 'entrada-almacen',
+            //             name: 'entrada-almacen',
+            //             component: require('./components/compras/almacen/entrada/Index'),
+            //             meta: {
+            //                 title: 'Entrada de Almacén',
+            //                 breadcrumb: {
+            //                     parent: 'almacen',
+            //                     name: 'ENTRADA DE ALMACÉN'
+            //                 },
+            //                 middleware: [auth, context, permission],
+            //                 permission: 'consultar_entrada_almacen'
+            //             }
+            //         },
+            //         {
+            //             path: 'salida-almacen',
+            //             name: 'salida-almacen',
+            //             component: require('./components/compras/almacen/salida/Index'),
+            //             meta: {
+            //                 title: 'Salida de Almacén',
+            //                 breadcrumb: {
+            //                     parent: 'almacen',
+            //                     name: 'SALIDA DE ALMACÉN'
+            //                 },
+            //                 middleware: [auth, context, permission],
+            //                 permission: 'consultar_salida_almacen'
+            //             }
+            //         }
+            //     ]
+            // },
             {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue'),
