@@ -37,7 +37,7 @@ class MarbeteTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'folio' => $model->folio,
             'folio_marbete' => $model->folio_marbete,
-            'id_inventario_fisico' => $model->id_inventario_fisico
+            'id_inventario_fisico' => $model->id_inventario_fisico,
             'id_almacen' =>$model->id_almacen,
             'id_material'=>$model->id_material,
             'folio_format'=>str_pad($model->folio,6,0,0),

@@ -32,7 +32,7 @@
                     { title: 'Folio', field: 'folio', sortable: true,  thComp: require('../../globals/th-Filter')},
                     { title: 'Almacén', field:'id_almacen', sortable: true,  thComp: require('../../globals/th-Filter')},
                     { title: 'Material', field:'id_material', sortable: true,  thComp: require('../../globals/th-Filter')},
-                   { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,

@@ -106,7 +106,7 @@
             },
             getAlmacenes() {
                 return this.$store.dispatch('cadeco/almacen/index', {
-                    params: {sort: 'descripcion', order: 'asc', scope:'AlmacenInventario' }
+                    params: {sort: 'descripcion', order: 'asc', scope:'TipoMaterialYHerramienta' }
                 })
                     .then(data => {
                         this.almacenes = data.data;
@@ -117,7 +117,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index',{
                     id: this.id_almacen,
-                    params: { sort:'descripcion', order:'asc', scope:'MaterialInventario' }
+                    params: { sort:'descripcion', order:'asc', scope:['MaterialDescripcion', 'tipo:1,4'] }
                 })
                     .then(data => {
                         this.materiales = data.data;

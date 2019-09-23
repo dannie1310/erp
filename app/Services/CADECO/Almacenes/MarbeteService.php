@@ -98,7 +98,7 @@ class MarbeteService
       Conteo::query()->where('id_marbete','=', $id)->delete();
        return $this->repository->delete($data, $id);
     }
-}
+
 
     public function index($data)
     {

@@ -101,10 +101,7 @@ class Almacen extends Model
         return $query->whereIn('tipo_almacen', [0,5])->where('opciones', 0);
     }
 
-    public function scopeAlmacenInventario($query)
-    {
-        return $query->whereIn("tipo_almacen", array(1,5));
-    }
+
 
 
 }
