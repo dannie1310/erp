@@ -20,7 +20,8 @@
                                                         <th class="bg-gray-light">Cantidad</th>
                                                         <th class="bg-gray-light">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar">
-                                                                <i class="fa fa-plus"></i>
+                                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                                <i class="fa fa-plus" v-else></i>
                                                             </button>
                                                         </th>
                                                     </tr>
@@ -39,7 +40,7 @@
                                                                      :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                              >
 
-                                                                 <option v-for="numero in numero_partes" :value="numero">{{ numero.numero_parte }}</option>
+                                                                 <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
                                                             </select>
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
@@ -52,7 +53,7 @@
                                                                       :name="`id_material[${i}]`"
                                                                       v-model="item.id_material"
                                                                       v-validate="{required: true }"
-                                                                      data-vv-as="No de Parte"
+                                                                      data-vv-as="Descripción"
                                                                       :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                               >
 
@@ -115,7 +116,7 @@
                          </div>
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 || observaciones == ''">Registrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 || observaciones == '' || cargando">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -135,7 +136,6 @@
                 referencia: '',
                 observaciones: '',
                 items: [],
-                numero_partes: [],
                 materiales: [],
                 bandera: 0
             }
@@ -160,29 +160,26 @@
             },
             getMateriales(id_almacen){
                 this.materiales = [];
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
-                        scope: ['materialInventario:'+id_almacen],
+                        scope: ['inventariosDiferenciaSaldo:'+id_almacen],
                         sort: 'descripcion',
                         order: 'asc'
                     }
                 })
                     .then(data => {
                         this.materiales = data.data;
+                        if( this.materiales.length != 0 ) {
+                            this.bandera = 1;
+                            this.cargando = false
+                        }
                     })
-            },
-            getNumeroPartes(id_almacen) {
-                this.numero_partes = [];
-                return this.$store.dispatch('cadeco/material/index', {
-                    params: {
-                        scope: ['materialInventario:'+id_almacen],
-                        sort: 'numero_parte',
-                        order: 'asc'
-                    }
-                })
-                    .then(data => {
-                        this.numero_partes = data.data;
-                        this.bandera = 1;
+                    .finally(() => {
+                        if( this.materiales.length == 0 ) {
+                            swal('¡Error!', 'No existe ningun material disponible para ajustar.', 'error')
+                        }
+
                     })
             },
             agregar() {
@@ -190,9 +187,8 @@
                     'id_material' : '',
                     'cantidad' : '',
                 }
-                if(this.numero_partes.length === 0 && this.materiales.length === 0 ) {
+                if(this.materiales.length === 0 ) {
                     this.getMateriales(this.id_almacen);
-                    this.getNumeroPartes(this.id_almacen);
                 }
                 this.referencia = this.$attrs.referencia;
                 this.items.push(array);

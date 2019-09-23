@@ -59,6 +59,10 @@ class AjustePositivo extends Ajuste
 
     public function validarPartidas($partidas, $id)
     {
+        if($partidas[0]['id_material'] == null)
+        {
+            abort(400, "No se puede registrar un ajuste vacio");
+        }
         foreach ($partidas as  $partida) {
             $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])
                 ->where('id_almacen', '=', $id)
