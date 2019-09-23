@@ -224,6 +224,25 @@ export const routes = [
                             permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
 
                         }
+                    },
+
+                ]
+            },
+            {
+                path:'marbete',
+                component: require('./components/almacenes/marbete/Layout'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'marbete',
+                        component: require('./components/almacenes/marbete/Index'),
+                        meta: {
+                            title: 'Marbetes',
+                            breadcrumb: {parent: 'almacenes', name: 'MARBETES'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_marbetes']
+                        }
+
                     }
                 ]
             },

@@ -23,6 +23,12 @@
                     <p>Ajuste de Inventario</p>
                 </router-link>
             </li>
+            <li class="nav-item" v-if="$root.can('consultar_marbetes')">
+                <router-link :to="{name: 'marbete'}" class="nav-link">
+                    <i class="nav-icon fa fa-newspaper-o"></i>
+                    <p>Marbetes</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->

@@ -71,15 +71,7 @@ class Material extends Model
 
     public function scopeTipo($query, $tipo)
     {
-        return $query->where('tipo_material', '=', $tipo);
-    }
-
-    public function scopeMaterialInventario($query, $id)
-    {
-        $materiales =  Material::query()->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
-             ->whereRaw('inventarios.saldo != inventarios.cantidad')
-            ->pluck('materiales.id_material');
-        return $query->whereIn('id_material',array_unique($materiales->toArray()));
+        return $query->whereIn('tipo_material', explode(",", $tipo));
     }
 
     public function scopeMaterialInventarioGlobal($query, $id)
@@ -90,10 +82,9 @@ class Material extends Model
         return $query->whereIn('id_material',array_unique($materiales->toArray()));
     }
 
-    public function scopeTipos($query, $tipos)
+
+    public function scopeMaterialDescripcion($query)
     {
-        $tip = explode(',',$tipos);
-//        dd(array_unique($tip));
-        return $query->where('equivalencia', '=', 1)->whereIn('tipo_material', array_unique($tip));
+        return $query->where('descripcion','!=','NULL');
     }
 }

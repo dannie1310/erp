@@ -35,11 +35,14 @@ class MarbeteController extends Controller
      * @param Manager $fractal
      * @param MarbeteTransformer $transformer
      */
+
     public function __construct(MarbeteService $service, Manager $fractal, MarbeteTransformer $transformer)
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-//        $this->middleware('permiso:consultar_marbetes')->only(['paginate','index','show']);
+        $this->middleware('permiso:consultar_marbetes')->only(['paginate','index','show']);
+        $this->middleware('permiso:registrar_marbetes_manualmente')->only(['store']);
+        $this->middleware('permiso:eliminar_marbetes_manualmente')->only(['delete']);
 
 
 
@@ -49,3 +52,4 @@ class MarbeteController extends Controller
     }
 
 }
+

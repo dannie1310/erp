@@ -16,6 +16,14 @@ use Illuminate\Database\Eloquent\Model;
 class Almacen extends Model
 {
     /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'material',
+    ];
+    /**
      * @var string
      */
     protected $connection = 'cadeco';
@@ -92,4 +100,8 @@ class Almacen extends Model
     {
         return $query->whereIn('tipo_almacen', [0,5])->where('opciones', 0);
     }
+
+
+
+
 }
