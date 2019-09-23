@@ -4,7 +4,7 @@
 
 <script>
     export default {
-        name: "Layout"
+        name: "salida-almacen-layout"
     }
 </script>
 

@@ -1,4 +1,5 @@
-const URI = '/api/compras/almacen/entrada/';
+const URI = '/api/almacenes/entrada/';
+
 export default{
     namespaced: true,
     state: {
