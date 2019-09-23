@@ -71,7 +71,7 @@ class Material extends Model
 
     public function scopeTipo($query, $tipo)
     {
-        return $query->where('tipo_material', '=', $tipo);
+        return $query->whereIn('tipo_material', explode(",", $tipo));
     }
 
     public function scopeInventariosDiferenciaSaldo($query, $id)
@@ -84,5 +84,10 @@ class Material extends Model
     {
         return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
             ->whereRaw('inventarios.saldo != 0')->select('materiales.*')->distinct();
+    }
+
+    public function scopeMaterialDescripcion($query)
+    {
+        return $query->where('descripcion','!=','NULL');
     }
 }

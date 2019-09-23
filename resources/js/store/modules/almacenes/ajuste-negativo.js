@@ -4,16 +4,11 @@ export default{
     state: {
         ajustes: [],
         currentAjuste: null,
-        meta: {}
     },
 
     mutations: {
         SET_AJUSTES(state, data){
             state.ajustes = data
-        },
-
-        SET_META(state, data){
-            state.meta = data
         },
 
         SET_AJUSTE(state, data){
@@ -38,19 +33,6 @@ export default{
     },
 
     actions: {
-        paginate(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + 'paginate', {params: payload.params})
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
-        },
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -107,10 +89,6 @@ export default{
     getters: {
         ajustes(state) {
             return state.ajustes
-        },
-
-        meta(state) {
-            return state.meta
         },
 
         currentAjuste(state) {

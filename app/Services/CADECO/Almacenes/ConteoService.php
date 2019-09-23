@@ -5,6 +5,8 @@ namespace App\Services\CADECO\Almacenes;
 
 
 use App\Models\CADECO\Inventarios\Conteo;
+use App\Models\CADECO\Inventarios\CtgTipoConteo;
+use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\Inventarios\Marbete;
@@ -20,7 +22,37 @@ class ConteoService
     }
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $conteo = $this->repository;
+
+        if(isset($data['inventario_fisico'])){
+            $inventario = InventarioFisico::query()->where('folio', 'LIKE', '%'.$data['inventario_fisico'].'%')->get();
+            $marbete = Marbete::query()->whereIn('id_inventario_fisico',$inventario->pluck('id'))->get();
+            $conteo = $conteo->whereIn(['id_marbete', $marbete->pluck('id')]);
+        }
+
+        if(isset($data['iniciales'])){
+            $conteo = $conteo->where([['iniciales', 'LIKE', '%'.$data['iniciales'].'%']]);
+        }
+
+        if(isset($data['tipo_conteo'])){
+            $tipo = CtgTipoConteo::query()->where('descripcion', 'LIKE', '%'.$data['tipo_conteo'].'%')->get();
+            $conteo = $conteo->whereIn(['tipo_conteo', $tipo->pluck('id')]);
+        }
+        return $conteo->paginate($data);
+    }
+
+    public function cancelar($data,$id){
+        $observaciones = $data['data'][0];
+        $this->repository->show($id)->cancelar($observaciones);
+    }
+
+    public function show($id){
+        return $this->repository->show($id);
+    }
+
+    public function store($data){
+        $conteo = $this->repository->create($data);
+        return $this->repository->show($conteo->id);
     }
 
     public function cargaLayout($file){
@@ -35,30 +67,36 @@ class ConteoService
             $folio_marbete =  (int)substr(str_replace(' ', '', $c['folio_marbete']), 4, 6);
             $c['folio_marbete'] = $folio_marbete;
             $c['id_layout_conteo'] = $layout->id;
-            $partidas_layout = LayoutConteoPartida::query()->create($c);
 
-            if($marbete = Marbete::query()->find($partidas_layout->id_marbete)){
-                if($marbete->folio == $partidas_layout->folio_marbete){
-                    if($partidas_layout->tipo_conteo <= 3 && $partidas_layout->tipo_conteo > 0){
-                        if(count($marbete->conteos->where('tipo_conteo','=',$partidas_layout->tipo_conteo)) == 0){
-                            $c['id_layout_conteos_partida'] = $partidas_layout->id;
-                            $this->repository->create($c);
+            if(!is_numeric($c['tipo_conteo']) || !is_numeric($c['cantidad_usados']) || !is_numeric($c['cantidad_nuevo']) || !is_numeric($c['cantidad_inservible']) || !is_numeric($c['total'])){
+                $i++;
+                array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Error al ingresar cantidades");
+            }else{
+                $partidas_layout = LayoutConteoPartida::query()->create($c);
+                if($marbete = Marbete::query()->find($partidas_layout->id_marbete)){
+                    if($marbete->folio == $partidas_layout->folio_marbete){
+                        if($partidas_layout->tipo_conteo <= 3 && $partidas_layout->tipo_conteo > 0){
+                            if(count($marbete->conteos->where('tipo_conteo','=',$partidas_layout->tipo_conteo)) == 0){
+                                $c['id_layout_conteos_partida'] = $partidas_layout->id;
+                                $this->repository->create($c);
+                            }else{
+                                $i++;
+                                array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Ya existe el registro de la partida");
+                            }
                         }else{
                             $i++;
-                            array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Ya existe el registro de la partida");
+                            array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - El tipo de conteo no es valido");
                         }
                     }else{
                         $i++;
-                        array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - El tipo de conteo no es valido");
+                        array_push($mensaje_rechazos ,  " \n\nError en ".$folio.": \n - El Folio del Marbete no es valido");
                     }
+
                 }else{
                     $i++;
-                    array_push($mensaje_rechazos ,  " \n\nError en ".$folio.": \n - El Folio del Marbete no es valido");
+                    array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Número de Marbete incorrecto");
                 }
 
-            }else{
-                $i++;
-                array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - No se encuentra el registro del Marbete");
             }
         }
         $mensaje_rechazos = array_unique($mensaje_rechazos);

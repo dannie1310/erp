@@ -11,18 +11,24 @@
                     <p>Inventario Físico</p>
                 </router-link>
             </li>
+            <li class="nav-item" v-if="$root.can('consultar_conteos')">
+                <router-link :to="{name: 'conteo'}" class="nav-link">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>Conteos</p>
+                </router-link>
+            </li>
             <li class="nav-item" v-if="ajuste_inventario">
                 <router-link :to="{name: 'ajuste-inventario'}" class="nav-link">
                     <i class="nav-icon fa fa-server"></i>
                     <p>Ajuste de Inventario</p>
                 </router-link>
             </li>
-<!--            <li class="nav-item" v-if="$root.can('consultar_inventario_fisico')">-->
-<!--                <router-link :to="{name: 'conteo'}" class="nav-link">-->
-<!--                    <i class="nav-icon fa fa-server"></i>-->
-<!--                    <p>Conteos</p>-->
-<!--                </router-link>-->
-<!--            </li>-->
+            <li class="nav-item" v-if="$root.can('consultar_marbetes')">
+                <router-link :to="{name: 'marbete'}" class="nav-link">
+                    <i class="nav-icon fa fa-newspaper-o"></i>
+                    <p>Marbetes</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
