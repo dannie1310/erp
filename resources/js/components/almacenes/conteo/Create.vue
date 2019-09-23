@@ -21,20 +21,16 @@
                                     <div class="form-group row error-content">
                                         <label for="id_marbete" class="col-sm-3 col-form-label">Marbete: </label>
                                          <div class="col-sm-9">
-                                            <select
-                                                    type="text"
+                                            <MarbeteSelect
                                                     name="id_marbete"
-                                                    data-vv-as="Marbete"
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
                                                     id="id_marbete"
+                                                    data-vv-as="Número de Marbete"
+                                                    v-validate="{required: true}"
                                                     v-model="dato.id_marbete"
-                                                    :class="{'is-invalid': errors.has('id_marbete')}"
+                                                    :class="errors.has('id_marbete')"
                                             >
-                                                    <option value>-- Seleccione un marbete --</option>
-                                                    <option v-for="marbete in marbetes" :value="marbete.id">{{ marbete.folio_marbete }}</option>
-                                            </select>
-                                            <div class="invalid-feedback" v-show="errors.has('dato.id_marbete')">{{ errors.first('id_marbete') }}</div>
+                                            </MarbeteSelect>
+                                            <div class="invalid-feedback" v-show="errors.has('id_marbete')">{{ errors.first('id_marbete') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -42,7 +38,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="tipo_conteo" class="col-sm-3 col-form-label">Tipo de Conteo: </label>
+                                        <label for="tipo_conteo" class="col-sm-3 col-form-label">Número de Conteo: </label>
                                          <div class="col-sm-9">
                                             <select
                                                     type="text"
@@ -194,8 +190,10 @@
 </template>
 
 <script>
+    import MarbeteSelect from "../marbete/Select";
     export default {
         name: "conteo-create",
+        components: {MarbeteSelect},
         data() {
             return {
                 cargando: false,
@@ -214,7 +212,6 @@
             }
         },
         mounted(){
-            this.getMarbete();
             this.getConteo();
         },
         methods:{
@@ -232,17 +229,7 @@
                 this.$validator.reset();
                 this.cargando = false;
             },
-            getMarbete(){
-                this.marbetes = [];
-                return this.$store.dispatch('almacenes/marbete/index', {
-                    params: {
-                        sort: 'folio', order: 'desc'
-                    }
-                })
-                    .then(data => {
-                        this.marbetes = data.data;
-                    })
-            },
+
             getConteo(){
                 this.conteos = [];
                 return this.$store.dispatch('almacenes/ctg-tipo-conteo/index', {
@@ -268,6 +255,7 @@
                     }
                 });
             },
+
             store() {
                 return this.$store.dispatch('almacenes/conteo/store', this.$data.dato)
                     .then(data => {

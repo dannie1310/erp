@@ -1,5 +1,5 @@
 <template>
-    <cancelar v-if="$root.can('eliminar_conteos')" v-bind:id="value.id" v-bind:pagina="value.pagina"></cancelar>
+    <cancelar v-if="$root.can('eliminar_conteos') && value.estado == 0" v-bind:id="value.id" v-bind:pagina="value.pagina"></cancelar>
 </template>
 
 <script>

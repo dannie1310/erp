@@ -162,7 +162,7 @@
                     $(this.$refs.modal).modal('hide');
                     this.cargando = true;
                     this.$store.dispatch('almacenes/conteo/paginate', { params:{
-                        include: ['marbete'], sort: 'id_marbete', order: 'desc' ,limit:10, offset:this.pagina
+                            include: ['marbete.inventario_fisico'], sort: 'id_marbete', order: 'desc' ,limit:10, offset:this.pagina
                         }
                     })
                         .then(data => {
@@ -182,6 +182,12 @@
         computed: {
             Conteo() {
                 return this.$store.getters['almacenes/conteo/currentConteo'];
+            },
+            meta(){
+                return this.$store.getters['almacenes/conteo/meta'];
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         }, watch: {
             cargando(val) {
