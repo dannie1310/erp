@@ -7,7 +7,7 @@ namespace App\Http\Controllers\v1\CADECO\Almacenes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Compras\DeleteSalidaAlmacenRequest;
 use App\Http\Transformers\CADECO\Compras\SalidaAlmacenTransformer;
-use App\Services\CADECO\Compras\SalidaAlmacenService;
+use App\Services\CADECO\Almacenes\SalidaAlmacenService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
 

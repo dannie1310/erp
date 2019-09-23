@@ -12,7 +12,7 @@ namespace App\Http\Controllers\v1\CADECO\Almacenes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Compras\DeleteEntradaAlmacenRequest;
 use App\Http\Transformers\CADECO\Compras\EntradaAlmacenTransformer;
-use App\Services\CADECO\Compras\EntradaAlmacenService;
+use App\Services\CADECO\Almacenes\EntradaAlmacenService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;

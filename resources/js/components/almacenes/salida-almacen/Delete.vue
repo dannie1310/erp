@@ -127,6 +127,7 @@
         },
         methods: {
             find() {
+                this.motivo = '';
                 this.$store.commit('almacenes/salida-almacen/SET_SALIDA', null);
                 return this.$store.dispatch('almacenes/salida-almacen/find', {
                     id: this.id,
