@@ -32,7 +32,8 @@ class Estimacion extends Transaccion
         'anticipo',
         'referencia',
         'observaciones',
-        'tipo_transaccion'
+        'tipo_transaccion',
+        'id_usuario'
     ];
 
     public $searchable = [

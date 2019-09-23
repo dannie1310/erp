@@ -43,6 +43,11 @@ class Material extends Model
         return $this->hasOne(CuentaMaterial::class, 'id_material');
     }
 
+    public function inventarios()
+    {
+        return $this->hasMany(Inventario::class, 'id_material','id_material');
+    }
+
     public function hijos()
     {
         return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
@@ -67,5 +72,28 @@ class Material extends Model
     public function scopeTipo($query, $tipo)
     {
         return $query->where('tipo_material', '=', $tipo);
+    }
+
+    public function scopeMaterialInventario($query, $id)
+    {
+        $materiales =  Material::query()->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
+             ->whereRaw('inventarios.saldo != inventarios.cantidad')
+            ->pluck('materiales.id_material');
+        return $query->whereIn('id_material',array_unique($materiales->toArray()));
+    }
+
+    public function scopeMaterialInventarioGlobal($query, $id)
+    {
+        $materiales =  Material::query()->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
+            ->whereRaw('inventarios.saldo != 0')
+            ->pluck('materiales.id_material');
+        return $query->whereIn('id_material',array_unique($materiales->toArray()));
+    }
+
+    public function scopeTipos($query, $tipos)
+    {
+        $tip = explode(',',$tipos);
+//        dd(array_unique($tip));
+        return $query->where('equivalencia', '=', 1)->whereIn('tipo_material', array_unique($tip));
     }
 }

@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\Inventario;
 use League\Fractal\TransformerAbstract;
 
@@ -20,7 +21,7 @@ class InventarioTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'material'
     ];
 
     /**
@@ -44,5 +45,18 @@ class InventarioTransformer extends TransformerAbstract
             'saldo_format' => $model->saldo_format,
             'monto_aplicado' => $model->monto_aplicado
         ];
+    }
+
+    /**
+     * @param Inventario $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMaterial(Inventario $model)
+    {
+        if($material = $model->material)
+        {
+            return $this->item($material, new MaterialTransformer);
+        }
+        return null;
     }
 }
