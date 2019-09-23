@@ -26,6 +26,7 @@ class SalidaAlmacenObserver
         $salida->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $salida->FechaHoraRegistro = date('Y-m-d h:i:s');
         $salida->id_obra = Context::getIdObra();
+        $salida->id_usuario = auth()->id();
     }
 
     public function deleting(SalidaAlmacen $salida)

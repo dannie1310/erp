@@ -43,6 +43,11 @@ class Material extends Model
         return $this->hasOne(CuentaMaterial::class, 'id_material');
     }
 
+    public function inventarios()
+    {
+        return $this->hasMany(Inventario::class, 'id_material','id_material');
+    }
+
     public function hijos()
     {
         return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
@@ -68,6 +73,17 @@ class Material extends Model
     {
         return $query->where('tipo_material', '=', $tipo);
     }
+
+
+    public function scopeMaterialInventarioGlobal($query, $id)
+    {
+        $materiales =  Material::query()->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
+            ->whereRaw('inventarios.saldo != 0')
+            ->pluck('materiales.id_material');
+        return $query->whereIn('id_material',array_unique($materiales->toArray()));
+    }
+
+
 
     public function scopeMaterialInventario($query)
     {

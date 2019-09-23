@@ -12,7 +12,6 @@ namespace App\Models\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaAlmacen;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Almacen extends Model
 {
@@ -97,11 +96,15 @@ class Almacen extends Model
         return $query->has('cuentaAlmacen', '=', 0);
     }
 
+    public function scopeTipoMaterialYHerramienta($query)
+    {
+        return $query->whereIn('tipo_almacen', [0,5])->where('opciones', 0);
+    }
+
     public function scopeAlmacenInventario($query)
     {
         return $query->whereIn("tipo_almacen", array(1,5));
     }
-
 
 
 }

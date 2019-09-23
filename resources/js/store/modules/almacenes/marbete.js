@@ -11,11 +11,12 @@ export default{
         SET_MARBETES(state, data){
             state.marbetes = data
         },
-        SET_MARBETE(state,data){
-            state.currentMarbete = data
-        },
+
         SET_META(state, data){
             state.meta = data
+        },
+        SET_MARBETE(state,data){
+            state.currentMarbete = data
         },
         UPDATE_MARBETE(state, data) {
             state.marbetes = state.marbetes.map(marbete => {
@@ -41,6 +42,20 @@ export default{
     },
 
     actions: {
+        index(context, payload = {}) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI, { params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+
+                        resolve(data.data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         paginate(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

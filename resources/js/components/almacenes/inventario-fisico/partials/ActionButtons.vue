@@ -20,8 +20,7 @@
 </template>
 
 <script>
-    import Layout from "../../conteo/cargar-layout";
-
+    import Layout from "../../conteo/CargarLayout";
     export default {
         name: "action-buttons",
         components: {CreateMarbete, Layout},
@@ -62,14 +61,11 @@
                         this.$emit('success')
                     })
             },
-            show() {
-                this.$router.push({name: 'create-marbete', params: {id: this.value.id}});
-            },
+
             deleteMarbete(){
                 // this.$router.push({name: 'banco-edit', params: {id: this.value.id}});
                 this.$router.push({name: 'marbete-delete', params: {id: this.value.id}});
             }
-
             }
     }
 

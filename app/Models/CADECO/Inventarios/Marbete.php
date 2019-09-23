@@ -9,7 +9,7 @@ use App\Models\CADECO\Material;
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use Illuminate\Database\Eloquent\Model;
 
-class Marbete extends Model
+class Marbete extends  Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Inventarios.marbetes';
@@ -25,14 +25,18 @@ class Marbete extends Model
         'folio'
     ];
 
+    public $searchable = [
+        'folio'
+    ];
+
+
     public function conteos()
     {
         return $this->hasMany(Conteo::class, 'id_marbete', 'id');
     }
 
-    public function inventario_fisico()
-    {
-        return $this->belongsTo(InventarioFisico::class, 'id_inventario_fisico','id');
+    public function invetarioFisico(){
+        return $this->hasOne(InventarioFisico::class, 'id', 'id_inventario_fisico');
     }
 
     public function almacen(){
@@ -48,5 +52,15 @@ class Marbete extends Model
         return chunk_split(str_pad($this->folio, 6,0,0),3,' ');
     }
 
+    public function getFolioMarbeteAttribute(){
+        return $this->invetarioFisico->numero_folio_format."-".$this->folio_format;
+    }
+
+    public function scopeInventarioAbierto($query)
+    {
+        return $query->whereHas('invetarioFisico', function ($q){
+            return $q->where('estado', '=', 0);
+        });
+    }
 
 }

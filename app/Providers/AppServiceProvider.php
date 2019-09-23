@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\CADECO\AjusteNegativo;
+use App\Models\CADECO\AjustePositivo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\SalidaEliminada;
@@ -37,10 +39,13 @@ use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;
 use App\Models\CADECO\Fondo;
 use App\Models\CADECO\Inventarios\Conteo;
+use App\Models\CADECO\Inventarios\ConteoCancelado;
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\LiberacionFondoGarantia;
+use App\Models\CADECO\NuevoLote;
+use App\Models\CADECO\NuevoLotePartida;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Pago;
@@ -66,6 +71,8 @@ use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
+use App\Observers\CADECO\AjusteNegativoObserver;
+use App\Observers\CADECO\AjustePositivoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
@@ -103,10 +110,13 @@ use App\Observers\CADECO\FinanzasCBE\SolicitudBajaObserver;
 use App\Observers\CADECO\FinanzasCBE\SolicitudMovimientoObserver;
 use App\Observers\CADECO\FondoObserver;
 use App\Observers\CADECO\Inventarios\ConteoObserver;
+use App\Observers\CADECO\Inventarios\ConteoCanceladoObserver;
 use App\Observers\CADECO\Inventarios\InventarioFisicoObserver;
 use App\Observers\CADECO\Inventarios\LayoutConteoObserver;
 use App\Observers\CADECO\Inventarios\LayoutConteoPartidaObserver;
 use App\Observers\CADECO\LiberacionFondoGarantiaObserver;
+use App\Observers\CADECO\NuevoLoteObserver;
+use App\Observers\CADECO\NuevoLotePartidaObserver;
 use App\Observers\CADECO\OrdenCompraObserver;
 use App\Observers\CADECO\OrdenPagoObserver;
 use App\Observers\CADECO\PagoACuentaObserver;
@@ -199,6 +209,7 @@ class AppServiceProvider extends ServiceProvider
             LayoutConteo::observe(LayoutConteoObserver::class);
             LayoutConteoPartida::observe(LayoutConteoPartidaObserver::class);
             Conteo::observe(ConteoObserver::class);
+            ConteoCancelado::observe(ConteoCanceladoObserver::class);
 
 
             /**
@@ -229,6 +240,8 @@ class AppServiceProvider extends ServiceProvider
             MovimientoBancario::observe(MovimientoBancarioObserver::class);
             TraspasoCuentas::observe(TraspasoCuentasObserver::class);
 
+            AjusteNegativo::observe(AjusteNegativoObserver::class);
+            AjustePositivo::observe(AjustePositivoObserver::class);
             Banco::observe(BancoObserver::class);
             Credito::observe(CreditoObserver::class);
             Cuenta::observe(CuentaObserver::class);
@@ -240,6 +253,8 @@ class AppServiceProvider extends ServiceProvider
             Estimacion::observe(EstimacionObserver::class);
             Fondo::observe(FondoObserver::class);
             LiberacionFondoGarantia::observe(LiberacionFondoGarantiaObserver::class);
+            NuevoLote::observe(NuevoLoteObserver::class);
+            NuevoLotePartida::observe(NuevoLotePartidaObserver::class);
             OrdenCompra::observe(OrdenCompraObserver::class);
             OrdenPago::observe(OrdenPagoObserver::class);
             Pago::observe(PagoObserver::class);
