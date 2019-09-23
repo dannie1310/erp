@@ -33,5 +33,6 @@ class DescuentoFondoGarantiaObserver
         $descuentoFondoGarantia->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $descuentoFondoGarantia->FechaHoraRegistro = date('Y-m-d h:i:s');
         $descuentoFondoGarantia->id_obra = Context::getIdObra();
+        $descuentoFondoGarantia->id_usuario = auth()->id();
     }
 }

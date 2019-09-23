@@ -29,7 +29,8 @@ class PagoVario extends Transaccion
         "id_moneda",
         "saldo",
         "estado",
-        "destino"
+        "destino",
+        "id_usuario"
     ];
     protected static function boot()
     {

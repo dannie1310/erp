@@ -3,7 +3,7 @@
 </template>
 
 <script>
-    import Layout from "../../conteo/cargar-layout";
+    import Layout from "../../conteo/CargarLayout";
     import Cancelar from "../../conteo/Cancelar";
     export default {
         name: "action-buttons",

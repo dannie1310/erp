@@ -21,6 +21,7 @@ class LiberacionFondoGarantia extends Transaccion
         'referencia',
         'comentario',
         'observaciones',
+        'id_usuario'
     ];
 
     public $usuario_registra = 666;

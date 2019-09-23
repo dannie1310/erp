@@ -22,7 +22,8 @@ class OrdenPago extends Transaccion
         'referencia',
         'tipo_transaccion',
         "id_empresa",
-        "id_moneda"
+        "id_moneda",
+        "id_usuario"
     ];
 
     protected static function boot()

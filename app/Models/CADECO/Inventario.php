@@ -19,6 +19,16 @@ class Inventario extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'id_item',
+        'id_almacen',
+        'id_material',
+        'cantidad',
+        'saldo',
+        'monto_total',
+        'monto_pagado',
+    ];
+
     public function almacen()
     {
         return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
@@ -37,12 +47,10 @@ class Inventario extends Model
     public function getCantidadFormatAttribute()
     {
         return number_format($this->cantidad,3,'.', '');
-
     }
 
     public function getSaldoFormatAttribute()
     {
         return number_format($this->saldo,3,'.', '');
-
     }
 }
