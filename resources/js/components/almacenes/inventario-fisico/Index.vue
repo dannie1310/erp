@@ -29,10 +29,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Folio', field: 'folio', sortable: true},
                     { title: 'Usuario Inició', field: 'usuario_inicia', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Fecha/Hora Inicio', field: 'fecha_hora_inicio', sortable: true, thComp: require('../../globals/th-Date')},
-                    { title: 'Cantidad de Marbetes', field: 'cantidad_marbetes', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Fecha/Hora Inicio', field: 'fecha_hora_inicio', sortable: true},
+                    { title: 'Cantidad de Marbetes', field: 'cantidad_marbetes'},
                     { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
@@ -84,7 +84,7 @@
                     inventarios.forEach(function (inventario, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: inventario.folio_format,
+                            folio: inventario.folio_format,
                             id_tipo: inventario.id_tipo,
                             fecha_hora_inicio: inventario.fecha_hora_inicio_format,
                             cantidad_marbetes: inventario.cantidad_marbetes,

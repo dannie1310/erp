@@ -152,7 +152,15 @@
                 })
             },
             getNuevoLote(){
-
+                this.$store.commit('almacenes/nuevo-lote/SET_AJUSTE', null);
+                return this.$store.dispatch('almacenes/nuevo-lote/find', {
+                    id: this.id,
+                    params: {include: ['almacen', 'partidas.material', 'usuario']}
+                }).then(data => {
+                    this.$store.commit('almacenes/nuevo-lote/SET_AJUSTE', data);
+                    this.ajustes = data;
+                    $(this.$refs.modal).modal('show');
+                })
             }
         }
     }

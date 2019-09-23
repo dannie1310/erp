@@ -69,7 +69,7 @@
                     <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
                        href="#nav-profile" id="nav-profile-tab" role="tab" v-if="$root.can('registrar_ajuste_negativo')">Ajuste (-)</a>
                     <a aria-controls="nav-contact" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-contact"
-                       id="nav-contact-tab" role="tab">Nuevo Lote</a>
+                       id="nav-contact-tab" role="tab" v-if="$root.can('registrar_nuevo_lote')">Nuevo Lote</a>
                 </div>
             </nav>
 
@@ -81,7 +81,7 @@
                     <ajuste-negativo v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia"></ajuste-negativo>
                 </div>
                 <div aria-labelledby="nav-contact-tab" class="tab-pane fade" id="nav-contact" role="tabpanel" style="display:block;">
-<!--                    <index-sucursal v-bind:id="id"></index-sucursal>-->
+                    <nuevo-lote v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia"></nuevo-lote>
                 </div>
             </div>
         </nav>
@@ -91,9 +91,10 @@
 <script>
     import AjusteNegativo from "./ajuste-negativo/Create";
     import AjustePositivo from "./ajuste-positivo/Create";
+    import NuevoLote from "./nuevo-lote/Create";
     export default {
         name: "ajuste-create",
-        components: {AjusteNegativo, AjustePositivo},
+        components: {AjusteNegativo, AjustePositivo, NuevoLote},
         data() {
             return {
                 cargando: false,

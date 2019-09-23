@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class InventarioMarbete extends Rotation
 {
     protected $inventario;
-    protected $y = 0;
+    protected $e = 1.45;
 
 
     const DPI = 96;
@@ -29,11 +29,13 @@ class InventarioMarbete extends Rotation
 
         $this->WidthTotal = $this->GetPageWidth() - 2;
         $this->inventario = $inventario;
+
     }
 
     function Header()
     {
-        $this->setY(0.8);
+        $this->setY(0.73);
+        $this->e = 1.47;
     }
 
     public function partidas(){
@@ -55,18 +57,18 @@ class InventarioMarbete extends Rotation
 
             $this->SetY($this->GetY() + 0.6);
             $this->SetFont('Arial', 'B', 6);
-            $this->Cell(2.35);
+            $this->Cell(2.2);
             $this->Cell(5.15, 0.45, utf8_decode($this->inventario->obra->nombre), '', 0, 'C', 1);
-            $this->Cell(2.5);
+            $this->Cell(2.65);
             $this->Cell(6.8, 0.45, utf8_decode($marbete->almacen->descripcion), '', 0, 'C', 1);
             $this->Cell(2.65);
             $this->Cell(6.25, 0.45, utf8_decode($marbete->almacen->descripcion), '', 0, 'C', 1);
 
             $this->SetY($this->GetY() + 0.45);
             $this->SetFont('Arial', 'B', 5.5);
-            $this->Cell(2.35);
+            $this->Cell(2.2);
             $this->Cell(5.15, 0.65, utf8_decode($marbete->almacen->descripcion), '', 0, 'C', 1);
-            $this->Cell(2.5);
+            $this->Cell(2.65);
             $this->SetFont('Arial', 'B', 8);
             $this->Cell(2.8, 0.65, utf8_decode($marbete->material->numero_parte), '', 0, 'C', 1);
             $this->Cell(1.4);
@@ -78,45 +80,47 @@ class InventarioMarbete extends Rotation
 
             $this->SetY($this->GetY() + 0.7);
             $this->SetFont('Arial', 'B', 5.5);
-            $this->Cell(2.35);
+            $this->Cell(2.2);
             $this->Cell(5.15, 0.65, utf8_decode(substr($marbete->material->familia->descripcion, 0, 42)), '', 0, 'C', 1);
             $this->SetFont('Arial', '', 6);
-            $this->Cell(1.15);
+            $this->Cell(1.30);
             $this->MultiAlignCell(8.25, 0.25, utf8_decode('                '.$marbete->material->descripcion), '', 0, 'L');
             $this->SetFont('Arial', '', 6.5);
-            $this->Cell(1.05);
+            $this->Cell(1.15);
             $this->MultiAlignCell(7.85, 0.3, utf8_decode('                '.$marbete->material->descripcion),  '', 0, 'L');
 
             $this->SetY($this->GetY() + 0.65);
             $this->SetFont('Arial', '', 6.5);
-            $this->Cell(2.35);
+            $this->Cell(2.2);
             $this->Cell(2.15, 0.65, utf8_decode($marbete->material->numero_parte), '', 0, 'C', 1);
-            $this->Cell(1.35);
+            $this->Cell(1.4);
             $this->Cell(1.65, 0.65, utf8_decode($marbete->material->id_material), '', 0, 'C', 1);
 
             $this->SetY($this->GetY() + 0.6);
             $this->SetFont('Arial', '', 6.5);
-            $this->Cell(2.35);
+            $this->Cell(2.2);
             $this->Cell(2.15, 0.7, utf8_decode(''), '', 0, 'C', 1);
-            $this->Cell(1.35);
+            $this->Cell(1.4);
             $this->Cell(1.65, 0.7, utf8_decode($marbete->material->unidad), '', 0, 'C', 1);
 
             $this->SetY($this->GetY() + 0.75);
             $this->SetFont('Arial', '', 6);
-            $this->Cell(1);
-            $this->MultiAlignCell(6.55, 0.28, utf8_decode('                '.$marbete->material->descripcion), '', 0, 'L');
+            $this->Cell(0.9);
+            $this->MultiAlignCell(6.55, 0.28, utf8_decode('                '.$marbete->material->descripcion ), '', 0, 'L');
 
             $this->SetY($this->GetY() + 1.7);
             $this->SetFont('Arial', 'B', 9);
-            $this->Cell(0.9);
+            $this->Cell(0.8);
             $this->Code39($this->GetX() + 1.6,$this->GetY() +0.1, strval(str_pad($marbete->material->id_material, '6', 0, 0)) );
-            $this->Cell(1.05);
+            $this->Cell(1.1);
             $this->Code39($this->GetX() + 9.2,$this->GetY() +0.1, strval(str_pad($marbete->material->id_material, '6', 0, 0)) );
-            $this->Cell(1.05);
+            $this->Cell(1.15);
             $this->Code39($this->GetX() + 17 ,$this->GetY() +0.1, strval(str_pad($marbete->material->id_material, '6', 0, 0)) );
             $this->setFillColor('255','255','255');
+//            dd('pardo', $this->GetY(), $this->GetY() + $this->e, $this->e, $marbete->material->id_material);
+            $this->SetY($this->GetY() + $this->e);
+            $this->e -=0.03;
 
-            $this->SetY($this->GetY() +1.35);
         }
     }
 

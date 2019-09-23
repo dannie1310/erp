@@ -11,6 +11,8 @@
 |
 */
 
+
+
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
@@ -157,6 +159,12 @@ $api->version('v1', function ($api) {
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@show')->where(['id' => '[0-9]+']);
             });
 
+            //NUEVO LOTE
+            $api->group(['prefix' => 'nuevo-lote'], function ($api) {
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@store');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@show')->where(['id' => '[0-9]+']);
+            });
+
         });
 
         //INVENTARIO FISICO
@@ -170,8 +178,25 @@ $api->version('v1', function ($api) {
         });
 
         $api->group(['prefix' => 'conteo'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@store');
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@paginate');
+            $api->get('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cancelar')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'tipo-conteo'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Almacenes\CtgTipoConteoController@index');
+        });
+        $api->group(['prefix' => 'marbete'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@index');
+        });
+
+        //MARBETE
+        $api->group(['prefix'=>'marbete'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@paginate');
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@destroy')->where(['id' => '[0-9]+']);
         });
     });
 
