@@ -1,22 +1,30 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: DBenitezc
+ * Date: 20/08/2019
+ * Time: 12:57 PM
+ */
+
+namespace App\Services\CADECO\Almacenes;
 
 
-namespace App\Services\CADECO\Compras;
-
-
-use App\Models\CADECO\Almacen;
-use App\Models\CADECO\SalidaAlmacen;
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\EntradaMaterial;
 use App\Repositories\Repository;
 
-class SalidaAlmacenService
+class EntradaAlmacenService
 {
-
     /**
-     * @var $repository
+     * @var Repository
      */
     protected $repository;
 
-    public function __construct(SalidaAlmacen $model)
+    /**
+     * EntradaAlmacenService constructor.
+     * @param EntradaMaterial $model
+     */
+    public function __construct(EntradaMaterial $model)
     {
         $this->repository = new Repository($model);
     }
@@ -28,21 +36,19 @@ class SalidaAlmacenService
         if(isset($data['numero_folio'])) {
             $salida = $salida->where( [['numero_folio', 'LIKE', '%' . request( 'numero_folio' ) . '%']] );
         }
-
         if(isset($data['fecha'])) {
             $salida = $salida->where( [['fecha', '=', request( 'fecha' )]] );
         }
-
         if(isset($data['referencia'])) {
             $salida = $salida->where( [['referencia', 'LIKE', '%' . request( 'referencia' ) . '%']] );
         }
-
-        if(isset($data['id_almacen'])){
-            $almacen = Almacen::query()->where([['descripcion', 'LIKE', '%'.request('id_almacen').'%']])->get();
-            foreach ($almacen as $a){
-                $salida = $salida->whereOr([['id_almacen', '=', $a->id_almacen]]);
+        if(isset($data['id_empresa'])){
+            $empresas = Empresa::query()->where([['razon_social', 'LIKE', '%'.request('id_empresa').'%']])->get();
+            foreach ($empresas as $a){
+                $salida = $salida->whereOr([['id_empresa', '=', $a->id_empresa]]);
             }
         }
+
         return $salida->paginate($data);
     }
 

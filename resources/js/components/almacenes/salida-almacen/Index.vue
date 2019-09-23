@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-12">
+       <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -18,23 +18,23 @@
 
 <script>
     export default {
-        name: "entrada-index",
+        name: "salida-almacen-index",
+        components: {},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Fecha', field: 'fecha',sortable: true, thComp: require('../../../globals/th-Date')},
-                    { title: 'Empresa', field: 'id_empresa',sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Observaciones', field: 'observaciones', sortable: true},
-                    { title: 'Estatus', field: 'estado', sortable: true},
+                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date')},
+                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Operación', field: 'opciones', sortable: true},
+                    { title: 'Almacen', field: 'id_almacen', sortable: true, thComp: require('../../globals/th-Filter')},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: { include: 'empresa', sort: 'numero_folio', order: 'desc'},
+                query: {include: ['almacen'], sort: 'numero_folio',order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -51,10 +51,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/entrada-almacen/paginate', { params: this.query})
+                return this.$store.dispatch('almacenes/salida-almacen/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('compras/entrada-almacen/SET_ENTRADAS', data.data);
-                        this.$store.commit('compras/entrada-almacen/SET_META', data.meta);
+                        this.$store.commit('almacenes/salida-almacen/SET_SALIDAS', data.data);
+                        this.$store.commit('almacenes/salida-almacen/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -62,42 +62,44 @@
             }
         },
         computed: {
-            entradas(){
-                return this.$store.getters['compras/entrada-almacen/entradas'];
+            salidas() {
+                return this.$store.getters['almacenes/salida-almacen/salidas'];
             },
-            meta(){
-                return this.$store.getters['compras/entrada-almacen/meta'];
+            meta() {
+                return this.$store.getters['almacenes/salida-almacen/meta'];
             },
             tbodyStyle() {
-                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+                return this.cargando ? {'-webkit-filter': 'blur(2px)'} : {}
             }
         },
         watch: {
-            entradas: {
-                handler(entradas) {
+            salidas: {
+                handler(salidas) {
                     let self = this
                     self.$data.data = []
-                    entradas.forEach(function (entrada, i) {
+                    salidas.forEach(function (salida, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: entrada.numero_folio_format,
-                            fecha: entrada.fecha_format,
-                            id_empresa: entrada.empresa.razon_social,
-                            referencia: entrada.referencia,
-                            observaciones: entrada.observaciones,
-                            estado: entrada.estado_format,
+                            numero_folio: salida.folio_format,
+                            fecha: salida.fecha_format,
+                            referencia: salida.referencia,
+                            observaciones: salida.observaciones,
+                            opciones: salida.operacion,
+                            estado: salida.estado_format,
+                            id_almacen: salida.almacen.descripcion,
                             buttons: $.extend({}, {
-                                id: entrada.id,
-                                estado: entrada.estado,
+                                show: true,
                                 pagina: self.query.offset,
-                                delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
+                                borrar: self.$root.can('eliminar_salida_almacen') ? true : false,
+                                id: salida.id
+
                             })
+
                         })
                     });
                 },
                 deep: true
             },
-
             meta: {
                 handler(meta) {
                     let total = meta.pagination.total
@@ -110,18 +112,6 @@
                     this.paginate(query)
                 },
                 deep: true
-            },
-            search(val) {
-                if (this.timer) {
-                    clearTimeout(this.timer);
-                    this.timer = null;
-                }
-                this.timer = setTimeout(() => {
-                    this.query.search = val;
-                    this.query.offset = 0;
-                    this.paginate();
-
-                }, 500);
             },
             cargando(val) {
                 $('tbody').css({

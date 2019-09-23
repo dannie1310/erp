@@ -138,33 +138,33 @@
             find(){
                 this.motivo = '';
                 this.partidas = '';
-                this.$store.commit('compras/entrada-almacen/SET_ENTRADA', null);
-                return this.$store.dispatch('compras/entrada-almacen/find', {
+                this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', null);
+                return this.$store.dispatch('almacenes/entrada-almacen/find', {
                     id: this.id,
                     params: { include: ['orden_compra', 'empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario', 'partidas.concepto', 'partidas.movimiento'] }
                 }).then(data => {
-                    this.$store.commit('compras/entrada-almacen/SET_ENTRADA', data);
+                    this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', data);
                     this.partidas = this.entrada.partidas.data;
                     $(this.$refs.modal).modal('show');
                 })
             },
             eliminar() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/entrada-almacen/eliminar', {
+                return this.$store.dispatch('almacenes/entrada-almacen/eliminar', {
                     id: this.id,
                     params: {data: [this.$data.motivo]}
                 })
                     .then(data => {
-                        this.$store.commit('compras/entrada-almacen/DELETE_ENTRADA', {id: this.id})
+                        this.$store.commit('almacenes/entrada-almacen/DELETE_ENTRADA', {id: this.id})
                         $(this.$refs.modal).modal('hide');
-                        this.$store.dispatch('compras/entrada-almacen/paginate', {
+                        this.$store.dispatch('almacenes/entrada-almacen/paginate', {
                             params: {
                                 include: 'empresa', sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
                             }
                         })
                             .then(data => {
-                                this.$store.commit('compras/entrada-almacen/SET_ENTRADAS', data.data);
-                                this.$store.commit('compras/entrada-almacen/SET_META', data.meta);
+                                this.$store.commit('almacenes/entrada-almacen/SET_ENTRADAS', data.data);
+                                this.$store.commit('almacenes/entrada-almacen/SET_META', data.meta);
                             })
                     })
                     .finally( ()=>{
@@ -186,7 +186,7 @@
         },
         computed: {
             entrada() {
-                return this.$store.getters['compras/entrada-almacen/currentEntrada'];
+                return this.$store.getters['almacenes/entrada-almacen/currentEntrada'];
             }
         }
     }

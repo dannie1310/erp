@@ -127,33 +127,34 @@
         },
         methods: {
             find() {
-                this.$store.commit('compras/salida-almacen/SET_SALIDA', null);
-                return this.$store.dispatch('compras/salida-almacen/find', {
+                this.motivo = '';
+                this.$store.commit('almacenes/salida-almacen/SET_SALIDA', null);
+                return this.$store.dispatch('almacenes/salida-almacen/find', {
                     id: this.id,
                     params: {include: ['almacen','partidas.movimiento.inventario','partidas.inventario','partidas.almacen','partidas.material','partidas.concepto']}
                 }).then(data => {
-                    this.$store.commit('compras/salida-almacen/SET_SALIDA', data);
+                    this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
                     $(this.$refs.modal).modal('show');
                 })
             },
 
             eliminar() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/salida-almacen/eliminar', {
+                return this.$store.dispatch('almacenes/salida-almacen/eliminar', {
                     id: this.id,
                     params: {data: [this.$data.motivo]}
                 })
                     .then(data => {
-                        this.$store.commit('compras/salida-almacen/DELETE_SALIDA', {id: this.id})
+                        this.$store.commit('almacenes/salida-almacen/DELETE_SALIDA', {id: this.id})
                         $(this.$refs.modal).modal('hide');
-                        this.$store.dispatch('compras/salida-almacen/paginate', {
+                        this.$store.dispatch('almacenes/salida-almacen/paginate', {
                             params: {
                                 include: 'almacen', sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
                             }
                         })
                             .then(data => {
-                                this.$store.commit('compras/salida-almacen/SET_SALIDAS', data.data);
-                                this.$store.commit('compras/salida-almacen/SET_META', data.meta);
+                                this.$store.commit('almacenes/salida-almacen/SET_SALIDAS', data.data);
+                                this.$store.commit('almacenes/salida-almacen/SET_META', data.meta);
                             })
                     })
                     .finally( ()=>{
@@ -176,7 +177,7 @@
         },
         computed: {
             salida() {
-                return this.$store.getters['compras/salida-almacen/currentSalida'];
+                return this.$store.getters['almacenes/salida-almacen/currentSalida'];
             }
         }
     }

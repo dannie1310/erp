@@ -42,32 +42,6 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="gestion_almacen">
-                <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-server"></i>
-                    <p>
-                        Gestión de Almacén
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
-                </a>
-
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_entrada_almacen')">
-                        <router-link :to="{name: 'entrada-almacen'}" class="nav-link" :class="{active: this.$route.name == 'entrada-almacen'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Entrada</p>
-                        </router-link>
-                    </li>
-                </ul>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_salida_almacen')">
-                        <router-link :to="{name: 'salida-almacen'}" class="nav-link" :class="{active: this.$route.name == 'salida-almacen'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Salida</p>
-                        </router-link>
-                    </li>
-                </ul>
-            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
