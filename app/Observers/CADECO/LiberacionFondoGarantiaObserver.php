@@ -34,6 +34,7 @@ class LiberacionFondoGarantiaObserver
         $fondoGarantia->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $fondoGarantia->FechaHoraRegistro = date('Y-m-d h:i:s');
         $fondoGarantia->id_obra = Context::getIdObra();
+        $fondoGarantia->id_usuario = auth()->id();
     }
 
     public function updating(LiberacionFondoGarantia $fondoGarantia)

@@ -12,6 +12,7 @@ use League\Fractal\TransformerAbstract;
 
 class MarbeteTransformer extends TransformerAbstract
 {
+
     /**
      * List of resources possible to include
      *
@@ -33,15 +34,23 @@ class MarbeteTransformer extends TransformerAbstract
     public function transform(Marbete $model)
     {
         return [
-            'id'=>$model->getKey(),
-            'id_inventario_fisico'=>$model->id_inventario_fisico,
+            'id' => $model->getKey(),
+            'folio' => $model->folio,
+            'folio_marbete' => $model->folio_marbete,
+            'id_inventario_fisico' => $model->id_inventario_fisico,
             'id_almacen' =>$model->id_almacen,
             'id_material'=>$model->id_material,
             'folio_format'=>str_pad($model->folio,6,0,0),
-            'folio'=>$model->folio,
             'saldo'=>$model->saldo,
 
         ];
+    }
+
+    public function includeInventarioFisico(Marbete $model){
+        if($invetarioFisico = $model->invetarioFisico){
+            return $this->item($invetarioFisico, new InventarioFisicoTransformer);
+        }
+        return null;
     }
 
     /**
@@ -69,22 +78,6 @@ class MarbeteTransformer extends TransformerAbstract
         if($material = $model->material)
         {
             return $this->item($material, new MaterialTransformer);
-        }
-        return null;
-    }
-
-    /**
-     * @param Marbete $model
-     * @return \League\Fractal\Resource\Item
-     *
-     */
-
-    public function includeInventarioFisico(Marbete $model)
-    {
-
-        if($inventario = $model->inventario_fisico)
-        {
-          return $this->item($inventario, new InventarioFisicoTransformer);
         }
         return null;
     }

@@ -19,6 +19,16 @@ export default{
         SET_CONTEO(state, data){
             state.currentConteo = data
         },
+
+        UPDATE_CONTEO(state, data) {
+            state.conteos = state.conteos.map(conteo => {
+                if (conteo.id === data.id) {
+                    return Object.assign({}, conteo, data)
+                }
+                return conteo
+            })
+            state.currentConteo = data;
+        },
     },
 
     actions: {
@@ -33,6 +43,47 @@ export default{
                     .catch(error => {
                         reject(error);
                     })
+            });
+        },
+
+        cancelar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cancelar Conteo",
+                    text: "¿Está seguro/a que quiere cancelar el conteo?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Continuar',
+                            closeModal: false,
+                        }
+                    }
+                }) .then((value) => {
+                    if (value) {
+                        axios
+                            .get(URI + payload.id + '/cancelar', {params: payload.params})
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("La cancelación ha sido aplicada exitosamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error =>  {
+                                reject(error);
+                            });
+                    } else {
+                        reject();
+                    }
+                });
             });
         },
 
@@ -59,17 +110,27 @@ export default{
                                 .post(URI + 'layout', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    console.log(data);
-                                    swal("No se pudieron insertar los siguientes conteos:"+data, {
-                                        buttons: {
-                                            confirm: {
-                                                text: 'Aceptar',
-                                                closeModal: true,
+                                    if(data.length > 0){
+                                        swal("No se pudieron insertar los siguientes conteos:"+data, {
+                                            buttons: {
+                                                confirm: {
+                                                    text: 'Aceptar',
+                                                    closeModal: true,
+                                                }
                                             }
-                                        }
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
+                                        }).then(() => {
+                                            resolve(data);
+                                        })
+                                    }else{
+                                        swal("Conteos registrados correctamente:"+data, {
+                                            icon: "success",
+                                            timer: 2000,
+                                            buttons: false
+                                        }).then(() => {
+                                            resolve(data);
+                                        })
+                                    }
+
                                 })
                                 .catch(error => {
                                     reject('Archivo no procesable');
@@ -78,6 +139,58 @@ export default{
                     });
             });
         },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar conteo manual",
+                    text: "¿Está seguro/a de que quiere registrar un conteo manual?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Conteo registrado correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+
     },
 
     getters: {

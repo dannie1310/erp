@@ -19,10 +19,11 @@ class MarbeteService
      * @var Repository
      */
     protected $repository;
-    /**
-     * MarbeteService constructor
-     */
 
+    /**
+     * MarbeteService constructor.
+     * @param Marbete $model
+     */
     public function __construct(Marbete $model)
     {
         $this->repository = new Repository($model);
@@ -36,7 +37,7 @@ class MarbeteService
         if (empty($inventario)){
             abort(400, 'No hay un inventario físico activo');
         }
-        
+
         $saldo = Inventario::query()->join('almacenes','almacenes.id_almacen', 'inventarios.id_almacen')
             ->where('inventarios.id_almacen','=', $data['id_almacen'])
             ->where('inventarios.id_material','=', $data['id_material'])->sum('inventarios.saldo');
@@ -97,4 +98,11 @@ class MarbeteService
       Conteo::query()->where('id_marbete','=', $id)->delete();
        return $this->repository->delete($data, $id);
     }
+
+
+    public function index($data)
+    {
+        return $this->repository->all($data);
+    }
+
 }

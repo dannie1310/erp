@@ -32,6 +32,7 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
             $user[]=array(
                 "folio"=>$this->inventario->getNumeroFolioFormatAttribute(). ' '.chunk_split($folio_marbete, 3, ' '),
                 "almacen"=>$marbete->almacen->descripcion,
+                "id_material" => $marbete->id_material,
                 "material"=>$marbete->material->descripcion,
                 "saldo"=>$marbete->saldo,
                 "nuevo1"=>array_key_exists('1',$conteos)?$conteos[1]->cantidad_nuevo:'  ',
@@ -58,6 +59,7 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
             '   ',
             '   ',
             '   ',
+            '   ',
             'Conteo1',
             '   ',
             '   ',
@@ -72,6 +74,7 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
             '   ',
         ], ['No. Marbete',
             'Almacen',
+            'Id Material',
             'Material',
             'Saldo',
             'usados',

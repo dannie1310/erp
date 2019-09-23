@@ -16,3 +16,4 @@
 </div>
 <script src="{{ mix('js/app.js') }}"></script>
 </html>
+<script src="https://kit.fontawesome.com/4a7d805650.js" crossorigin="anonymous"></script>
