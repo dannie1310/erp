@@ -175,6 +175,12 @@
                             this.cargando = false
                         }
                     })
+                    .finally(() => {
+                        if( this.materiales.length == 0 ) {
+                            swal('¡Error!', 'No existe ningun material disponible para ajustar.', 'error')
+                        }
+
+                    })
             },
             agregar() {
                 var array = {

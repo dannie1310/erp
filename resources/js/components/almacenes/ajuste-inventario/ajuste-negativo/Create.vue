@@ -116,7 +116,7 @@
                          </div>
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 || cargando">Registrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 || cargando ">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -173,6 +173,11 @@
                         if( this.materiales.length != 0 ) {
                             this.bandera = 1;
                             this.cargando = false
+                        }
+                    })
+                    .finally(() => {
+                        if( this.materiales.length == 0 ) {
+                            swal('¡Error!', 'No existe ningun material disponible para ajustar.', 'error')
                         }
                     })
             },
