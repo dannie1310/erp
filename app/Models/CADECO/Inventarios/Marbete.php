@@ -24,6 +24,10 @@ class Marbete extends  Model
         'folio'
     ];
 
+    public $searchable = [
+        'folio'
+    ];
+
     public function conteos(){
         return $this->hasMany(Conteo::class, 'id_marbete', 'id');
     }
@@ -42,6 +46,16 @@ class Marbete extends  Model
 
     public function getFolioFormatAttribute(){
         return chunk_split(str_pad($this->folio, 6,0,0),3,' ');
+    }
+    public function getFolioMarbeteAttribute(){
+        return $this->invetarioFisico->numero_folio_format."-".$this->folio_format;
+    }
+
+    public function scopeInventarioAbierto($query)
+    {
+        return $query->whereHas('invetarioFisico', function ($q){
+            return $q->where('estado', '=', 0);
+        });
     }
 
 }

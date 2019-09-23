@@ -3,11 +3,13 @@ import Vuex from 'vuex';
 import auth from './modules/auth';
 
 //ALMACENES
+import conteo from './modules/almacenes/conteo';
+import tipoConteo from './modules/almacenes/ctg-tipo-conteo';
 import ajusteInventario from './modules/almacenes/ajuste-inventario';
 import ajusteNegativo from './modules/almacenes/ajuste-negativo';
 import ajustePositivo from './modules/almacenes/ajuste-positivo';
-import conteo from './modules/almacenes/conteo';
 import inventarioFisico from './modules/almacenes/inventario-fisico';
+import marbete from './modules/almacenes/marbete';
 import nuevoLote from  './modules/almacenes/nuevo-lote';
 
 //CADECO
@@ -99,11 +101,13 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
+        'almacenes/conteo' : conteo,
+        'almacenes/ctg-tipo-conteo' : tipoConteo,
         'almacenes/ajuste-inventario' : ajusteInventario,
         'almacenes/ajuste-negativo' : ajusteNegativo,
         'almacenes/ajuste-positivo' : ajustePositivo,
-        'almacenes/conteo' : conteo,
         'almacenes/inventario-fisico' : inventarioFisico,
+        'almacenes/marbete' : marbete,
         'almacenes/nuevo-lote' : nuevoLote,
 
         'cadeco/almacen': almacen,
