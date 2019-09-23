@@ -4,8 +4,6 @@
             <i class="fa fa-file-pdf-o"></i>
         </button>
 
-        <button type="button" @click="deleteMarbete" class="btn btn-sm btn-outline-danger"  title="Eliminar Marbete"><i class="fa fa-newspaper-o"></i></button>
-
         <button @click="descargaLayout"  v-if="value.estado == 0 && $root.can('descarga_layout_captura_conteos')" type="button" class="btn btn-sm btn-outline-success" title="Descargar Layout">
             <i class="fa fa-download"></i>
         </button>
@@ -62,10 +60,6 @@
                     })
             },
 
-            deleteMarbete(){
-                // this.$router.push({name: 'banco-edit', params: {id: this.value.id}});
-                this.$router.push({name: 'marbete-delete', params: {id: this.value.id}});
-            }
             }
     }
 
