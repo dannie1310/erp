@@ -20,7 +20,8 @@
                                                         <th class="bg-gray-light">Cantidad</th>
                                                         <th class="bg-gray-light">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar">
-                                                                <i class="fa fa-plus"></i>
+                                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                                <i class="fa fa-plus" v-else></i>
                                                             </button>
                                                         </th>
                                                     </tr>
@@ -39,7 +40,7 @@
                                                                      :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                              >
 
-                                                                 <option v-for="numero in material" :value="numero">{{ numero.numero_parte }}</option>
+                                                                 <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
                                                             </select>
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
@@ -115,7 +116,7 @@
                          </div>
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 || observaciones == ''">Registrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() || id_almacen == '' || items.length == 0 || cargando">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -159,6 +160,7 @@
             },
             getMateriales(id_almacen){
                 this.materiales = [];
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: ['inventariosDistintoCero:'+id_almacen],
@@ -170,6 +172,7 @@
                         this.materiales = data.data;
                         if( this.materiales.length != 0 ) {
                             this.bandera = 1;
+                            this.cargando = false
                         }
                     })
             },
