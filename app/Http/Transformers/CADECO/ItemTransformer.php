@@ -43,6 +43,10 @@ class ItemTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param Item $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeConcepto(Item $model)
     {
         if($concepto = $model->concepto) {
@@ -52,6 +56,10 @@ class ItemTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Item $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeContrato(Item $model)
     {
         if($contrato = $model->contrato) {

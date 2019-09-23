@@ -194,23 +194,19 @@ export const routes = [
                             title: 'Ajuste de Inventarios',
                             breadcrumb: {parent: 'almacenes', name: 'AJUSTE DE INVENTARIOS'},
                             middleware: [auth, context],
-
                         }
                     },
                     {
-                        path: 'ajuste-positivo',
-                        name: 'ajuste-positivo',
-                        component: require('./components/almacenes/ajuste-inventario/ajuste-positivo/Index'),
+                        path: 'create',
+                        name: 'ajuste-create',
+                        component: require('./components/almacenes/ajuste-inventario/Create'),
                         meta: {
-                            title: 'Ajuste Positivo (+)',
-                            breadcrumb: {
-                                parent: 'ajuste-inventario',
-                                name: 'AJUSTE POSITIVO (+)'
-                            },
+                            title: 'Registrar Ajuste de Inventario',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'ajuste-inventario'},
                             middleware: [auth, context, permission],
-                            permission: 'consultar_entrada_almacen'
+                            permission: ['registrar_ajuste_positivo','registrar_ajuste_negativo']
                         }
-                    }
+                    },
                 ]
             },
             {
@@ -262,8 +258,25 @@ export const routes = [
                             breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FÍSICO'},
                             middleware: [auth, context, permission],
                             permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
-
                         }
+                    },
+                ]
+            },
+            {
+                path:'marbete',
+                component: require('./components/almacenes/marbete/Layout'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'marbete',
+                        component: require('./components/almacenes/marbete/Index'),
+                        meta: {
+                            title: 'Marbetes',
+                            breadcrumb: {parent: 'almacenes', name: 'MARBETES'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_marbetes']
+                        }
+
                     }
                 ]
             },

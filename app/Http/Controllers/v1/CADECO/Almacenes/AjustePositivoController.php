@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Almacenes;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Almacenes\StoreAjustePositivoRequest;
 use App\Http\Transformers\CADECO\Almacenes\AjustePositivoTransformer;
 use App\Services\CADECO\Almacenes\AjustePositivoService;
 use App\Traits\ControllerTrait;
@@ -17,7 +18,10 @@ use League\Fractal\Manager;
 
 class AjustePositivoController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait
+    {
+        store as protected traitStore;
+    }
 
     /**
      * @var AjustePositivoService
@@ -45,8 +49,16 @@ class AjustePositivoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_ajuste_positivo')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:registrar_ajuste_positivo')->only('store');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function store(StoreAjustePositivoRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

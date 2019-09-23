@@ -5,6 +5,8 @@ namespace App\Services\CADECO\Almacenes;
 
 
 use App\Models\CADECO\Inventarios\Conteo;
+use App\Models\CADECO\Inventarios\CtgTipoConteo;
+use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\Inventarios\Marbete;
@@ -20,7 +22,37 @@ class ConteoService
     }
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $conteo = $this->repository;
+
+        if(isset($data['inventario_fisico'])){
+            $inventario = InventarioFisico::query()->where('folio', 'LIKE', '%'.$data['inventario_fisico'].'%')->get();
+            $marbete = Marbete::query()->whereIn('id_inventario_fisico',$inventario->pluck('id'))->get();
+            $conteo = $conteo->whereIn(['id_marbete', $marbete->pluck('id')]);
+        }
+
+        if(isset($data['iniciales'])){
+            $conteo = $conteo->where([['iniciales', 'LIKE', '%'.$data['iniciales'].'%']]);
+        }
+
+        if(isset($data['tipo_conteo'])){
+            $tipo = CtgTipoConteo::query()->where('descripcion', 'LIKE', '%'.$data['tipo_conteo'].'%')->get();
+            $conteo = $conteo->whereIn(['tipo_conteo', $tipo->pluck('id')]);
+        }
+        return $conteo->paginate($data);
+    }
+
+    public function cancelar($data,$id){
+        $observaciones = $data['data'][0];
+        $this->repository->show($id)->cancelar($observaciones);
+    }
+
+    public function show($id){
+        return $this->repository->show($id);
+    }
+
+    public function store($data){
+        $conteo = $this->repository->create($data);
+        return $this->repository->show($conteo->id);
     }
 
     public function cargaLayout($file){

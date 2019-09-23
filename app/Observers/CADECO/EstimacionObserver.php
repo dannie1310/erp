@@ -35,6 +35,7 @@ class EstimacionObserver
         $estimacion->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $estimacion->FechaHoraRegistro = date('Y-m-d h:i:s');
         $estimacion->id_obra = Context::getIdObra();
+        $estimacion->id_usuario = auth()->id();
     }
 
     public function created(Estimacion $estimacion)

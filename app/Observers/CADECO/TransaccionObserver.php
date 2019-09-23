@@ -26,5 +26,6 @@ class TransaccionObserver
         $transaccion->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $transaccion->FechaHoraRegistro = date('Y-m-d h:i:s');
         $transaccion->id_obra = Context::getIdObra();
+        $transaccion->id_usuario = auth()->id();
     }
 }

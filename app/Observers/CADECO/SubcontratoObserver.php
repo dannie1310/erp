@@ -28,6 +28,7 @@ class SubcontratoObserver
         $subcontrato->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $subcontrato->FechaHoraRegistro = date('Y-m-d h:i:s');
         $subcontrato->id_obra = Context::getIdObra();
+        $subcontrato->id_usuario = auth()->id();
     }
 
     public function created(Subcontrato $subcontrato)
