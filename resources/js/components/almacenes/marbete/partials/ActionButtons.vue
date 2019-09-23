@@ -14,7 +14,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('almacenes/marbete/eliminar', {
                     id: this.value.id,
-                    params: {}
+                    params: { id_inventario_fisico: this.value.id_inventario_fisico}
                 })
                     .then(data => {
                         this.$store.commit('almacenes/marbete/DELETE_MARBETE', {id: this.value.id})

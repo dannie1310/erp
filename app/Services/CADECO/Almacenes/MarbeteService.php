@@ -95,6 +95,16 @@ class MarbeteService
 
     public function delete($data, $id)
     {
+
+
+        $inventario = InventarioFisico::query()->where('id',$data['id_inventario_fisico'])->get()->toArray();
+
+        $estado=$inventario[0]['estado'];
+
+        if ($estado==='1'){
+            abort(400, 'No se puede eliminar un marbete de un Inventario Cerrado');
+        }
+
       Conteo::query()->where('id_marbete','=', $id)->delete();
        return $this->repository->delete($data, $id);
     }
