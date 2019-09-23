@@ -161,7 +161,7 @@
                 this.materiales = [];
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
-                        scope: ['materialInventario:'+id_almacen],
+                        scope: ['inventariosDiferenciaSaldo:'+id_almacen],
                         sort: 'descripcion',
                         order: 'asc'
                     }
