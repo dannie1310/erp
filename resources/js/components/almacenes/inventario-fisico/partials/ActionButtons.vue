@@ -23,7 +23,7 @@
     import Layout from "../../conteo/CargarLayout";
     export default {
         name: "action-buttons",
-        components: {CreateMarbete, Layout},
+        components: {Layout},
         props: ['value'],
         data() {
             return {
