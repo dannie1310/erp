@@ -1,19 +1,14 @@
-const URI = '/api/almacenes/ajuste-positivo/';
+const URI = '/api/almacenes/ajuste-inventario/positivo/';
 export default{
     namespaced: true,
     state: {
         ajustes: [],
         currentAjuste: null,
-        meta: {}
     },
 
     mutations: {
         SET_AJUSTES(state, data){
             state.ajustes = data
-        },
-
-        SET_META(state, data){
-            state.meta = data
         },
 
         SET_AJUSTE(state, data){
@@ -38,28 +33,62 @@ export default{
     },
 
     actions: {
-        paginate(context, payload) {
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar el ajuste positivo (+)",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Ajuste positivo registrado correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+        find (context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'paginate', {params: payload.params})
+                    .get(URI+payload.id, {params: payload.params})
                     .then(r => r.data)
-                    .then(data => {
+                    .then((data) => {
                         resolve(data);
                     })
                     .catch(error => {
-                        reject(error);
+                        reject(error)
                     })
             });
-        },
+        }
     },
 
     getters: {
         ajustes(state) {
             return state.ajustes
-        },
-
-        meta(state) {
-            return state.meta
         },
 
         currentAjuste(state) {

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-   import Layout from "./cargar-layout";
+   import Layout from "./CargarLayout";
    import Create from "./Create";
    export default {
         name: "conteo-index",
