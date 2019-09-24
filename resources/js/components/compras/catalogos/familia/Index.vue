@@ -1,6 +1,9 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <create @created="paginate()"></create>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -17,8 +20,10 @@
 </template>
 
 <script>
+    import Create from "./Create";
     export default {
         name: "familia-index",
+        components:{Create},
         data() {
             return {
                 HeaderSettings: false,
