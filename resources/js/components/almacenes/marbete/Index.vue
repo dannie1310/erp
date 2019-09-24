@@ -32,11 +32,14 @@
                     { title: 'Folio', field: 'folio', sortable: true,  thComp: require('../../globals/th-Filter')},
                     { title: 'Almacén', field:'id_almacen', sortable: true,  thComp: require('../../globals/th-Filter')},
                     { title: 'Material', field:'id_material', sortable: true,  thComp: require('../../globals/th-Filter')},
+                    { title: 'Total Primer Conteo', field:'primer_conteo'},
+                    { title: 'Total Segundo Conteo', field:'segundo_conteo'},
+                    { title: 'Total Tercer Conteo', field:'tercer_conteo'},
                     { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
-                query: {include:['almacen','material','inventario_fisico'], sort:'id', order:'desc'},
+                query: {include:['almacen','material','inventario_fisico','conteos'], sort:'id', order:'desc'},
                 estado: "",
                 cargando: false
             }
@@ -85,6 +88,9 @@
                             id_inventario_fisico: marbete.inventario_fisico.folio_format,
                             id_almacen: marbete.almacen.descripcion,
                             id_material: marbete.material.descripcion,
+                            primer_conteo: marbete.conteos.data[0] ? marbete.conteos.data[0].total : '-',
+                            segundo_conteo: marbete.conteos.data[1] ? marbete.conteos.data[1].total : '-',
+                            tercer_conteo: marbete.conteos.data[2] ? marbete.conteos.data[2].total : '-',
                             buttons: $.extend({}, {
                                 id: marbete.id,
                                 id_inventario_fisico: marbete.id_inventario_fisico,
