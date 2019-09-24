@@ -24,12 +24,36 @@ class Material extends Model
         'numero_parte',
         'unidad',
         'cuentaMaterial.cuenta',
-        'cuentaMaterial.tipo.descripcion'
+        'cuentaMaterial.tipo.descripcion',
+        'tipo_material',
+        'equivalencia'
     ];
 
     public function getTieneHijosAttribute()
     {
         return $this->hijos()->count() ? true : false;
+    }
+
+    public function getTipoFamiliaAttribute()
+    {
+        switch ($this->tipo_material){
+            case(1):
+                return 'Materiales';
+                break;
+            case(2):
+                if($this->equivalencia == 0){
+                    return 'Mano de Obra';
+                }else{
+                    return 'Servicio';
+                }
+                break;
+            case(4):
+                return 'Herramienta y Equipo';
+                break;
+            case(8):
+                return 'Maquinaria';
+                break;
+        }
     }
 
     public function familia()

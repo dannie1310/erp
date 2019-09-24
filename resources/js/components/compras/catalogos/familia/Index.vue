@@ -24,13 +24,13 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Descripción', field: 'descripcion',sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'No. de Parte', field: 'numero_parte', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Familia', field: 'tipo_material',sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: { include: 'hijos', scope:'roots', sort: 'nivel', order: 'desc'},
+                query: { scope:'roots', sort: 'nivel', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -75,8 +75,8 @@
                     materiales.forEach(function (material, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
+                            tipo_material: material.tipo_familia,
                             descripcion: material.descripcion,
-                            numero_parte: material.numero_parte,
                             // buttons: $.extend({}, {
                             //     id: entrada.id,
                             //     estado: entrada.estado,
