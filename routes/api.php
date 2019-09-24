@@ -142,7 +142,6 @@ $api->version('v1', function ($api) {
         //AJUSTE INVENTARIOS
         $api->group(['prefix' => 'ajuste-inventario'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteController@paginate');
-        });
 
         //AJUSTE POSITIVO (+)
             $api->group(['prefix' => 'positivo'], function ($api) {
@@ -162,21 +161,28 @@ $api->version('v1', function ($api) {
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@show')->where(['id' => '[0-9]+']);
             });
 
+        });
+
+        //CONTEO
+        $api->group(['prefix' => 'conteo'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@store');
+            $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@paginate');
+            $api->get('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cancelar')->where(['id' => '[0-9]+']);
+        });
+
+        //CATÁLOGO CONTEO TIPO
+        $api->group(['prefix' => 'tipo-conteo'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Almacenes\CtgTipoConteoController@index');
+        });
+
+
         // ENTRADA DE ALMACEN
         $api->group(['prefix' => 'entrada'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@destroy')->where(['id' => '[0-9]+']);
-        });
-
-
-        // SALIDA DE ALMACEN
-        $api->group(['prefix' => 'salida'], function ($api) {
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@paginate');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@show')->where(['id' => '[0-9]+']);
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@destroy')->where(['id' => '[0-9]+']);
-
-
         });
 
         //INVENTARIO FISICO
@@ -189,25 +195,19 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/actualizar', 'App\Http\Controllers\v1\CADECO\Almacenes\InventarioFisicoController@actualizar')->where(['id' => '[0-9]+']);
         });
 
-        //CONTEO
-        $api->group(['prefix' => 'conteo'], function ($api) {
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@show')->where(['id' => '[0-9]+']);
-            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@store');
-            $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@paginate');
-            $api->get('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cancelar')->where(['id' => '[0-9]+']);
-        });
-
-        $api->group(['prefix' => 'tipo-conteo'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Almacenes\CtgTipoConteoController@index');
-        });
-
         //MARBETE
         $api->group(['prefix'=>'marbete'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@index');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@paginate');
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        // SALIDA DE ALMACEN
+        $api->group(['prefix' => 'salida'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@destroy')->where(['id' => '[0-9]+']);
         });
     });
 
