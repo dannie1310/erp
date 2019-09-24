@@ -317,29 +317,29 @@ export const routes = [
                 }
             },
             {
-                path: 'familia',
+                path: 'catalogo-insumo',
                 component: require('./components/compras/catalogos/Layout'),
                 children: [
                     {
                         path: '/',
-                        name: 'familia',
+                        name: 'catalogo-insumo',
                         component: require('./components/compras/catalogos/Index'),
                         meta: {
-                            title: 'Gestión de Familias',
-                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE FAMILIAS'},
+                            title: 'Gestión de Insumos',
+                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE INSUMOS'},
                             middleware: [auth, context],
 
                         }
                     },
                     {
-                        path: 'material-familia',
-                        name: 'material-familia',
+                        path: 'familia',
+                        name: 'familia',
                         component: require('./components/compras/catalogos/familia/Index'),
                         meta: {
-                            title: 'Gestión de Familia',
+                            title: 'Familia',
                             breadcrumb: {
-                                parent: 'familia',
-                                name: 'GESTIÓN DE FAMILIA'
+                                parent: 'catalogo-insumo',
+                                name: 'FAMILIA'
                             },
                             middleware: [auth, context],
                             // permission: 'consultar_entrada_almacen'
