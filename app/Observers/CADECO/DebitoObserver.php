@@ -32,6 +32,7 @@ class DebitoObserver
         $debito->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $debito->FechaHoraRegistro = date('Y-m-d h:i:s');
         $debito->id_obra = Context::getIdObra();
+        $debito->id_usuario = auth()->id();
     }
 
     public function updating(Debito $debito)

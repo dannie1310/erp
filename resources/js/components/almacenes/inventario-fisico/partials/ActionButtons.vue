@@ -3,6 +3,7 @@
         <button type="button" class="btn btn-sm btn-outline-primary" title="Descargar Marbetes" v-if="value.estado == 0 && value.marbete" @click="pdf_marbetes(value.id)">
             <i class="fa fa-file-pdf-o"></i>
         </button>
+
         <button @click="descargaLayout"  v-if="value.estado == 0 && $root.can('descarga_layout_captura_conteos')" type="button" class="btn btn-sm btn-outline-success" title="Descargar Layout">
             <i class="fa fa-download"></i>
         </button>
@@ -13,14 +14,11 @@
         </button>
         <button @click="update" v-if="$root.can('cerrar_inventario_fisico') && value.estado == 0" type="button" class="btn btn-sm btn-outline-danger" title="Cerrar Inventario Físico"><i class="fa fa-lock"></i> </button>
 
-
-
-
     </div>
 </template>
 
 <script>
-    import Layout from "../../conteo/cargar-layout";
+    import Layout from "../../conteo/CargarLayout";
     export default {
         name: "action-buttons",
         components: {Layout},
@@ -60,8 +58,9 @@
                     .then(() => {
                         this.$emit('success')
                     })
+            },
+
             }
-        }
     }
 
 </script>

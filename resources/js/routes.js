@@ -194,21 +194,52 @@ export const routes = [
                             title: 'Ajuste de Inventarios',
                             breadcrumb: {parent: 'almacenes', name: 'AJUSTE DE INVENTARIOS'},
                             middleware: [auth, context],
-
                         }
                     },
                     {
-                        path: 'ajuste-positivo',
-                        name: 'ajuste-positivo',
-                        component: require('./components/almacenes/ajuste-inventario/ajuste-positivo/Index'),
+                        path: 'create',
+                        name: 'ajuste-create',
+                        component: require('./components/almacenes/ajuste-inventario/Create'),
                         meta: {
-                            title: 'Ajuste Positivo (+)',
-                            breadcrumb: {
-                                parent: 'ajuste-inventario',
-                                name: 'AJUSTE POSITIVO (+)'
-                            },
+                            title: 'Registrar Ajuste de Inventario',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'ajuste-inventario'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_ajuste_positivo','registrar_ajuste_negativo']
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'entrada-almacen',
+                component: require('./components/almacenes/entrada-almacen/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'entrada-almacen',
+                        component: require('./components/almacenes/entrada-almacen/Index'),
+                        meta: {
+                            title: 'Entrada de Almacén',
+                            breadcrumb: {parent: 'almacenes', name: 'ENTRADA ALMACEN'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_entrada_almacen'
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'salida-almacen',
+                component: require('./components/almacenes/salida-almacen/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'salida-almacen',
+                        component: require('./components/almacenes/salida-almacen/Index'),
+                        meta: {
+                            title: 'Salida de Almacén',
+                            breadcrumb: {parent: 'almacenes', name: 'SALIDA ALMACEN'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_salida_almacen'
+
                         }
                     }
                 ]
@@ -226,7 +257,23 @@ export const routes = [
                             breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FÍSICO'},
                             middleware: [auth, context, permission],
                             permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
-
+                        }
+                    },
+                ]
+            },
+            {
+                path:'marbete',
+                component: require('./components/almacenes/marbete/Layout'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'marbete',
+                        component: require('./components/almacenes/marbete/Index'),
+                        meta: {
+                            title: 'Marbetes',
+                            breadcrumb: {parent: 'almacenes', name: 'MARBETES'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_marbetes']
                         }
                     }
                 ]
@@ -268,51 +315,6 @@ export const routes = [
                     breadcrumb: {parent:'home', name: 'COMPRAS'},
                     middleware: [auth, context, access]
                 }
-            },
-            {
-                path: 'almacen',
-                component: require('./components/compras/almacen/Layout'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'almacen',
-                        component: require('./components/compras/almacen/Index'),
-                        meta: {
-                            title: 'Gestión de Almacenes',
-                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE ALMACENES'},
-                            middleware: [auth, context],
-
-                        }
-                    },
-                    {
-                        path: 'entrada-almacen',
-                        name: 'entrada-almacen',
-                        component: require('./components/compras/almacen/entrada/Index'),
-                        meta: {
-                            title: 'Entrada de Almacén',
-                            breadcrumb: {
-                                parent: 'almacen',
-                                name: 'ENTRADA DE ALMACÉN'
-                            },
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_entrada_almacen'
-                        }
-                    },
-                    {
-                        path: 'salida-almacen',
-                        name: 'salida-almacen',
-                        component: require('./components/compras/almacen/salida/Index'),
-                        meta: {
-                            title: 'Salida de Almacén',
-                            breadcrumb: {
-                                parent: 'almacen',
-                                name: 'SALIDA DE ALMACÉN'
-                            },
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_salida_almacen'
-                        }
-                    }
-                ]
             },
             {
                 path: 'familia',

@@ -31,7 +31,8 @@ class Pago extends Transaccion
         "id_empresa",
         "id_moneda",
         "saldo",
-        "destino"
+        "destino",
+        "id_usuario"
     ];
 
     protected static function boot()

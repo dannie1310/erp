@@ -4,8 +4,15 @@ import auth from './modules/auth';
 
 //ALMACENES
 import conteo from './modules/almacenes/conteo';
+import tipoConteo from './modules/almacenes/ctg-tipo-conteo';
+import ajusteInventario from './modules/almacenes/ajuste-inventario';
+import ajusteNegativo from './modules/almacenes/ajuste-negativo';
 import ajustePositivo from './modules/almacenes/ajuste-positivo';
 import inventarioFisico from './modules/almacenes/inventario-fisico';
+import entradaAlmacen from './modules/almacenes/entrada-almacen';
+import salidaAlmacen from './modules/almacenes/salida-almacen';
+import marbete from './modules/almacenes/marbete';
+import nuevoLote from  './modules/almacenes/nuevo-lote';
 
 //CADECO
 
@@ -23,8 +30,6 @@ import sucursal from './modules/cadeco/sucursal';
 
 
 //COMPRAS
-import entradaAlmacen from './modules/compras/entrada-almacen';
-import salidaAlmacen from './modules/compras/salida-almacen';
 import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
 
@@ -97,8 +102,15 @@ export default new Vuex.Store({
     modules: {
         auth,
         'almacenes/conteo' : conteo,
+        'almacenes/ctg-tipo-conteo' : tipoConteo,
+        'almacenes/ajuste-inventario' : ajusteInventario,
+        'almacenes/ajuste-negativo' : ajusteNegativo,
         'almacenes/ajuste-positivo' : ajustePositivo,
         'almacenes/inventario-fisico' : inventarioFisico,
+        'almacenes/marbete' : marbete,
+        'almacenes/nuevo-lote' : nuevoLote,
+        'almacenes/entrada-almacen' : entradaAlmacen,
+        'almacenes/salida-almacen' : salidaAlmacen,
 
         'cadeco/almacen': almacen,
         'cadeco/banco': banco,
@@ -112,8 +124,6 @@ export default new Vuex.Store({
         'cadeco/obras': obras,
         'cadeco/sucursal': sucursal,
 
-        'compras/entrada-almacen' : entradaAlmacen,
-        'compras/salida-almacen' : salidaAlmacen,
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
 
