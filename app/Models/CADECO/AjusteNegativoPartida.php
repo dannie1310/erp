@@ -31,8 +31,9 @@ class AjusteNegativoPartida extends Item
         foreach ($partidas as $partida){
             $cantidad_total = $partida['cantidad'];
             $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])
+                ->whereRaw('inventarios.saldo != 0')
                 ->where('id_almacen', '=', $id_almacen)
-                ->orderBy('id_lote', 'desc')->get();
+                ->orderBy('id_lote', 'asc')->get();
 
             foreach ($inventarios as $inventario){
                 if($inventario->saldo > 0 && $cantidad_total > 0) {
