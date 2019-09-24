@@ -68,7 +68,7 @@ class ConteoService
             $c['folio_marbete'] = $folio_marbete;
             $c['id_layout_conteo'] = $layout->id;
 
-            if(!is_numeric($c['tipo_conteo']) || !is_numeric($c['cantidad_usados']) || !is_numeric($c['cantidad_nuevo']) || !is_numeric($c['cantidad_inservible']) || !is_numeric($c['total'])){
+            if(!is_numeric($c['tipo_conteo']) || !is_numeric($c['cantidad_nuevo']) || !is_numeric($c['total'])){
                 $i++;
                 array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Error al ingresar cantidades");
             }else{
@@ -125,10 +125,18 @@ class ConteoService
             if($linea == 1){
                 $linea++;
             }else{
-                if(count($renglon) != 9 && count($renglon) != 8) {
+                if(count($renglon) != 9) {
                     abort(400,'No se pueden procesar los conteos');
-                }else if(count($renglon) == 9 || (count($renglon) == 8 && $renglon[0] != '' && $renglon[1] != '' && $renglon[2] != '' && $renglon[3] != '' && $renglon[4] != ''
-                    && $renglon[5] != ''  && $renglon[6] != ''  && $renglon[7] != '')){
+                }else if(count($renglon) == 9 && $renglon[0] != '' && $renglon[1] != '' && $renglon[2] != '' && $renglon[4] != '' && $renglon[6] != ''){
+                    if($renglon[3] == ''){
+                        $renglon[3] = null;
+                    }if($renglon[5] == ''){
+                        $renglon[5] = null;
+                    }if($renglon[7] == ''){
+                        $renglon[7] = null;
+                    }if($renglon[8] == '' || $renglon[8] == "\r\n"){
+                        $renglon[8] = null;
+                    }
                     $content[] = array(
                         'folio_marbete' =>  $renglon[0],
                         'id_marbete' =>  $renglon[1],
@@ -138,12 +146,13 @@ class ConteoService
                         'cantidad_inservible' =>  $renglon[5],
                         'total' =>  $renglon[6],
                         'iniciales' =>  $renglon[7],
-                        'observaciones' =>  array_key_exists(8,$renglon)?$renglon[8]:null,
+                        'observaciones' =>  $renglon[8],
                     );
                 }
                 $linea++;
             }
         }
+//        dd($renglon,$linea);
         fclose($myfile);
         return $content;
 
