@@ -30,7 +30,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: { scope:'roots', sort: 'nivel', order: 'desc'},
+                query: {sort: 'nivel', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -46,10 +46,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/material/paginate', { params: this.query})
+                return this.$store.dispatch('cadeco/familia/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('cadeco/material/SET_MATERIALES', data.data);
-                        this.$store.commit('cadeco/material/SET_META', data.meta);
+                        this.$store.commit('cadeco/familia/SET_FAMILIAS', data.data);
+                        this.$store.commit('cadeco/familia/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -57,26 +57,26 @@
             }
         },
         computed: {
-            materiales(){
-                return this.$store.getters['cadeco/material/materiales'];
+            familias(){
+                return this.$store.getters['cadeco/familia/familias'];
             },
             meta(){
-                return this.$store.getters['cadeco/material/meta'];
+                return this.$store.getters['cadeco/familia/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            materiales: {
-                handler(materiales) {
+            familias: {
+                handler(familias) {
                     let self = this
                     self.$data.data = []
-                    materiales.forEach(function (material, i) {
+                    familias.forEach(function (familia, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            tipo_material: material.tipo_familia,
-                            descripcion: material.descripcion,
+                            tipo_material: familia.tipo_material_descripcion,
+                            descripcion: familia.descripcion,
                             // buttons: $.extend({}, {
                             //     id: entrada.id,
                             //     estado: entrada.estado,

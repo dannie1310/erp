@@ -35,7 +35,7 @@ class Material extends Model
         return $this->hijos()->count() ? true : false;
     }
 
-    public function getTipoFamiliaAttribute()
+    public function getTipoMaterialDescripcionAttribute()
     {
         switch ($this->tipo_material){
             case(1):
@@ -59,8 +59,7 @@ class Material extends Model
 
     public function familia()
     {
-        return $this->belongsTo(self::class, 'tipo_material', 'tipo_material')
-            ->where('nivel', 'LIKE', substr($this->nivel, 0, 4));
+        return $this->belongsTo(Familia::class, 'tipo_material', 'tipo_material');
     }
 
     public function cuentaMaterial()
