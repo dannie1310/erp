@@ -90,4 +90,11 @@ class Material extends Model
     {
         return $query->where('descripcion','!=','NULL');
     }
+
+
+    public function scopeTipos($query, $tipos)
+    {
+        $tip = explode(',',$tipos);
+        return $query->where('equivalencia', '=', 1)->whereIn('tipo_material', array_unique($tip));
+    }
 }

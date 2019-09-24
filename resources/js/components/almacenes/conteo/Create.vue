@@ -245,7 +245,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.dato.cantidad_usados <= 0 || this.dato.cantidad_nuevos <= 0 || this.dato.cantidad_inservibles <= 0 || this.dato.total <= 0){
+                        if(this.dato.cantidad_usados < 0 || this.dato.cantidad_nuevos < 0 || this.dato.cantidad_inservibles < 0 || this.dato.total < 0){
                             swal('¡Error!', 'Error al registrar cantidad, favor de revisar la información y registrar la cantidad nuevamente.', 'error')
                         }
                         else {

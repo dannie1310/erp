@@ -31,8 +31,9 @@ class AjusteNegativoPartida extends Item
         foreach ($partidas as $partida){
             $cantidad_total = $partida['cantidad'];
             $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])
+                ->whereRaw('inventarios.saldo != 0')
                 ->where('id_almacen', '=', $id_almacen)
-                ->orderBy('id_lote', 'desc')->get();
+                ->orderBy('id_lote', 'asc')->get();
 
             foreach ($inventarios as $inventario){
                 if($inventario->saldo > 0 && $cantidad_total > 0) {
@@ -47,11 +48,10 @@ class AjusteNegativoPartida extends Item
                             'referencia' => $partida['id_material']['unidad']
                         ];
                         $registro_partida = $this->create($data);
+                        $cantidad_total -= $inventario->saldo;
                         $inventario->saldo = 0;
                         $inventario->save();
-                        $cantidad_total -= $inventario->saldo;
                     } else{
-
                         $data = [
                             'id_transaccion' => $ajuste,
                             'item_antecedente' => $inventario->id_lote,
