@@ -43,7 +43,7 @@ class InventarioFisicoController extends Controller
         $this->middleware('permiso:consultar_inventario_fisico')->only('paginate');
         $this->middleware('permiso:iniciar_inventario_fisico')->only('store');
 //        $this->middleware('permiso:generar_marbetes')->only('pdf_marbetes');
-        $this->middleware('permiso:descarga_layout_captura_conteos')->only('descargaLayout');
+//        $this->middleware('permiso:descarga_layout_captura_conteos')->only('descargaLayout');
         $this->middleware('permiso:descargar_resumen_conteos')->only('descargar_resumen_conteo');
         $this->middleware('permiso:cerrar_inventario_fisico')->only('actualizar');
 
@@ -62,7 +62,11 @@ class InventarioFisicoController extends Controller
 
     public function descargaLayout($id)
     {
-        return $this->service->descargaLayout($id);
+        if(auth()->user()->can('descarga_layout_captura_conteos')){
+            return $this->service->descargaLayout($id);
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+
     }
 
     public function actualizar($id)
