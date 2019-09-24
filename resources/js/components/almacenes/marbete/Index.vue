@@ -86,7 +86,8 @@
                             id_almacen: marbete.almacen.descripcion,
                             id_material: marbete.material.descripcion,
                             buttons: $.extend({}, {
-                                id: marbete.id
+                                id: marbete.id,
+                                id_inventario_fisico: marbete.id_inventario_fisico,
                             })
                         })
                     });
