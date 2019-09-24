@@ -26,7 +26,8 @@ class Material extends Model
         'cuentaMaterial.cuenta',
         'cuentaMaterial.tipo.descripcion',
         'tipo_material',
-        'equivalencia'
+        'equivalencia',
+        'marca'
     ];
 
     public function getTieneHijosAttribute()
@@ -41,7 +42,7 @@ class Material extends Model
                 return 'Materiales';
                 break;
             case(2):
-                if($this->equivalencia == 0){
+                if($this->equivalencia == 0 && $this->marca ==0){
                     return 'Mano de Obra';
                 }else{
                     return 'Servicio';
