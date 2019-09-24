@@ -74,7 +74,7 @@
                                                                     :name="`cantidad[${i}]`"
                                                                     v-model="item.cantidad"
                                                                     data-vv-as="Cantidad"
-                                                                    v-validate="{required: true,min_value: 0}"
+                                                                    v-validate="{required: true, min_value: 0.1}"
                                                                     class="form-control"
                                                                     :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                                     id="cantidad"
