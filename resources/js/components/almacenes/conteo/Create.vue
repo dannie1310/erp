@@ -180,7 +180,7 @@
                         </div>
                          <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.id_marbete == ''">Registrar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.id_marbete == null">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -217,7 +217,7 @@
         methods:{
             init() {
                 this.cargando = true;
-                this.dato.id_marbete = '';
+                this.dato.id_marbete = null;
                 this.dato.tipo_conteo = '';
                 this.dato.cantidad_usados='';
                 this.dato.cantidad_nuevo='';
@@ -226,6 +226,7 @@
                 this.dato.iniciales='';
                 this.dato.observaciones='';
                 $(this.$refs.modal).modal('show');
+                this.dato.id_marbete = null;
                 this.$validator.reset();
                 this.cargando = false;
             },
