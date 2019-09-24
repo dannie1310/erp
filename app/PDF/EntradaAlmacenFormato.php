@@ -5,6 +5,7 @@ namespace App\PDF;
 
 
 use App\Models\CADECO\EntradaMaterial;
+use App\Models\CADECO\OrdenCompra;
 use Ghidev\Fpdf\Rotation;
 use App\Models\CADECO\Obra;
 use App\Facades\Context;
@@ -31,11 +32,21 @@ class EntradaAlmacenFormato extends Rotation
 //        dd($entrada);
         parent::__construct('P', 'cm', 'A4');
         $this->obra = Obra::find(Context::getIdObra());
+//        dd($this->obra);
 
-        $entrada_almacen=EntradaMaterial::query()->where('id_transaccion', $id)->get()->toArray();
+        $entrada_almacen=EntradaMaterial::query()->where('id_transaccion', $id)->with('ordenCompra', 'empresa', 'sucursal', 'partidas')->get()->toArray();
         $this->numero_folio = '#'.str_pad($entrada_almacen[0]['numero_folio'],5,0, STR_PAD_LEFT);
-
+        $this->fecha = substr($entrada_almacen[0]['fecha'], 0, 10);
 //        dd($entrada_almacen);
+
+
+        $this->oc_folio = '#'.str_pad($entrada_almacen[0]['orden_compra']['numero_folio'],5,0,STR_PAD_LEFT);
+
+        $this->empresa = $entrada_almacen[0]['empresa']['razon_social'];
+        $this->empresa_rfc = $entrada_almacen[0]['empresa']['rfc'];
+        $this->empresa_direccion = $entrada_almacen[0]['sucursal']['direccion'];
+
+        $this->partidas = $entrada_almacen[0]['partidas'];
 //        dd($this->obra);
     }
     public function Header()
@@ -62,12 +73,12 @@ class EntradaAlmacenFormato extends Rotation
         $this->SetX($x_f);
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(4.5, .7, 'FECHA ', 'L', 0, 'L');
-        $this->Cell(3.5, .7, 'FDD', 'R', 0, 'L');
+        $this->Cell(3.5, .7, date("d-m-Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
         $this->Ln(.7);
 
         $this->Cell(11.5);
         $this->Cell(4.5, .7, 'ORDEN DE COMPRA', 'LB', 0, 'L');
-        $this->Cell(3.5, .7, '88' . ' ', 'RB', 1, 'L');
+        $this->Cell(3.5, .7, $this->oc_folio, 'RB', 1, 'L');
         $this->Ln(.5);
 
         $this->SetFont('Arial', 'B', 13);
@@ -115,7 +126,7 @@ class EntradaAlmacenFormato extends Rotation
         else
             $y_alto = $y_final_2;
 
-        $alto = abs($y_inicial - $y_alto) + 1;
+        $alto = abs($y_inicial - $y_alto) + 1.5;
         $this->SetWidths([9.5]);
         $this->SetRounds(['1234']);
         $this->SetRadius([0.2]);
@@ -130,9 +141,9 @@ class EntradaAlmacenFormato extends Rotation
         $this->setY($y_inicial);
         $this->setX($x_inicial);
         $this->MultiCell(9.5, .5,
-            "dsf" .'
-' . utf8_decode(strtoupper('$this->sucursal_direccion')) . '
-' . '$this->empresa_rfc', '', 'L');
+            $this->empresa .'
+' . utf8_decode(strtoupper($this->empresa_direccion)) . '
+' . $this->empresa_rfc, '', 'L');
 
         $this->setY($y_inicial);
         $this->setX($x_inicial + 10);
@@ -141,8 +152,9 @@ class EntradaAlmacenFormato extends Rotation
         $this->setY($y_inicial);
         $this->setX($x_inicial + 10);
         $this->MultiCell(9.5, .5,
-            utf8_decode($this->obra->cliente) . '
-' . $this->obra->direccion . '
+            utf8_decode($this->obra->facturar) . '
+' . utf8_decode($this->obra->direccion) . '
+' . 'Estado: '.utf8_decode($this->obra->estado) . ' C.P:'.$this->obra->codigo_postal.' 
 ' . $this->obra->rfc, '', 'L');
 
         $this->setY($y_alto);
@@ -163,7 +175,7 @@ class EntradaAlmacenFormato extends Rotation
         $this->Cell(10, .3, (''), 0, 1, 'L');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de ordenes de compra. Fecha de registro: ') , 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de ordenes de compra. Fecha de registro: '.date("Y-m-d", strtotime($this->fecha))  . ' ') , 0, 0, 'L');
         $this->Cell(9.5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
