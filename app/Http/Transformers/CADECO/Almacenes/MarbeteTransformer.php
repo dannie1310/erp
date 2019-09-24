@@ -22,6 +22,7 @@ class MarbeteTransformer extends TransformerAbstract
         'almacen',
         'material',
         'inventario_fisico',
+        'conteos'
 
     ];
     /**
@@ -81,5 +82,15 @@ class MarbeteTransformer extends TransformerAbstract
         }
         return null;
     }
+    public function includeConteos(Marbete $model)
+    {
+
+        if($conteos = $model->conteos)
+        {
+            return $this->collection($conteos, new ConteoTransformer);
+        }
+        return null;
+    }
+
 
 }
