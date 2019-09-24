@@ -5,7 +5,6 @@ namespace App\PDF;
 
 
 use App\Models\CADECO\EntradaMaterial;
-use App\Models\CADECO\OrdenCompra;
 use Ghidev\Fpdf\Rotation;
 use App\Models\CADECO\Obra;
 use App\Facades\Context;
@@ -13,8 +12,8 @@ use App\Facades\Context;
 class EntradaAlmacenFormato extends Rotation
 {
     protected $obra;
-    protected $entrada;
-    protected $numero_folio;
+    protected $entrada_almacen;
+    private $dim_aux=0;
     const DPI = 96;
     const MM_IN_INCH = 25.4;
     const A4_HEIGHT = 297;
@@ -29,147 +28,289 @@ class EntradaAlmacenFormato extends Rotation
 
     public function __construct($id)
     {
-//        dd($entrada);
+
         parent::__construct('P', 'cm', 'A4');
         $this->obra = Obra::find(Context::getIdObra());
-//        dd($this->obra);
-
-        $entrada_almacen=EntradaMaterial::query()->where('id_transaccion', $id)->with('ordenCompra', 'empresa', 'sucursal', 'partidas')->get()->toArray();
-        $this->numero_folio = '#'.str_pad($entrada_almacen[0]['numero_folio'],5,0, STR_PAD_LEFT);
-        $this->fecha = substr($entrada_almacen[0]['fecha'], 0, 10);
-//        dd($entrada_almacen);
 
 
-        $this->oc_folio = '#'.str_pad($entrada_almacen[0]['orden_compra']['numero_folio'],5,0,STR_PAD_LEFT);
+        $this->entrada_almacen=EntradaMaterial::query()->where('id_transaccion', $id)->with('ordenCompra', 'empresa', 'sucursal', 'partidas','partidas.material','partidas.almacen')->get()->toArray();
+        $this->numero_folio = '#'.str_pad($this->entrada_almacen[0]['numero_folio'],5,0, STR_PAD_LEFT);
+        $this->fecha = substr($this->entrada_almacen[0]['fecha'], 0, 10);
 
-        $this->empresa = $entrada_almacen[0]['empresa']['razon_social'];
-        $this->empresa_rfc = $entrada_almacen[0]['empresa']['rfc'];
-        $this->empresa_direccion = $entrada_almacen[0]['sucursal']['direccion'];
 
-        $this->partidas = $entrada_almacen[0]['partidas'];
-//        dd($this->obra);
+
+        $this->oc_folio = '#'.str_pad($this->entrada_almacen[0]['orden_compra']['numero_folio'],5,0,STR_PAD_LEFT);
+
+        $this->empresa = $this->entrada_almacen[0]['empresa']['razon_social'];
+        $this->empresa_rfc = $this->entrada_almacen[0]['empresa']['rfc'];
+        $this->empresa_direccion = $this->entrada_almacen[0]['sucursal']['direccion'];
+
+        $this->partidas = $this->entrada_almacen[0]['partidas'];
+
     }
     public function Header()
     {
-        $residuo = $this->PageNo() % 2;
-        $postTitle = .7;
+        $residuo = $this->PageNo();
+   if($residuo>1){
 
-        $this->Cell(11.5);
-        $x_f = $this->GetX();
-        $y_f = $this->GetY();
+       $postTitle = .7;
 
-        $this->SetTextColor('0,0,0');
-        $this->SetFont('Arial', 'B', 14);
-        $this->Cell(4.5, .7, utf8_decode('FOLIO'), 'LT', 0, 'L');
-        $this->Cell(3.5, .7, $this->numero_folio, 'RT', 0, 'L');
-        $this->Ln(.7);
-        $y_f = $this->GetY();
+       $this->Cell(11.5);
+       $x_f = $this->GetX();
+       $y_f = $this->GetY();
 
-        $this->SetFont('Arial', 'B', 24);
-        $this->Cell(11.5, $postTitle, utf8_decode('ENTRADA DE ALMACÉN'), 0, 0, 'C', 0);
-        $this->Ln();
-
-        $this->SetY($y_f);
-        $this->SetX($x_f);
-        $this->SetFont('Arial', 'B', 10);
-        $this->Cell(4.5, .7, 'FECHA ', 'L', 0, 'L');
-        $this->Cell(3.5, .7, date("d-m-Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
-        $this->Ln(.7);
-
-        $this->Cell(11.5);
-        $this->Cell(4.5, .7, 'ORDEN DE COMPRA', 'LB', 0, 'L');
-        $this->Cell(3.5, .7, $this->oc_folio, 'RB', 1, 'L');
-        $this->Ln(.5);
-
-        $this->SetFont('Arial', 'B', 13);
-        $this->SetWidths([19.5]);
-        $this->SetRounds(['1234']);
-        $this->SetRadius([0.2]);
-        $this->SetFills(['255,255,255']);
-        $this->SetTextColors(['0,0,0']);
-        $this->SetHeights([0.7]);
-        $this->SetRounds(['1234']);
-        $this->SetRadius([0.2]);
-        $this->SetAligns("C");
+       $this->SetTextColor('0,0,0');
+       $this->SetFont('Arial', 'B', 14);
+       $this->Cell(4.5, .7, utf8_decode('FOLIO'), 'LT', 0, 'L');
+       $this->Cell(3.5, .7, $this->numero_folio, 'RT', 0, 'L');
+       $this->Ln(.7);
+       $y_f = $this->GetY();
 
 
-        $this->Row([utf8_decode($this->obra->nombre . '  ' . " ")]);
-        $this->Ln(.5);
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(9.5, .7, 'Proveedor/Sucursal', 0, 0, 'L');
-        $this->Cell(.5);
-        $this->Cell(9.5, .7, 'Empresa', 0, 0, 'L');
-        $this->Ln(.8);
-        $y_inicial = $this->getY();
-        $x_inicial = $this->getX();
-        $this->MultiCell(9.5, .5,
-            "empresa" . '
+       $this->SetY($y_f);
+       $this->SetX($x_f);
+       $this->SetFont('Arial', 'B', 10);
+       $this->Cell(4.5, .7, 'FECHA ', 'L', 0, 'L');
+       $this->Cell(3.5, .7, date("d-m-Y", strtotime($this->fecha)) . ' ', 'R', 0, 'L');
+       $this->Ln(.7);
+
+       $this->Cell(11.5);
+       $this->Cell(4.5, .7, 'ORDEN DE COMPRA', 'LB', 0, 'L');
+       $this->Cell(3.5, .7, $this->oc_folio, 'RB', 1, 'L');
+       $this->Ln(.5);
+
+   }else{
+
+
+           $postTitle = .7;
+
+           $this->Cell(11.5);
+           $x_f = $this->GetX();
+           $y_f = $this->GetY();
+
+           $this->SetTextColor('0,0,0');
+           $this->SetFont('Arial', 'B', 14);
+           $this->Cell(4.5, .7, utf8_decode('FOLIO'), 'LT', 0, 'L');
+           $this->Cell(3.5, .7, $this->numero_folio, 'RT', 0, 'L');
+           $this->Ln(.7);
+           $y_f = $this->GetY();
+
+           $this->SetFont('Arial', 'B', 24);
+           $this->Cell(11.5, $postTitle, utf8_decode('ENTRADA DE ALMACÉN'), 0, 0, 'C', 0);
+           $this->Ln();
+
+           $this->SetY($y_f);
+           $this->SetX($x_f);
+           $this->SetFont('Arial', 'B', 10);
+           $this->Cell(4.5, .7, 'FECHA ', 'L', 0, 'L');
+           $this->Cell(3.5, .7, date("d-m-Y", strtotime($this->fecha)) . ' ', 'R', 0, 'L');
+           $this->Ln(.7);
+
+           $this->Cell(11.5);
+           $this->Cell(4.5, .7, 'ORDEN DE COMPRA', 'LB', 0, 'L');
+           $this->Cell(3.5, .7, $this->oc_folio, 'RB', 1, 'L');
+           $this->Ln(.5);
+
+           $this->SetFont('Arial', 'B', 13);
+           $this->SetWidths([19.5]);
+           $this->SetRounds(['1234']);
+           $this->SetRadius([0.2]);
+           $this->SetFills(['255,255,255']);
+           $this->SetTextColors(['0,0,0']);
+           $this->SetHeights([0.7]);
+           $this->SetRounds(['1234']);
+           $this->SetRadius([0.2]);
+           $this->SetAligns("C");
+
+
+           $this->Row([utf8_decode($this->obra->nombre . '  ' . " ")]);
+           $this->Ln(.5);
+           $this->SetFont('Arial', '', 10);
+           $this->Cell(9.5, .7, 'Proveedor/Sucursal', 0, 0, 'L');
+           $this->Cell(.5);
+           $this->Cell(9.5, .7, 'Empresa', 0, 0, 'L');
+           $this->Ln(.8);
+           $y_inicial = $this->getY();
+           $x_inicial = $this->getX();
+           $this->MultiCell(9.5, .5,
+               "empresa" . '
 ' . "sucrus" . '
 ' . "dsad", '', 'L');
 
 
-        $y_final_1 = $this->getY();
-        $this->setY($y_inicial);
-        $this->setX($x_inicial + 10);
-        $this->MultiCell(9.5, .5,
-            utf8_decode("hora") . '
+           $y_final_1 = $this->getY();
+           $this->setY($y_inicial);
+           $this->setX($x_inicial + 10);
+           $this->MultiCell(9.5, .5,
+               utf8_decode("hora") . '
 ' . "dir factura" . '
 ' . "obra rfc", '', 'L');
-        $y_final_2 = $this->getY();
+           $y_final_2 = $this->getY();
 
 
+           if ($y_final_1 > $y_final_2)
+               $y_alto = $y_final_1;
 
+           else
+               $y_alto = $y_final_2;
 
-        if ($y_final_1 > $y_final_2)
-            $y_alto = $y_final_1;
-
-        else
-            $y_alto = $y_final_2;
-
-        $alto = abs($y_inicial - $y_alto) + 1.5;
-        $this->SetWidths([9.5]);
-        $this->SetRounds(['1234']);
-        $this->SetRadius([0.2]);
-        $this->SetFills(['255,255,255']);
-        $this->SetTextColors(['0,0,0']);
-        $this->SetHeights([$alto]);
-        $this->SetStyles(['DF']);
-        $this->SetAligns("L");
-        $this->SetFont('Arial', '', 10);
-        $this->setY($y_inicial);
-        $this->Row([""]);
-        $this->setY($y_inicial);
-        $this->setX($x_inicial);
-        $this->MultiCell(9.5, .5,
-            $this->empresa .'
+           $alto = abs($y_inicial - $y_alto) + 1.5;
+           $this->SetWidths([9.5]);
+           $this->SetRounds(['1234']);
+           $this->SetRadius([0.2]);
+           $this->SetFills(['255,255,255']);
+           $this->SetTextColors(['0,0,0']);
+           $this->SetHeights([$alto]);
+           $this->SetStyles(['DF']);
+           $this->SetAligns("L");
+           $this->SetFont('Arial', '', 10);
+           $this->setY($y_inicial);
+           $this->Row([""]);
+           $this->setY($y_inicial);
+           $this->setX($x_inicial);
+           $this->MultiCell(9.5, .5,
+               $this->empresa . '
 ' . utf8_decode(strtoupper($this->empresa_direccion)) . '
 ' . $this->empresa_rfc, '', 'L');
 
-        $this->setY($y_inicial);
-        $this->setX($x_inicial + 10);
-        $this->Row([""]);
+           $this->setY($y_inicial);
+           $this->setX($x_inicial + 10);
+           $this->Row([""]);
 
-        $this->setY($y_inicial);
-        $this->setX($x_inicial + 10);
-        $this->MultiCell(9.5, .5,
-            utf8_decode($this->obra->facturar) . '
+           $this->setY($y_inicial);
+           $this->setX($x_inicial + 10);
+           $this->MultiCell(9.5, .5,
+               utf8_decode($this->obra->facturar) . '
 ' . utf8_decode($this->obra->direccion) . '
-' . 'Estado: '.utf8_decode($this->obra->estado) . ' C.P:'.$this->obra->codigo_postal.' 
+' . 'Estado: ' . utf8_decode($this->obra->estado) . ' C.P:' . $this->obra->codigo_postal . ' 
 ' . $this->obra->rfc, '', 'L');
 
-        $this->setY($y_alto);
-        $this->Ln(.5);
+           $this->setY($y_alto);
+           $this->Ln(.5);
 
+           $this->SetFont('Arial', '', 6);
+           $this->SetHeights([0.8]);
+       }
+    }
+
+
+    public function partidas($partidas= [])
+    {
+        $this->Ln(1.3);
         $this->SetFont('Arial', '', 6);
-        $this->SetHeights([0.8]);
+        $this->SetFillColor(180,180,180);
+        $this->SetWidths([1,2.5,10,2,2,2]);
+        $this->SetStyles(['DF','DF','DF','DF','DF']);
+        $this->SetRounds(['1','','','','','2']);
+        $this->SetRadius([0.2,0,0,0,0,0.2]);
+        $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
+        $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['C','C','C','C','C','C',]);
+        $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad", "Fecha Entrega"]);
+
+
+
+        foreach($partidas as $i => $p)
+        {
+            $this->dim = $this->GetY();
+            if($this->dim>22.8) {
+                $this->AddPage();
+                $this->Ln(0.5);
+                $this->SetFont('Arial', '', 6);
+                $this->SetFillColor(180,180,180);
+                $this->SetWidths([1,2.5,10,2,2,2]);
+                $this->SetStyles(['DF','DF','DF','DF','DF']);
+                $this->SetRounds(['1','','','','','2']);
+                $this->SetRadius([0.2,0,0,0,0,0.2]);
+                $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
+                $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+                $this->SetHeights([0.4]);
+                $this->SetAligns(['C','C','C','C','C','C',]);
+                $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad", "Fecha Entrega"]);
+                $this->dim_aux=1;
+            }
+
+            $this->SetWidths([1,2.5,10,2,2,2]);
+            $this->encola="partida";
+            $this->SetRounds(['','','','','','']);
+            $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+            $this->SetAligns(['L','L','L','L','L','C']);
+            $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+
+            $this->Row([
+                $i+1,
+                $p['material']['numero_parte'],
+                utf8_decode($p['material']['descripcion']),
+               $p['unidad'],
+                $p['cantidad'],
+                date("d-m-Y", strtotime($p['material']['FechaHoraRegistro']))
+            ]);
+            /*Observaciones*/
+            $this->SetRounds(['4','','','','','','','','3']);
+            $this->SetRadius([0,0,0,0,0,0,0,0,0]);
+            $this->SetWidths([19.5]);
+            $this->SetAligns(['L']);
+            $this->Row([utf8_decode($p['almacen']['descripcion'])]);
+
+            /*Guiones*/
+            $this->SetRounds(['4','','','','','','','','3']);
+            $this->SetRadius([0,0,0,0,0,0,0,0,0]);
+            $this->SetWidths([19.5]);
+            $this->SetAligns(['L']);
+            $this->Row([utf8_decode("---")]);
+        }
+
+
+        $this->Ln(.7);
+        $this->SetWidths([19.5]);
+        $this->SetRounds(['12']);
+        $this->SetRadius([0.2]);
+        $this->SetFills(['180,180,180']);
+        $this->SetTextColors(['0,0,0']);
+        $this->SetHeights([0.5]);
+        $this->SetFont('Arial', '', 9);
+        $this->SetAligns(['C']);
+        $this->encola="observaciones_encabezado";
+        $this->Row(["Observaciones"]);
+        $this->SetRounds(['34']);
+        $this->SetRadius([0.2]);
+        $this->SetAligns(['J']);
+        $this->SetStyles(['DF']);
+        $this->SetFills(['255,255,255']);
+        $this->SetTextColors(['0,0,0']);
+        $this->SetHeights([0.5]);
+        $this->SetFont('Arial', '', 9);
+        $this->SetWidths([19.5]);
+        $this->encola="observaciones";
+
+        $this->Row([utf8_decode($this->entrada_almacen[0]['observaciones'])]);
+
+
     }
 
 
 
     public function Footer()
     {
+        $this->SetY(-3.5);
+        $this->SetX(14.7);
+        $this->SetFont('Arial', '', 6);
+        $this->SetFillColor(180, 180, 180);
+
+
+        $this->CellFitScale(4.89, .4, utf8_decode('Recibi'), 'TRLB', 0, 'C', 1);
+        $this->Ln();
+
+        $this->SetX(14.7);
+        $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
+        $this->Ln();
+        $this->SetX(14.7);
+        $this->CellFitScale(4.89, .4, '', 'TRLB', 0, 'C', 1);
+
 
         $this->SetY(-0.8);
+        $this->SetX(14.7);
         $this->SetFont('Arial', 'B', 8);
 
         $this->Cell(10, .3, (''), 0, 1, 'L');
@@ -185,6 +326,8 @@ class EntradaAlmacenFormato extends Rotation
         $this->AliasNbPages();
         $this->AddPage();
         $this->SetAutoPageBreak(true, 4);
+        $this->partidas($this->partidas);
+
         try {
             $this->Output('I', 'Formato - Entrada de Almacen.pdf', 1);
         } catch (\Exception $ex) {

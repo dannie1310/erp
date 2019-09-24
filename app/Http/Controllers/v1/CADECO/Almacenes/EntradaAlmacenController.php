@@ -50,6 +50,7 @@ class EntradaAlmacenController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_entrada_almacen')->only(['show','paginate','index','find']);
         $this->middleware('permiso:eliminar_entrada_almacen')->only('destroy');
+        $this->middleware('permiso:consultar_formato_entrada_almacen')->only('pdfEntradaAlmacen');
 
         $this->service = $service;
         $this->fractal = $fractal;
