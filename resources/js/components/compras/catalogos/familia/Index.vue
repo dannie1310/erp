@@ -35,7 +35,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'nivel', order: 'desc'},
+                query: {scope:'tipo:4,1', sort: 'nivel', order: 'desc'},
                 estado: "",
                 cargando: false
             }

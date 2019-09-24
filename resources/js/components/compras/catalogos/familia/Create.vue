@@ -61,6 +61,10 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary":disabled="errors.count() > 0 ">Registrar</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -72,23 +76,37 @@
     export default {
         name: "familia-create",
         data() {
-            return {
-                cargando:false,
-                tipos: [
-                    {id: 1, descripcion: 'Materiales'},
-                    {id: 2, descripcion: 'Mano de Obra y Servicios'},
-                    {id: 4, descripcion: 'Herramienta y Equipo'},
-                    {id: 8, descripcion: 'Maquinaria'}
-                ],
-                tipo:'',
-                descripcion:''
-            }
+                return {
+                    cargando:false,
+                    tipos: [
+                        {id: 1, descripcion: 'Materiales'},
+                        {id: 4, descripcion: 'Herramienta y Equipo'}
+                    ],
+                    tipo:'',
+                    descripcion:''
+                }
         },
         methods: {
             init() {
                 this.cargando = true;
                 $(this.$refs.modal).modal('show');
-            }
+            },
+            store() {
+                return this.$store.dispatch('cadeco/familia/store', this.$data)
+                    .then(data => {
+                        this.$emit('created', data);
+                        $(this.$refs.modal).modal('hide');
+                    }).finally( ()=>{
+                        this.cargando = false;
+                    });
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                            this.store()
+                    }
+                });
+            },
         }
     }
 </script>

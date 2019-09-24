@@ -39,4 +39,14 @@ class FamiliaService
     {
         return $this->repository->paginate($data);
     }
+
+    public function store(array $data)
+    {
+        $datos = [
+            'tipo_material' => $data['tipo'],
+            'descripcion' => $data['descripcion']
+        ];
+
+        return $this->repository->create($datos);
+    }
 }
