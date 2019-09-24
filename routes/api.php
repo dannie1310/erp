@@ -167,6 +167,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato-entrada-almacen', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@pdfEntradaAlmacen')->where(['id' => '[0-9]+']);
         });
 
 

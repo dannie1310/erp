@@ -60,4 +60,9 @@ class EntradaAlmacenController extends Controller
     {
         return $this->traitDestroy($request, $id);
     }
+
+    public function pdfEntradaAlmacen($id)
+    {
+        return $this->service->pdfEntradaAlmacen($id)->create();
+    }
 }
