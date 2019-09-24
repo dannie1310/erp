@@ -62,7 +62,11 @@ class InventarioFisicoController extends Controller
 
     public function descargaLayout($id)
     {
-        return $this->service->descargaLayout($id);
+        if(auth()->user()->can('descarga_layout_captura_conteos')){
+            return $this->service->descargaLayout($id);
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+
     }
 
     public function actualizar($id)
