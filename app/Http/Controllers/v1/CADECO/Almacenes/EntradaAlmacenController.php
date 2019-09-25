@@ -50,7 +50,7 @@ class EntradaAlmacenController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_entrada_almacen')->only(['show','paginate','index','find']);
         $this->middleware('permiso:eliminar_entrada_almacen')->only('destroy');
-        $this->middleware('permiso:consultar_formato_entrada_almacen')->only('pdfEntradaAlmacen');
+        //$this->middleware('permiso:consultar_formato_entrada_almacen')->only('pdfEntradaAlmacen');
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -64,6 +64,9 @@ class EntradaAlmacenController extends Controller
 
     public function pdfEntradaAlmacen($id)
     {
-        return $this->service->pdfEntradaAlmacen($id)->create();
+        if(auth()->user()->can('consultar_formato_entrada_almacen')) {
+            return $this->service->pdfEntradaAlmacen($id)->create();
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
     }
 }
