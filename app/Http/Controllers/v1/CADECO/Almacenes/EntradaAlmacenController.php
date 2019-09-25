@@ -64,7 +64,7 @@ class EntradaAlmacenController extends Controller
 
     public function pdfEntradaAlmacen($id)
     {
-        if(auth()->user()->can('consultar_formato_entrada_almacen')) {
+        if(auth()->user()->can('consultar_entrada_almacen')) {
             return $this->service->pdfEntradaAlmacen($id)->create();
         }
         dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
