@@ -42,6 +42,11 @@ class EntradaMaterial extends Transaccion
         }
     }
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa');
+    }
+
     public function ordenCompra()
     {
         return $this->belongsTo(OrdenCompra::class, 'id_antecedente','id_transaccion');
@@ -50,6 +55,11 @@ class EntradaMaterial extends Transaccion
     public function partidas()
     {
         return $this->hasMany(EntradaMaterialPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'id_sucursal');
     }
 
     public function eliminar($motivo)
