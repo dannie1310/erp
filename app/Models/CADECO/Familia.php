@@ -24,6 +24,14 @@ class Familia extends Material
         });
     }
 
+    public function validarExistente($tipo)
+    {
+        if($this->where('descripcion','=', $this->descripcion)->where('tipo_material','=',$tipo)->get()->toArray() != [])
+        {
+            throw New \Exception('Esta descripción "'.$this->descripcion.'" ya existe.');
+        }
+    }
+
     public function nivelConsecutivo($tipo)
     {
         $n = 0;
