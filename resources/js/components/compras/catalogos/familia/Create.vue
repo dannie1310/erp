@@ -88,7 +88,7 @@
         },
         methods: {
             init() {
-                this.cargando = true;
+                 // this.cargando = true;
                 $(this.$refs.modal).modal('show');
             },
             store() {
