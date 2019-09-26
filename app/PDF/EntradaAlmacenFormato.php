@@ -34,7 +34,6 @@ class EntradaAlmacenFormato extends Rotation
         $this->obra = Obra::find(Context::getIdObra());
 
         $this->entrada = EntradaMaterial::query()->find($id);
-//        $this->entrada_almacen=EntradaMaterial::query()->where('id_transaccion', $id)->with('ordenCompra', 'empresa', 'sucursal', 'partidas','partidas.material','partidas.almacen','partidas.concepto')->get()->toArray();
         $this->numero_folio = '#'.str_pad($this->entrada['numero_folio'],5,0, STR_PAD_LEFT);
         $this->fecha = substr($this->entrada['fecha'], 0, 10);
 
