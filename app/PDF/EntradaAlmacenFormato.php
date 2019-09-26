@@ -4,6 +4,7 @@
 namespace App\PDF;
 
 
+
 use App\Models\CADECO\EntradaMaterial;
 use Ghidev\Fpdf\Rotation;
 use App\Models\CADECO\Obra;
@@ -32,20 +33,18 @@ class EntradaAlmacenFormato extends Rotation
         parent::__construct('P', 'cm', 'A4');
         $this->obra = Obra::find(Context::getIdObra());
 
-
-        $this->entrada_almacen=EntradaMaterial::query()->where('id_transaccion', $id)->with('ordenCompra', 'empresa', 'sucursal', 'partidas','partidas.material','partidas.almacen')->get()->toArray();
-        $this->numero_folio = '#'.str_pad($this->entrada_almacen[0]['numero_folio'],5,0, STR_PAD_LEFT);
-        $this->fecha = substr($this->entrada_almacen[0]['fecha'], 0, 10);
-
+        $this->entrada = EntradaMaterial::query()->find($id);
+        $this->numero_folio = '#'.str_pad($this->entrada['numero_folio'],5,0, STR_PAD_LEFT);
+        $this->fecha = substr($this->entrada['fecha'], 0, 10);
 
 
-        $this->oc_folio = '#'.str_pad($this->entrada_almacen[0]['orden_compra']['numero_folio'],5,0,STR_PAD_LEFT);
+        $this->oc_folio = '#'.str_pad($this->entrada->ordenCompra['numero_folio'],5,0,STR_PAD_LEFT);
 
-        $this->empresa = $this->entrada_almacen[0]['empresa']['razon_social'];
-        $this->empresa_rfc = $this->entrada_almacen[0]['empresa']['rfc'];
-        $this->empresa_direccion = $this->entrada_almacen[0]['sucursal']['direccion'];
+        $this->empresa = $this->entrada->empresa['razon_social'];
+        $this->empresa_rfc = $this->entrada->empresa['rfc'];
+        $this->empresa_direccion = $this->entrada->sucursal['direccion'];
 
-        $this->partidas = $this->entrada_almacen[0]['partidas'];
+
 
     }
     public function Header()
@@ -169,7 +168,7 @@ class EntradaAlmacenFormato extends Rotation
            $this->setY($y_inicial);
            $this->setX($x_inicial);
            $this->MultiCell(9.5, .5,
-               $this->empresa . '
+               utf8_decode($this->empresa) . '
 ' . utf8_decode(strtoupper($this->empresa_direccion)) . '
 ' . $this->empresa_rfc, '', 'L');
 
@@ -194,7 +193,7 @@ class EntradaAlmacenFormato extends Rotation
     }
 
 
-    public function partidas($partidas= [])
+    public function partidas()
     {
         $this->Ln(1.3);
         $this->SetFont('Arial', '', 6);
@@ -211,7 +210,7 @@ class EntradaAlmacenFormato extends Rotation
 
 
 
-        foreach($partidas as $i => $p)
+        foreach($this->entrada->partidas as $i => $p)
         {
             $this->dim = $this->GetY();
             if($this->dim>22.8) {
@@ -232,7 +231,6 @@ class EntradaAlmacenFormato extends Rotation
             }
 
             $this->SetWidths([1,2.5,10,2,2,2]);
-            $this->encola="partida";
             $this->SetRounds(['','','','','','']);
             $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
             $this->SetAligns(['L','L','L','L','L','C']);
@@ -240,18 +238,39 @@ class EntradaAlmacenFormato extends Rotation
 
             $this->Row([
                 $i+1,
-                $p['material']['numero_parte'],
-                utf8_decode($p['material']['descripcion']),
+                $p->material['numero_parte'],
+                utf8_decode($p->material['descripcion']),
                $p['unidad'],
                 $p['cantidad'],
-                date("d-m-Y", strtotime($p['material']['FechaHoraRegistro']))
+                date("d-m-Y", strtotime($p->material['FechaHoraRegistro']))
             ]);
-            /*Observaciones*/
-            $this->SetRounds(['4','','','','','','','','3']);
-            $this->SetRadius([0,0,0,0,0,0,0,0,0]);
-            $this->SetWidths([19.5]);
-            $this->SetAligns(['L']);
-            $this->Row([utf8_decode($p['almacen']['descripcion'])]);
+
+
+
+          if(empty($p->almacen['descripcion'])){
+              $nivel=$p->concepto['nivel'];
+
+              /*Observaciones*/
+              $this->SetRounds(['4','','','','','','','','3']);
+              $this->SetRadius([0,0,0,0,0,0,0,0,0]);
+              $this->SetWidths([19.5]);
+              $this->SetAligns(['L']);
+
+
+              $this->Row([utf8_decode($p->concepto->getAncestrosAttribute($nivel))]);
+
+          }else{
+
+
+              /*Observaciones*/
+              $this->SetRounds(['4','','','','','','','','3']);
+              $this->SetRadius([0,0,0,0,0,0,0,0,0]);
+              $this->SetWidths([19.5]);
+              $this->SetAligns(['L']);
+              $this->Row([utf8_decode($p->almacen['descripcion'])]);
+
+
+          }
 
             /*Guiones*/
             $this->SetRounds(['4','','','','','','','','3']);
@@ -284,7 +303,7 @@ class EntradaAlmacenFormato extends Rotation
         $this->SetWidths([19.5]);
         $this->encola="observaciones";
 
-        $this->Row([utf8_decode($this->entrada_almacen[0]['observaciones'])]);
+        $this->Row([utf8_decode($this->entrada['observaciones'])]);
 
 
     }
@@ -326,7 +345,7 @@ class EntradaAlmacenFormato extends Rotation
         $this->AliasNbPages();
         $this->AddPage();
         $this->SetAutoPageBreak(true, 4);
-        $this->partidas($this->partidas);
+        $this->partidas();
 
         try {
             $this->Output('I', 'Formato - Entrada de Almacen.pdf', 1);
