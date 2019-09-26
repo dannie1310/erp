@@ -159,7 +159,7 @@
                                                     step="any"
                                                     name="sucursal"
                                                     data-vv-as="Sucursal"
-                                                    v-validate="{required: true, numeric:true, digits: 3}"
+                                                    v-validate="{required: true, numeric:true, digits: 4}"
                                                     class="form-control"
                                                     id="sucursal"
                                                     placeholder="Sucursal"
