@@ -961,6 +961,20 @@ export const routes = [
                             permission: 'cargar_distribucion_recursos_remesa'
                         }
                     },
+                    {
+                        path: 'carga-masiva',
+                        name: 'carga-masiva',
+                        component: require('./components/finanzas/gestion/carga-masiva/Index'),
+                        meta: {
+                            title: 'Carga Masiva',
+                            breadcrumb: {
+                                parent: 'gestion-pago',
+                                name: 'CARGA MASIVA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
                 ]
             },
             {
