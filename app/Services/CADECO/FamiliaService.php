@@ -1,0 +1,52 @@
+<?php
+
+
+namespace App\Services\CADECO;
+
+
+use App\Models\CADECO\Familia;
+use App\Repositories\Repository;
+
+class FamiliaService
+{
+    /**
+     * @var Repository
+     */
+    protected $repository;
+
+    /**
+     * FamiliaService constructor
+     *
+     * @param Familia $model
+     */
+
+    public function __construct(Familia $model)
+    {
+        $this->repository = new Repository($model);
+    }
+
+    public function index($data)
+    {
+        return $this->repository->all($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
+
+    public function store(array $data)
+    {
+        $datos = [
+            'tipo_material' => $data['tipo'],
+            'descripcion' => $data['descripcion']
+        ];
+
+        return $this->repository->create($datos);
+    }
+}
