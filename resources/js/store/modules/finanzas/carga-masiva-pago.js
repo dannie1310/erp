@@ -1,4 +1,4 @@
-const URI = '/api/finanzas/carga-masiva/';
+const URI = '/api/finanzas/pago/carga-masiva/';
 
 export default {
     namespaced: true,

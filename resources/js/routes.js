@@ -923,12 +923,12 @@ export const routes = [
             },
             {
                 path: 'gestion-pago',
-                component: require('./components/finanzas/gestion/Layout'),
+                component: require('./components/finanzas/gestion-pago/Layout'),
                 children: [
                     {
                         path: '/',
                         name: 'gestion-pago',
-                        component: require('./components/finanzas/gestion/Index'),
+                        component: require('./components/finanzas/gestion-pago/Index'),
                         meta: {
                             title: 'Gestión de Pagos',
                             breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGOS'},
@@ -939,7 +939,7 @@ export const routes = [
                     {
                         path: 'pago',
                         name: 'pago',
-                        component: require('./components/finanzas/gestion/pago/Index'),
+                        component: require('./components/finanzas/gestion-pago/pago/Index'),
                         meta: {
                             title: 'Gestión de Pagos',
                             breadcrumb: {
@@ -953,7 +953,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'pago-create',
-                        component: require('./components/finanzas/gestion/pago/Create'),
+                        component: require('./components/finanzas/gestion-pago/pago/Create'),
                         meta: {
                             title: 'Registrar Pagos con Bitácora Bancaria (SANTANDER)',
                             breadcrumb: {name: 'REGISTRAR (BITÁCORA BSANT)', parent: 'pago'},
@@ -964,7 +964,7 @@ export const routes = [
                     {
                         path: 'carga-masiva',
                         name: 'carga-masiva',
-                        component: require('./components/finanzas/gestion/carga-masiva/Index'),
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Index'),
                         meta: {
                             title: 'Carga Masiva',
                             breadcrumb: {

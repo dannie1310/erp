@@ -520,6 +520,10 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'pago'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@paginate');
+
+            $api->group(['prefix' => 'carga-masiva'], function ($api){
+                $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@paginate');
+            });
         });
 
         /**

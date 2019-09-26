@@ -43,7 +43,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['moneda','cuenta','empresa'], sort: 'id_transaccion', order: 'desc'},
+                query: {},
                 estado: "",
                 cargando: false,
             }
@@ -63,10 +63,10 @@
             },
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('finanzas/pago/paginate', { params: this.query})
+                return this.$store.dispatch('finanzas/carga-masiva-pago/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('finanzas/pago/SET_PAGOS', data.data);
-                        this.$store.commit('finanzas/pago/SET_META', data.meta);
+                        this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUTS', data.data);
+                        this.$store.commit('finanzas/carga-masiva-pago/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -74,31 +74,25 @@
             },
         },
         computed: {
-           pagos(){
-                return this.$store.getters['finanzas/pago/pagos'];
+           layouts(){
+                return this.$store.getters['finanzas/carga-masiva-pago/layouts'];
             },
             meta(){
-                return this.$store.getters['finanzas/pago/meta'];
+                return this.$store.getters['finanzas/carga-masiva-pago/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            pagos: {
-                handler(pagos) {
+            layouts: {
+                handler(layouts) {
                     let self = this
                     self.$data.data = []
-                    pagos.forEach(function (pago, i) {
+                    layouts.forEach(function (layout, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: `#${pago.numero_folio}`,
-                            fecha: pago.fecha_format,
-                            id_empresa: pago.empresa.razon_social.toUpperCase(),
-                            id_cuenta: pago.cuenta.numero,
-                            observaciones: pago.observaciones.toLocaleUpperCase(),
-                            monto: `$ ${parseFloat(pago.monto).formatMoney(2)}`,
-                            id_moneda:pago.moneda.nombre,
+
                         })
 
                     });
