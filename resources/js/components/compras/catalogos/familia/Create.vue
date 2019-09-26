@@ -98,6 +98,9 @@
                         $(this.$refs.modal).modal('hide');
                     }).finally( ()=>{
                         this.cargando = false;
+                        this.tipo = '';
+                        this.descripcion = '';
+
                     });
             },
             validate() {
