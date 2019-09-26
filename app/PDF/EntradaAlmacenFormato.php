@@ -49,37 +49,6 @@ class EntradaAlmacenFormato extends Rotation
     }
     public function Header()
     {
-        $residuo = $this->PageNo();
-   if($residuo>1){
-
-       $postTitle = .7;
-
-       $this->Cell(11.5);
-       $x_f = $this->GetX();
-       $y_f = $this->GetY();
-
-       $this->SetTextColor('0,0,0');
-       $this->SetFont('Arial', 'B', 14);
-       $this->Cell(4.5, .7, utf8_decode('FOLIO'), 'LT', 0, 'L');
-       $this->Cell(3.5, .7, $this->numero_folio, 'RT', 0, 'L');
-       $this->Ln(.7);
-       $y_f = $this->GetY();
-
-
-       $this->SetY($y_f);
-       $this->SetX($x_f);
-       $this->SetFont('Arial', 'B', 10);
-       $this->Cell(4.5, .7, 'FECHA ', 'L', 0, 'L');
-       $this->Cell(3.5, .7, date("d-m-Y", strtotime($this->fecha)) . ' ', 'R', 0, 'L');
-       $this->Ln(.7);
-
-       $this->Cell(11.5);
-       $this->Cell(4.5, .7, 'ORDEN DE COMPRA', 'LB', 0, 'L');
-       $this->Cell(3.5, .7, $this->oc_folio, 'RB', 1, 'L');
-       $this->Ln(.5);
-
-   }else{
-
 
            $postTitle = .7;
 
@@ -189,13 +158,13 @@ class EntradaAlmacenFormato extends Rotation
 
            $this->SetFont('Arial', '', 6);
            $this->SetHeights([0.8]);
-       }
+
     }
 
 
     public function partidas()
     {
-        $this->Ln(1.3);
+        $this->Ln(1.8);
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180);
         $this->SetWidths([1,2.5,10,2,2,2]);
@@ -213,9 +182,9 @@ class EntradaAlmacenFormato extends Rotation
         foreach($this->entrada->partidas as $i => $p)
         {
             $this->dim = $this->GetY();
-            if($this->dim>22.8) {
+            if($this->dim>24.8) {
                 $this->AddPage();
-                $this->Ln(0.5);
+                $this->Ln(1.8);
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(180,180,180);
                 $this->SetWidths([1,2.5,10,2,2,2]);
