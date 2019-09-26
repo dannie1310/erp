@@ -3,6 +3,7 @@
       <div class="col-12">
          <create @created="paginate()"></create>
          <Layout @change="paginate()"></Layout>
+         <CodigoBarra @change="paginate()"></CodigoBarra>
       </div>
       <div class="col-12">
          <div class="card">
@@ -21,11 +22,12 @@
 </template>
 
 <script>
-   import Layout from "./CargarLayout";
+   import CodigoBarra from "./CodigoBarra";
    import Create from "./Create";
+   import Layout from "./CargarLayout";
    export default {
         name: "conteo-index",
-       components: {Layout, Create},
+       components: {CodigoBarra, Layout, Create},
        data() {
           return {
              HeaderSettings: false,
