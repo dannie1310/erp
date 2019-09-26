@@ -27,7 +27,7 @@
                                                     data-vv-as="Número de Marbete"
                                                     v-validate="{required: true}"
                                                     v-model="dato.id_marbete"
-                                                    :class="errors.has('id_marbete')"
+                                                    :class="{'is-invalid': errors.has('id_marbete')}"
                                             >
                                             </MarbeteSelect>
                                             <div class="invalid-feedback" v-show="errors.has('id_marbete')">{{ errors.first('id_marbete') }}</div>
@@ -48,12 +48,12 @@
                                                     class="form-control"
                                                     id="tipo_conteo"
                                                     v-model="dato.tipo_conteo"
-                                                    :class="{'is-invalid': errors.has('dato.tipo_conteo')}"
+                                                    :class="{'is-invalid': errors.has('tipo_conteo')}"
                                             >
                                                     <option value>-- Seleccione un conteo --</option>
                                                     <option v-for="conteo in conteos" :value="conteo.id">{{ conteo.descripcion }}</option>
                                             </select>
-                                            <div class="invalid-feedback" v-show="errors.has('dato.tipo_conteo')">{{ errors.first('tipo_conteo') }}</div>
+                                            <div class="invalid-feedback" v-show="errors.has('tipo_conteo')">{{ errors.first('tipo_conteo') }}</div>
                                         </div>
 
                                     </div>
@@ -68,13 +68,13 @@
                                                     type="number"
                                                     name="cantidad_usados"
                                                     data-vv-as="Cantidad Usados"
-                                                    v-validate="{required: true}"
+                                                    v-validate="{required: false}"
                                                     class="form-control"
                                                     id="cantidad_usados"
                                                     placeholder="Cantidad Usados"
                                                     v-model="dato.cantidad_usados"
-                                                    :class="{'is-invalid': errors.has('dato.cantidad_usados')}">
-                                            <div class="invalid-feedback" v-show="errors.has('dato.cantidad_usados')">{{ errors.first('cantidad_usados') }}</div>
+                                                    :class="{'is-invalid': errors.has('cantidad_usados')}">
+                                            <div class="invalid-feedback" v-show="errors.has('cantidad_usados')">{{ errors.first('cantidad_usados') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -86,15 +86,15 @@
                                         <div class="col-sm-9">
                                             <input
                                                     type="number"
-                                                    name="cantidad_nuevos"
+                                                    name="cantidad_nuevo"
                                                     data-vv-as="Cantidad Nuevos"
                                                     v-validate="{required: true}"
                                                     class="form-control"
                                                     id="cantidad_nuevo"
                                                     placeholder="Cantidad Nuevos"
                                                     v-model="dato.cantidad_nuevo"
-                                                    :class="{'is-invalid': errors.has('dato.cantidad_nuevo')}">
-                                            <div class="invalid-feedback" v-show="errors.has('dato.cantidad_nuevo')">{{ errors.first('cantidad_nuevo') }}</div>
+                                                    :class="{'is-invalid': errors.has('cantidad_nuevo')}">
+                                            <div class="invalid-feedback" v-show="errors.has('cantidad_nuevo')">{{ errors.first('cantidad_nuevo') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -108,13 +108,13 @@
                                                     type="number"
                                                     name="cantidad_inservible"
                                                     data-vv-as="Cantidad Inservible"
-                                                    v-validate="{required: true}"
+                                                    v-validate="{required: false}"
                                                     class="form-control"
                                                     id="cantidad_inservible"
                                                     placeholder="Cantidad Inservible"
                                                     v-model="dato.cantidad_inservible"
-                                                    :class="{'is-invalid': errors.has('dato.cantidad_inservible')}">
-                                            <div class="invalid-feedback" v-show="errors.has('dato.cantidad_inservible')">{{ errors.first('cantidad_inservible') }}</div>
+                                                    :class="{'is-invalid': errors.has('cantidad_inservible')}">
+                                            <div class="invalid-feedback" v-show="errors.has('cantidad_inservible')">{{ errors.first('cantidad_inservible') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -133,8 +133,8 @@
                                                     id="total"
                                                     placeholder="Total"
                                                     v-model="dato.total"
-                                                    :class="{'is-invalid': errors.has('dato.total')}">
-                                            <div class="invalid-feedback" v-show="errors.has('dato.total')">{{ errors.first('total') }}</div>
+                                                    :class="{'is-invalid': errors.has('total')}">
+                                            <div class="invalid-feedback" v-show="errors.has('total')">{{ errors.first('total') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -148,13 +148,13 @@
                                                     type="text"
                                                     name="iniciales"
                                                     data-vv-as="Iniciales"
-                                                    v-validate="{required: true}"
+                                                    v-validate="{required: false}"
                                                     class="form-control"
                                                     id="iniciales"
                                                     placeholder="Iniciales"
                                                     v-model="dato.iniciales"
-                                                    :class="{'is-invalid': errors.has('dato.iniciales')}">
-                                            <div class="invalid-feedback" v-show="errors.has('dato.iniciales')">{{ errors.first('iniciales') }}</div>
+                                                    :class="{'is-invalid': errors.has('iniciales')}">
+                                            <div class="invalid-feedback" v-show="errors.has('iniciales')">{{ errors.first('iniciales') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -180,7 +180,7 @@
                         </div>
                          <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Registrar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.id_marbete == null">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -217,7 +217,7 @@
         methods:{
             init() {
                 this.cargando = true;
-                this.dato.id_marbete = '';
+                this.dato.id_marbete = null;
                 this.dato.tipo_conteo = '';
                 this.dato.cantidad_usados='';
                 this.dato.cantidad_nuevo='';
@@ -226,6 +226,7 @@
                 this.dato.iniciales='';
                 this.dato.observaciones='';
                 $(this.$refs.modal).modal('show');
+                this.dato.id_marbete = null;
                 this.$validator.reset();
                 this.cargando = false;
             },
@@ -245,7 +246,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.dato.cantidad_usados <= 0 || this.dato.cantidad_nuevos <= 0 || this.dato.cantidad_inservibles <= 0 || this.dato.total <= 0){
+                        if(this.dato.cantidad_usados < 0 || this.dato.cantidad_nuevos < 0 || this.dato.cantidad_inservibles < 0 || this.dato.total < 0){
                             swal('¡Error!', 'Error al registrar cantidad, favor de revisar la información y registrar la cantidad nuevamente.', 'error')
                         }
                         else {
