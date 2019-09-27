@@ -4,7 +4,7 @@
             <button  @click="create" title="Crear" class="btn btn-app btn-info pull-right" >
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
-                Anexar Carga
+                Registrar Carga Masiva
             </button>
         </div>
         <div class="col-12">
@@ -24,10 +24,10 @@
 </template>
 
 <script>
-
+    import Create from './Create';
     export default {
         name: "carga-masiva-index",
-
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
@@ -59,7 +59,7 @@
 
         methods: {
             create() {
-                this.$router.push({name: ''});
+                this.$router.push({name: 'carga-masiva-create'});
             },
             paginate() {
                 this.cargando = true;

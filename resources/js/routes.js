@@ -975,6 +975,17 @@ export const routes = [
                             permission: 'cargar_distribucion_recursos_remesa'
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'carga-masiva-create',
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Create'),
+                        meta: {
+                            title: 'Registrar Carga Masiva de Pagos',
+                            breadcrumb: {name: 'REGISTRAR CARGA MASIVA DE PAGOS', parent: 'carga-masiva'},
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
                 ]
             },
             {
