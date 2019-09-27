@@ -30,6 +30,29 @@ class Concepto extends Model
         });
     }
 
+    public function getAncestrosAttribute($nivel)
+    {
+        $size = strlen($nivel)/4;
+        $first = 4;
+        $ancestro='';
+
+        for($i=0; $i<$size; $i++)
+        {
+            $aux = substr($nivel,0, $first);
+            $result = Concepto::query()->where('nivel', 'LIKE', $aux)->select('descripcion')->get()->first()->toArray();
+            if($i==0){
+                $ancestro = $result['descripcion'];
+            }else{
+                $ancestro .= '->' .$result['descripcion'];
+            }
+            $first+=4;
+
+        }
+
+       return $ancestro;
+
+    }
+
     public function getPathAttribute()
     {
         if ($this->nivel_padre == '') {
