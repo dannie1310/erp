@@ -36,7 +36,6 @@ class SalidaAlmacenFormato extends Rotation
 
         $this->salida = SalidaAlmacen::query()->find($id);
 
-//        dd($this->salida);
 
 
         $this->numero_folio = '#'.str_pad($this->salida['numero_folio'],5,0, STR_PAD_LEFT);
@@ -44,14 +43,7 @@ class SalidaAlmacenFormato extends Rotation
         $this->fecha = substr($this->salida['fecha'], 0, 10);
 
         $this->almacen = $this->salida->almacen['descripcion'];
-//        dd($this->salida);
-//
-//
-//        $this->oc_folio = '#'.str_pad($this->entrada->ordenCompra['numero_folio'],5,0,STR_PAD_LEFT);
-//
-//        $this->empresa = $this->entrada->empresa['razon_social'];
-//        $this->empresa_rfc = $this->entrada->empresa['rfc'];
-//        $this->empresa_direccion = $this->entrada->sucursal['direccion'];
+
 
 
 
@@ -72,8 +64,17 @@ class SalidaAlmacenFormato extends Rotation
         $this->Ln(.7);
         $y_f = $this->GetY();
 
-        $this->SetFont('Arial', 'B', 24);
-        $this->Cell(11.5, $postTitle, utf8_decode('SALIDA DE MATERIALES'), 0, 0, 'C', 0);
+
+        if($this->salida['opciones']==='65537'){
+            $this->SetFont('Arial', 'B', 18);
+            $this->Cell(11.5, $postTitle, utf8_decode( 'TRANSFERENCIA DE MATERIALES'), 0, 0, 'C', 0);
+        }
+
+        if($this->salida['opciones']==='1'){
+            $this->SetFont('Arial', 'B', 24);
+            $this->Cell(11.5, $postTitle, utf8_decode( 'SALIDA DE MATERIALES'), 0, 0, 'C', 0);
+        }
+
         $this->Ln();
 
         $this->SetY($y_f);
@@ -183,7 +184,7 @@ class SalidaAlmacenFormato extends Rotation
         $this->SetAligns(['C','C','C','C','C',]);
         $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad"]);
 
-//dd($this->salida->partidas);
+
 
         foreach($this->salida->partidas as $i => $p)
         {
