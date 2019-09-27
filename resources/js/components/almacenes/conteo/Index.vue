@@ -3,7 +3,7 @@
       <div class="col-12">
          <create @created="paginate()"></create>
          <Layout @change="paginate()"></Layout>
-         <CodigoBarra @change="paginate()"></CodigoBarra>
+         <CodigoBarra @created="paginate()"></CodigoBarra>
       </div>
       <div class="col-12">
          <div class="card">

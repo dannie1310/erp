@@ -55,6 +55,12 @@ class ConteoService
         return $this->repository->show($conteo->id);
     }
 
+    public function storeCodigoBarra($data){
+//        dd("PANDA",$data);
+        $conteo = $this->repository->create($data);
+        return $this->repository->show($conteo->id);
+    }
+
     public function cargaLayout($file){
         $conteos = $this->getCsvData($file);
         $layout = LayoutConteo::query()->create();

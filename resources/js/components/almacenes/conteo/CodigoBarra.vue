@@ -2,11 +2,11 @@
     <span>
         <button @click="init" v-if="$root.can('agregar_conteos_manuales')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-plus" v-else></i>
-            Registrar Conteo por Código de Barras
+            <i class="fa fa-barcode" v-else></i>
+            Registrar con Código de Barras
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR CONTEO MANUAL</h5>
@@ -14,14 +14,36 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                     <form role="form" @submit.prevent="validate">
+                     <form role="form">
                         <div class="modal-body">
+                             <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="cantidad_nuevo" class="col-sm-3 col-form-label">Nuevos: </label>
+                                        <div class="col-sm-9">
+                                            <input
+                                                    step="any"
+                                                    type="number"
+                                                    name="cantidad_nuevo"
+                                                    data-vv-as="Cantidad Nuevos"
+                                                    v-validate="{required: false}"
+                                                    class="form-control"
+                                                    id="cantidad_nuevo"
+                                                    placeholder="Cantidad Nuevos"
+                                                    v-model="dato.cantidad_nuevo"
+                                                    :class="{'is-invalid': errors.has('cantidad_nuevo')}">
+                                            <div class="invalid-feedback" v-show="errors.has('cantidad_nuevo')">{{ errors.first('cantidad_nuevo') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="cantidad_usados" class="col-sm-3 col-form-label">Cantidad Usados</label>
+                                        <label for="cantidad_usados" class="col-sm-3 col-form-label">Usados: </label>
                                         <div class="col-sm-9">
                                             <input
+                                                    step="any"
                                                     type="number"
                                                     name="cantidad_usados"
                                                     data-vv-as="Cantidad Usados"
@@ -39,29 +61,10 @@
                              <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="cantidad_nuevo" class="col-sm-3 col-form-label">Cantidad Nuevos</label>
+                                        <label for="cantidad_inservible" class="col-sm-3 col-form-label">Inservibles: </label>
                                         <div class="col-sm-9">
                                             <input
-                                                    type="number"
-                                                    name="cantidad_nuevo"
-                                                    data-vv-as="Cantidad Nuevos"
-                                                    v-validate="{required: false}"
-                                                    class="form-control"
-                                                    id="cantidad_nuevo"
-                                                    placeholder="Cantidad Nuevos"
-                                                    v-model="dato.cantidad_nuevo"
-                                                    :class="{'is-invalid': errors.has('cantidad_nuevo')}">
-                                            <div class="invalid-feedback" v-show="errors.has('cantidad_nuevo')">{{ errors.first('cantidad_nuevo') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="cantidad_inservible" class="col-sm-3 col-form-label">Cantidad Inservibles</label>
-                                        <div class="col-sm-9">
-                                            <input
+                                                    step="any"
                                                     type="number"
                                                     name="cantidad_inservible"
                                                     data-vv-as="Cantidad Inservible"
@@ -72,26 +75,6 @@
                                                     v-model="dato.cantidad_inservible"
                                                     :class="{'is-invalid': errors.has('cantidad_inservible')}">
                                             <div class="invalid-feedback" v-show="errors.has('cantidad_inservible')">{{ errors.first('cantidad_inservible') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="total" class="col-sm-3 col-form-label">Total</label>
-                                        <div class="col-sm-9">
-                                            <input
-                                                    type="number"
-                                                    name="total"
-                                                    data-vv-as="Total"
-                                                    v-validate="{required: false}"
-                                                    class="form-control"
-                                                    id="total"
-                                                    placeholder="Total"
-                                                    v-model="dato.total"
-                                                    :class="{'is-invalid': errors.has('total')}">
-                                            <div class="invalid-feedback" v-show="errors.has('total')">{{ errors.first('total') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -137,29 +120,20 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="conteos" class="col-sm-3 col-form-label">Codigo de Barras: </label>
+                                        <label for="observaciones" class="col-sm-3 col-form-label">Código de barras: </label>
                                         <div class="col-sm-9">
-                                            <input
-                                                    type="text"
-                                                    name="conteos"
-                                                    data-vv-as="conteos"
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
-                                                    id="conteos"
-                                                    placeholder="conteos"
-                                                    v-model="dato.conteos"
-                                                    :class="{'is-invalid': errors.has('conteos')}"
-                                                    @input="validate"
-                                            >
-                                            <div class="invalid-feedback" v-show="errors.has('dato.conteos')">{{ errors.first('conteos') }}</div>
+                                              <input v-model="barcodeValue" class="form-control" v-on:keyup.enter.prevent="validate"/>
+                                              <barcode v-bind:value="barcodeValue">
+                                                Escanear el código de barras.
+                                              </barcode>
                                         </div>
                                     </div>
                                 </div>
-                             </div>
+                           </div>
+
                         </div>
                          <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-<!--                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.cantidad_nuevo == '' || dato.total == ''">Registrar</button>-->
                         </div>
                      </form>
                 </div>
@@ -170,16 +144,19 @@
 
 <script>
     import MarbeteSelect from "../marbete/Select";
+    import VueBarcode from 'vue-barcode';
     export default {
         name: "codigo-barra",
-        components: {MarbeteSelect},
+        components: {MarbeteSelect,'barcode': VueBarcode},
         data() {
             return {
                 cargando: false,
                 marbetes:[],
                 conteos:[],
+                barcodeValue: '',
                 dato:{
-                    conteos:'',
+                    id_marbete:'',
+                    tipo_conteo:'',
                     cantidad_usados:'',
                     cantidad_nuevo:'',
                     cantidad_inservible:'',
@@ -195,8 +172,10 @@
         methods:{
             init() {
                 this.cargando = true;
+                this.barcodeValue='';
                 this.dato.cantidad_usados='';
-                this.dato.conteos='';
+                this.dato.id_marbete = null;
+                this.dato.tipo_conteo = '';
                 this.dato.cantidad_nuevo='';
                 this.dato.cantidad_inservible='';
                 this.dato.total='';
@@ -212,28 +191,30 @@
                     params: {
                         sort: 'id', order: 'asc'
                     }
-                })
-                    .then(data => {
+                }).then(data => {
                         this.conteos = data.data;
-                    })
+                  })
             },
 
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.dato.total == '' || this.dato.cantidad_nuevos == ''){
-                            $(this.$refs.modal).modal('hide');
+                        if(this.dato.total == '' || this.dato.cantidad_nuevo == ''){
                             swal('¡Error!', 'Error al registrar cantidad, favor de ingresar cantidades.', 'error');
+                            this.barcodeValue='';
                         }else{
                             if(this.dato.cantidad_usados < 0 || this.dato.cantidad_nuevos < 0 || this.dato.cantidad_inservibles < 0 || this.dato.total < 0){
-                                swal('¡Error!', 'Error al registrar cantidad, favor de revisar la información y registrar la cantidad nuevamente.', 'error')
+                                swal('¡Error!', 'Error al registrar cantidad, favor de revisar la información y registrar la cantidad nuevamente.', 'error');
+                                this.barcodeValue='';
                             }
                             else {
+                                var marbete = this.barcodeValue.split("C");
+                                this.dato.id_marbete = marbete[0];
+                                this.dato.tipo_conteo = marbete[1];
                                 this.dato.iniciales = this.dato.iniciales.toUpperCase();
                                 this.store()
                             }
                         }
-
                     }
                 });
             },

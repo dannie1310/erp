@@ -167,6 +167,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'conteo'], function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@store');
+            $api->post('codigo-barra', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@storeCodigoBarra');
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@paginate');
             $api->get('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cancelar')->where(['id' => '[0-9]+']);
