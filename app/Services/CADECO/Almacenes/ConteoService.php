@@ -56,7 +56,7 @@ class ConteoService
     }
 
     public function storeCodigoBarra($data){
-//        dd("PANDA",$data);
+        $data['total'] = $data['cantidad_usados'] +$data['cantidad_nuevo'] +$data['cantidad_inservible'];
         $conteo = $this->repository->create($data);
         return $this->repository->show($conteo->id);
     }

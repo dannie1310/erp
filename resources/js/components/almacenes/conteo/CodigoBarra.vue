@@ -9,19 +9,18 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR CONTEO MANUAL</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR CON CÓDIGO DE BARRAS</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                     <form role="form">
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="observaciones" class="col-sm-3 col-form-label">Código de barras: </label>
+                                        <label for="barcodeValue" class="col-sm-3 col-form-label">Código de barras: </label>
                                         <div class="col-sm-9">
-                                              <input v-model="barcodeValue" class="form-control" v-on:keyup.enter.prevent="validate"/>
+                                              <input v-model="barcodeValue" name="barcodeValue" id="barcodeValue" v-on:keyup.enter="findCodigo" class="form-control"/>
                                               <barcode v-bind:value="barcodeValue">
                                                 Escanear el código de barras.
                                               </barcode>
@@ -29,7 +28,51 @@
                                     </div>
                                 </div>
                            </div>
-                             <div class="row">
+                            <form role="form" @submit.prevent="validate">
+
+                            <div class="row" v-if="barcodeValue">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_marbete" class="col-sm-3 col-form-label">Marbete: </label>
+                                        <div class="col-sm-9">
+                                            <input
+                                                    type="text"
+                                                    name="id_marbete"
+                                                    data-vv-as="Folio Marbete"
+                                                    v-validate="{required: false}"
+                                                    class="form-control"
+                                                    id="id_marbete"
+                                                    placeholder="marbete.folio_marbete"
+                                                    v-model="marbete.folio_marbete"
+                                                    :class="{'is-invalid': errors.has('id_marbete')}"
+                                                    :disabled="true">
+                                            <div class="invalid-feedback" v-show="errors.has('id_marbete')">{{ errors.first('id_marbete') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" v-if="barcodeValue">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="tipo_conteo" class="col-sm-3 col-form-label">Numero de Conteo: </label>
+                                        <div class="col-sm-9">
+                                            <input
+                                                    type="text"
+                                                    name="tipo_conteo"
+                                                    data-vv-as="Tiempo Conteo"
+                                                    v-validate="{required: false}"
+                                                    class="form-control"
+                                                    id="tipo_conteo"
+                                                    placeholder="dato.tipo_conteo"
+                                                    v-model="dato.tipo_conteo"
+                                                    :class="{'is-invalid': errors.has('tipo_conteo')}"
+                                                    :disabled="true">
+                                            <div class="invalid-feedback" v-show="errors.has('tipo_conteo')">{{ errors.first('tipo_conteo') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="row" v-if="barcodeValue">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="cantidad_nuevo" class="col-sm-3 col-form-label">Nuevos: </label>
@@ -44,14 +87,19 @@
                                                     id="cantidad_nuevo"
                                                     placeholder="Cantidad Nuevos"
                                                     v-model="dato.cantidad_nuevo"
-                                                    :class="{'is-invalid': errors.has('cantidad_nuevo')}">
+                                                    :class="{'is-invalid': errors.has('cantidad_nuevo')}"
+                                                    v-on:keyup.enter.prevent="validate">
                                             <div class="invalid-feedback" v-show="errors.has('cantidad_nuevo')">{{ errors.first('cantidad_nuevo') }}</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
+                             <label for="mostrar" v-if="barcodeValue">Más información</label>
+                            <input type="checkbox" id="mostrar" value="mostrar" v-model="checkedMostrar" v-if="barcodeValue">
+                                <label for="seguir">Captura Continua</label>
+                            <input type="checkbox" id="seguir" value="seguir" v-model="seguir">
+                            <div class="row" v-if="barcodeValue">
+                                <div class="col-md-12" v-if="checkedMostrar">
                                     <div class="form-group row error-content">
                                         <label for="cantidad_usados" class="col-sm-3 col-form-label">Usados: </label>
                                         <div class="col-sm-9">
@@ -65,14 +113,13 @@
                                                     id="cantidad_usados"
                                                     placeholder="Cantidad Usados"
                                                     v-model="dato.cantidad_usados"
-                                                    :class="{'is-invalid': errors.has('cantidad_usados')}">
+                                                    :class="{'is-invalid': errors.has('cantidad_usados')}"
+                                                    v-on:keyup.enter.prevent="validate">
                                             <div class="invalid-feedback" v-show="errors.has('cantidad_usados')">{{ errors.first('cantidad_usados') }}</div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12" v-if="checkedMostrar">
                                     <div class="form-group row error-content">
                                         <label for="cantidad_inservible" class="col-sm-3 col-form-label">Inservibles: </label>
                                         <div class="col-sm-9">
@@ -86,55 +133,19 @@
                                                     id="cantidad_inservible"
                                                     placeholder="Cantidad Inservible"
                                                     v-model="dato.cantidad_inservible"
-                                                    :class="{'is-invalid': errors.has('cantidad_inservible')}">
+                                                    :class="{'is-invalid': errors.has('cantidad_inservible')}"
+                                                    v-on:keyup.enter.prevent="validate">
                                             <div class="invalid-feedback" v-show="errors.has('cantidad_inservible')">{{ errors.first('cantidad_inservible') }}</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                             <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="iniciales" class="col-sm-3 col-form-label">Iniciales</label>
-                                        <div class="col-sm-9">
-                                            <input
-                                                    type="text"
-                                                    name="iniciales"
-                                                    data-vv-as="Iniciales"
-                                                    v-validate="{required: false}"
-                                                    class="form-control"
-                                                    id="iniciales"
-                                                    placeholder="Iniciales"
-                                                    v-model="dato.iniciales"
-                                                    :class="{'is-invalid': errors.has('iniciales')}">
-                                            <div class="invalid-feedback" v-show="errors.has('iniciales')">{{ errors.first('iniciales') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="observaciones" class="col-sm-3 col-form-label">Observaciones: </label>
-                                        <div class="col-sm-9">
-                                            <textarea
-                                                    name="observaciones"
-                                                    id="observaciones"
-                                                    class="form-control"
-                                                    v-model="dato.observaciones"
-                                                    data-vv-as="Observaciones"
-                                                    :class="{'is-invalid': errors.has('dato.observaciones')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('dato.observaciones')">{{ errors.first('observaciones') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                             </div>
+                            </form>
+
                         </div>
                          <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         </div>
-                     </form>
                 </div>
             </div>
           </div>
@@ -153,15 +164,15 @@
                 marbetes:[],
                 conteos:[],
                 barcodeValue: '',
+                seguir: '',
+                checkedMostrar: false,
                 dato:{
                     id_marbete:'',
                     tipo_conteo:'',
-                    cantidad_usados:'',
+                    cantidad_usados:0,
                     cantidad_nuevo:'',
-                    cantidad_inservible:'',
-                    total:'',
-                    iniciales:'',
-                    observaciones:''
+                    cantidad_inservible:0,
+                    total:''
                 }
             }
         },
@@ -169,17 +180,34 @@
             this.getConteo();
         },
         methods:{
+            findCodigo() {
+                var marbete = this.barcodeValue.split("C");
+                this.dato.id_marbete = marbete[0];
+                if (!marbete[1]){
+                    swal('¡Error!', 'Error al leer el código de barras.', 'error');
+                    this.barcodeValue='';
+                }else{
+                    this.dato.tipo_conteo = marbete[1];
+                    this.$store.commit('almacenes/marbete/SET_MARBETE', null);
+                    return this.$store.dispatch('almacenes/marbete/findCodigo', {
+                        id: marbete[0],
+                        params: {}
+                    }).then(data => {
+                        this.$store.commit('almacenes/marbete/SET_MARBETE', data);
+                    })
+
+                }
+            },
             init() {
                 this.cargando = true;
                 this.barcodeValue='';
-                this.dato.cantidad_usados='';
-                this.dato.id_marbete = null;
+                this.checkedMostrar=false;
+                this.dato.cantidad_usados=0;
+                this.dato.id_marbete = '';
                 this.dato.tipo_conteo = '';
                 this.dato.cantidad_nuevo='';
-                this.dato.cantidad_inservible='';
+                this.dato.cantidad_inservible=0;
                 this.dato.total='';
-                this.dato.iniciales='';
-                this.dato.observaciones='';
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset();
                 this.cargando = false;
@@ -197,20 +225,24 @@
 
             validate() {
                 this.$validator.validate().then(result => {
+                    var marbete = this.barcodeValue.split("C");
                     if (result) {
-                        if(this.dato.total == '' || this.dato.cantidad_nuevo == ''){
+                        if(this.dato.cantidad_nuevo == ''){
                             swal('¡Error!', 'Error al registrar cantidad, favor de ingresar cantidades.', 'error');
                             this.barcodeValue='';
-                        }else{
-                            if(this.dato.cantidad_usados < 0 || this.dato.cantidad_nuevos < 0 || this.dato.cantidad_inservibles < 0 || this.dato.total < 0){
+                        }else if (marbete[2]){
+                            swal('¡Error!', 'Error al leer el código de barras, intente de nuevo.', 'error');
+                            this.barcodeValue='';
+                        }
+                        else{
+                            if(this.dato.cantidad_usados < 0 || this.dato.cantidad_nuevos < 0 || this.dato.cantidad_inservibles < 0){
                                 swal('¡Error!', 'Error al registrar cantidad, favor de revisar la información y registrar la cantidad nuevamente.', 'error');
                                 this.barcodeValue='';
                             }
                             else {
-                                var marbete = this.barcodeValue.split("C");
+
                                 this.dato.id_marbete = marbete[0];
                                 this.dato.tipo_conteo = marbete[1];
-                                this.dato.iniciales = this.dato.iniciales.toUpperCase();
                                 this.store()
                             }
                         }
@@ -221,11 +253,20 @@
             store() {
                 return this.$store.dispatch('almacenes/conteo/storeCodigoBarra', this.$data.dato)
                     .then(data => {
-                        this.$emit('created', data);
-                        $(this.$refs.modal).modal('hide');
+                        if(this.seguir){
+                            this.init();
+                        }else{
+                            this.$emit('created', data);
+                            $(this.$refs.modal).modal('hide');
+                        }
                     }).finally( ()=>{
                         this.cargando = false;
                     });
+            },
+        },
+        computed: {
+            marbete() {
+                return this.$store.getters['almacenes/marbete/currentMarbete'];
             },
         }
     }

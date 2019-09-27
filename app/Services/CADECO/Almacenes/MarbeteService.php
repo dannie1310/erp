@@ -29,6 +29,14 @@ class MarbeteService
         $this->repository = new Repository($model);
     }
 
+    public function showCodigo($id){
+        $marbete = $this->repository->show($id);
+        if(!$marbete || $marbete->invetarioFisico->estado != 0){
+            throw new \Exception("El código del marbete no es válido", 400);
+        }
+        return $this->repository->show($id);
+    }
+
     public function store($data)
     {
 
