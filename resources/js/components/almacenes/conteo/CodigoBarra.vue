@@ -16,6 +16,19 @@
                     </div>
                      <form role="form">
                         <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="observaciones" class="col-sm-3 col-form-label">Código de barras: </label>
+                                        <div class="col-sm-9">
+                                              <input v-model="barcodeValue" class="form-control" v-on:keyup.enter.prevent="validate"/>
+                                              <barcode v-bind:value="barcodeValue">
+                                                Escanear el código de barras.
+                                              </barcode>
+                                        </div>
+                                    </div>
+                                </div>
+                           </div>
                              <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
@@ -117,20 +130,6 @@
                                     </div>
                                 </div>
                              </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="observaciones" class="col-sm-3 col-form-label">Código de barras: </label>
-                                        <div class="col-sm-9">
-                                              <input v-model="barcodeValue" class="form-control" v-on:keyup.enter.prevent="validate"/>
-                                              <barcode v-bind:value="barcodeValue">
-                                                Escanear el código de barras.
-                                              </barcode>
-                                        </div>
-                                    </div>
-                                </div>
-                           </div>
-
                         </div>
                          <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
