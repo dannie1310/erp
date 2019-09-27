@@ -42,8 +42,24 @@ class Conteo extends Model
         }else{
             return 'Extra';
         }
-
     }
+
+    public function getUsadoAttribute(){
+        return round($this->cantidad_usados, 2);
+    }
+
+    public function getNuevoAttribute(){
+        return round($this->cantidad_nuevo, 2);
+    }
+
+    public function getInservibleAttribute(){
+        return round($this->cantidad_inservible, 2);
+    }
+
+    public function getTotalFormatAttribute(){
+        return round($this->total, 2);
+    }
+
     public function getFolioMarbeteAttribute(){
         return $this->marbete->invetarioFisico->numero_folio_format."-".$this->marbete->folio_format;
     }
