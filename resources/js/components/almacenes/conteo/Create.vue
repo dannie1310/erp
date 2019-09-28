@@ -65,6 +65,7 @@
                                         <label for="cantidad_usados" class="col-sm-3 col-form-label">Cantidad Usados</label>
                                         <div class="col-sm-9">
                                             <input
+                                                    step="any"
                                                     type="number"
                                                     name="cantidad_usados"
                                                     data-vv-as="Cantidad Usados"
@@ -85,6 +86,7 @@
                                         <label for="cantidad_nuevo" class="col-sm-3 col-form-label">Cantidad Nuevos</label>
                                         <div class="col-sm-9">
                                             <input
+                                                    step="any"
                                                     type="number"
                                                     name="cantidad_nuevo"
                                                     data-vv-as="Cantidad Nuevos"
@@ -105,6 +107,7 @@
                                         <label for="cantidad_inservible" class="col-sm-3 col-form-label">Cantidad Inservibles</label>
                                         <div class="col-sm-9">
                                             <input
+                                                    step="any"
                                                     type="number"
                                                     name="cantidad_inservible"
                                                     data-vv-as="Cantidad Inservible"
@@ -125,6 +128,7 @@
                                         <label for="total" class="col-sm-3 col-form-label">Total</label>
                                         <div class="col-sm-9">
                                             <input
+                                                    step="any"
                                                     type="number"
                                                     name="total"
                                                     data-vv-as="Total"
