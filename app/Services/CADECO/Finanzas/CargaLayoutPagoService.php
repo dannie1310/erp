@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Factura;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Models\CADECO\SolicitudPagoAnticipado;
@@ -44,24 +45,47 @@ class CargaLayoutPagoService
 
         foreach ($this->getCSVData($layout) as $key => $pago) {
             $documento = Documento::query()->where('IDTransaccionCDC', '=', $pago['id_transaccion'])->first();
-            //dd($documento);
             if($documento != null) {
+                $transaccion = "";
+                $pago_a_generar = "";
+                $aplicacion_manual = "";
+                $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->first();
                 $factura = Factura::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
                 $solicitud = SolicitudPagoAnticipado::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
 
                 if ($factura == null && $solicitud != null) // Solicitud de Pago Anticipado
                 {
-
+                    $transaccion = $solicitud;
+                    $pago_a_generar = $this->datosPago($documento->IDTipoDocumento);
                 }
 
                 if ($solicitud == null && $factura != null) // Factura
                 {
-
+                    $transaccion = $factura;
+                    $pago_a_generar = $this->datosPago($documento->IDTipoDocumento);
                 }
-                $registros[] = $this->datosPago($documento, $pago);
+
+                $registros[] = array(
+                    'id_documento' => $documento->IDDocumento,
+                    'id_transaccion' => $transaccion ? $transaccion->id_transaccion : null,
+                    'folio_transaccion' => $transaccion ? $transaccion->numero_folio : null,
+                    'referencia_factura' => $transaccion ? $transaccion->referencia : null,
+                    'monto_factura' => $transaccion ? $transaccion->monto : null,
+                    'moneda_factura' =>  $transaccion ? $transaccion->moneda : null,
+                    'cuenta_cargo' =>  $pago['cuenta_cargo'],
+                    'fecha_pago' => $pago['fecha_pago'],
+                    'referencia_pago' => $pago['referencia_pago'],
+                    'tipo_cambio' => $pago['tipo_cambio'],
+                    'monto_pagado' => $pago['monto_pagado'],
+                    'id_transaccion_tipo' => $documento->tipoDocumento->TipoDocumento,
+                    'pago_a_generar' => $pago_a_generar ? $pago_a_generar['pago_a_generar'] : "",
+                    'aplicacion_manual' => $pago_a_generar ? $pago_a_generar['aplicacion_manual'] : "",
+                    'estado' => '',
+                    'beneficiario' => $documento->Destinatario,
+                    'referencia_docto' => $documento->Referencia,
+                    'origen_docto' => $documento->origenDocumento->OrigenDocumento,
+                );
             }
-//             dd($factura, $solicitud);
-  //         $registros =  $pago;
         }
 
         return array(
@@ -85,7 +109,7 @@ class CargaLayoutPagoService
                         "cuenta_cargo" =>  $linea[4],
                         "fecha_pago" => $linea[5],
                         "referencia_pago" => $linea[6],
-                        "tipo_campo" => $linea[7],
+                        "tipo_cambio" => $linea[7],
                         "monto_pagado" => str_replace("\r\n","",$linea[8])
                     );
                 }
@@ -113,9 +137,9 @@ class CargaLayoutPagoService
         );
     }
 
-    public function datosPago($data, $pago){
+    public function datosPago($data){
         $aplicacion_manual = false;
-        switch ((int)$data->IDTipoDocumento){
+        switch ((int)$data){
             case 9:
             case 11:
                 $pago_a_generar = 'Pago';
@@ -131,20 +155,9 @@ class CargaLayoutPagoService
                 $pago_a_generar = 'Pago a Cuenta (Requiere Aplicación Manual)';
                 break;
         }
-
         return array(
-            'id_documento' => $data->IDDocumento,
-            'id_transaccion' => $data->transaccion? $data->transaccion->id_transaccion:null,
-            'id_transaccion_tipo' => $data->tipoDocumento->TipoDocumento,
             'pago_a_generar' => $pago_a_generar,
-            'aplicacion_manual' => $aplicacion_manual,
-            'estado' => '',
-            'beneficiario' => $data->Destinatario,
-            'monto' => $pago['monto_pagado'],
-            'cuenta_cargo' => ['id_cuenta_cargo' => '21', 'numero'=> '22', 'abreviatura'=> '22q', 'nombre' => 'CuentaBeEm', 'id_empresa' => '3sdsf'],
-            'referencia' => $pago['referencia_pago'],
-            'referencia_docto' => $data->Referencia,
-            'origen_docto' => $data->origenDocumento->OrigenDocumento,
+            'aplicacion_manual' => $aplicacion_manual
         );
     }
 }

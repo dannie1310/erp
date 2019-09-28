@@ -66,7 +66,11 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(pago, i) in pagos">
-                                                                {{pago}}
+                                                                <td>{{pago.referencia_factura}}</td>
+                                                                <td>{{pago.monto_factura}}</td>
+                                                                <td>{{pago.moneda}}</td>
+                                                                <td>{{pago.cuenta_cargo}}</td>
+                                                                <td>{{pago}}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
