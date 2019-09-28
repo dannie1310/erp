@@ -9,7 +9,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Registrar Marbete</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Registrar Inventario Fisico</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -17,53 +17,73 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-                                <!--Almacen-->
-                                <div class="col-md-12" v-if="almacenes">
-                                    <div class="form-group error-content">
-                                        <label for="id_almacen">Almacen</label>
-                                               <select
-                                                   class="form-control"
-                                                   name="id_almacen"
-                                                   data-vv-as="Almacen"
-                                                   v-model="id_almacen"
-                                                   v-validate="{required: true}"
-                                                   :class="{'is-invalid': errors.has('id_almacen')}"
-                                                   id="id_almacen">
-                                            <option value>-- Seleccione un Almacen --</option>
-                                            <option v-for="(almacen, index) in almacenes" :value="almacen.id">
-                                                {{ almacen.descripcion }}
-                                            </option>
+                                <!--Usuario-->
+                                <div class="col-md-6">
+                                    <div class="form-group row error-content">
+                                        <label for="usuario" class="col-sm-3 col-form-label">Usuario:</label>
+                                        <div class="col-sm-10">
+                                            <input
 
-                                        </select>
-                                          <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
+                                                type="text"
+                                                name="usuario"
+                                                data-vv-as="Usuario"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="usuario"
+                                                placeholder="Usuario Inicío"
+                                                v-model="usuario"
+                                                :class="{'is-invalid': errors.has('usuario')}">
+                                            <div class="invalid-feedback" v-show="errors.has('usuario')">{{ errors.first('usuario') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                    <div class="col-md-4">
+                                    <div class="form-group row error-content">
+                                        <label for="id_tipo" class="col-sm-3 col-form-label">Tipo: </label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group btn-group-toggle">
+                                                <label class="btn btn-outline-secondary" :class="id_tipo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos" :key="llave">
+                                                    <input type="radio"
+                                                           class="btn-group-toggle"
+                                                           name="id_tipo"
+                                                           :id="'tipo' + llave"
+                                                           :value="llave"
+                                                           autocomplete="on"
+                                                           v-model.number="id_tipo">
+                                                            {{ tipo}}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Inventario-->
+                                    <div class="col-md-2">
+                                    <div class="form-group row error-content">
+                                        <label for="inventario" class="col-sm-4 col-form-label">Porcentaje:</label>
+                                        <div class="col-sm-9">
+                                            <select
+                                                type="text"
+                                                name="inventario"
+                                                data-vv-as="Inventario"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="inventario"
+                                                v-model="inventario"
+                                                :class="{'is-invalid': errors.has('inventario')}"
+                                            >
+                                                    <option value>-- % --</option>
+                                                    <option v-for="inventario in inventarios" :value="inventario.id">{{ inventario.descripcion }}</option>
+                                            </select>
+                                            <div class="invalid-feedback" v-show="errors.has('inventario')">{{ errors.first('inventario') }}</div>
+                                        </div>
                                     </div>
                                 </div>
 
 
-                                <!--Material-->
-                                     <div class="col-md-12" >
-                                    <div class="form-group error-content" v-if="">
-                                        <label for="id_material">Material</label>
-                                               <select
-                                                   class="form-control"
-                                                   name="id_material"
-                                                   data-vv-as="Material"
-                                                   v-model="id_material"
-                                                   v-validate="{required: true}"
-                                                   id="id_material"
-                                                   :class="{'is-invalid': errors.has('id_material')}">
-                                            <option value>-- Seleccione un Material --</option>
-                                            <option v-for="(material, index) in materiales" :value="material.id"
-                                                    data-toggle="tooltip" data-placement="left" :title="material.descripcion ">
-                                                    {{ material.descripcion }}
-                                            </option>
-
-                                        </select>
-                                         <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
-                                    </div>
-                                </div>
 
                             </div>
+
                         </div>
                         <div class="modal-footer">
                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -82,7 +102,19 @@
         data() {
             return {
                 cargando: false,
-                dato:''
+                inventarios: [
+                    {id: 1, descripcion: '80%'},
+                    {id: 2, descripcion: '60%'},
+                    {id: 3, descripcion: '40%'},
+                    {id: 4, descripcion: '20%'},
+                    {id: 5, descripcion: '10%'}
+                ],
+                tipos: {
+                    1: "Conteo Total",
+                    2: "Conteo Aleatorio"
+                },
+                inventario:'',
+                usuario:''
             }
         },
         mounted(){
@@ -90,7 +122,7 @@
         methods:{
             init() {
                 $(this.$refs.modal).modal('show');
-                this.cargando = true;
+                this.cargando = false;
             },
             store() {
                 return this.$store.dispatch('almacenes/inventario-fisico/store', this.dato)
@@ -99,6 +131,13 @@
                     }).finally( ()=>{
                         this.cargando = false;
                     });
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store()
+                    }
+                });
             },
         }
     }
