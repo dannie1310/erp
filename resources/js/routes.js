@@ -976,7 +976,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'create',
+                        path: 'carga-create',
                         name: 'carga-masiva-create',
                         component: require('./components/finanzas/gestion-pago/carga-masiva/Create'),
                         meta: {

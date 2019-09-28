@@ -19,7 +19,7 @@
                                         <input type="file" class="form-control" id="carga_layout"
                                                @change="onFileChange"
                                                row="3"
-                                               v-validate="{ ext: ['txt']}"
+                                               v-validate="{ ext: ['csv']}"
                                                name="carga_layout"
                                                data-vv-as="Layout"
                                                ref="carga_layout"
@@ -29,6 +29,64 @@
                                     </div>
                                 </div>
                             </div>
+                            <br>
+                            <div class="row" >
+                                <div class="col-12">
+                                    <div class="invoice p-3 mb-3">
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <h3>Pagos</h3>
+                                            </div>
+                                            <div class="col-3">
+                                                <h6 align="right">Total: {{pagos.length}}</h6>
+                                                <h6 align="right">Pagables: {{resumen.pagables}}</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Referencia solicitud / factura</th>
+                                                            <th>Monto solicitud / factura</th>
+                                                            <th>Moneda solicitud / factura</th>
+                                                            <th>Cuenta Cargo</th>
+                                                            <th>Fecha Pago</th>
+                                                            <th>Referencia Pago</th>
+                                                            <th>Tipo Cambio</th>
+                                                            <th>Monto Pagado</th>
+                                                            <th>Estado</th>
+                                                            <th>Tipo de Transacción Pagada</th>
+                                                            <th>Referencia de Transacción Pagada</th>
+                                                            <th>Tipo de Pago a Generar</th>
+                                                            <th></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(pago, i) in pagos">
+                                                                {{pago}}
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="salir">
+                                <span v-if="cargando">
+                                    <i class="fa fa-spin fa-spinner"></i>
+                                </span>
+                                <span v-else>
+                                    Cerrar
+                                </span>
+                            </button>
+                            <button type="button" class="btn btn-primary" @click="store">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -42,9 +100,97 @@
         name: "carga-masiva-create",
         data() {
             return {
-                cargando: false
+                cargando: false,
+                pagos:[],
+                resumen:[],
+                file_pagos : null
             }
         },
+        methods: {
+            cargarLayout(){
+                this.cargando = true;
+                var formData = new FormData();
+                formData.append('pagos',  this.file_pagos);
+                return this.$store.dispatch('finanzas/carga-masiva-pago/cargarLayout',
+                    {
+                        data: formData,
+                        config: {
+                            params: { _method: 'POST'}
+                        }
+                    })
+                    .then(data => {
+                        console.log(data.resumen);
+                        if(data.data.length > 0){
+                            this.pagos = data.data;
+                            this.resumen = data.resumen;
+                        }else{
+                            if(this.$refs.carga_layout.value !== ''){
+                                this.$refs.carga_layout.value = '';
+                                this.file_pagos = null;
+                            }
+                            this.pagos = [];
+                            swal('Carga Masiva', 'Archivo de layout sin pagos válidos.', 'warning')
+                        }
+                    }).finally(() => {
+                        this.cargando = false;
+                    });
+            },
+            createImage(file, tipo) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.file_pagos = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+            },
+
+            onFileChange(e){
+                this.file_pagos = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.createImage(files[0]);
+                setTimeout(() => {
+                    this.validate()
+                }, 500);
+            },
+            salir(){
+                return this.$store.dispatch('finanzas/carga-masiva-pago/salir')
+                    .then(() => {
+                        this.$router.push({name: 'carga-masiva'});
+                    });
+            },
+
+            store() {
+                return this.$store.dispatch('finanzas/carga-masiva-pago/store', this.$data)
+                    .then((data) => {
+                        this.$router.push({name: 'carga-masiva'});
+                    });
+            },
+
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result){
+                        if(this.$refs.carga_layout.value === ''){
+                            swal('¡Error!', 'Seleccione un archivo.', 'warning')
+                        }else{
+                            this.cargarLayout()
+                        }
+                        //this.cargarLayout()
+                    }else{
+                        if(this.$refs.carga_layout.value !== ''){
+                            this.$refs.carga_layout.value = '';
+                            this.file_pagos = null;
+                        }
+                       // this.$validator.errors.clear();
+                       // this.bitacora = [];
+                       // swal('¡Error!', 'Archivo de bitácora no válido.', 'warning')
+                    }
+                });
+            },
+        }
     }
 </script>
 
