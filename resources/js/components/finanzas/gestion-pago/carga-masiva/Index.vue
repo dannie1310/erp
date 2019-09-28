@@ -35,11 +35,9 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Beneficiario', field: 'id_empresa', thComp:require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Cuenta', field: 'id_cuenta',  thComp:require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Concepto', field: 'observaciones',  thComp:require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Importe', field: 'monto', sortable: true},
-                    { title: 'Moneda', field: 'id_moneda',  thComp:require('../../../globals/th-Filter'), sortable: true },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+
                 ],
                 data: [],
                 total: 0,
@@ -92,6 +90,11 @@
                     layouts.forEach(function (layout, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
+                            fecha: layout.fecha_registro,
+                            buttons: $.extend({}, {
+
+                                autorizar: true
+                            })
 
                         })
 
