@@ -34,16 +34,21 @@ class MarbeteService
 
         $inventario = InventarioFisico::query()->where('estado',0)->first();
 
+
         if (empty($inventario)){
             abort(400, 'No hay un inventario físico activo');
         }
+        
 
-        $existe_material = Marbete::query()->where('id_almacen','=', $data['id_almacen'])->where('id_material', '=', $data['id_material'])->first();
+        $existe_material = Marbete::query()->where('id_almacen','=', $data['id_almacen'])
+            ->where('id_material', '=', $data['id_material'])
+            ->where('id_inventario_fisico','=', $inventario->id)
+            ->first();
 
         if(!empty($existe_material)){
-            abort(400, 'Ya existe el material en almacén');
+            abort(400, 'Ya existe un marbete asociado a este material en el inventario');
         }
-    
+
         $saldo = Inventario::query()->join('almacenes','almacenes.id_almacen', 'inventarios.id_almacen')
             ->where('inventarios.id_almacen','=', $data['id_almacen'])
             ->where('inventarios.id_material','=', $data['id_material'])->sum('inventarios.saldo');
