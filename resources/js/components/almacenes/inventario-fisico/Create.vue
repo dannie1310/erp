@@ -6,7 +6,7 @@
             Iniciar Inventario Físico
         </button>
                  <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Registrar Inventario Fisico</h5>
@@ -17,28 +17,8 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-                                <!--Usuario-->
-                                <div class="col-md-6">
-                                    <div class="form-group row error-content">
-                                        <label for="usuario" class="col-sm-3 col-form-label">Usuario:</label>
-                                        <div class="col-sm-10">
-                                            <input
-
-                                                type="text"
-                                                name="usuario"
-                                                data-vv-as="Usuario"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="usuario"
-                                                placeholder="Usuario Inicío"
-                                                v-model="usuario"
-                                                :class="{'is-invalid': errors.has('usuario')}">
-                                            <div class="invalid-feedback" v-show="errors.has('usuario')">{{ errors.first('usuario') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                    <div class="col-md-4">
+                                <div class="col-md-2"></div>
+                                    <div class="col-md-6">
                                     <div class="form-group row error-content">
                                         <label for="id_tipo" class="col-sm-3 col-form-label">Tipo: </label>
                                         <div class="col-sm-10">
@@ -60,7 +40,7 @@
                                     </div>
                                 </div>
                                 <!--Inventario-->
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                     <div class="form-group row error-content">
                                         <label for="inventario" class="col-sm-4 col-form-label">Porcentaje:</label>
                                         <div class="col-sm-9">
@@ -90,7 +70,7 @@
                         </div>
                         <div class="modal-footer">
                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="submit" class="btn btn-primary">Registrar</button>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
