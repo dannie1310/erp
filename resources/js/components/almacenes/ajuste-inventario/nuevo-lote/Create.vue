@@ -68,7 +68,7 @@
                                                         <td>
                                                             {{item.id_material.unidad}}
                                                         </td>
-                                                        <td style="width: 180px;">
+                                                        <td style="width: 120px;">
                                                             <input
                                                                     :disabled = "!item.id_material"
                                                                     type="number"
@@ -85,7 +85,7 @@
                                                                  v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
                                                             </div>
                                                         </td>
-                                                        <td style="width: 180px;">
+                                                        <td style="width: 120px;">
                                                             <input
                                                                     :disabled = "!item.id_material"
                                                                     type="number"
@@ -102,7 +102,7 @@
                                                                  v-show="errors.has(`monto_total[${i}]`)">{{ errors.first(`monto_total[${i}]`) }}
                                                             </div>
                                                         </td>
-                                                        <td style="width: 180px;">
+                                                        <td style="width: 120px;">
                                                             <input
                                                                     :disabled = "!item.id_material"
                                                                     type="number"
