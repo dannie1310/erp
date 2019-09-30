@@ -10,7 +10,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR CON CÓDIGO DE BARRAS</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" @click="cerrar" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -20,7 +20,18 @@
                                     <div class="form-group row error-content">
                                         <label for="barcodeValue" class="col-sm-3 col-form-label">Código de barras: </label>
                                         <div class="col-sm-9">
-                                              <input v-model="barcodeValue" name="barcodeValue" id="barcodeValue" v-on:keyup.enter="findCodigo" class="form-control"/>
+                                              <input
+                                                      ref="barcodeValue"
+                                                      name="barcodeValue"
+                                                      data-vv-as="Codigo de Barra"
+                                                      v-validate="{required: true}"
+                                                      class="form-control"
+                                                      id="barcodeValue"
+                                                      placeholder="Código de barra"
+                                                      v-model="barcodeValue"
+                                                      :class="{'is-invalid': errors.has('barcodeValue')}"
+                                                      v-on:keyup.enter="findCodigo"
+                                              />
                                               <barcode v-bind:value="barcodeValue">
                                                 Escanear el código de barras.
                                               </barcode>
@@ -30,7 +41,7 @@
                            </div>
                             <form role="form" @submit.prevent="validate">
 
-                            <div class="row" v-if="barcodeValue">
+                            <div class="row" v-if="marbete && barcodeValue">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="id_marbete" class="col-sm-3 col-form-label">Marbete: </label>
@@ -51,7 +62,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="barcodeValue">
+                            <div class="row" v-if="marbete && barcodeValue">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="tipo_conteo" class="col-sm-3 col-form-label">Numero de Conteo: </label>
@@ -72,12 +83,13 @@
                                     </div>
                                 </div>
                             </div>
-                             <div class="row" v-if="barcodeValue">
+                             <div class="row" v-if="marbete && barcodeValue">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="cantidad_nuevo" class="col-sm-3 col-form-label">Nuevos: </label>
                                         <div class="col-sm-9">
                                             <input
+                                                    ref="input"
                                                     step="any"
                                                     type="number"
                                                     name="cantidad_nuevo"
@@ -94,11 +106,7 @@
                                     </div>
                                 </div>
                             </div>
-                             <label for="mostrar" v-if="barcodeValue">Más información</label>
-                            <input type="checkbox" id="mostrar" value="mostrar" v-model="checkedMostrar" v-if="barcodeValue">
-                                <label for="seguir">Captura Continua</label>
-                            <input type="checkbox" id="seguir" value="seguir" v-model="seguir">
-                            <div class="row" v-if="barcodeValue">
+                            <div class="row" v-if="marbete && barcodeValue">
                                 <div class="col-md-12" v-if="checkedMostrar">
                                     <div class="form-group row error-content">
                                         <label for="cantidad_usados" class="col-sm-3 col-form-label">Usados: </label>
@@ -140,11 +148,15 @@
                                     </div>
                                 </div>
                             </div>
+                             <label for="seguir" @click="foco">Captura Continua</label>
+                            <input type="checkbox" id="seguir" value="seguir" v-model="seguir"  @click="foco">
+                             <label for="mostrar" v-if="marbete && barcodeValue"  @click="foco">Más información</label>
+                            <input type="checkbox" id="mostrar" value="mostrar" v-model="checkedMostrar" v-if="marbete && barcodeValue"  @click="foco">
                             </form>
 
                         </div>
                          <div class="modal-footer">
-                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                             <button type="button" class="btn btn-secondary" @click="cerrar">Cerrar</button>
                         </div>
                 </div>
             </div>
@@ -178,14 +190,16 @@
         },
         mounted(){
             this.getConteo();
+            this.$refs.barcodeValue.focus();
         },
         methods:{
             findCodigo() {
                 var marbete = this.barcodeValue.split("C");
                 this.dato.id_marbete = marbete[0];
-                if (!marbete[1]){
-                    swal('¡Error!', 'Error al leer el código de barras.', 'error');
-                    this.barcodeValue='';
+                if (!marbete[1] || marbete[1] == 3){
+                    swal('¡Error!', 'Error al leer el código de barras, intente de nuevo.', 'error');
+                    this.$emit('created');
+                    $(this.$refs.modal).modal('hide');
                 }else{
                     this.dato.tipo_conteo = marbete[1];
                     this.$store.commit('almacenes/marbete/SET_MARBETE', null);
@@ -194,11 +208,23 @@
                         params: {}
                     }).then(data => {
                         this.$store.commit('almacenes/marbete/SET_MARBETE', data);
+                        this.$nextTick(() => this.$refs.input.focus());
                     })
-
+                }
+            },
+            cerrar(){
+                this.$emit('created');
+                $(this.$refs.modal).modal('hide');
+            },
+            foco(){
+                if(this.$refs.input){
+                    this.$nextTick(() => this.$refs.input.focus());
+                }else{
+                    this.$nextTick(() => this.$refs.barcodeValue.focus());
                 }
             },
             init() {
+                $(this.$refs.modal).modal('show');
                 this.cargando = true;
                 this.barcodeValue='';
                 this.checkedMostrar=false;
@@ -208,9 +234,9 @@
                 this.dato.cantidad_nuevo='';
                 this.dato.cantidad_inservible=0;
                 this.dato.total='';
-                $(this.$refs.modal).modal('show');
                 this.$validator.reset();
                 this.cargando = false;
+                this.$refs.barcodeValue.focus();
             },
             getConteo(){
                 this.conteos = [];
@@ -222,25 +248,26 @@
                         this.conteos = data.data;
                   })
             },
-
             validate() {
                 this.$validator.validate().then(result => {
                     var marbete = this.barcodeValue.split("C");
                     if (result) {
                         if(this.dato.cantidad_nuevo == ''){
                             swal('¡Error!', 'Error al registrar cantidad, favor de ingresar cantidades.', 'error');
-                            this.barcodeValue='';
+                            this.$emit('created');
+                            $(this.$refs.modal).modal('hide');
                         }else if (marbete[2]){
                             swal('¡Error!', 'Error al leer el código de barras, intente de nuevo.', 'error');
-                            this.barcodeValue='';
+                            this.$emit('created');
+                            $(this.$refs.modal).modal('hide');
                         }
                         else{
                             if(this.dato.cantidad_usados < 0 || this.dato.cantidad_nuevos < 0 || this.dato.cantidad_inservibles < 0){
                                 swal('¡Error!', 'Error al registrar cantidad, favor de revisar la información y registrar la cantidad nuevamente.', 'error');
-                                this.barcodeValue='';
+                                this.$emit('created');
+                                $(this.$refs.modal).modal('hide');
                             }
                             else {
-
                                 this.dato.id_marbete = marbete[0];
                                 this.dato.tipo_conteo = marbete[1];
                                 this.store()
@@ -254,6 +281,7 @@
                 return this.$store.dispatch('almacenes/conteo/storeCodigoBarra', this.$data.dato)
                     .then(data => {
                         if(this.seguir){
+                            this.$emit('created');
                             this.init();
                         }else{
                             this.$emit('created', data);
