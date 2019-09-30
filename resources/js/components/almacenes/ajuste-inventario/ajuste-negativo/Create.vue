@@ -29,7 +29,7 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
-                                                        <td style="width: 200px;">
+                                                        <td style="width: 180px;">
                                                              <select
                                                                      :disabled = "!bandera"
                                                                      class="form-control"
