@@ -986,6 +986,16 @@ export const routes = [
                             permission: 'cargar_distribucion_recursos_remesa'
                         }
                     },
+                    {
+                        path: 'autorizar',
+                        name: 'autorizar-layout',
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Autorizar'),
+                        meta: {
+                            title: 'Autorizar Layouts',
+                            breadcrumb: { name: 'AUTORIZAR', parent:'carga-masiva'},
+                            middleware: [auth, context],
+                        }
+                    }
                 ]
             },
             {

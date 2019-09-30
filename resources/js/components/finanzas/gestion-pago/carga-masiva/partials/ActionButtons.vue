@@ -1,7 +1,7 @@
 <template>
-    <div class="btn-group " v-if="value.id">
-        <button @click="show()" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Fondo">
-            <i class="fa fa-eye"></i>
+    <div class="btn-group">
+        <button @click="show()" type="button" class="btn btn-sm btn-outline-success" title="Autorizar">
+            <i class="fa fa-check"></i>
         </button>
     </div>
 
@@ -21,7 +21,7 @@
 
             },
             show() {
-                this.$router.push({name: 'fondo-show', params: {id: this.value.id}});
+                this.$router.push({name: 'autorizar-layout', params: {id: this.value.id}});
             },
         }
     }
