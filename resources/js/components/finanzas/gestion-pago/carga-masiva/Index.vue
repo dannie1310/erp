@@ -92,7 +92,7 @@
                             index: (i + 1) + self.query.offset,
                             fecha: layout.fecha_registro,
                             buttons: $.extend({}, {
-
+                                id: layout.id,
                                 autorizar: true
                             })
 
