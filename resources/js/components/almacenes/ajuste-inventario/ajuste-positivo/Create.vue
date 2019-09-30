@@ -17,7 +17,7 @@
                                                         <th class="bg-gray-light">No de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
                                                         <th class="bg-gray-light">Unidad</th>
-                                                        <th class="bg-gray-light">Cantidad</th>
+                                                        <th class="bg-gray-light">Cantidad a Sumar</th>
                                                         <th class="bg-gray-light">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar">
                                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
@@ -29,7 +29,7 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
-                                                        <td>
+                                                        <td style="width: 200px;">
                                                              <select
                                                                      :disabled = "!bandera"
                                                                      class="form-control"
@@ -66,7 +66,7 @@
                                                         <td>
                                                             {{item.id_material.unidad}}
                                                         </td>
-                                                        <td>
+                                                        <td style="width: 250px;">
                                                             <input
                                                                     :disabled = "!item.id_material"
                                                                     type="number"
