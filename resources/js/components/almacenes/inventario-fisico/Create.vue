@@ -47,6 +47,8 @@
                                                     <input type="radio"
                                                            class="btn-group-toggle"
                                                            name="id_tipo"
+                                                           data-vv-as="Tipo"
+                                                           v-validate="{required: true}"
                                                            :id="'tipo' + llave"
                                                            :value="llave"
                                                            autocomplete="on"
@@ -63,7 +65,7 @@
                                         <label for="inventario" class="col-sm-4 col-form-label">Porcentaje:</label>
                                         <div class="col-sm-9">
                                             <select
-                                                :disabled="!id_tipo"
+                                                :disabled="id_tipo!=2"
                                                 type="text"
                                                 name="inventario"
                                                 data-vv-as="Inventario"
