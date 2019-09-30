@@ -17,7 +17,7 @@ class Factura extends Transaccion
 
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 65)
-                ->where('opciones', '=', 0)
+                //->where('opciones', '=', 0)
                 ->where('estado', '!=', -2);
         });
     }
@@ -25,5 +25,10 @@ class Factura extends Transaccion
     public function partidas()
     {
         return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 }

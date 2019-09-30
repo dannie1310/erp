@@ -52,25 +52,49 @@
                                                             <th>Referencia solicitud / factura</th>
                                                             <th>Monto solicitud / factura</th>
                                                             <th>Moneda solicitud / factura</th>
+                                                            <th>Beneficiario</th>
                                                             <th>Cuenta Cargo</th>
                                                             <th>Fecha Pago</th>
                                                             <th>Referencia Pago</th>
                                                             <th>Tipo Cambio</th>
                                                             <th>Monto Pagado</th>
-                                                            <th>Estado</th>
                                                             <th>Tipo de Transacción Pagada</th>
-                                                            <th>Referencia de Transacción Pagada</th>
-                                                            <th>Tipo de Pago a Generar</th>
-                                                            <th></th>
+                                                            <th>Estado</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(pago, i) in pagos">
+                                                                <td>{{i+1}}</td>
                                                                 <td>{{pago.referencia_factura}}</td>
                                                                 <td>{{pago.monto_factura}}</td>
-                                                                <td>{{pago.moneda}}</td>
-                                                                <td>{{pago.cuenta_cargo}}</td>
-                                                                <td>{{pago}}</td>
+                                                                <td>{{pago.moneda_factura}}</td>
+                                                                <td>{{pago.beneficiario}}</td>
+                                                                <td>
+                                                                      <select
+                                                                              class="form-control"
+                                                                              :name="`id_cuenta_cargo[${i}]`"
+                                                                              v-model="pago.cuenta_cargo.id"
+                                                                              v-validate="{required: true }"
+                                                                              data-vv-as="Cuenta Cargo"
+                                                                              :class="{'is-invalid': errors.has(`id_cuenta_cargo[${i}]`)}"
+                                                                      >
+
+                                                                             <option v-for="cuenta in pago.cuenta_cargo" :value="cuenta.id">{{ cuenta.numero }} ({{cuenta.abreviatura}})</option>
+                                                                        </select>
+                                                                    <div class="invalid-feedback"
+                                                                         v-show="errors.has(`id_cuenta_cargo[${i}]`)">{{ errors.first(`id_cuenta_cargo[${i}]`) }}
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{pago.fecha_pago}}</td>
+                                                                <td>{{pago.referencia_pago}}</td>
+                                                                <td>{{pago.tipo_cambio}}</td>
+                                                                <td>{{pago.monto_pagado}}</td>
+                                                                <td>{{pago.pago_a_generar}}</td>
+                                                               <td class="text-center">
+                                                                    <small class="badge" :class="{'badge-danger': pago.estado.estado == 0, 'badge-warning': pago.estado.estado != 1,  'badge-success': pago.estado.estado == 1}">
+                                                                        {{ pago.estado.descripcion }}
+                                                                    </small>
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>

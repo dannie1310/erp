@@ -97,4 +97,9 @@ class SolicitudPagoAnticipado extends Transaccion
             throw New \Exception('Este subcontrato no cuenta con el saldo disponible para lo que solicita.');
         }
     }
+
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
 }
