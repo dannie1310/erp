@@ -3,16 +3,16 @@ import Vuex from 'vuex';
 import auth from './modules/auth';
 
 //ALMACENES
-import conteo from './modules/almacenes/conteo';
-import tipoConteo from './modules/almacenes/ctg-tipo-conteo';
 import ajusteInventario from './modules/almacenes/ajuste-inventario';
 import ajusteNegativo from './modules/almacenes/ajuste-negativo';
 import ajustePositivo from './modules/almacenes/ajuste-positivo';
-import inventarioFisico from './modules/almacenes/inventario-fisico';
+import conteo from './modules/almacenes/conteo';
 import entradaAlmacen from './modules/almacenes/entrada-almacen';
-import salidaAlmacen from './modules/almacenes/salida-almacen';
+import inventarioFisico from './modules/almacenes/inventario-fisico';
 import marbete from './modules/almacenes/marbete';
 import nuevoLote from  './modules/almacenes/nuevo-lote';
+import tipoConteo from './modules/almacenes/ctg-tipo-conteo';
+import salidaAlmacen from './modules/almacenes/salida-almacen';
 
 //CADECO
 
@@ -22,6 +22,7 @@ import concepto from './modules/cadeco/concepto';
 import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
+import familia from './modules/cadeco/familia';
 import fondo from './modules/cadeco/fondo';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
@@ -118,6 +119,7 @@ export default new Vuex.Store({
         'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
         'cadeco/empresa': empresa,
+        'cadeco/familia': familia,
         'cadeco/fondo': fondo,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
