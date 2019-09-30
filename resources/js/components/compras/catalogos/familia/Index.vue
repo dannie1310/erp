@@ -82,12 +82,6 @@
                             index: (i + 1) + self.query.offset,
                             tipo_material: familia.tipo_material_descripcion,
                             descripcion: familia.descripcion,
-                            // buttons: $.extend({}, {
-                            //     id: entrada.id,
-                            //     estado: entrada.estado,
-                            //     pagina: self.query.offset,
-                            //     delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
-                            // })
                         })
                     });
                 },
