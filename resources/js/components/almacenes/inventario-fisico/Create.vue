@@ -63,6 +63,7 @@
                                         <label for="inventario" class="col-sm-4 col-form-label">Porcentaje:</label>
                                         <div class="col-sm-9">
                                             <select
+                                                :disabled="!id_tipo"
                                                 type="text"
                                                 name="inventario"
                                                 data-vv-as="Inventario"
@@ -109,6 +110,7 @@
                     {id: 4, descripcion: '20%'},
                     {id: 5, descripcion: '10%'}
                 ],
+                id_tipo:'',
                 tipos: {
                     1: "Conteo Total",
                     2: "Conteo Aleatorio"
