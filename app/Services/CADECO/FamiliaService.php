@@ -37,7 +37,13 @@ class FamiliaService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $familia = $this->repository;
+
+        if(isset($data['descripcion'])) {
+            $salida = $familia->where([['descripcion', 'LIKE', '%' . request('descripcion') . '%']]);
+        }
+            return $familia->paginate($data);
+
     }
 
     public function store(array $data)

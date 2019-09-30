@@ -29,7 +29,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Familia', field: 'tipo_material',sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Familia', field: 'tipo_material',sortable: true},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
@@ -82,12 +82,6 @@
                             index: (i + 1) + self.query.offset,
                             tipo_material: familia.tipo_material_descripcion,
                             descripcion: familia.descripcion,
-                            // buttons: $.extend({}, {
-                            //     id: entrada.id,
-                            //     estado: entrada.estado,
-                            //     pagina: self.query.offset,
-                            //     delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
-                            // })
                         })
                     });
                 },
