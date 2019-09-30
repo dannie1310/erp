@@ -231,7 +231,9 @@ class SalidaAlmacenFormato extends Rotation
 
 
             if($p->concepto['nivel']>0){
+
             $nivel=$p->concepto['nivel'];
+
             if(empty($nivel)){
                 $nivel='';
             }else{
@@ -257,39 +259,75 @@ class SalidaAlmacenFormato extends Rotation
                 $this->SetAligns(['L','L']);
                 $this->SetTextColors(['0,0,0','0,0,0']);
 
+                if (empty($p->almacen['descripcion'])){
+                    $destino = '';
+                }else{
+                    $destino =$p->almacen['descripcion'];
+                }
                 $this->Row([
                     "Destino:",
-                    utf8_decode($p->almacen['descripcion']),
+                    utf8_decode($destino),
                 ]);
             }
 
 
             }
 
+        $this->dim_2 = $this->GetY();
 
-        $this->Ln(.7);
-        $this->SetWidths([19.5]);
-        $this->SetRounds(['12']);
-        $this->SetRadius([0.2]);
-        $this->SetFills(['180,180,180']);
-        $this->SetTextColors(['0,0,0']);
-        $this->SetHeights([0.5]);
-        $this->SetFont('Arial', '', 9);
-        $this->SetAligns(['C']);
-        $this->encola="observaciones_encabezado";
-        $this->Row(["Observaciones"]);
-        $this->SetRounds(['34']);
-        $this->SetRadius([0.2]);
-        $this->SetAligns(['J']);
-        $this->SetStyles(['DF']);
-        $this->SetFills(['255,255,255']);
-        $this->SetTextColors(['0,0,0']);
-        $this->SetHeights([0.5]);
-        $this->SetFont('Arial', '', 9);
-        $this->SetWidths([19.5]);
-        $this->encola="observaciones";
+        if($this->dim_2>24) {
+            $this->AddPage();
+            $this->Ln(1.8);
+            $this->Ln(.7);
+            $this->SetWidths([19.5]);
+            $this->SetRounds(['12']);
+            $this->SetRadius([0.2]);
+            $this->SetFills(['180,180,180']);
+            $this->SetTextColors(['0,0,0']);
+            $this->SetHeights([0.5]);
+            $this->SetFont('Arial', '', 9);
+            $this->SetAligns(['C']);
+            $this->encola="observaciones_encabezado";
+            $this->Row(["Observaciones"]);
+            $this->SetRounds(['34']);
+            $this->SetRadius([0.2]);
+            $this->SetAligns(['J']);
+            $this->SetStyles(['DF']);
+            $this->SetFills(['255,255,255']);
+            $this->SetTextColors(['0,0,0']);
+            $this->SetHeights([0.5]);
+            $this->SetFont('Arial', '', 9);
+            $this->SetWidths([19.5]);
+            $this->encola="observaciones";
 
-        $this->Row([utf8_decode($this->salida['observaciones'])]);
+            $this->Row([utf8_decode($this->salida['observaciones'])]);
+        }else{
+            $this->Ln(.7);
+            $this->SetWidths([19.5]);
+            $this->SetRounds(['12']);
+            $this->SetRadius([0.2]);
+            $this->SetFills(['180,180,180']);
+            $this->SetTextColors(['0,0,0']);
+            $this->SetHeights([0.5]);
+            $this->SetFont('Arial', '', 9);
+            $this->SetAligns(['C']);
+            $this->encola="observaciones_encabezado";
+            $this->Row(["Observaciones"]);
+            $this->SetRounds(['34']);
+            $this->SetRadius([0.2]);
+            $this->SetAligns(['J']);
+            $this->SetStyles(['DF']);
+            $this->SetFills(['255,255,255']);
+            $this->SetTextColors(['0,0,0']);
+            $this->SetHeights([0.5]);
+            $this->SetFont('Arial', '', 9);
+            $this->SetWidths([19.5]);
+            $this->encola="observaciones";
+
+            $this->Row([utf8_decode($this->salida['observaciones'])]);
+        }
+
+
 
 
     }
