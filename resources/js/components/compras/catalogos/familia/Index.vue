@@ -29,7 +29,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Familia', field: 'tipo_material',sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Familia', field: 'tipo_material',sortable: true},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
