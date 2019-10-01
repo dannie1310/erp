@@ -59,6 +59,14 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'material'}" class="nav-link" :class="{active: this.$route.name == 'material'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Material</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>

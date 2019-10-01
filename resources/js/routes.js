@@ -344,6 +344,20 @@ export const routes = [
                             middleware: [auth, context],
                             // permission: 'consultar_entrada_almacen'
                         }
+                    },
+                    {
+                        path: 'material',
+                        name: 'material',
+                        component: require('./components/compras/catalogos/material/Index'),
+                        meta: {
+                            title: 'Material',
+                            breadcrumb: {
+                                parent: 'catalogo-insumo',
+                                name: 'MATERIAL'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
                     }
                 ]
             },
