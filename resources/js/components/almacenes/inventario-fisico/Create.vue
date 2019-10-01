@@ -52,7 +52,7 @@
                                                 v-validate="{required: true}"
                                                 class="form-control"
                                                 id="inventario"
-                                                v-model="inventario"
+                                                v-model="form.inventario"
                                                 :class="{'is-invalid': errors.has('inventario')}"
                                             >
                                                     <option value>-- % --</option>
@@ -86,19 +86,18 @@
             return {
                 cargando: false,
                 inventarios: [
-                    {id: 1, descripcion: '80%'},
-                    {id: 2, descripcion: '60%'},
-                    {id: 3, descripcion: '40%'},
-                    {id: 4, descripcion: '20%'},
-                    {id: 5, descripcion: '10%'}
+                    {id: 100, descripcion: '80%'},
+                    {id: 75, descripcion: '60%'},
+                    {id: 50, descripcion: '40%'},
+                    {id: 25, descripcion: '20%'},
+                    {id: 12, descripcion: '10%'}
                 ],
-                id_tipo:'',
                 tipos: {
                     1: "Conteo Total",
                     2: "Conteo Aleatorio"
                 },
-                inventario:'',
-                usuario:''
+                id_tipo:'',
+                form: {inventario:''}
             }
         },
         mounted(){
@@ -107,15 +106,32 @@
             init() {
                 $(this.$refs.modal).modal('show');
                 this.cargando = false;
+                this.id_tipo='';
+                this.form.inventario='';
+
             },
             store() {
+                if(this.id_tipo==1){
                 return this.$store.dispatch('almacenes/inventario-fisico/store', this.dato)
                     .then(data => {
                         this.$emit('created', data);
                     }).finally( ()=>{
                         this.cargando = false;
+                        $(this.$refs.modal).modal('hide');
                     });
-            },
+                    console.log(this.id_tipo)
+                }else{
+                    return this.$store.dispatch('almacenes/inventario-fisico/store', this.form)
+                        .then(data => {
+                            this.$emit('created', data);
+                        }).finally( ()=>{
+                            this.cargando = false;
+                            $(this.$refs.modal).modal('hide');
+                        });
+                }
+
+
+        },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
