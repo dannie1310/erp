@@ -62,7 +62,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="marbete && barcodeValue">
+                            <div class="row" v-if="marbete && barcodeValue && tipoConteo">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="tipo_conteo" class="col-sm-3 col-form-label">Numero de Conteo: </label>
@@ -70,12 +70,12 @@
                                             <input
                                                     type="text"
                                                     name="tipo_conteo"
-                                                    data-vv-as="Tiempo Conteo"
+                                                    data-vv-as="Tipo Conteo"
                                                     v-validate="{required: false}"
                                                     class="form-control"
                                                     id="tipo_conteo"
-                                                    placeholder="dato.tipo_conteo"
-                                                    v-model="dato.tipo_conteo"
+                                                    placeholder="Tipo Conteo"
+                                                    v-model="tipoConteo.descripcion"
                                                     :class="{'is-invalid': errors.has('tipo_conteo')}"
                                                     :disabled="true">
                                             <div class="invalid-feedback" v-show="errors.has('tipo_conteo')">{{ errors.first('tipo_conteo') }}</div>
@@ -188,10 +188,6 @@
                 }
             }
         },
-        mounted(){
-            this.getConteo();
-            this.$refs.barcodeValue.focus();
-        },
         methods:{
             findCodigo() {
                 var marbete = this.barcodeValue.split("C");
@@ -208,8 +204,14 @@
                         params: {}
                     }).then(data => {
                         this.$store.commit('almacenes/marbete/SET_MARBETE', data);
-                        this.$nextTick(() => this.$refs.input.focus());
-                    })
+                        return this.$store.dispatch('almacenes/ctg-tipo-conteo/find', {
+                            id: marbete[1],
+                            params: {}
+                        }).then(data => {
+                            this.$store.commit('almacenes/ctg-tipo-conteo/SET_CONTEO', data);
+                        });
+                    });
+                    this.$nextTick(() => this.$refs.input.focus());
                 }
             },
             cerrar(){
@@ -296,6 +298,9 @@
             marbete() {
                 return this.$store.getters['almacenes/marbete/currentMarbete'];
             },
+            tipoConteo() {
+                return this.$store.getters['almacenes/ctg-tipo-conteo/currentConteo'];
+            }
         }
     }
 </script>

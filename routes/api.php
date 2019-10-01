@@ -176,6 +176,7 @@ $api->version('v1', function ($api) {
         //CATÁLOGO CONTEO TIPO
         $api->group(['prefix' => 'tipo-conteo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Almacenes\CtgTipoConteoController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\CtgTipoConteoController@show')->where(['id' => '[0-9]+']);
         });
 
 
