@@ -5,7 +5,7 @@
             <i class="fa fa-barcode" v-else></i>
             Registrar con Código de Barras
         </button>
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -41,7 +41,7 @@
                            </div>
                             <form role="form" @submit.prevent="validate">
 
-                            <div class="row" v-if="marbete && barcodeValue">
+                            <div class="row" v-if="marbete && barcodeValue && tipoConteo">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="id_marbete" class="col-sm-3 col-form-label">Marbete: </label>
@@ -83,7 +83,7 @@
                                     </div>
                                 </div>
                             </div>
-                             <div class="row" v-if="marbete && barcodeValue">
+                             <div class="row" v-if="marbete && barcodeValue && tipoConteo">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="cantidad_nuevo" class="col-sm-3 col-form-label">Nuevos: </label>
@@ -106,7 +106,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="marbete && barcodeValue">
+                            <div class="row" v-if="marbete && barcodeValue && tipoConteo">
                                 <div class="col-md-12" v-if="checkedMostrar">
                                     <div class="form-group row error-content">
                                         <label for="cantidad_usados" class="col-sm-3 col-form-label">Usados: </label>
@@ -150,8 +150,8 @@
                             </div>
                              <label for="seguir" @click="foco">Captura Continua</label>
                             <input type="checkbox" id="seguir" value="seguir" v-model="seguir"  @click="foco">
-                             <label for="mostrar" v-if="marbete && barcodeValue"  @click="foco">Más información</label>
-                            <input type="checkbox" id="mostrar" value="mostrar" v-model="checkedMostrar" v-if="marbete && barcodeValue"  @click="foco">
+                             <label for="mostrar" v-if="marbete && barcodeValue && tipoConteo"  @click="foco">Más información</label>
+                            <input type="checkbox" id="mostrar" value="mostrar" v-model="checkedMostrar" v-if="marbete && barcodeValue && tipoConteo"  @click="foco">
                             </form>
 
                         </div>
@@ -208,10 +208,10 @@
                             id: marbete[1],
                             params: {}
                         }).then(data => {
+                            this.$nextTick(() => this.$refs.input.focus());
                             this.$store.commit('almacenes/ctg-tipo-conteo/SET_CONTEO', data);
                         });
                     });
-                    this.$nextTick(() => this.$refs.input.focus());
                 }
             },
             cerrar(){
@@ -226,7 +226,6 @@
                 }
             },
             init() {
-                $(this.$refs.modal).modal('show');
                 this.cargando = true;
                 this.barcodeValue='';
                 this.checkedMostrar=false;
@@ -239,6 +238,7 @@
                 this.$validator.reset();
                 this.cargando = false;
                 this.$refs.barcodeValue.focus();
+                $(this.$refs.modal).modal('show');
             },
             getConteo(){
                 this.conteos = [];
