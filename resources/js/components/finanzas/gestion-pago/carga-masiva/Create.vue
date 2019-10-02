@@ -89,6 +89,7 @@
                                                                 <td>{{pago.referencia_pago}}</td>
                                                                 <td>{{pago.tipo_cambio}}</td>
                                                                 <td>{{pago.monto_pagado}}</td>
+                                                                <td>{{pago.validar_monto}}</td>
                                                                 <td v-if="pago.cuenta_encontrada">true</td>
                                                                 <td v-else> false</td>
                                                                 <td>{{pago.pago_a_generar}}</td>

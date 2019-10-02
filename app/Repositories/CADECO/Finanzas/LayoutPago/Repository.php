@@ -145,14 +145,14 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function getAmount($money)
     {
         $cleanString = preg_replace('/([^0-9\.,])/i', '', $money);
-        $onlyNumbersString = preg_replace('/([^0-9])/i', '', $money);
+        /*$onlyNumbersString = preg_replace('/([^0-9])/i', '', $money);
 
         $separatorsCountToBeErased = strlen($cleanString) - strlen($onlyNumbersString) - 1;
 
         $stringWithCommaOrDot = preg_replace('/([,\.])/', '', $cleanString, $separatorsCountToBeErased);
-        $removedThousendSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '',  $stringWithCommaOrDot);
+        $removedThousendSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '',  $stringWithCommaOrDot);*/
 
-        return (float) str_replace(',', '.', $removedThousendSeparator);
+        return (float) str_replace(',', '.', $cleanString);
     }
 
     public function resumenLayout($data)
@@ -241,16 +241,14 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function validarMontos($monto_factura, $monto_pago)
     {
-        if($monto_factura != 0 && $monto_factura < $monto_pago)
+        if($monto_pago == 0.0 || ($monto_factura+1 <= $monto_pago || $monto_factura-1 <= $monto_pago))
         {
-            if($monto_factura+1 >= $monto_pago || $monto_factura-1 >= $monto_pago)
-            {
-                return true;
-            }
-
             return false;
         }
-        return true;
+        else
+        {
+            return true;
+        }
     }
 
     public function validarRegistroPrevio($transaccion)

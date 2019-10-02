@@ -17,7 +17,6 @@ class Factura extends Transaccion
 
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 65)
-                //->where('opciones', '=', 0)
                 ->where('estado', '!=', -2);
         });
     }
