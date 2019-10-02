@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\Finanzas;
 
 
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class LayoutPago extends Model
@@ -19,11 +20,20 @@ class LayoutPago extends Model
 
     public function partidas()
     {
-        return $this->hasMany(LayoutPagoPartida::class, 'i_layout_pagos', 'id');
+        return $this->hasMany(LayoutPagoPartida::class, 'id_layout_pagos', 'id');
     }
 
-    public function estado()
+    public function Ctgestado()
     {
-        return $this->belongsTo(CtgEstadoLayoutPago::class, 'estado', 'estado');
+        return $this->belongsTo(CtgEstadoLayoutPago::class, 'estado', 'id');
     }
+
+    public function usuarioCarga(){
+        return $this->belongsTo(Usuario::class, 'id_usuario_carga', 'idusuario');
+    }
+
+    public function usuarioAutorizo(){
+        return $this->belongsTo(Usuario::class, 'id_usuario_autorizo', 'idusuario');
+    }
+
 }

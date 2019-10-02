@@ -9,12 +9,27 @@
 namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
-use App\Http\Transformers\CADECO\TransaccionTransformer;
-use App\Models\CADECO\Transaccion;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Models\CADECO\Factura;
+use League\Fractal\TransformerAbstract;
 
-class FacturaTransformer extends TransaccionTransformer
+class FacturaTransformer extends TransformerAbstract
 {
-    public function transform(Transaccion $model) {
+    protected $availableIncludes = [
+        'empresa'
+    ];
+    public function transform(Factura $model) {
            return $model->toArray();
+    }
+
+    /**
+     * @param Factura $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEmpresa(Factura $model) {
+        if ($empresa = $model->empresa) {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
     }
 }

@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use League\Fractal\TransformerAbstract;
 
@@ -20,7 +21,10 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'partidas'
+        'partidas',
+        'estado',
+        'usuario_carga',
+        'usuario_autorizo'
     ];
 
     /**
@@ -36,8 +40,52 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'fecha_registro' => date('Y-m-d H:i:s', strtotime($model->fecha_hora_carga)),
-            'estado' => $model->estado,
+            'fecha_hora_carga' => date('Y-m-d H:i', strtotime($model->fecha_hora_carga)),
+            'monto_layout_pagos' => '$ ' . number_format($model->monto_layout_pagos,2),
+            'nombre_layout_pagos' => $model->nombre_layout_pagos,
+            'fecha_hora_autorizo' =>$model->fecha_hora_autorizo ? date('Y-m-d H:i', strtotime($model->fecha_hora_carga)): null
         ];
+    }
+
+    /**
+     * @param LayoutPago $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEstado(LayoutPago $model){
+        if($estado = $model->Ctgestado){
+            return $this->item($estado, new CtgEstadoLayoutPagoTransformer);
+        }
+        return null;
+    }
+    /**
+     * @param LayoutPago $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(LayoutPago $model){
+        if($partidas = $model->partidas){
+            return $this->collection($partidas, new LayoutPagoPartidaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param LayoutPago $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuarioCarga(LayoutPago $model){
+        if($usuario_carga = $model->usuarioCarga){
+            return $this->item($usuario_carga, new UsuarioTransformer);
+        }
+        return null;
+    }
+    /**
+     * @param LayoutPago $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuarioAutorizo(LayoutPago $model){
+        if($usuario_autorizo = $model->usuarioAutorizo){
+            return $this->item($usuario_autorizo, new UsuarioTransformer);
+        }
+        return null;
     }
 }

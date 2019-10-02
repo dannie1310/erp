@@ -24,6 +24,10 @@ class CargaLayoutPagoService
         $this->repository = new Repository($model);
     }
 
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
     public function paginate($data)
     {
         return $this->repository->paginate($data);

@@ -4,58 +4,56 @@
             <div class="invoice p-3 mb-3">
                 <div class="row">
                     <div class="col-12">
-                        <h4> <i class="fa fa-list-alt"></i> DISPERSIÓN DE RECURSOS AUTORIZADOS DE LA REMESA </h4>
+                        <h4> <i class="fa fa-list-alt"></i> DISPERSIÓN DE LAYOUT DE PAGOS </h4>
                     </div>
                 </div>
-<!--                <div v-if="true" class="row">-->
-                <div class="row">
+                <div v-if="layout" class="row">
                     <div class="table-responsive col-12">
                         <table class="table table-striped">
                             <tbody>
                             <tr>
-                                <td colspan="2" class="bg-gray-light">
+                                <td class="bg-gray-light">
                                     <b>Folio Dispersión:</b>
                                 </td>
-                                <td colspan="2" class="bg-gray-light">
-                                    folio
+                                <td class="bg-gray-light">
+                                    {{layout.id}}
                                 </td>
 
                                 <td class="bg-gray-light">
-                                    <b>Monto Total de Remesa:</b>
+                                    <b>Monto Layout:</b>
                                 </td>
                                 <td class="bg-gray-light text-right">
-                                    monto
+                                    {{layout.monto_layout_pagos}}
                                 </td>
-                                <td class="bg-gray-light"><b>Estado:</b><br> </td>
-                                <td class="bg-gray-light">estado</td>
+                                <td class="bg-gray-light" colspan="2"><b>Estado:</b><br> </td>
+                                <td class="bg-gray-light">{{layout.estado.descripcion}}</td>
                             </tr>
                             <tr>
                                 <td colspan="2" class="bg-gray-light">
                                     <b>Registró:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
-                                    usuario
+                                    {{layout.usuario_carga.nombre}}
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
                                     <b>Fecha de Registro:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
-                                    fecha
+                                    {{layout.fecha_hora_carga}}
                                 </td>
                             </tr>
-<!--                            <tr v-if="true">-->
-                            <tr>
+                            <tr v-if="layout.usuario_autorizo">
                                 <td colspan="2" class="bg-gray-light">
                                     <b>Autorizó:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
-                                    usuario
+                                    {{layout.usuario_autorizo.nombre}}
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
                                     <b>Fecha de Autorización:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
-                                    fecha
+                                    {{layout.fecha_hora_autorizo}}
                                 </td>
                             </tr>
                             </tbody>
@@ -64,8 +62,7 @@
 
                 </div>
                 <h5><i class="fa fa-list" style="padding-right: 3px"></i>Partidas de la Dispersión</h5>
-<!--                <div v-if="true" class="row">-->
-                <div class="row">
+                <div v-if="layout" class="row">
                     <div  class="col-12 table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -73,27 +70,30 @@
                                 <th>#</th>
                                 <th>Concepto</th>
                                 <th>Beneficiario</th>
-                                <th>Importe Pesos</th>
+                                <th>Importe Documento</th>
                                 <th>Cuenta Cargo</th>
                                 <th>Fecha Pago</th>
                                 <th>Tipo Cambio</th>
-                                <th>Monto Pago</th>
+                                <th>Importe Pagado</th>
                                 <th>Referencia Pago</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>index</td>
-                                <td>concepto</td>
-                                <td>empresa</td>
-                                <td>importe monto_trance</td>
-                                <td>cuenta cargo</td>
-                                <td>fecha pago</td>
-                                <td>tipo cambio</td>
-                                <td>monto pago</td>
-                                <td>referencia pago</td>
-                                <td>estado</td>
+                            <tr v-for="(doc, i) in layout.partidas.data">
+                                <td>{{i+1}}</td>
+                                <td v-if="doc.factura">{{doc.factura.observaciones}}</td>
+                                <td v-else-if="doc.solicitud_pago_anticipado">{{doc.solicitud_pago_anticipado.observaciones}}</td>
+                                <td v-if="doc.factura">{{doc.factura.empresa.razon_social}}</td>
+                                <td v-else-if="doc.solicitud_pago_anticipado">{{doc.solicitud_pago_anticipado.empresa.razon_social}}</td>
+                                <td>{{doc.monto_transaccion_format}}</td>
+                                <td>{{doc.cuenta_cargo}}</td>
+                                <td>{{doc.fecha_pago}}</td>
+                                <td>{{doc.tipo_cambio}}</td>
+                                <td>{{doc.monto_pagado_format}}</td>
+                                <td>{{doc.referencia_pago}}</td>
+                                <td v-if="doc.id_transaccion_pago"><small class="badge-primary">Aplicado</small></td>
+                                <td v-else><small class="badge-success">Pagado</small></td>
                             </tr>
                             </tbody>
                         </table>
@@ -106,7 +106,41 @@
 
 <script>
     export default {
-        name: "pago-masivo-show"
+        name: "pago-masivo-show",
+        props: ['id'],
+        data() {
+            return {
+                cargando: false,
+            }
+        },
+        mounted() {
+            this.$Progress.start();
+            this.find()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
+        },
+        methods: {
+            find() {
+                this.cargando = true;
+                this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', null);
+                return this.$store.dispatch('finanzas/carga-masiva-pago/find', {
+                    id: this.id,
+                    params: {
+                        include: ['partidas.solicitud_pago_anticipado.empresa','partidas.factura.empresa','usuario_carga','usuario_autorizo','estado','partidas.moneda'],
+                    }
+                }).then(data => {
+                    this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', data);
+                }) .finally(() => {
+                    this.cargando = false;
+                })
+            }
+        },
+        computed: {
+            layout() {
+                return this.$store.getters['finanzas/carga-masiva-pago/currentLayout']
+            }
+        }
     }
 </script>
 
