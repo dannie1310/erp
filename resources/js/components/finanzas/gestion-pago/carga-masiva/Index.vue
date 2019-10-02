@@ -22,7 +22,6 @@
         <!-- /.col -->
     </div>
 </template>
-
 <script>
     import Create from './Create';
     export default {
@@ -35,11 +34,8 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Beneficiario', field: 'id_empresa', thComp:require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Cuenta', field: 'id_cuenta',  thComp:require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Concepto', field: 'observaciones',  thComp:require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Importe', field: 'monto', sortable: true},
-                    { title: 'Moneda', field: 'id_moneda',  thComp:require('../../../globals/th-Filter'), sortable: true },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],
                 data: [],
                 total: 0,
@@ -48,7 +44,6 @@
                 cargando: false,
             }
         },
-
         mounted() {
             this.$Progress.start();
             this.paginate()
@@ -56,7 +51,6 @@
                     this.$Progress.finish();
                 })
         },
-
         methods: {
             create() {
                 this.$router.push({name: 'carga-masiva-create'});
@@ -74,7 +68,7 @@
             },
         },
         computed: {
-           layouts(){
+            layouts(){
                 return this.$store.getters['finanzas/carga-masiva-pago/layouts'];
             },
             meta(){
@@ -92,16 +86,17 @@
                     layouts.forEach(function (layout, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-
+                            fecha: layout.fecha_registro,
+                            buttons: $.extend({}, {
+                                id: layout.id,
+                                autorizar: true,
+                                show: true
+                            })
                         })
-
                     });
-
                 },
                 deep: true
             },
-
-
             meta: {
                 handler(meta) {
                     let total = meta.pagination.total
@@ -124,7 +119,6 @@
                     this.query.search = val;
                     this.query.offset = 0;
                     this.paginate();
-
                 }, 500);
             },
             cargando(val) {
