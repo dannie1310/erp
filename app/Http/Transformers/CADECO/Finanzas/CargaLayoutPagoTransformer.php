@@ -23,7 +23,7 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'partidas',
         'estado',
-        'usuario_carga',
+        'usuario',
         'usuario_autorizo'
     ];
 
@@ -52,7 +52,7 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
      * @return \League\Fractal\Resource\Item|null
      */
     public function includeEstado(LayoutPago $model){
-        if($estado = $model->Ctgestado){
+        if($estado = $model->estadoLayout){
             return $this->item($estado, new CtgEstadoLayoutPagoTransformer);
         }
         return null;
@@ -72,9 +72,9 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
      * @param LayoutPago $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeUsuarioCarga(LayoutPago $model){
-        if($usuario_carga = $model->usuarioCarga){
-            return $this->item($usuario_carga, new UsuarioTransformer);
+    public function includeUsuario(LayoutPago $model){
+        if($usuario = $model->usuario){
+            return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }

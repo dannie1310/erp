@@ -4,7 +4,7 @@
             <div class="invoice p-3 mb-3">
                 <div class="row">
                     <div class="col-12">
-                        <h4> <i class="fa fa-list-alt"></i> DISPERSIÓN DE LAYOUT DE PAGOS </h4>
+                        <h4> <i class="fa fa-list-alt"></i> CARGA MASIVA DE LAYOUT DE PAGOS </h4>
                     </div>
                 </div>
                 <div v-if="layout" class="row">
@@ -13,7 +13,7 @@
                             <tbody>
                             <tr>
                                 <td class="bg-gray-light">
-                                    <b>Folio Dispersión:</b>
+                                    <b>Folio:</b>
                                 </td>
                                 <td class="bg-gray-light">
                                     {{layout.id}}
@@ -33,7 +33,7 @@
                                     <b>Registró:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
-                                    {{layout.usuario_carga.nombre}}
+                                    {{layout.usuario.nombre}}
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
                                     <b>Fecha de Registro:</b>
@@ -61,7 +61,7 @@
                     </div>
 
                 </div>
-                <h5><i class="fa fa-list" style="padding-right: 3px"></i>Partidas de la Dispersión</h5>
+                <h5><i class="fa fa-list" style="padding-right: 3px"></i>Partidas de la Carga de layout</h5>
                 <div v-if="layout" class="row">
                     <div  class="col-12 table-responsive">
                         <table class="table table-striped">
@@ -127,7 +127,7 @@
                 return this.$store.dispatch('finanzas/carga-masiva-pago/find', {
                     id: this.id,
                     params: {
-                        include: ['partidas.solicitud_pago_anticipado.empresa','partidas.factura.empresa','usuario_carga','usuario_autorizo','estado','partidas.moneda'],
+                        include: ['partidas.solicitud_pago_anticipado.empresa','partidas.factura.empresa','usuario','usuario_autorizo','estado','partidas.moneda'],
                     }
                 }).then(data => {
                     this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', data);

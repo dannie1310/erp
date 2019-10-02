@@ -23,17 +23,17 @@ class LayoutPago extends Model
         return $this->hasMany(LayoutPagoPartida::class, 'id_layout_pagos', 'id');
     }
 
-    public function Ctgestado()
+    public function estadoLayout()
     {
-        return $this->belongsTo(CtgEstadoLayoutPago::class, 'estado', 'id');
+        return $this->hasOne(CtgEstadoLayoutPago::class, 'estado' );
     }
-
-    public function usuarioCarga(){
-        return $this->belongsTo(Usuario::class, 'id_usuario_carga', 'idusuario');
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class,'id_usuario_carga', 'idusuario');
     }
-
-    public function usuarioAutorizo(){
-        return $this->belongsTo(Usuario::class, 'id_usuario_autorizo', 'idusuario');
+    public  function usuarioAutorizo()
+    {
+        return $this->belongsTo(Usuario::class,'id_usuario_autorizo','idusuario');
     }
 
 }
