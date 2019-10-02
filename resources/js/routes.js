@@ -962,6 +962,17 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'registro-pago',
+                        name: 'gestion-registro-pago',
+                        component: require('./components/finanzas/gestion-pago/pago/RegistrarPago'),
+                        meta: {
+                            title: 'Registrar Pagos',
+                            breadcrumb: {name: 'REGISTRAR PAGOS', parent: 'pago'},
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
                         path: 'carga-masiva',
                         name: 'carga-masiva',
                         component: require('./components/finanzas/gestion-pago/carga-masiva/Index'),
