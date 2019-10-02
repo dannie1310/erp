@@ -12,7 +12,7 @@ namespace App\Models\CADECO;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
 
-class SolicitudPagoAnticipado extends Transaccion
+class SolicitudPagoAnticipado extends Solicitud
 {
     public const TIPO_ANTECEDENTE = null;
 
@@ -43,8 +43,7 @@ class SolicitudPagoAnticipado extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 72)
-                ->where('opciones', '=', 327681);
+            return $query->where('opciones', '=', 327681);
         });
     }
 

@@ -14,7 +14,7 @@ use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Factura;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
 use App\Models\CADECO\OrdenPago;
-use App\Models\CADECO\SolicitudPagoAnticipado;
+use App\Models\CADECO\Solicitud;
 use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 
@@ -47,7 +47,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 $cuentas = [];
                 $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->get();
                 $factura = Factura::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
-                $solicitud = SolicitudPagoAnticipado::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
+                $solicitud = Solicitud::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
 
                 if($cta_cargo->toArray() == [])
                 {
