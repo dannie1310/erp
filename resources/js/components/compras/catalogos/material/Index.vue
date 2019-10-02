@@ -20,17 +20,18 @@
 </template>
 
 <script>
-    // import Create from "./Create";
+    import Create from "./Create";
     export default {
          name: "material-index",
-        // components:{Create},
+        components:{Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Familia', field: 'tipo_material',sortable: true},
+                    { title: 'Material', field: 'tipo_material',sortable: true},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'Unidad', field: 'unidad', sortable: true},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
@@ -51,10 +52,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/familia/paginate', { params: this.query})
+                return this.$store.dispatch('compras/material-familia/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('cadeco/familia/SET_FAMILIAS', data.data);
-                        this.$store.commit('cadeco/familia/SET_META', data.meta);
+                        this.$store.commit('compras/material-familia/SET_MATERIALES', data.data);
+                        this.$store.commit('compras/material-familia/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -62,26 +63,27 @@
             }
         },
         computed: {
-            familias(){
-                return this.$store.getters['cadeco/familia/familias'];
+            materiales(){
+                return this.$store.getters['compras/material-familia/materiales'];
             },
             meta(){
-                return this.$store.getters['cadeco/familia/meta'];
+                return this.$store.getters['compras/material-familia/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            familias: {
-                handler(familias) {
+            materiales: {
+                handler(materiales) {
                     let self = this
                     self.$data.data = []
-                    familias.forEach(function (familia, i) {
+                    materiales.forEach(function (material, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            tipo_material: familia.tipo_material_descripcion,
-                            descripcion: familia.descripcion,
+                            tipo_material: material.tipo_material_descripcion,
+                            descripcion: material.descripcion,
+                            unidad: material.unidad,
                         })
                     });
                 },

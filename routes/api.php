@@ -81,6 +81,7 @@ $api->version('v1', function ($api) {
             $api->post('/','App\Http\Controllers\v1\CADECO\FamiliaController@store');
         });
 
+
         // FONDOS
         $api->group(['prefix' =>  'fondo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\FondoController@index');
@@ -369,6 +370,13 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-orden-compra', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@pdfOrdenCompra')->where(['id' => '[0-9]+']);
         });
 
+        // MATERIALES
+        $api->group(['prefix' => 'material'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\MaterialController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\MaterialController@paginate');
+            $api->get('{id}','App\Http\Controllers\v1\CADECO\Compras\MaterialController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\Compras\MaterialController@store');
+        });
 
         // SOLICITUD DE COMPRA
         $api->group(['prefix' => 'solicitud-compra'], function ($api) {
