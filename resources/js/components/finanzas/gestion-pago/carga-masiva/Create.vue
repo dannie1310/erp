@@ -19,13 +19,13 @@
                                         <input type="file" class="form-control" id="carga_layout"
                                                @change="onFileChange"
                                                row="3"
-                                               v-validate="{ ext: ['csv']}"
+                                               v-validate="{ ext: ['csv','xlsx']}"
                                                name="carga_layout"
                                                data-vv-as="Layout"
                                                ref="carga_layout"
                                                :class="{'is-invalid': errors.has('carga_layout')}"
                                         >
-                                        <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (txt)</div>
+                                        <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv)</div>
                                     </div>
                                 </div>
                             </div>
@@ -89,9 +89,11 @@
                                                                 <td>{{pago.referencia_pago}}</td>
                                                                 <td>{{pago.tipo_cambio}}</td>
                                                                 <td>{{pago.monto_pagado}}</td>
+                                                                <td v-if="pago.cuenta_encontrada">true</td>
+                                                                <td v-else> false</td>
                                                                 <td>{{pago.pago_a_generar}}</td>
                                                                <td class="text-center">
-                                                                    <small class="badge" :class="{'badge-danger': pago.estado.estado == 0, 'badge-warning': pago.estado.estado != 1,  'badge-success': pago.estado.estado == 1}">
+                                                                    <small class="badge" :class="{'badge-danger': pago.estado.estado == 0, 'badge-warning': pago.estado.estado == 2,  'badge-success': pago.estado.estado == 1, 'badge-info': pago.estado.estado == -1}">
                                                                         {{ pago.estado.descripcion }}
                                                                     </small>
                                                                 </td>
