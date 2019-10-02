@@ -10,7 +10,8 @@ namespace App\Services\CADECO\Finanzas;
 
 
 use App\Models\CADECO\Finanzas\LayoutPago;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Finanzas\LayoutPago\Repository;
+
 
 class CargaLayoutPagoService
 {
@@ -27,5 +28,10 @@ class CargaLayoutPagoService
     public function paginate($data)
     {
         return $this->repository->paginate($data);
+    }
+
+    public function validarLayout($pagos)
+    {
+        return $this->repository->validarLayout($pagos);
     }
 }
