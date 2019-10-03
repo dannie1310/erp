@@ -17,8 +17,8 @@
         name: "familia-select",
         props: ['value', 'error', 'placeholder'],
         data() {
-            return {
-                val: null
+            return { val: null
+
             }
         },
         methods: {
@@ -26,20 +26,39 @@
                 return this.$store.dispatch('cadeco/familia/index', {
                     params: {
                         search: searchQuery,
-                        scope: 'material:1',
+                        scope: 'tipo:1',
                         limit: 15,
-                        sort: 'nivel',
-                        order: 'DESC'
+                        sort: 'id_material',
+                        order: 'ASC'
                     }
                 })
                     .then(data => {
-                        const options = data.map(i => ({
+
+                        const options = data.data.map(i => ({
                             id: i.id,
-                            label: i.folio_marbete
+                            label: i.descripcion
                         }))
                         callback(null, options)
                     })
             }
+            // loadOptions({ action, searchQuery, callback }) {
+            //     return this.$store.dispatch('almacenes/marbete/index', {
+            //         params: {
+            //             search: searchQuery,
+            //             scope: 'inventarioAbierto',
+            //             limit: 15,
+            //             sort: 'folio',
+            //             order: 'ASC'
+            //         }
+            //     })
+            //         .then(data => {
+            //             const options = data.map(i => ({
+            //                 id: i.id,
+            //                 label: i.folio_marbete
+            //             }))
+            //             callback(null, options)
+            //         })
+            // }
         },
 
         watch: {

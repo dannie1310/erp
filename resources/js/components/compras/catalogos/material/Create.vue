@@ -9,7 +9,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR FAMILIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR MATERIAL</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -19,17 +19,17 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="tipo" class="col-sm-2 col-form-label">Tipo: </label>
+                                        <label for="tipo" class="col-sm-2 col-form-label">Material: </label>
                                         <div class="col-sm-10">
-<!--                                            <FamiliaSelect-->
-<!--                                                    name="id_marbete"-->
-<!--                                                    id="id_marbete"-->
-<!--                                                    data-vv-as="Número de Marbete"-->
-<!--                                                    v-validate="{required: true}"-->
-<!--                                                    v-model="dato.id_marbete"-->
-<!--                                                    :class="{'is-invalid': errors.has('id_marbete')}">-->
+                                            <FamiliaSelect
+                                                    name="tipo"
+                                                    id="tipo"
+                                                    data-vv-as="Material"
+                                                    v-validate="{required: true}"
+                                                    v-model="dato.tipo"
+                                                    :class="{'is-invalid': errors.has('tipo')}">
 
-<!--                                            </FamiliaSelect>-->
+                                            </FamiliaSelect>
                                             <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                                         </div>
                                     </div>
@@ -41,7 +41,7 @@
                                         <label for="descripcion" class="col-sm-2 col-form-label">Descripción:</label>
                                         <div class="col-sm-10">
                                             <input
-                                                :disabled="!tipo"
+                                                :disabled="!dato.tipo"
                                                 type="text"
                                                 name="descripcion"
                                                 data-vv-as="Descripcion"
@@ -49,13 +49,36 @@
                                                 class="form-control"
                                                 id="descripcion"
                                                 placeholder="Descripcion"
-                                                v-model="descripcion"
+                                                v-model="dato.descripcion"
                                                 :class="{'is-invalid': errors.has('descripcion')}">
                                             <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+<!--                             <div class="row">-->
+<!--                                <div class="col-md-12">-->
+<!--                                    <div class="form-group row error-content">-->
+<!--                                        <label for="unidad" class="col-sm-2 col-form-label">Unidad: </label>-->
+<!--                                        <div class="col-sm-3">-->
+<!--                                            <select-->
+<!--                                                type="text"-->
+<!--                                                name="unidad"-->
+<!--                                                data-vv-as="Unidad"-->
+<!--                                                v-validate="{required: true}"-->
+<!--                                                class="form-control"-->
+<!--                                                id="unidad"-->
+<!--                                                v-model="unidad"-->
+<!--                                                :class="{'is-invalid': errors.has('unidad')}"-->
+<!--                                            >-->
+<!--                                                    <option value>&#45;&#45; Seleccione un Unidad &#45;&#45;</option>-->
+<!--                                                    <option v-for="unidad in unidades" :value="unidad.id">{{ unidad.descripcion }}</option>-->
+<!--                                            </select>-->
+<!--                                            <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </div>
                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -76,12 +99,11 @@
         data() {
                 return {
                     cargando:false,
-                    tipos: [
-                        {id: 1, descripcion: 'Materiales'},
-                        {id: 4, descripcion: 'Herramienta y Equipo'}
-                    ],
-                    tipo:'',
-                    descripcion:''
+                    dato: {
+                        tipo: '',
+                        descripcion: ''
+
+                    }
                 }
         },
         methods: {
