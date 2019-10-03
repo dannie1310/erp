@@ -22,7 +22,7 @@ class StoreCargaLayoutPagoRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('registrar_distribucion_recursos_remesa');
+        return auth()->user()->can('registrar_carga_layout_pago');
     }
 
     /**

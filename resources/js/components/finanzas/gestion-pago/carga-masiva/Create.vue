@@ -164,8 +164,6 @@
 </template>
 
 <script>
-    import pago from "../../../../store/modules/finanzas/pago";
-
     export default {
         name: "carga-masiva-create",
         data() {

@@ -972,7 +972,7 @@ export const routes = [
                                 name: 'CARGA MASIVA'
                             },
                             middleware: [auth, context, permission],
-                            permission: 'cargar_distribucion_recursos_remesa'
+                            permission: 'consultar_carga_layout_pago'
                         }
                     },
                     {
@@ -983,7 +983,7 @@ export const routes = [
                             title: 'Registrar Carga Masiva de Pagos',
                             breadcrumb: {name: 'REGISTRAR CARGA MASIVA DE PAGOS', parent: 'carga-masiva'},
                             middleware: [auth, context, permission],
-                            permission: 'cargar_distribucion_recursos_remesa'
+                            permission: 'registrar_carga_layout_pago'
                         }
                     },
                 ]
