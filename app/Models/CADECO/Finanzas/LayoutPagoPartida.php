@@ -16,6 +16,7 @@ use App\Models\CADECO\PagoACuenta;
 use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class LayoutPagoPartida extends Model
@@ -23,6 +24,26 @@ class LayoutPagoPartida extends Model
     protected $connection = 'cadeco';
     protected $table = 'Finanzas.layout_pagos_partidas';
     public $timestamps = false;
+
+    protected $fillable = [
+        'id_layout_pagos',
+        'id_transaccion',
+        'monto_transaccion',
+        'id_moneda',
+        'tipo_cambio',
+        'cuenta_cargo',
+        'id_cuenta_cargo',
+        'fecha_pago',
+        'monto_pagado',
+        'referencia_pago',
+        'id_documento_remesa',
+        'id_transaccion_pago'
+    ];
+
+    public function layoutPago()
+    {
+        return $this->belongsTo(LayoutPago::class, 'id_layout_pagos', 'id');
+    }
 
     public function factura()
     {
@@ -57,5 +78,16 @@ class LayoutPagoPartida extends Model
     public function moneda()
     {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function validarRegistro()
+    {
+        if($this->id_cuenta_cargo == null && $this->id_transaccion_pago == NULL){
+            abort(403, 'No selecciono la cuenta cargo.');
+        }
+
+        if($this->monto_pagado == 0){
+            abort(403, 'El monto pagado no debe ser cero.');
+        }
     }
 }

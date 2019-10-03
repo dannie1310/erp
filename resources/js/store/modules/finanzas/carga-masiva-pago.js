@@ -34,6 +34,81 @@ export default {
                     })
             });
         },
+        cargarLayout(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'layout', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        salir(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registro de Pagos con Carga Masiva",
+                    text: "¿Está seguro/a de que desea salir? Perderá los cambios no guardados.",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Salir',
+                            closeModal: true,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            resolve(null);
+                        }
+                    });
+            });
+        },
+        store(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Carga Masiva",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                }).then((value) => {
+                    if (value) {
+                        axios
+                            .post(URI, payload)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Carga Manual registrada correctamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            });
+                    }
+                });
+            });
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

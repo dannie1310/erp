@@ -523,6 +523,8 @@ $api->version('v1', function ($api) {
 
             $api->group(['prefix' => 'carga-masiva'], function ($api){
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@paginate');
+                $api->post('layout', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@presentaPagos');
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@show')->where(['id' => '[0-9]+']);
                 $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@autorizar')->where(['id' => '[0-9]+']);
 
