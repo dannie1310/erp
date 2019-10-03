@@ -253,7 +253,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function validarMontos($monto_factura, $monto_pago)
     {
-        if($monto_pago == 0.0 || ($monto_factura+1 <= $monto_pago || $monto_factura-1 <= $monto_pago))
+        if($monto_pago == 0.0 || ($monto_factura+1 <= $monto_pago || $monto_factura-1 >= $monto_pago))
         {
             return false;
         }
@@ -265,11 +265,14 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function validarRegistroPrevio($transaccion)
     {
-        if(LayoutPagoPartida::query()->where('id_transaccion', $transaccion)->first() != null)
+        $partida = LayoutPagoPartida::query()->where('id_transaccion', $transaccion)->first();
+        if($partida != null)
         {
-            return array(
-                'id' => 0, 'estado' => -1, 'descripcion' => 'Registrado Previamente'
-            );
+            if($partida->layoutPago()->where('estado', '!=', '-1')->first() != null) {
+                return array(
+                    'id' => 0, 'estado' => -1, 'descripcion' => 'Registrado Previamente'
+                );
+            }
         }
     }
 

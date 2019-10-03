@@ -39,6 +39,11 @@ class LayoutPagoPartida extends Model
         'id_transaccion_pago'
     ];
 
+    public function layoutPago()
+    {
+        return $this->belongsTo(LayoutPago::class, 'id_layout_pagos', 'id');
+    }
+
     public function factura()
     {
         return $this->belongsTo(Factura::class, 'id_transaccion', 'id_transaccion');
@@ -72,8 +77,12 @@ class LayoutPagoPartida extends Model
     public function validarRegistro()
     {
         if($this->id_cuenta_cargo == null && $this->id_transaccion_pago == NULL){
-            dd($this);
             abort(403, 'No selecciono la cuenta cargo.');
         }
+
+        if($this->monto_pagado == 0){
+            abort(403, 'El monto pagado no debe ser cero.');
+        }
+
     }
 }

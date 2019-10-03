@@ -14,7 +14,6 @@
                         <div class="modal-body">
                             <div class="row justify-content-between">
                                  <div class="col-md-8">
-                                     <label for="carga_layout" class="col-lg-12 col-form-label">Cargar Layout</label>
                                     <div class="col-lg-12">
                                         <input type="file" class="form-control" id="carga_layout"
                                                @change="onFileChange"
@@ -90,7 +89,22 @@
                                                                 </td>
                                                                 <td v-else></td>
                                                                 <td>{{pago.fecha_pago}}</td>
-                                                                <td>{{pago.referencia_pago}}</td>
+                                                                <td>
+                                                                    <div class="col-12">
+                                                                        <div class="form-group error-content">
+                                                                            <input
+                                                                                    type="text"
+                                                                                    data-vv-as="Referencia Pago"
+                                                                                    v-validate="{required: true}"
+                                                                                    class="form-control"
+                                                                                    :name="`referencia_pago[${i}]`"
+                                                                                    placeholder="Referencia Pago"
+                                                                                    v-model="pago.referencia_pago"
+                                                                                    :class="{'is-invalid': errors.has(`referencia_pago[${i}]`)}">
+                                                                            <div class="invalid-feedback" v-show="errors.has(`referencia_pago[${i}]`)">{{ errors.first(`referencia_pago[${i}]`) }}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
                                                                 <td>{{pago.tipo_cambio}}</td>
                                                                 <td v-if="pago.id_transaccion != null && pago.estado.estado != 2 && pago.estado.estado != -1">
                                                                     <div class="col-12">
@@ -99,14 +113,14 @@
                                                                                     type="number"
                                                                                     step="any"
                                                                                     data-vv-as="Monto Pagado"
-                                                                                    v-validate="{required: true, min_value:0.1, max_value: pago.monto_factura+1, decimal:3}"
+                                                                                    v-validate="{required: true, min_value:0.1, decimal:3}"
                                                                                     class="form-control"
                                                                                     :name="`monto_pagado[${i}]`"
                                                                                     placeholder="Monto Pagado"
                                                                                     v-model="pago.monto_pagado"
                                                                                     :class="{'is-invalid': errors.has(`monto_pagado[${i}]`)}">
                                                                             <div class="invalid-feedback" v-show="errors.has(`monto_pagado[${i}]`)">{{ errors.first(`monto_pagado[${i}]`) }}</div>
-                                                                            <div  v-if="pago.validar_monto == false" class="text-danger small">No corresponde con el monto de la transacción.</div>
+                                                                            <div  v-if="pago.validar_monto == false && pago.monto_pagado != pago.monto_factura" class="text-danger small">No corresponde con el monto de la transacción.</div>
                                                                         </div>
                                                                     </div>
                                                                </td>
