@@ -987,7 +987,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'autorizar',
+                        path: ':id',
                         name: 'autorizar-layout',
                         component: require('./components/finanzas/gestion-pago/carga-masiva/Autorizar'),
                         meta: {

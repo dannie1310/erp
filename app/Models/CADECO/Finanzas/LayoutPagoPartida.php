@@ -10,6 +10,7 @@ namespace App\Models\CADECO\Finanzas;
 
 
 use App\Models\CADECO\Factura;
+use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\PagoACuenta;
 use App\Models\CADECO\PagoVario;
@@ -25,12 +26,12 @@ class LayoutPagoPartida extends Model
 
     public function factura()
     {
-        return $this->belongsTo(Factura::class, 'id_transaccion_pago', 'id_transaccion');
+        return $this->belongsTo(Factura::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function solicitudPagoAnticipado()
     {
-        return $this->belongsTo(SolicitudPagoAnticipado::class, 'id_transaccion_pago', 'id_transaccion');
+        return $this->belongsTo(SolicitudPagoAnticipado::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function pago()
@@ -51,5 +52,10 @@ class LayoutPagoPartida extends Model
     public function documento()
     {
         return $this->belongsTo(Documento::class, 'id_documento_remesa', 'IDDocumento');
+    }
+
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 }

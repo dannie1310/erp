@@ -49,4 +49,9 @@ class CargaLayoutPagoController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
+
+    public function autorizar($data)
+    {
+        return $this->service->autorizar($data);
+    }
 }
