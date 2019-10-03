@@ -30,6 +30,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function paginate_especial($data)
     {
         $this->model = $this->model->select([
+            'Finanzas.cuentas_bancarias_empresas.id',
             'Finanzas.cuentas_bancarias_empresas.id_banco',
             'Finanzas.cuentas_bancarias_empresas.id_solicitud_origen_alta',
             'Finanzas.cuentas_bancarias_empresas.id_solicitud_origen_baja',
