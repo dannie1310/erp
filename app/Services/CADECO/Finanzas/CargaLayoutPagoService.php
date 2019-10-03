@@ -34,4 +34,15 @@ class CargaLayoutPagoService
     {
         return $this->repository->validarLayout($pagos);
     }
+
+    public function store(array $data)
+    {
+        $datos = [
+            'pagos' => $data['pagos'],
+            'resumen' => $data['resumen'],
+            'file_pagos' => $data['file_pagos'],
+            'nombre_archivo' => $data['file_pagos_name']
+        ];
+       return $this->repository->create($datos);
+    }
 }

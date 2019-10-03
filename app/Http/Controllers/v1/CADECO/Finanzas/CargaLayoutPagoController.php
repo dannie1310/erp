@@ -15,10 +15,13 @@ use App\Services\CADECO\Finanzas\CargaLayoutPagoService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
+use App\Http\Requests\Finanzas\StoreCargaLayoutPagoRequest;
 
 class CargaLayoutPagoController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        store as protected traitStore;
+    }
 
     /**
      * @var CargaLayoutPagoService
@@ -56,9 +59,8 @@ class CargaLayoutPagoController extends Controller
         return response()->json($respuesta, 200);
     }
 
-    public function registrarPagos(Request $request)
+    public function store(StoreCargaLayoutPagoRequest $request)
     {
-        $respuesta = $this->service->registrarPagos($request);
-        return response()->json($respuesta, 200);
+        return $this->traitStore($request);
     }
 }

@@ -18,6 +18,6 @@ class LayoutPagoPartidaObserver
      */
     public function creating(LayoutPagoPartida $partida)
     {
-
+        $partida->validarRegistro();
     }
 }

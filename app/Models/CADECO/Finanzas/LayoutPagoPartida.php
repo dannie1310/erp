@@ -25,12 +25,12 @@ class LayoutPagoPartida extends Model
 
     public function factura()
     {
-        return $this->belongsTo(Factura::class, 'id_transaccion_pago', 'id_transaccion');
+        return $this->belongsTo(Factura::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function solicitudPagoAnticipado()
     {
-        return $this->belongsTo(SolicitudPagoAnticipado::class, 'id_transaccion_pago', 'id_transaccion');
+        return $this->belongsTo(SolicitudPagoAnticipado::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function pago()
@@ -51,5 +51,10 @@ class LayoutPagoPartida extends Model
     public function documento()
     {
         return $this->belongsTo(Documento::class, 'id_documento_remesa', 'IDDocumento');
+    }
+
+    public function validarRegistro()
+    {
+        dd("AQUI", $this);
     }
 }

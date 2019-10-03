@@ -40,30 +40,40 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
         foreach ($this->getCSVData($layout) as $key => $pago) {
             $documento = Documento::query()->where("IDTransaccionCDC", "=", $pago['id_transaccion'])->first();
-            if($documento != null) {
+            if($documento != null && ($pago['fecha_pago'] || $pago['referencia_pago'] || $pago['monto_pagado'] || $pago['cuenta_cargo'])) {
                 $transaccion = "";
                 $pago_a_generar = "";
                 $cuenta_encontrada = true;
                 $cuentas = [];
-                $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->get();
+                $id_cuenta = "";
+                $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->first();
                 $factura = Factura::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
                 $solicitud = Solicitud::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
 
-                if($cta_cargo->toArray() == [])
+                if($cta_cargo == null)
                 {
                     $cta_cargo = Cuenta::query()->where('id_tipo_cuentas_obra', '=', 1)->get();
                     $cuenta_encontrada = false;
-                }
-
-                foreach ($cta_cargo as $cargo)
-                {
-                    $cuentas[] = array('id' => $cargo->id_cuenta,
-                        'numero'=> $cargo->numero,
-                        'abreviatura'=> $cargo->abreviatura,
-                        'nombre' => $cargo->empresa->razon_social,
-                        'id_empresa' => $cargo->empresa->id_empresa
+                    foreach ($cta_cargo as $cargo)
+                    {
+                        $cuentas[] = array('id' => $cargo->id_cuenta,
+                            'numero'=> $cargo->numero,
+                            'abreviatura'=> $cargo->abreviatura,
+                            'nombre' => $cargo->empresa->razon_social,
+                            'id_empresa' => $cargo->empresa->id_empresa
+                        );
+                    }
+                }else{
+                    $id_cuenta = $cta_cargo->id_cuenta;
+                    $cuentas = array('id' => $cta_cargo->id_cuenta,
+                        'numero'=> $cta_cargo->numero,
+                        'abreviatura'=> $cta_cargo->abreviatura,
+                        'nombre' => $cta_cargo->empresa->razon_social,
+                        'id_empresa' => $cta_cargo->empresa->id_empresa
                     );
                 }
+
+
 
                 if ($factura == null && $solicitud != null) // Solicitud de Pago Anticipado
                 {
@@ -83,22 +93,24 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                     'folio_transaccion' => $transaccion ? $transaccion->numero_folio : null,
                     'fecha_factura' => $pago['fecha_factura'],
                     'referencia_factura' => $transaccion ? $transaccion->referencia : null,
-                    'monto_factura' => $transaccion ? $transaccion->monto : null,
+                    'monto_factura' => $transaccion ? (float) $transaccion->monto : null,
                     'moneda_factura' =>  $transaccion ? $transaccion->moneda ? $transaccion->moneda->nombre : null : null,
+                    'id_moneda' =>  $transaccion ? $transaccion->id_moneda : null,
                     'cuenta_encontrada' => $cuenta_encontrada,
+                    'id_cuenta_cargo' => $id_cuenta,
                     'cuenta_cargo' =>  $cuentas,
                     'fecha_pago' => $pago['fecha_pago'],
                     'referencia_pago' => $pago['referencia_pago'],
                     'tipo_cambio' => $pago['tipo_cambio'],
                     'monto_pagado' => $pago['monto_pagado'],
                     'validar_monto' => $this->validarMontos($transaccion ? $transaccion->monto : 0, $pago['monto_pagado']),
-                    'id_transaccion_tipo' => $documento->tipoDocumento->TipoDocumento,
+                    'id_transaccion_tipo' => $transaccion ? $documento->tipoDocumento->TipoDocumento : null,
                     'pago_a_generar' => $pago_a_generar ? $pago_a_generar['pago_a_generar'] : "",
                     'aplicacion_manual' => $pago_a_generar ? $pago_a_generar['aplicacion_manual'] : "",
                     'estado' => $transaccion ? $this->validarEstatusPago($transaccion) : ['id' => 0, 'estado' =>0, 'descripcion' => 'No encontrada'],
-                    'beneficiario' => $documento->Destinatario,
-                    'referencia_docto' => $documento->Referencia,
-                    'origen_docto' => $documento->origenDocumento->OrigenDocumento,
+                    'beneficiario' => $transaccion ? $documento->Destinatario : null,
+                    'referencia_docto' => $transaccion ? $documento->Referencia :  null,
+                    'origen_docto' => $transaccion ? $documento->origenDocumento->OrigenDocumento : null,
                 );
             }
         }
@@ -259,6 +271,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 'id' => 0, 'estado' => -1, 'descripcion' => 'Registrado Previamente'
             );
         }
+    }
+
+    public function create(array $data)
+    {
+        return $this->model->registar($data);
     }
 
 }
