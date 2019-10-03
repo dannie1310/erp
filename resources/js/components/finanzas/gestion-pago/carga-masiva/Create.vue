@@ -191,7 +191,6 @@
                         }
                     })
                     .then(data => {
-                        console.log(data.resumen);
                         if(data.data.length > 0){
                             this.pagos = data.data;
                             this.resumen = data.resumen;
