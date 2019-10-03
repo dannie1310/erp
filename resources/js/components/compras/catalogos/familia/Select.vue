@@ -28,37 +28,19 @@
                         search: searchQuery,
                         scope: 'tipo:1',
                         limit: 15,
-                        sort: 'id_material',
+                        sort: 'nivel',
                         order: 'ASC'
                     }
                 })
                     .then(data => {
 
                         const options = data.data.map(i => ({
-                            id: i.id,
+                            id: i.nivel,
                             label: i.descripcion
                         }))
                         callback(null, options)
                     })
             }
-            // loadOptions({ action, searchQuery, callback }) {
-            //     return this.$store.dispatch('almacenes/marbete/index', {
-            //         params: {
-            //             search: searchQuery,
-            //             scope: 'inventarioAbierto',
-            //             limit: 15,
-            //             sort: 'folio',
-            //             order: 'ASC'
-            //         }
-            //     })
-            //         .then(data => {
-            //             const options = data.map(i => ({
-            //                 id: i.id,
-            //                 label: i.folio_marbete
-            //             }))
-            //             callback(null, options)
-            //         })
-            // }
         },
 
         watch: {

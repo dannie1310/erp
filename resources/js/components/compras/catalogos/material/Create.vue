@@ -36,7 +36,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-12">
+                               <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="descripcion" class="col-sm-2 col-form-label">Descripción:</label>
                                         <div class="col-sm-10">
@@ -56,29 +56,48 @@
                                     </div>
                                 </div>
                             </div>
-<!--                             <div class="row">-->
-<!--                                <div class="col-md-12">-->
-<!--                                    <div class="form-group row error-content">-->
-<!--                                        <label for="unidad" class="col-sm-2 col-form-label">Unidad: </label>-->
-<!--                                        <div class="col-sm-3">-->
-<!--                                            <select-->
-<!--                                                type="text"-->
-<!--                                                name="unidad"-->
-<!--                                                data-vv-as="Unidad"-->
-<!--                                                v-validate="{required: true}"-->
-<!--                                                class="form-control"-->
-<!--                                                id="unidad"-->
-<!--                                                v-model="unidad"-->
-<!--                                                :class="{'is-invalid': errors.has('unidad')}"-->
-<!--                                            >-->
-<!--                                                    <option value>&#45;&#45; Seleccione un Unidad &#45;&#45;</option>-->
-<!--                                                    <option v-for="unidad in unidades" :value="unidad.id">{{ unidad.descripcion }}</option>-->
-<!--                                            </select>-->
-<!--                                            <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="nu_parte" class="col-sm-2 col-form-label">N° Parte:</label>
+                                        <div class="col-sm-5">
+                                            <input
+                                                :disabled="!dato.descripcion"
+                                                type="text"
+                                                name="nu_parte"
+                                                data-vv-as="N° Parte"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="nu_parte"
+                                                placeholder="######"
+                                                v-model="dato.nu_parte"
+                                                :class="{'is-invalid': errors.has('nu_parte')}">
+                                            <div class="invalid-feedback" v-show="errors.has('nu_parte')">{{ errors.first('nu_parte') }}</div>
+                                        </div>
+                                        <label for="unidad" class="col-sm-1 col-form-label">Unidad: </label>
+                                        <div class="col-sm-2">
+                                            <select
+                                                :disabled="!dato.descripcion"
+                                                type="text"
+                                                name="unidad"
+                                                data-vv-as="Unidad"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="unidad"
+                                                v-model="dato.unidad"
+                                                :class="{'is-invalid': errors.has('unidad')}"
+                                            >
+                                                    <option value>--Unidad--</option>
+                                                    <option v-for="unidad in unidades" :value="unidad.id">{{ unidad.descripcion }}</option>
+                                            </select>
+                                            <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
                         </div>
                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -99,20 +118,42 @@
         data() {
                 return {
                     cargando:false,
+                    unidades: [
+                        {id:'M', descripcion: 'M'},
+                        {id:'M2', descripcion: 'M2'},
+                        {id:'M3', descripcion: 'M3'},
+                        {id:'ML', descripcion: 'ML'},
+                        {id:'KG', descripcion: 'KG'},
+                        {id:'PZ', descripcion: 'PZA'},
+                        {id:'TON', descripcion: 'TON'},
+                        {id:'LOT', descripcion: 'LOT'},
+                        {id:'PAQ', descripcion: 'PAQ'},
+                        {id:'PAR', descripcion: 'PAR'},
+                        {id:'CAJA', descripcion: 'CAJA'},
+                        {id:'BLOCK', descripcion: 'BLOCK'},
+                        {id:'JUEGO', descripcion: 'JUEGO'},
+                        {id:'ROLLO', descripcion: 'ROLLO'}
+                    ],
                     dato: {
                         tipo: '',
-                        descripcion: ''
-
+                        unidad:'',
+                        descripcion: '',
+                        nu_parte:''
                     }
                 }
         },
         methods: {
             init() {
                   this.cargando = false;
+                    // this.dato.tipo = null;
+                    // this.dato.unidad = '';
+                    // this.dato.descripcion = '';
+                    // this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
             },
             store() {
-                return this.$store.dispatch('cadeco/familia/store', this.$data)
+                console.log('Material:',this.dato.tipo,'Descripcion:',this.descripcion,'N° Parte',this.nu_parte,'Unidad',this.unidad);
+                return this.$store.dispatch('compras/material-familia/store', this.$data.dato)
                     .then(data => {
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');

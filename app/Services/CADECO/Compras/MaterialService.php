@@ -48,4 +48,15 @@ class MaterialService
         }
         return $familia->paginate($data);
     }
+    public function store(array $data)
+    {
+        $datos = [
+            'tipo' => $data['tipo'],
+            'unidad' => $data['unidad'],
+            'descripcion' => $data['descripcion'],
+            'nu_parte' => $data['nu_parte']
+        ];
+
+        return $this->repository->create($datos);
+    }
 }
