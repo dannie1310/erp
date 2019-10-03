@@ -32,7 +32,7 @@ class LayoutPago extends Model
         return $this->hasMany(LayoutPagoPartida::class, 'id_layout_pagos', 'id');
     }
 
-    public function estado()
+    public function ctgEstado()
     {
         return $this->belongsTo(CtgEstadoLayoutPago::class, 'estado', 'estado');
     }
@@ -60,21 +60,23 @@ class LayoutPago extends Model
 
             foreach ($data['pagos'] as $pago)
             {
-                $layout_pagos->partidas()->create([
-                    'id_layout_pagos' => $layout_pagos->id,
-                    'id_transaccion' => $pago['id_transaccion'],
-                    'monto_transaccion' => $pago['monto_factura'],
-                    'id_moneda' => $pago['id_moneda'],
-                    'tipo_cambio' => $pago['tipo_cambio'],
-                    'cuenta_cargo' => $pago['id_cuenta_cargo'] ? Cuenta::query()->where('id_cuenta', $pago['id_cuenta_cargo'])->first()->pluck('id_cuenta') : null,
-                    'id_cuenta_cargo' => $pago['id_cuenta_cargo'],
-                    'fecha_pago' => $pago['fecha_pago'],
-                    'monto_pagado' => $pago['monto_pagado'],
-                    'referencia_pago' => $pago['referencia'],
-                    'id_documento_remesa' => $pago['id_documento'],
-                    'id_transaccion_pago' => $pago['estado']['estado'] == 2 ? $pago['estado']['id'] : null
+                if($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) {
+                    $layout_pagos->partidas()->create([
+                        'id_layout_pagos' => $layout_pagos->id,
+                        'id_transaccion' => $pago['id_transaccion'],
+                        'monto_transaccion' => $pago['monto_factura'],
+                        'id_moneda' => $pago['id_moneda'],
+                        'tipo_cambio' => $pago['tipo_cambio'],
+                        'cuenta_cargo' => $pago['id_cuenta_cargo'] ? Cuenta::query()->where('id_cuenta', $pago['id_cuenta_cargo'])->pluck('numero')->toArray()['0'] : 0,
+                        'id_cuenta_cargo' => $pago['id_cuenta_cargo'] ?  $pago['id_cuenta_cargo'] : 0,
+                        'fecha_pago' => date($this->fecha_pago),
+                        'monto_pagado' => $pago['monto_pagado'],
+                        'referencia_pago' => $pago['referencia_pago'],
+                        'id_documento_remesa' => $pago['id_documento'],
+                        'id_transaccion_pago' => $pago['estado']['estado'] == 2 ? $pago['estado']['id'] : NULL
 
-                ]);
+                    ]);
+                }
             }
             DB::connection('cadeco')->commit();
             return $this;
