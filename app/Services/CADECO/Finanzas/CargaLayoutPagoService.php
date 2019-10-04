@@ -10,6 +10,9 @@ namespace App\Services\CADECO\Finanzas;
 
 
 use App\Models\CADECO\Finanzas\LayoutPago;
+use App\Models\CADECO\OrdenPago;
+use App\Models\CADECO\Solicitud;
+use App\Models\CADECO\Transaccion;
 use App\Repositories\CADECO\Finanzas\LayoutPago\Repository;
 
 
@@ -60,11 +63,28 @@ class CargaLayoutPagoService
 
             if(is_null($partida->id_transaccion_pago)){
 
+
+                $transaccion= Transaccion::query()->find($partida->id_transaccion);
+
+
                 /*Facturas*/
+                if($transaccion->tipo_transaccion==='65'){
+
+                    $orden_pago = OrdenPago::query()->where('id_referente','=', $transaccion->id_transaccion)->get()->first();
+
+//                    dd($orden_pago);
+
+                }
 
 
+                /*Solicitud*/
+                if($transaccion->tipo_transaccion==='72'){
 
-                /*Solicitud de Pago Anticipado*/
+
+                    $solicitud = Solicitud::query()->where()
+
+
+                }
 
 
 
