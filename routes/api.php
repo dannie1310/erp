@@ -73,6 +73,14 @@ $api->version('v1', function ($api) {
 
         });
 
+        // FAMILIAS
+        $api->group(['prefix' => 'familia'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\FamiliaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\FamiliaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\FamiliaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\FamiliaController@store');
+        });
+
         // FONDOS
         $api->group(['prefix' =>  'fondo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\FondoController@index');
@@ -183,6 +191,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato-entrada-almacen', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@pdfEntradaAlmacen')->where(['id' => '[0-9]+']);
         });
 
         //INVENTARIO FISICO
