@@ -14,7 +14,7 @@ use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\PagoACuenta;
 use App\Models\CADECO\PagoVario;
-use App\Models\CADECO\SolicitudPagoAnticipado;
+use App\Models\CADECO\Solicitud;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -50,9 +50,9 @@ class LayoutPagoPartida extends Model
         return $this->belongsTo(Factura::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function solicitudPagoAnticipado()
+    public function solicitud()
     {
-        return $this->belongsTo(SolicitudPagoAnticipado::class, 'id_transaccion', 'id_transaccion');
+        return $this->belongsTo(Solicitud::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function pago()

@@ -17,7 +17,7 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
      */
 
     protected $availableIncludes = [
-        'solicitud_pago_anticipado',
+        'solicitud',
         'factura',
         'moneda'
     ];
@@ -63,8 +63,8 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
         }
         return null;
     }
-    public function includeSolicitudPagoAnticipado(LayoutPagoPartida $model){
-        if($solicitud_pago_anticipado = $model->solicitud_pago_anticipado){
+    public function includeSolicitud(LayoutPagoPartida $model){
+        if($solicitud_pago_anticipado = $model->solicitud){
             return $this->item($solicitud_pago_anticipado, new SolicitudPagoAnticipadoTransformer);
         }
         return null;
