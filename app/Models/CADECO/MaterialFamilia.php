@@ -13,7 +13,10 @@ class MaterialFamilia extends Material
         'marca',
         'UsuarioRegistro',
         'FechaHoraRegistro',
-        'nivel'
+        'nivel',
+        'numero_parte',
+        'tipo',
+        'unidad'
     ];
     protected static function boot()
     {
@@ -26,21 +29,25 @@ class MaterialFamilia extends Material
 
     public function validarExistente($tipo)
     {
-        if($this->where('descripcion','=', $this->descripcion)->where('tipo_material','=',$tipo)->get()->toArray() != [])
+
+        if($this->where('numero_parte','=', $this->numero_parte)->where('tipo_material','=',1)->get()->toArray() != [])
         {
-            throw New \Exception('Esta descripción "'.$this->descripcion.'" ya existe.');
+            throw New \Exception('El material "'.$this->descripcion.'" con el numero de parte "'.$this->numero_parte.'" ya existe.');
         }
+
     }
 
     public function nivelConsecutivo($tipo)
     {
-        $n = 0;
-        foreach ($this->where('tipo_material','=',$tipo)->orderBy('nivel', 'asc')->get()->pluck('nivel') as $nivel){
-            if((int)$nivel != $n) {
-                return str_pad($n, 3, 0, 0) . '.';
-            }
-            $n++;
-        }
-        return str_pad($n, 3, 0, 0) . '.';
+
+        $this->tipo = str_replace ( ".", "", $this->tipo);
+//        dd($this->tipo);
+        $num = $this->where('tipo_material','=',1)->where('nivel','LIKE',$this->tipo.'.%')->orderBy('nivel', 'desc')->get()->pluck('nivel')->first();
+
+        $num = substr($num, 4,3);
+        $num = $num +1;
+        $num = str_pad($num, 3, "0", STR_PAD_LEFT);
+
+        return $this->tipo.'.'.$num.'.';
     }
 }

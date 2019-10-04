@@ -101,7 +101,6 @@ class Repository implements RepositoryInterface
 
     public function create(array $data)
     {
-        dd($data,'Funcion create');
         return $this->model->create($data);
     }
 

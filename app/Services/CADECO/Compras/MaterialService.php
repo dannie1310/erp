@@ -54,7 +54,7 @@ class MaterialService
             'tipo' => $data['tipo'],
             'unidad' => $data['unidad'],
             'descripcion' => $data['descripcion'],
-            'nu_parte' => $data['nu_parte']
+            'numero_parte' => $data['nu_parte']
         ];
 
         return $this->repository->create($datos);
