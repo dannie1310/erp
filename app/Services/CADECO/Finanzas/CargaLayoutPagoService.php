@@ -53,7 +53,29 @@ class CargaLayoutPagoService
 
     public function autorizar($data)
     {
-        dd($data);
-        return "autorizar";
+        $layout= $this->repository->show($data);
+        $partidas = $layout->partidas;
+
+        foreach($partidas as $partida){
+
+            if(is_null($partida->id_transaccion_pago)){
+
+                /*Facturas*/
+
+
+
+                /*Solicitud de Pago Anticipado*/
+
+
+
+
+            }else{
+//                echo "pagado";
+            }
+        }
+
+
+
+
     }
 }

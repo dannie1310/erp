@@ -101,7 +101,7 @@
                                 <td>{{doc.cuenta_cargo}}</td>
                                 <td>{{doc.fecha_pago}}</td>
                                 <td>{{doc.tipo_cambio}}</td>
-                                <td>{{doc.monto_transaccion_format_2}}</td>
+                                <td>{{doc.monto_transaccion_format}}</td>
                                 <td>{{doc.referencia_pago}}</td>
                                 <td v-if="doc.id_transaccion_pago"><small class="badge-primary">Aplicado</small></td>
                                 <td v-else><small class="badge-success">Pagado</small></td>
@@ -157,9 +157,6 @@
                 //     .then(data => {
                 //     this.$router.push({name: ''});
                 // })
-            },
-            cuentas() {
-
             },
 
         },
