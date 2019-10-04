@@ -56,4 +56,9 @@ class ConteoController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function storeCodigoBarra(Request $request){
+        $respuesta = $this->service->storeCodigoBarra($request->all());
+        return response()->json($respuesta, 200);
+    }
+
 }
