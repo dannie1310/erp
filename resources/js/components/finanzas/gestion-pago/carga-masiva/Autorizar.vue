@@ -101,17 +101,8 @@
                                 <td>{{doc.cuenta_cargo}}</td>
                                 <td>{{doc.fecha_pago}}</td>
                                 <td>{{doc.tipo_cambio}}</td>
-                                <td style="width: 120px;">
-                                    <input type="text"
-                                           class="form-control"
-                                           :value="doc.monto_transaccion_format_2"
-                                           placeholder="Importe Pagado" ></td>
-                                <td style="width: 140px;">
-                                    <input type="text"
-                                           class="form-control"
-                                           placeholder="Referencia de Pago"
-                                           :value="doc.referencia_pago">
-                                </td>
+                                <td>{{doc.monto_transaccion_format_2}}</td>
+                                <td>{{doc.referencia_pago}}</td>
                                 <td v-if="doc.id_transaccion_pago"><small class="badge-primary">Aplicado</small></td>
                                 <td v-else><small class="badge-success">Pagado</small></td>
                             </tr>

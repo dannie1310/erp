@@ -5,6 +5,7 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 
 use App\Http\Transformers\CADECO\Contabilidad\FacturaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\CADECO\SolicitudTransformer;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
 use League\Fractal\TransformerAbstract;
 
@@ -65,7 +66,7 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
     }
     public function includeSolicitud(LayoutPagoPartida $model){
         if($solicitud_pago_anticipado = $model->solicitud){
-            return $this->item($solicitud_pago_anticipado, new SolicitudPagoAnticipadoTransformer);
+            return $this->item($solicitud_pago_anticipado, new SolicitudTransformer);
         }
         return null;
     }
