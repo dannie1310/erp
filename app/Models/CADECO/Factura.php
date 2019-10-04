@@ -30,4 +30,8 @@ class Factura extends Transaccion
     {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
+
+    public function scopeAutorizada($query){
+        return $query->where('autorizado', '>', 0);
+    }
 }

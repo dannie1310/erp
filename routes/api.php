@@ -514,6 +514,18 @@ $api->version('v1', function ($api) {
             $api->post('bitacora', 'App\Http\Controllers\v1\CADECO\Finanzas\GestionPagoController@presentaBitacora');
         });
 
+        /**
+         * FACTURAS
+         */
+        $api->group(['prefix' => 'factura'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@index');
+            $api->get('autorizada', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@autorizadas');
+        });
+
+        /**
+         * SOLICITUD
+         */
+
 
         /***
          * PAGOS

@@ -61,7 +61,21 @@
         },
         methods: {
             getDocumentos(tipo){
-                console.log(tipo);
+                this.cargando = true;
+                let self = this
+                return self.$store.dispatch('finanzas/factura/autorizadas', {
+                    params: {
+                        scope: 'autorizada',
+                        sort: 'id_transaccion',
+                        order: 'ASC'
+                    }
+                })
+                    .then(data => {
+                        this.data = data;
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
             }
         },
         watch: {
