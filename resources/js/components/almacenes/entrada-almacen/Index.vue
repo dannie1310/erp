@@ -87,6 +87,7 @@
                             observaciones: entrada.observaciones,
                             estado: entrada.estado_format,
                             buttons: $.extend({}, {
+                                show: true,
                                 id: entrada.id,
                                 estado: entrada.estado,
                                 pagina: self.query.offset,
