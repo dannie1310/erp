@@ -60,7 +60,7 @@ class SalidaAlmacenFormato extends Rotation
         $this->SetTextColor('0,0,0');
         $this->SetFont('Arial', 'B', 14);
         $this->Cell(4.5, .7, utf8_decode('FOLIO'), 'LT', 0, 'L');
-        $this->Cell(3.5, .7, $this->numero_folio, 'RT', 0, 'L');
+        $this->Cell(3.5, .7, ''.$this->numero_folio.'', 'RT', 0, 'L');
         $this->Ln(.7);
         $y_f = $this->GetY();
 
@@ -175,7 +175,7 @@ class SalidaAlmacenFormato extends Rotation
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180);
         $this->SetWidths([1,2.5,12,2,2]);
-        $this->SetStyles(['DF','DF','DF','DF']);
+        $this->SetStyles(['DF','DF','DF','DF','DF']);
         $this->SetRounds(['1','','','','2']);
         $this->SetRadius([0.2,0,0,0,0.2]);
         $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
@@ -195,7 +195,7 @@ class SalidaAlmacenFormato extends Rotation
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(180,180,180);
                 $this->SetWidths([1,2.5,12,2,2]);
-                $this->SetStyles(['DF','DF','DF','DF']);
+                $this->SetStyles(['DF','DF','DF','DF','DF']);
                 $this->SetRounds(['1','','','','2']);
                 $this->SetRadius([0.2,0,0,0,0.2]);
                 $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
@@ -217,7 +217,7 @@ class SalidaAlmacenFormato extends Rotation
                 $p->material['numero_parte'],
                 utf8_decode($p->material['descripcion']),
                 $p['unidad'],
-                $p['cantidad'],
+                $p->cantidad_format,
             ]);
 
             /*Guiones*/
