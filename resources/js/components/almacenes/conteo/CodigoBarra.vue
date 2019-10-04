@@ -94,7 +94,7 @@
                                                     type="number"
                                                     name="cantidad_nuevo"
                                                     data-vv-as="Cantidad Nuevos"
-                                                    v-validate="{required: false}"
+                                                    v-validate="{required: true}"
                                                     class="form-control"
                                                     id="cantidad_nuevo"
                                                     placeholder="Cantidad Nuevos"
@@ -157,6 +157,8 @@
                         </div>
                          <div class="modal-footer">
                              <button type="button" class="btn btn-secondary" @click="cerrar">Cerrar</button>
+                             <button class="btn btn-primary" :disabled="errors.count() > 0 || dato.cantidad_nuevo == ''" @click="validate">Registrar</button>
+
                         </div>
                 </div>
             </div>
@@ -192,26 +194,30 @@
             findCodigo() {
                 var marbete = this.barcodeValue.split("C");
                 this.dato.id_marbete = marbete[0];
-                if (!marbete[1] || marbete[1] == 3){
-                    swal('¡Error!', 'Error al leer el código de barras, intente de nuevo.', 'error');
-                    this.$emit('created');
-                    $(this.$refs.modal).modal('hide');
+                if (!marbete[1] || marbete[1] == 3 || marbete[2]){
+                    swal('¡Error!', 'Número de Marbete Invalido.', 'error');
+                    this.barcodeValue='';
                 }else{
                     this.dato.tipo_conteo = marbete[1];
-                    this.$store.commit('almacenes/marbete/SET_MARBETE', null);
-                    return this.$store.dispatch('almacenes/marbete/findCodigo', {
-                        id: marbete[0],
-                        params: {}
-                    }).then(data => {
-                        this.$store.commit('almacenes/marbete/SET_MARBETE', data);
-                        return this.$store.dispatch('almacenes/ctg-tipo-conteo/find', {
-                            id: marbete[1],
+                    if(marbete[1]<0 || marbete[1]>=3){
+                        swal('¡Error!', 'Número de Marbete Invalido.', 'error');
+                        this.barcodeValue='';
+                    }else{
+                        this.$store.commit('almacenes/marbete/SET_MARBETE', null);
+                        return this.$store.dispatch('almacenes/marbete/findCodigo', {
+                            id: marbete[0],
                             params: {}
                         }).then(data => {
-                            this.$nextTick(() => this.$refs.input.focus());
-                            this.$store.commit('almacenes/ctg-tipo-conteo/SET_CONTEO', data);
+                            this.$store.commit('almacenes/marbete/SET_MARBETE', data);
+                            return this.$store.dispatch('almacenes/ctg-tipo-conteo/find', {
+                                id: marbete[1],
+                                params: {}
+                            }).then(data => {
+                                this.$store.commit('almacenes/ctg-tipo-conteo/SET_CONTEO', data);
+                                this.$nextTick(() => this.$refs.input.focus());
+                            });
                         });
-                    });
+                    }
                 }
             },
             cerrar(){
@@ -219,6 +225,10 @@
                 $(this.$refs.modal).modal('hide');
             },
             foco(){
+                if(this.checkedMostrar == false){
+                    this.dato.cantidad_usados=0;
+                    this.dato.cantidad_inservible=0;
+                }
                 if(this.$refs.input){
                     this.$nextTick(() => this.$refs.input.focus());
                 }else{
@@ -254,26 +264,17 @@
                 this.$validator.validate().then(result => {
                     var marbete = this.barcodeValue.split("C");
                     if (result) {
-                        if(this.dato.cantidad_nuevo == ''){
-                            swal('¡Error!', 'Error al registrar cantidad, favor de ingresar cantidades.', 'error');
-                            this.$emit('created');
-                            $(this.$refs.modal).modal('hide');
-                        }else if (marbete[2]){
-                            swal('¡Error!', 'Error al leer el código de barras, intente de nuevo.', 'error');
-                            this.$emit('created');
-                            $(this.$refs.modal).modal('hide');
+                        if(this.dato.cantidad_usados < 0 || this.dato.cantidad_nuevo < 0 || this.dato.cantidad_inservible < 0){
+                            swal('¡Error!', 'Error al registrar cantidad, favor de revisar la información y registrar la cantidad nuevamente.', 'error');
+                            this.dato.cantidad_usados=0;
+                            this.dato.cantidad_nuevo='';
+                            this.dato.cantidad_inservible=0;
+                            this.$nextTick(() => this.$refs.input.focus());
                         }
-                        else{
-                            if(this.dato.cantidad_usados < 0 || this.dato.cantidad_nuevos < 0 || this.dato.cantidad_inservibles < 0){
-                                swal('¡Error!', 'Error al registrar cantidad, favor de revisar la información y registrar la cantidad nuevamente.', 'error');
-                                this.$emit('created');
-                                $(this.$refs.modal).modal('hide');
-                            }
-                            else {
-                                this.dato.id_marbete = marbete[0];
-                                this.dato.tipo_conteo = marbete[1];
-                                this.store()
-                            }
+                        else {
+                            this.dato.id_marbete = marbete[0];
+                            this.dato.tipo_conteo = marbete[1];
+                            this.store()
                         }
                     }
                 });
@@ -289,7 +290,12 @@
                             this.$emit('created', data);
                             $(this.$refs.modal).modal('hide');
                         }
-                    }).finally( ()=>{
+                    })
+                    .catch(error => {
+                        this.$emit('created');
+                        this.init();
+                    })
+                    .finally( ()=>{
                         this.cargando = false;
                     });
             },
