@@ -175,6 +175,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'conteo'], function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@store');
+            $api->post('codigo-barra', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@storeCodigoBarra');
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cargaLayout');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@paginate');
             $api->get('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Almacenes\ConteoController@cancelar')->where(['id' => '[0-9]+']);
@@ -183,6 +184,7 @@ $api->version('v1', function ($api) {
         //CATÁLOGO CONTEO TIPO
         $api->group(['prefix' => 'tipo-conteo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Almacenes\CtgTipoConteoController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\CtgTipoConteoController@show')->where(['id' => '[0-9]+']);
         });
 
 
@@ -207,6 +209,7 @@ $api->version('v1', function ($api) {
         //MARBETE
         $api->group(['prefix'=>'marbete'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@index');
+            $api->get('{id}/porCodigo', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@showCodigo')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@paginate');
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Almacenes\MarbeteController@destroy')->where(['id' => '[0-9]+']);
