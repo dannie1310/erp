@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
+
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Models\CADECO\Factura;
 use League\Fractal\TransformerAbstract;
@@ -19,9 +20,8 @@ class FacturaTransformer extends TransformerAbstract
         'empresa'
     ];
     public function transform(Factura $model) {
-           return $model->toArray();
+        return $model->toArray();
     }
-
     /**
      * @param Factura $model
      * @return \League\Fractal\Resource\Item|null

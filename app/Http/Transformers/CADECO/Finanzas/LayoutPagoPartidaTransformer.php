@@ -3,25 +3,36 @@
 
 namespace App\Http\Transformers\CADECO\Finanzas;
 
-
 use App\Http\Transformers\CADECO\Contabilidad\FacturaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\CADECO\SolicitudTransformer;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
 use League\Fractal\TransformerAbstract;
 
 class LayoutPagoPartidaTransformer extends TransformerAbstract
 {
     /**
+     * List of resources possible to include
+     *
      * @var array
      */
+
     protected $availableIncludes = [
-        'solicitud_pago_anticipado',
+        'solicitud',
         'factura',
         'moneda'
     ];
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
 
-    public function transform(LayoutPagoPartida $model)
-    {
+    ];
+
+    public function transform(LayoutPagoPartida $model){
+
         return [
             'id' => $model->getKey(),
             'fecha_pago' => date('Y-m-d', strtotime($model->fecha_pago)),
@@ -29,6 +40,7 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
             'id_transaccion' => $model->id_transaccion,
             'monto_transaccion' => $model->monto_transaccion,
             'monto_transaccion_format' => '$ ' . number_format($model->monto_transaccion,2),
+            'monto_transaccion_format_2' =>  number_format($model->monto_transaccion,2),
             'id_moneda' => $model->id_moneda,
             'tipo_cambio' => $model->tipo_cambio,
             'cuenta_cargo' => $model->cuenta_cargo,
@@ -39,7 +51,9 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
             'id_documento_remesa' => $model->id_documento_remesa,
             'id_transaccion_pago' => $model->id_transaccion_pago,
         ];
+
     }
+
 
     public function includeFactura(LayoutPagoPartida $model){
         if($factura = $model->factura){
@@ -47,18 +61,20 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
         }
         return null;
     }
-
-    public function includeSolicitudPagoAnticipado(LayoutPagoPartida $model){
-        if($solicitud_pago_anticipado = $model->solicitud_pago_anticipado){
-            return $this->item($solicitud_pago_anticipado, new SolicitudPagoAnticipadoTransformer);
+    public function includeSolicitud(LayoutPagoPartida $model){
+        if($solicitud_pago_anticipado = $model->solicitud){
+            return $this->item($solicitud_pago_anticipado, new SolicitudTransformer);
         }
         return null;
     }
-
     public function includeMoneda(LayoutPagoPartida $model){
         if($moneda = $model->moneda){
             return $this->item($moneda, new MonedaTransformer);
         }
         return null;
     }
+
+
+
+
 }
