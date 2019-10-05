@@ -35,7 +35,9 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Importe', field: 'monto', sortable: true},
+                    { title: 'Importe', field: 'monto',tdClass: 'money', sortable: true},
+                    { title: 'Usuario', field: 'usuario', sortable: true},
+                    { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
 
                 ],
@@ -57,6 +59,7 @@
 
         methods: {
             create() {
+                this.$Progress.start();
                 this.$router.push({name: 'carga-masiva-create'});
             },
             paginate() {
@@ -90,7 +93,11 @@
                     layouts.forEach(function (layout, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
+                            numero_folio:layout.id,
                             fecha: layout.fecha_registro,
+                            monto: layout.monto,
+                            usuario: layout.usuario,
+                            estado:layout.estado,
                             buttons: $.extend({}, {
                                 id: layout.id,
                                 autorizar: true
@@ -139,3 +146,9 @@
         }
     }
 </script>
+<style>
+    .money
+    {
+        text-align: right;
+    }
+</style>
