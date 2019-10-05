@@ -68,7 +68,10 @@
                     .finally(() => {
                         this.cargando = false;
                     })
-            }
+            },
+            create() {
+                this.$router.push({name: 'entrada-almacen-create'});
+            },
         },
         computed: {
             entradas(){

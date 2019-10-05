@@ -144,4 +144,9 @@ class OrdenCompra extends Transaccion
 
        return $query->whereIn('id_transaccion', $transacciones);
     }
+
+    public function scopeDisponibleEntradaAlmacen($query)
+    {
+        return $query->where('estado', '!=', 2);
+    }
 }
