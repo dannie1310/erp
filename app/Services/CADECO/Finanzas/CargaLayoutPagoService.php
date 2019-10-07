@@ -9,7 +9,9 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Models\CADECO\Factura;
 use App\Models\CADECO\Finanzas\LayoutPago;
+use App\Models\CADECO\Finanzas\LayoutPagoPartida;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Solicitud;
 use App\Models\CADECO\Transaccion;
@@ -56,6 +58,7 @@ class CargaLayoutPagoService
 
     public function autorizar($data)
     {
+
         $layout= $this->repository->show($data);
         $partidas = $layout->partidas;
 
@@ -70,30 +73,37 @@ class CargaLayoutPagoService
                 /*Facturas*/
                 if($transaccion->tipo_transaccion==='65'){
 
-                    $orden_pago = OrdenPago::query()->where('id_referente','=', $transaccion->id_transaccion)->get()->first();
+                    $factura = new Factura();
+                    $pago=$factura->verificaOrdenPago($transaccion);
 
-//                    dd($orden_pago);
-
+//dd($pago->id_transaccion, $partida->id_transaccion);
+                  LayoutPagoPartida::query()->where('id_transaccion','=', $partida->id_transaccion)
+                      ->update(['id_transaccion_pago'=>$pago->id_transaccion]);
+//dd($layout);
                 }
+
+
+
 
 
                 /*Solicitud*/
                 if($transaccion->tipo_transaccion==='72'){
-
-
-                    $solicitud = Solicitud::query()->where()
-
+dd("Hola");
+                $solicitud = new Solicitud();
+                $solicitud->verificaPago($transaccion);
 
                 }
 
 
 
 
-            }else{
-//                echo "pagado";
             }
         }
 
+/*Se autoriza el Layout de Pago*/
+//     LayoutPago::query()->where('id','=', $data )
+//         ->update(['id_usuario_autorizo'=>auth()->id(),
+//             'fecha_hora_autorizado'=>date('Y-m-d h:i:s'), 'estado'=>1]);
 
 
 

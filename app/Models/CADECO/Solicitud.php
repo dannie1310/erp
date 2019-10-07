@@ -21,4 +21,8 @@ class Solicitud extends Transaccion
             return $query->where('tipo_transaccion', '=', 72);
         });
     }
+
+    public function verificaPago($data){
+        
+    }
 }

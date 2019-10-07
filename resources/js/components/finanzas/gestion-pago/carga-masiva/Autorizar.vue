@@ -113,7 +113,7 @@
                                 </div>
 
                 <div class="modal-footer">
-                    <button  type="button" class="btn btn-secondary pull-right" >Cerrar</button>
+
                     <div>
                         <button @click="autorizar" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
                     </div>
