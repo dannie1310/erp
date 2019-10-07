@@ -36,7 +36,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'tipo:4,1', sort: 'nivel', order: 'desc'},
+                query: {scope:'tipo:1', sort: 'id_material', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -81,7 +81,7 @@
                     materiales.forEach(function (material, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            tipo_material: material.tipo_material_descripcion,
+                            tipo_material: material.descripcion_padre,
                             descripcion: material.descripcion,
                             unidad: material.unidad,
                         })

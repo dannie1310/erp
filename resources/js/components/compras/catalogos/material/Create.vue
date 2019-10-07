@@ -124,15 +124,19 @@
                         {id:'M3', descripcion: 'M3'},
                         {id:'ML', descripcion: 'ML'},
                         {id:'KG', descripcion: 'KG'},
-                        {id:'PZ', descripcion: 'PZA'},
+                        {id:'PZA', descripcion: 'PZA'},
                         {id:'TON', descripcion: 'TON'},
-                        {id:'LOT', descripcion: 'LOT'},
+                        {id:'JOR', descripcion: 'JOR'},
+                        {id:'LOTE', descripcion: 'LOTE'},
                         {id:'PAQ', descripcion: 'PAQ'},
                         {id:'PAR', descripcion: 'PAR'},
                         {id:'CAJA', descripcion: 'CAJA'},
+                        {id:'HORA', descripcion: 'HORA'},
                         {id:'BLOCK', descripcion: 'BLOCK'},
-                        {id:'JUEGO', descripcion: 'JUEGO'},
-                        {id:'ROLLO', descripcion: 'ROLLO'}
+                        {id:'LITRO', descripcion: 'LITRO'},
+                        {id:'JGO', descripcion: 'JUEGO'},
+                        {id:'ROLLO', descripcion: 'ROLLO'},
+                        {id:'PULGADA', descripcion: 'PULGADA'}
                     ],
                     dato: {
                         tipo: '',
@@ -145,10 +149,10 @@
         methods: {
             init() {
                   this.cargando = false;
-                    // this.dato.tipo = null;
-                    // this.dato.unidad = '';
-                    // this.dato.descripcion = '';
-                    // this.dato.nu_parte = '';
+                    this.dato.tipo = null;
+                    this.dato.unidad = '';
+                    this.dato.descripcion = '';
+                    this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
             },
             store() {

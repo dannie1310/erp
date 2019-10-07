@@ -13,14 +13,14 @@ class MaterialFamiliaObserver
      */
     public function creating(MaterialFamilia $materialFamilia)
     {
-
         $materialFamilia->validarExistente($materialFamilia->descripcion);
         $materialFamilia->nivel = $materialFamilia->nivelConsecutivo($materialFamilia->nivel);
         $materialFamilia->tipo_material = 1;
-        dd($materialFamilia->tipo_material,$materialFamilia->nivel);
+        $materialFamilia->marca = 0;
+        $materialFamilia->equivalencia = 0;
+        $materialFamilia->unidad_compra = $materialFamilia->unidad;
+        $materialFamilia->codigo_familia_ins = $materialFamilia->numero_parte;
         $materialFamilia->FechaHoraRegistro = date('Y-m-d h:i:s');
         $materialFamilia->UsuarioRegistro = auth()->user()->usuario;
-//        dd('ya debe insertar');
-
     }
 }
