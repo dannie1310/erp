@@ -16,6 +16,7 @@ class MaterialTransformer extends TransformerAbstract
 {
     public function transform(MaterialFamilia $model)
     {
+//        dd($model->descripcion);
         return [
             'id' => $model->getKey(),
             'descripcion' => $model->descripcion,

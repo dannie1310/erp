@@ -51,7 +51,7 @@ class MaterialService
     public function store(array $data)
     {
         $datos = [
-            'tipo' => $data['tipo'],
+            'nivel' => $data['tipo'],
             'unidad' => $data['unidad'],
             'descripcion' => $data['descripcion'],
             'numero_parte' => $data['nu_parte']
