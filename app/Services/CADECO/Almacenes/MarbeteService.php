@@ -29,13 +29,32 @@ class MarbeteService
         $this->repository = new Repository($model);
     }
 
+    public function showCodigo($id){
+        $marbete = $this->repository->show($id);
+        if(!$marbete || $marbete->invetarioFisico->estado != 0){
+            throw new \Exception("El código del marbete no es válido", 400);
+        }
+        return $this->repository->show($id);
+    }
+
     public function store($data)
     {
 
         $inventario = InventarioFisico::query()->where('estado',0)->first();
 
+
         if (empty($inventario)){
             abort(400, 'No hay un inventario físico activo');
+        }
+        
+
+        $existe_material = Marbete::query()->where('id_almacen','=', $data['id_almacen'])
+            ->where('id_material', '=', $data['id_material'])
+            ->where('id_inventario_fisico','=', $inventario->id)
+            ->first();
+
+        if(!empty($existe_material)){
+            abort(400, 'Ya existe un marbete asociado a este material en el inventario');
         }
 
         $saldo = Inventario::query()->join('almacenes','almacenes.id_almacen', 'inventarios.id_almacen')

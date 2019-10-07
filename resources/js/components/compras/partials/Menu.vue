@@ -42,6 +42,24 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item" >
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>
+                        Gestión de Insumos
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'familia'}" class="nav-link" :class="{active: this.$route.name == 'familia'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Familia</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->

@@ -12,6 +12,7 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Http\Transformers\CADECO\Finanzas\CtgEstadoLayoutPagoTransformer;
 use App\Models\CADECO\Finanzas\LayoutPago;
+use App\Models\IGH\Usuario;
 use League\Fractal\TransformerAbstract;
 
 class CargaLayoutPagoTransformer extends TransformerAbstract
@@ -39,14 +40,28 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
 
     public function transform(LayoutPago $model)
     {
+        $nombre = Usuario::query() ->where('idusuario', '=', $model->id_usuario_carga)->get()->pluck('nombre');
+        $apaterno = Usuario::query() ->where('idusuario', '=', $model->id_usuario_carga)->get()->pluck('apaterno');
+        $amaterno = Usuario::query() ->where('idusuario', '=', $model->id_usuario_carga)->get()->pluck('amaterno');
+        $usuario = $nombre[0].' '.$apaterno[0].' '.$amaterno[0];
+        switch ($model->estado):
+            case 0:
+                $estado = 'Registrada';
+                break;
+            case 1:
+                $estado = 'Autorizada';
+                break;
+        endswitch;
+        $monto = '$ '.number_format($model->monto_layout_pagos, 2, '.', '');
+
         return [
             'id' => $model->getKey(),
-            'usuario' =>$model->id_usuario_carga,
-            'monto'=> $model->monto_layout_pagos,
-            'fecha_registro' => date('Y-m-d H:i:s', strtotime($model->fecha_hora_carga)),
+          'usuario' =>$usuario,
+            'monto'=> $monto,
+            'fecha_registro' => date('d/m/Y', strtotime($model->fecha_hora_carga)),
             'fecha_autorizacion'=>date('Y-m-d H:i:s', strtotime($model->fecha_hora_autorizado)),
             'usuario_autorizo'=>$model->id_usuario_autorizo,
-            'estado' => $model->estado,
+            'estado' => $estado,
         ];
     }
 

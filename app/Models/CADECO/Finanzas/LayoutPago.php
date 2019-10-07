@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO\Finanzas;
 
+use App\Models\CADECO\Cuenta;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\Finanzas\CtgEstadoLayoutPago;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;

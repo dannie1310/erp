@@ -37,6 +37,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function validarLayout($layout)
     {
         $registros= array();
+        $hash_file =$this->model->validarArchivo($layout);
 
         foreach ($this->getCSVData($layout) as $key => $pago) {
             $documento = Documento::query()->where("IDTransaccionCDC", "=", $pago['id_transaccion'])->first();

@@ -1,6 +1,6 @@
 <template>
     <div class="btn-group" v-if="value.id">
-        <button @click="show()" type="button" class="btn btn-sm btn-outline-success" title="Autorizar" v-if="value.autorizar">
+        <button @click="show()" type="button" class="btn btn-sm btn-outline-success" title="Autorizar" v-if="value.autorizar && $root.can('consultar_carga_layout_pago')">
             <i class="fa fa-check"></i>
         </button>
         <button @click="ver" v-if="value.show" type="button" class="btn btn-sm btn-outline-secondary" title="Ver"><i class="fa fa-eye"></i></button>

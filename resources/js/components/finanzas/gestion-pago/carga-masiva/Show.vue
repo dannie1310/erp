@@ -26,7 +26,7 @@
                                     {{layout.monto_layout_pagos}}
                                 </td>
                                 <td class="bg-gray-light" colspan="2"><b>Estado:</b><br> </td>
-                                <td class="bg-gray-light">{{layout.estado.descripcion}}</td>
+                                <td class="bg-gray-light"><estatus-label :value="layout.estado"></estatus-label></td>
                             </tr>
                             <tr>
                                 <td colspan="2" class="bg-gray-light">
@@ -100,13 +100,19 @@
                     </div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button  type="button" class="btn btn-secondary pull-right" @click="index" >Cerrar</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+    import EstatusLabel from "./partials/CargaMasivaEstatus";
+    import Index from "./Index";
     export default {
         name: "pago-masivo-show",
+        components: {EstatusLabel},
         props: ['id'],
         data() {
             return {
@@ -134,6 +140,9 @@
                 }) .finally(() => {
                     this.cargando = false;
                 })
+            },
+            index(){
+                this.$router.push({name: 'carga-masiva'});
             }
         },
         computed: {

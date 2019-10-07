@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Almacenes\MarbeteTransformer;
 use App\Services\CADECO\Almacenes\MarbeteService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class MarbeteController extends Controller
@@ -44,11 +45,15 @@ class MarbeteController extends Controller
         $this->middleware('permiso:registrar_marbetes_manualmente')->only(['store']);
         $this->middleware('permiso:eliminar_marbetes_manualmente')->only(['delete']);
 
-
-
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function showCodigo(Request $request, $id)
+    {
+        $item = $this->service->showCodigo($id);
+        return $this->respondWithItem($item);
     }
 
 }

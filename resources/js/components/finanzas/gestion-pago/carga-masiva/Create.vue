@@ -67,10 +67,10 @@
                                                                 <td>{{i+1}}</td>
                                                                 <td v-if="pago.id_transaccion == null" class="text-danger">No se encontro la factura ó solicitud.</td>
                                                                 <td v-else>{{pago.referencia_factura}}</td>
-                                                                <td>{{pago.monto_factura}}</td>
+                                                                <td>${{(parseFloat(pago.monto_factura)).formatMoney(2,'.',',')}}</td>
                                                                 <td>{{pago.moneda_factura}}</td>
                                                                 <td>{{pago.beneficiario}}</td>
-                                                                <td v-if="pago.cuenta_encontrada && pago.id_transaccion != null">{{pago.cuenta_cargo.numero}} ({{pago.cuenta_cargo.abreviatura}})</td>
+                                                                <td v-if="pago.cuenta_encontrada && pago.id_transaccion != null && pago.estado.estado != -1">{{pago.cuenta_cargo.numero}} ({{pago.cuenta_cargo.abreviatura}})</td>
                                                                 <td v-else-if="pago.id_transaccion != null && pago.estado.estado != 2 && pago.estado.estado != -1">
                                                                     <select
                                                                         class="form-control"

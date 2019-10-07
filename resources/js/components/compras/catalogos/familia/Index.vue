@@ -1,11 +1,7 @@
 <template>
     <div class="row">
-        <div class="col-12"  v-if="$root.can('registrar_carga_layout_pago')" :disabled="cargando">
-            <button  @click="create" title="Crear" class="btn btn-app btn-info pull-right" >
-                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                <i class="fa fa-plus" v-else></i>
-                Registrar Carga Masiva
-            </button>
+        <div class="col-12">
+            <create @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -22,29 +18,26 @@
         <!-- /.col -->
     </div>
 </template>
+
 <script>
-    import Create from './Create';
+    import Create from "./Create";
     export default {
-        name: "carga-masiva-index",
-        components: {Create},
+        name: "familia-index",
+        components:{Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Importe', field: 'monto',tdClass: 'money', sortable: true},
-                    { title: 'Usuario', field: 'usuario', sortable: true},
-                    { title: 'Estado', field: 'estado', sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
-
+                    { title: 'Familia', field: 'tipo_material',sortable: true},
+                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {scope:'tipo:4,1', sort: 'nivel', order: 'desc'},
                 estado: "",
-                cargando: false,
+                cargando: false
             }
         },
         mounted() {
@@ -54,60 +47,46 @@
                     this.$Progress.finish();
                 })
         },
+
         methods: {
-            create() {
-                this.$Progress.start();
-                this.$router.push({name: 'carga-masiva-create'});
-            },
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('finanzas/carga-masiva-pago/paginate', { params: this.query})
+                return this.$store.dispatch('cadeco/familia/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUTS', data.data);
-                        this.$store.commit('finanzas/carga-masiva-pago/SET_META', data.meta);
+                        this.$store.commit('cadeco/familia/SET_FAMILIAS', data.data);
+                        this.$store.commit('cadeco/familia/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
-            },
+            }
         },
         computed: {
-            layouts(){
-                return this.$store.getters['finanzas/carga-masiva-pago/layouts'];
+            familias(){
+                return this.$store.getters['cadeco/familia/familias'];
             },
             meta(){
-                return this.$store.getters['finanzas/carga-masiva-pago/meta'];
+                return this.$store.getters['cadeco/familia/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            layouts: {
-                handler(layouts) {
+            familias: {
+                handler(familias) {
                     let self = this
                     self.$data.data = []
-                    layouts.forEach(function (layout, i) {
+                    familias.forEach(function (familia, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio:layout.id,
-                            fecha: layout.fecha_registro,
-                            monto: layout.monto,
-                            usuario: layout.usuario,
-                            estado:layout.estado,
-                            buttons: $.extend({}, {
-                                id: layout.id,
-                                autorizar: true,
-                                show: true
-                            })
+                            tipo_material: familia.tipo_material_descripcion,
+                            descripcion: familia.descripcion,
                         })
-
                     });
-
                 },
                 deep: true
             },
-
 
             meta: {
                 handler(meta) {
