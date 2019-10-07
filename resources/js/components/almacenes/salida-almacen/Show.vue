@@ -7,8 +7,8 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header" v-if="salida">
-                        <h5 class="modal-title" id="exampleModalLongTitle" v-if="salida.opciones == 1"> <i class="fa fa-trash"></i> ELIMINAR SALIDA DE  ALMACÉN</h5>
-                        <h5 class="modal-title" id="exampleModalLongTitle" v-else> <i class="fa fa-trash"></i> ELIMINAR TRANSFERENCIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle" v-if="salida.opciones == 1"> <i class="fa fa-th"></i> VISUALIZAR SALIDA DE  ALMACÉN</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle" v-else> <i class="fa fa-th"></i> VISUALIZAR TRANSFERENCIA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
