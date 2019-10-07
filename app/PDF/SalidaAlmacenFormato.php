@@ -15,6 +15,7 @@ class SalidaAlmacenFormato extends Rotation
     protected $obra;
     protected $entrada_almacen;
     private $dim_aux=0;
+    var $encola = '';
     const DPI = 96;
     const MM_IN_INCH = 25.4;
     const A4_HEIGHT = 297;
@@ -111,18 +112,18 @@ class SalidaAlmacenFormato extends Rotation
         $y_inicial = $this->getY();
         $x_inicial = $this->getX();
         $this->MultiCell(9.5, .5,
-            "empresa" . '
-' . "sucrus" . '
-' . "dsad", '', 'L');
+                        "empresa" . '
+            ' . "sucrus" . '
+            ' . "dsad", '', 'L');
 
 
         $y_final_1 = $this->getY();
         $this->setY($y_inicial);
         $this->setX($x_inicial + 10);
         $this->MultiCell(9.5, .5,
-            utf8_decode("hora") . '
-' . "dir factura" . '
-' . "obra rfc", '', 'L');
+                    utf8_decode("hora") . '
+        ' . "dir factura" . '
+        ' . "obra rfc", '', 'L');
         $y_final_2 = $this->getY();
 
 
@@ -155,10 +156,10 @@ class SalidaAlmacenFormato extends Rotation
         $this->setY($y_inicial);
         $this->setX($x_inicial + 10);
         $this->MultiCell(9.5, .5,
-            utf8_decode($this->obra->facturar) . '
-' . utf8_decode($this->obra->direccion) . '
-' . 'Estado: ' . utf8_decode($this->obra->estado) . ' C.P:' . $this->obra->codigo_postal . '
-' . $this->obra->rfc, '', 'L');
+                    utf8_decode($this->obra->facturar) . '
+        ' . utf8_decode($this->obra->direccion) . '
+        ' . 'Estado: ' . utf8_decode($this->obra->estado) . ' C.P:' . $this->obra->codigo_postal . '
+        ' . $this->obra->rfc, '', 'L');
 
         $this->setY($y_alto);
         $this->Ln(.5);
@@ -166,11 +167,17 @@ class SalidaAlmacenFormato extends Rotation
         $this->SetFont('Arial', '', 6);
         $this->SetHeights([0.8]);
 
+
+
+
+
+
+
     }
 
-
-    public function partidas()
+    public function tableHeader()
     {
+
         $this->Ln(1.8);
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180);
@@ -183,92 +190,126 @@ class SalidaAlmacenFormato extends Rotation
         $this->SetHeights([0.4]);
         $this->SetAligns(['C','C','C','C','C',]);
         $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad"]);
+    }
 
 
-
-        foreach($this->salida->partidas as $i => $p)
-        {
-            $this->dim = $this->GetY();
-            if($this->dim>24.8) {
-                $this->AddPage();
-                $this->Ln(1.8);
-                $this->SetFont('Arial', '', 6);
-                $this->SetFillColor(180,180,180);
-                $this->SetWidths([1,2.5,12,2,2]);
-                $this->SetStyles(['DF','DF','DF','DF','DF']);
-                $this->SetRounds(['1','','','','2']);
-                $this->SetRadius([0.2,0,0,0,0.2]);
-                $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
-                $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
-                $this->SetHeights([0.4]);
-                $this->SetAligns(['C','C','C','C','L',]);
-                $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad", ]);
-                $this->dim_aux=1;
-            }
-
-            $this->SetWidths([1,2.5,12,2,2]);
-            $this->SetRounds(['','','','','']);
-            $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
-            $this->SetAligns(['L','L','L','L','L']);
-            $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
-
-            $this->Row([
-                $i+1,
-                $p->material['numero_parte'],
-                utf8_decode($p->material['descripcion']),
-                $p['unidad'],
-                $p->cantidad_format,
-            ]);
-
-            /*Guiones*/
-            $this->SetRounds(['4','','','','','','','','3']);
-            $this->SetFills(['255,255,255']);
-            $this->SetRadius([0,0,0,0,0,0,0,0,0]);
-            $this->SetWidths([19.5]);
-            $this->SetAligns(['L']);
-            $this->Row([utf8_decode("---")]);
+    public function partidas()
+    {
+if($this->PageNo()==1){
+    $this->tableHeader();
+}
 
 
+            foreach ($this->salida->partidas as $i => $p) {
+                $this->dim = $this->GetY();
 
-            if($p->concepto['nivel']>0){
 
-            $nivel=$p->concepto['nivel'];
+                $this->SetWidths([1, 2.5, 12, 2, 2]);
+                $this->SetRounds(['', '', '', '', '']);
+                $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+                $this->SetAligns(['L', 'L', 'L', 'L', 'L']);
+                $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
 
-            if(empty($nivel)){
-                $nivel='';
-            }else{
-                $nivel=$p->concepto->getAncestrosAttribute($nivel);
-            }
-
-            $this->SetWidths([1,18.5]);
-            $this->SetRounds(['','']);
-            $this->SetFills(['180,180,180','255,255,255']);
-            $this->SetAligns(['L','L']);
-            $this->SetTextColors(['0,0,0','0,0,0']);
-
-            $this->Row([
-                "Destino:",
-                utf8_decode($nivel),
-            ]);
-
-        }else{
-
-                $this->SetWidths([1,18.5]);
-                $this->SetRounds(['','']);
-                $this->SetFills(['180,180,180','255,255,255']);
-                $this->SetAligns(['L','L']);
-                $this->SetTextColors(['0,0,0','0,0,0']);
-
-                if (empty($p->almacen['descripcion'])){
-                    $destino = '';
-                }else{
-                    $destino =$p->almacen['descripcion'];
-                }
                 $this->Row([
-                    "Destino:",
-                    utf8_decode($destino),
+                       $i + 1,
+                       $p->material['numero_parte'],
+                       utf8_decode($p->material['descripcion']),
+                       $p['unidad'],
+                       $p->cantidad
                 ]);
-            }
+
+                /*Guiones*/
+                $this->SetRounds(['4', '', '', '', '', '', '', '', '3']);
+                $this->SetFills(['255,255,255']);
+                $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                $this->SetWidths([19.5]);
+                $this->SetAligns(['L']);
+                $this->Row(["---"]);
+
+                $this->dim_2 = $this->GetY();
+
+                if($this->dim_2>24) {
+                    $this->AddPage();
+                    $this->Ln(1.8);
+                    $this->Ln(.7);
+                    if ($p->concepto['nivel'] > 0) {
+
+                        $nivel = $p->concepto['nivel'];
+
+                        $nivel = $p->concepto->getAncestrosAttribute($nivel);
+
+
+                        $this->SetWidths([1, 18.5]);
+                        $this->SetRounds(['', '']);
+                        $this->SetFills(['180,180,180', '255,255,255']);
+                        $this->SetAligns(['L', 'L']);
+                        $this->SetTextColors(['0,0,0', '0,0,0']);
+
+                        $this->Row([
+                            "Destino:",
+                            utf8_decode($nivel),
+                        ]);
+
+                    } else {
+
+                        $this->SetWidths([1, 18.5]);
+                        $this->SetRounds(['', '']);
+                        $this->SetFills(['180,180,180', '255,255,255']);
+                        $this->SetAligns(['L', 'L']);
+                        $this->SetTextColors(['0,0,0', '0,0,0']);
+
+                        if (empty($p->almacen['descripcion'])) {
+                            $destino = '';
+                        } else {
+                            $destino = $p->almacen['descripcion'];
+                        }
+                        $this->Row([
+                            "Destino:",
+                            utf8_decode($destino),
+                        ]);
+                    }
+
+                }else{
+
+                    if ($p->concepto['nivel'] > 0) {
+
+                        $nivel = $p->concepto['nivel'];
+
+                        $nivel = $p->concepto->getAncestrosAttribute($nivel);
+
+
+                        $this->SetWidths([1, 18.5]);
+                        $this->SetRounds(['', '']);
+                        $this->SetFills(['180,180,180', '255,255,255']);
+                        $this->SetAligns(['L', 'L']);
+                        $this->SetTextColors(['0,0,0', '0,0,0']);
+
+                        $this->Row([
+                            "Destino:",
+                            utf8_decode($nivel),
+                        ]);
+
+                    } else {
+
+                        $this->SetWidths([1, 18.5]);
+                        $this->SetRounds(['', '']);
+                        $this->SetFills(['180,180,180', '255,255,255']);
+                        $this->SetAligns(['L', 'L']);
+                        $this->SetTextColors(['0,0,0', '0,0,0']);
+
+                        if (empty($p->almacen['descripcion'])) {
+                            $destino = '';
+                        } else {
+                            $destino = $p->almacen['descripcion'];
+                        }
+                        $this->Row([
+                            "Destino:",
+                            utf8_decode($destino),
+                        ]);
+                    }
+
+                }
+
 
 
             }
