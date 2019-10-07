@@ -30,6 +30,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EmpresaFondoFijo;
 use App\Models\CADECO\EntradaMaterial;
 use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Familia;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLog;
@@ -44,6 +45,7 @@ use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\LiberacionFondoGarantia;
+use App\Models\CADECO\MaterialFamilia;
 use App\Models\CADECO\NuevoLote;
 use App\Models\CADECO\NuevoLotePartida;
 use App\Models\CADECO\OrdenCompra;
@@ -75,6 +77,7 @@ use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
+use App\Observers\CADECO\Compras\MaterialFamiliaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
 use App\Observers\CADECO\Contabilidad\CierreObserver;
@@ -99,6 +102,7 @@ use App\Observers\CADECO\EmpresaFondoFijoObserver;
 use App\Observers\CADECO\EmpresaObserver;
 use App\Observers\CADECO\EntradaMaterialObserver;
 use App\Observers\CADECO\EstimacionObserver;
+use App\Observers\CADECO\FamiliaObserver;
 use App\Observers\CADECO\Finanzas\ConfiguracionEstimacionObserver;
 use App\Observers\CADECO\Finanzas\CuentaBancariaEmpresaObserver;
 use App\Observers\CADECO\Finanzas\DistribucionRecursoRemesaLogObserver;
@@ -162,6 +166,7 @@ class AppServiceProvider extends ServiceProvider
              */
             EntradaEliminada::observe(EntradaEliminadaObserver::class);
             SalidaEliminada::observe(SalidaEliminadaObserver::class);
+            MaterialFamilia::observe(MaterialFamiliaObserver::class);
 
             /**
              *Contabilidad
@@ -251,6 +256,7 @@ class AppServiceProvider extends ServiceProvider
             EmpresaFondoFijo::observe(EmpresaFondoFijoObserver::class);
             EntradaMaterial::observe(EntradaMaterialObserver::class);
             Estimacion::observe(EstimacionObserver::class);
+            Familia::observe(FamiliaObserver::class);
             Fondo::observe(FondoObserver::class);
             LiberacionFondoGarantia::observe(LiberacionFondoGarantiaObserver::class);
             NuevoLote::observe(NuevoLoteObserver::class);

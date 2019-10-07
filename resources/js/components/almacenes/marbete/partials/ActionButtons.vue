@@ -21,7 +21,7 @@
 
                         this.$store.dispatch('almacenes/marbete/paginate', {
                             id: this.id,
-                            params:{include:['almacen','material','inventario_fisico'], order:'desc', sort:'folio'}
+                            params:{include:['almacen','material','inventario_fisico','conteos'], order:'desc', sort:'folio'}
                         })
                             .then(data => {
                                 this.$store.commit('almacenes/marbete/SET_MARBETES', data.data);
