@@ -39,6 +39,13 @@ class Almacen extends Model
     protected $primaryKey = 'id_almacen';
 
     /**
+     * @var array
+     */
+    public $searchable = [
+        'descripcion'
+    ];
+
+    /**
      * @var bool
      */
     public $timestamps = false;
