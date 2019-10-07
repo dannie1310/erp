@@ -952,12 +952,12 @@ export const routes = [
             },
             {
                 path: 'gestion-pago',
-                component: require('./components/finanzas/gestion/Layout'),
+                component: require('./components/finanzas/gestion-pago/Layout'),
                 children: [
                     {
                         path: '/',
                         name: 'gestion-pago',
-                        component: require('./components/finanzas/gestion/Index'),
+                        component: require('./components/finanzas/gestion-pago/Index'),
                         meta: {
                             title: 'Gestión de Pagos',
                             breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGOS'},
@@ -968,7 +968,7 @@ export const routes = [
                     {
                         path: 'pago',
                         name: 'pago',
-                        component: require('./components/finanzas/gestion/pago/Index'),
+                        component: require('./components/finanzas/gestion-pago/pago/Index'),
                         meta: {
                             title: 'Gestión de Pagos',
                             breadcrumb: {
@@ -982,7 +982,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'pago-create',
-                        component: require('./components/finanzas/gestion/pago/Create'),
+                        component: require('./components/finanzas/gestion-pago/pago/Create'),
                         meta: {
                             title: 'Registrar Pagos con Bitácora Bancaria (SANTANDER)',
                             breadcrumb: {name: 'REGISTRAR (BITÁCORA BSANT)', parent: 'pago'},
@@ -990,6 +990,41 @@ export const routes = [
                             permission: 'cargar_distribucion_recursos_remesa'
                         }
                     },
+                    {
+                        path: 'carga-masiva',
+                        name: 'carga-masiva',
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Index'),
+                        meta: {
+                            title: 'Carga Masiva',
+                            breadcrumb: {
+                                parent: 'gestion-pago',
+                                name: 'CARGA MASIVA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_carga_layout_pago'
+                        }
+                    },
+                    {
+                        path: 'carga-create',
+                        name: 'carga-masiva-create',
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Create'),
+                        meta: {
+                            title: 'Registrar Carga Masiva de Pagos',
+                            breadcrumb: {name: 'REGISTRAR CARGA MASIVA DE PAGOS', parent: 'carga-masiva'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_carga_layout_pago'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'autorizar-layout',
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Autorizar'),
+                        meta: {
+                            title: 'Autorizar Layouts',
+                            breadcrumb: { name: 'AUTORIZAR', parent:'carga-masiva'},
+                            middleware: [auth, context],
+                        }
+                    }
                 ]
             },
             {
