@@ -33,6 +33,7 @@ import sucursal from './modules/cadeco/sucursal';
 //COMPRAS
 import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
+import materialFamilia from './modules/compras/material-familia';
 
 //CONFIGURACION
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
@@ -128,6 +129,7 @@ export default new Vuex.Store({
 
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
+        'compras/material-familia' : materialFamilia,
 
         'configuracion/area-subcontratante' : areaSubcontratante,
 

@@ -42,7 +42,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" >
+            <li class="nav-item" v-if="catalogo || $root.can('consultar_insumo_material')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-server"></i>
                     <p>
@@ -51,11 +51,19 @@
                     </p>
                 </a>
 
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview" v-if="catalogo">
                     <li class="nav-item" >
                         <router-link :to="{name: 'familia'}" class="nav-link" :class="{active: this.$route.name == 'familia'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Familia</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_material')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'material'}" class="nav-link" :class="{active: this.$route.name == 'material'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Material</p>
                         </router-link>
                     </li>
                 </ul>
@@ -70,6 +78,13 @@
         name: "compras-menu",
 
         computed: {
+
+            catalogo(){
+                return this.$root.can([
+                    'consultar_familia_material',
+                    'consultar_familia_herramienta_equipo'
+                ]);
+            },
             gestion_almacen() {
                 return this.$root.can([
                     'consultar_entrada_almacen',

@@ -45,6 +45,7 @@ use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\LiberacionFondoGarantia;
+use App\Models\CADECO\MaterialFamilia;
 use App\Models\CADECO\NuevoLote;
 use App\Models\CADECO\NuevoLotePartida;
 use App\Models\CADECO\OrdenCompra;
@@ -76,6 +77,7 @@ use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
+use App\Observers\CADECO\Compras\MaterialFamiliaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
 use App\Observers\CADECO\Contabilidad\CierreObserver;
@@ -164,6 +166,7 @@ class AppServiceProvider extends ServiceProvider
              */
             EntradaEliminada::observe(EntradaEliminadaObserver::class);
             SalidaEliminada::observe(SalidaEliminadaObserver::class);
+            MaterialFamilia::observe(MaterialFamiliaObserver::class);
 
             /**
              *Contabilidad
