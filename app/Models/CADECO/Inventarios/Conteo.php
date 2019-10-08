@@ -42,8 +42,24 @@ class Conteo extends Model
         }else{
             return 'Extra';
         }
-
     }
+
+    public function getUsadoAttribute(){
+        return round($this->cantidad_usados, 2);
+    }
+
+    public function getNuevoAttribute(){
+        return round($this->cantidad_nuevo, 2);
+    }
+
+    public function getInservibleAttribute(){
+        return round($this->cantidad_inservible, 2);
+    }
+
+    public function getTotalFormatAttribute(){
+        return round($this->total, 2);
+    }
+
     public function getFolioMarbeteAttribute(){
         return $this->marbete->invetarioFisico->numero_folio_format."-".$this->marbete->folio_format;
     }
@@ -80,6 +96,8 @@ class Conteo extends Model
         if(count(Conteo::query()->where('id_marbete','=',$this->id_marbete)->where('tipo_conteo','=',$this->tipo_conteo)->get()) > 0){
             abort(400,'El conteo que intenta registrar ya existe');
         }
+        if($this->tipo_conteo > 3 || $this->tipo_conteo <= 0){
+            abort(400,'El número de conteo no es válido');
+        }
     }
-
 }

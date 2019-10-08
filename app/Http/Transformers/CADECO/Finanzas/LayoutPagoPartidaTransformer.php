@@ -50,9 +50,6 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
             'referencia_pago' => $model->referencia_pago,
             'id_documento_remesa' => $model->id_documento_remesa,
             'id_transaccion_pago' => $model->id_transaccion_pago,
-
-
-
         ];
 
     }

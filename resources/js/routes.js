@@ -222,7 +222,6 @@ export const routes = [
                             breadcrumb: {parent: 'almacenes', name: 'ENTRADA ALMACEN'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_entrada_almacen'
-
                         }
                     }
                 ]
@@ -276,7 +275,6 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: ['consultar_marbetes']
                         }
-
                     }
                 ]
             },
@@ -317,6 +315,37 @@ export const routes = [
                     breadcrumb: {parent:'home', name: 'COMPRAS'},
                     middleware: [auth, context, access]
                 }
+            },
+            {
+                path: 'catalogo-insumo',
+                component: require('./components/compras/catalogos/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'catalogo-insumo',
+                        component: require('./components/compras/catalogos/Index'),
+                        meta: {
+                            title: 'Gestión de Insumos',
+                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE INSUMOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia',
+                        name: 'familia',
+                        component: require('./components/compras/catalogos/familia/Index'),
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'catalogo-insumo',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    }
+                ]
             },
             {
                 path: 'orden-compra',
@@ -994,6 +1023,18 @@ export const routes = [
                             title: 'Autorizar Layouts',
                             breadcrumb: { name: 'AUTORIZAR', parent:'carga-masiva'},
                             middleware: [auth, context],
+                        }
+                    },
+                    {
+                        path: ':id/consultar',
+                        name: 'pago-masivo-show',
+                        props: true,
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Show'),
+                        meta: {
+                            title: 'Consultar Layout registrados',
+                            breadcrumb: {name: 'VER', parent: 'carga-masiva'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_carga_layout_pago'
                         }
                     }
                 ]

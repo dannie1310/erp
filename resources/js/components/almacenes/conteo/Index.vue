@@ -3,6 +3,7 @@
       <div class="col-12">
          <create @created="paginate()"></create>
          <Layout @change="paginate()"></Layout>
+         <CodigoBarra @created="paginate()"></CodigoBarra>
       </div>
       <div class="col-12">
          <div class="card">
@@ -21,11 +22,12 @@
 </template>
 
 <script>
-   import Layout from "./CargarLayout";
+   import CodigoBarra from "./CodigoBarra";
    import Create from "./Create";
+   import Layout from "./CargarLayout";
    export default {
         name: "conteo-index",
-       components: {Layout, Create},
+       components: {CodigoBarra, Layout, Create},
        data() {
           return {
              HeaderSettings: false,
@@ -92,11 +94,11 @@
                      id : conteo.id,
                      tipo_conteo : conteo.tipo_conteo_format,
                      id_marbete : conteo.folio_marbete,
-                     cantidad_usados : conteo.cantidad_usados ? conteo.cantidad_usados:'-',
-                     cantidad_nuevo : conteo.cantidad_nuevo,
-                     cantidad_inservible : conteo.cantidad_inservible ? conteo.cantidad_inservible:'-',
+                     cantidad_usados : conteo.cantidad_usados ? conteo.usado:'-',
+                     cantidad_nuevo : conteo.nuevo,
+                     cantidad_inservible : conteo.cantidad_inservible ? conteo.inservible:'-',
                      inventario_fisico : conteo.marbete.inventario_fisico.folio_format,
-                     total : conteo.total,
+                     total : conteo.total_format,
                      iniciales : conteo.iniciales ? conteo.iniciales:'-',
                      observaciones : conteo.observaciones ? conteo.observaciones:'-',
                      buttons: $.extend({}, {

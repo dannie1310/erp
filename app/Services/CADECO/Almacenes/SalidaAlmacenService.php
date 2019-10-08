@@ -6,6 +6,7 @@ namespace App\Services\CADECO\Almacenes;
 
 use App\Models\CADECO\Almacen;
 use App\Models\CADECO\SalidaAlmacen;
+use App\PDF\SalidaAlmacenFormato;
 use App\Repositories\Repository;
 
 class SalidaAlmacenService
@@ -54,5 +55,11 @@ class SalidaAlmacenService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar($data['data'][0]);
+    }
+
+    public function pdfSalidaAlmacen($id)
+    {
+        $pdf = new SalidaAlmacenFormato($id);
+        return $pdf;
     }
 }
