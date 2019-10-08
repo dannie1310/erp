@@ -367,7 +367,7 @@ export const routes = [
                             title: 'Herramienta y Equipo',
                             breadcrumb: {
                                 parent: 'catalogo-insumo',
-                                name: 'HERRAIENTA Y EQUIPO'
+                                name: 'HERRAMIENTA Y EQUIPO'
                             },
                             middleware: [auth, context],
                             // permission: 'consultar_entrada_almacen'
