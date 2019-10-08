@@ -30,7 +30,18 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function paginate_especial($data)
     {
         $this->model = $this->model->select([
-            'Finanzas.cuentas_bancarias_empresas.*',
+            'Finanzas.cuentas_bancarias_empresas.id',
+            'Finanzas.cuentas_bancarias_empresas.id_banco',
+            'Finanzas.cuentas_bancarias_empresas.id_solicitud_origen_alta',
+            'Finanzas.cuentas_bancarias_empresas.id_solicitud_origen_baja',
+            'Finanzas.cuentas_bancarias_empresas.cuenta_clabe',
+            'Finanzas.cuentas_bancarias_empresas.id_moneda',
+            'Finanzas.cuentas_bancarias_empresas.id_plaza',
+            'Finanzas.cuentas_bancarias_empresas.sucursal',
+            'Finanzas.cuentas_bancarias_empresas.tipo_cuenta',
+            'Finanzas.cuentas_bancarias_empresas.registro',
+            'Finanzas.cuentas_bancarias_empresas.fecha_hora_registro',
+            'Finanzas.cuentas_bancarias_empresas.estatus',
             'empresas.*',
 
         ])->join('dbo.empresas as empresas', 'Finanzas.cuentas_bancarias_empresas.id_empresa', 'empresas.id_empresa');
