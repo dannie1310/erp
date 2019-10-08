@@ -150,10 +150,10 @@ export default {
                                         timer: 1500,
                                         buttons: false
                                     })
-                                    //     .then(() => {
-                                    //     context.commit('UPDATE_DISTRIBUCION', data);
-                                    //     resolve(data);
-                                    // })
+                                        .then(() => {
+
+                                        resolve(data);
+                                    })
                                 })
                                 .catch(error => {
                                     reject(error);

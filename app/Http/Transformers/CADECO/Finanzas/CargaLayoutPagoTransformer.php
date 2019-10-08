@@ -9,12 +9,9 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
-
-use App\Http\Transformers\CADECO\Finanzas\CtgEstadoLayoutPagoTransformer;
-
-use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Http\Transformers\IGH\UsuarioTransformer;
-
+use App\Http\Transformers\CADECO\Finanzas\CtgEstadoLayoutPagoTransformer;
+use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Models\IGH\Usuario;
 use League\Fractal\TransformerAbstract;
 

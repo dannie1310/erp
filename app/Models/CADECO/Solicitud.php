@@ -21,4 +21,27 @@ class Solicitud extends Transaccion
             return $query->where('tipo_transaccion', '=', 72);
         });
     }
+
+    public function verificaPago($data){
+        $pago = Pago::query()->where('id_referente','=', $data['id_referente'])
+            ->where('id_empresa','>',0)->get()->first();
+
+
+        if(is_null($pago)){
+            $datos = [
+                'numero_folio' => $data['numero_folio'],
+                'fecha'=>$data['fecha'],
+                'monto'=>$data['monto'],
+                'id_empresa'=>$data['id_empresa'],
+                'observaciones'=>$data['observaciones'],
+                'id_moneda'=>$data['id_moneda'],
+            ];
+            $pago = Pago::query()->create($datos);
+            return $pago;
+
+        }else{
+            return $pago;
+        }
+
+    }
 }

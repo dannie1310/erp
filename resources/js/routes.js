@@ -1038,6 +1038,18 @@ export const routes = [
                             breadcrumb: { name: 'AUTORIZAR', parent:'carga-masiva'},
                             middleware: [auth, context],
                         }
+                    },
+                    {
+                        path: ':id/consultar',
+                        name: 'pago-masivo-show',
+                        props: true,
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Show'),
+                        meta: {
+                            title: 'Consultar Layout registrados',
+                            breadcrumb: {name: 'VER', parent: 'carga-masiva'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_carga_layout_pago'
+                        }
                     }
                 ]
             },
