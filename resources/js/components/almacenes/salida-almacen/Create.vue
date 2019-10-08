@@ -10,9 +10,10 @@
                                 <!--Referencia-->
                                  <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="referencia">Referencia</label>
+                                        <label for="referencia">       Referencia</label>
                                         <div class="col-sm-10">
-                                               <input style="width: 100%"
+                                               <input class="form-control"
+                                                      style="width: 100%"
                                                       placeholder="Referencia"
                                                       name="referencia"
                                                       id="referencia"
@@ -30,9 +31,10 @@
                                     <div class="form-group error-content">
                                         <label for="id_almacen">Almacen</label>
                                                <Almacen
+                                                   class="form-control"
                                                    name="id_almacen"
                                                    id="id_almacen"
-                                                   data-vv-as="Número de Marbete"
+                                                   data-vv-as="Almacén"
                                                    v-validate="{required: true}"
                                                    v-model="dato.id_almacen"
                                                    :class="{'is-invalid': errors.has('id_almacen')}"
@@ -86,7 +88,22 @@
                             <div class="row">
                                 <div class="col-md-12" v-if="dato.id_tipo == 1">
                                     <div class="form-group row error-content">
-                                        conceptos
+                                        <div class="form-group row error-content">
+                                        <label for="id_concepto" class="col-sm-2 col-form-label">Concepto</label>
+                                            <div class="col-sm-10">
+                                                <concepto-select
+                                                    name="id_concepto"
+                                                    data-vv-as="Concepto"
+                                                    v-validate="{required: true}"
+                                                    id="id_concepto"
+                                                    v-model="dato.id_concepto"
+                                                    :error="errors.has('id_concepto')"
+                                                    ref="conceptoSelect"
+                                                    :disableBranchNodes="false"
+                                                ></concepto-select>
+                                            <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -145,12 +162,14 @@
 
 <script>
     import Almacen from "../../cadeco/almacen/Select";
+    import ConceptoSelect from "../../cadeco/concepto/Select";
     export default {
         name: "salida-almacen-create",
-        components: {Almacen},
+        components: {Almacen, ConceptoSelect},
         data() {
             return {
                 dato:{
+                    id_concepto:'',
                     id_almacen:'',
                     id_empresa:'',
                     id_tipo:'',
