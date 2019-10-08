@@ -51,6 +51,7 @@ class CargaLayoutPagoController extends Controller
 
         $this->middleware('permiso:consultar_carga_layout_pago')->only(['paginate','show']);
         $this->middleware('permiso:registrar_carga_layout_pago')->only(['store']);
+        $this->middleware('permiso:descargar_layout_pagos')->only(['descarga_layout']);
 
         $this->service = $service;
         $this->fractal = $fractal;
