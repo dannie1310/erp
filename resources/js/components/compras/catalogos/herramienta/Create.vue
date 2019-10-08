@@ -3,13 +3,13 @@
         <button @click="init" v-if="$root.can('registrar_insumo_material')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
-            Registrar Material
+            Registrar Herramienta / Equipo
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR MATERIAL</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR HERRAMIENTA / EQUIPO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -22,7 +22,7 @@
                                         <label for="tipo" class="col-sm-2 col-form-label">Material: </label>
                                         <div class="col-sm-10">
                                             <FamiliaSelect
-                                                    :scope="'tipo:1'"
+                                                    :scope="'tipo:4'"
                                                     name="tipo"
                                                     id="tipo"
                                                     data-vv-as="Material"
@@ -114,7 +114,7 @@
 <script>
     import FamiliaSelect from "../familia/Select";
     export default {
-        name: "material-create",
+        name: "herramienta-create",
         components: {FamiliaSelect},
         data() {
                 return {
@@ -144,19 +144,19 @@
                         unidad:'',
                         descripcion: '',
                         nu_parte:'',
-                        tipo_material:1,
-                        equivalencia:0,
-                        marca:0
+                        tipo_material:4,
+                        equivalencia:1,
+                        marca:1
                     }
                 }
         },
         methods: {
             init() {
                   this.cargando = false;
-                    this.dato.tipo = null;
-                    this.dato.unidad = '';
-                    this.dato.descripcion = '';
-                    this.dato.nu_parte = '';
+                    // this.dato.tipo = null;
+                    // this.dato.unidad = '';
+                    // this.dato.descripcion = '';
+                    // this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
             },
             store() {

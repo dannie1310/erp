@@ -67,6 +67,14 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_material')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'herramienta'}" class="nav-link" :class="{active: this.$route.name == 'herramienta'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Herramienta y Equipo</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>
