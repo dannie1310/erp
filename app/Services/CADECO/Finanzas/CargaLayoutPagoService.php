@@ -9,8 +9,10 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\CSV\PagoLayout;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Repositories\CADECO\Finanzas\LayoutPago\Repository;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class CargaLayoutPagoService
@@ -55,5 +57,9 @@ class CargaLayoutPagoService
     {
         dd($data);
         return "autorizar";
+    }
+
+    public function descargar_layout(){
+        return Excel::download(new PagoLayout(), 'LayoutRegistroPagos.csv');
     }
 }

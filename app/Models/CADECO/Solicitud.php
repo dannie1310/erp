@@ -21,4 +21,13 @@ class Solicitud extends Transaccion
             return $query->where('tipo_transaccion', '=', 72);
         });
     }
+
+    public function pago(){
+        return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion')
+            ->where('tipo_transaccion', '=', 82);
+    }
+
+    public function fondo(){
+        return $this->belongsTo(Fondo::class, 'id_referente', 'id_fondo');
+    }
 }
