@@ -70,4 +70,10 @@ class PermisoController extends Controller
     {
         return $this->service->porCantidad();
     }
+
+    public function descargaListadoPermisosObra(Request $request, $id)
+    {
+        return $this->service->descargaListadoPermisosObra($id);
+    }
+
 }
