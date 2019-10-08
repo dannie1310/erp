@@ -13,6 +13,7 @@
                                         <label for="referencia">Referencia</label>
                                         <div class="col-sm-10">
                                                <input style="width: 100%"
+                                                      class="form-control"
                                                       placeholder="Referencia"
                                                       name="referencia"
                                                       id="referencia"
@@ -89,7 +90,7 @@
                                         conceptos
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-12" v-if="dato.id_almacen">
                                     <div class="form-group">
                                         <div class="col-12">
                                             <button @click="agregar_partida"class="btn btn-app btn-info pull-right" :disabled="cargando">
@@ -140,6 +141,44 @@
                 </div>
             </div>
         </nav>
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AGREGAR PARTIDA</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                     <form role="form" @submit.prevent="validatePartida">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <label for="descripcion" class="col-sm-3 col-form-label">Observaciones: </label>
+                                        <div class="col-sm-9">
+                                            <textarea
+                                                    name="descripcion"
+                                                    id="descripcion"
+                                                    class="form-control"
+                                                    v-model="partida.descripcion"
+                                                    data-vv-as="Observaciones"
+                                                    :class="{'is-invalid': errors.has('partida.descripcion')}"
+                                            ></textarea>
+                                            <div class="invalid-feedback" v-show="errors.has('partida.descripcion')">{{ errors.first('descripcion') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                         <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || partida.descripcion == ''">Registrar</button>
+                        </div>
+                     </form>
+                </div>
+            </div>
+          </div>
     </span>
 </template>
 
@@ -181,7 +220,18 @@
         },
         methods: {
             agregar_partida(){
-                this.dato.partidas.push(this.partida);
+                this.cargando = true;
+                this.partida.no_parte = '';
+                this.partida.id_material = '';
+                this.partida.descripcion='';
+                this.partida.unidad='';
+                this.partida.existencia='';
+                this.partida.cantidad='';
+                this.partida.destino='';
+                this.partida.id_concepto='';
+                $(this.$refs.modal).modal('show');
+                this.$validator.reset();
+                this.cargando = false;
             },
             getEmpresas() {
                 return this.$store.dispatch('cadeco/empresa/index', {
@@ -196,6 +246,13 @@
                 this.$validator.validate().then(result => {
                     if (result) {
                         alert('panda');
+                    }
+                });
+            },
+            validatePartida() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.partidas.push(this.partida);
                     }
                 });
             },
