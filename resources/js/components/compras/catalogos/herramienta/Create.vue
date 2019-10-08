@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_insumo_material')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_insumo_herramienta_equipo')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Herramienta / Equipo
@@ -153,10 +153,10 @@
         methods: {
             init() {
                   this.cargando = false;
-                    // this.dato.tipo = null;
-                    // this.dato.unidad = '';
-                    // this.dato.descripcion = '';
-                    // this.dato.nu_parte = '';
+                    this.dato.tipo = null;
+                    this.dato.unidad = '';
+                    this.dato.descripcion = '';
+                    this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
             },
             store() {
