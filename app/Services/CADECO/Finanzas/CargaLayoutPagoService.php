@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\CSV\PagoLayout;
 use App\Models\CADECO\Factura;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
@@ -16,6 +17,7 @@ use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Solicitud;
 use App\Models\CADECO\Transaccion;
 use App\Repositories\CADECO\Finanzas\LayoutPago\Repository;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class CargaLayoutPagoService
@@ -112,5 +114,9 @@ class CargaLayoutPagoService
                 'fecha_hora_autorizado' => date('Y-m-d h:i:s'), 'estado' => 1]);
 
 
+    }
+
+    public function descargar_layout(){
+        return Excel::download(new PagoLayout(), 'LayoutRegistroPagos.csv');
     }
 }
