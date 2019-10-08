@@ -10,6 +10,7 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Almacen;
+use App\Models\CADECO\Material;
 use App\Repositories\Repository;
 
 class AlmacenService
@@ -33,4 +34,9 @@ class AlmacenService
     {
         return $this->repository->all($data);
     }
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
 }

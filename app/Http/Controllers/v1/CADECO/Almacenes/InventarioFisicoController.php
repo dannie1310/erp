@@ -62,7 +62,8 @@ class InventarioFisicoController extends Controller
 
     public function descargaLayout($id)
     {
-        return $this->service->descargaLayout($id);
+
+            return $this->service->descargaLayout($id);
     }
 
     public function actualizar($id)
@@ -72,7 +73,8 @@ class InventarioFisicoController extends Controller
     }
 
 
-    public function descargar_resumen_conteo($id){
+    public function descargar_resumen_conteo($id)
+    {
         return $this->service->generar_resumen_conteos($id);
     }
 

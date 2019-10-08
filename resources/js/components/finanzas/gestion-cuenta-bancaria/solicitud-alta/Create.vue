@@ -19,7 +19,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="id_empresa" class="col-sm-2 col-form-label">Tipo Beneficiario: </label>
+                                        <label for="id_empresa" class="col  sm-2 col-form-label">Tipo Beneficiario: </label>
                                         <div class="col-sm-10">
                                             <div class="btn-group btn-group-toggle">
                                                 <label class="btn btn-outline-secondary" :class="id_tipo_empresa === Number(key) ? 'active': ''" v-for="(tipo_empresa, key) in tipos_empresas" :key="key">

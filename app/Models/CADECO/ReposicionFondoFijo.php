@@ -9,17 +9,14 @@
 namespace App\Models\CADECO;
 
 
-use Illuminate\Database\Eloquent\Model;
-
-class ReposicionFondoFijo extends Model
+class ReposicionFondoFijo extends Solicitud
 {
     protected static function boot()
     {
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 72)
-                ->where('opciones', '=', 1)
+            return $query->where('opciones', '=', 1)
                 ->where('estado', '!=', -2);
         });
     }

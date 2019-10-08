@@ -24,7 +24,10 @@ class Material extends Model
         'numero_parte',
         'unidad',
         'cuentaMaterial.cuenta',
-        'cuentaMaterial.tipo.descripcion'
+        'cuentaMaterial.tipo.descripcion',
+        'tipo_material',
+        'equivalencia',
+        'marca'
     ];
 
     public function getTieneHijosAttribute()
@@ -32,15 +35,51 @@ class Material extends Model
         return $this->hijos()->count() ? true : false;
     }
 
+    public function getTipoMaterialDescripcionAttribute()
+    {
+        switch ($this->tipo_material){
+            case(1):
+                return 'Materiales';
+                break;
+            case(2):
+                if($this->equivalencia == 0 && $this->marca ==0){
+                    return 'Mano de Obra';
+                }else{
+                    return 'Servicio';
+                }
+                break;
+            case(4):
+                return 'Herramienta y Equipo';
+                break;
+            case(8):
+                return 'Maquinaria';
+                break;
+        }
+    }
+
+    public function getDescripcionPadreAttribute()
+    {
+        $nivel = substr($this->nivel, 0,4);
+        $regreso = Material::query()->where('nivel','=',$nivel)->pluck('descripcion')->first();
+        if($regreso == null){
+            return '---';
+        }
+        return $regreso;
+    }
+
     public function familia()
     {
-        return $this->belongsTo(self::class, 'tipo_material', 'tipo_material')
-            ->where('nivel', 'LIKE', substr($this->nivel, 0, 4));
+        return $this->belongsTo(Familia::class, 'tipo_material', 'tipo_material');
     }
 
     public function cuentaMaterial()
     {
         return $this->hasOne(CuentaMaterial::class, 'id_material');
+    }
+
+    public function inventarios()
+    {
+        return $this->hasMany(Inventario::class, 'id_material','id_material');
     }
 
     public function hijos()
@@ -66,6 +105,30 @@ class Material extends Model
 
     public function scopeTipo($query, $tipo)
     {
-        return $query->where('tipo_material', '=', $tipo);
+        return $query->whereIn('tipo_material', explode(",", $tipo));
+    }
+
+    public function scopeInventariosDiferenciaSaldo($query, $id)
+    {
+        return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
+            ->whereRaw('inventarios.saldo != inventarios.cantidad')->select('materiales.*')->distinct();
+    }
+
+    public function scopeInventariosDistintoCero($query, $id)
+    {
+        return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
+            ->whereRaw('inventarios.saldo != 0')->select('materiales.*')->distinct();
+    }
+
+    public function scopeMaterialDescripcion($query)
+    {
+        return $query->where('descripcion','!=','NULL');
+    }
+
+
+    public function scopeTipos($query, $tipos)
+    {
+        $tip = explode(',',$tipos);
+        return $query->where('equivalencia', '=', 1)->whereIn('tipo_material', array_unique($tip));
     }
 }

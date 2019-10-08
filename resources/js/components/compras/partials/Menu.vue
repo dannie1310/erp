@@ -42,28 +42,28 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="gestion_almacen">
+            <li class="nav-item" v-if="catalogo || $root.can('consultar_insumo_material')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-server"></i>
                     <p>
-                        Gestión de Almacén
+                        Gestión de Insumos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
 
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_entrada_almacen')">
-                        <router-link :to="{name: 'entrada-almacen'}" class="nav-link" :class="{active: this.$route.name == 'entrada-almacen'}">
+                <ul class="nav nav-treeview" v-if="catalogo">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'familia'}" class="nav-link" :class="{active: this.$route.name == 'familia'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Entrada</p>
+                            <p>Familia</p>
                         </router-link>
                     </li>
                 </ul>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_salida_almacen')">
-                        <router-link :to="{name: 'salida-almacen'}" class="nav-link" :class="{active: this.$route.name == 'salida-almacen'}">
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_material')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'material'}" class="nav-link" :class="{active: this.$route.name == 'material'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Salida</p>
+                            <p>Material</p>
                         </router-link>
                     </li>
                 </ul>
@@ -78,6 +78,13 @@
         name: "compras-menu",
 
         computed: {
+
+            catalogo(){
+                return this.$root.can([
+                    'consultar_familia_material',
+                    'consultar_familia_herramienta_equipo'
+                ]);
+            },
             gestion_almacen() {
                 return this.$root.can([
                     'consultar_entrada_almacen',

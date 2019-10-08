@@ -3,9 +3,10 @@
 
 namespace App\Services\CADECO\Almacenes;
 
+use App\Facades\Context;
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\IGH\Usuario;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Inventarios\Repository;
 use PhpParser\Node\Stmt\Return_;
 
 class InventarioFisicoService
@@ -59,7 +60,8 @@ class InventarioFisicoService
 
     public function descargaLayout($id)
     {
-        return $this->repository->show($id)->descargaLayout();
+
+            return $this->repository->show($id)->descargaLayout();
     }
 
     public function generar_resumen_conteos($id){

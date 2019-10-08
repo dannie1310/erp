@@ -194,21 +194,52 @@ export const routes = [
                             title: 'Ajuste de Inventarios',
                             breadcrumb: {parent: 'almacenes', name: 'AJUSTE DE INVENTARIOS'},
                             middleware: [auth, context],
-
                         }
                     },
                     {
-                        path: 'ajuste-positivo',
-                        name: 'ajuste-positivo',
-                        component: require('./components/almacenes/ajuste-inventario/ajuste-positivo/Index'),
+                        path: 'create',
+                        name: 'ajuste-create',
+                        component: require('./components/almacenes/ajuste-inventario/Create'),
                         meta: {
-                            title: 'Ajuste Positivo (+)',
-                            breadcrumb: {
-                                parent: 'ajuste-inventario',
-                                name: 'AJUSTE POSITIVO (+)'
-                            },
+                            title: 'Registrar Ajuste de Inventario',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'ajuste-inventario'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_ajuste_positivo','registrar_ajuste_negativo']
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'entrada-almacen',
+                component: require('./components/almacenes/entrada-almacen/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'entrada-almacen',
+                        component: require('./components/almacenes/entrada-almacen/Index'),
+                        meta: {
+                            title: 'Entrada de Almacén',
+                            breadcrumb: {parent: 'almacenes', name: 'ENTRADA ALMACEN'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_entrada_almacen'
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'salida-almacen',
+                component: require('./components/almacenes/salida-almacen/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'salida-almacen',
+                        component: require('./components/almacenes/salida-almacen/Index'),
+                        meta: {
+                            title: 'Salida de Almacén',
+                            breadcrumb: {parent: 'almacenes', name: 'SALIDA ALMACEN'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_salida_almacen'
+
                         }
                     }
                 ]
@@ -226,7 +257,23 @@ export const routes = [
                             breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FÍSICO'},
                             middleware: [auth, context, permission],
                             permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
-
+                        }
+                    },
+                ]
+            },
+            {
+                path:'marbete',
+                component: require('./components/almacenes/marbete/Layout'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'marbete',
+                        component: require('./components/almacenes/marbete/Index'),
+                        meta: {
+                            title: 'Marbetes',
+                            breadcrumb: {parent: 'almacenes', name: 'MARBETES'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_marbetes']
                         }
                     }
                 ]
@@ -270,46 +317,46 @@ export const routes = [
                 }
             },
             {
-                path: 'almacen',
-                component: require('./components/compras/almacen/Layout'),
+                path: 'catalogo-insumo',
+                component: require('./components/compras/catalogos/Layout'),
                 children: [
                     {
                         path: '/',
-                        name: 'almacen',
-                        component: require('./components/compras/almacen/Index'),
+                        name: 'catalogo-insumo',
+                        component: require('./components/compras/catalogos/Index'),
                         meta: {
-                            title: 'Gestión de Almacenes',
-                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE ALMACENES'},
+                            title: 'Gestión de Insumos',
+                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE INSUMOS'},
                             middleware: [auth, context],
 
                         }
                     },
                     {
-                        path: 'entrada-almacen',
-                        name: 'entrada-almacen',
-                        component: require('./components/compras/almacen/entrada/Index'),
+                        path: 'familia',
+                        name: 'familia',
+                        component: require('./components/compras/catalogos/familia/Index'),
                         meta: {
-                            title: 'Entrada de Almacén',
+                            title: 'Familia',
                             breadcrumb: {
-                                parent: 'almacen',
-                                name: 'ENTRADA DE ALMACÉN'
+                                parent: 'catalogo-insumo',
+                                name: 'FAMILIA'
                             },
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
                         }
                     },
                     {
-                        path: 'salida-almacen',
-                        name: 'salida-almacen',
-                        component: require('./components/compras/almacen/salida/Index'),
+                        path: 'material',
+                        name: 'material',
+                        component: require('./components/compras/catalogos/material/Index'),
                         meta: {
-                            title: 'Salida de Almacén',
+                            title: 'Material',
                             breadcrumb: {
-                                parent: 'almacen',
-                                name: 'SALIDA DE ALMACÉN'
+                                parent: 'catalogo-insumo',
+                                name: 'MATERIAL'
                             },
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_salida_almacen'
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
                         }
                     }
                 ]
@@ -919,12 +966,12 @@ export const routes = [
             },
             {
                 path: 'gestion-pago',
-                component: require('./components/finanzas/gestion/Layout'),
+                component: require('./components/finanzas/gestion-pago/Layout'),
                 children: [
                     {
                         path: '/',
                         name: 'gestion-pago',
-                        component: require('./components/finanzas/gestion/Index'),
+                        component: require('./components/finanzas/gestion-pago/Index'),
                         meta: {
                             title: 'Gestión de Pagos',
                             breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGOS'},
@@ -935,7 +982,7 @@ export const routes = [
                     {
                         path: 'pago',
                         name: 'pago',
-                        component: require('./components/finanzas/gestion/pago/Index'),
+                        component: require('./components/finanzas/gestion-pago/pago/Index'),
                         meta: {
                             title: 'Gestión de Pagos',
                             breadcrumb: {
@@ -949,7 +996,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'pago-create',
-                        component: require('./components/finanzas/gestion/pago/Create'),
+                        component: require('./components/finanzas/gestion-pago/pago/Create'),
                         meta: {
                             title: 'Registrar Pagos con Bitácora Bancaria (SANTANDER)',
                             breadcrumb: {name: 'REGISTRAR (BITÁCORA BSANT)', parent: 'pago'},
@@ -957,6 +1004,53 @@ export const routes = [
                             permission: 'cargar_distribucion_recursos_remesa'
                         }
                     },
+                    {
+                        path: 'carga-masiva',
+                        name: 'carga-masiva',
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Index'),
+                        meta: {
+                            title: 'Carga Masiva',
+                            breadcrumb: {
+                                parent: 'gestion-pago',
+                                name: 'CARGA MASIVA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_carga_layout_pago'
+                        }
+                    },
+                    {
+                        path: 'carga-create',
+                        name: 'carga-masiva-create',
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Create'),
+                        meta: {
+                            title: 'Registrar Carga Masiva de Pagos',
+                            breadcrumb: {name: 'REGISTRAR CARGA MASIVA DE PAGOS', parent: 'carga-masiva'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_carga_layout_pago'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'autorizar-layout',
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Autorizar'),
+                        meta: {
+                            title: 'Autorizar Layouts',
+                            breadcrumb: { name: 'AUTORIZAR', parent:'carga-masiva'},
+                            middleware: [auth, context],
+                        }
+                    },
+                    {
+                        path: ':id/consultar',
+                        name: 'pago-masivo-show',
+                        props: true,
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Show'),
+                        meta: {
+                            title: 'Consultar Layout registrados',
+                            breadcrumb: {name: 'VER', parent: 'carga-masiva'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_carga_layout_pago'
+                        }
+                    }
                 ]
             },
             {

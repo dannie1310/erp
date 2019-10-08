@@ -20,7 +20,12 @@ class InventarioFisico extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'estado'
+        'estado',
+        'id_tipo'
+    ];
+
+    protected $searchable = [
+        'fecha_hora_inicio'
     ];
     public $timestamps = false;
 
@@ -67,9 +72,8 @@ class InventarioFisico extends Model
     }
 
     public function validar(){
-
         if(InventarioFisico::query()->where('estado', '=',0)->first() != null){
-            abort(400,'Existen inventarios físicos no finalizados');
+            abort(400,'Existe un inventario físico no finalizado');
         }
         return true;
     }
