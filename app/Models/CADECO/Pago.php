@@ -56,4 +56,29 @@ class Pago extends Transaccion
     public function empresa(){
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
+
+    public function verificaPago($data)
+    {
+        $pago = Pago::query()->where('numero_folio','=', $data['numero_folio'])->get()->first();
+
+        if(is_null($pago)){
+            $datos = [
+                'numero_folio' => $data['numero_folio'],
+                'fecha'=>$data['fecha'],
+                'monto'=>$data['monto'],
+                'id_empresa'=>$data['id_empresa'],
+                'observaciones'=>$data['observaciones'],
+                'id_moneda'=>$data['id_moneda'],
+            ];
+
+            $pago = Pago::query()->create($datos);
+            return $pago;
+
+        }else{
+            return $pago;
+        }
+
+
+
+    }
 }

@@ -92,7 +92,7 @@
                                 <td>{{doc.tipo_cambio}}</td>
                                 <td>{{doc.monto_pagado_format}}</td>
                                 <td>{{doc.referencia_pago}}</td>
-                                <td v-if="doc.id_transaccion_pago"><small class="badge-primary">Aplicado</small></td>
+                                <td v-if="doc.id_transaccion_pago===null"><small class="badge-primary">Aplicado</small></td>
                                 <td v-else><small class="badge-success">Pagado</small></td>
                             </tr>
                             </tbody>
