@@ -25,9 +25,6 @@ class PagoObserver
          }
         $pago->tipo_transaccion = 82;
         $pago->opciones = 0;
-        $pago->fecha = date('Y-m-d');
-        $pago->cumplimiento =  date('Y-m-d');
-        $pago->vencimiento = date('Y-m-d');
         $pago->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $pago->FechaHoraRegistro = date('Y-m-d h:i:s');
         $pago->id_obra = Context::getIdObra();
