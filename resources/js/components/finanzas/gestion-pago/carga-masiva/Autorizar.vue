@@ -103,7 +103,7 @@
                                 <td>{{doc.tipo_cambio}}</td>
                                 <td>{{doc.monto_transaccion_format}}</td>
                                 <td>{{doc.referencia_pago}}</td>
-                                <td v-if="doc.id_transaccion_pago"><small class="badge-primary">Aplicado</small></td>
+                                <td v-if="doc.id_transaccion_pago===null"><small class="badge-primary">Aplicado</small></td>
                                 <td v-else><small class="badge-success">Pagado</small></td>
                             </tr>
                             </tbody>
@@ -113,9 +113,9 @@
                                 </div>
 
                 <div class="modal-footer">
-
+                    <button  type="button" class="btn btn-secondary pull-right" @click="index" >Cerrar</button>
                     <div>
-                        <button @click="autorizar" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
+                        <button v-if="!layout.fecha_autorizacion" @click="autorizar" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
                     </div>
                 </div>
             </div>
@@ -152,12 +152,14 @@
             autorizar() {
                 return this.$store.dispatch('finanzas/carga-masiva-pago/autorizar', {
                     id: this.id
+                }).then(data => {
+                   this.find();
+                   this.layout();
                 })
-
-                //     .then(data => {
-                //     this.$router.push({name: ''});
-                // })
             },
+            index(){
+                this.$router.push({name: 'carga-masiva'});
+            }
 
         },
         computed: {

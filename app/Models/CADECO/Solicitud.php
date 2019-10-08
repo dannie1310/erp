@@ -23,7 +23,8 @@ class Solicitud extends Transaccion
     }
 
     public function verificaPago($data){
-        $pago = Pago::query()->where('id_referente','=', $data['id_referente'])->get()->first();
+        $pago = Pago::query()->where('id_referente','=', $data['id_referente'])
+            ->where('id_empresa','>',0)->get()->first();
 
 
         if(is_null($pago)){
@@ -38,6 +39,8 @@ class Solicitud extends Transaccion
             $pago = Pago::query()->create($datos);
             return $pago;
 
+        }else{
+            return $pago;
         }
 
     }

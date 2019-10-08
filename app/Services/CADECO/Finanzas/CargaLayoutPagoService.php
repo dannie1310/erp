@@ -53,58 +53,63 @@ class CargaLayoutPagoService
             'file_pagos' => $data['file_pagos'],
             'nombre_archivo' => $data['file_pagos_name']
         ];
-       return $this->repository->create($datos);
+        return $this->repository->create($datos);
     }
 
-    public function autorizar($data)
+    public function autorizar($id)
     {
 
-        $layout= $this->repository->show($data);
+        $layout = $this->repository->show($id);
         $partidas = $layout->partidas;
 
-        foreach($partidas as $partida){
+        foreach ($partidas as $partida) {
 
-            if(is_null($partida->id_transaccion_pago)){
+            $id_transaccion = $partida->id_transaccion;
+
+            if (is_null($partida->id_transaccion_pago)) {
 
 
-                $transaccion= Transaccion::query()->find($partida->id_transaccion);
+                $transaccion = Transaccion::query()->find($partida->id_transaccion);
 
 
                 /*Facturas*/
-                if($transaccion->tipo_transaccion==='65'){
+                if ($transaccion->tipo_transaccion === '65') {
 
                     $factura = new Factura();
-                    $pago=$factura->verificaOrdenPago($transaccion);
+                    $pago = $factura->verificaOrdenPago($transaccion);
 
-//dd($pago->id_transaccion, $partida->id_transaccion);
-                  LayoutPagoPartida::query()->where('id_transaccion','=', $partida->id_transaccion)
-                      ->update(['id_transaccion_pago'=>$pago->id_transaccion]);
-//dd($layout);
+
+                        $layout = LayoutPagoPartida::query()->where('id_transaccion', '=', $partida->id_transaccion)
+                            ->update(['id_transaccion_pago' => $pago->id_transaccion]);
+
+
+
                 }
-
-
-
 
 
                 /*Solicitud*/
-                if($transaccion->tipo_transaccion==='72'){
-dd("Hola");
-                $solicitud = new Solicitud();
-                $solicitud->verificaPago($transaccion);
+                if ($transaccion->tipo_transaccion === '72') {
+
+                    $solicitud = new Solicitud();
+                    $pago = $solicitud->verificaPago($transaccion);
+
+
+
+                        $layout = LayoutPagoPartida::query()->where('id_transaccion', '=', $id_transaccion)
+                            ->update(['id_transaccion_pago' => $pago->id_transaccion]);
 
                 }
 
 
-
-
             }
+
+
         }
 
-/*Se autoriza el Layout de Pago*/
-//     LayoutPago::query()->where('id','=', $data )
-//         ->update(['id_usuario_autorizo'=>auth()->id(),
-//             'fecha_hora_autorizado'=>date('Y-m-d h:i:s'), 'estado'=>1]);
-
+        /*Se autoriza el Layout de Pago*/
+        LayoutPago::query()->where('id', '=', $id)
+            ->update(['id_usuario_autorizo' => auth()->id(),
+                'fecha_hora_autorizado' => date('Y-m-d h:i:s'), 'estado' => 1]);
 
 
     }

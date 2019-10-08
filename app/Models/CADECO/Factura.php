@@ -34,7 +34,6 @@ class Factura extends Transaccion
 
     public function verificaOrdenPago($data)
     {
-
         $orden_pago = OrdenPago::query()->where('id_referente','=', $data['id_transaccion'])->get()->first();
 
 
@@ -58,9 +57,6 @@ class Factura extends Transaccion
 
             return $response;
 
-
-
-
         }else{
             $pago = new Pago();
             $response =$pago->verificaPago($orden_pago);
@@ -68,4 +64,6 @@ class Factura extends Transaccion
         }
 
     }
+
+
 }
