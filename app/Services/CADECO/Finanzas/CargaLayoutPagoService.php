@@ -25,6 +25,11 @@ class CargaLayoutPagoService
         $this->repository = new Repository($model);
     }
 
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
     public function paginate($data)
     {
         return $this->repository->paginate($data);
@@ -44,11 +49,6 @@ class CargaLayoutPagoService
             'nombre_archivo' => $data['file_pagos_name']
         ];
        return $this->repository->create($datos);
-    }
-
-    public function show($id)
-    {
-        return $this->repository->show($id);
     }
 
     public function autorizar($data)

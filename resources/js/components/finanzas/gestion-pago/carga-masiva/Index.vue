@@ -22,7 +22,6 @@
         <!-- /.col -->
     </div>
 </template>
-
 <script>
     import Create from './Create';
     export default {
@@ -48,7 +47,6 @@
                 cargando: false,
             }
         },
-
         mounted() {
             this.$Progress.start();
             this.paginate()
@@ -56,7 +54,6 @@
                     this.$Progress.finish();
                 })
         },
-
         methods: {
             create() {
                 this.$Progress.start();
@@ -75,7 +72,7 @@
             },
         },
         computed: {
-           layouts(){
+            layouts(){
                 return this.$store.getters['finanzas/carga-masiva-pago/layouts'];
             },
             meta(){
@@ -100,9 +97,9 @@
                             estado:layout.estado,
                             buttons: $.extend({}, {
                                 id: layout.id,
-                                autorizar: true
+                                autorizar: true,
+                                show: true
                             })
-
                         })
 
                     });
