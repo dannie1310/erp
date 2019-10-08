@@ -28,7 +28,6 @@
         <!-- /.col -->
     </div>
 </template>
-
 <script>
     import Create from './Create';
     export default {
