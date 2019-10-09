@@ -35,6 +35,7 @@
                                         <label for="id_orden_compra"  class="col-sm-2 col-form-label">Orden de Compra: </label>
                                         <div class="col-sm-10">
                                             <select
+                                                    :disabled="!bandera"
                                                     type="text"
                                                     name="id_orden_compra"
                                                     data-vv-as="Orden de Compra"
@@ -169,7 +170,8 @@
                 orden_compra : [],
                 empresa : '',
                 remision : '',
-                cargando: false
+                cargando: false,
+                bandera : 0
             }
         },
         mounted() {
@@ -183,6 +185,7 @@
                 this.orden_compra = [];
                 this.remision = '';
                 this.cargando = false;
+                this.bandera = 0;
             },
             getOrdenesCompra() {
                 return this.$store.dispatch('compras/orden-compra/index', {
@@ -207,6 +210,7 @@
                 })
                     .then(data => {
                         this.orden_compra = data;
+                        this.bandera = 1;
                     })
             },
             store() {
