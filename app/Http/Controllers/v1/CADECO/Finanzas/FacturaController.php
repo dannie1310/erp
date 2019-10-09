@@ -50,5 +50,10 @@ class FacturaController extends Controller
         return response()->json($autorizadas);
     }
 
+    public function pendientesPago($id){
+        $pendientes = $this->service->pendientesPago($id);
+        return $this->respondWithPaginator($pendientes);
+    }
+
 
 }

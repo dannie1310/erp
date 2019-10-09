@@ -10,11 +10,11 @@ export default {
 
     mutations: {
         SET_FACTURAS(state, data) {
-            state.pagos = data;
+            state.facturas = data;
         },
 
         SET_FACTURA(state, data) {
-            state.currentPago = data;
+            state.currentfactura = data;
         },
 
         SET_META(state, data) {
@@ -49,10 +49,36 @@ export default {
                     });
             });
         },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         autorizadas(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'autorizada', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+        pendientes_pago(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI +payload.id + '/pendientesPago', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
