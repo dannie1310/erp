@@ -126,24 +126,25 @@
                                                                     </div>
                                                                 </td>
                                                                 <td v-else></td>
-                                                                <td v-if="pago.estado.estado > 0 && pago.tipo_cambio != false">
+                                                                <td v-if="pago.estado.estado > 0 && pago.bandera_TC != 1 && pago.datos_completos_correctos==1">
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content">
                                                                             <input
-                                                                                    type="text"
+                                                                                    type="number"
                                                                                     data-vv-as="Tipo Cambio"
-                                                                                    v-validate="{required: true}"
+                                                                                    v-validate="{required: true, min_value: 1}"
                                                                                     class="form-control"
                                                                                     :name="`tipo_cambio[${i}]`"
                                                                                     placeholder="Tipo Cambio"
                                                                                     v-model="pago.tipo_cambio"
                                                                                     :class="{'is-invalid': errors.has(`tipo_cambio[${i}]`)}">
                                                                             <div class="invalid-feedback" v-show="errors.has(`tipo_cambio[${i}]`)">{{ errors.first(`tipo_cambio[${i}]`) }}</div>
-                                                                            <div  v-if=" pago.tipo_cambio != false" class="text-danger small">El tipo de cambio no concuerda.</div>
+                                                                            <div  v-if="pago.bandera_TC == 0 && pago.tipo_cambio <= 1" class="text-danger small">El tipo de cambio no concuerda.</div>
                                                                         </div>
                                                                     </div>
                                                                 </td>
-                                                                <td v-else>1</td>
+                                                                <td v-else-if="pago.estado.estado > 0 && pago.bandera_TC == 1 && pago.datos_completos_correctos==1">{{pago.tipo_cambio}}</td>
+                                                                <td v-else></td>
                                                                 <td v-if="pago.id_transaccion != null && pago.estado.estado != 2 && pago.estado.estado > 0 && pago.datos_completos_correctos==1">
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content">
@@ -221,7 +222,7 @@
         },
         methods: {
             formatoFecha(date){
-                return moment(date).format('DD/MM/YYYY');
+                return moment(date).format('DD-MM-YYYY');
             },
             cargarLayout(){
                 this.cargando = true;
