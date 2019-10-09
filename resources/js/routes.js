@@ -290,7 +290,7 @@ export const routes = [
                             title: 'Conteos',
                             breadcrumb: {parent: 'almacenes', name: 'CONTEOS'},
                             middleware: [auth, context, permission],
-                            permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+                            permission: ['consultar_conteos']
 
                         }
                     }
