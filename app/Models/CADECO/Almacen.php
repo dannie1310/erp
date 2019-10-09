@@ -12,6 +12,7 @@ namespace App\Models\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\Contabilidad\CuentaAlmacen;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Almacen extends Model
 {

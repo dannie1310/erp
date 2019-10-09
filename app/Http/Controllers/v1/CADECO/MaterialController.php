@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Services\CADECO\MaterialService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class MaterialController extends Controller
@@ -48,5 +49,10 @@ class MaterialController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function porInventario(Request $request)
+    {
+        return $this->service->porInventario($request->all());
     }
 }
