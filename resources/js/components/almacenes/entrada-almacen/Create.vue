@@ -115,13 +115,32 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="text-center" v-if="doc.cantidad_ingresada == doc.cantidad">
-                                                        <small class="badge" :class="{'badge-success': doc.cantidad_ingresada == doc.cantidad}">
+                                                    <td class="text-center" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad)">
+                                                        <small class="badge" :class="{'badge-success':parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad)}">
                                                             <i class="fa fa-check-circle-o" aria-hidden="true"></i> Cumplido
                                                          </small>
                                                     </td>
-                                                    <td></td>
-                                                    <td><i class="fa fa-tasks" aria-hidden="true" title="Almacén"></i></td>
+                                                    <td v-else></td>
+                                                    <td v-if="!doc.destino">
+                                                        <button v-on:click="destino" class="btn btn-info btn-sm">Seleccionar Destino</button>
+                                                        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> Selecciona un Destino:</h5>
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <form role="form" @submit.prevent="validate">
+                                                                        <div class="modal-body">
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td v-else></td>
                                                     <td class="text-center"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                                 </tr>
                                             </tbody>
@@ -198,6 +217,7 @@
                     }
                 }).then(data => {
                     this.ordenes_compra = data;
+                    this.bandera = 1;
                 })
             },
             getOrdenCompra() {
@@ -210,7 +230,6 @@
                 })
                     .then(data => {
                         this.orden_compra = data;
-                        this.bandera = 1;
                     })
             },
             store() {
