@@ -18,10 +18,10 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-2"></div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-5">
                                     <div class="form-group row error-content">
-                                        <label for="id_tipo" class="col-sm-3 col-form-label">Tipo: </label>
-                                        <div class="col-sm-11" align="right">
+                                        <label for="id_tipo" class="col-sm-2 col-form-label">Tipo: </label>
+                                        <div class="col-sm-10" align="right">
                                             <div class="btn-group btn-group-toggle">
                                                 <label class="btn btn-outline-secondary" :class="id_tipo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos" :key="llave">
                                                     <input type="radio"
@@ -40,10 +40,10 @@
                                     </div>
                                 </div>
                                 <!--Inventario-->
-                                    <div class="col-md-3">
+                                    <div class="col-md-5">
                                     <div class="form-group row error-content">
-                                        <label for="inventario" class="col-sm-4 col-form-label">Porcentaje:</label>
-                                        <div class="col-sm-9">
+                                        <label for="inventario" class="col-sm-5 col-form-label">Porcentaje:</label>
+                                        <div class="col-sm-5">
                                             <select
                                                 :disabled="id_tipo!=2"
                                                 type="text"
