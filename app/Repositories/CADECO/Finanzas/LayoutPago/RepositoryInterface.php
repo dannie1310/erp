@@ -15,6 +15,6 @@ interface RepositoryInterface
     public function getCSVData($file);
     public function resumenLayout($data);
     public function datosPago($data);
-    public function validarEstatusPago($transaccion);
+    public function validarEstatusPago($transaccion, $documento);
     public function validarRegistroPrevio($transaccion);
 }
