@@ -65,7 +65,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             }
 
             if ($cta_cargo == null) {
-               $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'], $transaccion->moneda ? $transaccion->moneda->tipo : '', '');
+               $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'], $transaccion ? $transaccion->moneda->id_moneda : '', '');
 
                 $cta_cargo = Cuenta::query()->where('id_tipo_cuentas_obra', '=', 1)->get();
                 $cuenta_encontrada = false;
@@ -79,7 +79,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                     );
                 }
             } else {
-                $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'],$transaccion != null ? $transaccion->moneda : '', $cta_cargo->id_moneda);
+                $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'],$transaccion != null ? $transaccion->moneda->id_moneda : '', $cta_cargo->id_moneda);
                 $id_cuenta = $cta_cargo->id_cuenta;
                 $cuentas = array('id' => $cta_cargo->id_cuenta,
                     'numero' => $cta_cargo->numero,
@@ -105,7 +105,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 'cuenta_cargo' => $cuentas,
                 'fecha_pago' => $this->validarFecha($pago['fecha_pago']) == true ? $pago['fecha_pago'] : '',
                 'referencia_pago' => $pago['referencia_pago'],
-                'tipo_cambio' => $tipo_cuenta_moneda == 0 ? $pago['tipo_cambio'] : false,
+                'tipo_cambio' => $pago['tipo_cambio'],
+                'bandera_TC' => $tipo_cuenta_moneda,
                 'monto_pagado' => $pago['monto_pagado'],
                 'validar_monto' => $this->validarMontos($transaccion ? $transaccion->monto : 0, $pago['monto_pagado']),
                 'id_transaccion_tipo' => $documento ? $documento->tipoDocumento->TipoDocumento : null,
@@ -311,23 +312,51 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public  function validarFecha($fecha)
     {
-        if(DateTime::createFromFormat('d/m/Y', $fecha) == false && DateTime::createFromFormat('d-m-Y', $fecha)== false &&  DateTime::createFromFormat('Y-m-d', $fecha)== false && DateTime::createFromFormat('Y/m/d', $fecha) == false)
+        $fecha_correcta = DateTime::createFromFormat('d/m/Y', $fecha);
+        if($fecha_correcta != false)
         {
-            return false;
+            if(strcmp($fecha_correcta->format('d/m/Y'), $fecha) == 0) {
+                return true;
+            }
         }
-        return true;
+
+        $fecha_correcta =DateTime::createFromFormat('d-m-Y', $fecha);
+        if($fecha_correcta != false)
+        {
+            if(strcmp($fecha_correcta->format('d-m-Y'), $fecha) == 0) {
+                return true;
+            }
+        }
+
+        $fecha_correcta =DateTime::createFromFormat('Y-m-d', $fecha);
+        if($fecha_correcta != false)
+        {
+            if(strcmp($fecha_correcta->format('Y-m-d'), $fecha) == 0) {
+                return true;
+            }
+        }
+
+        $fecha_correcta = DateTime::createFromFormat('Y/m/d', $fecha);
+        if($fecha_correcta != false)
+        {
+            if(strcmp($fecha_correcta->format('Y/m/d'), $fecha) == 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function validarTipoCambio($tipo_cambio, $moneda_transaccion, $moneda_cuenta)
     {
-        if($tipo_cambio == '' && $moneda_cuenta == '')// Tipo cambio vacio y cuenta no encontrada
+        if(($tipo_cambio == '' && $moneda_cuenta == '') || $moneda_cuenta == '')// Tipo cambio vacio y cuenta no encontrada
         {
-            return 0;
+            return 2;
         }
 
         if($moneda_transaccion =! "")
         {
-            if ($tipo_cambio == 1 && $moneda_cuenta == 1 && $moneda_transaccion == 1) //Tipo cambio y todo en pesos
+            if (($tipo_cambio == 1 && $moneda_cuenta == 1 && $moneda_transaccion == 1) || ($tipo_cambio == 1 && $moneda_cuenta == $moneda_transaccion)) //Tipo cambio y todo en pesos
             {
                 return 1;
             }
