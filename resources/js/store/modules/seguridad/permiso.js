@@ -84,6 +84,29 @@ export default {
                     });
             });
         },
+        descargaListado(contest, payload){
+            return new Promise((resolve, reject) => {
+                axios
+
+                    .get(URI +  'descarga_listado_permisos_obra/' + payload.id , { params: payload.params, responseType:'blob', })
+                    .then(r => r.data)
+                    .then(data => {
+
+                        const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'Listado de Permisos por Obra-'+payload.id+'.xlsx');
+                        document.body.appendChild(link);
+                        link.click();
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+
+
     },
 
     getters: {
