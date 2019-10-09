@@ -63,7 +63,7 @@
                                         <label for="nu_parte" class="col-sm-2 col-form-label">N° Parte:</label>
                                         <div class="col-sm-5">
                                             <input
-                                                :disabled="!dato.descripcion"
+                                                :disabled="!dato.tipo"
                                                 type="text"
                                                 name="nu_parte"
                                                 data-vv-as="N° Parte"
@@ -78,7 +78,7 @@
                                         <label for="unidad" class="col-sm-1 col-form-label">Unidad: </label>
                                         <div class="col-sm-2">
                                             <select
-                                                :disabled="!dato.descripcion"
+                                                :disabled="!dato.tipo"
                                                 type="text"
                                                 name="unidad"
                                                 data-vv-as="Unidad"
