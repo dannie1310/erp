@@ -290,7 +290,7 @@ export const routes = [
                             title: 'Conteos',
                             breadcrumb: {parent: 'almacenes', name: 'CONTEOS'},
                             middleware: [auth, context, permission],
-                            permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+                            permission: ['consultar_conteos']
 
                         }
                     }
@@ -340,6 +340,20 @@ export const routes = [
                             breadcrumb: {
                                 parent: 'catalogo-insumo',
                                 name: 'FAMILIA'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    },
+                    {
+                        path: 'material',
+                        name: 'material',
+                        component: require('./components/compras/catalogos/material/Index'),
+                        meta: {
+                            title: 'Material',
+                            breadcrumb: {
+                                parent: 'catalogo-insumo',
+                                name: 'MATERIAL'
                             },
                             middleware: [auth, context],
                             // permission: 'consultar_entrada_almacen'
@@ -1023,6 +1037,18 @@ export const routes = [
                             title: 'Autorizar Layouts',
                             breadcrumb: { name: 'AUTORIZAR', parent:'carga-masiva'},
                             middleware: [auth, context],
+                        }
+                    },
+                    {
+                        path: ':id/consultar',
+                        name: 'pago-masivo-show',
+                        props: true,
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Show'),
+                        meta: {
+                            title: 'Consultar Layout registrados',
+                            breadcrumb: {name: 'VER', parent: 'carga-masiva'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_carga_layout_pago'
                         }
                     }
                 ]

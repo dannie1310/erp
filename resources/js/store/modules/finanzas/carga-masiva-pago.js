@@ -150,10 +150,10 @@ export default {
                                         timer: 1500,
                                         buttons: false
                                     })
-                                    //     .then(() => {
-                                    //     context.commit('UPDATE_DISTRIBUCION', data);
-                                    //     resolve(data);
-                                    // })
+                                        .then(() => {
+
+                                        resolve(data);
+                                    })
                                 })
                                 .catch(error => {
                                     reject(error);
@@ -162,6 +162,24 @@ export default {
                     });
             });
         },
+        descarga_layout(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'descarga_layout', { params: payload.params, responseType:'blob', })
+                    .then(r => r.data)
+                    .then(data => {
+                        const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'LayoutPendienesPagos_' + this._vm.$session.get('db') + '.csv');
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        }
     },
 
     getters: {
