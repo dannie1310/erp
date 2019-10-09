@@ -90,6 +90,11 @@ $api->version('v1', function ($api) {
 
         });
 
+        // INVENTARIOS
+        $api->group(['prefix' => 'inventario'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\InventarioController@index');
+        });
+
         // MATERIALES
         $api->group(['prefix' => 'material'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MaterialController@index');

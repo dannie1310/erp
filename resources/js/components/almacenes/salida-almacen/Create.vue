@@ -10,7 +10,7 @@
                                 <!--Referencia-->
                                  <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="referencia">       Referencia</label>
+                                        <label for="referencia">Referencia:</label>
                                         <div class="col-sm-10">
                                                <input class="form-control"
                                                       style="width: 100%"
@@ -29,7 +29,7 @@
                                 <!--Almacen-->
                                  <div class="col-md-6">
                                     <div class="form-group error-content">
-                                        <label for="id_almacen">Almacen</label>
+                                        <label for="id_almacen">Almacen:</label>
                                                <Almacen
                                                    class="form-control"
                                                    name="id_almacen"
@@ -72,13 +72,14 @@
                                             <div class="btn-group btn-group-toggle">
                                                 <label class="btn btn-outline-secondary" :class="dato.id_tipo === Number(key) ? 'active': ''" v-for="(tipo, key) in tipos" :key="key">
                                                     <input type="radio"
-                                                           class="btn-group-toggle"
-                                                           name="id_tipo"
-                                                           :id="'id_tipo' + key"
-                                                           :value="key"
-                                                           autocomplete="on"
-                                                           v-model.number="dato.id_tipo">
-                                                            {{ tipo }}
+                                                       class="btn-group-toggle"
+                                                       name="id_tipo"
+                                                       :id="'id_tipo' + key"
+                                                       :value="key"
+                                                       autocomplete="on"
+                                                       @click="borrar"
+                                                       v-model.number="dato.id_tipo">
+                                                        {{ tipo }}
                                                 </label>
                                             </div>
                                         </div>
@@ -89,7 +90,7 @@
                                 <div class="col-md-12" v-if="dato.id_tipo == 1">
                                     <div class="form-group row error-content">
                                         <div class="form-group row error-content">
-                                        <label for="id_concepto" class="col-sm-2 col-form-label">Concepto</label>
+                                        <label for="id_concepto" class="col-sm-2 col-form-label">Concepto:</label>
                                             <div class="col-sm-10">
                                                 <concepto-select
                                                     name="id_concepto"
@@ -106,7 +107,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12" v-if="dato.id_almacen">
+                                <div class="col-md-12" v-if="dato.id_almacen && dato.id_tipo">
                                     <div class="form-group">
                                         <div class="col-12">
                                             <button @click="agregar_partida"class="btn btn-app btn-info pull-right" :disabled="cargando">
@@ -145,8 +146,22 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-12">
+                                    <div class="form-group error-content">
+                                        <label for="observaciones">Observaciones:</label>
+                                        <textarea
+                                                name="observaciones"
+                                                id="observaciones"
+                                                class="form-control"
+                                                v-model="dato.observaciones"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Observaciones"
+                                                :class="{'is-invalid': errors.has('observaciones')}"
+                                        ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
                          <div class="footer">
                            <button type="button" class="btn btn-secondary">Cerrar</button>
@@ -183,9 +198,9 @@
                                             <option value>-- Seleccione una Empresa --</option>
                                             <option v-for="(empresa, index) in empresas" :value="empresa.id"
                                                     data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
-                                                {{ empresa.razon_social }}
+                                                {{ empresa.id }}
                                             </option>
-                                        </select>
+                                            </select>
                                          <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
                                     </div>
                                 </div>
@@ -212,26 +227,65 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="descripcion" class="col-sm-3 col-form-label">Observaciones: </label>
-                                        <div class="col-sm-9">
-                                            <textarea
-                                                    name="descripcion"
-                                                    id="descripcion"
-                                                    class="form-control"
-                                                    v-model="partida.descripcion"
-                                                    data-vv-as="Observaciones"
-                                                    :class="{'is-invalid': errors.has('partida.descripcion')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('partida.descripcion')">{{ errors.first('descripcion') }}</div>
-                                        </div>
+                                        <label for="cantidad">Cantidad:</label>
+                                        <input
+                                            step="any"
+                                            type="number"
+                                            name="cantidad"
+                                            data-vv-as="Total"
+                                            v-validate="{required: true}"
+                                            class="form-control"
+                                            id="cantidad"
+                                            placeholder="Cantidad"
+                                            v-model="partida.cantidad"
+                                            :class="{'is-invalid': errors.has('cantidad')}">
+                                    <div class="invalid-feedback" v-show="errors.has('cantidad')">{{ errors.first('cantidad') }}</div>
+                                </div>
+                            </div>
+                            <div class="row" v-if="almacenes && dato.id_tipo == 2">
+                                <div class="col-md-12">
+                                    <div class="form-group error-content">
+                                        <label for="id_almacenes">Almacén:</label>
+                                           <select
+                                                   class="form-control"
+                                                   name="id_almacenes"
+                                                   data-vv-as="Almacen"
+                                                   v-model="partida.id_almacenes"
+                                                   v-validate="{required: true}"
+                                                   id="id_almacenes"
+                                                   :class="{'is-invalid': errors.has('id_almacenes')}">
+                                            <option value>-- Seleccione un Almacén --</option>
+                                            <option v-for="(almacen, index) in almacenes" :value="almacen.id"
+                                                    data-toggle="tooltip" data-placement="left" :title="almacen.descripcion ">
+                                                {{ almacen.descripcion }}
+                                            </option>
+                                        </select>
+                                         <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                     </div>
                                 </div>
-                             </div>
+                            </div>
+                            <div class="row" v-if="dato.id_tipo == 1">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                    <label for="id_conceptos">Concepto:</label>
+                                        <concepto-select
+                                                name="id_conceptos"
+                                                data-vv-as="Concepto"
+                                                v-validate="{required: true}"
+                                                id="id_conceptos"
+                                                v-model="partida.id_conceptos"
+                                                :error="errors.has('id_conceptos')"
+                                                ref="conceptoSelect"
+                                                :disableBranchNodes="false"
+                                        ></concepto-select>
+                                    <div class="error-label" v-show="errors.has('id_conceptos')">{{ errors.first('id_conceptos') }}</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                          <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || partida.descripcion == ''">Registrar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -254,6 +308,7 @@
                     id_empresa:'',
                     id_tipo:'',
                     referencia:'',
+                    observaciones:'',
                     partidas:[]
                 },
                 tipos: {
@@ -268,15 +323,18 @@
                     existencia:'',
                     cantidad:'',
                     destino:'',
-                    id_concepto:''
+                    id_concepto:'',
+                    id_almacenes:''
                 },
                 empresas:[],
+                almacenes:[],
+                inventarios:[],
                 cargando: false
 
             }
         },
         mounted() {
-            this.getEmpresas()
+            this.getEmpresas();
         },
         methods: {
             agregar_partida(){
@@ -291,6 +349,8 @@
                 this.partida.id_concepto='';
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset();
+                this.getInventario();
+                this.getAlmacenes();
                 this.cargando = false;
             },
             getEmpresas() {
@@ -300,7 +360,22 @@
                     .then(data => {
                         this.empresas = data.data;
                     })
-
+            },
+            getInventario() {
+                return this.$store.dispatch('cadeco/inventario/index', {
+                    params: {sort: 'id_material', order: 'asc', scope:'ListaAlmacen:'+this.dato.id_almacen}
+                })
+                    .then(data => {
+                        this.inventarios = data.data;
+                    })
+            },
+            getAlmacenes() {
+                return this.$store.dispatch('cadeco/almacen/index', {
+                    params: {sort: 'descripcion', order: 'asc'}
+                })
+                    .then(data => {
+                        this.almacenes = data.data;
+                    })
             },
             validate() {
                 this.$validator.validate().then(result => {
@@ -308,6 +383,9 @@
                         alert('panda');
                     }
                 });
+            },
+            borrar(){
+                this.dato.partidas=[];
             },
             validatePartida() {
                 this.dato.partidas.push(this.partida);

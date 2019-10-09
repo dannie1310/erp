@@ -9,7 +9,9 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Inventario extends Model
 {
@@ -18,6 +20,10 @@ class Inventario extends Model
     protected $primaryKey = 'id_lote';
 
     public $timestamps = false;
+
+    public $searchable = [
+        'id_material'
+    ];
 
     protected $fillable = [
         'id_item',
@@ -52,5 +58,14 @@ class Inventario extends Model
     public function getSaldoFormatAttribute()
     {
         return number_format($this->saldo,3,'.', '');
+    }
+
+    public function scopeListaAlmacen($query, $almacen){
+        $query = DB::select('SELECT m.descripcion , sum(saldo) as saldo FROM '.Context::getDatabase().'.[dbo].[inventarios] i
+                            inner join '.Context::getDatabase().'.[dbo].materiales m on i.id_material = m.id_material
+                            where i.id_almacen = '.$almacen.' and saldo >0
+                            group by m.id_material,m.descripcion');
+        dd($query);
+       return $query;
     }
 }
