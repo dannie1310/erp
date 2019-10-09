@@ -119,6 +119,7 @@
                                                             <i class="fa fa-check-circle-o" aria-hidden="true"></i> Cumplido
                                                          </small>
                                                     </td>
+                                                    <td></td>
                                                     <td><i class="fa fa-tasks" aria-hidden="true" title="Almacén"></i></td>
                                                     <td class="text-center"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                                 </tr>
