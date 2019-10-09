@@ -12,8 +12,10 @@ use App\Models\CADECO\Cuenta;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\Finanzas\CtgEstadoLayoutPago;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Zend\Validator\Date;
 
 class LayoutPago extends Model
 {
@@ -62,7 +64,7 @@ class LayoutPago extends Model
 
             foreach ($data['pagos'] as $pago)
             {
-                if($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) {
+                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
                     $layout_pagos->partidas()->create([
                         'id_layout_pagos' => $layout_pagos->id,
                         'id_transaccion' => $pago['id_transaccion'],
@@ -71,7 +73,7 @@ class LayoutPago extends Model
                         'tipo_cambio' => $pago['tipo_cambio'],
                         'cuenta_cargo' => $pago['id_cuenta_cargo'] ? Cuenta::query()->where('id_cuenta', $pago['id_cuenta_cargo'])->pluck('numero')->toArray()['0'] : 0,
                         'id_cuenta_cargo' => $pago['id_cuenta_cargo'] ?  $pago['id_cuenta_cargo'] : 0,
-                        'fecha_pago' => date($this->fecha_pago),
+                        'fecha_pago' => $pago['fecha_pago'] ? date_format(date_create($pago['fecha_pago']), 'd/m/Y') : date_format(date_create($pago['fecha_pago_s']), 'd/m/Y'),
                         'monto_pagado' => $pago['monto_pagado'],
                         'referencia_pago' => $pago['referencia_pago'],
                         'id_documento_remesa' => $pago['id_documento'],

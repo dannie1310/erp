@@ -57,7 +57,8 @@ class CargaLayoutPagoController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function presentaPagos(Request $request){
+    public function presentaPagos(Request $request)
+    {
         $respuesta = $this->service->validarLayout($request->pagos);
         return response()->json($respuesta, 200);
     }

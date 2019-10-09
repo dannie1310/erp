@@ -17,6 +17,7 @@ use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Solicitud;
 use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use DateTime;
 
 class Repository extends \App\Repositories\Repository implements RepositoryInterface
 {
@@ -40,80 +41,83 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $hash_file =$this->model->validarArchivo($layout);
 
         foreach ($this->getCSVData($layout) as $key => $pago) {
-            $documento = Documento::query()->where("IDTransaccionCDC", "=", $pago['id_transaccion'])->first();
-            if($documento != null && ($pago['fecha_pago'] || $pago['referencia_pago'] || $pago['monto_pagado'] || $pago['cuenta_cargo'])) {
-                $transaccion = "";
-                $pago_a_generar = "";
-                $cuenta_encontrada = true;
-                $cuentas = [];
-                $id_cuenta = "";
-                $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->first();
-                $factura = Factura::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
-                $solicitud = Solicitud::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
+            $documento = Documento::query()->has('remesa')->where("IDTransaccionCDC", "=", $pago['id_transaccion'])->first();
+            $transaccion = "";
+            $pago_a_generar = "";
+            $cuenta_encontrada = true;
+            $cuentas = [];
+            $id_cuenta = "";
+            $tipo_cuenta_moneda = '';
+            $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->first();
+            $factura = Factura::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
+            $solicitud = Solicitud::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
 
-                if($cta_cargo == null)
-                {
-                    $cta_cargo = Cuenta::query()->where('id_tipo_cuentas_obra', '=', 1)->get();
-                    $cuenta_encontrada = false;
-                    foreach ($cta_cargo as $cargo)
-                    {
-                        $cuentas[] = array('id' => $cargo->id_cuenta,
-                            'numero'=> $cargo->numero,
-                            'abreviatura'=> $cargo->abreviatura,
-                            'nombre' => $cargo->empresa->razon_social,
-                            'id_empresa' => $cargo->empresa->id_empresa
-                        );
-                    }
-                }else{
-                    $id_cuenta = $cta_cargo->id_cuenta;
-                    $cuentas = array('id' => $cta_cargo->id_cuenta,
-                        'numero'=> $cta_cargo->numero,
-                        'abreviatura'=> $cta_cargo->abreviatura,
-                        'nombre' => $cta_cargo->empresa->razon_social,
-                        'id_empresa' => $cta_cargo->empresa->id_empresa
+            if ($factura == null && $solicitud != null) // Solicitud de Pago Anticipado
+            {
+                $transaccion = $solicitud;
+                $pago_a_generar = $documento ? $this->datosPago($documento->IDTipoDocumento) : '';
+                $moneda = $transaccion->moneda;
+            }
+
+            if ($solicitud == null && $factura != null) // Factura
+            {
+                $transaccion = $factura;
+                $pago_a_generar = $documento ? $this->datosPago($documento->IDTipoDocumento) : '';
+                $moneda = $transaccion->moneda;
+            }
+
+            if ($cta_cargo == null) {
+               $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'],$moneda ? $moneda : '', '');
+
+                $cta_cargo = Cuenta::query()->where('id_tipo_cuentas_obra', '=', 1)->get();
+                $cuenta_encontrada = false;
+                foreach ($cta_cargo as $cargo) {
+                    $cuentas[] = array('id' => $cargo->id_cuenta,
+                        'numero' => $cargo->numero,
+                        'abreviatura' => $cargo->abreviatura,
+                        'nombre' => $cargo->empresa->razon_social,
+                        'id_empresa' => $cargo->empresa->id_empresa,
+                        'tipo_cuenta' => $cargo->id_moneda
                     );
                 }
-
-
-
-                if ($factura == null && $solicitud != null) // Solicitud de Pago Anticipado
-                {
-                    $transaccion = $solicitud;
-                    $pago_a_generar = $this->datosPago($documento->IDTipoDocumento);
-                }
-
-                if ($solicitud == null && $factura != null) // Factura
-                {
-                    $transaccion = $factura;
-                    $pago_a_generar = $this->datosPago($documento->IDTipoDocumento);
-                }
-
-                $registros[] = array(
-                    'id_documento' => $documento->IDDocumento,
-                    'id_transaccion' => $transaccion ? $transaccion->id_transaccion : null,
-                    'folio_transaccion' => $transaccion ? $transaccion->numero_folio : null,
-                    'fecha_factura' => $pago['fecha_factura'],
-                    'referencia_factura' => $transaccion ? $transaccion->referencia : null,
-                    'monto_factura' => $transaccion ? (float) $transaccion->monto : null,
-                    'moneda_factura' =>  $transaccion ? $transaccion->moneda ? $transaccion->moneda->nombre : null : null,
-                    'id_moneda' =>  $transaccion ? $transaccion->id_moneda : null,
-                    'cuenta_encontrada' => $cuenta_encontrada,
-                    'id_cuenta_cargo' => $id_cuenta,
-                    'cuenta_cargo' =>  $cuentas,
-                    'fecha_pago' => $pago['fecha_pago'],
-                    'referencia_pago' => $pago['referencia_pago'],
-                    'tipo_cambio' => $pago['tipo_cambio'],
-                    'monto_pagado' => $pago['monto_pagado'],
-                    'validar_monto' => $this->validarMontos($transaccion ? $transaccion->monto : 0, $pago['monto_pagado']),
-                    'id_transaccion_tipo' => $transaccion ? $documento->tipoDocumento->TipoDocumento : null,
-                    'pago_a_generar' => $pago_a_generar ? $pago_a_generar['pago_a_generar'] : "",
-                    'aplicacion_manual' => $pago_a_generar ? $pago_a_generar['aplicacion_manual'] : "",
-                    'estado' => $transaccion ? $this->validarEstatusPago($transaccion) : ['id' => 0, 'estado' =>0, 'descripcion' => 'No encontrada'],
-                    'beneficiario' => $transaccion ? $documento->Destinatario : null,
-                    'referencia_docto' => $transaccion ? $documento->Referencia :  null,
-                    'origen_docto' => $transaccion ? $documento->origenDocumento->OrigenDocumento : null,
+            } else {
+                $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'],$moneda ? $moneda : '', $cta_cargo->id_moneda);
+                $id_cuenta = $cta_cargo->id_cuenta;
+                $cuentas = array('id' => $cta_cargo->id_cuenta,
+                    'numero' => $cta_cargo->numero,
+                    'abreviatura' => $cta_cargo->abreviatura,
+                    'nombre' => $cta_cargo->empresa->razon_social,
+                    'id_empresa' => $cta_cargo->empresa->id_empresa,
+                    'tipo_cuenta' => $cta_cargo->id_moneda
                 );
             }
+
+            $registros[] = array(
+                'datos_completos_correctos' => $pago['estado'],
+                'id_documento' => $documento ? $documento->IDDocumento : null,
+                'id_transaccion' => $transaccion ? $transaccion->id_transaccion : null,
+                'folio_transaccion' => $transaccion ? $transaccion->numero_folio : null,
+                'fecha_factura' => $pago['fecha_factura'],
+                'referencia_factura' => $transaccion ? $transaccion->referencia : null,
+                'monto_factura' => $transaccion ? (float)$transaccion->monto : null,
+                'moneda_factura' => $transaccion ? $transaccion->moneda ? $transaccion->moneda->nombre : null : null,
+                'id_moneda' => $transaccion ? $transaccion->id_moneda : null,
+                'cuenta_encontrada' => $cuenta_encontrada,
+                'id_cuenta_cargo' => $id_cuenta,
+                'cuenta_cargo' => $cuentas,
+                'fecha_pago' => $this->validarFecha($pago['fecha_pago']) == true ? $pago['fecha_pago'] : '',
+                'referencia_pago' => $pago['referencia_pago'],
+                'tipo_cambio' => $tipo_cuenta_moneda == 1 ? $pago['tipo_cambio'] : false,
+                'monto_pagado' => $pago['monto_pagado'],
+                'validar_monto' => $this->validarMontos($transaccion ? $transaccion->monto : 0, $pago['monto_pagado']),
+                'id_transaccion_tipo' => $documento ? $documento->tipoDocumento->TipoDocumento : null,
+                'pago_a_generar' => $pago_a_generar ? $pago_a_generar['pago_a_generar'] : "",
+                'aplicacion_manual' => $pago_a_generar ? $pago_a_generar['aplicacion_manual'] : "",
+                'estado' => $transaccion ? $this->validarEstatusPago($transaccion, $documento) : ['id' => 0, 'estado' => 0, 'descripcion' => 'No encontrada'],
+                'beneficiario' => $transaccion ? $transaccion->empresa->razon_social : null,
+                'referencia_docto' => $documento ? $documento->Referencia : null,
+                'origen_docto' => $documento ? $documento->origenDocumento->OrigenDocumento : null,
+            );
         }
 
         return array(
@@ -130,8 +134,10 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $titulos = 0;
             while(!feof($myfile)) {
                 $linea = explode(",",fgets($myfile));
+
                 if($titulos > 0) {
-                    if (count($linea) > 1) {
+
+                    if (count($linea) > 1 && count($linea) <= 11) {
                         $content[] = array(
                             "id_transaccion" => (int)str_replace(" ", "", $linea[0]),
                             "fecha_factura" => $linea[1],
@@ -142,7 +148,22 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                             "fecha_pago" => $linea[7],
                             "referencia_pago" => $linea[8],
                             "tipo_cambio" => $linea[9],
-                            "monto_pagado" => $this->getAmount(str_replace("\r\n", "", $linea[10]))
+                            "monto_pagado" => $this->getAmount(str_replace("\r\n", "", $linea[10])),
+                            "estado" => 1
+                        );
+                    }else{
+                        $content[] = array(
+                            "id_transaccion" => (int)str_replace(" ", "", $linea[0]),
+                            "fecha_factura" => $linea[1],
+                            "referencia_factura" => $linea[2],
+                            "monto_factura" => $linea[4],
+                            "moneda_factura" => $linea[5],
+                            "cuenta_cargo" => $linea[6],
+                            "fecha_pago" => $linea[7],
+                            "referencia_pago" => $linea[8],
+                            "tipo_cambio" => $linea[9],
+                            "monto_pagado" => $this->getAmount(str_replace("\r\n", "", $linea[10])),
+                            "estado" => 0
                         );
                     }
                 }
@@ -175,9 +196,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
         foreach ($data as $dato){
             $dato['monto_pagado'];
-            if($dato['estado']['descripcion'] == 'Pagable'){
-                $pagables++;
-                $monto_pagar += $dato['monto_pagado'];
+            if( $dato['datos_completos_correctos'] == 1) {
+                if ($dato['estado']['descripcion'] == 'Pagable') {
+                    $pagables++;
+                    $monto_pagar += $dato['monto_pagado'];
+                }
             }
         }
         return array(
@@ -212,42 +235,48 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         );
     }
 
-    public function validarEstatusPago($transaccion)
+    public function validarEstatusPago($transaccion, $documento)
     {
         $registrado = $this->validarRegistroPrevio($transaccion->id_transaccion);
         if($registrado == null) {
-            if ($transaccion->tipo_transaccion == 65) {
-                $transaccion_antecedente = OrdenPago::query()->withoutGlobalScopes()
-                    ->where('id_referente', '=', $transaccion->id_transaccion)
-                    ->where('tipo_transaccion', '=', 68)
-                    ->where('estado', '!=', -2)
-                    ->where('id_obra', '=', Context::getIdObra())->first();
+            if ($documento != null) {
+                if ($transaccion->tipo_transaccion == 65) {
+                    $transaccion_antecedente = OrdenPago::query()->withoutGlobalScopes()
+                        ->where('id_referente', '=', $transaccion->id_transaccion)
+                        ->where('tipo_transaccion', '=', 68)
+                        ->where('estado', '!=', -2)
+                        ->where('id_obra', '=', Context::getIdObra())->first();
 
-                if ($transaccion != null && $transaccion_antecedente != null) {
-                    $pago = Transaccion::query()->where('numero_folio', '=', $transaccion_antecedente->numero_folio)
+                    if ($transaccion != null && $transaccion_antecedente != null) {
+                        $pago = Transaccion::query()->where('numero_folio', '=', $transaccion_antecedente->numero_folio)
+                            ->where('tipo_transaccion', '=', 82)
+                            ->where('estado', '!=', -2)->first();
+
+                        return array(
+                            'id' => $pago->id_transaccion, 'estado' => 2, 'descripcion' => 'Pagada'
+                        );
+                    }
+                }
+                if ($transaccion->tipo_transaccion == 72) {
+                    $pago = Transaccion::query()->where('id_antecedente', '=', $transaccion->id_transaccion)
                         ->where('tipo_transaccion', '=', 82)
                         ->where('estado', '!=', -2)->first();
 
-                    return array(
-                        'id' => $pago->id_transaccion, 'estado' => 2, 'descripcion' => 'Pagada'
-                    );
+                    if ($pago != null) {
+                        return array(
+                            'id' => $pago->id_transaccion, 'estado' => 2, 'descripcion' => 'Pagada'
+                        );
+                    }
                 }
-            }
-            if ($transaccion->tipo_transaccion == 72) {
-                $pago = Transaccion::query()->where('id_antecedente', '=', $transaccion->id_transaccion)
-                    ->where('tipo_transaccion', '=', 82)
-                    ->where('estado', '!=', -2)->first();
 
-                if ($pago != null) {
-                    return array(
-                        'id' => $pago->id_transaccion, 'estado' => 2, 'descripcion' => 'Pagada'
-                    );
-                }
+                return array(
+                    'id' => 0, 'estado' => 1, 'descripcion' => 'Pagable'
+                );
+            }else{
+                return array(
+                    'id' => 0, 'estado' => 0, 'descripcion' => 'Documento no liberado'
+                );
             }
-
-            return array(
-                'id' => 0, 'estado' => 1, 'descripcion' => 'Pagable'
-            );
         }
         return $registrado;
     }
@@ -282,4 +311,30 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return $this->model->registar($data);
     }
 
+    public  function validarFecha($fecha)
+    {
+        if(DateTime::createFromFormat('d/m/Y', $fecha) == false && DateTime::createFromFormat('d-m-Y', $fecha)== false &&  DateTime::createFromFormat('Y-m-d', $fecha)== false && DateTime::createFromFormat('Y/m/d', $fecha) == false)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public function validarTipoCambio($tipo_cambio, $moneda_transaccion, $moneda_cuenta)
+    {
+        if($tipo_cambio == '' && $moneda_cuenta == '')// Tipo cambio vacio y cuenta no encontrada
+        {
+            return 0;
+        }
+
+        if($moneda_transaccion =! '')
+        {
+            if ($tipo_cambio == 1 && $moneda_cuenta == 1 && $moneda_transaccion->tipo == 1) //Tipo cambio y todo en pesos
+            {
+                return 1;
+            }
+        }
+
+        return 0;
+    }
 }

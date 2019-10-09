@@ -40,7 +40,7 @@ class Documento extends Model
     }
 
     public function remesa(){
-        return $this->hasMany(Remesa::class, 'IDRemesa', 'IDRemesa');
+        return $this->belongsTo(Remesa::class, 'IDRemesa', 'IDRemesa');
     }
 
     public function documentoLiberado()
