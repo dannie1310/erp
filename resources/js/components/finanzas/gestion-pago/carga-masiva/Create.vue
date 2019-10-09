@@ -126,7 +126,7 @@
                                                                     </div>
                                                                 </td>
                                                                 <td v-else></td>
-                                                                <td v-if="pago.tipo_cambio == false">
+                                                                <td v-if="pago.tipo_cambio != false">
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content">
                                                                             <input
@@ -142,7 +142,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </td>
-                                                                <td v-else>{{pago.tipo_cambio}}</td>
+                                                                <td v-else>1</td>
                                                                 <td v-if="pago.id_transaccion != null && pago.estado.estado != 2 && pago.estado.estado > 0 && pago.datos_completos_correctos==1">
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content">

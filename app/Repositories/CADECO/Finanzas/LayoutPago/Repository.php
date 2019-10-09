@@ -56,18 +56,16 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             {
                 $transaccion = $solicitud;
                 $pago_a_generar = $documento ? $this->datosPago($documento->IDTipoDocumento) : '';
-                $moneda = $transaccion->moneda;
             }
 
             if ($solicitud == null && $factura != null) // Factura
             {
                 $transaccion = $factura;
                 $pago_a_generar = $documento ? $this->datosPago($documento->IDTipoDocumento) : '';
-                $moneda = $transaccion->moneda;
             }
 
             if ($cta_cargo == null) {
-               $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'],$moneda ? $moneda : '', '');
+               $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'], $transaccion->moneda ? $transaccion->moneda->tipo : '', '');
 
                 $cta_cargo = Cuenta::query()->where('id_tipo_cuentas_obra', '=', 1)->get();
                 $cuenta_encontrada = false;
@@ -81,7 +79,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                     );
                 }
             } else {
-                $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'],$moneda ? $moneda : '', $cta_cargo->id_moneda);
+                $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'],$transaccion != null ? $transaccion->moneda : '', $cta_cargo->id_moneda);
                 $id_cuenta = $cta_cargo->id_cuenta;
                 $cuentas = array('id' => $cta_cargo->id_cuenta,
                     'numero' => $cta_cargo->numero,
@@ -107,7 +105,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 'cuenta_cargo' => $cuentas,
                 'fecha_pago' => $this->validarFecha($pago['fecha_pago']) == true ? $pago['fecha_pago'] : '',
                 'referencia_pago' => $pago['referencia_pago'],
-                'tipo_cambio' => $tipo_cuenta_moneda == 1 ? $pago['tipo_cambio'] : false,
+                'tipo_cambio' => $tipo_cuenta_moneda == 0 ? $pago['tipo_cambio'] : false,
                 'monto_pagado' => $pago['monto_pagado'],
                 'validar_monto' => $this->validarMontos($transaccion ? $transaccion->monto : 0, $pago['monto_pagado']),
                 'id_transaccion_tipo' => $documento ? $documento->tipoDocumento->TipoDocumento : null,
@@ -327,9 +325,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             return 0;
         }
 
-        if($moneda_transaccion =! '')
+        if($moneda_transaccion =! "")
         {
-            if ($tipo_cambio == 1 && $moneda_cuenta == 1 && $moneda_transaccion->tipo == 1) //Tipo cambio y todo en pesos
+            if ($tipo_cambio == 1 && $moneda_cuenta == 1 && $moneda_transaccion == 1) //Tipo cambio y todo en pesos
             {
                 return 1;
             }
