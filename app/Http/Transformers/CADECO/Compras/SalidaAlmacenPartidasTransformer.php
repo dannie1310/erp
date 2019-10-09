@@ -26,6 +26,7 @@ class SalidaAlmacenPartidasTransformer extends TransformerAbstract
 
     public function transform(SalidaAlmacenPartida $model)
     {
+
         return [
             'id' => (int)$model->getKey(),
             'unidad' => $model->unidad,
