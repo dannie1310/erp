@@ -126,7 +126,7 @@
                                                                     </div>
                                                                 </td>
                                                                 <td v-else></td>
-                                                                <td v-if="pago.tipo_cambio != false">
+                                                                <td v-if="pago.estado.estado > 0 && pago.tipo_cambio != false">
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content">
                                                                             <input
@@ -139,6 +139,7 @@
                                                                                     v-model="pago.tipo_cambio"
                                                                                     :class="{'is-invalid': errors.has(`tipo_cambio[${i}]`)}">
                                                                             <div class="invalid-feedback" v-show="errors.has(`tipo_cambio[${i}]`)">{{ errors.first(`tipo_cambio[${i}]`) }}</div>
+                                                                            <div  v-if=" pago.tipo_cambio != false" class="text-danger small">El tipo de cambio no concuerda.</div>
                                                                         </div>
                                                                     </div>
                                                                 </td>
