@@ -9,7 +9,7 @@
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Registrar Inventario Fisico</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Iniciar Inventario Fisico</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -21,7 +21,7 @@
                                     <div class="col-md-6">
                                     <div class="form-group row error-content">
                                         <label for="id_tipo" class="col-sm-3 col-form-label">Tipo: </label>
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-11" align="right">
                                             <div class="btn-group btn-group-toggle">
                                                 <label class="btn btn-outline-secondary" :class="id_tipo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos" :key="llave">
                                                     <input type="radio"
@@ -93,8 +93,8 @@
                     {id: 12, descripcion: '10%'}
                 ],
                 tipos: {
-                    1: "Conteo Total",
-                    2: "Conteo Aleatorio"
+                    1: "Total",
+                    2: "Aleatorio"
                 },
                 id_tipo:'',
                 form: {inventario:''}
