@@ -45,7 +45,6 @@
                                         <label for="descripcion" class="col-sm-2 col-form-label">Descripción:</label>
                                         <div class="col-sm-10">
                                             <input
-                                                :disabled="!tipo"
                                                 type="text"
                                                 name="descripcion"
                                                 data-vv-as="Descripcion"

@@ -50,11 +50,16 @@ class MaterialService
     }
     public function store(array $data)
     {
+
         $datos = [
             'nivel' => $data['tipo'],
             'unidad' => $data['unidad'],
             'descripcion' => $data['descripcion'],
-            'numero_parte' => $data['nu_parte']
+            'numero_parte' => $data['nu_parte'],
+            'tipo_material' => $data['tipo_material'],
+            'equivalencia' => $data['equivalencia'],
+            'marca' => $data['marca']
+
         ];
 
         return $this->repository->create($datos);

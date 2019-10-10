@@ -358,6 +358,20 @@ export const routes = [
                             middleware: [auth, context],
                             // permission: 'consultar_entrada_almacen'
                         }
+                    },
+                    {
+                        path: 'herramienta',
+                        name: 'herramienta',
+                        component: require('./components/compras/catalogos/herramienta/Index'),
+                        meta: {
+                            title: 'Herramienta y Equipo',
+                            breadcrumb: {
+                                parent: 'catalogo-insumo',
+                                name: 'HERRAMIENTA Y EQUIPO'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
                     }
                 ]
             },
