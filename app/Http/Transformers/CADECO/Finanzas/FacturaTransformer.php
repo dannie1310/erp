@@ -44,7 +44,7 @@ class FacturaTransformer extends TransformerAbstract
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
-            'fecha_format' => (string)$model->fecha_hora_registro_format,
+            'fecha_format' => (string)$model->fecha_format,
             'estado' => (int)$model->estado,
             'cumplimiento' => (string)$model->cumplimiento_form,
             'vencimiento' => $model->vencimiento_form,
@@ -67,5 +67,9 @@ class FacturaTransformer extends TransformerAbstract
             return $this->item($moneda, new MonedaTransformer);
         }
         return null;
+    }
+
+    public function includeEmpresa(Factura $model){
+
     }
 }

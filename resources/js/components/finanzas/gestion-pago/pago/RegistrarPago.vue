@@ -64,7 +64,75 @@
                         </div>
                     </div>
                     <form role="form" @submit.prevent="validate">
-                        <datatable v-bind="$data" />
+                        <div class="modal-body">
+                            <div class="row justify-content-between">
+                                <div class="col-md-9">
+                                    <div class="form-group error-content">
+                                        <label for="empresa">Empresa</label>
+                                        <input type="text" class="form-control" id="empresa" placeholder="empresa" style="width:100%" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group error-content">
+                                        <label for="autorizado">Importe Autorizado</label>
+                                        <input type="text" class="form-control" id="autorizado" placeholder="autorizado" style="width:100%" disabled>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group error-content">
+                                        <label for="destinatario">Destinatario</label>
+                                        <input type="text" class="form-control" id=destinatario placeholder="destinatario" style="width:100%" >
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group error-content">
+                                        <label for="concepto">Concepto</label>
+                                        <input type="text" class="form-control" id="concepto" placeholder="concepto" style="width:100%" >
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-1 text-left" >
+                                      <label class="text-secondary">Cheque/Pago </label>
+                                       <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="form-group error-content">
+                                        <label for="concepto">Cuenta Bancaria</label>
+                                        <input type="text" class="form-control" id="concepto" placeholder="cuenta" style="width:100%" >
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group error-content">
+                                        <label for="empresa">Moneda</label>
+                                        <input type="text" class="form-control" id="empresa" placeholder="moneda" style="width:100%" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group error-content">
+                                        <label for="referencia">Número Cheque / Referencia</label>
+                                        <input type="text" class="form-control" id="referencia" placeholder="referencia" style="width:100%" >
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group error-content">
+                                        <label for="emision">Fecha de Emisión</label>
+                                        <input type="text" class="form-control" id="emision" placeholder="emision" style="width:100%" >
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group error-content">
+                                        <label for="cobro">Fecha de Cobro</label>
+                                        <input type="text" class="form-control" id="cobro" placeholder="cobro" style="width:100%" >
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-1 text-left" >
+                                      <label class="text-secondary"></label>
+                                       <hr style="color: #0056b2; margin-top:auto;" width="90%" size="10" />
+                                </div>
+
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -77,21 +145,6 @@
         name: "gestion-registro-pago",
         data() {
             return {
-                HeaderSettings: false,
-                columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Descripción', field: 'descripcion', sortable: true},
-                    { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Vencimiento', field: 'vencimiento',sortable: true},
-                    { title: 'Moneda', field: 'moneda', sortable: true},
-                    { title: 'Monto', field: 'monto', sortable: true},
-                    { title: 'A Pagar', field: 'pagar', sortable: true},
-                    { title: 'T/C', field: 'tipo_cambio'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
-                ],
-                data: [],
-                total: 0,
-                query: {sort: 'id_transaccion', order: 'desc'},
                 tipos:{
                     0:'Facturas',
                     1:'Solicitudes'
@@ -142,7 +195,7 @@
                     id: this.id_documento,
                     params: {
                         scope: ['pendientePago', 'conDocumento'],
-                        include:['documento', 'moneda'],
+                        include:['documento', 'moneda', 'empresa'],
                         sort: 'id_transaccion',
                         order: 'DESC'
                     }
@@ -158,57 +211,6 @@
             }
         },
         watch: {
-            facturas: {
-                handler(facturas) {
-                    let self = this
-                    self.$data.data = []
-                    self.$data.data = facturas.map((factura, i) => ({
-                        index: (i + 1),
-                        descripcion: factura.observaciones,
-                        fecha: factura.fecha_format,
-                        vencimiento: factura.vencimiento,
-                        moneda: factura.moneda.nombre,
-                        monto: factura.monto_format,
-                        pagar: factura.a_pagar,
-                        tipo_cambio: factura.tipo_cambio,
-                        buttons: $.extend({}, {
-                            pagar: self.$root.can('registrar_pago') ? true : true,
-                            id: factura.id
-                        })
-                    }));
-                },
-                deep: true
-            },
-            meta: {
-                handler (meta) {
-                    this.total = meta.pagination.total
-                },
-                deep: true
-            },
-            query: {
-                handler () {
-                    this.getFacturasPendientes()
-                },
-                deep: true
-            },
-            search(val) {
-                if (this.timer) {
-                    clearTimeout(this.timer);
-                    this.timer = null;
-                }
-                this.timer = setTimeout(() => {
-                    this.query.search = val;
-                    this.query.offset = 0;
-                    this.getFacturasPendientes();
-                }, 500);
-            },
-            cargando(val) {
-                $('tbody').css({
-                    '-webkit-filter': val ? 'blur(2px)' : '',
-                    'pointer-events': val ? 'none' : ''
-                });
-            },
-
             tipo(value){
                 if(value){
                     if(parseInt(value) === 0) {
