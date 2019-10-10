@@ -33,14 +33,13 @@ class MaterialService
 
     public function porInventario($data)
     {
-        $query = DB::select('SELECT m.id_material , m.descripcion , sum(saldo) as saldo, m.numero_parte FROM '.Context::getDatabase().'.[dbo].[inventarios] i
+        $query = DB::select('SELECT m.id_material , m.descripcion , sum(saldo) as saldo, m.numero_parte ,m.unidad
+                    FROM '.Context::getDatabase().'.[dbo].[inventarios] i
                     inner join '.Context::getDatabase().'.[dbo].materiales m on i.id_material = m.id_material
                     where i.id_almacen = '.$data['almacen'].' and saldo >0
-                    group by  m.id_material ,m.id_material,m.descripcion,m.numero_parte');
+                    group by  m.id_material ,m.id_material,m.descripcion,m.numero_parte,m.unidad');
 
-        dd(collect($query));
-        $material = $query;
-        return $this->repository->all($query);
+        return $query;
     }
 
     public function show($id)

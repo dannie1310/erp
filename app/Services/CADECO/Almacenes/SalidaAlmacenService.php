@@ -55,4 +55,9 @@ class SalidaAlmacenService
     {
         return $this->show($id)->eliminar($data['data'][0]);
     }
+    public function store($data)
+    {
+        dd($data);
+//        return $this->show($id)->eliminar($data['data'][0]);
+    }
 }

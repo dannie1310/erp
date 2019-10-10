@@ -124,21 +124,19 @@
                                                             <th>No. de Parte</th>
                                                             <th>Material</th>
                                                             <th>Unidad</th>
-                                                            <th>Existencia</th>
+<!--                                                            <th>Existencia</th>-->
                                                             <th>Cantidad</th>
                                                             <th>Destino</th>
-                                                            <th></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="(partida, index) in dato.partidas">
-                                                            <td>select no de parte</td>
-                                                            <td>select material</td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
+                                                            <td>{{partida[0].numero_parte}}</td>
+                                                            <td>{{partida[0].descripcion}}</td>
+                                                            <td>{{partida[0].unidad}}</td>
+<!--                                                            <td>{{// partida[0].existencia}}</td>-->
+                                                            <td>{{partida[1]}}</td>
+                                                            <td>{{partida[2].descripcion}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -183,7 +181,7 @@
                     </div>
                      <form role="form" @submit.prevent="validatePartida">
                         <div class="modal-body">
-                             <div class="row">
+                             <div class="row"  v-if="materiales">
                                  <div class="col-md-4">
                                     <div class="form-group error-content">
                                         <label for="id_materiales">No. de Parte:</label>
@@ -192,11 +190,11 @@
                                                    name="id_materiales"
                                                    data-vv-as="Material"
                                                    v-model="partida.id_materiales"
-                                                   v-validate="{required: false}"
+                                                   v-validate="{required: true}"
                                                    id="id_materiales"
                                                    :class="{'is-invalid': errors.has('id_materiales')}">
                                             <option value>-- Seleccione --</option>
-                                            <option v-for="(material, index) in materiales" :value="material.id"
+                                            <option v-for="(material, index) in materiales" :value="material.id_material"
                                                     data-toggle="tooltip" data-placement="left" :title="material.numero_parte ">
                                                 {{ material.numero_parte }}
                                             </option>
@@ -212,13 +210,59 @@
                                                    name="id_materiales"
                                                    data-vv-as="Material"
                                                    v-model="partida.id_materiales"
-                                                   v-validate="{required: false}"
+                                                   v-validate="{required: true}"
                                                    id="id_materiales"
                                                    :class="{'is-invalid': errors.has('id_materiales')}">
                                             <option value>-- Seleccione --</option>
-                                            <option v-for="(material, index) in materiales" :value="material.id"
+                                            <option v-for="(material, index) in materiales" :value="material.id_material"
                                                     data-toggle="tooltip" data-placement="left" :title="material.descripcion ">
                                                 {{ material.descripcion }}
+                                            </option>
+                                        </select>
+                                         <div class="invalid-feedback" v-show="errors.has('id_materiales')">{{ errors.first('id_materiales') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="row"  v-if="materiales">
+                                 <div class="col-md-6">
+                                    <div class="form-group error-content">
+                                        <label for="id_materiales">Unidad:</label>
+                                           <select
+                                                   class="form-control"
+                                                   name="id_materiales"
+                                                   data-vv-as="Material"
+                                                   v-model="partida.id_materiales"
+                                                   v-validate="{required: true}"
+                                                   id="id_materiales"
+                                                   :class="{'is-invalid': errors.has('id_materiales')}"
+                                                   :disabled="true"
+                                           >
+                                            <option value>-- Unidad --</option>
+                                            <option v-for="(material, index) in materiales" :value="material.id_material"
+                                                    data-toggle="tooltip" data-placement="left" :title="material.unidad ">
+                                                {{ material.unidad }}
+                                            </option>
+                                            </select>
+                                         <div class="invalid-feedback" v-show="errors.has('id_materiales')">{{ errors.first('id_materiales') }}</div>
+                                    </div>
+                                </div>
+                                  <div class="col-md-6">
+                                    <div class="form-group error-content">
+                                        <label for="id_materiales">Existencia:</label>
+                                           <select
+                                                   class="form-control"
+                                                   name="id_materiales"
+                                                   data-vv-as="Material"
+                                                   v-model="partida.id_materiales"
+                                                   v-validate="{required: true}"
+                                                   id="id_materiales"
+                                                   :class="{'is-invalid': errors.has('id_materiales')}"
+                                                   :disabled="true"
+                                           >
+                                            <option value>-- Existencia --</option>
+                                            <option v-for="(material, index) in materiales" :value="material.id_material"
+                                                    data-toggle="tooltip" data-placement="left" :title="material.saldo ">
+                                                {{ material.saldo }}
                                             </option>
                                         </select>
                                          <div class="invalid-feedback" v-show="errors.has('id_materiales')">{{ errors.first('id_materiales') }}</div>
@@ -242,7 +286,7 @@
                                     <div class="invalid-feedback" v-show="errors.has('cantidad')">{{ errors.first('cantidad') }}</div>
                                 </div>
                             </div>
-                            <div class="row" v-if="almacenes && dato.id_tipo == 2">
+                            <div class="row" v-if="almacenes && dato.id_tipo == 65537">
                                 <div class="col-md-12">
                                     <div class="form-group error-content">
                                         <label for="id_almacenes">Almacén:</label>
@@ -250,17 +294,18 @@
                                                    class="form-control"
                                                    name="id_almacenes"
                                                    data-vv-as="Almacen"
-                                                   v-model="partida.id_almacenes"
+                                                   v-model="partida.destino"
                                                    v-validate="{required: true}"
                                                    id="id_almacenes"
-                                                   :class="{'is-invalid': errors.has('id_almacenes')}">
+                                                   :class="{'is-invalid': errors.has('id_almacenes')}"
+                                           >
                                             <option value>-- Seleccione un Almacén --</option>
                                             <option v-for="(almacen, index) in almacenes" :value="almacen.id"
-                                                    data-toggle="tooltip" data-placement="left" :title="almacen.descripcion ">
+                                                    data-toggle="tooltip" data-placement="left" :title="almacen.descripcion" @click="validarAlmacen">
                                                 {{ almacen.descripcion }}
                                             </option>
                                         </select>
-                                         <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
+                                         <div class="invalid-feedback" v-show="errors.has('id_almacenes')">{{ errors.first('id_almacenes') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -297,6 +342,7 @@
 <script>
     import Almacen from "../../cadeco/almacen/Select";
     import ConceptoSelect from "../../cadeco/concepto/Select";
+    import material from "../../../store/modules/cadeco/material";
     export default {
         name: "salida-almacen-create",
         components: {Almacen, ConceptoSelect},
@@ -313,21 +359,19 @@
                 },
                 tipos: {
                     1: "Consumo",
-                    2: "Transferencia"
+                    65537: "Transferencia"
                 },
                 partida:{
                     id_materiales:'',
-                    descripcion:'',
-                    unidad:'',
-                    existencia:'',
                     cantidad:'',
                     destino:'',
                     id_concepto:'',
-                    id_almacenes:''
                 },
                 empresas:[],
                 almacenes:[],
                 materiales:[],
+                material:'',
+                almacen:'',
                 cargando: false
 
             }
@@ -341,9 +385,6 @@
                 this.getAlmacenes();
                 this.cargando = true;
                 this.partida.id_materiales = '';
-                this.partida.descripcion='';
-                this.partida.unidad='';
-                this.partida.existencia='';
                 this.partida.cantidad='';
                 this.partida.destino='';
                 this.partida.id_concepto='';
@@ -367,6 +408,24 @@
                         this.materiales = data;
                     })
             },
+            findMaterial() {
+                this.$store.commit('cadeco/material/SET_MATERIAL', null);
+                return this.$store.dispatch('cadeco/material/find', {
+                    id: this.partida.id_materiales,
+                    params: {}
+                }).then(data => {
+                    this.material = data;
+                })
+            },
+            findAlmacen() {
+                this.$store.commit('cadeco/almacen/SET_ALMACEN', null);
+                return this.$store.dispatch('cadeco/almacen/find', {
+                    id: this.partida.destino,
+                    params: {}
+                }).then(data => {
+                    this.almacen = data;
+                })
+            },
             getAlmacenes() {
                 return this.$store.dispatch('cadeco/almacen/index', {
                     params: {sort: 'descripcion', order: 'asc'}
@@ -379,16 +438,34 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        alert('panda');
+                        this.store()
                     }
                 });
+            },
+            store() {
+                return this.$store.dispatch('almacenes/salida-almacen/store', this.dato)
+                    .then((data) => {
+                        $(this.$refs.modal).modal('hide');
+                        this.$emit('created', data);
+                    });
             },
             borrar(){
                 this.dato.partidas=[];
             },
+            validarAlmacen() {
+                if(this.dato.id_almacen == this.partida.id_almacenes){
+                    swal('¡Error!', 'No puede seleccionar el mismo almacén en el destino.', 'error');
+                    this.partida.id_almacenes='';
+                }
+            },
             validatePartida() {
-                this.dato.partidas.push(this.partida);
+                this.findMaterial();
+                this.findAlmacen().finally(() => {
+                    this.dato.partidas.push([this.material,this.partida.cantidad,this.almacen]);
+                });
+
                 $(this.$refs.modal).modal('hide');
+
             },
         }
     }
