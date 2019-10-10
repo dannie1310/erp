@@ -89,5 +89,9 @@ class LayoutPagoPartida extends Model
         if($this->monto_pagado == 0){
             abort(403, 'El monto pagado no debe ser cero.');
         }
+
+        if($this->tipo_cambio < 1){
+            abort(403, 'El tipo de camio no puede ser cero.');
+        }
     }
 }
