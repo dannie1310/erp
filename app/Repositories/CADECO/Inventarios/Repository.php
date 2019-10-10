@@ -48,8 +48,14 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             throw $e;
         }
     }
+    private function obtieneCantidadComplemento($porcentaje = 100)
+    {
+        $cantidad = DB::connection('cadeco')->table('Inventarios.materiales_existencia')->where('id_obra',  Context::getIdObra())->count();
+        return round(2*$cantidad/100,0);
+    }
     public function total($id_inventario)
     {
+        $cantidad = $this->obtieneCantidadComplemento();
         try {
             $query = DB::select('select 
 id_almacen,
@@ -72,7 +78,7 @@ SELECT materiales_existencia.id_obra,
   
   UNION
 (
-select top 24 * from 
+select top '.$cantidad.' * from 
 (
     --INICIA AUB
     (SELECT materiales_por_monto.id_obra,
@@ -180,6 +186,7 @@ where id_obra = ' . Context::getIdObra() . '
     }
     public function parcial($id_inventario,$data){
     try {
+        $cantidad = $this->obtieneCantidadComplemento($data['inventario']);
         $query = DB::select('select 
     id_almacen,
     id_material,
@@ -239,7 +246,7 @@ where id_obra = ' . Context::getIdObra() . '
 
 (
 
-select top 24 * from 
+select top '.$cantidad.' * from 
 (
     --INICIA AUB
     (SELECT materiales_por_monto.id_obra,
