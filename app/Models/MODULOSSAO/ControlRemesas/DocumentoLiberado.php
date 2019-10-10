@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 class DocumentoLiberado extends Model
 {
     protected $connection = 'modulosao';
-    protected $table = 'ControlRemesas.DocumentosLiberados';
+    protected $table = 'ModulosSao.ControlRemesas.DocumentosLiberados';
     protected $primaryKey = 'IDDocumento';
     public $timestamps = false;
 
