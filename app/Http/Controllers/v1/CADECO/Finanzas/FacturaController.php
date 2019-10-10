@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Finanzas\FacturaTransformer;
 use App\Services\CADECO\Finanzas\FacturaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class FacturaController extends Controller
@@ -39,6 +40,7 @@ class FacturaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_factura')->only(['paginate']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -54,6 +56,8 @@ class FacturaController extends Controller
         $pendientes = $this->service->pendientesPago($id);
         return $this->respondWithPaginator($pendientes);
     }
+
+
 
 
 }

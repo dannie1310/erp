@@ -4,9 +4,11 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Models\CADECO\ContraRecibo;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
 use App\Repositories\CADECO\Finanzas\RegistrarPago\Repository;
+use http\Env\Request;
 
 class FacturaService
 {
@@ -32,6 +34,78 @@ class FacturaService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function paginate($data)
+    {
+
+        $facturas = $this->repository;
+
+
+       if(isset($data['numero_folio']))
+       {
+           $facturas = $facturas->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+       }
+
+       if(isset($data['folio_contrarecibo']))
+       {
+           $contraRecibos = ContraRecibo::query()->where([['numero_folio', 'LIKE', '%'.$data['folio_contrarecibo'].'%']])->get();
+           foreach ($contraRecibos as $e){
+               $facturas = $facturas->whereOr([['id_antecedente','=',$e->id_transaccion]]);
+           }
+       }
+
+
+       if(isset($data['referencia']))
+       {
+           $facturas = $facturas->where([['referencia', 'LIKE', '%'.$data['referencia'].'%']]);
+       }
+
+       if(isset($data['monto'])){
+           $facturas = $facturas->where([['monto', 'LIKE', '%'.$data['monto'].'%']]);
+       }
+
+        if(isset($data['saldo'])){
+            $facturas = $facturas->where([['saldo', 'LIKE', '%'.$data['saldo'].'%']]);
+        }
+
+        if(isset($data['observaciones']))
+        {
+            $contraRecibos = ContraRecibo::query()->where([['observaciones', 'LIKE', '%'.$data['observaciones'].'%']])->get();
+            foreach ($contraRecibos as $e){
+                $facturas = $facturas->whereOr([['id_antecedente','=',$e->id_transaccion]]);
+            }
+        }
+
+        if (isset($data['id_empresa']))
+        {
+            $empresas = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['id_empresa'].'%']])->get();
+            foreach ($empresas as $e){
+                $facturas = $facturas->whereOr([['id_empresa','=', $e->id_empresa]]);
+            }
+        }
+
+        if(isset($data['estado']))
+        {
+            if(strcmp(strtoupper($data['estado']),'REGISTRADA')==0){
+                $facturas = $facturas->where([['estado', '=', 0]]);
+            }
+
+            if(strcmp(strtoupper($data['estado']),'REVISADA')==0){
+                $facturas = $facturas->where([['estado', '=', 1]]);
+            }
+
+            if(strcmp(strtoupper($data['estado']),'PAGADA')==0){
+                $facturas = $facturas->where([['estado', '=', 2]]);
+            }
+        }
+
+
+
+
+
+
+        return $facturas->paginate($data);
     }
 
     public function autorizadas(){

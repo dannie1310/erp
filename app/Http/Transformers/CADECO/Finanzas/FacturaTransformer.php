@@ -4,6 +4,8 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\CADECO\ContraReciboTransformer;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoTransformer;
 use App\Models\CADECO\Factura;
@@ -15,8 +17,11 @@ class FacturaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'contra_recibo',
        'documento',
-        'moneda'
+        'empresa',
+        'moneda',
+
     ];
 
     /**
@@ -28,6 +33,16 @@ class FacturaTransformer extends TransformerAbstract
 
     public function transform(Factura $model)
     {
+        if($model->estado==0){
+            $estado='Registrada';
+        }
+        if ($model->estado==1){
+            $estado='Revisada';
+        }
+        if($model->estado==2){
+            $estado='Pagada';
+        }
+
         return [
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
@@ -37,6 +52,7 @@ class FacturaTransformer extends TransformerAbstract
             'impuesto'=>(float)$model->impuesto,
             'impuesto_format'=>(string) '$ '.number_format($model->impuesto,2,".",","),
             'monto'=>(float)$model->monto,
+            'saldo_format'=>(string) '$ '.number_format(($model->saldo),2,".",","),
             'total_format'=>(string)$model->monto_format,
             'monto_format'=>(string)$model->monto_format,
             'referencia'=>(string)$model->referencia,
@@ -45,12 +61,23 @@ class FacturaTransformer extends TransformerAbstract
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
             'fecha_format' => (string)$model->fecha_format,
+            'estado_format'=>$estado,
             'estado' => (int)$model->estado,
             'cumplimiento' => (string)$model->cumplimiento_form,
             'vencimiento' => $model->vencimiento_form,
             'tipo_cambio' => $model->tipo_cambio,
             'a_pagar' => $model->autorizado
         ];
+    }
+
+    public function includeContraRecibo(Factura $model)
+    {
+
+        if($contrarecibo = $model->contra_recibo){
+            return $this->item($contrarecibo, new ContraReciboTransformer);
+        }
+        return null;
+
     }
 
     public function includeDocumento(Factura $model)
@@ -70,6 +97,11 @@ class FacturaTransformer extends TransformerAbstract
     }
 
     public function includeEmpresa(Factura $model){
-
+        if($empresa = $model->empresa) {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
     }
+
+
 }

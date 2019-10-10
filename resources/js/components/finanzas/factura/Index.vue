@@ -25,15 +25,22 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Razón Social', field: 'razon_social',thComp: require('../../globals/th-Filter'), sortable: true},
-                    { title: 'Nombre Corto', field: 'nombre_corto',thComp: require('../../globals/th-Filter'), sortable: true},
-                    { title: 'Descripción Corta', field: 'descripcion_corta',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Folio', field: 'numero_folio',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Folio Contrarecibo', field: 'folio_contrarecibo',thComp: require('../../globals/th-Filter'), sortable: false},
+                    { title: 'Referencia', field: 'referencia',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Empresa', field: 'id_empresa',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Fecha', field: 'fecha', sortable: false},
+                    { title: 'Importe', field: 'monto',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Saldo', field: 'saldo',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Estado', field: 'estado',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Observaciones Contrarecibo', field: 'observaciones',thComp: require('../../globals/th-Filter'), sortable: false},
+
 
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: 'ctg_banco', sort: 'id_empresa',  order: 'desc'
+                    include: ['contra_recibo','empresa'], sort: 'id_transaccion',  order: 'desc'
                 },
                 cargando: false
 
@@ -49,10 +56,10 @@
         methods: {
             paginate(){
                 this.cargando=true;
-                return this.$store.dispatch('cadeco/banco/paginate', {params: this.query})
+                return this.$store.dispatch('finanzas/factura/paginate', {params: this.query})
                     .then(data=>{
-                        this.$store.commit('cadeco/banco/SET_BANCOS', data.data);
-                        this.$store.commit('cadeco/banco/SET_META',data.meta)
+                        this.$store.commit('finanzas/factura/SET_FACTURAS', data.data);
+                        this.$store.commit('finanzas/factura/SET_META',data.meta)
                     })
                     .finally(()=>{
                         this.cargando=false;
@@ -61,32 +68,34 @@
             }
         },
         computed: {
-            bancos(){
-                return this.$store.getters['cadeco/banco/bancos'];
+            facturas(){
+                return this.$store.getters['finanzas/factura/facturas'];
             },
             meta(){
-                return this.$store.getters['cadeco/banco/meta']
+                return this.$store.getters['finanzas/factura/meta']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            bancos: {
-                handler(bancos) {
+            facturas: {
+                handler(facturas) {
                     let self = this
                     self.$data.data = []
-                    bancos.forEach(function (banco, i) {
+                    facturas.forEach(function (factura, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            razon_social: banco.razon_social,
-                            descripcion_corta: banco.ctg_banco?banco.ctg_banco.descripcion_corta:'--',
-                            nombre_corto: banco.ctg_banco?banco.ctg_banco.nombre_corto:'--',
-                            // buttons: $.extend({}, {
-                            //     show: true,
-                            //     edit: true,
-                            //     id: banco.id
-                            // })
+                            numero_folio: '# ' + factura.numero_folio,
+                            folio_contrarecibo: '# ' + factura.contra_recibo.numero_folio,
+                            referencia: factura.referencia,
+                            id_empresa: factura.empresa.razon_social,
+                            monto: factura.monto_format,
+                            saldo: factura.saldo_format,
+                            fecha: factura.fecha_format,
+                            estado: factura.estado_format,
+                            observaciones: factura.contra_recibo.observaciones
+
                         })
 
                     });

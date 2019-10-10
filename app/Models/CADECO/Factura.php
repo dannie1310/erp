@@ -23,8 +23,18 @@ class Factura extends Transaccion
         });
     }
 
+    public function contra_recibo()
+    {
+        return $this->belongsTo(ContraRecibo::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function documento(){
         return $this->belongsTo(Documento::class, 'id_transaccion', 'IDTransaccionCDC');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa');
     }
 
     public function moneda()
