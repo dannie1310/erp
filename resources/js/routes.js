@@ -1084,6 +1084,25 @@ export const routes = [
                     },
                 ]
             },
+
+            {
+                path:'factura',
+                component: require('./components/finanzas/factura/Layout'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'factura',
+                        component: require('./components/finanzas/factura/Index'),
+                        meta:{
+                            title: 'Facturas',
+                            breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
+                            middleware: [auth, context],
+                            // permission: 'consultar_banco'
+                        }
+                    },
+
+                ]
+            },
         ]
     },
     {
