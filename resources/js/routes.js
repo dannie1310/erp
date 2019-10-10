@@ -57,14 +57,14 @@ export const routes = [
         }
     },
     {
-        path: '/auditoria',
-        name: 'auditoria',
+        path: '/control-interno',
+        name: 'control-interno',
         components:  {
-            default: require('./components/auditoria/Index.vue'),
-            menu: require('./components/auditoria/partials/Menu.vue')
+            default: require('./components/control-interno/Index.vue'),
+            menu: require('./components/control-interno/partials/Menu.vue')
         },
         meta: {
-            title: 'Auditoría',
+            title: 'Control Interno',
             middleware: [auth, permission],
             permission: ['auditoria_consultar_permisos_por_obra','auditoria_consultar_permisos_por_usuario'],
             general: true,
@@ -72,31 +72,31 @@ export const routes = [
         }
     },
     {
-        path: '/auditoria/permisos',
+        path: '/control-interno/permisos',
         components: {
-            default: require('./components/auditoria/partials/Layout.vue'),
-            menu: require('./components/auditoria/partials/Menu.vue')
+            default: require('./components/control-interno/partials/Layout.vue'),
+            menu: require('./components/control-interno/partials/Menu.vue')
         },
         children: [
             {
                 path: '',
                 name: 'permisos-obra',
-                component: require('./components/auditoria/Index'),
+                component: require('./components/control-interno/Index'),
                 meta: {
                     title: 'Permisos',
-                    breadcrumb: {parent: 'auditoria', name: 'PERMISOS ÁSIGNADOS'},
+                    breadcrumb: {parent: 'control-interno', name: 'PERMISOS ÁSIGNADOS'},
                     middleware: [auth]
 
                 }
             },
             {
                 path: 'por-obra',
-                component: require('./components/auditoria/por-obra/partials/Layout'),
+                component: require('./components/control-interno/por-obra/partials/Layout'),
                 children: [
                     {
                         path: '/',
                         name: 'por-obra',
-                        component: require('./components/auditoria/por-obra/Index'),
+                        component: require('./components/control-interno/por-obra/Index'),
                         meta: {
                             title: 'Permisos Asignados por Obra',
                             breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR OBRA'},
@@ -110,12 +110,12 @@ export const routes = [
             },
             {
                 path: 'por-usuario',
-                component: require('./components/auditoria/por-usuario/partials/Layout'),
+                component: require('./components/control-interno/por-usuario/partials/Layout'),
                 children: [
                     {
                         path: '/',
                         name: 'por-usuario',
-                        component: require('./components/auditoria/por-usuario/Index'),
+                        component: require('./components/control-interno/por-usuario/Index'),
                         meta: {
                             title: 'Permisos Asignados por Usuario',
                             breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR USUARIO'},
@@ -354,6 +354,20 @@ export const routes = [
                             breadcrumb: {
                                 parent: 'catalogo-insumo',
                                 name: 'MATERIAL'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    },
+                    {
+                        path: 'herramienta',
+                        name: 'herramienta',
+                        component: require('./components/compras/catalogos/herramienta/Index'),
+                        meta: {
+                            title: 'Herramienta y Equipo',
+                            breadcrumb: {
+                                parent: 'catalogo-insumo',
+                                name: 'HERRAMIENTA Y EQUIPO'
                             },
                             middleware: [auth, context],
                             // permission: 'consultar_entrada_almacen'

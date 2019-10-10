@@ -15,7 +15,7 @@
 <script>
     export default {
         name: "familia-select",
-        props: ['value', 'error', 'placeholder'],
+        props: ['scope','value', 'error', 'placeholder'],
         data() {
             return { val: null
 
@@ -26,7 +26,7 @@
                 return this.$store.dispatch('cadeco/familia/index', {
                     params: {
                         search: searchQuery,
-                        scope: 'tipo:1',
+                        scope: this.scope,
                         limit: 15,
                         sort: 'nivel',
                         order: 'ASC'
