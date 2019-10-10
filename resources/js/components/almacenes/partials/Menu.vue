@@ -7,31 +7,31 @@
             <li class="nav-header">MÓDULOS</li>
             <li class="nav-item" v-if="$root.can('consultar_entrada_almacen')">
                 <router-link :to="{name: 'entrada-almacen'}" class="nav-link">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-sign-in"></i>
                     <p>Entrada de Almacén</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_salida_almacen')">
                 <router-link :to="{name: 'salida-almacen'}" class="nav-link">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-sign-out"></i>
                     <p>Salida de Almacén</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_inventario_fisico')">
                 <router-link :to="{name: 'inventario-fisico'}" class="nav-link">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>Inventario Físico</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_conteos')">
                 <router-link :to="{name: 'conteo'}" class="nav-link">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>Conteos</p>
                 </router-link>
             </li>
             <li class="nav-item" v-if="ajuste_inventario">
                 <router-link :to="{name: 'ajuste-inventario'}" class="nav-link">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>Ajuste de Inventario</p>
                 </router-link>
             </li>
