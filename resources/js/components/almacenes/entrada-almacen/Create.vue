@@ -122,25 +122,11 @@
                                                     </td>
                                                     <td v-else></td>
                                                     <td v-if="!doc.destino">
-                                                        <button v-on:click="destino" class="btn btn-info btn-sm">Seleccionar Destino</button>
-                                                        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-                                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> Selecciona un Destino:</h5>
-                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <form role="form" @submit.prevent="validate">
-                                                                        <div class="modal-body">
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        <span>
+                                                            <button v-on:click="destino(i)" class="btn btn-info btn-sm">Seleccionar Destino</button>
+                                                        </span>
                                                     </td>
-                                                    <td v-else></td>
+                                                    <td v-else>{{doc.descripcion_destino}}</td>
                                                     <td class="text-center"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                                 </tr>
                                             </tbody>
@@ -176,12 +162,73 @@
                 </div>
             </div>
         </div>
+         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> Selecciona un Destino:</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_concepto" class="col-sm-2 col-form-label">Concepto</label>
+                                        <div class="col-sm-10">
+                                            <concepto-select
+                                                    name="id_concepto"
+                                                    data-vv-as="Concepto"
+                                                    id="id_concepto"
+                                                    v-model="id_concepto_temporal"
+                                                    :error="errors.has('id_concepto')"
+                                                    ref="conceptoSelect"
+                                                    :disableBranchNodes="true"
+                                            ></concepto-select>
+                                            <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row error-content">
+                                        <label for="almacen" class="col-sm-2 col-form-label">Almacén</label>
+                                        <div class="col-sm-10">
+                                            <select
+                                                    name="id_almacen"
+                                                    id="id_almacen"
+                                                    data-vv-as="Almacén"
+                                                    class="form-control"
+                                                    v-model="id_almacen_temporal"
+                                                    :class="{'is-invalid': errors.has('id_almacen')}"
+                                            >
+                                                <option value>-- Almacén --</option>
+                                                <option v-for="item in almacenes" :value="item.id">{{ item.descripcion }}</option>
+                                            </select>
+                                            <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button class="btn btn-primary"  data-dismiss="modal" v-on:click="seleccionar">Seleccionar</button>
+                         </div>
+                    </form>
+                </div>
+            </div>
+        </div>
      </span>
 </template>
 
 <script>
+    import ConceptoSelect from "../../cadeco/concepto/Select";
     export default {
         name: "entrada-almacen-create",
+        components: {ConceptoSelect},
         data() {
             return {
                 id_orden_compra : '',
@@ -190,7 +237,14 @@
                 empresa : '',
                 remision : '',
                 cargando: false,
-                bandera : 0
+                bandera : 0,
+                destino_temporal : '',
+                index_temporal : '',
+                tipo_temporal : '',
+                id_almacen_temporal : '',
+                id_concepto_temporal : '',
+                almacenes : [],
+                descripcion : ''
             }
         },
         mounted() {
@@ -232,6 +286,39 @@
                         this.orden_compra = data;
                     })
             },
+            getAlmacenes() {
+                this.$store.commit('cadeco/almacen/SET_ALMACENES', []);
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/almacen/index', {
+
+                })
+                    .then(data => {
+                        this.almacenes = data.data
+                    })
+            },
+
+            getAlmacen(id) {
+                return this.$store.dispatch('cadeco/almacen/find', {
+                    id: id,
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.descripcion = data;
+                    })
+            },
+
+            getConcepto(id) {
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: id,
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.descripcion = data;
+                    })
+            },
+
             store() {
                 return this.$store.dispatch('almacenes/entrada-almacen/store', this.$data)
                     .then((data) => {
@@ -247,12 +334,58 @@
             },
             salir(){
                 this.$router.push({name: 'entrada-almacen'});
+            },
+            destino(i) {
+                this.index_temporal = i;
+                console.log(this.almacenes.length);
+                if(this.almacenes == []) {
+                    this.getAlmacenes();
+                }
+                $(this.$refs.modal).modal('show');
+            },
+            seleccionar() {
+                console.log("seleccionar",this.destino_temporal, this.index_temporal);
+                if(this.destino_temporal == '')
+                {
+                    swal('¡Error!', 'Debe seleccionar un destino.', 'error')
+                }else {
+                    this.orden_compra.partidas.data[this.index_temporal].destino = this.destino_temporal;
+                    this.orden_compra.partidas.data[this.index_temporal].tipo_destino = this.tipo_temporal;
+                    if(this.tipo_temporal == 1){
+                        this.descripcion = this.getConcepto(this.destino_temporal);
+                        this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = this.descripcion;
+                    }
+                    if(this.tipo_temporal == 2){
+                        this.descripcion = this.getAlmacen(this.destino_temporal);
+                        this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = this.descripcion;
+                    }
+                    this.destino_temporal = '';
+                    this.index_temporal = '';
+                    this.id_almacen_temporal = '';
+                    this.id_concepto_temporal = '';
+                    this.tipo_temporal = '';
+                    this.descripcion = '';
+                }
             }
         },
         watch: {
             id_orden_compra(value){
                 if(value != ''){
                     this.getOrdenCompra();
+                }
+            },
+            id_concepto_temporal(value){
+                if(value != ''){
+                    this.id_almacen_temporal = '';
+                    this.destino_temporal = value;
+                    this.tipo_temporal = 1;
+                }
+            },
+            id_almacen_temporal(value){
+                if(value != ''){
+                    this.id_concepto_temporal = '';
+                    this.destino_temporal = value;
+                    this.tipo_temporal = 2;
                 }
             }
         }
