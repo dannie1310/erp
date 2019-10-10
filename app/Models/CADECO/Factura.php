@@ -9,6 +9,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\MODULOSSAO\ControlRemesas\Documento;
+
 class Factura extends Transaccion
 {
     protected static function boot()
@@ -21,9 +23,18 @@ class Factura extends Transaccion
         });
     }
 
-    public function partidas()
+    public function contra_recibo()
     {
-        return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
+        return $this->belongsTo(ContraRecibo::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function documento(){
+        return $this->belongsTo(Documento::class, 'id_transaccion', 'IDTransaccionCDC');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa');
     }
 
     public function moneda()
@@ -66,4 +77,26 @@ class Factura extends Transaccion
     }
 
 
+
+    public function ordenPago(){
+        return $this->belongsTo(OrdenPago::class, 'id_transaccion', 'id_referente');
+    }
+
+    public function partidas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function scopePendientePago($query){
+        return $query->whereIn('estado', [1,2]);
+    }
+
+    public function scopeConDocumento($query){
+        return $query->has('documento');
+    }
+
+    public function getAutorizadoAttribute(){
+        $pagar = $this->monto * $this->tipo_cambio;
+        return '$ ' . number_format($pagar,2);
+    }
 }
