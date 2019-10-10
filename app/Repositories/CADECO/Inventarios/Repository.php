@@ -48,10 +48,39 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             throw $e;
         }
     }
-    private function obtieneCantidadComplemento($porcentaje = 100)
+    private function obtieneCantidadComplemento()
     {
-        $cantidad = DB::connection('cadeco')->table('Inventarios.materiales_existencia')->where('id_obra',  Context::getIdObra())->count();
-        return round(2*$cantidad/100,0);
+
+        /*$cantidad = DB::connection('cadeco')->table('Inventarios.materiales_existencia')->where('id_obra',  Context::getIdObra())->count();*/
+        $query = DB::select('SELECT materiales_por_monto.id_obra,
+        materiales_por_monto.obra,
+        materiales_por_monto.material,
+        materiales_por_monto.unidad,
+        materiales_por_monto.numero_parte,
+        materiales_por_monto.familia,
+        materiales_por_monto.almacen,
+        materiales_por_monto.existencia_sistema,
+        materiales_por_monto.nivel_familia,
+        materiales_por_monto.id_almacen,
+        materiales_por_monto.id_material
+    FROM ' . Context::getDatabase() . '.Inventarios.materiales_por_monto materiales_por_monto
+    WHERE (materiales_por_monto.percentiles <= 8) and id_obra = ' . Context::getIdObra() . '
+  UNION
+  SELECT materiales_por_precio_unitario.id_obra,
+        materiales_por_precio_unitario.obra,
+        materiales_por_precio_unitario.material,
+        materiales_por_precio_unitario.unidad,
+        materiales_por_precio_unitario.numero_parte,
+        materiales_por_precio_unitario.familia,
+        materiales_por_precio_unitario.almacen,
+        materiales_por_precio_unitario.existencia_sistema,
+        materiales_por_precio_unitario.nivel_familia,
+        materiales_por_precio_unitario.id_almacen,
+        materiales_por_precio_unitario.id_material
+   FROM ' . Context::getDatabase() . '.Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
+    WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = ' . Context::getIdObra() );
+    $cantidad = count($query);
+        return ceil(2*$cantidad/100);
     }
     public function total($id_inventario)
     {
@@ -186,7 +215,7 @@ where id_obra = ' . Context::getIdObra() . '
     }
     public function parcial($id_inventario,$data){
     try {
-        $cantidad = $this->obtieneCantidadComplemento($data['inventario']);
+        $cantidad = $this->obtieneCantidadComplemento();
         $query = DB::select('select 
     id_almacen,
     id_material,
