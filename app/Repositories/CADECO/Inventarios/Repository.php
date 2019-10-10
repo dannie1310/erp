@@ -78,7 +78,57 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         materiales_por_precio_unitario.id_almacen,
         materiales_por_precio_unitario.id_material
    FROM ' . Context::getDatabase() . '.Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
-    WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = ' . Context::getIdObra() );
+    WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = ' . Context::getIdObra().'
+    EXCEPT
+  (
+  --INICIA C
+      SELECT materiales_existencia.id_obra,
+       materiales_existencia.obra,
+       materiales_existencia.material,
+       materiales_existencia.unidad,
+       materiales_existencia.numero_parte,
+       materiales_existencia.familia,
+       materiales_existencia.almacen,
+       materiales_existencia.existencia_sistema,
+       materiales_existencia.nivel_familia,
+       materiales_existencia.id_almacen,
+       materiales_existencia.id_material
+  FROM ' . Context::getDatabase() . '.Inventarios.materiales_existencia materiales_existencia
+  --FIN C
+  INTERSECT
+  (
+  -- INICIA AUB
+    SELECT materiales_por_monto.id_obra,
+        materiales_por_monto.obra,
+        materiales_por_monto.material,
+        materiales_por_monto.unidad,
+        materiales_por_monto.numero_parte,
+        materiales_por_monto.familia,
+        materiales_por_monto.almacen,
+        materiales_por_monto.existencia_sistema,
+        materiales_por_monto.nivel_familia,
+        materiales_por_monto.id_almacen,
+        materiales_por_monto.id_material
+   FROM ' . Context::getDatabase() . '.Inventarios.materiales_por_monto materiales_por_monto
+  WHERE (materiales_por_monto.percentiles <= 8) and id_obra = ' . Context::getIdObra() . '
+ UNION
+ SELECT materiales_por_precio_unitario.id_obra,
+        materiales_por_precio_unitario.obra,
+        materiales_por_precio_unitario.material,
+        materiales_por_precio_unitario.unidad,
+        materiales_por_precio_unitario.numero_parte,
+        materiales_por_precio_unitario.familia,
+        materiales_por_precio_unitario.almacen,
+        materiales_por_precio_unitario.existencia_sistema,
+        materiales_por_precio_unitario.nivel_familia,
+        materiales_por_precio_unitario.id_almacen,
+        materiales_por_precio_unitario.id_material
+   FROM ' . Context::getDatabase() . '.Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
+  WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = ' . Context::getIdObra() . '
+  --FIN AUB
+  )
+  )  
+    ');
     $cantidad = count($query);
         return ceil(2*$cantidad/100);
     }
