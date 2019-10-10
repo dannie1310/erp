@@ -72,7 +72,7 @@
                                     </div>
                                  </div>
                             </div>
-                            <div class="row" v-if="id_orden_compra != ''">
+                            <div class="row" v-if="orden_compra.length != 0">
                                 <div  class="col-12">
                                     <div class="table-responsive">
                                         <table class="table table-striped">
@@ -297,9 +297,9 @@
                     })
             },
 
-            getAlmacen(id) {
+            getAlmacen() {
                 return this.$store.dispatch('cadeco/almacen/find', {
-                    id: id,
+                    id: this.destino_temporal,
                     params: {
                     }
                 })
@@ -308,9 +308,9 @@
                     })
             },
 
-            getConcepto(id) {
+            getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
-                    id: id,
+                    id: this.destino_temporal,
                     params: {
                     }
                 })
@@ -338,7 +338,7 @@
             destino(i) {
                 this.index_temporal = i;
                 console.log(this.almacenes.length);
-                if(this.almacenes == []) {
+                if(this.almacenes.length == 0) {
                     this.getAlmacenes();
                 }
                 $(this.$refs.modal).modal('show');
@@ -352,11 +352,11 @@
                     this.orden_compra.partidas.data[this.index_temporal].destino = this.destino_temporal;
                     this.orden_compra.partidas.data[this.index_temporal].tipo_destino = this.tipo_temporal;
                     if(this.tipo_temporal == 1){
-                        this.descripcion = this.getConcepto(this.destino_temporal);
+                        this.descripcion = this.getConcepto();
                         this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = this.descripcion;
                     }
                     if(this.tipo_temporal == 2){
-                        this.descripcion = this.getAlmacen(this.destino_temporal);
+                        this.descripcion = this.getAlmacen();
                         this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = this.descripcion;
                     }
                     this.destino_temporal = '';
