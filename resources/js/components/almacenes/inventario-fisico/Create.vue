@@ -94,7 +94,7 @@
                 ],
                 tipos: {
                     1: "Total",
-                    2: "Aleatorio"
+                    2: "Parcial"
                 },
                 id_tipo:'',
                 form: {inventario:''}
