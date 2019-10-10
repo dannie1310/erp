@@ -159,7 +159,7 @@ select top 24 * from
   ) as significativas_sin_existencia
   
 )) as marbetes_inventario_total
-where id_obra = 1
+where id_obra = ' . Context::getIdObra() . '
             
 ');
             foreach ($query as $q) {
