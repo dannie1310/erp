@@ -96,18 +96,17 @@ class FacturaService
 
         if(isset($data['opciones']))
         {
-            if(strcmp(strtoupper($data['opciones']),'SAO')==0){
+            if(strpos('FACTURA',strtoupper($data['opciones'])) !== FALSE ){
                 $facturas = $facturas->where([['opciones', '=', 0]]);
             }
 
-            if(strcmp(strtoupper($data['opciones']),'GASTOS VARIOS')==0 ||strcmp(strtoupper($data['opciones']),'GASTOS')==0||strcmp(strtoupper($data['opciones']),'VARIOS')==0){
+            if(strpos('GASTOS VARIOS',strtoupper($data['opciones'])) !== FALSE ){
                 $facturas = $facturas->where([['opciones', '=', 1]]);
             }
 
-            if(strcmp(strtoupper($data['opciones']),'MATERIALES')==0||strcmp(strtoupper($data['opciones']),'SERVICIOS')==0||strcmp(strtoupper($data['opciones']),'MATERIALES/SERVICIOS')==0){
+            if(strpos('MATERIALES / SERVICIOS',strtoupper($data['opciones'])) !== FALSE ){
                 $facturas = $facturas->where([['opciones', '=', 65537]]);
             }
-
         }
 
         if(isset($data['fecha'])) {
