@@ -33,6 +33,7 @@
                     { title: 'Importe', field: 'monto', sortable: true},
                     { title: 'Saldo', field: 'saldo', sortable: true},
                     { title: 'Estado', field: 'estado',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Tipo', field: 'opciones',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Observaciones Contrarecibo', field: 'observaciones',thComp: require('../../globals/th-Filter'), sortable: false},
 
 
@@ -94,6 +95,7 @@
                             saldo: factura.saldo_format,
                             fecha: factura.fecha_format,
                             estado: factura.estado_format,
+                            opciones: factura.opciones_format,
                             observaciones: factura.contra_recibo.observaciones
 
                         })
