@@ -44,13 +44,13 @@ class FacturaTransformer extends TransformerAbstract
         }
 
         if($model->opciones==0){
-            $opciones='SAO';
+            $opciones='Factura';
         }
         if($model->opciones==1){
             $opciones='Gastos Varios';
         }
         if($model->opciones==65537){
-            $opciones='Materiales/Servicios';
+            $opciones='Materiales / Servicios';
         }
 
         return [
