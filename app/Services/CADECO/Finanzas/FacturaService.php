@@ -42,14 +42,14 @@ class FacturaService
         $facturas = $this->repository;
 
 
-       if(isset($data['numero_folio']))
+       if(isset($data['id_transaccion']))
        {
-           $facturas = $facturas->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+           $facturas = $facturas->where([['numero_folio', 'LIKE', '%'.$data['id_transaccion'].'%']]);
        }
 
-       if(isset($data['folio_contrarecibo']))
+       if(isset($data['numero_folio']))
        {
-           $contraRecibos = ContraRecibo::query()->where([['numero_folio', 'LIKE', '%'.$data['folio_contrarecibo'].'%']])->get();
+           $contraRecibos = ContraRecibo::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']])->get();
            foreach ($contraRecibos as $e){
                $facturas = $facturas->whereOr([['id_antecedente','=',$e->id_transaccion]]);
            }
@@ -98,6 +98,10 @@ class FacturaService
             if(strcmp(strtoupper($data['estado']),'PAGADA')==0){
                 $facturas = $facturas->where([['estado', '=', 2]]);
             }
+        }
+
+        if(isset($data['fecha'])) {
+            $facturas = $facturas->where( [['fecha', '=', $data['fecha']]] );
         }
 
 

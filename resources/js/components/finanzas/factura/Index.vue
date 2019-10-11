@@ -25,11 +25,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Folio', field: 'numero_folio',thComp: require('../../globals/th-Filter'), sortable: true},
-                    { title: 'Folio Contrarecibo', field: 'folio_contrarecibo',thComp: require('../../globals/th-Filter'), sortable: false},
+                    { title: 'Folio', field: 'id_transaccion',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Folio Contrarecibo', field: 'numero_folio',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Referencia', field: 'referencia',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Empresa', field: 'id_empresa',thComp: require('../../globals/th-Filter'), sortable: true},
-                    { title: 'Fecha', field: 'fecha', sortable: false},
+                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date'), sortable: true},
                     { title: 'Importe', field: 'monto',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Saldo', field: 'saldo',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Estado', field: 'estado',thComp: require('../../globals/th-Filter'), sortable: true},
@@ -86,8 +86,8 @@
                     facturas.forEach(function (factura, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: '# ' + factura.numero_folio,
-                            folio_contrarecibo: '# ' + factura.contra_recibo.numero_folio,
+                            id_transaccion: '# ' + factura.numero_folio,
+                            numero_folio: '# ' + factura.contra_recibo.numero_folio,
                             referencia: factura.referencia,
                             id_empresa: factura.empresa.razon_social,
                             monto: factura.monto_format,
