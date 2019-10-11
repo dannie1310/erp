@@ -25,7 +25,7 @@
                                                 placeholder="Remisión"
                                                 v-model="remision"
                                                 :class="{'is-invalid': errors.has('remision')}">
-                                        <div class="invalid-feedback" v-show="errors.has('remision')">{{ errors.first('remision') }}</div>
+                                        <div class="error-label" v-show="errors.has('remision')">{{ errors.first('remision') }}</div>
                                     </div>
                                  </div>
                             </div>
@@ -121,12 +121,17 @@
                                                          </small>
                                                     </td>
                                                     <td v-else></td>
-                                                    <td v-if="!doc.destino">
-                                                        <span>
-                                                            <button v-on:click="destino(i)" class="btn btn-info btn-sm">Seleccionar Destino</button>
-                                                        </span>
+                                                    <td>
+                                                        <small class="badge" :class="{'badge-success':true}">
+                                                            <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
+                                                         </small>
+                                                        <!--<span>-->
+                                                            <!--<button v-on:click="destino(i)" class="btn btn-info btn-sm">Seleccionar Destino</button>-->
+                                                        <!--</span>-->
+                                                        <label v-if = "doc.tipo_destino == 2" v-model="doc.destino">{{doc.descripcion_destino.descripcion}}</label>
+                                                        <label v-else-if="doc.tipo_destino == 1" v-model="doc.destino">{{doc.descripcion_destino.path}}</label>
                                                     </td>
-                                                    <td v-else>{{doc.descripcion_destino}}</td>
+                                                    <!--<td v-else>{{doc.descripcion_destino}}</td>-->
                                                     <td class="text-center"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                                 </tr>
                                             </tbody>
@@ -176,7 +181,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group row error-content">
-                                        <label for="id_concepto" class="col-sm-2 col-form-label">Concepto</label>
+                                        <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos</label>
                                         <div class="col-sm-10">
                                             <concepto-select
                                                     name="id_concepto"
@@ -195,7 +200,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group row error-content">
-                                        <label for="almacen" class="col-sm-2 col-form-label">Almacén</label>
+                                        <label for="almacen" class="col-sm-2 col-form-label">Activos</label>
                                         <div class="col-sm-10">
                                             <select
                                                     name="id_almacen"
@@ -244,7 +249,7 @@
                 id_almacen_temporal : '',
                 id_concepto_temporal : '',
                 almacenes : [],
-                descripcion : ''
+                descripcion_temporal : []
             }
         },
         mounted() {
@@ -304,7 +309,7 @@
                     }
                 })
                     .then(data => {
-                        this.descripcion = data;
+                        this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = data;
                     })
             },
 
@@ -315,7 +320,7 @@
                     }
                 })
                     .then(data => {
-                        this.descripcion = data;
+                        this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = data;
                     })
             },
 
@@ -328,7 +333,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        if(this.destino_temporal == '')
+                        {
+                            swal('¡Error!', 'Debe seleccionar un destino.', 'error')
+                        }else {
+                            this.store()
+                        }
                     }
                 });
             },
@@ -336,35 +346,27 @@
                 this.$router.push({name: 'entrada-almacen'});
             },
             destino(i) {
+                 this.destino_temporal = '';
+                 this.index_temporal = '';
+                 this.id_almacen_temporal = '';
+                 this.id_concepto_temporal = '';
+                 this.tipo_temporal = '';
+                 this.descripcion = '';
                 this.index_temporal = i;
-                console.log(this.almacenes.length);
                 if(this.almacenes.length == 0) {
                     this.getAlmacenes();
                 }
                 $(this.$refs.modal).modal('show');
             },
             seleccionar() {
-                console.log("seleccionar",this.destino_temporal, this.index_temporal);
-                if(this.destino_temporal == '')
-                {
-                    swal('¡Error!', 'Debe seleccionar un destino.', 'error')
-                }else {
-                    this.orden_compra.partidas.data[this.index_temporal].destino = this.destino_temporal;
-                    this.orden_compra.partidas.data[this.index_temporal].tipo_destino = this.tipo_temporal;
-                    if(this.tipo_temporal == 1){
-                        this.descripcion = this.getConcepto();
-                        this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = this.descripcion;
-                    }
-                    if(this.tipo_temporal == 2){
-                        this.descripcion = this.getAlmacen();
-                        this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = this.descripcion;
-                    }
-                    this.destino_temporal = '';
-                    this.index_temporal = '';
-                    this.id_almacen_temporal = '';
-                    this.id_concepto_temporal = '';
-                    this.tipo_temporal = '';
-                    this.descripcion = '';
+                console.log("seleccionar", this.destino_temporal, this.index_temporal);
+                this.orden_compra.partidas.data[this.index_temporal].destino = this.destino_temporal;
+                this.orden_compra.partidas.data[this.index_temporal].tipo_destino = this.tipo_temporal;
+                if (this.tipo_temporal == 1) {
+                    this.getConcepto();
+                }
+                if (this.tipo_temporal == 2) {
+                    this.getAlmacen();
                 }
             }
         },
@@ -375,14 +377,14 @@
                 }
             },
             id_concepto_temporal(value){
-                if(value != ''){
+                if(value !== '' && value !== null && value !== undefined){
                     this.id_almacen_temporal = '';
                     this.destino_temporal = value;
                     this.tipo_temporal = 1;
                 }
             },
             id_almacen_temporal(value){
-                if(value != ''){
+                if(value !== '' && value !== null && value !== undefined){
                     this.id_concepto_temporal = '';
                     this.destino_temporal = value;
                     this.tipo_temporal = 2;
