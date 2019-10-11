@@ -1068,28 +1068,28 @@ export const routes = [
                 ]
             },
             {
-                path: 'catalogo-insumo',
-                component: require('./components/compras/catalogos/Layout'),
+                path: 'insumo-servicio',
+                component: require('./components/finanzas/insumo-servicio/Layout'),
                 children: [
                     {
                         path: '/',
-                        name: 'catalogo-insumo',
-                        component: require('./components/compras/catalogos/Index'),
+                        name: 'insumo-servicio',
+                        component: require('./components/finanzas/insumo-servicio/Index'),
                         meta: {
-                            title: 'Gestión de Insumos',
-                            breadcrumb: {parent: 'compras', name: 'GESTIÓN DE INSUMOS'},
+                            title: 'Insumo de Servicios',
+                            breadcrumb: {parent: 'finanzas', name: 'INSUMO SERVICIO'},
                             middleware: [auth, context],
 
                         }
                     },
                     {
-                        path: 'familia',
-                        name: 'familia',
-                        component: require('./components/compras/catalogos/familia/Index'),
+                        path: 'familia-serv',
+                        name: 'familia-serv',
+                        component: require('./components/finanzas/insumo-servicio/familia/Index'),
                         meta: {
                             title: 'Familia',
                             breadcrumb: {
-                                parent: 'catalogo-insumo',
+                                parent: 'insumo-servicio',
                                 name: 'FAMILIA'
                             },
                             middleware: [auth, context],

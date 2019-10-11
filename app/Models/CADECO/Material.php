@@ -42,7 +42,7 @@ class Material extends Model
                 return 'Materiales';
                 break;
             case(2):
-                if($this->equivalencia == 0 && $this->marca ==0){
+                if($this->marca ==0){
                     return 'Mano de Obra';
                 }else{
                     return 'Servicio';
@@ -106,6 +106,13 @@ class Material extends Model
     public function scopeTipo($query, $tipo)
     {
         return $query->whereIn('tipo_material', explode(",", $tipo));
+    }
+
+    public function scopeServicio($query)
+    {
+//        dd(->tipo_material);
+        return $query->whereIn('tipo_material', explode(",", 2));
+
     }
 
     public function scopeInventariosDiferenciaSaldo($query, $id)

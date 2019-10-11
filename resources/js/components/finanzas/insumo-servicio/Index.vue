@@ -4,7 +4,7 @@
 
 <script>
     export default {
-        name: "familia-index"
+        name: "familia-serv-index"
     }
 </script>
 

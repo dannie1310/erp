@@ -99,9 +99,9 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="catalogo || $root.can('consultar_insumo_material')">
+            <li class="nav-item" v-if="$root.can('consultar_insumo_material')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-cogs"></i>
                     <p>
                         Insumo de Servicios
                         <i class="right fa fa-angle-left"></i>
@@ -110,7 +110,7 @@
 
                 <ul class="nav nav-treeview">
                     <li class="nav-item" >
-                        <router-link :to="{name: ''}" class="nav-link" :class="{active: this.$route.name == 'familia'}">
+                        <router-link :to="{name: 'familia-serv'}" class="nav-link" :class="{active: this.$route.name == ''}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Familia</p>
                         </router-link>
@@ -118,7 +118,7 @@
                 </ul>
                 <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_material')">
                     <li class="nav-item" >
-                        <router-link :to="{name: ''}" class="nav-link" :class="{active: this.$route.name == 'material'}">
+                        <router-link :to="{name: ''}" class="nav-link" :class="{active: this.$route.name == ''}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Servicio</p>
                         </router-link>
