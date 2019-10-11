@@ -43,6 +43,16 @@ class FacturaTransformer extends TransformerAbstract
             $estado='Pagada';
         }
 
+        if($model->opciones==0){
+            $opciones='SAO';
+        }
+        if($model->opciones==1){
+            $opciones='Gastos Varios';
+        }
+        if($model->opciones==65537){
+            $opciones='Materiales/Servicios';
+        }
+
         return [
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
@@ -63,6 +73,7 @@ class FacturaTransformer extends TransformerAbstract
             'fecha_format' => (string)$model->fecha_format,
             'estado_format'=>$estado,
             'estado' => (int)$model->estado,
+            'opciones_format'=>$opciones,
             'cumplimiento' => (string)$model->cumplimiento_form,
             'vencimiento' => $model->vencimiento_form,
             'tipo_cambio' => $model->tipo_cambio,
