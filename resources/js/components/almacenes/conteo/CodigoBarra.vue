@@ -3,13 +3,13 @@
         <button @click="init" v-if="$root.can('agregar_conteos_codigo_barra')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-barcode" v-else></i>
-            Registrar con Código de Barras
+            Registro con Código
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-barcode"></i> Registrar con código de barras</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-barcode"></i> Registrar conteo con código de barras</h5>
                         <button type="button" class="close" @click="cerrar" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
