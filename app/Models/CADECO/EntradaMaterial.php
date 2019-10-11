@@ -23,6 +23,15 @@ class EntradaMaterial extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 19;
 
+    protected $fillable = [
+        'tipo_transaccion',
+        'id_empresa',
+        'id_sucursal',
+        'referencia',
+        'observaciones',
+        'id_usuario'
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -366,11 +375,52 @@ class EntradaMaterial extends Transaccion
 
     public function registrar($data)
     {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            //validaciones del antecedente
+            $ordencompra = OrdenCompra::query()->where('id_transaccion', '=', $data['id_antecedente'])
+                ->where('estado', '!=', 2)->first();
+
+            if($ordencompra == null)
+            {
+                abort(400, 'Está orden de compra ya está completa.');
+            }
+
+            $entrada = $this->create([
+                'id_antecedente' => $ordencompra->id_transaccion,
+                'id_empresa' => $ordencompra->id_empresa,
+                'id_sucursal' => $ordencompra->id_sucursal,
+                'referencia' => $data['remision'],
+                'id_moneda' => $ordencompra->id_moneda,
+                'observaciones' => $data['observaciones'],
+            ]);
+
+            foreach ($data['partidas'] as $item){
+                dd($item);
+                $entrada->partidas()->create([
+                    'id_almacen' => $data['id_almacen'],
+                    'id_material' => $item['id_material']['id'],
+                    'unidad' => $item['id_material']['unidad'],
+                    'cantidad' => $item['cantidad'],
+                    'importe' => $item['monto_total'],
+                    'saldo' => $item['monto_total'] - $item['monto_pagado'],
+                ]);
+            }
+
+                //registro de la entrada
+
+            //registro de las partidas
+            DB::connection('cadeco')->commit();
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
         dd($data);
     }
 
-    public function validarRegistro()
+    public function validarRegistro($orden_compra)
     {
-        dd($this->id_antecedente);
+
     }
 }

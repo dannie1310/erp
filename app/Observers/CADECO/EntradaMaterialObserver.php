@@ -9,6 +9,7 @@
 namespace App\Observers\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\EntradaMaterial;
 
 class EntradaMaterialObserver
@@ -19,14 +20,13 @@ class EntradaMaterialObserver
      */
     public function creating(EntradaMaterial $entradaMaterial) //El creating que se encuentra en transaccion
     {
-        $entradaMaterial->validarRegistro();
-        dd($entradaMaterial->id_antecedente);
-        if (!$entradaMaterial->validaTipoAntecedente()) {
-            throw New \Exception('La transacción antecedente no es válida');
-        }
+        $entradaMaterial->tipo_transaccion = 33;
+        $entradaMaterial->estado = 0;
+        $entradaMaterial->opciones = 1;
         $entradaMaterial->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $entradaMaterial->FechaHoraRegistro = date('Y-m-d h:i:s');
         $entradaMaterial->id_obra = Context::getIdObra();
+        $entradaMaterial->fecha = date('Y-m-d h:i:s');
         $entradaMaterial->id_usuario = auth()->id();
     }
 

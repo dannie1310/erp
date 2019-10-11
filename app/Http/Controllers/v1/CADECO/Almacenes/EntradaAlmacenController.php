@@ -15,7 +15,6 @@ use App\Http\Requests\Almacenes\StoreEntradaAlmacenRequest;
 use App\Http\Transformers\CADECO\Compras\EntradaAlmacenTransformer;
 use App\Services\CADECO\Almacenes\EntradaAlmacenService;
 use App\Traits\ControllerTrait;
-use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class EntradaAlmacenController extends Controller
