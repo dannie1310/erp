@@ -1019,6 +1019,17 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'registro-pago',
+                        name: 'gestion-registro-pago',
+                        component: require('./components/finanzas/gestion-pago/pago/RegistrarPago'),
+                        meta: {
+                            title: 'Registrar Pagos',
+                            breadcrumb: {name: 'REGISTRAR PAGOS', parent: 'pago'},
+                            middleware: [auth, context, permission],
+                            permission: 'cargar_distribucion_recursos_remesa'
+                        }
+                    },
+                    {
                         path: 'carga-masiva',
                         name: 'carga-masiva',
                         component: require('./components/finanzas/gestion-pago/carga-masiva/Index'),
@@ -1096,6 +1107,25 @@ export const routes = [
                             permission: 'consultar_solicitud_pago_anticipado'
                         }
                     },
+                ]
+            },
+
+            {
+                path:'factura',
+                component: require('./components/finanzas/factura/Layout'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'factura',
+                        component: require('./components/finanzas/factura/Index'),
+                        meta:{
+                            title: 'Facturas',
+                            breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
+                        }
+                    },
+
                 ]
             },
         ]

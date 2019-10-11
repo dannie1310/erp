@@ -99,6 +99,12 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item" v-if="$root.can('consultar_factura')">
+                <router-link :to="{name: 'factura'}" class="nav-link">
+                    <i class="fa fa-circle nav-icon"></i>
+                    <p>Facturas</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
