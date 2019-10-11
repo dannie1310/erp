@@ -99,4 +99,35 @@ class Factura extends Transaccion
         $pagar = $this->monto * $this->tipo_cambio;
         return '$ ' . number_format($pagar,2);
     }
+
+
+    public function getEstado($estado)
+    {
+        if($estado==0){
+            $estado='Registrada';
+        }
+        if ($estado==1){
+            $estado='Revisada';
+        }
+        if($estado==2){
+            $estado='Pagada';
+        }
+        return $estado;
+    }
+
+    public function getTipo($tipo)
+    {
+
+        if($tipo==0){
+            $tipo='Factura';
+        }
+        if($tipo==1){
+            $tipo='Gastos Varios';
+        }
+        if($tipo==65537){
+            $tipo='Materiales / Servicios';
+        }
+
+        return $tipo;
+    }
 }
