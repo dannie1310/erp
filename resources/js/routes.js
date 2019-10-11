@@ -1121,8 +1121,8 @@ export const routes = [
                         meta:{
                             title: 'Facturas',
                             breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_factura'
+                            middleware: [auth, context],
+                            // permission: 'consultar_banco'
                         }
                     },
 
