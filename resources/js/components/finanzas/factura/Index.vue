@@ -30,8 +30,8 @@
                     { title: 'Referencia', field: 'referencia',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Empresa', field: 'id_empresa',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date'), sortable: true},
-                    { title: 'Importe', field: 'monto',thComp: require('../../globals/th-Filter'), sortable: true},
-                    { title: 'Saldo', field: 'saldo',thComp: require('../../globals/th-Filter'), sortable: true},
+                    { title: 'Importe', field: 'monto', sortable: true},
+                    { title: 'Saldo', field: 'saldo', sortable: true},
                     { title: 'Estado', field: 'estado',thComp: require('../../globals/th-Filter'), sortable: true},
                     { title: 'Observaciones Contrarecibo', field: 'observaciones',thComp: require('../../globals/th-Filter'), sortable: false},
 

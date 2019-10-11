@@ -60,14 +60,7 @@ class FacturaService
        {
            $facturas = $facturas->where([['referencia', 'LIKE', '%'.$data['referencia'].'%']]);
        }
-
-       if(isset($data['monto'])){
-           $facturas = $facturas->where([['monto', 'LIKE', '%'.$data['monto'].'%']]);
-       }
-
-        if(isset($data['saldo'])){
-            $facturas = $facturas->where([['saldo', 'LIKE', '%'.$data['saldo'].'%']]);
-        }
+       
 
         if(isset($data['observaciones']))
         {
