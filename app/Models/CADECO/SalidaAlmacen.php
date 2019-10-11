@@ -18,6 +18,15 @@ class SalidaAlmacen extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
 
+    protected $fillable = [
+        'id_concepto',
+        'id_almacen',
+        'id_empresa',
+        'opciones',
+        'observaciones',
+        'referencia'
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -356,5 +365,24 @@ class SalidaAlmacen extends Transaccion
         if ($salida == null) {
             abort(400, 'Error en el proceso de eliminación de salida de almacén.');
         }
+    }
+
+    public function registrar($data){
+
+        $datos = [
+            'id_almacen' => $data['id_almacen'],
+            'id_concepto' => $data['id_concepto'],
+            'id_empresa' => $data['id_empresa'],
+            'opciones' => $data['opciones'],
+            'referencia' => $data['referencia'],
+            'observaciones' => $data['observaciones'],
+        ];
+        $salidaTransaccion = $this->create($datos);
+//        $salidaTransaccion = $this->find(108483);
+        $partida = new SalidaAlmacenPartida();
+        $partida->registrar($data['partidas'], $salidaTransaccion->toArray());
+
+
+//        return $this->show($id)->eliminar($data['data'][0]);
     }
 }
