@@ -363,4 +363,14 @@ class EntradaMaterial extends Transaccion
             Item::destroy($item['id_item']);
         }
     }
+
+    public function registrar($data)
+    {
+        dd($data);
+    }
+
+    public function validarRegistro()
+    {
+        dd($this->id_antecedente);
+    }
 }

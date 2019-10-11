@@ -1,6 +1,7 @@
 <template>
      <span>
-        <div class="row">
+        <nav>
+            <div class="row">
             <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="row">
@@ -59,9 +60,9 @@
                                         <label for="empresa" class="col-sm-2 col-form-label">Empresa: </label>
                                         <div class="col-sm-10">
                                             <input
+                                                    :disabled="true"
                                                     type="text"
                                                     data-vv-as="Empresa"
-                                                    v-validate="{required: true}"
                                                     class="form-control"
                                                     :name="empresa"
                                                     placeholder="Empresa"
@@ -124,10 +125,7 @@
                                                     <td>
                                                         <small class="badge" :class="{'badge-success':true}">
                                                             <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
-                                                         </small>
-                                                        <!--<span>-->
-                                                            <!--<button v-on:click="destino(i)" class="btn btn-info btn-sm">Seleccionar Destino</button>-->
-                                                        <!--</span>-->
+                                                        </small>
                                                         <label v-if = "doc.tipo_destino == 2" v-model="doc.destino">{{doc.descripcion_destino.descripcion}}</label>
                                                         <label v-else-if="doc.tipo_destino == 1" v-model="doc.destino">{{doc.descripcion_destino.path}}</label>
                                                     </td>
@@ -167,7 +165,8 @@
                 </div>
             </div>
         </div>
-         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        </nav>
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" >
                 <div class="modal-content">
                     <div class="modal-header">
@@ -176,7 +175,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form role="form">
+                    <form role="form" @submit.prevent="seleccionar">
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-12">
@@ -220,7 +219,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                                <button class="btn btn-primary"  data-dismiss="modal" v-on:click="seleccionar">Seleccionar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Seleccionar</button>
                          </div>
                     </form>
                 </div>
@@ -264,6 +263,13 @@
                 this.remision = '';
                 this.cargando = false;
                 this.bandera = 0;
+                this.destino_temporal = '';
+                this.index_temporal = '';
+                this.tipo_temporal = '';
+                this.id_almacen_temporal = '';
+                this.id_concepto_temporal = '';
+                this.almacenes = [];
+                this.descripcion_temporal = [];
             },
             getOrdenesCompra() {
                 return this.$store.dispatch('compras/orden-compra/index', {
@@ -333,12 +339,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.destino_temporal == '')
-                        {
-                            swal('¡Error!', 'Debe seleccionar un destino.', 'error')
-                        }else {
+                        // if(this.destino_temporal == '')
+                        // {
+                        //     swal('¡Error!', 'Debe seleccionar un destino.', 'error')
+                        // }else {
                             this.store()
-                        }
+                        //}
                     }
                 });
             },
@@ -359,15 +365,17 @@
                 $(this.$refs.modal).modal('show');
             },
             seleccionar() {
-                console.log("seleccionar", this.destino_temporal, this.index_temporal);
                 this.orden_compra.partidas.data[this.index_temporal].destino = this.destino_temporal;
                 this.orden_compra.partidas.data[this.index_temporal].tipo_destino = this.tipo_temporal;
+
                 if (this.tipo_temporal == 1) {
                     this.getConcepto();
                 }
                 if (this.tipo_temporal == 2) {
                     this.getAlmacen();
                 }
+
+                $(this.$refs.modal).modal('hide');
             }
         },
         watch: {

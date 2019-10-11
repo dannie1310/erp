@@ -19,6 +19,8 @@ class EntradaMaterialObserver
      */
     public function creating(EntradaMaterial $entradaMaterial) //El creating que se encuentra en transaccion
     {
+        $entradaMaterial->validarRegistro();
+        dd($entradaMaterial->id_antecedente);
         if (!$entradaMaterial->validaTipoAntecedente()) {
             throw New \Exception('La transacción antecedente no es válida');
         }

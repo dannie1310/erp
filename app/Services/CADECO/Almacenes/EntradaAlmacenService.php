@@ -12,7 +12,7 @@ namespace App\Services\CADECO\Almacenes;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EntradaMaterial;
 use App\PDF\EntradaAlmacenFormato;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\EntradaAlmacen\Repository;
 
 class EntradaAlmacenService
 {
@@ -67,5 +67,17 @@ class EntradaAlmacenService
     {
         $pdf = new EntradaAlmacenFormato($id);
         return $pdf;
+    }
+
+    public function store(array $data)
+    {
+        $datos = [
+            'id_antecedente' => $data['id_orden_compra'],
+            'remision' => $data['remision'],
+            'observaciones' => $data['orden_compra']['observaciones'],
+            'partidas' =>  $data['orden_compra']['partidas']['data']
+        ];
+
+        return $this->repository->create($datos);
     }
 }
