@@ -58,7 +58,8 @@ class SalidaAlmacenService
     }
     public function store($data)
     {
-        $this->repository->create($data);
+        $salida = $this->repository->create($data);
+        return $this->repository->show($salida->id_transaccion);
 
     }
 }

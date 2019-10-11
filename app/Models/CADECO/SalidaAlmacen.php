@@ -336,6 +336,18 @@ class SalidaAlmacen extends Transaccion
 
     }
 
+    private function validarRegistro($data){
+        foreach ($data['partidas'] as $p){
+            if(Inventario::query()->where('id_almacen','=',$data['id_almacen'])->where('id_material','',$p[0]['id'])->first()){
+                abort(400, "No existe lote");
+            }
+            if($p[3]<$p[1]){
+                abort(400, "La cantida es mayor a la existencia");
+            }
+        }
+
+    }
+
     private function revisar_respaldos()
     {
         $partidas = $this->partidas()->get()->toArray();
@@ -369,20 +381,27 @@ class SalidaAlmacen extends Transaccion
 
     public function registrar($data){
 
-        $datos = [
-            'id_almacen' => $data['id_almacen'],
-            'id_concepto' => $data['id_concepto'],
-            'id_empresa' => $data['id_empresa'],
-            'opciones' => $data['opciones'],
-            'referencia' => $data['referencia'],
-            'observaciones' => $data['observaciones'],
-        ];
-        $salidaTransaccion = $this->create($datos);
-//        $salidaTransaccion = $this->find(108483);
-        $partida = new SalidaAlmacenPartida();
-        $partida->registrar($data['partidas'], $salidaTransaccion->toArray());
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $this->validarRegistro($data);
+            $datos = [
+                'id_almacen' => $data['id_almacen'],
+                'id_concepto' => $data['id_concepto'],
+                'id_empresa' => $data['id_empresa'],
+                'opciones' => $data['opciones'],
+                'referencia' => $data['referencia'],
+                'observaciones' => $data['observaciones'],
+            ];
+            $salidaTransaccion = $this->create($datos);
+            $partida = new SalidaAlmacenPartida();
+            $partida->registrar($data['partidas'], $salidaTransaccion->toArray());
 
-
-//        return $this->show($id)->eliminar($data['data'][0]);
+            DB::connection('cadeco')->commit();
+            return $salidaTransaccion;
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 }

@@ -117,8 +117,8 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar conteo manual",
-                    text: "¿Está seguro/a de que quiere registrar un conteo manual?",
+                    title: "Registrar salida / transferencia de almacén",
+                    text: "¿Está seguro/a de que quiere registrar una salida / transferencia de almacén?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -137,7 +137,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Conteo registrado correctamente", {
+                                    swal("salida / transferencia de almacén registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false

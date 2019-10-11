@@ -30,6 +30,7 @@ class Inventario extends Model
         'id_almacen',
         'id_material',
         'cantidad',
+        'lote_antecedente',
         'saldo',
         'monto_total',
         'monto_pagado',

@@ -38,6 +38,7 @@
                                                    v-validate="{required: true}"
                                                    v-model="dato.id_almacen"
                                                    :class="{'is-invalid': errors.has('id_almacen')}"
+                                                   @select="borrar"
                                                ></Almacen>
                                           <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                     </div>
@@ -77,6 +78,7 @@
                                                        :id="'opciones' + key"
                                                        :value="key"
                                                        autocomplete="on"
+                                                       v-validate="{required: true}"
                                                        @click="borrar"
                                                        v-model.number="dato.opciones">
                                                         {{ tipo }}
@@ -134,7 +136,7 @@
                                                             <td>{{partida[0].numero_parte}}</td>
                                                             <td>{{partida[0].descripcion}}</td>
                                                             <td>{{partida[0].unidad}}</td>
-                                                            <td>{{partida[3]}}</td>
+                                                            <td>{{partida[3][1]}}</td>
                                                             <td>{{partida[1]}}</td>
                                                             <td>{{partida[2].descripcion}}</td>
                                                         </tr>
@@ -163,7 +165,7 @@
                         </div>
                          <div class="footer">
                            <button type="button" class="btn btn-secondary">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.partidas > 0">Guardar</button>
                         </div>
                      </form>
                     </div>
@@ -334,7 +336,7 @@
                         </div>
                          <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Registrar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato_partida.cantidad == '' || dato_partida.destino == '' || partida == {}">Registrar</button>
                         </div>
                      </form>
                 </div>
@@ -447,8 +449,7 @@
             store() {
                 return this.$store.dispatch('almacenes/salida-almacen/store', this.dato)
                     .then((data) => {
-                        $(this.$refs.modal).modal('hide');
-                        this.$emit('created', data);
+                        this.$router.push({name: 'salida-almacen'});
                     });
             },
             borrar(){
@@ -470,7 +471,7 @@
             validatePartida() {
                 this.findMaterial();
                 this.findAlmacen().finally(() => {
-                    this.dato.partidas.push([this.material,this.dato_partida.cantidad,this.almacen,this.partida[1]]);
+                    this.dato.partidas.push([this.material,this.dato_partida.cantidad,this.almacen,this.partida]);
                 });
 
                 $(this.$refs.modal).modal('hide');
