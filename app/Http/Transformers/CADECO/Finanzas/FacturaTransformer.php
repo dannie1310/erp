@@ -33,26 +33,6 @@ class FacturaTransformer extends TransformerAbstract
 
     public function transform(Factura $model)
     {
-        if($model->estado==0){
-            $estado='Registrada';
-        }
-        if ($model->estado==1){
-            $estado='Revisada';
-        }
-        if($model->estado==2){
-            $estado='Pagada';
-        }
-
-        if($model->opciones==0){
-            $opciones='Factura';
-        }
-        if($model->opciones==1){
-            $opciones='Gastos Varios';
-        }
-        if($model->opciones==65537){
-            $opciones='Materiales / Servicios';
-        }
-
         return [
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
@@ -71,9 +51,9 @@ class FacturaTransformer extends TransformerAbstract
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
             'fecha_format' => (string)$model->fecha_format,
-            'estado_format'=>$estado,
+            'estado_format'=>$model->getEstado($model->estado),
             'estado' => (int)$model->estado,
-            'opciones_format'=>$opciones,
+            'opciones_format'=>$model->getTipo($model->opciones),
             'cumplimiento' => (string)$model->cumplimiento_form,
             'vencimiento' => $model->vencimiento_form,
             'tipo_cambio' => $model->tipo_cambio,
