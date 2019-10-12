@@ -20,7 +20,7 @@ class OrdenCompraPartida extends Item
 
     public function getCantidadPendienteAttribute()
     {
-        $cantidad_entradas = EntradaMaterialPartida::query()->where('item_antecedente', '=', $this->item_antecedente)->sum('cantidad');
+        $cantidad_entradas = EntradaMaterialPartida::query()->where('item_antecedente', '=', $this->id_item)->sum('cantidad');
         return number_format(($this->cantidad - $cantidad_entradas),2,'.', '');
     }
 }

@@ -93,20 +93,20 @@
                                             </thead>
                                             <tbody>
                                                 <tr v-for="(doc, i) in orden_compra.partidas.data">
-                                                    <td>{{i+1}}</td>
-                                                    <td>{{doc.material.numero_parte}}</td>
-                                                    <td>{{doc.material.descripcion}}</td>
-                                                    <td>{{doc.material.unidad}}</td>
-                                                    <td></td>
-                                                    <td>{{doc.cantidad}}</td>
-                                                    <td>
+                                                    <td v-if="doc.cantidad_pendiente != 0">{{i+1}}</td>
+                                                    <td v-if="doc.cantidad_pendiente != 0">{{doc.material.numero_parte}}</td>
+                                                    <td v-if="doc.cantidad_pendiente != 0">{{doc.material.descripcion}}</td>
+                                                    <td v-if="doc.cantidad_pendiente != 0">{{doc.material.unidad}}</td>
+                                                    <td v-if="doc.cantidad_pendiente != 0"></td>
+                                                    <td v-if="doc.cantidad_pendiente != 0">{{doc.cantidad_pendiente}}</td>
+                                                    <td v-if="doc.cantidad_pendiente != 0">
                                                         <div class="col-12">
                                                             <div class="form-group error-content">
                                                                 <input
                                                                         type="number"
                                                                         step="any"
                                                                         data-vv-as="Cantidad Ingresada"
-                                                                        v-validate="{min_value:0.1, max_value:doc.cantidad, decimal:2}"
+                                                                        v-validate="{min_value:0.1, max_value:doc.cantidad_pendiente, decimal:2}"
                                                                         class="form-control"
                                                                         :name="`cantidad_ingresada[${i}]`"
                                                                         placeholder="Cantidad Ingresada"
@@ -116,13 +116,13 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="text-center" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad)">
+                                                    <td class="text-center" v-if="doc.cantidad_pendiente != 0 && parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad)">
                                                         <small class="badge" :class="{'badge-success':parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad)}">
                                                             <i class="fa fa-check-circle-o" aria-hidden="true"></i> Cumplido
                                                          </small>
                                                     </td>
-                                                    <td v-else></td>
-                                                    <td>
+                                                    <td v-else-if="doc.cantidad_pendiente != 0"></td>
+                                                    <td v-if="doc.cantidad_pendiente != 0">
                                                         <small class="badge" :class="{'badge-success':true}">
                                                             <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
                                                         </small>
@@ -130,7 +130,7 @@
                                                         <label v-else-if="doc.tipo_destino == 1" v-model="doc.destino">{{doc.descripcion_destino.path}}</label>
                                                     </td>
                                                     <!--<td v-else>{{doc.descripcion_destino}}</td>-->
-                                                    <td class="text-center"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                                    <td class="text-center" v-if="doc.cantidad_pendiente != 0"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                                 </tr>
                                             </tbody>
                                         </table>
