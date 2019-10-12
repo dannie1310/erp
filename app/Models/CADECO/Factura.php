@@ -37,41 +37,39 @@ class Factura extends Transaccion
         return $this->belongsTo(Empresa::class, 'id_empresa');
     }
 
+    public function orden_pago()
+    {
+        return $this->belongsTo(OrdenPago::class, 'id_referente','id_transaccion');
+    }
+
     public function moneda()
     {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
 
-    public function verificaOrdenPago($data)
+
+    public function generaOrdenPago($data)
     {
-        $orden_pago = OrdenPago::query()->where('id_referente','=', $data['id_transaccion'])->get()->first();
 
 
-        if(is_null($orden_pago)){
+        if (is_null($this->orden_pago)){
             $datos = [
-                'id_antecedente'=>$data['id_antecedente'],
-                'id_referente'=>$data['id_transaccion'],
-                'fecha'=>$data['fecha'],
-                'id_obra'=>$data['id_obra'],
-                'monto'=>$data['monto'],
-                'referencia'=>$data['referencia'],
-                'id_empresa'=>$data['id_empresa'],
-                'id_moneda'=> $data['id_moneda'],
-                'id_usuario'=>$data['usuario']
+                    'id_antecedente'=>$this->id_antecedente,
+                    'id_referente'=>$this->id_transaccion,
+                    'monto'=>-1*abs($data->monto_pagado),
+                    'fecha'=>$data->fecha_pago,
+                    'id_empresa'=>$this->id_empresa,
+                    'id_moneda'=> $data->id_moneda,
             ];
 
-            $orden_pago = OrdenPago::query()->create($datos);
 
-            $pago = new Pago();
-            $response =$pago->verificaPago($orden_pago);
+            $ordenPago= $this->orden_pago()->create($datos);
 
-            return $response;
+            $orden_pago = OrdenPago::query()->find($ordenPago->id_transaccion);
 
-        }else{
-            $pago = new Pago();
-            $response =$pago->verificaPago($orden_pago);
-            return $response;
+             return $orden_pago->generaPago($data);
+
         }
 
     }

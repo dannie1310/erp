@@ -35,6 +35,7 @@ class OrdenPagoTransformer extends TransformerAbstract
             'fecha' => $model->fecha,
             'id_obra' => $model->id_obra,
             'monto' => $model->monto,
+            'numero_folio'=>$model->numero_folio,
             'referencia' => $model->referencia,
             'tipo_transaccion' => $model->tipo_transaccion,
             "id_empresa" => $model->id_empres,
