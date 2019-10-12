@@ -22,35 +22,70 @@ class Solicitud extends Transaccion
         });
     }
 
-    public function pago(){
+    public function pago()
+    {
         return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion')
             ->where('tipo_transaccion', '=', 82);
     }
 
-    public function fondo(){
+    public function fondo()
+    {
         return $this->belongsTo(Fondo::class, 'id_referente', 'id_fondo');
     }
 
-    public function verificaPago($data){
-        $pago = Pago::query()->where('id_referente','=', $data['id_referente'])
-            ->where('id_empresa','>',0)->get()->first();
+    public function generaPago($data)
+    {
+
+        $data = array(
+            "id_empresa" => $this->id_empresa,
+            "id_moneda" => $this->id_moneda,
+            "fecha" => $this->fecha,
+            "cumplimiento" => $this->fecha,
+            "vencimiento" => $this->fecha,
+            "monto" => -1 * abs($this->monto),
+            "referencia" => $this->referencia,
+        );
 
 
-        if(is_null($pago)){
-            $datos = [
-                'numero_folio' => $data['numero_folio'],
-                'fecha'=>$data['fecha'],
-                'monto'=>$data['monto'],
-                'id_empresa'=>$data['id_empresa'],
-                'observaciones'=>$data['observaciones'],
-                'id_moneda'=>$data['id_moneda'],
-            ];
-            $pago = Pago::query()->create($datos);
-            return $pago;
+        switch ($this->tipo_transaccion) {
+            case 65:
+                $data["id_antecedente"] = $this->id_antecedente;
+                $data["id_referente"] = $this->id_transaccion;
+                unset($data["referencia"]);
+                $o_pago = OrdenPago::query()->create($data);
+                $o_pago = OrdenPago::query()->where('id_transaccion', '=', $o_pago->id_transaccion)->first();
+                unset($data["id_antecedente"]);
+                unset($data["id_referente"]);
+                $data["numero_folio"] = $o_pago->numero_folio;
+                $data["referencia"] = $this->referencia;
+                $data["estado"] = 2;
+                $data["id_cuenta"] = $this->id_cuenta;
+                $data["destino"] = $this->destino;
+                $data["observaciones"] = $this->observaciones;
+                $pago = Pago::query()->create($data);
+                return $pago->id_transaccion;
+                break;
 
-        }else{
-            return $pago;
+            case 72:
+                $data["id_cuenta"] = $this->id_cuenta;
+                $data["destino"] = $this->destino;
+                $data["observaciones"] = $this->observaciones;
+                $pago = PagoACuenta::query()->create($data);
+                return $pago->id_transaccion;
+                break;
+
+            default:
+                $data["id_cuenta"] = $this->id_cuenta;
+                $data["destino"] = $this->destino;
+                $data["observaciones"] = $this->observaciones;
+                $pago = PagoACuenta::query()->create($data);
+                return $pago->id_transaccion;
+                break;
+
+
         }
 
+
     }
+
 }
