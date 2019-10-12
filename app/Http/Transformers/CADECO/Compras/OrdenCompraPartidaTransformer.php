@@ -40,12 +40,15 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
             'id_antecedente' => $model->id_antecedente,
             'item_antecedente' => $model->item_antecedente,
             'cantidad' => $model->cantidad,
+            'cantidad_material' => $model->cantidad_material,
             'precio_unitario' => $model->precio_unitario,
             'estado'=> $model->estado,
             'unidad' => $model->unidad,
             'importe' => $model->importe,
             'precio_unitario' => $model->precio_unitario,
-            'precio_material' => $model->precio_material
+            'precio_material' => $model->precio_material,
+            'numero' => $model->numero,
+            'cantidad_pendiente' => $model->cantidadPendiente
         ];
     }
 

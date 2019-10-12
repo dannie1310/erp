@@ -16,9 +16,8 @@ class EntradaMaterialObserver
 {
     /**
      * @param EntradaMaterial $entradaMaterial
-     * @throws \Exception
      */
-    public function creating(EntradaMaterial $entradaMaterial) //El creating que se encuentra en transaccion
+    public function creating(EntradaMaterial $entradaMaterial)
     {
         $entradaMaterial->tipo_transaccion = 33;
         $entradaMaterial->estado = 0;
@@ -28,6 +27,11 @@ class EntradaMaterialObserver
         $entradaMaterial->id_obra = Context::getIdObra();
         $entradaMaterial->fecha = date('Y-m-d h:i:s');
         $entradaMaterial->id_usuario = auth()->id();
+    }
+
+    public function created(EntradaMaterial $entradaMaterial)
+    {
+
     }
 
     public function deleting(EntradaMaterial $entradaMaterial)

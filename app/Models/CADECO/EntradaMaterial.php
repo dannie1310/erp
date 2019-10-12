@@ -24,14 +24,21 @@ class EntradaMaterial extends Transaccion
     public const TIPO_ANTECEDENTE = 19;
 
     protected $fillable = [
+        'id_antecedente',
         'tipo_transaccion',
         'id_empresa',
         'id_sucursal',
         'referencia',
         'observaciones',
-        'id_usuario'
+        'id_usuario',
+        'id_moneda',
+        'estado',
+        'opciones',
+        'comentario',
+        'FechaHoraRegistro',
+        'id_obra',
+        'fecha'
     ];
-
     protected static function boot()
     {
         parent::boot();
@@ -386,8 +393,10 @@ class EntradaMaterial extends Transaccion
                 abort(400, 'Está orden de compra ya está completa.');
             }
 
+            $this->validarCantidades($data['partidas']);
+
             $entrada = $this->create([
-                'id_antecedente' => $ordencompra->id_transaccion,
+                'id_antecedente' => $data['id_antecedente'],
                 'id_empresa' => $ordencompra->id_empresa,
                 'id_sucursal' => $ordencompra->id_sucursal,
                 'referencia' => $data['remision'],
@@ -395,32 +404,98 @@ class EntradaMaterial extends Transaccion
                 'observaciones' => $data['observaciones'],
             ]);
 
+            $oc_completa = $this->validarOrdenCompraCumplida($data['partidas']);
+
             foreach ($data['partidas'] as $item){
-                dd($item);
-                $entrada->partidas()->create([
-                    'id_almacen' => $data['id_almacen'],
-                    'id_material' => $item['id_material']['id'],
-                    'unidad' => $item['id_material']['unidad'],
-                    'cantidad' => $item['cantidad'],
-                    'importe' => $item['monto_total'],
-                    'saldo' => $item['monto_total'] - $item['monto_pagado'],
-                ]);
+                if(isset($item['cantidad_ingresada']) == true) {
+                    if ($item['tipo_destino'] == 1) {
+                        $entrada->partidas()->create([
+                            'item_antecedente' => $item['id'],
+                            'id_transaccion' => $entrada->id_transaccion,
+                            'id_antecedente' => $entrada->id_antecedente,
+                            'id_concepto' => $item['destino'],
+                            'id_material' => $item['material']['id'],
+                            'unidad' => $item['material']['unidad'],
+                            'numero' => $item['numero'],
+                            'cantidad_material' => $item['cantidad_material'],
+                            'cantidad' => $item['cantidad_ingresada'],
+                            'cantidad_original1' => $item['cantidad_ingresada'],
+                            'importe' => $item['precio_material'] * $item['cantidad_ingresada'],
+                            'saldo' => $item['precio_material'] * $item['cantidad_ingresada'],
+                            'precio_unitario' => $item['precio_material']
+                        ]);
+                    }
+                    if ($item['tipo_destino'] == 2) {
+                        $entrada->partidas()->create([
+                            'item_antecedente' => $item['id'],
+                            'id_transaccion' => $entrada->id_transaccion,
+                            'id_antecedente' => $entrada->id_antecedente,
+                            'id_almacen' => $item['destino'],
+                            'id_material' => $item['material']['id'],
+                            'unidad' => $item['material']['unidad'],
+                            'numero' => $item['numero'],
+                            'cantidad_material' => $item['cantidad_material'],
+                            'cantidad' => $item['cantidad_ingresada'],
+                            'cantidad_original1' => $item['cantidad_ingresada'],
+                            'importe' => $item['precio_material'] * $item['cantidad_ingresada'],
+                            'saldo' => $item['precio_material'] * $item['cantidad_ingresada'],
+                            'precio_unitario' => $item['precio_material']
+                        ]);
+                    }
+                }
             }
 
-                //registro de la entrada
+            if($oc_completa == true){
+                $ordencompra->estado = 2;
+                $ordencompra->save();
+            }
 
-            //registro de las partidas
             DB::connection('cadeco')->commit();
+            return $entrada;
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
         }
-        dd($data);
     }
 
-    public function validarRegistro($orden_compra)
+    public function validarCantidades($partidas)
     {
+        foreach ($partidas as $i){
+            if(isset($i['cantidad_ingresada']) == true) {
+                $cantidad_entradas = EntradaMaterialPartida::query()->where('item_antecedente', '=', $i['id'])->sum('cantidad');
+                $cantidad_item_orden = OrdenCompraPartida::query()->where('id_item', '=', $i['id'])->pluck('cantidad')->first();
+                if ($cantidad_item_orden < $cantidad_entradas)
+                {
+                    abort(400, 'El material: ' . $i['material']['descripcion'] . '  está entregado completamente.');
+                }
 
+                if(!($cantidad_item_orden > $cantidad_entradas && $cantidad_item_orden >= $cantidad_entradas+$i['cantidad_ingresada']))
+                {
+                    abort(400, 'El material: ' . $i['material']['descripcion'] . '  sobrepasa la cantidad ingresada.');
+
+                }
+            }
+        }
+    }
+
+    public function validarOrdenCompraCumplida($partidas)
+    {
+        $suma_totales = 0;
+        foreach ($partidas as $i) {
+            if(isset($i['cantidad_ingresada']) == true) {
+                $cantidad_entradas = EntradaMaterialPartida::query()->where('item_antecedente', '=', $i['item_antecedente'])->sum('cantidad');
+                $cantidad_item_orden = OrdenCompraPartida::query()->where('id_item', '=', $i['item_antecedente'])->pluck('cantidad')->first();
+
+                if ((float)$cantidad_item_orden == (float)$cantidad_entradas + (float)$i['cantidad_ingresada']) {
+                    $suma_totales = $suma_totales + 1;
+                }
+            }
+        }
+
+        if($suma_totales == count($partidas)){
+           return true;
+        }
+        return false;
     }
 }

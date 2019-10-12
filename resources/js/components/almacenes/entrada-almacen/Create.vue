@@ -106,7 +106,7 @@
                                                                         type="number"
                                                                         step="any"
                                                                         data-vv-as="Cantidad Ingresada"
-                                                                        v-validate="{required: true, min_value:0.1, max_value:doc.cantidad, decimal:2}"
+                                                                        v-validate="{min_value:0.1, max_value:doc.cantidad, decimal:2}"
                                                                         class="form-control"
                                                                         :name="`cantidad_ingresada[${i}]`"
                                                                         placeholder="Cantidad Ingresada"
@@ -219,7 +219,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Seleccionar</button>
+                                <button  class="btn btn-primary" data-dismiss="modal" v-on:click="seleccionar">Seleccionar</button>
                          </div>
                     </form>
                 </div>
@@ -374,8 +374,6 @@
                 if (this.tipo_temporal == 2) {
                     this.getAlmacen();
                 }
-
-                $(this.$refs.modal).modal('hide');
             }
         },
         watch: {
