@@ -316,7 +316,12 @@
                 return self.$store.dispatch('finanzas/remesa/find',{
                     id: self.id_remesa,
                     params: {
-                        include: ['documentosDisponibles', 'documentosDisponibles.empresa.cuentas_bancarias.banco.ctgBanco', 'documentosDisponibles.moneda', 'remesaLiberada', 'documentosDisponibles.fondo.empresa.cuentas_bancarias.banco']
+                        include: ['documentosDisponibles',
+                            'documentosDisponibles.empresa.cuentas_bancarias.banco.ctgBanco',
+                            'documentosDisponibles.moneda',
+                            'documentosDisponibles.montoProcesado',
+                            'remesaLiberada',
+                            'documentosDisponibles.fondo.empresa.cuentas_bancarias.banco'],
                     }
                 })
                     .then(data => {
