@@ -48,7 +48,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {include: ['usuario','estado'], sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false,
             }
@@ -106,8 +106,8 @@
                             numero_folio:layout.id,
                             fecha: layout.fecha_registro,
                             monto: layout.monto,
-                            usuario: layout.usuario,
-                            estado:layout.estado,
+                            usuario: layout.usuario.nombre,
+                            estado:layout.estado.descripcion,
                             buttons: $.extend({}, {
                                 id: layout.id,
                                 autorizar: true,

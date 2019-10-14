@@ -75,7 +75,6 @@ class CargaLayoutPagoService
                     $partida->save();
                 }
 
-
                 /*Solicitud*/
                 if ($transaccion->tipo_transaccion === '72') {
                     $pago = Solicitud::query()->find($partida->id_transaccion)->generaPago($partida);
@@ -83,11 +82,7 @@ class CargaLayoutPagoService
                     $partida->save();
 
                 }
-
-
             }
-
-
         }
 
         /*Se autoriza el Layout de Pago*/
