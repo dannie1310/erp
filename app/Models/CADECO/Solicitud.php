@@ -46,45 +46,12 @@ class Solicitud extends Transaccion
             "referencia" => $this->referencia,
         );
 
-
-        switch ($this->tipo_transaccion) {
-            case 65:
-                $data["id_antecedente"] = $this->id_antecedente;
-                $data["id_referente"] = $this->id_transaccion;
-                unset($data["referencia"]);
-                $o_pago = OrdenPago::query()->create($data);
-                $o_pago = OrdenPago::query()->where('id_transaccion', '=', $o_pago->id_transaccion)->first();
-                unset($data["id_antecedente"]);
-                unset($data["id_referente"]);
-                $data["numero_folio"] = $o_pago->numero_folio;
-                $data["referencia"] = $this->referencia;
-                $data["estado"] = 2;
                 $data["id_cuenta"] = $this->id_cuenta;
                 $data["destino"] = $this->destino;
                 $data["observaciones"] = $this->observaciones;
-                $pago = Pago::query()->create($data);
-                return $pago->id_transaccion;
-                break;
-
-            case 72:
-                $data["id_cuenta"] = $this->id_cuenta;
-                $data["destino"] = $this->destino;
-                $data["observaciones"] = $this->observaciones;
+                $data['id_referente']= $this->id_referente;
                 $pago = PagoACuenta::query()->create($data);
                 return $pago->id_transaccion;
-                break;
-
-            default:
-                $data["id_cuenta"] = $this->id_cuenta;
-                $data["destino"] = $this->destino;
-                $data["observaciones"] = $this->observaciones;
-                $pago = PagoACuenta::query()->create($data);
-                return $pago->id_transaccion;
-                break;
-
-
-        }
-
 
     }
 
