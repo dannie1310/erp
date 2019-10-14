@@ -116,8 +116,8 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="text-center" v-if="doc.cantidad_pendiente != 0 && parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad)">
-                                                        <small class="badge" :class="{'badge-success':parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad)}">
+                                                    <td class="text-center" v-if="doc.cantidad_pendiente != 0 && parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)">
+                                                        <small class="badge" :class="{'badge-success':parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)}">
                                                             <i class="fa fa-check-circle-o" aria-hidden="true"></i> Cumplido
                                                          </small>
                                                     </td>
