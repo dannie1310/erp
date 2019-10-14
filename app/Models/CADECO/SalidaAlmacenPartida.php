@@ -54,6 +54,7 @@ class SalidaAlmacenPartida extends Item
 
     public function registrar($partidas,$salidas)
     {
+        abort(400, $salidas['opciones']);
         try {
             foreach ($partidas as $p) {
                 $inventario = Inventario::query()->where( 'id_material', '=', $p[0]['id'] )

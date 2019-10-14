@@ -36,9 +36,8 @@
                                                    id="id_almacen"
                                                    data-vv-as="Almacén"
                                                    v-validate="{required: true}"
-                                                   v-model="dato.id_almacen"
+                                                   v-model="id_almacen"
                                                    :class="{'is-invalid': errors.has('id_almacen')}"
-                                                   @select="borrar"
                                                ></Almacen>
                                           <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                     </div>
@@ -89,27 +88,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-12" v-if="dato.opciones == 1">
-                                    <div class="form-group row error-content">
-                                        <div class="form-group row error-content">
-                                        <label for="id_concepto" class="col-sm-2 col-form-label">Concepto:</label>
-                                            <div class="col-sm-10">
-                                                <concepto-select
-                                                    name="id_concepto"
-                                                    data-vv-as="Concepto"
-                                                    v-validate="{required: true}"
-                                                    id="id_concepto"
-                                                    v-model="dato.id_concepto"
-                                                    :error="errors.has('id_concepto')"
-                                                    ref="conceptoSelect"
-                                                    :disableBranchNodes="false"
-                                                ></concepto-select>
-                                            <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12" v-if="dato.id_almacen && dato.opciones">
+                                <div class="col-md-12" v-if="id_almacen && dato.opciones">
                                     <div class="form-group">
                                         <div class="col-12">
                                             <button @click="agregar_partida"class="btn btn-app btn-info pull-right" :disabled="cargando">
@@ -129,6 +108,7 @@
                                                             <th>Existencia</th>
                                                             <th>Cantidad</th>
                                                             <th>Destino</th>
+                                                            <th>Acciones</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -138,7 +118,13 @@
                                                             <td>{{partida[0].unidad}}</td>
                                                             <td>{{partida[3][1]}}</td>
                                                             <td>{{partida[1]}}</td>
-                                                            <td>{{partida[2].descripcion}}</td>
+                                                            <td v-if="partida[2].path" :title="partida[2].path">{{partida[2].descripcion}}</td>
+                                                            <td v-else>{{partida[2].descripcion}}</td>
+                                                            <td>
+                                                                <button type="button" @click="borrarPartidas(index)" class="btn btn-sm btn-outline-danger" title="Eliminar partida">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -324,10 +310,10 @@
                                                 data-vv-as="Concepto"
                                                 v-validate="{required: true}"
                                                 id="id_conceptos"
-                                                v-model="dato_partida.id_conceptos"
+                                                v-model="dato_partida.destino"
                                                 :error="errors.has('id_conceptos')"
                                                 ref="conceptoSelect"
-                                                :disableBranchNodes="false"
+                                                :disableBranchNodes="true"
                                         ></concepto-select>
                                     <div class="error-label" v-show="errors.has('id_conceptos')">{{ errors.first('id_conceptos') }}</div>
                                     </div>
@@ -377,6 +363,7 @@
                 materiales:[],
                 material:'',
                 almacen:'',
+                id_almacen:'',
                 cargando: false
 
             }
@@ -423,12 +410,21 @@
             },
             findAlmacen() {
                 this.$store.commit('cadeco/almacen/SET_ALMACEN', null);
-                return this.$store.dispatch('cadeco/almacen/find', {
-                    id: this.dato_partida.destino,
-                    params: {}
-                }).then(data => {
-                    this.almacen = data;
-                })
+                if(this.dato.opciones == 65537){
+                    return this.$store.dispatch('cadeco/almacen/find', {
+                        id: this.dato_partida.destino,
+                        params: {}
+                    }).then(data => {
+                        this.almacen = data;
+                    })
+                }else{
+                    return this.$store.dispatch('cadeco/concepto/find', {
+                        id: this.dato_partida.destino,
+                        params: {}
+                    }).then(data => {
+                        this.almacen = data;
+                    })
+                }
             },
             getAlmacenes() {
                 return this.$store.dispatch('cadeco/almacen/index', {
@@ -455,6 +451,9 @@
             borrar(){
                 this.dato.partidas=[];
             },
+            borrarPartidas(i){
+                this.dato.partidas.splice(i,1);
+            },
             validarCantidad() {
                 if(parseInt(this.partida[1]) < parseInt(this.dato_partida.cantidad)) {
                     swal('¡Error!', 'La cantidad no puede ser mayor a la existencia.', 'error');
@@ -477,6 +476,14 @@
                 $(this.$refs.modal).modal('hide');
 
             },
+        },
+        watch:{
+            id_almacen(value){
+                if(value != ''){
+                    this.dato.id_almacen = value
+                    this.dato.partidas=[];
+                }
+            }
         }
     }
 </script>

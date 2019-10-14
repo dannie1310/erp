@@ -380,7 +380,6 @@ class SalidaAlmacen extends Transaccion
     }
 
     public function registrar($data){
-
         try{
             DB::connection('cadeco')->beginTransaction();
             $this->validarRegistro($data);
