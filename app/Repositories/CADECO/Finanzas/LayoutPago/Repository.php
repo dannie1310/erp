@@ -116,6 +116,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 'beneficiario' => $transaccion ? $transaccion->empresa->razon_social : null,
                 'referencia_docto' => $documento ? $documento->Referencia : null,
                 'origen_docto' => $documento ? $documento->origenDocumento->OrigenDocumento : null,
+                'fecha_limite' =>  date('d-m-Y')
             );
         }
 
@@ -312,10 +313,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public  function validarFecha($fecha)
     {
+
         $fecha_correcta = DateTime::createFromFormat('d/m/Y', $fecha);
         if($fecha_correcta != false)
         {
-            if(strcmp($fecha_correcta->format('d/m/Y'), $fecha) == 0) {
+            if(strcmp($fecha_correcta->format('d/m/Y'), $fecha) == 0 && date('d/m/Y') >=  $fecha) {
                 return true;
             }
         }
@@ -323,7 +325,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $fecha_correcta =DateTime::createFromFormat('d-m-Y', $fecha);
         if($fecha_correcta != false)
         {
-            if(strcmp($fecha_correcta->format('d-m-Y'), $fecha) == 0) {
+            if(strcmp($fecha_correcta->format('d-m-Y'), $fecha) == 0 && date('d-m-Y') >=  $fecha) {
                 return true;
             }
         }
@@ -331,7 +333,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $fecha_correcta =DateTime::createFromFormat('Y-m-d', $fecha);
         if($fecha_correcta != false)
         {
-            if(strcmp($fecha_correcta->format('Y-m-d'), $fecha) == 0) {
+            if(strcmp($fecha_correcta->format('Y-m-d'), $fecha) == 0 && date('Y-m-d') >=  $fecha) {
                 return true;
             }
         }
@@ -339,7 +341,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $fecha_correcta = DateTime::createFromFormat('Y/m/d', $fecha);
         if($fecha_correcta != false)
         {
-            if(strcmp($fecha_correcta->format('Y/m/d'), $fecha) == 0) {
+            if(strcmp($fecha_correcta->format('Y/m/d'), $fecha) == 0 && date('Y/m/d') >=  $fecha) {
                 return true;
             }
         }
