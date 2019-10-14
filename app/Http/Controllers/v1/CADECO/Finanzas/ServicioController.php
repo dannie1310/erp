@@ -6,8 +6,10 @@ namespace App\Http\Controllers\v1\CADECO\Finanzas;
 
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Finanzas\ServicioTransformer;
-use App\Services\CADECO\Compras\MaterialService;
+use App\Services\CADECO\FamiliaService;
+use App\Services\CADECO\Finanzas\ServicioService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class ServicioController extends Controller
@@ -15,7 +17,7 @@ class ServicioController extends Controller
     use ControllerTrait;
 
     /**
-     * @var MaterialService
+     * @var ServicioService
      */
     protected $service;
 
@@ -31,13 +33,12 @@ class ServicioController extends Controller
 
     /**
      * FamiliaController constructor.
-     * @param MaterialService $service
+     * @param ServicioService $service
      * @param ServicioTransformer $transformer
      * @param Manager $fractal
      */
-    public function __construct(MaterialService $service, ServicioTransformer $transformer, Manager $fractal)
+    public function __construct(ServicioService $service, ServicioTransformer $transformer, Manager $fractal)
     {
-//        dd('Controlador Servicio');
         $this->middleware('auth:api');
         $this->middleware('context');
 //        $this->middleware('permiso:consultar_familia_material,consultar_familia_herramienta_equipo')->only(['show','paginate','index','find']);
@@ -46,6 +47,11 @@ class ServicioController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;
+    }
+
+    public function porServicio(Request $request)
+    {
+        return $this->service->porServicio();
     }
 
 }

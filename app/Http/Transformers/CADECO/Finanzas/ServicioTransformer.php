@@ -3,14 +3,14 @@
 
 namespace App\Http\Transformers\CADECO\Finanzas;
 
-use App\Models\CADECO\MaterialFamilia;
+use App\Models\CADECO\Familia;
+use App\Models\CADECO\Material;
 use League\Fractal\TransformerAbstract;
 
 class ServicioTransformer extends TransformerAbstract
 {
-    public function transform(MaterialFamilia $model)
+    public function transform(Familia $model)
     {
-//        dd($model->descripcion,$model->tipo_material,$model->tipo_material_descripcion);
         return [
             'id' => $model->getKey(),
             'descripcion' => $model->descripcion,

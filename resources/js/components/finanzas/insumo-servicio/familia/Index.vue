@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-<!--            <create @created="paginate()"></create>-->
+            <create @created="paginate()"></create>
         </div>
         <div class="col-12">
             <div class="card">
@@ -20,22 +20,22 @@
 </template>
 
 <script>
-    // import Create from "./Create";
+    import Create from "./Create";
     export default {
         name: "familia-serv-index",
-        // components:{Create},
+        components:{Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Familia', field: 'tipo_material',sortable: true},
+                 //   { title: 'Familia', field: 'tipo_material',sortable: true},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'servicio', sort: 'nivel', order: 'desc'},
+                query: { sort: 'id_material', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -51,15 +51,26 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('finanzas/familia-serv/paginate', { params: this.query})
+
+                return this.$store.dispatch('finanzas/familia-serv/porServicio', {
+                    params: this.query
+                })
                     .then(data => {
-                        this.$store.commit('finanzas/familia-serv/SET_FAMILIAS', data.data);
-                        this.$store.commit('finanzas/familia-serv/SET_META', data.meta);
+                        this.$store.commit('finanzas/familia-serv/SET_FAMILIAS',data.data);
+                        this.$store.commit('finanzas/familia-serv/SET_META', {
+                            "pagination": {
+                                "total": data.total,
+                                "count": data.to - data.from + 1,
+                                "per_page": data.per_page,
+                                "current_page": data.current_page,
+                                "total_pages": data.last_page,
+                            }
+                        });
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
-            }
+            },
         },
         computed: {
             familias(){
@@ -74,16 +85,13 @@
         },
         watch: {
             familias: {
-                handler(familias) {
+                handler(famls) {
                     let self = this
                     self.$data.data = []
-                    familias.forEach(function (familia, i) {
-                        self.$data.data.push({
-                            index: (i + 1) + self.query.offset,
-                            tipo_material: familia.tipo_material_descripcion,
-                            descripcion: familia.descripcion,
-                        })
-                    });
+                    self.$data.data = famls.map((familia, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        descripcion: familia.descripcion
+                    }));
                 },
                 deep: true
             },

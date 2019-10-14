@@ -108,13 +108,6 @@ class Material extends Model
         return $query->whereIn('tipo_material', explode(",", $tipo));
     }
 
-    public function scopeServicio($query)
-    {
-//        dd(->tipo_material);
-        return $query->whereIn('tipo_material', explode(",", 2));
-
-    }
-
     public function scopeInventariosDiferenciaSaldo($query, $id)
     {
         return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)

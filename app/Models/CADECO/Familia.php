@@ -32,6 +32,16 @@ class Familia extends Material
         }
     }
 
+    public function scopeMarca($query, $tipo)
+    {
+
+        return $query->where('tipo_material','=',$tipo);
+//        ->whereIn('tipo_material', explode(",", $tipo));
+////        return $query->whereIn('tipo_material', explode(",", 2))->where('marca','=',$marca);
+//        $consulta =  Material::query()->whereRaw("nivel LIKE '".$model->nivel."0%'")->where('tipo_material','=',2)->where('marca','=',1)->pluck('descripcion')->first();
+//        return $query->where('marca','=',1);
+    }
+
     public function nivelConsecutivo($tipo)
     {
         $n = 0;
