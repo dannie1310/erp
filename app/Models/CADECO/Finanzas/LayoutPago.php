@@ -84,7 +84,7 @@ class LayoutPago extends Model
                 }
             }
             DB::connection('cadeco')->commit();
-            return $this;
+            return $layout_pagos;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
