@@ -44,12 +44,12 @@ class Solicitud extends Transaccion
             "vencimiento" => $this->fecha,
             "monto" => -1 * abs($this->monto),
             "referencia" => $this->referencia,
-        );
+            "id_cuenta" => $this->id_cuenta,
+            "destino" => $this->destino,
+            "observaciones" => $this->observaciones,
+            "id_referente"=> $this->id_referente,
+            );
 
-                $data["id_cuenta"] = $this->id_cuenta;
-                $data["destino"] = $this->destino;
-                $data["observaciones"] = $this->observaciones;
-                $data['id_referente']= $this->id_referente;
                 $pago = PagoACuenta::query()->create($data);
                 return $pago->id_transaccion;
 
