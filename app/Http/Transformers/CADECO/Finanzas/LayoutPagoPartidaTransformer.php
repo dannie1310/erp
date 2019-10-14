@@ -54,27 +54,39 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
 
     }
 
-
-    public function includeFactura(LayoutPagoPartida $model){
+    /**
+     * @param LayoutPagoPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeFactura(LayoutPagoPartida $model)
+    {
         if($factura = $model->factura){
             return $this->item($factura, new FacturaTransformer);
         }
         return null;
     }
-    public function includeSolicitud(LayoutPagoPartida $model){
+
+    /**
+     * @param LayoutPagoPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSolicitud(LayoutPagoPartida $model)
+    {
         if($solicitud_pago_anticipado = $model->solicitud){
             return $this->item($solicitud_pago_anticipado, new SolicitudTransformer);
         }
         return null;
     }
-    public function includeMoneda(LayoutPagoPartida $model){
-        if($moneda = $model->moneda){
+
+    /**
+     * @param LayoutPagoPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeMoneda(LayoutPagoPartida $model)
+    {
+        if ($moneda = $model->moneda) {
             return $this->item($moneda, new MonedaTransformer);
         }
         return null;
     }
-
-
-
-
 }

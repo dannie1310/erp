@@ -49,7 +49,7 @@ class SolicitudTransformer extends TransformerAbstract
             'fecha_format' => (string)$model->fecha_hora_registro_format,
             'estado' => (int)$model->estado,
             'cumplimiento' => (string)$model->cumplimiento_form,
-            'vencimiento' => $model->vencimiento_form,
+            'vencimiento' => $model->vencimiento_form
         ];
     }
 

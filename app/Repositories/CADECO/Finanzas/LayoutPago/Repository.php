@@ -52,7 +52,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $factura = Factura::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
             $solicitud = Solicitud::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
 
-            if ($factura == null && $solicitud != null) // Solicitud de Pago Anticipado
+            if ($factura == null && $solicitud != null) // Solicitud
             {
                 $transaccion = $solicitud;
                 $pago_a_generar = $documento ? $this->datosPago($documento->IDTipoDocumento) : '';
@@ -113,7 +113,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 'pago_a_generar' => $pago_a_generar ? $pago_a_generar['pago_a_generar'] : "",
                 'aplicacion_manual' => $pago_a_generar ? $pago_a_generar['aplicacion_manual'] : "",
                 'estado' => $transaccion ? $this->validarEstatusPago($transaccion, $documento) : ['id' => 0, 'estado' => 0, 'descripcion' => 'No encontrada'],
-                'beneficiario' => $transaccion ? $transaccion->empresa->razon_social : null,
+                'beneficiario' => $transaccion ? $transaccion->tipo_transaccion == 72 && $transaccion->opciones == 1 ? $transaccion->fondo->nombre : $transaccion->empresa->razon_social  : null,
                 'referencia_docto' => $documento ? $documento->Referencia : null,
                 'origen_docto' => $documento ? $documento->origenDocumento->OrigenDocumento : null,
                 'fecha_limite' =>  date('d-m-Y')

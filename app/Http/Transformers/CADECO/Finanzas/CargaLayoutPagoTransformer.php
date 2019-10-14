@@ -40,28 +40,11 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
 
     public function transform(LayoutPago $model)
     {
-        $nombre = Usuario::query() ->where('idusuario', '=', $model->id_usuario_carga)->get()->pluck('nombre');
-        $apaterno = Usuario::query() ->where('idusuario', '=', $model->id_usuario_carga)->get()->pluck('apaterno');
-        $amaterno = Usuario::query() ->where('idusuario', '=', $model->id_usuario_carga)->get()->pluck('amaterno');
-        $usuario = $nombre[0].' '.$apaterno[0].' '.$amaterno[0];
-        switch ($model->estado):
-            case 0:
-                $estado = 'Registrada';
-                break;
-            case 1:
-                $estado = 'Autorizada';
-                break;
-        endswitch;
-        $monto = '$ '.number_format($model->monto_layout_pagos, 2, '.', '');
-
         return [
             'id' => $model->getKey(),
-          'usuario' =>$usuario,
-            'monto'=> $monto,
+            'monto'=> '$ '.number_format($model->monto_layout_pagos, 2, '.', ''),
             'fecha_registro' => date('d/m/Y', strtotime($model->fecha_hora_carga)),
-            'fecha_autorizacion'=>date('Y-m-d H:i:s', strtotime($model->fecha_hora_autorizado)),
-            'usuario_autorizo'=>$model->id_usuario_autorizo,
-            'estado' => $estado,
+            'fecha_autorizacion'=>date('Y-m-d H:i:s', strtotime($model->fecha_hora_autorizado))
         ];
     }
 
@@ -71,8 +54,6 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
      */
     public function includeEstado(LayoutPago $model)
     {
-
-
         if($estado = $model->estadoLayout){
             return $this->item($estado, new CtgEstadoLayoutPagoTransformer);
         }
@@ -118,7 +99,4 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
         return null;
 
     }
-
-
-
 }
