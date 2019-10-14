@@ -1,17 +1,25 @@
 <?php
 
 
-namespace App\Services\CADECO\Almacenes;
+namespace App\Services\CADECO;
 
 
-use App\Models\CADECO\Inventarios\CtgTipoConteo;
+use App\Models\CADECO\Inventario;
 use App\Repositories\Repository;
 
-class CtgTipoConteoService
+class InventarioService
 {
+    /**
+     * @var Repository
+     */
     protected $repository;
 
-    public function __construct(CtgTipoConteo $model)
+    /**
+     * AlmacenService constructor.
+     *
+     * @param Inventario $model
+     */
+    public function __construct(Inventario $model)
     {
         $this->repository = new Repository($model);
     }
@@ -20,7 +28,6 @@ class CtgTipoConteoService
     {
         return $this->repository->all($data);
     }
-
     public function show($id)
     {
         return $this->repository->show($id);
