@@ -57,7 +57,7 @@ class SolicitudTransformer extends TransformerAbstract
      * @param Solicitud $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeSolicitud(Solicitud $model)
+    public function includeFondo(Solicitud $model)
     {
         if($fondo = $model->fondo){
             return $this->item($fondo, new FondoTransformer);
