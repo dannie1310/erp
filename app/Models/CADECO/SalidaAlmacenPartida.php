@@ -156,7 +156,6 @@ class SalidaAlmacenPartida extends Item
                 Item::query()->where( 'id_item', '=', $item->toArray()['id_item'] )->update( ['importe' => $monto_total] );
 
                 if(!empty($p[4]) && !empty($p[5])){
-                    abort(400,'panda');
                     ItemContratista::query()->create(['id_item'=> $item->toArray()['id_item'],
                                                     'id_empresa'=>$p[4]['id'],
                                                     'con_cargo'=>$p[5]]);
