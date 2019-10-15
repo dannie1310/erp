@@ -109,7 +109,7 @@
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-cogs"></i>
                     <p>
-                        Insumo de Servicios
+                        Catalogo de Insumos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -118,7 +118,7 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'familia-serv'}" class="nav-link" :class="{active: this.$route.name == 'familia-serv'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Familia</p>
+                            <p>Familia de Servicios</p>
                         </router-link>
                     </li>
                 </ul>
@@ -126,7 +126,7 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'servicio'}" class="nav-link" :class="{active: this.$route.name == 'servicio'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Servicio</p>
+                            <p>Insumo Servicios</p>
                         </router-link>
                     </li>
                 </ul>
