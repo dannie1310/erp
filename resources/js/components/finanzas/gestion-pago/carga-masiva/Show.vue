@@ -85,7 +85,8 @@
                                 <td v-if="doc.factura">{{doc.factura.observaciones}}</td>
                                 <td v-else-if="doc.solicitud">{{doc.solicitud.observaciones}}</td>
                                 <td v-if="doc.factura">{{doc.factura.empresa.razon_social}}</td>
-                                <td v-else-if="doc.solicitud">{{doc.solicitud.empresa.razon_social}}</td>
+                                <td v-else-if="doc.solicitud.empresa">{{doc.solicitud.empresa.razon_social}}</td>
+                                <td v-else-if="doc.solicitud.fondo">{{doc.solicitud.fondo.descripcion}}</td>
                                 <td>{{doc.monto_transaccion_format}}</td>
                                 <td>{{doc.cuenta_cargo}}</td>
                                 <td>{{doc.fecha_pago}}</td>
@@ -133,7 +134,7 @@
                 return this.$store.dispatch('finanzas/carga-masiva-pago/find', {
                     id: this.id,
                     params: {
-                        include: ['partidas.solicitud.empresa','partidas.factura.empresa','usuario','usuario_autorizo','estado','partidas.moneda'],
+                        include: ['partidas.solicitud.empresa','partidas.solicitud.fondo','partidas.factura.empresa','usuario','usuario_autorizo','estado','partidas.moneda'],
                     }
                 }).then(data => {
                     this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', data);
