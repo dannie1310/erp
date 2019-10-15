@@ -27,8 +27,7 @@ class Material extends Model
         'cuentaMaterial.tipo.descripcion',
         'tipo_material',
         'equivalencia',
-        'marca',
-        'familia'
+        'marca'
     ];
 
     public function getTieneHijosAttribute()

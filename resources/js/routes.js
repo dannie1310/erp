@@ -1108,14 +1108,14 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'material',
-                        name: 'material',
-                        component: require('./components/compras/catalogos/material/Index'),
+                        path: 'servicio',
+                        name: 'servicio',
+                        component: require('./components/finanzas/insumo-servicio/servicio/Index'),
                         meta: {
-                            title: 'Material',
+                            title: 'Servicio',
                             breadcrumb: {
-                                parent: 'catalogo-insumo',
-                                name: 'MATERIAL'
+                                parent: 'insumo-servicio',
+                                name: 'SERVICIO'
                             },
                             middleware: [auth, context],
                             // permission: 'consultar_entrada_almacen'
