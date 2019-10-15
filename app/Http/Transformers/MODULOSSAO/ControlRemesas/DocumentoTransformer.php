@@ -28,7 +28,8 @@ class DocumentoTransformer extends TransformerAbstract
         'documentoLiberado',
         'empresa',
         'moneda',
-        'fondo'
+        'fondo',
+        'montoProcesado'
     ];
 
     /**
@@ -58,7 +59,7 @@ class DocumentoTransformer extends TransformerAbstract
             'monto_total_solicitado' => $model->MontoTotalSolicitado,
             'observaciones' => $model->Observaciones,
             'destinatario' => $model->Destinatario,
-            'importe_total' => $model->getImporteTotalAttribute(),
+            'importe_total' => $model->getImporteTotalProcesadoAttribute(),
             'beneficiario' => $model->beneficiario,
             'tipo_documento' => $model->IDTipoDocumento
         ];
@@ -127,6 +128,18 @@ class DocumentoTransformer extends TransformerAbstract
            return $this->item($fondo, new FondoTransformer);
        }
        return null;
+   }
+
+   public function includeMontoProcesado(Documento $model){
+        if($procesado = $model->documentoProcesado){
+            foreach ($procesado as $item){
+                if($item->IDProceso == 4) {
+                    return $this->item($item, new DocumentoProcesadoTransformer);
+                }
+            }
+            return null;
+        }
+        return null;
    }
 
 }
