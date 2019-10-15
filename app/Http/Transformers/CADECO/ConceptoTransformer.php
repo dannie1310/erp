@@ -33,6 +33,7 @@ class ConceptoTransformer extends TransformerAbstract
             'descripcion' => $model->descripcion,
             'tiene_hijos' => $model->tieneHijos,
             'unidad' => $model->unidad,
+            'id_padre' => $model->id_padre,
             'path' => $model->path
         ];
     }

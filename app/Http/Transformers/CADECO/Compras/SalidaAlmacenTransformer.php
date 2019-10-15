@@ -45,7 +45,7 @@ class SalidaAlmacenTransformer extends TransformerAbstract
     {
         if($partida = $model->partidas)
         {
-            return $this->collection($partida, new SalidaAlmacenPartidasTransformer);
+            return $this->collection($partida, new SalidaAlmacenPartidaTransformer);
         }
         return null;
     }

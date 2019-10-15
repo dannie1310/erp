@@ -1,5 +1,12 @@
 <template>
     <div class="row">
+        <div class="col-12">
+            <button @click="create" v-if="$root.can('registrar_salida_almacen')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-plus" v-else></i>
+                Crear Salida/Transferencia de Almacén
+            </button>
+        </div>
        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -17,9 +24,10 @@
 </template>
 
 <script>
+    import Create from "./Create";
     export default {
         name: "salida-almacen-index",
-        components: {},
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
@@ -59,6 +67,8 @@
                     .finally(() => {
                         this.cargando = false;
                     })
+            },create(){
+                this.$router.push({name: 'salida-create'});
             }
         },
         computed: {

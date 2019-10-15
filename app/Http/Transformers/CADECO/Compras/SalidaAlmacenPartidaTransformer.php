@@ -10,7 +10,7 @@ use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\SalidaAlmacenPartida;
 use League\Fractal\TransformerAbstract;
 
-class SalidaAlmacenPartidasTransformer extends TransformerAbstract
+class SalidaAlmacenPartidaTransformer extends TransformerAbstract
 {
     /**
  * List of resources possible to include
