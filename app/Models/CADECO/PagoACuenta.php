@@ -17,6 +17,7 @@ class PagoACuenta extends Transaccion
         'id_antecedente',
         'fecha',
         'id_obra',
+        'id_referente',
         'cumplimiento',
         'vencimiento',
         'monto',

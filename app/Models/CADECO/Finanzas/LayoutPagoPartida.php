@@ -15,6 +15,7 @@ use App\Models\CADECO\Pago;
 use App\Models\CADECO\PagoACuenta;
 use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\Solicitud;
+use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -53,6 +54,11 @@ class LayoutPagoPartida extends Model
     public function solicitud()
     {
         return $this->belongsTo(Solicitud::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function transaccion()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_transaccion');
     }
 
     public function pago()
