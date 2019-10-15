@@ -32,7 +32,7 @@ class Documento extends Model
 
         self::addGlobalScope(function ($query){
             return $query->has('documentoLiberado')->whereHas('documentoProcesado', function ($query){
-                return $query->where('IDProceso', '=', 4);
+                return $query->where('IDProceso', '=', 4)->where('MontoAutorizadoPrimerEnvio', '>', 0)->orWhere('MontoAutorizadoSegundoEnvio', '>', 0);
             });
         });
     }
@@ -88,6 +88,12 @@ class Documento extends Model
         return $query->whereNotIn('IDDocumento', $documentos);
     }
 
+    public function scopeMontoDocumentoProcesado($query){
+        $query->has('documentoProcesado', function ($q) {
+            return $q->where('IDProceso', '=', 4);
+        });
+    }
+
     public function getImporteTotalAttribute(){
         if($this->IDMoneda != 1) {
             $moneda = Moneda::with('cambio')->where('id_moneda', '=', $this->IDMoneda)->get()->toArray();
@@ -100,22 +106,18 @@ class Documento extends Model
     public function getImporteTotalProcesadoAttribute(){
         foreach ($this->documentoProcesado as $item){
             if($item->IDProceso == 4){
-                $monto = 0;
-                $item->MontoAutorizadoPrimerEnvio > 0? $monto = $item->MontoAutorizadoPrimerEnvio:'';
-                $item->MontoAutorizadoSegundoEnvio > 0 && $item->MontoAutorizadoSegundoEnvio > $item->MontoAutorizadoPrimerEnvio? $monto = $item->MontoAutorizadoSegundoEnvio:'';
-
-                if($this->IDMoneda != 1) {
-                    $moneda = Moneda::with('cambio')->where('id_moneda', '=', $this->IDMoneda)->get()->toArray();
-                    return $monto * $moneda[0]['cambio']['cambio'];
-                }else {
-                    return $monto;
+                $monto = $item->MontoAutorizadoPrimerEnvio + $item->MontoAutorizadoSegundoEnvio;
+                if($monto <= $this->MontoTotal && $monto > 0){
+                    if($this->IDMoneda != 1) {
+                        $moneda = Moneda::with('cambio')->where('id_moneda', '=', $this->IDMoneda)->get()->toArray();
+                        return $monto * $moneda[0]['cambio']['cambio'];
+                    }else {
+                        return $monto;
+                    }
                 }
+                return $this->MontoTotal;
             }
         }
-    }
-
-    public function scopeMontoProcesado($query){
-        dd('pandita');
     }
 
     public function getBeneficiarioAttribute()

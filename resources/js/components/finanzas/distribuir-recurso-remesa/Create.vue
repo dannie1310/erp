@@ -81,7 +81,8 @@
                                                     <!--<td class="text-right">{{doc.monto_total_format}}</td>-->
                                                     <!--<td>{{doc.moneda.abreviatura}}</td>-->
                                                     <!--<td class="text-right">{{doc.saldo_moneda_nacional_format}}</td>-->
-                                                    <td class="text-right">${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
+                                                    <td class="text-right" v-if="doc.importe_total > 0">${{parseFloat(doc.importe_total).formatMoney(2, '.', ',') }}</td>
+                                                    <td class="text-right" v-else><i class="fa fa-exclamation-triangle" style="color: red" title="Importes autorizados exeden el importe total solicitado"></i></td>
                                                     <td style="width: 15%;">
                                                         <select
                                                                 class="form-control"
