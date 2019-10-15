@@ -29,13 +29,12 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                 //   { title: 'Familia', field: 'tipo_material',sortable: true},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: { sort: 'id_material', order: 'desc'},
+                query: {scope:'tipo:2',  sort: 'id_material', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -51,21 +50,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-
-                return this.$store.dispatch('finanzas/familia-serv/porServicio', {
-                    params: this.query
-                })
+                return this.$store.dispatch('cadeco/familia/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('finanzas/familia-serv/SET_FAMILIAS',data.data);
-                        this.$store.commit('finanzas/familia-serv/SET_META', {
-                            "pagination": {
-                                "total": data.total,
-                                "count": data.to - data.from + 1,
-                                "per_page": data.per_page,
-                                "current_page": data.current_page,
-                                "total_pages": data.last_page,
-                            }
-                        });
+                        this.$store.commit('cadeco/familia/SET_FAMILIAS', data.data);
+                        this.$store.commit('cadeco/familia/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -74,10 +62,10 @@
         },
         computed: {
             familias(){
-                return this.$store.getters['finanzas/familia-serv/familias'];
+                return this.$store.getters['cadeco/familia/familias'];
             },
             meta(){
-                return this.$store.getters['finanzas/familia-serv/meta'];
+                return this.$store.getters['cadeco/familia/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}

@@ -108,9 +108,9 @@
                     </p>
                 </a>
 
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_familia_servicio')">
                     <li class="nav-item" >
-                        <router-link :to="{name: 'familia-serv'}" class="nav-link" :class="{active: this.$route.name == ''}">
+                        <router-link :to="{name: 'familia-serv'}" class="nav-link" :class="{active: this.$route.name == 'familia-serv'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Familia</p>
                         </router-link>

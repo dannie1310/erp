@@ -553,17 +553,6 @@ $api->version('v1', function ($api) {
         });
 
         /**
-         * FAMILIA DE SERVICIOS
-         */
-
-        $api->group(['prefix' => 'familia'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ServicioController@index');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\ServicioController@paginate');
-            $api->get('por-servicio', 'App\Http\Controllers\v1\CADECO\Finanzas\ServicioController@porServicio');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\ServicioController@show')->where(['id' => '[0-9]+']);
-            $api->post('/','App\Http\Controllers\v1\CADECO\Finanzas\ServicioController@store');
-        });
-        /**
          * REMESA
          */
         $api->group(['prefix' => 'remesa'], function ($api){
