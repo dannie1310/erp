@@ -9,6 +9,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\MODULOSSAO\ControlRemesas\Documento;
+
 class Factura extends Transaccion
 {
     protected static function boot()
@@ -21,9 +23,23 @@ class Factura extends Transaccion
         });
     }
 
-    public function partidas()
+    public function contra_recibo()
     {
-        return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
+        return $this->belongsTo(ContraRecibo::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function documento(){
+        return $this->belongsTo(Documento::class, 'id_transaccion', 'IDTransaccionCDC');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa');
+    }
+
+    public function orden_pago()
+    {
+        return $this->belongsTo(OrdenPago::class, 'id_referente','id_transaccion');
     }
 
     public function moneda()
@@ -32,38 +48,84 @@ class Factura extends Transaccion
     }
 
 
-    public function verificaOrdenPago($data)
+
+    public function generaOrdenPago($data)
     {
-        $orden_pago = OrdenPago::query()->where('id_referente','=', $data['id_transaccion'])->get()->first();
 
 
-        if(is_null($orden_pago)){
+        if (is_null($this->orden_pago)){
             $datos = [
-                'id_antecedente'=>$data['id_antecedente'],
-                'id_referente'=>$data['id_transaccion'],
-                'fecha'=>$data['fecha'],
-                'id_obra'=>$data['id_obra'],
-                'monto'=>$data['monto'],
-                'referencia'=>$data['referencia'],
-                'id_empresa'=>$data['id_empresa'],
-                'id_moneda'=> $data['id_moneda'],
-                'id_usuario'=>$data['usuario']
+                    'id_antecedente'=>$this->id_antecedente,
+                    'id_referente'=>$this->id_transaccion,
+                    'monto'=>-1*abs($data->monto_pagado),
+                    'fecha'=>$data->fecha_pago,
+                    'id_empresa'=>$this->id_empresa,
+                    'id_moneda'=> $data->id_moneda,
             ];
 
-            $orden_pago = OrdenPago::query()->create($datos);
 
-            $pago = new Pago();
-            $response =$pago->verificaPago($orden_pago);
+            $ordenPago= $this->orden_pago()->create($datos);
 
-            return $response;
+            $orden_pago = OrdenPago::query()->find($ordenPago->id_transaccion);
 
-        }else{
-            $pago = new Pago();
-            $response =$pago->verificaPago($orden_pago);
-            return $response;
+             return $orden_pago->generaPago($data);
+
         }
 
     }
 
 
+
+    public function ordenPago(){
+        return $this->belongsTo(OrdenPago::class, 'id_transaccion', 'id_referente');
+    }
+
+    public function partidas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function scopePendientePago($query){
+        return $query->whereIn('estado', [1,2]);
+    }
+
+    public function scopeConDocumento($query){
+        return $query->has('documento');
+    }
+
+    public function getAutorizadoAttribute(){
+        $pagar = $this->monto * $this->tipo_cambio;
+        return '$ ' . number_format($pagar,2);
+    }
+
+
+    public function getEstado($estado)
+    {
+        if($estado==0){
+            $estado='Registrada';
+        }
+        if ($estado==1){
+            $estado='Revisada';
+        }
+        if($estado==2){
+            $estado='Pagada';
+        }
+        return $estado;
+    }
+
+    public function getTipo($tipo)
+    {
+
+        if($tipo==0){
+            $tipo='Factura';
+        }
+        if($tipo==1){
+            $tipo='Gastos Varios';
+        }
+        if($tipo==65537){
+            $tipo='Materiales / Servicios';
+        }
+
+        return $tipo;
+    }
 }

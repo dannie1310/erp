@@ -37,8 +37,4 @@ class CtgEstadoLayoutPagoTransformer extends TransformerAbstract
             'estado' =>$model->estado,
         ];
     }
-
-
-
-
 }

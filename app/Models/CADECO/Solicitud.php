@@ -22,35 +22,37 @@ class Solicitud extends Transaccion
         });
     }
 
-    public function pago(){
+    public function pago()
+    {
         return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion')
             ->where('tipo_transaccion', '=', 82);
     }
 
-    public function fondo(){
+    public function fondo()
+    {
         return $this->belongsTo(Fondo::class, 'id_referente', 'id_fondo');
     }
 
-    public function verificaPago($data){
-        $pago = Pago::query()->where('id_referente','=', $data['id_referente'])
-            ->where('id_empresa','>',0)->get()->first();
+    public function generaPago($data)
+    {
 
+        $data = array(
+            "id_empresa" => $this->id_empresa,
+            "id_moneda" => $this->id_moneda,
+            "fecha" => $this->fecha,
+            "cumplimiento" => $this->fecha,
+            "vencimiento" => $this->fecha,
+            "monto" => -1 * abs($this->monto),
+            "referencia" => $this->referencia,
+            "id_cuenta" => $this->id_cuenta,
+            "destino" => $this->destino,
+            "observaciones" => $this->observaciones,
+            "id_referente"=> $this->id_referente,
+            );
 
-        if(is_null($pago)){
-            $datos = [
-                'numero_folio' => $data['numero_folio'],
-                'fecha'=>$data['fecha'],
-                'monto'=>$data['monto'],
-                'id_empresa'=>$data['id_empresa'],
-                'observaciones'=>$data['observaciones'],
-                'id_moneda'=>$data['id_moneda'],
-            ];
-            $pago = Pago::query()->create($datos);
-            return $pago;
-
-        }else{
-            return $pago;
-        }
+                $pago = PagoACuenta::query()->create($data);
+                return $pago->id_transaccion;
 
     }
+
 }

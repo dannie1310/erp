@@ -72,7 +72,7 @@
                                                                 <td v-if="pago.beneficiario">{{pago.beneficiario}}</td>
                                                                 <td v-else class="text-center text-danger">No encontrado</td>
                                                                 <td v-if="pago.cuenta_encontrada && pago.id_transaccion != null && pago.estado.estado != -1">{{pago.cuenta_cargo.numero}} ({{pago.cuenta_cargo.abreviatura}})</td>
-                                                                <td v-else-if="pago.id_transaccion != null && pago.estado.estado != 2 && pago.estado.estado > 0">
+                                                                <td v-else-if="pago.id_transaccion != null && pago.estado.estado == 1">
                                                                     <select
                                                                         class="form-control"
                                                                         :name="`id_cuenta_cargo[${i}]`"
@@ -89,7 +89,7 @@
                                                                     </div>
                                                                 </td>
                                                                 <td v-else></td>
-                                                                <td v-if="pago.fecha_pago == false && pago.datos_completos_correctos == 1 && pago.estado.estado != -1">
+                                                                <td v-if="pago.fecha_pago == false && pago.datos_completos_correctos == 1 && pago.estado.estado == 1">
                                                                     <div class="col-md-12">
                                                                         <div class="form-group error-content">
                                                                             <div class="form-group">
@@ -109,7 +109,7 @@
                                                                 </td>
                                                                 <td v-else-if="pago.datos_completos_correctos == 0 || pago.estado.estado == -1"></td>
                                                                 <td v-else>{{pago.fecha_pago}}</td>
-                                                                <td v-if="pago.datos_completos_correctos == 1 && pago.estado.estado > 0">
+                                                                <td v-if="pago.datos_completos_correctos == 1 && pago.estado.estado == 1">
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content">
                                                                             <input
@@ -126,7 +126,7 @@
                                                                     </div>
                                                                 </td>
                                                                 <td v-else></td>
-                                                                <td v-if="pago.estado.estado > 0 && pago.bandera_TC != 1 && pago.datos_completos_correctos==1">
+                                                                <td v-if="pago.estado.estado == 1 && pago.bandera_TC != 1 && pago.datos_completos_correctos==1">
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content">
                                                                             <input
@@ -145,7 +145,7 @@
                                                                 </td>
                                                                 <td v-else-if="pago.estado.estado > 0 && pago.bandera_TC == 1 && pago.datos_completos_correctos==1">{{pago.tipo_cambio}}</td>
                                                                 <td v-else></td>
-                                                                <td v-if="pago.id_transaccion != null && pago.estado.estado != 2 && pago.estado.estado > 0 && pago.datos_completos_correctos==1">
+                                                                <td v-if="pago.id_transaccion != null && pago.estado.estado == 1 && pago.datos_completos_correctos==1">
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content">
                                                                             <input

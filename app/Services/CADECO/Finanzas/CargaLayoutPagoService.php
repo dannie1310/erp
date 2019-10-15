@@ -65,47 +65,24 @@ class CargaLayoutPagoService
         $partidas = $layout->partidas;
 
         foreach ($partidas as $partida) {
-
-            $id_transaccion = $partida->id_transaccion;
-
             if (is_null($partida->id_transaccion_pago)) {
-
-
-                $transaccion = Transaccion::query()->find($partida->id_transaccion);
-
+                $transaccion = $partida->transaccion;
 
                 /*Facturas*/
                 if ($transaccion->tipo_transaccion === '65') {
-
-                    $factura = new Factura();
-                    $pago = $factura->verificaOrdenPago($transaccion);
-
-
-                        $layout = LayoutPagoPartida::query()->where('id_transaccion', '=', $partida->id_transaccion)
-                            ->update(['id_transaccion_pago' => $pago->id_transaccion]);
-
-
-
+                    $pago = Factura::query()->find($partida->id_transaccion)->generaOrdenPago($partida);
+                    $partida->id_transaccion_pago = $pago;
+                    $partida->save();
                 }
-
 
                 /*Solicitud*/
                 if ($transaccion->tipo_transaccion === '72') {
-
-                    $solicitud = new Solicitud();
-                    $pago = $solicitud->verificaPago($transaccion);
-
-
-
-                        $layout = LayoutPagoPartida::query()->where('id_transaccion', '=', $id_transaccion)
-                            ->update(['id_transaccion_pago' => $pago->id_transaccion]);
+                    $pago = Solicitud::query()->find($partida->id_transaccion)->generaPago($partida);
+                    $partida->id_transaccion_pago = $pago;
+                    $partida->save();
 
                 }
-
-
             }
-
-
         }
 
         /*Se autoriza el Layout de Pago*/
