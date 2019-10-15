@@ -12,6 +12,12 @@ class ItemContratista extends Model
     protected $table = 'Compras.ItemsXContratista';
     protected $primaryKey = 'id_item';
 
+    protected $fillable = [
+        'id_item',
+        'id_empresa',
+        'con_cargo'
+    ];
+
     public $timestamps = false;
 
 }

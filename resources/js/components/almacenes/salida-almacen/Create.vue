@@ -319,6 +319,50 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row"  v-if="contratistas">
+                                  <div class="col-md-8">
+                                    <div class="form-group error-content">
+                                        <label for="empresa_contratista">Empresa Contratista:</label>
+                                           <select
+                                                   class="form-control"
+                                                   name="empresa_contratista"
+                                                   data-vv-as="Material"
+                                                   v-model="contratista.empresa_contratista"
+                                                   v-validate="{required: false}"
+                                                   id="empresa_contratista"
+                                                   :class="{'is-invalid': errors.has('empresa_contratista')}">
+                                            <option value>-- Seleccione --</option>
+                                            <option v-for="(contratista, index) in contratistas" :value="contratista.id"
+                                                    data-toggle="tooltip" data-placement="left" :title="contratista.id ">
+                                                {{ contratista.razon_social }}
+                                            </option>
+                                        </select>
+                                         <div class="invalid-feedback" v-show="errors.has('id')">{{ errors.first('id') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                 <div class="col-md-6">
+                                    <div class="form-group row error-content">
+                                        <label for="opcion" class="col-sm-3 col-form-label">Tipo: </label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group btn-group-toggle">
+                                                <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                    <input type="radio"
+                                                           class="btn-group-toggle"
+                                                           name="opcion"
+                                                           :id="'opcion' + key"
+                                                           :value="key"
+                                                           autocomplete="on"
+                                                           v-validate="{required: false}"
+                                                           v-model.number="contratista.opcion">
+                                                        {{ cargo }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                          <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -353,14 +397,25 @@
                     1: "Consumo",
                     65537: "Transferencia"
                 },
+                cargos: {
+                    1: "Con Cargo",
+                    0: "Sin Cargo"
+                },
                 dato_partida:{
                     cantidad:'',
                     destino:''
                 },
+                contratista: {
+                    empresa_contratista: '',
+                    opcion:''
+                },
+                emp_cont:'',
+                contratistas:[],
                 partida:{},
                 empresas:[],
                 almacenes:[],
                 materiales:[],
+                indice:'',
                 material:'',
                 almacen:'',
                 id_almacen:'',
@@ -375,13 +430,24 @@
             agregar_partida(){
                 this.getMateriales();
                 this.getAlmacenes();
+                this.getContratista();
                 this.cargando = true;
+                this.dato_partida.cantidad ='';
+                this.dato_partida.destino ='';
+                this.contratista.empresa_contratista ='';
+                this.contratista.opcion ='';
                 this.partida ={};
-                this.dato_partida.cantidad = '';
-                this.dato_partida.destino = '';
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset();
                 this.cargando = false;
+            },
+            getContratista() {
+                return this.$store.dispatch('cadeco/empresa/index', {
+                    params: {sort: 'razon_social', order: 'asc', scope:'Contratista' }
+                })
+                    .then(data => {
+                        this.contratistas = data.data;
+                    })
             },
             getEmpresas() {
                 return this.$store.dispatch('cadeco/empresa/index', {
@@ -406,6 +472,15 @@
                     params: {}
                 }).then(data => {
                     this.material = data;
+                })
+            },
+            findContratista() {
+                this.$store.commit('cadeco/empresa/SET_EMPRESA', null);
+                return this.$store.dispatch('cadeco/empresa/find', {
+                    id: this.contratista.empresa_contratista,
+                    params: {}
+                }).then(data => {
+                    this.emp_cont = data;
                 })
             },
             findAlmacen() {
@@ -469,13 +544,21 @@
             },
             validatePartida() {
                 this.findMaterial();
+                if(this.contratista.empresa_contratista != '' && this.contratista.opcion != '') {
+                    this.findContratista();
+                }
                 this.findAlmacen().finally(() => {
-                    this.dato.partidas.push([this.material,this.dato_partida.cantidad,this.almacen,this.partida]);
+                    this.dato.id_concepto = this.almacen.id_padre;
+                    if(this.emp_cont != '') {
+                        this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
+                    }else{
+                        this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida]);
+                    }
                 });
 
                 $(this.$refs.modal).modal('hide');
 
-            },
+            }
         },
         watch:{
             id_almacen(value){

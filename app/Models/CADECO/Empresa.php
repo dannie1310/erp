@@ -112,4 +112,8 @@ class Empresa extends Model
     {
         return $query->where('tipo_empresa','!=',1);
     }
+    public function scopeContratista($query)
+    {
+        return $query->where('tipo_empresa','=',2)->orWhere('tipo_empresa','=',3);
+    }
 }
