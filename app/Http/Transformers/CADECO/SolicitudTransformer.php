@@ -16,7 +16,8 @@ class SolicitudTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'fondo',
+        'empresa'
     ];
 
     /**
@@ -51,6 +52,28 @@ class SolicitudTransformer extends TransformerAbstract
             'cumplimiento' => (string)$model->cumplimiento_form,
             'vencimiento' => $model->vencimiento_form
         ];
+    }
+    /**
+     * @param Solicitud $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSolicitud(Solicitud $model)
+    {
+        if($fondo = $model->fondo){
+            return $this->item($fondo, new FondoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Solicitud $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEmpresa(Solicitud $model) {
+        if ($empresa = $model->empresa) {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
     }
 
 }

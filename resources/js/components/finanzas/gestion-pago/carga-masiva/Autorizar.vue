@@ -94,9 +94,9 @@
                             <tr v-for="(doc, i) in layout.partidas.data">
                                 <td>{{i+1}}</td>
                                 <td v-if="doc.factura">{{doc.factura.observaciones}}</td>
-                                <td v-else-if="doc.solicitud_pago_anticipado">{{doc.solicitud_pago_anticipado.observaciones}}</td>
+                                <td v-else-if="doc.solicitud">{{doc.solicitud.observaciones}}</td>
                                 <td v-if="doc.factura">{{doc.factura.empresa.razon_social}}</td>
-                                <td v-else-if="doc.solicitud_pago_anticipado">{{doc.solicitud_pago_anticipado.empresa.razon_social}}</td>
+                                <td v-else-if="doc.solicitud">{{doc.solicitud.empresa.razon_social}}</td>
                                 <td>{{doc.monto_transaccion_format}}</td>
                                 <td>{{doc.cuenta_cargo}}</td>
                                 <td>{{doc.fecha_pago}}</td>
@@ -143,7 +143,7 @@
             find() {
                 this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', null);
                 return this.$store.dispatch('finanzas/carga-masiva-pago/find', {
-                    params: { include: ['usuario', 'usuario_autorizo', 'estado', 'partidas','partidas.solicitud_pago_anticipado.empresa','partidas.factura.empresa', 'partidas.moneda']},
+                    params: { include: ['usuario', 'usuario_autorizo', 'estado', 'partidas','partidas.solicitud.empresa','partidas.factura.empresa', 'partidas.moneda']},
                     id: this.id
                 }).then(data => {
                     this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', data);
