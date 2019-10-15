@@ -64,4 +64,31 @@ class AjusteService
     {
         return $this->repository->show($id);
     }
+
+    public function delete($data, $id)
+    {
+        $ajuste = $this->repository->show($id);
+
+        switch ($ajuste->opciones){
+
+            /*Ajuste Positivo*/
+            case 0:
+
+                break;
+
+            /*Ajuste Negativo*/
+            case 1:
+
+                break;
+
+             /*Nuevo lotes*/
+            case 2:
+
+                break;
+        }
+
+    }
+
+
+
 }

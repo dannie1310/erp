@@ -120,7 +120,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-danger" >Eliminar</button>
+                        <button type="submit" class="btn btn-danger" v-on:click="borrar" >Eliminar</button>
                     </div>
                 </div>
             </div>
@@ -184,9 +184,16 @@
                     $(this.$refs.modal).modal('show');
                 })
             },
-            delete(){
-
-            }
+            borrar(){
+                return this.$store.dispatch('almacenes/ajuste-inventario/eliminar', {
+                    id: this.id,
+                    params: {data: [this.$data.motivo]}
+                }).then(data => {
+                    // this.$store.commit('almacenes/ajuste-positivo/SET_AJUSTE', data);
+                    // this.ajustes = data;
+                    // $(this.$refs.modal).modal('show');
+                })
+            },
         }
     }
 </script>

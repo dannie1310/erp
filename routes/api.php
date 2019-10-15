@@ -151,6 +151,7 @@ $api->version('v1', function ($api) {
         //AJUSTE INVENTARIOS
         $api->group(['prefix' => 'ajuste-inventario'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteController@paginate');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteController@destroy')->where(['id' => '[0-9]+']);
 
         //AJUSTE POSITIVO (+)
             $api->group(['prefix' => 'positivo'], function ($api) {
