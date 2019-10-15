@@ -97,6 +97,10 @@ class Transaccion extends Model
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function moneda(){
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
     public function getCumplimientoAttribute($cumplimiento)
     {
         return substr($cumplimiento, 0, 10);
@@ -132,6 +136,10 @@ class Transaccion extends Model
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
+
+//    public function moneda(){
+//        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+//    }
 
     public function getSubtotalAttribute()
     {

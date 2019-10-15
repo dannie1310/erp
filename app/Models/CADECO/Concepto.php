@@ -30,6 +30,7 @@ class Concepto extends Model
         });
     }
 
+
     public function getAncestrosAttribute($nivel)
     {
         $size = strlen($nivel)/4;

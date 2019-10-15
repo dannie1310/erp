@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_solicitud_pago_anticipado')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can(['registrar_familia_herramienta_equipo','registrar_familia_material'])" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Familia
@@ -45,7 +45,6 @@
                                         <label for="descripcion" class="col-sm-2 col-form-label">Descripción:</label>
                                         <div class="col-sm-10">
                                             <input
-                                                :disabled="!tipo"
                                                 type="text"
                                                 name="descripcion"
                                                 data-vv-as="Descripcion"

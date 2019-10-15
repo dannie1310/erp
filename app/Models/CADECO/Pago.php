@@ -56,4 +56,6 @@ class Pago extends Transaccion
     public function empresa(){
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
+
+
 }

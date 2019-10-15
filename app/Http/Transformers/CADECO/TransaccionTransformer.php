@@ -21,7 +21,8 @@ class TransaccionTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'tipo'
+        'tipo',
+        'empresa'
     ];
 
     /**
@@ -46,6 +47,13 @@ class TransaccionTransformer extends TransformerAbstract
     public function includeTipo(Transaccion $model) {
         if ($tipo = $model->tipo) {
             return $this->item($tipo, new TipoTransaccionTransformer);
+        }
+        return null;
+    }
+
+    public function includeEmpresa(Transaccion $model){
+        if($empresa = $model->empresa){
+            return $this->item($empresa, new EmpresaTransformer);
         }
         return null;
     }

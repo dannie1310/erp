@@ -57,6 +57,16 @@ class Material extends Model
         }
     }
 
+    public function getDescripcionPadreAttribute()
+    {
+        $nivel = substr($this->nivel, 0,4);
+        $regreso = Material::query()->where('nivel','=',$nivel)->where('tipo_material','=',$this->tipo_material)->pluck('descripcion')->first();
+        if($regreso == null){
+            return '---';
+        }
+        return $regreso;
+    }
+
     public function familia()
     {
         return $this->belongsTo(Familia::class, 'tipo_material', 'tipo_material');

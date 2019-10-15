@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 class Documento extends Model
 {
     protected $connection = 'modulosao';
-    protected $table = 'ControlRemesas.Documentos';
+    protected $table = 'ModulosSao.ControlRemesas.Documentos';
     protected $primaryKey = 'IDDocumento';
     public $timestamps = false;
 
@@ -40,7 +40,7 @@ class Documento extends Model
     }
 
     public function remesa(){
-        return $this->hasMany(Remesa::class, 'IDRemesa', 'IDRemesa');
+        return $this->belongsTo(Remesa::class, 'IDRemesa', 'IDRemesa');
     }
 
     public function documentoLiberado()

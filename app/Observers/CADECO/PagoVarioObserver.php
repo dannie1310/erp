@@ -25,9 +25,6 @@ class PagoVarioObserver
         }
         $pagoVario->tipo_transaccion = 82;
         $pagoVario->opciones = 1;
-        $pagoVario->fecha = date('Y-m-d');
-        $pagoVario->cumplimiento =  date('Y-m-d');
-        $pagoVario->vencimiento = date('Y-m-d');
         $pagoVario->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $pagoVario->FechaHoraRegistro = date('Y-m-d h:i:s');
         $pagoVario->id_obra = Context::getIdObra();
