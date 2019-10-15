@@ -150,7 +150,7 @@
                             </div>
                         </div>
                          <div class="footer">
-                           <button type="button" class="btn btn-secondary">Cerrar</button>
+                           <button type="button" class="btn btn-secondary"  @click="index">Cerrar</button>
                             <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.partidas > 0">Guardar</button>
                         </div>
                      </form>
@@ -541,6 +541,9 @@
                     swal('¡Error!', 'No puede seleccionar el mismo almacén en el destino.', 'error');
                     this.partida.id_almacenes='';
                 }
+            },
+            index(){
+                this.$router.push({name: 'salida-almacen'});
             },
             validatePartida() {
                 this.findMaterial();
