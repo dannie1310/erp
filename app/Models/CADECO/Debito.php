@@ -23,6 +23,7 @@ class Debito extends Transaccion
         'monto',
         'referencia',
         'observaciones',
+        'id_usuario'
     ];
 
     protected static function boot()

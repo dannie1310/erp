@@ -28,5 +28,6 @@ class PagoACuentaObserver
         $pagoACuenta->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $pagoACuenta->FechaHoraRegistro = date('Y-m-d h:i:s');
         $pagoACuenta->id_obra = Context::getIdObra();
+        $pagoACuenta->id_usuario = auth()->id();
     }
 }

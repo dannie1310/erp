@@ -5,6 +5,8 @@ namespace App\Services\CADECO\Almacenes;
 
 
 use App\Models\CADECO\Inventarios\Conteo;
+use App\Models\CADECO\Inventarios\CtgTipoConteo;
+use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\Inventarios\Marbete;
@@ -20,7 +22,37 @@ class ConteoService
     }
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $conteo = $this->repository;
+
+        if(isset($data['inventario_fisico'])){
+            $inventario = InventarioFisico::query()->where('folio', 'LIKE', '%'.$data['inventario_fisico'].'%')->get();
+            $marbete = Marbete::query()->whereIn('id_inventario_fisico',$inventario->pluck('id'))->get();
+            $conteo = $conteo->whereIn(['id_marbete', $marbete->pluck('id')]);
+        }
+
+        if(isset($data['iniciales'])){
+            $conteo = $conteo->where([['iniciales', 'LIKE', '%'.$data['iniciales'].'%']]);
+        }
+
+        if(isset($data['tipo_conteo'])){
+            $tipo = CtgTipoConteo::query()->where('descripcion', 'LIKE', '%'.$data['tipo_conteo'].'%')->get();
+            $conteo = $conteo->whereIn(['tipo_conteo', $tipo->pluck('id')]);
+        }
+        return $conteo->paginate($data);
+    }
+
+    public function cancelar($data,$id){
+        $observaciones = $data['data'][0];
+        $this->repository->show($id)->cancelar($observaciones);
+    }
+
+    public function show($id){
+        return $this->repository->show($id);
+    }
+
+    public function store($data){
+        $conteo = $this->repository->create($data);
+        return $this->repository->show($conteo->id);
     }
 
     public function cargaLayout($file){
@@ -36,7 +68,7 @@ class ConteoService
             $c['folio_marbete'] = $folio_marbete;
             $c['id_layout_conteo'] = $layout->id;
 
-            if(!is_numeric($c['tipo_conteo']) || !is_numeric($c['cantidad_usados']) || !is_numeric($c['cantidad_nuevo']) || !is_numeric($c['cantidad_inservible']) || !is_numeric($c['total'])){
+            if(!is_numeric($c['tipo_conteo']) || !is_numeric($c['cantidad_nuevo']) || !is_numeric($c['total'])){
                 $i++;
                 array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Error al ingresar cantidades");
             }else{
@@ -59,12 +91,10 @@ class ConteoService
                         $i++;
                         array_push($mensaje_rechazos ,  " \n\nError en ".$folio.": \n - El Folio del Marbete no es valido");
                     }
-
                 }else{
                     $i++;
                     array_push($mensaje_rechazos , " \n\nError en ".$folio.": \n - Número de Marbete incorrecto");
                 }
-
             }
         }
         $mensaje_rechazos = array_unique($mensaje_rechazos);
@@ -88,15 +118,26 @@ class ConteoService
 
         $content = array();
         $linea = 1;
+        $i=0;
+        $mensaje = "";
+        $mensaje_rechazos = [];
         while(!feof($myfile)) {
             $renglon = explode(",",fgets($myfile));
             if($linea == 1){
                 $linea++;
             }else{
-                if(count($renglon) != 9 && count($renglon) != 8) {
+                if(count($renglon) != 9) {
                     abort(400,'No se pueden procesar los conteos');
-                }else if(count($renglon) == 9 || (count($renglon) == 8 && $renglon[0] != '' && $renglon[1] != '' && $renglon[2] != '' && $renglon[3] != '' && $renglon[4] != ''
-                    && $renglon[5] != ''  && $renglon[6] != ''  && $renglon[7] != '')){
+                }else if(count($renglon) == 9 && $renglon[0] != '' && $renglon[1] != '' && $renglon[2] != '' && $renglon[4] != '' && $renglon[6] != ''){
+                    if($renglon[3] == ''){
+                        $renglon[3] = null;
+                    }if($renglon[5] == ''){
+                        $renglon[5] = null;
+                    }if($renglon[7] == ''){
+                        $renglon[7] = null;
+                    }if($renglon[8] == '' || $renglon[8] == "\r\n"){
+                        $renglon[8] = null;
+                    }
                     $content[] = array(
                         'folio_marbete' =>  $renglon[0],
                         'id_marbete' =>  $renglon[1],
@@ -106,11 +147,37 @@ class ConteoService
                         'cantidad_inservible' =>  $renglon[5],
                         'total' =>  $renglon[6],
                         'iniciales' =>  $renglon[7],
-                        'observaciones' =>  array_key_exists(8,$renglon)?$renglon[8]:null,
+                        'observaciones' =>  $renglon[8],
                     );
+                }else if ($renglon[1] == ''){
+                    $i++;
+                    array_push($mensaje_rechazos , " \n\nError en ".$renglon[0].": \n - Id de Marbete incorrecto");
+                }else if ($renglon[2] == ''){
+                    $i++;
+                    array_push($mensaje_rechazos , " \n\nError en ".$renglon[0].": \n - El campo Conteo es obligatorio");
+                }else if ($renglon[4] == ''){
+                    $i++;
+                    array_push($mensaje_rechazos , " \n\nError en ".$renglon[0].": \n - El campo Nuevos es obligatorio");
+                }else if ($renglon[6] == ''){
+                    $i++;
+                    array_push($mensaje_rechazos , " \n\nError en ".$renglon[0].": \n - El campo Total es obligatorio");
                 }
                 $linea++;
             }
+        }
+        $mensaje_rechazos = array_unique($mensaje_rechazos);
+        if($mensaje_rechazos != [])
+        {
+            $mensaje_fin = "";
+            foreach ($mensaje_rechazos as $mensaje_rechazo) {
+                $mensaje_fin = $mensaje_fin . $mensaje_rechazo;
+            }
+            $mensaje = $mensaje.$mensaje_fin;
+        }
+
+        if($mensaje != "")
+        {
+            abort(400,'No se realizó la carga de conteos debido a los siguientes errores:'.$mensaje);
         }
         fclose($myfile);
         return $content;
