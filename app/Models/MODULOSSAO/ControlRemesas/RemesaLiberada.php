@@ -10,6 +10,7 @@ namespace App\Models\MODULOSSAO\ControlRemesas;
 
 
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
+use App\Models\CADECO\Moneda;
 use Illuminate\Database\Eloquent\Model;
 
 class RemesaLiberada extends Model
@@ -30,7 +31,21 @@ class RemesaLiberada extends Model
         return $this->distribucionRemesa()->where('estado', '>=', 0)->sum('monto_distribuido');
     }
 
-    public function getRemesaAutorizadaMonto(){
+    public function getRemesaAutorizadaMontoProcesado(){
         return Documento::with('documentoLiberado')->where('IDRemesa', '=', $this->IDRemesa)->sum('MontoTotalSolicitado');
+    }
+
+    public function getRemesaAutorizadaMonto(){
+        $doctos =  Documento::with('documentoLiberado')->where('IDRemesa', '=', $this->IDRemesa)->get();
+        $monto = 0;
+        foreach ($doctos as $docto){
+            if($docto->IDMoneda == 1){
+                $monto += $docto->getImporteTotalProcesadoAttribute();
+            }else{
+                $moneda = Moneda::with('cambio')->where('id_moneda', '=', $docto->IDMoneda)->get()->toArray();
+                $monto += $docto->getImporteTotalProcesadoAttribute() * $moneda[0]['cambio']['cambio'];
+            }
+        }
+        return $monto;
     }
 }
