@@ -133,7 +133,7 @@ class DistribucionRecursoRemesaManual
                 $r_social_dep = $this->elimina_caracteres_especiales($partida->cuentaAbono->empresa->razon_social);
                 $razon_social = strlen($r_social_dep) > 40 ? substr($r_social_dep, 0, 40) :
                     str_pad($r_social_dep, 40, ' ', STR_PAD_RIGHT);
-                $monto = explode('.', $partida->documento->getImporteTotalProcesadoAttribute());
+                $monto = explode('.', number_format($partida->documento->getImporteTotalProcesadoAttribute(),2,".",""));
                 $documento = "D" . str_pad($partida->id_documento, 9, 0, STR_PAD_LEFT);
                 $concepto_rep = $this->elimina_caracteres_especiales($partida->documento->Concepto);
                 $concepto = strlen($concepto_rep) > 120 ? substr($concepto_rep, 0, 120) :
