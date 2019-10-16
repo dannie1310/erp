@@ -67,4 +67,9 @@ class NuevoLote extends Ajuste
             throw $e;
         }
     }
+
+    public function validarPartidasAjusteEliminar($partidas, $id)
+    {
+
+    }
 }

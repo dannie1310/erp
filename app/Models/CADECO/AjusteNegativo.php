@@ -38,7 +38,7 @@ class AjusteNegativo extends Ajuste
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            $this->validarPartidas($data['items'],$data['id_almacen']);
+            $this->validarPartidas($data['items'], $data['id_almacen']);
             $datos = [
                 'id_almacen' => $data['id_almacen'],
                 'referencia' => $data['referencia'],
@@ -50,7 +50,7 @@ class AjusteNegativo extends Ajuste
             $partida->registrar($data['items'], $ajusteTransaccion->id_almacen, $ajusteTransaccion->id_transaccion);
             DB::connection('cadeco')->commit();
             return $this;
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
@@ -60,24 +60,28 @@ class AjusteNegativo extends Ajuste
     public function validarPartidas($partidas, $id)
     {
         $mensaje = "";
-        if($partidas[0]['id_material'] == null)
-        {
+        if ($partidas[0]['id_material'] == null) {
             abort(400, "No se puede registrar un ajuste vacio");
         }
-        foreach ($partidas as  $partida) {
+        foreach ($partidas as $partida) {
             $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])
                 ->where('id_almacen', '=', $id)
                 ->where('saldo', '!=', '0')
                 ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();
 
-            if($inventarios['saldo'] < $partida['cantidad'])
-            {
-                $mensaje = $mensaje."-Item: ".$partida['id_material']['descripcion']."\n";
+            if ($inventarios['saldo'] < $partida['cantidad']) {
+                $mensaje = $mensaje . "-Item: " . $partida['id_material']['descripcion'] . "\n";
             }
         }
-        if($mensaje != "")
-        {
-            abort(400, "No se puede registrar el ajuste de inventario debido a que los saldos no soportan el ajuste que desea realizar:\n ".$mensaje);
+        if ($mensaje != "") {
+            abort(400, "No se puede registrar el ajuste de inventario debido a que los saldos no soportan el ajuste que desea realizar:\n " . $mensaje);
         }
     }
+
+
+    public function validarPartidasAjusteEliminar($partidas, $id)
+    {
+
+    }
+
 }

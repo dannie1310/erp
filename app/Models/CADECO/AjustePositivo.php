@@ -81,4 +81,25 @@ class AjustePositivo extends Ajuste
             }
         }
     }
+
+
+    public function validarPartidasAjusteEliminar($partidas, $id)
+    {
+        foreach ($partidas as $partida){
+dd($partida);
+              $item = Item::query()->where('item_antecedente','=', $partida->id_item)->first();
+
+              if(!is_null($item)){
+                  abort(400, "El item:".$partida['id_material']['descripcion']);
+              }
+              dd($item);
+//            $inventario = Inventario::query()->where('id_material', '=', $partida->id_material)
+//                ->where('id_almacen', '=', $partida->id_almacen)
+//                ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();
+//            dd($inventario);
+
+        }
+
+
+    }
 }
