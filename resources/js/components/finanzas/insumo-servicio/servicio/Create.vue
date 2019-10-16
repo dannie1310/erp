@@ -19,7 +19,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="tipo" class="col-sm-2 col-form-label">Servicio: </label>
+                                        <label for="tipo" class="col-sm-2 col-form-label">Familia: </label>
                                         <div class="col-sm-10">
                                             <FamiliaSelect
                                                 :scope="'tipo:2'"
