@@ -127,7 +127,7 @@
                                 <td class="text-right">{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
                                 <td class="text-right">{{doc.documento.saldo_moneda_nacional_format}}</td>
                                 <td class="text-right">{{doc.moneda  &&  doc.moneda.tipo != 1? parseFloat(doc.moneda.tipo_cambio).formatMoney(2, '.', ',') : '1.00'}}</td>-->
-                                <td class="text-right">${{doc.moneda  &&  doc.moneda.tipo != 1?parseFloat((doc.documento.monto_total * doc.moneda.tipo_cambio)).formatMoney(2, '.', ',') :parseFloat((doc.documento.monto_total)).formatMoney(2, '.', ',') }}</td>
+                                <td class="text-right">${{doc.moneda  &&  doc.moneda.tipo != 1?parseFloat((doc.documento.importe_total * doc.moneda.tipo_cambio)).formatMoney(2, '.', ',') :parseFloat((doc.documento.importe_total)).formatMoney(2, '.', ',') }}</td>
                                 <td>{{ doc.cuentaCargo.abreviatura }} ({{doc.cuentaCargo.numero}})</td>
                                 <td v-if="doc.cuentaAbono">{{getCuentaAbono(doc.cuentaAbono)}}</td>
                                 <td v-else></td>
