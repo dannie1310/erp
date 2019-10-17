@@ -107,15 +107,7 @@ class Documento extends Model
         foreach ($this->documentoProcesado as $item){
             if($item->IDProceso == 4){
                 $monto = $item->MontoAutorizadoPrimerEnvio + $item->MontoAutorizadoSegundoEnvio;
-                if($monto <= $this->MontoTotal && $monto > 0){
-                    if($this->IDMoneda != 1) {
-                        $moneda = Moneda::with('cambio')->where('id_moneda', '=', $this->IDMoneda)->get()->toArray();
-                        return $monto * $moneda[0]['cambio']['cambio'];
-                    }else {
-                        return $monto;
-                    }
-                }
-                return $this->MontoTotal;
+                return $monto;
             }
         }
     }
