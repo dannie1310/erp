@@ -139,4 +139,17 @@ class Documento extends Model
             return null;
         }
     }
+
+    /*
+     * Este método se crea para devolver el id de cuenta corriente pagadora en caso de que el proyecto tenga una sola cuenta
+     * activa de modo que en el formulario de dispersión quede preseleccionada
+     * */
+    public function getCuentaCargoAttribute(){
+        $cuentas = $this->transaccion->obra->cuentasPagadorasObra;
+        if(sizeof($cuentas) === 1){
+            return $cuentas[0]->id_cuenta;
+        }else{
+            return null;
+        }
+    }
 }
