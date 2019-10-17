@@ -14,8 +14,10 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Fondo;
 use App\Models\CADECO\Moneda;
+use App\Models\CADECO\Obra;
 use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
+use App\Facades\Context;
 
 class Documento extends Model
 {
@@ -145,7 +147,8 @@ class Documento extends Model
      * activa de modo que en el formulario de dispersión quede preseleccionada
      * */
     public function getCuentaCargoAttribute(){
-        $cuentas = $this->transaccion->obra->cuentasPagadorasObra;
+        $obra = Obra::find(Context::getIdObra());
+        $cuentas = $obra->cuentasPagadorasObra;
         if(sizeof($cuentas) === 1){
             return $cuentas[0]->id_cuenta;
         }else{
