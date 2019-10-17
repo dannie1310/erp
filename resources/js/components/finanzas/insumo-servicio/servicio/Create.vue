@@ -131,6 +131,18 @@
                 }
             }
         },
+        // mounted() {
+        //     this.getUnidades()
+        //
+        //
+        // },
+        mounted() {
+            // this.getBancos(),
+            this.getUnidades()
+
+
+        },
+
         methods: {
             init() {
                 this.cargando = false;
@@ -139,26 +151,39 @@
                 this.dato.descripcion = '';
                 this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
+                console.log('Jorge Armando');
+                // // getUnidades();
+                // console.log(this.unidades);
             },
+            // getUnidades() {
+            //     console.log('Jorge')
+            //     return this.$store.dispatch('cadeco/unidad/index', {
+            //         params: {sort: 'unidad',  order: 'asc'}
+            //     })
+            //         .then(data => {
+            //             // this.unidades= data.data;
+            //         })
+            // },
             getUnidades() {
                 return this.$store.dispatch('cadeco/unidad/index', {
-                    params: {sort: 'razon_social',  order: 'asc', scope:'NoRegistrado'}
+                    params: {sort: 'unidad',  order: 'asc'}
                 })
                     .then(data => {
                         this.unidades= data.data;
                     })
             },
             store() {
-                return this.$store.dispatch('compras/material-familia/store', this.$data.dato)
-                    .then(data => {
-                        this.$emit('created', data);
-                        $(this.$refs.modal).modal('hide');
-                    }).finally( ()=>{
-                        this.cargando = false;
-                        this.tipo = '';
-                        this.descripcion = '';
-
-                    });
+                console.log(this.bancos);
+                // return this.$store.dispatch('compras/material-familia/store', this.$data.dato)
+                //     .then(data => {
+                //         this.$emit('created', data);
+                //         $(this.$refs.modal).modal('hide');
+                //     }).finally( ()=>{
+                //         this.cargando = false;
+                //         this.tipo = '';
+                //         this.descripcion = '';
+                //
+                //     });
             },
             validate() {
                 this.$validator.validate().then(result => {

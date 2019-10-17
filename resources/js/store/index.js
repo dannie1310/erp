@@ -28,6 +28,7 @@ import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
 import sucursal from './modules/cadeco/sucursal';
+import unidad from './modules/cadeco/unidad'
 
 
 //COMPRAS
@@ -128,6 +129,7 @@ export default new Vuex.Store({
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
         'cadeco/sucursal': sucursal,
+        'cadeco/unidad': unidad,
 
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,

@@ -37,8 +37,8 @@ class UnidadController extends Controller
      */
     public function __construct(UnidadService $service, UnidadTransformer $transformer, Manager $fractal)
     {
-//        $this->middleware('auth:api');
-//        $this->middleware('context');
+        $this->middleware('auth:api');
+        $this->middleware('context');
 
         $this->service = $service;
         $this->transformer = $transformer;
