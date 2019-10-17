@@ -121,7 +121,7 @@ class DistribucionRecursoRemesaManual
             if($partida->cuentaAbono->tipo_cuenta == 1){
                 $cuenta_cargo = str_pad(substr($partida->cuentaCargo->numero, 0, 16), 16, ' ', STR_PAD_RIGHT);
                 $cuenta_abono = str_pad($partida->cuentaAbono->cuenta_clabe, 16, ' ', STR_PAD_RIGHT);
-                $importe = str_pad(number_format($partida->documento->MontoTotal, '2', '.', ''), 13, 0, STR_PAD_LEFT);
+                $importe = str_pad(number_format($partida->documento->getImporteTotalProcesadoAttribute(), '2', '.', ''), 13, 0, STR_PAD_LEFT);
                 $documento = "D" . str_pad($partida->id_documento, 9, 0, STR_PAD_LEFT);
                 $concepto_rep = $this->elimina_caracteres_especiales($partida->documento->Concepto);
                 $concepto = strlen($concepto_rep) > 30 ? substr($concepto_rep, 0, 30) :
@@ -133,7 +133,7 @@ class DistribucionRecursoRemesaManual
                 $r_social_dep = $this->elimina_caracteres_especiales($partida->cuentaAbono->empresa->razon_social);
                 $razon_social = strlen($r_social_dep) > 40 ? substr($r_social_dep, 0, 40) :
                     str_pad($r_social_dep, 40, ' ', STR_PAD_RIGHT);
-                $monto = explode('.', $partida->documento->MontoTotal);
+                $monto = explode('.', number_format($partida->documento->getImporteTotalProcesadoAttribute(),2,".",""));
                 $documento = "D" . str_pad($partida->id_documento, 9, 0, STR_PAD_LEFT);
                 $concepto_rep = $this->elimina_caracteres_especiales($partida->documento->Concepto);
                 $concepto = strlen($concepto_rep) > 120 ? substr($concepto_rep, 0, 120) :
@@ -146,7 +146,6 @@ class DistribucionRecursoRemesaManual
                     . $documento . $concepto
                     . str_pad(1, 7, ' ', STR_PAD_RIGHT) . 1;
             }
-
         }
     }
 

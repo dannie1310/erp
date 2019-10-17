@@ -7,7 +7,7 @@
         loadingText="Cargando"
         searchPromptText="Escriba para buscar..."
         noResultsText="Sin Resultados"
-        :placeholder="placeholder ? placeholder : '-- Buscar en Familia Servicio -- '"
+        :placeholder="placeholder ? placeholder : '-- Buscar en Familia -- '"
     >
     </treeselect>
 </template>
