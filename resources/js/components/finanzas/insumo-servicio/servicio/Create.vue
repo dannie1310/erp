@@ -89,7 +89,7 @@
                                                 :class="{'is-invalid': errors.has('unidad')}"
                                             >
                                                     <option value>--Unidad--</option>
-                                                    <option v-for="unidad in unidades" :value="unidad.id">{{ unidad.descripcion }}</option>
+                                                    <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
                                             </select>
                                             <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
                                         </div>
@@ -112,7 +112,7 @@
 </template>
 
 <script>
-    import FamiliaSelect from "../familia/Select";
+    import FamiliaSelect from "../../../cadeco/familia/Select";
     export default {
         name: "material-create",
         components: {FamiliaSelect},
@@ -131,16 +131,8 @@
                 }
             }
         },
-        // mounted() {
-        //     this.getUnidades()
-        //
-        //
-        // },
         mounted() {
-            // this.getBancos(),
             this.getUnidades()
-
-
         },
 
         methods: {
@@ -151,19 +143,7 @@
                 this.dato.descripcion = '';
                 this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
-                console.log('Jorge Armando');
-                // // getUnidades();
-                // console.log(this.unidades);
             },
-            // getUnidades() {
-            //     console.log('Jorge')
-            //     return this.$store.dispatch('cadeco/unidad/index', {
-            //         params: {sort: 'unidad',  order: 'asc'}
-            //     })
-            //         .then(data => {
-            //             // this.unidades= data.data;
-            //         })
-            // },
             getUnidades() {
                 return this.$store.dispatch('cadeco/unidad/index', {
                     params: {sort: 'unidad',  order: 'asc'}
@@ -173,17 +153,15 @@
                     })
             },
             store() {
-                console.log(this.bancos);
-                // return this.$store.dispatch('compras/material-familia/store', this.$data.dato)
-                //     .then(data => {
-                //         this.$emit('created', data);
-                //         $(this.$refs.modal).modal('hide');
-                //     }).finally( ()=>{
-                //         this.cargando = false;
-                //         this.tipo = '';
-                //         this.descripcion = '';
-                //
-                //     });
+                return this.$store.dispatch('cadeco/material/store', this.$data.dato)
+                    .then(data => {
+                        this.$emit('created', data);
+                        $(this.$refs.modal).modal('hide');
+                    }).finally( ()=>{
+                        this.cargando = false;
+                        this.tipo = '';
+                        this.descripcion = '';
+                    });
             },
             validate() {
                 this.$validator.validate().then(result => {

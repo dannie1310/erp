@@ -30,7 +30,7 @@ class UnidadController extends Controller
     protected $fractal;
 
     /**
-     * FamiliaController constructor.
+     * UnidadController constructor.
      * @param UnidadService $service
      * @param UnidadTransformer $transformer
      * @param Manager $fractal
@@ -44,5 +44,4 @@ class UnidadController extends Controller
         $this->transformer = $transformer;
         $this->fractal = $fractal;
     }
-
 }

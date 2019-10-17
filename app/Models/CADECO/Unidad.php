@@ -10,7 +10,6 @@ namespace App\Models\CADECO;
 
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Unidad extends Model
 {
@@ -23,13 +22,4 @@ class Unidad extends Model
         'tipo_unidad',
         'descripcion'
     ];
-
-    public function getNombreAceptableAttribute()
-    {
-        if($this->descripcion == 'SIN DESCRIPCIÓN')
-        {
-            return $this->unidad;
-        }
-            return $this->descripcion;
-    }
 }

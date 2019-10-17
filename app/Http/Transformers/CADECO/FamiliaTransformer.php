@@ -21,7 +21,6 @@ class FamiliaTransformer extends TransformerAbstract
 
     public function transform(Familia $model)
     {
-//        dd($model);
         return [
             'id' => $model->getKey(),
             'tipo_material'=> $model->tipo_material,

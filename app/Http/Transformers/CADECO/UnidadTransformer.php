@@ -20,9 +20,9 @@ class UnidadTransformer extends TransformerAbstract
     public function transform(Unidad $model)
     {
         return [
-            'Unidad' => $model->unidad,
-            'Tipo de unidad' => $model->tipo_unidad,
-            'Descripcion' => $model->getNombreAceptableAttribute()
+            'unidad' => $model->unidad,
+            'tipo_unidad' => $model->tipo_unidad,
+            'descripcion' => $model->descripcion
         ];
     }
 }
