@@ -119,26 +119,7 @@
         data() {
             return {
                 cargando:false,
-                unidades: [
-                    {id:'M', descripcion: 'M'},
-                    {id:'M2', descripcion: 'M2'},
-                    {id:'M3', descripcion: 'M3'},
-                    {id:'ML', descripcion: 'ML'},
-                    {id:'KG', descripcion: 'KG'},
-                    {id:'PZA', descripcion: 'PZA'},
-                    {id:'TON', descripcion: 'TON'},
-                    {id:'JOR', descripcion: 'JOR'},
-                    {id:'LOTE', descripcion: 'LOTE'},
-                    {id:'PAQ', descripcion: 'PAQ'},
-                    {id:'PAR', descripcion: 'PAR'},
-                    {id:'CAJA', descripcion: 'CAJA'},
-                    {id:'HORA', descripcion: 'HORA'},
-                    {id:'BLOCK', descripcion: 'BLOCK'},
-                    {id:'LITRO', descripcion: 'LITRO'},
-                    {id:'JGO', descripcion: 'JUEGO'},
-                    {id:'ROLLO', descripcion: 'ROLLO'},
-                    {id:'PULGADA', descripcion: 'PULGADA'}
-                ],
+                unidades: [],
                 dato: {
                     tipo: '',
                     unidad:'',
@@ -158,6 +139,14 @@
                 this.dato.descripcion = '';
                 this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
+            },
+            getUnidades() {
+                return this.$store.dispatch('cadeco/unidad/index', {
+                    params: {sort: 'razon_social',  order: 'asc', scope:'NoRegistrado'}
+                })
+                    .then(data => {
+                        this.unidades= data.data;
+                    })
             },
             store() {
                 return this.$store.dispatch('compras/material-familia/store', this.$data.dato)
