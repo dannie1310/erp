@@ -23,4 +23,8 @@ class CuentaObra extends Model
             return $query->where('id_obra', '=', Context::getIdObra());
         });
     }
+
+    public function cuenta(){
+        return $this->hasOne(Cuenta::class, 'id_cuenta');
+    }
 }

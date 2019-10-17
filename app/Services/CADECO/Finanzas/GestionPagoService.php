@@ -157,7 +157,7 @@ class GestionPagoService
                                 "fecha" => $fecha->format('Y-m-d'),
                                 "cumplimiento" => $fecha->format('Y-m-d'),
                                 "vencimiento" => $fecha->format('Y-m-d'),
-                                "monto" => -1 * abs($partida_remesa->documento->MontoTotalSolicitado),
+                                "monto" => -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute()),
                                 //"saldo" => -1 * abs($partida_remesa->documento->MontoTotalSolicitado),
                                 "referencia" => $pago['referencia'],
                                 //"destino" => $partida_remesa->documento->Destinatario,
@@ -192,7 +192,7 @@ class GestionPagoService
                                             $data["id_referente"] = $transaccion->id_referente;
                                             $data["estado"] = 1;
                                             $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
-                                            $data["saldo"] = -1 * abs($partida_remesa->documento->MontoTotalSolicitado);
+                                            $data["saldo"] = -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute());
                                             $data["destino"] = $partida_remesa->documento->Destinatario;
                                             $data["observaciones"] = $partida_remesa->documento->Observaciones;
                                             $pago_remesa = PagoVario::query()->create($data);
@@ -200,7 +200,7 @@ class GestionPagoService
 
                                         } else {
                                             $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
-                                            $data["saldo"] = -1 * abs($partida_remesa->documento->MontoTotalSolicitado);
+                                            $data["saldo"] = -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute());
                                             $data["destino"] = $partida_remesa->documento->Destinatario;
                                             $data["observaciones"] = $partida_remesa->documento->Observaciones;
 
@@ -209,19 +209,22 @@ class GestionPagoService
                                         break;
                                     default:
                                         $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
-                                        $data["saldo"] = -1 * abs($partida_remesa->documento->MontoTotalSolicitado);
+                                        $data["saldo"] = -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute());
                                         $data["destino"] = $partida_remesa->documento->Destinatario;
                                         $data["observaciones"] = $partida_remesa->documento->Observaciones;
 
                                         $pago_remesa = PagoACuenta::query()->create($data);
                                         break;
                                 }
-                                $transaccion->estado = 2;
+                                $saldo_transaccion = abs($transaccion->saldo - $partida_remesa->documento->getImporteTotalProcesadoAttribute());
+
+                                $transaccion->estado = $saldo_transaccion > 0.99?1:2;
+                                $transaccion->saldo = $saldo_transaccion;
                                 $transaccion->save();
 
                             } else {
                                 $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
-                                $data["saldo"] = -1 * abs($partida_remesa->documento->MontoTotalSolicitado);
+                                $data["saldo"] = -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute());
                                 $data["destino"] = $partida_remesa->documento->Destinatario;
                                 $data["observaciones"] = $partida_remesa->documento->Observaciones;
 
@@ -297,7 +300,7 @@ class GestionPagoService
 
         }catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
-            abort(400, "Error archivo de entrada inválido.");
+            abort(400, $e->getMessage());
             throw $pago;
         }
     }
