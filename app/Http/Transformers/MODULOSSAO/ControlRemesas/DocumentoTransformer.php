@@ -61,7 +61,8 @@ class DocumentoTransformer extends TransformerAbstract
             'destinatario' => $model->Destinatario,
             'importe_total' => $model->importe_total_procesado,
             'beneficiario' => $model->beneficiario,
-            'tipo_documento' => $model->IDTipoDocumento
+            'tipo_documento' => $model->IDTipoDocumento,
+            'id_cuenta_abono' => $model->cuenta_abono,
         ];
     }
 

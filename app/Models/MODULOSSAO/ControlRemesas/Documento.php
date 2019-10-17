@@ -127,4 +127,16 @@ class Documento extends Model
         }
         return null;
     }
+    /*
+     * Este método se crea para devolver el id de cuenta del proveedor en caso de tener una sola cuenta activa
+     * de modo que en el formulario de dispersión quede preseleccionado
+     * */
+    public function getCuentaAbonoAttribute(){
+        $cuentas = $this->empresa->cuentasBancarias;
+        if(sizeof($cuentas) === 1){
+            return $cuentas[0]->id;
+        }else{
+            return null;
+        }
+    }
 }
