@@ -22,9 +22,6 @@ class PagoObserver extends TransaccionObserver
     public function creating(Transaccion $pago)
     {
         parent::creating($pago);
-         if (!$pago->validaTipoAntecedente()) {
-                throw New \Exception('La transacción antecedente no es válida');
-         }
         $pago->tipo_transaccion = 82;
         $pago->opciones = 0;
     }

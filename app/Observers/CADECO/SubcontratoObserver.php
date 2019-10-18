@@ -11,24 +11,19 @@ namespace App\Observers\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\Subcontrato;
+use App\Models\CADECO\Transaccion;
 
-class SubcontratoObserver
+class SubcontratoObserver extends TransaccionObserver
 {
     /**
      * @param Subcontrato $subcontrato
      * @throws \Exception
      */
-    public function creating(Subcontrato $subcontrato)
+    public function creating(Transaccion $subcontrato)
     {
-        if (!$subcontrato->validaTipoAntecedente()) {
-            throw New \Exception('La transacción antecedente no es válida');
-        }
+        parent::creating($subcontrato);
         $subcontrato->tipo_transaccion = 51;
         $subcontrato->opciones = 2;
-        $subcontrato->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $subcontrato->FechaHoraRegistro = date('Y-m-d h:i:s');
-        $subcontrato->id_obra = Context::getIdObra();
-        $subcontrato->id_usuario = auth()->id();
     }
 
     public function created(Subcontrato $subcontrato)

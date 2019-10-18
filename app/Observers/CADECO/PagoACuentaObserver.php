@@ -11,23 +11,18 @@ namespace App\Observers\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\Transaccion;
 
-class PagoACuentaObserver
+class PagoACuentaObserver extends TransaccionObserver
 {
     /**
      * @param PagoACuenta $pagoACuenta
-     * @throws \Exception
+     *  @throws \Exception
      */
-    public function creating(PagoACuenta $pagoACuenta)
+    public function creating(Transaccion $pagoACuenta)
     {
-        if (!$pagoACuenta->validaTipoAntecedente()) {
-            throw New \Exception('La transacción antecedente no es válida');
-        }
+        parent::creating($pagoACuenta);
         $pagoACuenta->tipo_transaccion = 82;
         $pagoACuenta->opciones = 327681;
-        $pagoACuenta->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $pagoACuenta->FechaHoraRegistro = date('Y-m-d h:i:s');
-        $pagoACuenta->id_obra = Context::getIdObra();
-        $pagoACuenta->id_usuario = auth()->id();
     }
 }
