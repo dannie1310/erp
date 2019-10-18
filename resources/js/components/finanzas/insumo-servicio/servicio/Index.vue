@@ -22,21 +22,21 @@
 <script>
     import Create from "./Create";
     export default {
-         name: "material-index",
+        name: "servicio-index",
         components:{Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Material', field: 'tipo_material',sortable: true},
+                    { title: 'Familia', field: 'tipo_material',sortable: true},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
                     { title: 'Unidad', field: 'unidad', sortable: true},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:['tipo:1', 'insumos'], sort: 'id_material', order: 'desc'},
+                query: {scope:['tipo:2','insumos'], sort: 'id_material', order: 'desc'},
                 estado: "",
                 cargando: false
             }

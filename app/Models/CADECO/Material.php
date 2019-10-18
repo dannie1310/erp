@@ -19,6 +19,20 @@ class Material extends Model
     protected $primaryKey = 'id_material';
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'descripcion',
+        'tipo_material',
+        'equivalencia',
+        'marca',
+        'UsuarioRegistro',
+        'FechaHoraRegistro',
+        'nivel',
+        'numero_parte',
+        'tipo',
+        'unidad'
+    ];
+
     public $searchable = [
         'descripcion',
         'numero_parte',
@@ -42,7 +56,7 @@ class Material extends Model
                 return 'Materiales';
                 break;
             case(2):
-                if($this->equivalencia == 0 && $this->marca ==0){
+                if($this->marca ==0){
                     return 'Mano de Obra';
                 }else{
                     return 'Servicio';
@@ -84,8 +98,9 @@ class Material extends Model
 
     public function hijos()
     {
+//        dd($this);
         return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
-            ->where('nivel', 'LIKE', $this->nivel . '___.');
+            ->where('nivel', 'LIKE',  '009.___.');
     }
 
     public function scopeRoots($query)
@@ -130,5 +145,32 @@ class Material extends Model
     {
         $tip = explode(',',$tipos);
         return $query->where('equivalencia', '=', 1)->whereIn('tipo_material', array_unique($tip));
+    }
+
+    public function scopeInsumos($query)
+    {
+        return $query->whereRaw('LEN(nivel) = 8');
+    }
+
+    public function validarExistente()
+    {
+        if($this->where('numero_parte','=', $this->numero_parte)->get()->toArray() != [])
+        {
+            throw New \Exception('El articulo con el numero de parte "'.$this->numero_parte.'" ya existe.');
+        }
+    }
+
+    public function nivelConsecutivo()
+    {
+        $this->nivel = str_replace ( ".", "", $this->nivel);
+        $num = $this->where('tipo_material','=',$this->tipo_material)->where('nivel','LIKE',$this->nivel.'.%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'desc')->get()->pluck('nivel')->first();
+        if($num == null){
+            $num = 0;
+        }else{
+            $num = substr($num, 4,3);
+            $num = $num +1;
+        }
+        $num = str_pad($num, 3, "0", STR_PAD_LEFT);
+        return $this->nivel.'.'.$num.'.';
     }
 }

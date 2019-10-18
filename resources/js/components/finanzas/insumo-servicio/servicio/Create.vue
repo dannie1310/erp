@@ -1,15 +1,15 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_insumo_herramienta_equipo')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_insumo_servicio')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
-            Registrar Herramienta / Equipo
+            Registrar Servicio
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR HERRAMIENTA / EQUIPO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR SERVICIO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -19,16 +19,16 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="tipo" class="col-sm-2 col-form-label">Material: </label>
+                                        <label for="tipo" class="col-sm-2 col-form-label">Familia: </label>
                                         <div class="col-sm-10">
                                             <FamiliaSelect
-                                                    :scope="'tipo:4'"
-                                                    name="tipo"
-                                                    id="tipo"
-                                                    data-vv-as="Material"
-                                                    v-validate="{required: true}"
-                                                    v-model="dato.tipo"
-                                                    :class="{'is-invalid': errors.has('tipo')}">
+                                                :scope="'tipo:2'"
+                                                name="tipo"
+                                                id="tipo"
+                                                data-vv-as="Servicio"
+                                                v-validate="{required: true}"
+                                                v-model="dato.tipo"
+                                                :class="{'is-invalid': errors.has('tipo')}">
 
                                             </FamiliaSelect>
                                             <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
@@ -114,33 +114,34 @@
 <script>
     import FamiliaSelect from "../../../cadeco/familia/Select";
     export default {
-        name: "herramienta-create",
+        name: "material-create",
         components: {FamiliaSelect},
         data() {
-                return {
-                    cargando:false,
-                    unidades: [],
-                    dato: {
-                        tipo: '',
-                        unidad:'',
-                        descripcion: '',
-                        nu_parte:'',
-                        tipo_material:4,
-                        equivalencia:1,
-                        marca:1
-                    }
+            return {
+                cargando:false,
+                unidades: [],
+                dato: {
+                    tipo: '',
+                    unidad:'',
+                    descripcion: '',
+                    nu_parte:'',
+                    tipo_material:2,
+                    equivalencia:1,
+                    marca:1
                 }
+            }
         },
         mounted() {
             this.getUnidades()
         },
+
         methods: {
             init() {
-                  this.cargando = false;
-                    this.dato.tipo = null;
-                    this.dato.unidad = '';
-                    this.dato.descripcion = '';
-                    this.dato.nu_parte = '';
+                this.cargando = false;
+                this.dato.tipo = null;
+                this.dato.unidad = '';
+                this.dato.descripcion = '';
+                this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
             },
             getUnidades() {
@@ -160,13 +161,12 @@
                         this.cargando = false;
                         this.tipo = '';
                         this.descripcion = '';
-
                     });
             },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                            this.store()
+                        this.store()
                     }
                 });
             },
