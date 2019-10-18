@@ -39,7 +39,7 @@ class Factura extends Transaccion
 
     public function orden_pago()
     {
-        return $this->belongsTo(OrdenPago::class, 'id_referente','id_transaccion');
+        return $this->belongsTo(OrdenPago::class, 'id_transaccion','id_referente');
     }
 
     public function moneda()
@@ -69,6 +69,11 @@ class Factura extends Transaccion
             $orden_pago = OrdenPago::query()->find($ordenPago->id_transaccion);
 
              return $orden_pago->generaPago($data);
+
+        }else{
+            $orden_pago = OrdenPago::query()->find($this->orden_pago->id_transaccion);
+
+            return $orden_pago->generaPago($data);
 
         }
 
