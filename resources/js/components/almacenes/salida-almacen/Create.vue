@@ -647,11 +647,9 @@
                 if(parseInt(this.partida[1]) < parseInt(this.dato_partida.cantidad)) {
                     swal('¡Error!', 'La cantidad no puede ser mayor a la existencia.', 'error');
                     this.dato_partida.cantidad = '';
-                    this.$nextTick(() => this.$refs.input.focus());
-                }else if( parseInt(this.dato_partida.cantidad)<= 0){
+                }else if( parseInt(this.dato_partida.cantidad)< 0){
                     swal('¡Error!', 'La cantidad no puede ser cero o menor.', 'error');
                     this.dato_partida.cantidad = '';
-                    this.$nextTick(() => this.$refs.input.focus());
                 }
             },
             validarAlmacen() {
@@ -664,16 +662,17 @@
                 this.$router.push({name: 'salida-almacen'});
             },
             validatePartida() {
+
                 this.findMaterial();
-                if(this.contratista.empresa_contratista != '' && this.contratista.opcion != '') {
+                if(this.contratista.empresa_contratista != '' || this.contratista.opcion != '') {
                     this.findContratista();
                 }
                 this.findAlmacen().finally(() => {
                     this.dato.id_concepto = this.almacen.id_padre;
                     this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
-                    this.emp_cont='';
                 });
 
+                this.emp_cont='';
                 $(this.$refs.modal).modal('hide');
 
             }

@@ -161,11 +161,10 @@ class SalidaAlmacenPartida extends Item
                     }
                     Item::query()->where( 'id_item', '=', $item->toArray()['id_item'] )->update( ['importe' => $monto_total] );
 
-                    if ($p[4]!=null  && $p[5] != null) {
+                    if ($p[4] || $p[5]) {
                         ItemContratista::query()->create( ['id_item' => $item->toArray()['id_item'],
                             'id_empresa' => $p[4]['id'],
                             'con_cargo' => $p[5]] );
-
                     }
                 }
             }
