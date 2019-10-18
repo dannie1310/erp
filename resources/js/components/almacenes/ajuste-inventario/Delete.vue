@@ -1,6 +1,7 @@
 <template>
       <span>
          <button @click="find" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+
                <i class="fa fa-trash"></i>
          </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -13,7 +14,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row"  v-if="ajustes">
+                        <div class="row" v-if="ajustes">
                             <div class="col-12">
                                 <div class="invoice p-3 mb-3">
                                     <div class="row">
@@ -114,7 +115,16 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''" v-on:click="borrar" >Eliminar</button>
+                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''"
+                                v-on:click="borrar" v-if="this.tipo ==0 && $root.can('eliminar_ajuste_positivo')">Eliminar</button>
+                                                <button type="submit" class="btn btn-danger"
+                                                        :disabled="errors.count() > 0 || motivo == ''"
+                                                        v-on:click="borrar"
+                                                        v-if="this.tipo ==1 && $root.can('eliminar_ajuste_negativo')">Eliminar</button>
+                                                <button type="submit" class="btn btn-danger"
+                                                        :disabled="errors.count() > 0 || motivo == ''"
+                                                        v-on:click="borrar"
+                                                        v-if="this.tipo ==2 && $root.can('eliminar_nuevo_lote')">Eliminar</button>
                     </div>
                 </div>
             </div>
@@ -126,7 +136,7 @@
 <script>
     export default {
         name: "ajuste-inventario-delete",
-        props: ['id' , 'pagina', 'tipo'],
+        props: ['id', 'pagina', 'tipo'],
         data() {
             return {
                 motivo: '',
@@ -135,17 +145,17 @@
         },
         methods: {
             find() {
-                if(this.tipo == 0) {
+                if (this.tipo == 0) {
                     this.getPositivo();
                 }
-                if(this.tipo == 1){
+                if (this.tipo == 1) {
                     this.getNegativo();
                 }
-                if(this.tipo == 2){
+                if (this.tipo == 2) {
                     this.getNuevoLote();
                 }
             },
-            getPositivo(){
+            getPositivo() {
                 this.$store.commit('almacenes/ajuste-positivo/SET_AJUSTE', null);
                 return this.$store.dispatch('almacenes/ajuste-positivo/find', {
                     id: this.id,
@@ -156,7 +166,7 @@
                     $(this.$refs.modal).modal('show');
                 })
             },
-            getNegativo(){
+            getNegativo() {
                 this.$store.commit('almacenes/ajuste-negativo/SET_AJUSTE', null);
                 return this.$store.dispatch('almacenes/ajuste-negativo/find', {
                     id: this.id,
@@ -167,7 +177,7 @@
                     $(this.$refs.modal).modal('show');
                 })
             },
-            getNuevoLote(){
+            getNuevoLote() {
                 this.$store.commit('almacenes/nuevo-lote/SET_AJUSTE', null);
                 return this.$store.dispatch('almacenes/nuevo-lote/find', {
                     id: this.id,
@@ -178,15 +188,20 @@
                     $(this.$refs.modal).modal('show');
                 })
             },
-            borrar(){
-                if(this.tipo == 0) {
+            borrar() {
+                if (this.tipo == 0) {
                     return this.$store.dispatch('almacenes/ajuste-positivo/eliminar', {
                         id: this.id,
                         params: {data: [this.$data.motivo]}
                     })
                         .then(data => {
                             $(this.$refs.modal).modal('hide');
-                            return this.$store.dispatch('almacenes/ajuste-inventario/paginate', { params: {sort: 'numero_folio', order: 'desc'}})
+                            return this.$store.dispatch('almacenes/ajuste-inventario/paginate', {
+                                params: {
+                                    sort: 'numero_folio',
+                                    order: 'desc'
+                                }
+                            })
                                 .then(data => {
                                     this.$store.commit('almacenes/ajuste-inventario/SET_AJUSTES', data.data);
                                     this.$store.commit('almacenes/ajuste-inventario/SET_META', data.meta);
@@ -196,13 +211,18 @@
                             this.cargando = false;
                         });
                 }
-                if(this.tipo == 1){
+                if (this.tipo == 1) {
                     return this.$store.dispatch('almacenes/ajuste-negativo/eliminar', {
                         id: this.id,
                         params: {data: [this.$data.motivo]}
-                    }) .then(data => {
+                    }).then(data => {
                         $(this.$refs.modal).modal('hide');
-                        return this.$store.dispatch('almacenes/ajuste-inventario/paginate', { params: {sort: 'numero_folio', order: 'desc'}})
+                        return this.$store.dispatch('almacenes/ajuste-inventario/paginate', {
+                            params: {
+                                sort: 'numero_folio',
+                                order: 'desc'
+                            }
+                        })
                             .then(data => {
                                 this.$store.commit('almacenes/ajuste-inventario/SET_AJUSTES', data.data);
                                 this.$store.commit('almacenes/ajuste-inventario/SET_META', data.meta);
@@ -212,13 +232,18 @@
                             this.cargando = false;
                         });
                 }
-                if(this.tipo == 2){
+                if (this.tipo == 2) {
                     return this.$store.dispatch('almacenes/nuevo-lote/eliminar', {
                         id: this.id,
                         params: {data: [this.$data.motivo]}
-                    }) .then(data => {
+                    }).then(data => {
                         $(this.$refs.modal).modal('hide');
-                        return this.$store.dispatch('almacenes/ajuste-inventario/paginate', { params: {sort: 'numero_folio', order: 'desc'}})
+                        return this.$store.dispatch('almacenes/ajuste-inventario/paginate', {
+                            params: {
+                                sort: 'numero_folio',
+                                order: 'desc'
+                            }
+                        })
                             .then(data => {
                                 this.$store.commit('almacenes/ajuste-inventario/SET_AJUSTES', data.data);
                                 this.$store.commit('almacenes/ajuste-inventario/SET_META', data.meta);
