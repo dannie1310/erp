@@ -51,8 +51,6 @@ class Factura extends Transaccion
 
     public function generaOrdenPago($data)
     {
-
-
         if (is_null($this->orden_pago)){
             $datos = [
                     'id_antecedente'=>$this->id_antecedente,
@@ -79,10 +77,8 @@ class Factura extends Transaccion
 
     }
 
-
-
-    public function ordenPago(){
-        return $this->belongsTo(OrdenPago::class, 'id_transaccion', 'id_referente');
+    public function ordenesPago(){
+        return $this->hasMany(OrdenPago::class, 'id_referente', 'id_transaccion');
     }
 
     public function partidas()
@@ -91,7 +87,8 @@ class Factura extends Transaccion
     }
 
     public function scopePendientePago($query){
-        return $query->whereIn('estado', [1,2]);
+        return $query->where('estado', '=', 1)
+            ->where('saldo', '>', 0.99);
     }
 
     public function scopeConDocumento($query){

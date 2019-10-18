@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\CSV;
 
 use App\Models\CADECO\Solicitud;
@@ -23,7 +22,7 @@ class PagoLayout implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        $user = array();
+        $transacciones_pagables = array();
         $facturas = DB::connection('cadeco')->select(DB::raw("
                 select t.id_transaccion, t.fecha, t.referencia, e.razon_social, t.monto, m.nombre from transacciones t
                 join empresas e on e.id_empresa = t.id_empresa
@@ -39,7 +38,7 @@ class PagoLayout implements FromCollection, WithHeadings
 
         foreach ($facturas as $factura){
             $fecha  = new DateTime($factura->fecha);
-            $user[]=array(
+            $transacciones_pagables[]=array(
                 'id_transaccion' => $factura->id_transaccion,
                 'fecha' => date_format($fecha, 'd/m/Y'),
                 'referencia' => str_replace(',',' ', $factura->referencia),
@@ -64,7 +63,7 @@ class PagoLayout implements FromCollection, WithHeadings
                 if($solicitud->id_empresa != null){
                     $proveedor =  $solicitud->empresa->razon_social;
                 }
-                $user[]=array(
+                $transacciones_pagables[]=array(
                     'id_transaccion' => $solicitud->id_transaccion,
                     'fecha' => date_format($fecha, 'd/m/Y'),
                     'referencia' => str_replace(',',' ', $solicitud->referencia),
@@ -80,7 +79,7 @@ class PagoLayout implements FromCollection, WithHeadings
             }
         }
 
-        return collect($user);
+        return collect($transacciones_pagables);
     }
 
     /**
