@@ -44,4 +44,9 @@ class AjusteNegativoService
 
         return $this->repository->create($datos);
     }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data'][0]);
+    }
 }

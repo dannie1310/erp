@@ -40,4 +40,9 @@ class AjustePositivoService
     {
         return $this->repository->show($id);
     }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data'][0]);
+    }
 }
