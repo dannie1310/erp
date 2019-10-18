@@ -116,11 +116,14 @@
                                                             <td>{{partida[0].numero_parte}}</td>
                                                             <td>{{partida[0].descripcion}}</td>
                                                             <td>{{partida[0].unidad}}</td>
-                                                            <td>{{partida[3][1]}}</td>
-                                                            <td>{{partida[1]}}</td>
+                                                            <td>{{parseFloat(partida[3][1]).toFixed(2)}}</td>
+                                                            <td>{{parseFloat(partida[1]).toFixed(2)}}</td>
                                                             <td v-if="partida[2].path" :title="partida[2].path">{{partida[2].descripcion}}</td>
                                                             <td v-else>{{partida[2].descripcion}}</td>
                                                             <td>
+                                                                <button type="button" @click="agregarContratista(index)" class="btn btn-sm btn-outline-secondary" title="Modificar contratista">
+                                                                    <i class="fa fa-user"></i>
+                                                                </button>
                                                                 <button type="button" @click="borrarPartidas(index)" class="btn btn-sm btn-outline-danger" title="Eliminar partida">
                                                                     <i class="fa fa-trash"></i>
                                                                 </button>
@@ -169,204 +172,276 @@
                     </div>
                      <form role="form" @submit.prevent="validatePartida">
                         <div class="modal-body">
-                             <div class="row"  v-if="materiales">
-                                 <div class="col-md-4">
-                                    <div class="form-group error-content">
-                                        <label for="partida">No. de Parte:</label>
-                                           <select
-                                                   class="form-control"
-                                                   name="partida"
-                                                   data-vv-as="Material"
-                                                   v-model="partida"
-                                                   v-validate="{required: true}"
-                                                   id="partida"
-                                                   :class="{'is-invalid': errors.has('partida')}">
-                                            <option value>-- Seleccione --</option>
-                                            <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
-                                                    data-toggle="tooltip" data-placement="left" :title="material.numero_parte ">
-                                                {{ material.numero_parte }}
-                                            </option>
+                            <fieldset class="form-group">
+                                 <div class="row"  v-if="materiales">
+                                     <div class="col-md-4">
+                                        <div class="form-group error-content">
+                                            <label for="partida">No. de Parte:</label>
+                                               <select
+                                                       class="form-control"
+                                                       name="partida"
+                                                       data-vv-as="Material"
+                                                       v-model="partida"
+                                                       v-validate="{required: true}"
+                                                       id="partida"
+                                                       :class="{'is-invalid': errors.has('partida')}">
+                                                <option value>-- Seleccione --</option>
+                                                <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
+                                                        data-toggle="tooltip" data-placement="left" :title="material.numero_parte ">
+                                                    {{ material.numero_parte }}
+                                                </option>
+                                                </select>
+                                             <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
+                                        </div>
+                                    </div>
+                                      <div class="col-md-8">
+                                        <div class="form-group error-content">
+                                            <label for="partida">Material:</label>
+                                               <select
+                                                       class="form-control"
+                                                       name="partida"
+                                                       data-vv-as="Material"
+                                                       v-model="partida"
+                                                       v-validate="{required: true}"
+                                                       id="partida"
+                                                       :class="{'is-invalid': errors.has('partida')}">
+                                                <option value>-- Seleccione --</option>
+                                                <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
+                                                        data-toggle="tooltip" data-placement="left" :title="material.descripcion ">
+                                                    {{ material.descripcion }}
+                                                </option>
                                             </select>
-                                         <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
+                                             <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
+                                        </div>
                                     </div>
                                 </div>
-                                  <div class="col-md-8">
-                                    <div class="form-group error-content">
-                                        <label for="partida">Material:</label>
-                                           <select
-                                                   class="form-control"
-                                                   name="partida"
-                                                   data-vv-as="Material"
-                                                   v-model="partida"
-                                                   v-validate="{required: true}"
-                                                   id="partida"
-                                                   :class="{'is-invalid': errors.has('partida')}">
-                                            <option value>-- Seleccione --</option>
-                                            <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
-                                                    data-toggle="tooltip" data-placement="left" :title="material.descripcion ">
-                                                {{ material.descripcion }}
-                                            </option>
-                                        </select>
-                                         <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
+                                 <div class="row"  v-if="materiales">
+                                     <div class="col-md-6">
+                                        <div class="form-group error-content">
+                                            <label for="partida">Unidad:</label>
+                                               <select
+                                                       class="form-control"
+                                                       name="partida"
+                                                       data-vv-as="Material"
+                                                       v-model="partida"
+                                                       v-validate="{required: true}"
+                                                       id="partida"
+                                                       :class="{'is-invalid': errors.has('partida')}"
+                                                       :disabled="true"
+                                               >
+                                                <option value>-- Unidad --</option>
+                                                <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
+                                                        data-toggle="tooltip" data-placement="left" :title="material.unidad ">
+                                                    {{ material.unidad }}
+                                                </option>
+                                                </select>
+                                             <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                             <div class="row"  v-if="materiales">
-                                 <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="partida">Unidad:</label>
-                                           <select
-                                                   class="form-control"
-                                                   name="partida"
-                                                   data-vv-as="Material"
-                                                   v-model="partida"
-                                                   v-validate="{required: true}"
-                                                   id="partida"
-                                                   :class="{'is-invalid': errors.has('partida')}"
-                                                   :disabled="true"
-                                           >
-                                            <option value>-- Unidad --</option>
-                                            <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
-                                                    data-toggle="tooltip" data-placement="left" :title="material.unidad ">
-                                                {{ material.unidad }}
-                                            </option>
+                                      <div class="col-md-6">
+                                        <div class="form-group error-content">
+                                            <label for="partida">Existencia:</label>
+                                               <select
+                                                       class="form-control"
+                                                       name="partida"
+                                                       data-vv-as="Material"
+                                                       v-model="partida"
+                                                       v-validate="{required: true}"
+                                                       id="partida"
+                                                       :class="{'is-invalid': errors.has('partida')}"
+                                                       :disabled="true"
+                                               >
+                                                <option value>-- Existencia --</option>
+                                                <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
+                                                        data-toggle="tooltip" data-placement="left" :title="material.saldo ">
+                                                    {{ parseFloat(material.saldo).toFixed(2) }}
+                                                </option>
                                             </select>
-                                         <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
+                                             <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
+                                        </div>
                                     </div>
                                 </div>
-                                  <div class="col-md-6">
-                                    <div class="form-group error-content">
-                                        <label for="partida">Existencia:</label>
-                                           <select
-                                                   class="form-control"
-                                                   name="partida"
-                                                   data-vv-as="Material"
-                                                   v-model="partida"
-                                                   v-validate="{required: true}"
-                                                   id="partida"
-                                                   :class="{'is-invalid': errors.has('partida')}"
-                                                   :disabled="true"
-                                           >
-                                            <option value>-- Existencia --</option>
-                                            <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
-                                                    data-toggle="tooltip" data-placement="left" :title="material.saldo ">
-                                                {{ material.saldo }}
-                                            </option>
-                                        </select>
-                                         <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                        <label for="cantidad">Cantidad:</label>
-                                        <input
-                                            step="any"
-                                            ref="input"
-                                            type="number"
-                                            name="cantidad"
-                                            data-vv-as="Total"
-                                            v-validate="{required: true}"
-                                            class="form-control"
-                                            id="cantidad"
-                                            placeholder="Cantidad"
-                                            v-model="dato_partida.cantidad"
-                                            :class="{'is-invalid': errors.has('cantidad')}"
-                                            @change="validarCantidad"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('cantidad')">{{ errors.first('cantidad') }}</div>
-                                </div>
-                            </div>
-                            <div class="row" v-if="almacenes && dato.opciones == 65537">
-                                <div class="col-md-12">
-                                    <div class="form-group error-content">
-                                        <label for="id_almacenes">Almacén:</label>
-                                           <select
-                                                   class="form-control"
-                                                   name="id_almacenes"
-                                                   data-vv-as="Almacen"
-                                                   v-model="dato_partida.destino"
-                                                   v-validate="{required: true}"
-                                                   id="id_almacenes"
-                                                   :class="{'is-invalid': errors.has('id_almacenes')}"
-                                                   @click="validarAlmacen"
-                                           >
-                                            <option value>-- Seleccione un Almacén --</option>
-                                            <option v-for="(almacen, index) in almacenes" :value="almacen.id"
-                                                    data-toggle="tooltip" data-placement="left" :title="almacen.descripcion" @click="validarAlmacen">
-                                                {{ almacen.descripcion }}
-                                            </option>
-                                        </select>
-                                         <div class="invalid-feedback" v-show="errors.has('id_almacenes')">{{ errors.first('id_almacenes') }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row" v-if="dato.opciones == 1">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                    <label for="id_conceptos">Concepto:</label>
-                                        <concepto-select
-                                                name="id_conceptos"
-                                                data-vv-as="Concepto"
+                                <div class="row">
+                                    <div class="col-md-12">
+                                            <label for="cantidad">Cantidad:</label>
+                                            <input
+                                                ref="input"
+                                                step="0.01"
+                                                type="number"
+                                                name="cantidad"
+                                                data-vv-as="Total"
                                                 v-validate="{required: true}"
-                                                id="id_conceptos"
-                                                v-model="dato_partida.destino"
-                                                :error="errors.has('id_conceptos')"
-                                                ref="conceptoSelect"
-                                                :disableBranchNodes="true"
-                                        ></concepto-select>
-                                    <div class="error-label" v-show="errors.has('id_conceptos')">{{ errors.first('id_conceptos') }}</div>
+                                                class="form-control"
+                                                id="cantidad"
+                                                placeholder="Cantidad"
+                                                v-model="dato_partida.cantidad"
+                                                :class="{'is-invalid': errors.has('cantidad')}"
+                                                @change="validarCantidad"
+                                            >
+                                        <div class="invalid-feedback" v-show="errors.has('cantidad')">{{ errors.first('cantidad') }}</div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row"  v-if="contratistas">
-                                  <div class="col-md-8">
-                                    <div class="form-group error-content">
-                                        <label for="empresa_contratista">Empresa Contratista:</label>
-                                           <select
-                                                   class="form-control"
-                                                   name="empresa_contratista"
-                                                   data-vv-as="Material"
-                                                   v-model="contratista.empresa_contratista"
-                                                   v-validate="{required: false}"
-                                                   id="empresa_contratista"
-                                                   :class="{'is-invalid': errors.has('empresa_contratista')}">
-                                            <option value>-- Seleccione --</option>
-                                            <option v-for="(contratista, index) in contratistas" :value="contratista.id"
-                                                    data-toggle="tooltip" data-placement="left" :title="contratista.id ">
-                                                {{ contratista.razon_social }}
-                                            </option>
-                                        </select>
-                                         <div class="invalid-feedback" v-show="errors.has('id')">{{ errors.first('id') }}</div>
+                                <div class="row" v-if="almacenes && dato.opciones == 65537">
+                                    <div class="col-md-12">
+                                        <div class="form-group error-content">
+                                            <label for="id_almacenes">Almacén:</label>
+                                               <select
+                                                       class="form-control"
+                                                       name="id_almacenes"
+                                                       data-vv-as="Almacen"
+                                                       v-model="dato_partida.destino"
+                                                       v-validate="{required: true}"
+                                                       id="id_almacenes"
+                                                       :class="{'is-invalid': errors.has('id_almacenes')}"
+                                                       @click="validarAlmacen"
+                                               >
+                                                <option value>-- Seleccione un Almacén --</option>
+                                                <option v-for="(almacen, index) in almacenes" :value="almacen.id"
+                                                        data-toggle="tooltip" data-placement="left" :title="almacen.descripcion" @click="validarAlmacen">
+                                                    {{ almacen.descripcion }}
+                                                </option>
+                                            </select>
+                                             <div class="invalid-feedback" v-show="errors.has('id_almacenes')">{{ errors.first('id_almacenes') }}</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                 <div class="col-md-6">
-                                    <div class="form-group row error-content">
-                                        <label for="opcion" class="col-sm-3 col-form-label">Tipo: </label>
-                                        <div class="col-sm-10">
-                                            <div class="btn-group btn-group-toggle">
-                                                <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
-                                                    <input type="radio"
-                                                           class="btn-group-toggle"
-                                                           name="opcion"
-                                                           :id="'opcion' + key"
-                                                           :value="key"
-                                                           autocomplete="on"
-                                                           v-validate="{required: false}"
-                                                           v-model.number="contratista.opcion">
-                                                        {{ cargo }}
-                                                </label>
+                                <div class="row" v-if="dato.opciones == 1">
+                                    <div class="col-md-12">
+                                        <div class="form-group row error-content">
+                                        <label for="id_conceptos">Concepto:</label>
+                                            <concepto-select
+                                                    name="id_conceptos"
+                                                    data-vv-as="Concepto"
+                                                    v-validate="{required: true}"
+                                                    id="id_conceptos"
+                                                    v-model="dato_partida.destino"
+                                                    :error="errors.has('id_conceptos')"
+                                                    ref="conceptoSelect"
+                                                    :disableBranchNodes="true"
+                                            ></concepto-select>
+                                        <div class="error-label" v-show="errors.has('id_conceptos')">{{ errors.first('id_conceptos') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <hr>
+                            <fieldset class="form-group">
+                                <div class="row"  v-if="contratistas">
+                                      <div class="col-md-8">
+                                        <div class="form-group error-content">
+                                            <label for="empresa_contratista">Empresa Contratista:</label>
+                                               <select
+                                                       class="form-control"
+                                                       name="empresa_contratista"
+                                                       data-vv-as="Material"
+                                                       v-model="contratista.empresa_contratista"
+                                                       v-validate="{required: false}"
+                                                       id="empresa_contratista"
+                                                       :class="{'is-invalid': errors.has('empresa_contratista')}">
+                                                <option value>-- Seleccione --</option>
+                                                <option v-for="(contratista, index) in contratistas" :value="contratista.id"
+                                                        data-toggle="tooltip" data-placement="left" :title="contratista.id ">
+                                                    {{ contratista.razon_social }}
+                                                </option>
+                                            </select>
+                                             <div class="invalid-feedback" v-show="errors.has('id')">{{ errors.first('id') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                     <div class="col-md-6">
+                                        <div class="form-group row error-content">
+                                            <label for="opcion" class="col-sm-3 col-form-label">Tipo: </label>
+                                            <div class="col-sm-10">
+                                                <div class="btn-group btn-group-toggle">
+                                                    <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                        <input type="radio"
+                                                               class="btn-group-toggle"
+                                                               name="opcion"
+                                                               :id="'opcion' + key"
+                                                               :value="key"
+                                                               autocomplete="on"
+                                                               v-validate="{required: false}"
+                                                               v-model.number="contratista.opcion">
+                                                            {{ cargo }}
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </fieldset>
                         </div>
                          <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato_partida.cantidad == '' || dato_partida.destino == '' || partida == {}">Registrar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato_partida.cantidad == '' || dato_partida.destino == '' || partida == {}">Registrar</button>
+                        </div>
+                     </form>
+                </div>
+            </div>
+          </div>
+        <div class="modal fade" ref="contratista" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AGREGAR CONTRATISTA</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                     <form role="form" @submit.prevent="modificarContratista">
+                        <div class="modal-body">
+                            <fieldset class="form-group">
+                                <div class="row"  v-if="contratistas">
+                                      <div class="col-md-8">
+                                        <div class="form-group error-content">
+                                            <label for="empresa_contratista">Empresa Contratista:</label>
+                                               <select
+                                                       class="form-control"
+                                                       name="empresa_contratista"
+                                                       data-vv-as="Material"
+                                                       v-model="contratista.empresa_contratista"
+                                                       v-validate="{required: false}"
+                                                       id="empresa_contratista"
+                                                       :class="{'is-invalid': errors.has('empresa_contratista')}">
+                                                <option value>-- Seleccione --</option>
+                                                <option v-for="(contratista, index) in contratistas" :value="contratista.id"
+                                                        data-toggle="tooltip" data-placement="left" :title="contratista.id ">
+                                                    {{ contratista.razon_social }}
+                                                </option>
+                                            </select>
+                                             <div class="invalid-feedback" v-show="errors.has('id')">{{ errors.first('id') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                     <div class="col-md-6">
+                                        <div class="form-group row error-content">
+                                            <label for="opcion" class="col-sm-3 col-form-label">Tipo: </label>
+                                            <div class="col-sm-10">
+                                                <div class="btn-group btn-group-toggle">
+                                                    <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                        <input type="radio"
+                                                               class="btn-group-toggle"
+                                                               name="opcion"
+                                                               :id="'opcion' + key"
+                                                               :value="key"
+                                                               autocomplete="on"
+                                                               v-validate="{required: false}"
+                                                               v-model.number="contratista.opcion">
+                                                            {{ cargo }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                         <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Contratista</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == ''">Registrar Contratista</button>
                         </div>
                      </form>
                 </div>
@@ -440,6 +515,45 @@
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset();
                 this.cargando = false;
+            },
+            agregarContratista(index){
+                this.indice = index;
+                if(this.dato.partidas[this.indice][4] == '' && this.dato.partidas[this.indice][5] == ''){
+                    this.contratista.empresa_contratista = '';
+                    this.contratista.opcion = '';
+                }else{
+                    this.contratista.empresa_contratista = this.dato.partidas[this.indice][4].id;
+                    this.contratista.opcion =  this.dato.partidas[this.indice][5];
+                }
+                this.getContratista().then(data =>{
+                    this.cargando = true;
+                    $(this.$refs.contratista).modal('show');
+                    this.$validator.reset();
+                    this.cargando = false;
+                    this.emp_cont='';
+                });
+
+            },
+            quitarContratista(){
+                this.cargando = true;
+                this.dato.partidas[this.indice][4] = '';
+                this.dato.partidas[this.indice][5] = '';
+                $(this.$refs.contratista).modal('hide');
+                this.$validator.reset();
+                this.emp_cont='';
+                this.cargando = false;
+            },
+            modificarContratista(){
+                this.cargando = true;
+                this.findContratista().then(data => {
+                    this.dato.partidas[this.indice][4] = this.emp_cont;
+                    this.dato.partidas[this.indice][5] = this.contratista.opcion;
+                    $(this.$refs.contratista).modal('hide');
+                    this.$validator.reset();
+                    this.cargando = false;
+                    this.emp_cont='';
+                });
+
             },
             getContratista() {
                 return this.$store.dispatch('cadeco/empresa/index', {
@@ -534,12 +648,16 @@
                     swal('¡Error!', 'La cantidad no puede ser mayor a la existencia.', 'error');
                     this.dato_partida.cantidad = '';
                     this.$nextTick(() => this.$refs.input.focus());
+                }else if( parseInt(this.dato_partida.cantidad)<= 0){
+                    swal('¡Error!', 'La cantidad no puede ser cero o menor.', 'error');
+                    this.dato_partida.cantidad = '';
+                    this.$nextTick(() => this.$refs.input.focus());
                 }
             },
             validarAlmacen() {
-                if(this.dato.id_almacen == this.partida.id_almacenes){
+                if(this.id_almacen == this.dato_partida.destino){
                     swal('¡Error!', 'No puede seleccionar el mismo almacén en el destino.', 'error');
-                    this.partida.id_almacenes='';
+                    this.dato_partida.destino='';
                 }
             },
             index(){
@@ -552,11 +670,8 @@
                 }
                 this.findAlmacen().finally(() => {
                     this.dato.id_concepto = this.almacen.id_padre;
-                    if(this.emp_cont != '') {
-                        this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
-                    }else{
-                        this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida]);
-                    }
+                    this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
+                    this.emp_cont='';
                 });
 
                 $(this.$refs.modal).modal('hide');

@@ -374,7 +374,13 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'compras'], function ($api) {
 
-         // ORDEN DE COMPRA
+         // ITEM CONTRATISTA
+        $api->group(['prefix' => 'item-contratista'], function ($api) {
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Compras\ItemContratistaController@destroy')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Compras\ItemContratistaController@update')->where(['id' => '[0-9]+']);
+        });
+
+        // ORDEN DE COMPRA
         $api->group(['prefix' => 'orden-compra'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@paginate');

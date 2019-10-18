@@ -37,7 +37,8 @@ class MaterialService
                     FROM '.Context::getDatabase().'.[dbo].[inventarios] i
                     inner join '.Context::getDatabase().'.[dbo].materiales m on i.id_material = m.id_material
                     where i.id_almacen = '.$data['almacen'].' and saldo >0 and m.numero_parte is not null
-                    group by  m.id_material ,m.id_material,m.descripcion,m.numero_parte,m.unidad');
+                    group by  m.id_material ,m.id_material,m.descripcion,m.numero_parte,m.unidad
+                    order by m.descripcion');
 
         return $query;
     }
