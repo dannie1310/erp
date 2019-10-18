@@ -116,8 +116,8 @@
                                                             <td>{{partida[0].numero_parte}}</td>
                                                             <td>{{partida[0].descripcion}}</td>
                                                             <td>{{partida[0].unidad}}</td>
-                                                            <td>{{partida[3][1]}}</td>
-                                                            <td>{{partida[1]}}</td>
+                                                            <td>{{parseFloat(partida[3][1]).toFixed(2)}}</td>
+                                                            <td>{{parseFloat(partida[1]).toFixed(2)}}</td>
                                                             <td v-if="partida[2].path" :title="partida[2].path">{{partida[2].descripcion}}</td>
                                                             <td v-else>{{partida[2].descripcion}}</td>
                                                             <td>
@@ -254,7 +254,7 @@
                                                 <option value>-- Existencia --</option>
                                                 <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
                                                         data-toggle="tooltip" data-placement="left" :title="material.saldo ">
-                                                    {{ material.saldo }}
+                                                    {{ parseFloat(material.saldo).toFixed(2) }}
                                                 </option>
                                             </select>
                                              <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
