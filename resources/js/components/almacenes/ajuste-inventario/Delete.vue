@@ -92,28 +92,25 @@
 
 
 
-                                      <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group row error-content">
-                                                     <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
-                                                    <div class="col-sm-10">
-                                                        <textarea
-                                                            name="motivo"
-                                                            id="motivo"
-                                                            class="form-control"
-                                                            v-model="motivo"
-                                                            v-validate="{required: true}"
-                                                            data-vv-as="Motivo"
-                                                            :class="{'is-invalid': errors.has('motivo')}"
-                                                        ></textarea>
-                                                        <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
-                                                    </div>
+                                  <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group row error-content">
+                                                 <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
+                                                <div class="col-sm-10">
+                                                    <textarea
+                                                        name="motivo"
+                                                        id="motivo"
+                                                        class="form-control"
+                                                        v-model="motivo"
+                                                        v-validate="{required: true}"
+                                                        data-vv-as="Motivo"
+                                                        :class="{'is-invalid': errors.has('motivo')}"
+                                                    ></textarea>
+                                                    <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                                                 </div>
                                             </div>
                                         </div>
-
-
-
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -185,14 +182,34 @@
                 })
             },
             borrar(){
-                return this.$store.dispatch('almacenes/ajuste-inventario/eliminar', {
-                    id: this.id,
-                    params: {data: [this.$data.motivo]}
-                }).then(data => {
-                    // this.$store.commit('almacenes/ajuste-positivo/SET_AJUSTE', data);
-                    // this.ajustes = data;
-                    // $(this.$refs.modal).modal('show');
-                })
+                if(this.tipo == 0) {
+                    return this.$store.dispatch('almacenes/ajuste-positivo/eliminar', {
+                        id: this.id,
+                        params: {data: [this.$data.motivo]}
+                    })
+                        .then(data => {
+                            $(this.$refs.modal).modal('show');
+                        })
+                        .finally(() => {
+                            this.cargando = false;
+                        });
+                }
+                if(this.tipo == 1){
+                    return this.$store.dispatch('almacenes/ajuste-negativo/eliminar', {
+                        id: this.id,
+                        params: {data: [this.$data.motivo]}
+                    }).then(data => {
+                        $(this.$refs.modal).modal('show');
+                    })
+                }
+                if(this.tipo == 2){
+                    return this.$store.dispatch('almacenes/nuevo-lote/eliminar', {
+                        id: this.id,
+                        params: {data: [this.$data.motivo]}
+                    }).then(data => {
+                        $(this.$refs.modal).modal('show');
+                    })
+                }
             },
         }
     }

@@ -10,10 +10,7 @@ namespace App\Services\CADECO\Almacenes;
 
 
 use App\Models\CADECO\Ajuste;
-use App\Models\CADECO\AjusteNegativo;
-use App\Models\CADECO\AjustePositivo;
 use App\Models\CADECO\Almacen;
-use App\Models\CADECO\NuevoLote;
 use App\Repositories\Repository;
 
 class AjusteService
@@ -67,13 +64,4 @@ class AjusteService
     {
         return $this->repository->show($id);
     }
-
-    public function delete($data, $id)
-    {
-        return $this->show($id)->eliminar($data['data'][0]);
-    }
-
-
-
-
 }

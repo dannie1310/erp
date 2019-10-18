@@ -11,6 +11,7 @@ class AjusteEliminado extends Model
     protected $connection = 'cadeco';
     protected $table = 'Almacen.ajuste_inventario_eliminado';
     protected $primaryKey = 'id_transaccion';
+    public $timestamps = false;
 
 
     public $fillable = [
@@ -30,10 +31,5 @@ class AjusteEliminado extends Model
         'usuario_elimina',
         'motivo_eliminacion',
         'fecha_eliminacion',
-
     ];
-
-
-
-
 }

@@ -36,7 +36,5 @@ class ItemAjusteEliminado extends Model
         'cantidad_original1',
         'precio_original1',
         'id_asignacion'
-
     ];
-
 }
