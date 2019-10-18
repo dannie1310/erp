@@ -80,16 +80,20 @@ class FacturaService
 
         if(isset($data['estado']))
         {
-            if(strcmp(strtoupper($data['estado']),'REGISTRADA')==0){
+            if(strpos('REGISTRADA',strtoupper($data['estado'])) !== FALSE ){
                 $facturas = $facturas->where([['estado', '=', 0]]);
             }
 
-            if(strcmp(strtoupper($data['estado']),'REVISADA')==0){
+            if(strpos('REVISADA',strtoupper($data['estado'])) !== FALSE ){
                 $facturas = $facturas->where([['estado', '=', 1]]);
             }
 
-            if(strcmp(strtoupper($data['estado']),'PAGADA')==0){
+            if(strpos('PAGADA',strtoupper($data['estado'])) !== FALSE ){
                 $facturas = $facturas->where([['estado', '=', 2]]);
+            }
+
+            if(strpos('SALDO PENDIENTE',strtoupper($data['estado'])) !== FALSE ){
+                $facturas = $facturas->where([['estado', '=', 1]]);
             }
         }
 
