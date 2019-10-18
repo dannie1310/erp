@@ -14,6 +14,7 @@ use App\Models\SEGURIDAD_ERP\CtgContratista;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
+use App\Models\CADECO\Obra;
 
 class Transaccion extends Model
 {
@@ -97,6 +98,11 @@ class Transaccion extends Model
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function obra()
+    {
+        return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
+    }
+
     public function moneda(){
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
@@ -136,10 +142,6 @@ class Transaccion extends Model
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
-
-//    public function moneda(){
-//        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
-//    }
 
     public function getSubtotalAttribute()
     {
