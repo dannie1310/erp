@@ -38,6 +38,10 @@ class Solicitud extends Transaccion
         return $this->belongsTo(PagoACuenta::class, 'id_referente', 'id_referente');
     }
 
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
 
     public function generaPago($data)
     {
