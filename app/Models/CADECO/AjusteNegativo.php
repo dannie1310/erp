@@ -187,23 +187,21 @@ class AjusteNegativo extends Ajuste
 
     public function validarRespaldos()
     {
+
+
         $partidas = $this->partidas()->get()->toArray();
-
-
-        foreach($this->partidas()->get() as $partida) {
+        foreach ($this->partidas()->get() as $partida) {
             $item = ItemAjusteEliminado::query()->where('id_item', '=', $partida->id_item)->first();
-
-            if(!is_null($item))
+            if ($item == null)
             {
                 abort(400, 'Error en el proceso de eliminación de ajustes.');
             }
         }
 
-        $ajuste = AjusteEliminado::query()->where('id_transaccion', '=', $this->id_transaccion)->first();
-
-        if(!is_null($ajuste))
+        if(AjusteEliminado::query()->where('id_transaccion', '=', $this->id_transaccion)->first() == null)
         {
             abort(400, 'Error en el proceso de eliminación de ajustes.');
         }
+
     }
 }
