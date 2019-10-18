@@ -70,36 +70,9 @@ class AjusteService
 
     public function delete($data, $id)
     {
-
-        $ajuste = $this->repository->show($id);
-
-        switch ($ajuste->opciones){
-
-            /*Ajuste Positivo*/
-            case 0:
-                $positivo = AjustePositivo::query()->with('partidas')->find($id);
-                $ajuste_positivo = new AjustePositivo();
-                $ajuste_positivo->validarPartidasAjusteEliminar($positivo->partidas, $id);
-
-                break;
-
-            /*Ajuste Negativo*/
-            case 1:
-                $negativo = AjusteNegativo::query()->with('partidas')->find($id);
-                $ajuste_negativo = new AjusteNegativo();
-                $ajuste_negativo->validarPartidasAjusteEliminar($negativo->partidas, $id);
-                break;
-
-             /*Nuevo lotes*/
-            case 2:
-                $lote = NuevoLote::query()->with('partidas')->find($id);
-                $nuevo_lote = new NuevoLote();
-                $nuevo_lote->validarPartidasAjusteEliminar($lote->partidas, $id);
-
-                break;
-        }
-
+        return $this->show($id)->eliminar($data['data'][0]);
     }
+
 
 
 

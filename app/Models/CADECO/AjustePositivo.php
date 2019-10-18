@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Almacenes\ItemAjusteEliminado;
 use Illuminate\Support\Facades\DB;
 
 class AjustePositivo extends Ajuste
@@ -83,14 +84,15 @@ class AjustePositivo extends Ajuste
     }
 
 
+
     public function validarPartidasAjusteEliminar($partidas, $id)
     {
         foreach ($partidas as $partida){
-dd($partida);
-              $item = Item::query()->where('item_antecedente','=', $partida->id_item)->first();
 
+              $item = Item::query()->where('id_item','=', $partida->id_item)->first();
+            dd($item->material->descripcion);
               if(!is_null($item)){
-                  abort(400, "El item:".$partida['id_material']['descripcion']);
+                  abort(400, "El item:". $partida->id_item ." - ".$item->material->descricpion . "ya se encuenntra asociado a otra transacción");
               }
               dd($item);
 //            $inventario = Inventario::query()->where('id_material', '=', $partida->id_material)

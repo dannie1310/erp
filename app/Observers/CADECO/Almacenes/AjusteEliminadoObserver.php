@@ -18,6 +18,7 @@ class AjusteEliminadoObserver
     public function creating(AjusteEliminado $model)
     {
         $model->fecha = date('Y-m-d h:i:s');
+        $model->tipo_transaccion = 35;
         $model->FechaHoraRegistro = date('Y-m-d h:i:s');
         $model->usuario_elimina = auth()->id();
         $model->id_obra = Context::getIdObra();
