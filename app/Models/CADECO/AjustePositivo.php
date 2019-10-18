@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Almacenes\AjusteEliminado;
 use App\Models\CADECO\Almacenes\ItemAjusteEliminado;
 use Illuminate\Support\Facades\DB;
 
@@ -84,66 +85,88 @@ class AjustePositivo extends Ajuste
     }
 
 
-
-    public function validarPartidasAjusteEliminar($partidas, $id)
-    {
-        foreach ($partidas as $partida){
-
-              $item = Item::query()->where('id_item','=', $partida->id_item)->first();
-            dd($item->material->descripcion);
-              if(!is_null($item)){
-                  abort(400, "El item:". $partida->id_item ." - ".$item->material->descricpion . "ya se encuentra asociado en otra transacción");
-              }
-//              dd($item);
-//            $inventario = Inventario::query()->where('id_material', '=', $partida->id_material)
-//                ->where('id_almacen', '=', $partida->id_almacen)
-//                ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();
-//            dd($inventario);
-
-        }
-
-
-    }
-
     public function eliminar($motivo)
     {
-        switch ($this->opciones){
+        try {
+            DB::connection('cadeco')->beginTransaction();
 
-            /*Ajuste Positivo*/
-            case 0:
-                $positivo = AjustePositivo::query()->with('partidas')->find($this->id_transaccion);
-                $ajuste_positivo = new AjustePositivo();
-//                $ajuste_positivo->validarPartidasAjusteEliminar($positivo->partidas, $this->id_transaccion);
-                $this->respaldarItems($positivo->partidas);
-                $this->respaldarAjuste($positivo, $motivo);
-                break;
+            $this->validarEliminacion();
 
-            /*Ajuste Negativo*/
-            case 1:
-                $negativo = AjusteNegativo::query()->with('partidas')->find($this->id_transaccion);
-                $ajuste_negativo = new AjusteNegativo();
-                $ajuste_negativo->validarPartidasAjusteEliminar($negativo->partidas, $this->id_transaccion);
-                $this->respaldarItems($negativo->partidas);
-                $this->respaldarAjuste($negativo, $motivo);
-                break;
+            //Se realiza una revision de los respaldos
+            $this->validarRespaldos();
 
-            /*Nuevo lotes*/
-            case 2:
+            //Ser realizan los respaldos
+            $this->respaldarItems();
+            $this->respaldarAjuste($motivo);
 
-                $lote = NuevoLote::query()->with('partidas')->find($this->id_transaccion);
-                $nuevo_lote = new NuevoLote();
-                $nuevo_lote->validarPartidasAjusteEliminar($lote->partidas, $this->id_transaccion);
-                $this->respaldarItems($lote->partidas);
-                $this->respaldarAjuste($lote, $motivo);
-                break;
+
+            //Se elimina el ajuste
+            $this->partidas()->delete();
+            $this->delete();
+
+            DB::connection('cadeco')->commit();
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
         }
     }
 
 
 
-    public function respaldarItems($data){
+    public function validarEliminacion()
+    {
+        $partidas = $this->partidas()->get()->toArray();
 
-        foreach ($data as $partida ){
+        foreach($this->partidas()->get() as $partida) {
+            $item = Item::query()->where('id_antecedente','=', $partida->id_item)->first();
+
+            if(!is_null($item)){
+                abort(400, "El item:". $partida->id_item ." - ".$item->material->descricpion . "ya se encuentra asociado en otra transacción");
+            }
+
+
+            $inventario = Inventario::query()->where('id_lote', '=', $partida->item_antecedente)
+                ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first();
+
+            if($partida->cantidad>$inventario->saldo)
+            {
+                abort(400, 'Error en el proceso de eliminación de ajustes. (Saldo menor)');
+            }
+
+            Inventario::query()->where('id_lote','=', $partida->item_antecedente)->update(array('saldo'=>$inventario->saldo-$partida->cantidad));
+
+        }
+    }
+
+
+    public function validarRespaldos()
+    {
+      $partidas = $this->partidas()->get()->toArray();
+
+      foreach($this->partidas()->get() as $partida) {
+
+          $item = ItemAjusteEliminado::query()->where('id_item', '=', $partida->id_item)->first();
+
+          if(!is_null($item))
+          {
+              abort(400, 'Error en el proceso de eliminación de ajustes.');
+          }
+      }
+
+        $ajuste = AjusteEliminado::query()->where('id_transaccion', '=', $this->id_transaccion)->first();
+
+        if(!is_null($ajuste))
+        {
+            abort(400, 'Error en el proceso de eliminación de ajustes.');
+        }
+    }
+
+
+
+    public function respaldarItems(){
+
+        foreach ($this->partidas as $partida ){
 
             $datos = [
                 'id_item' => $partida->id_item,
@@ -175,7 +198,8 @@ class AjustePositivo extends Ajuste
 
     }
 
-    public function respaldarAjuste($data, $motivo)
+
+    public function respaldarAjuste($motivo)
     {
 
         $datos = [
@@ -197,5 +221,8 @@ class AjustePositivo extends Ajuste
 
         $ajuste_respaldo = AjusteEliminado::query()->create($datos);
     }
+
+
+
 
 }

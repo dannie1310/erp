@@ -9,6 +9,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Almacenes\AjusteEliminado;
+use App\Models\CADECO\Almacenes\ItemAjusteEliminado;
 use Illuminate\Support\Facades\DB;
 
 class AjusteNegativo extends Ajuste
@@ -104,7 +106,27 @@ class AjusteNegativo extends Ajuste
 
     public function validarEliminacion()
     {
-        //colocar validaciones para proceder a la eliminación
+        $partidas = $this->partidas()->get()->toArray();
+
+        foreach($this->partidas()->get() as $partida) {
+            $item = Item::query()->where('id_antecedente','=', $partida->id_item)->first();
+
+            if(!is_null($item)){
+                abort(400, "El item:". $partida->id_item ." - ".$item->material->descricpion . "ya se encuentra asociado en otra transacción");
+            }
+
+
+            $inventario = Inventario::query()->where('id_lote', '=', $partida->item_antecedente)
+                ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first();
+
+            if($partida->cantidad>$inventario->cantidad)
+            {
+                abort(400, 'Error en el proceso de eliminación de ajustes. (Saldo menor)');
+            }
+
+            Inventario::query()->where('id_lote','=', $partida->item_antecedente)->update(array('saldo'=>$inventario->saldo+$partida->cantidad));
+
+        }
     }
 
     public function respaldarItems(){
@@ -142,7 +164,7 @@ class AjusteNegativo extends Ajuste
     public function respaldarAjuste($motivo)
     {
 
-        $datos = [
+
             $datos = [
                 'id_transaccion' => $this->id_transaccion,
                 'numero_folio' => $this->numero_folio,
@@ -158,7 +180,6 @@ class AjusteNegativo extends Ajuste
                 'FechaHoraRegistro' => $this->FechaHoraRegistro,
                 'id_obra' => $this->id_obra,
                 'motivo_eliminacion' => $motivo
-            ];
         ];
 
         $ajuste_respaldo = AjusteEliminado::query()->create($datos);
@@ -166,6 +187,23 @@ class AjusteNegativo extends Ajuste
 
     public function validarRespaldos()
     {
-        //revisar el respaldo del ajuste y de las partidas
+        $partidas = $this->partidas()->get()->toArray();
+
+
+        foreach($this->partidas()->get() as $partida) {
+            $item = ItemAjusteEliminado::query()->where('id_item', '=', $partida->id_item)->first();
+
+            if(!is_null($item))
+            {
+                abort(400, 'Error en el proceso de eliminación de ajustes.');
+            }
+        }
+
+        $ajuste = AjusteEliminado::query()->where('id_transaccion', '=', $this->id_transaccion)->first();
+
+        if(!is_null($ajuste))
+        {
+            abort(400, 'Error en el proceso de eliminación de ajustes.');
+        }
     }
 }
