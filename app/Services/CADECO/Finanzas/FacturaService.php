@@ -116,12 +116,6 @@ class FacturaService
         if(isset($data['fecha'])) {
             $facturas = $facturas->where( [['fecha', '=', $data['fecha']]] );
         }
-
-
-
-
-
-
         return $facturas->paginate($data);
     }
 
