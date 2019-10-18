@@ -152,13 +152,13 @@ class NuevoLote extends Ajuste
         $partidas = $this->partidas()->get()->toArray();
         foreach ($this->partidas()->get() as $partida) {
             $item = ItemAjusteEliminado::query()->where('id_item', '=', $partida->id_item)->first();
-            if ($item == null)
+            if (is_null($item))
             {
                 abort(400, 'Error en el proceso de eliminación de ajustes.');
             }
         }
-
-        if(AjusteEliminado::query()->where('id_transaccion', '=', $this->id_transaccion)->first() == null)
+        $ajuste =AjusteEliminado::query()->where('id_transaccion', '=', $this->id_transaccion)->first();
+        if(is_null($ajuste))
         {
             abort(400, 'Error en el proceso de eliminación de ajustes.');
         }
