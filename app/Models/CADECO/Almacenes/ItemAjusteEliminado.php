@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class ItemAjusteEliminado extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'Almacen.items_ajustes_eliminadas';
+    protected $table = 'Almacenes.items_ajustes_eliminados';
     protected $primaryKey = 'id_item';
 
     public $timestamps = false;
