@@ -1,12 +1,16 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_marbetes_manualmente')" class="btn btn-app btn-info pull-right" :disabled="cargando">
-            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-plus" v-else></i>
-            Crear Marbete
-        </button>
+        <div class="row">
+            <div class="col-12" v-if="$root.can('registrar_marbetes_manualmente')" :disabled="cargando">
+                <button @click="init" class="btn btn-app btn-info pull-right">
+                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                    <i class="fa fa-plus" v-else></i>
+                    Crear Marbete
+                </button>
+            </div>
+        </div>
 
-                     <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
