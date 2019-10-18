@@ -11,24 +11,21 @@ namespace App\Observers\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\OrdenPago;
+use App\Models\CADECO\Transaccion;
 
-class OrdenPagoObserver
+class OrdenPagoObserver extends TransaccionObserver
 {
     /**
      * @param OrdenPago $ordenPago
      * @throws \Exception
      */
-    public function creating(OrdenPago $ordenPago)
+    public function creating(Transaccion $ordenPago)
     {
+        parent::creating($ordenPago);
         if (!$ordenPago->validaTipoAntecedente()) {
             throw New \Exception('La transacción antecedente no es válida');
         }
         $ordenPago->tipo_transaccion = 68;
         $ordenPago->opciones = 0;
-        $ordenPago->fecha = date('Y-m-d');
-        $ordenPago->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $ordenPago->FechaHoraRegistro = date('Y-m-d h:i:s');
-        $ordenPago->id_obra = Context::getIdObra();
-        $ordenPago->id_usuario = auth()->id();
     }
 }

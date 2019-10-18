@@ -172,7 +172,7 @@ class GestionPagoService
                                         $data["id_antecedente"] = $transaccion->id_antecedente;
                                         $data["id_referente"] = $transaccion->id_transaccion;
                                         unset($data["referencia"]);
-                                        $o_pago = OrdenPago::query()->create($data);
+                                        $o_pago = OrdenPago::create($data);
                                         $o_pago = OrdenPago::query()->where('id_transaccion', '=', $o_pago->id_transaccion)->first();
                                         unset($data["id_antecedente"]);
                                         unset($data["id_referente"]);
