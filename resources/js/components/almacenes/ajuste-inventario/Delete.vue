@@ -89,9 +89,6 @@
                                             </table>
                                         </div>
                                     </div>
-
-
-
                                   <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
@@ -106,7 +103,7 @@
                                                         data-vv-as="Motivo"
                                                         :class="{'is-invalid': errors.has('motivo')}"
                                                     ></textarea>
-                                                    <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                                     <div class="error-label" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -117,7 +114,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-danger" v-on:click="borrar" >Eliminar</button>
+                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 " v-on:click="borrar" >Eliminar</button>
                     </div>
                 </div>
             </div>
@@ -188,7 +185,12 @@
                         params: {data: [this.$data.motivo]}
                     })
                         .then(data => {
-                            $(this.$refs.modal).modal('show');
+                            $(this.$refs.modal).modal('hide');
+                            return this.$store.dispatch('almacenes/ajuste-inventario/paginate', { params: {sort: 'numero_folio', order: 'desc'}})
+                                .then(data => {
+                                    this.$store.commit('almacenes/ajuste-inventario/SET_AJUSTES', data.data);
+                                    this.$store.commit('almacenes/ajuste-inventario/SET_META', data.meta);
+                                })
                         })
                         .finally(() => {
                             this.cargando = false;
@@ -198,17 +200,33 @@
                     return this.$store.dispatch('almacenes/ajuste-negativo/eliminar', {
                         id: this.id,
                         params: {data: [this.$data.motivo]}
-                    }).then(data => {
-                        $(this.$refs.modal).modal('show');
+                    }) .then(data => {
+                        $(this.$refs.modal).modal('hide');
+                        return this.$store.dispatch('almacenes/ajuste-inventario/paginate', { params: {sort: 'numero_folio', order: 'desc'}})
+                            .then(data => {
+                                this.$store.commit('almacenes/ajuste-inventario/SET_AJUSTES', data.data);
+                                this.$store.commit('almacenes/ajuste-inventario/SET_META', data.meta);
+                            })
                     })
+                        .finally(() => {
+                            this.cargando = false;
+                        });
                 }
                 if(this.tipo == 2){
                     return this.$store.dispatch('almacenes/nuevo-lote/eliminar', {
                         id: this.id,
                         params: {data: [this.$data.motivo]}
-                    }).then(data => {
-                        $(this.$refs.modal).modal('show');
+                    }) .then(data => {
+                        $(this.$refs.modal).modal('hide');
+                        return this.$store.dispatch('almacenes/ajuste-inventario/paginate', { params: {sort: 'numero_folio', order: 'desc'}})
+                            .then(data => {
+                                this.$store.commit('almacenes/ajuste-inventario/SET_AJUSTES', data.data);
+                                this.$store.commit('almacenes/ajuste-inventario/SET_META', data.meta);
+                            })
                     })
+                        .finally(() => {
+                            this.cargando = false;
+                        });
                 }
             },
         }
