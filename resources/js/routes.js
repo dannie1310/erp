@@ -1079,6 +1079,51 @@ export const routes = [
                 ]
             },
             {
+                path: 'insumo-servicio',
+                component: require('./components/finanzas/insumo-servicio/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'insumo-servicio',
+                        component: require('./components/finanzas/insumo-servicio/Index'),
+                        meta: {
+                            title: 'Insumo de Servicios',
+                            breadcrumb: {parent: 'finanzas', name: 'INSUMO SERVICIO'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia-serv',
+                        name: 'familia-serv',
+                        component: require('./components/finanzas/insumo-servicio/familia/Index'),
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'insumo-servicio',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    },
+                    {
+                        path: 'material',
+                        name: 'material',
+                        component: require('./components/compras/catalogos/material/Index'),
+                        meta: {
+                            title: 'Material',
+                            breadcrumb: {
+                                parent: 'catalogo-insumo',
+                                name: 'MATERIAL'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'solicitud',
                 component: require('./components/finanzas/solicitud/Layout'),
                 children: [

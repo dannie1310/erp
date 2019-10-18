@@ -27,7 +27,8 @@ class Material extends Model
         'cuentaMaterial.tipo.descripcion',
         'tipo_material',
         'equivalencia',
-        'marca'
+        'marca',
+        'familia'
     ];
 
     public function getTieneHijosAttribute()
@@ -42,7 +43,7 @@ class Material extends Model
                 return 'Materiales';
                 break;
             case(2):
-                if($this->equivalencia == 0 && $this->marca ==0){
+                if($this->marca ==0){
                     return 'Mano de Obra';
                 }else{
                     return 'Servicio';
@@ -84,8 +85,9 @@ class Material extends Model
 
     public function hijos()
     {
+//        dd($this);
         return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
-            ->where('nivel', 'LIKE', $this->nivel . '___.');
+            ->where('nivel', 'LIKE',  '009.___.');
     }
 
     public function scopeRoots($query)
