@@ -70,6 +70,7 @@ class CargaLayoutPagoService
 
                 /*Facturas*/
                 if ($transaccion->tipo_transaccion === '65') {
+
                     $pago = Factura::query()->find($partida->id_transaccion)->generaOrdenPago($partida);
                     $partida->id_transaccion_pago = $pago;
                     $partida->save();
@@ -77,6 +78,8 @@ class CargaLayoutPagoService
 
                 /*Solicitud*/
                 if ($transaccion->tipo_transaccion === '72') {
+
+
                     $pago = Solicitud::query()->find($partida->id_transaccion)->generaPago($partida);
                     $partida->id_transaccion_pago = $pago;
                     $partida->save();
