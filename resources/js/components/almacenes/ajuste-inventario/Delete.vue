@@ -114,7 +114,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 " v-on:click="borrar" >Eliminar</button>
+                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''" v-on:click="borrar" >Eliminar</button>
                     </div>
                 </div>
             </div>
