@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12 col-sm-6 col-md-3" v-for="(sistema, i) in sistemas">
                 <div class="info-box">
-                    <span :class="'info-box-icon '+sistema.color+' elevation-1'" :title="sistema.description"><i :class="sistema.icon"></i></span>
+                    <span :class="'info-box-icon '+sistema.color+' elevation-1'"><i :class="sistema.icon" :title="sistema.description"></i></span>
 
                     <div class="info-box-content">
                         <span class="info-box-number">{{sistema.name.toUpperCase()}}</span>
