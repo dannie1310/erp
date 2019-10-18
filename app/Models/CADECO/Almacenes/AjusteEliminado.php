@@ -4,6 +4,8 @@
 namespace App\Models\CADECO\Almacenes;
 
 
+use Illuminate\Database\Eloquent\Model;
+
 class AjusteEliminado extends Model
 {
     protected $connection = 'cadeco';

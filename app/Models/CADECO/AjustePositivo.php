@@ -92,9 +92,9 @@ class AjustePositivo extends Ajuste
               $item = Item::query()->where('id_item','=', $partida->id_item)->first();
             dd($item->material->descripcion);
               if(!is_null($item)){
-                  abort(400, "El item:". $partida->id_item ." - ".$item->material->descricpion . "ya se encuenntra asociado a otra transacción");
+                  abort(400, "El item:". $partida->id_item ." - ".$item->material->descricpion . "ya se encuentra asociado en otra transacción");
               }
-              dd($item);
+//              dd($item);
 //            $inventario = Inventario::query()->where('id_material', '=', $partida->id_material)
 //                ->where('id_almacen', '=', $partida->id_almacen)
 //                ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();

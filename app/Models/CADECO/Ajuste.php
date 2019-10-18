@@ -42,13 +42,11 @@ class Ajuste extends Transaccion
 
             /*Ajuste Positivo*/
             case 0:
-
-                $positivo = AjustePositivo::query()->with('partidas')->find($this->id_transaccion);
-                $ajuste_positivo = new AjustePositivo();
-                $ajuste_positivo->validarPartidasAjusteEliminar($positivo->partidas, $this->id_transaccion);
-//                $this->respaldarItem();
-//                $this->respaldarAjuste();
-
+                  $positivo = AjustePositivo::query()->with('partidas')->find($this->id_transaccion);
+                  $ajuste_positivo = new AjustePositivo();
+//                $ajuste_positivo->validarPartidasAjusteEliminar($positivo->partidas, $this->id_transaccion);
+                $this->respaldarItems($positivo->partidas);
+                $this->respaldarAjuste($positivo, $motivo);
                 break;
 
             /*Ajuste Negativo*/
@@ -56,8 +54,8 @@ class Ajuste extends Transaccion
                 $negativo = AjusteNegativo::query()->with('partidas')->find($this->id_transaccion);
                 $ajuste_negativo = new AjusteNegativo();
                 $ajuste_negativo->validarPartidasAjusteEliminar($negativo->partidas, $this->id_transaccion);
-//                $this->respaldarItem();
-//                $this->respaldarAjuste();
+                $this->respaldarItems($negativo->partidas);
+                $this->respaldarAjuste($negativo, $motivo);
                 break;
 
             /*Nuevo lotes*/
@@ -66,55 +64,62 @@ class Ajuste extends Transaccion
                 $lote = NuevoLote::query()->with('partidas')->find($this->id_transaccion);
                 $nuevo_lote = new NuevoLote();
                 $nuevo_lote->validarPartidasAjusteEliminar($lote->partidas, $this->id_transaccion);
-//                $this->respaldarItem();
-//                $this->respaldarAjuste();
-
+                $this->respaldarItems($lote->partidas);
+                $this->respaldarAjuste($lote, $motivo);
                 break;
         }
     }
 
 
 
-    public function respaldarItem($data){
-        $datos = [
-            'id_item'=>"",
-            'id_transaccion'=>"",
-            'id_antecedente'=>"",
-            'item_antecedente'=>"",
-            'id_almacen'=>"",
-            'id_concepto'=>"",
-            'id_material'=>"",
-            'unidad'=>"",
-            'numero'=>"",
-            'cantidad'=>"",
-            'cantidad_material'=>"",
-            'importe'=>"",
-            'saldo'=>"",
-            'precio_unitario'=>"",
-            'anticipo'=>"",
-            'precio_material'=>"",
-            'referencia'=>"",
-            'estado'=>'',
-            'cantidad_original1'=>"",
-            'precio_original1'=>"",
-            'id_asignacion'=>""
-        ];
-        $item_respaldo = ItemAjusteEliminado::query()->create($datos);
+    public function respaldarItems($data){
+
+        foreach ($data as $partida ){
+
+            $datos = [
+                'id_item' => $partida->id_item,
+                'id_transaccion' => $partida->id_transaccion,
+                'id_antecedente' => $partida->id_antecedente,
+                'item_antecedente' => $partida->item_antecedente,
+                'id_almacen' => $partida->id_almacen,
+                'id_concepto' => $partida->id_concepto,
+                'id_material' => $partida->id_material,
+                'unidad' => $partida->unidad,
+                'numero' => $partida->numero,
+                'cantidad' => $partida->cantidad,
+                'cantidad_material' => $partida->cantidad_material,
+                'importe' => $partida->importe,
+                'saldo' => $partida->saldo,
+                'precio_unitario' => $partida->precio_unitario,
+                'anticipo' => $partida->anticipo,
+                'precio_material' => $partida->precio_material,
+                'referencia' => $partida->referencia,
+                'estado' => $partida->estado,
+                'cantidad_original1' => $partida->cantidad_original1,
+                'precio_original1' => $partida->precio_original1,
+                'id_asignacion' => $partida->id_asignacion
+            ];
+            $item_respaldo = ItemAjusteEliminado::query()->create($datos);
+
+
+        }
+
     }
 
-    public function respaldarAjuste($data)
+    public function respaldarAjuste($data, $motivo)
     {
+
         $datos = [
-            'id_transaccion'=>"",
-            'numero_folio'=>"",
-            'id_almacen'=>"",
-            'opciones'=>"",
-            'monto'=>"",
-            'saldo'=>"",
-            'referencia'=>"",
-            'comentario'=>"",
-            'observaciones'=>"",
-            'motivo_eliminacion'=>"",
+            'id_transaccion' => $data->id_transaccion,
+            'numero_folio' => $data->numero_folio,
+            'id_almacen' => $data->id_almacen,
+            'opciones' => $data->opciones,
+            'monto' => $data->monto,
+            'saldo' => $data->saldo,
+            'referencia' => $data->referencia,
+            'comentario' => $data->comentario,
+            'observaciones' => $data->observaciones,
+            'motivo_eliminacion' => $motivo,
         ];
 
         $ajuste_respaldo = AjusteEliminado::query()->create($datos);
