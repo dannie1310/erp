@@ -5,7 +5,12 @@
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
+                <div class="modal-content" v-if="cargando">
+                    <div>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-spin fa-spinner"></i>CARGANDO</h5>
+                    </div>
+                </div>
+                <div class="modal-content" v-else>
                     <div class="modal-header" v-if="salida">
                         <h5 class="modal-title" id="exampleModalLongTitle" v-if="salida.opciones == 1"> <i class="fa fa-th"></i> VISUALIZAR SALIDA DE  ALMACÉN</h5>
                         <h5 class="modal-title" id="exampleModalLongTitle" v-else> <i class="fa fa-th"></i> VISUALIZAR TRANSFERENCIA</h5>
@@ -117,7 +122,7 @@
                                                        name="empresa_contratista"
                                                        data-vv-as="Material"
                                                        v-model="cont.empresa_contratista"
-                                                       v-validate="{required: false}"
+                                                       v-validate="{required: true}"
                                                        id="empresa_contratista"
                                                        :class="{'is-invalid': errors.has('empresa_contratista')}">
                                                 <option value>-- Seleccione --</option>
@@ -143,7 +148,7 @@
                                                                :id="'opcion' + key"
                                                                :value="key"
                                                                autocomplete="on"
-                                                               v-validate="{required: false}"
+                                                               v-validate="{required: true}"
                                                                v-model.number="cont.opcion">
                                                             {{ cargo }}
                                                     </label>
@@ -157,7 +162,7 @@
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                             <button type="button" class="btn btn-danger" v-if="emp_cont" @click="quitarContratista">Quitar Contratista</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Registrar Contratista</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || cont.opcion > 1">Registrar Contratista</button>
                         </div>
                      </form>
                 </div>
@@ -181,6 +186,7 @@
                 contratistas:[],
                 indice: '',
                 cargo: '',
+                cargando: false,
                 emp_cont:'',
                 cargos: {
                     1: "Con Cargo",
@@ -190,6 +196,8 @@
         },
         methods: {
             find() {
+                $(this.$refs.modal).modal('show');
+                this.cargando = true;
                 this.getContratista();
                 this.motivo = '';
                 this.$store.commit('almacenes/salida-almacen/SET_SALIDA', null);
@@ -198,7 +206,8 @@
                     params: {include: ['almacen','partidas.movimiento.inventario','partidas.inventario','partidas.almacen','partidas.material','partidas.concepto','partidas.contratista.empresa']}
                 }).then(data => {
                     this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
-                    $(this.$refs.modal).modal('show');
+                }).finally(() => {
+                    this.cargando = false;
                 })
             },
             findPartidas() {
@@ -254,7 +263,7 @@
                     params:{data: this.cont}
                 }).then(data => {
                     $(this.$refs.contratista).modal('hide');
-                    this.findPartidas();
+                    this.find();
                 });
             },
             quitarContratista(){
@@ -263,7 +272,7 @@
                     params:{}
                 }).then(data => {
                     $(this.$refs.contratista).modal('hide');
-                    this.findPartidas();
+                    this.find();
                 });
             },
         },

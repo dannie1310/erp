@@ -39,6 +39,7 @@ class ItemContratistaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:editar_salida_almacen')->only(['destroy','update']);
 
         $this->fractal = $fractal;
         $this->service = $service;
