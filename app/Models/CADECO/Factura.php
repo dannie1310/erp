@@ -37,52 +37,27 @@ class Factura extends Transaccion
         return $this->belongsTo(Empresa::class, 'id_empresa');
     }
 
-    public function orden_pago()
-    {
-        return $this->belongsTo(OrdenPago::class, 'id_transaccion','id_referente');
-    }
-
     public function moneda()
     {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
-
-
     public function generaOrdenPago($data)
     {
-
-
-        if (is_null($this->orden_pago)){
-            $datos = [
-                    'id_antecedente'=>$this->id_antecedente,
-                    'id_referente'=>$this->id_transaccion,
-                    'monto'=>-1*abs($data->monto_pagado),
-                    'fecha'=>$data->fecha_pago,
-                    'id_empresa'=>$this->id_empresa,
-                    'id_moneda'=> $data->id_moneda,
-            ];
-
-
-            $ordenPago= $this->orden_pago()->create($datos);
-
-            $orden_pago = OrdenPago::query()->find($ordenPago->id_transaccion);
-
-             return $orden_pago->generaPago($data);
-
-        }else{
-            $orden_pago = OrdenPago::query()->find($this->orden_pago->id_transaccion);
-
-            return $orden_pago->generaPago($data);
-
-        }
-
+        $datos = [
+            'id_antecedente'=>$this->id_antecedente,
+            'id_referente'=>$this->id_transaccion,
+            'monto'=>-1*abs($data->monto_pagado),
+            'fecha'=>$data->fecha_pago,
+            'id_empresa'=>$this->id_empresa,
+            'id_moneda'=> $data->id_moneda,
+        ];
+        $ordenPago= OrdenPago::create($datos);
+        return $ordenPago->generaPago($data);
     }
 
-
-
-    public function ordenPago(){
-        return $this->belongsTo(OrdenPago::class, 'id_transaccion', 'id_referente');
+    public function ordenesPago(){
+        return $this->hasMany(OrdenPago::class, 'id_referente', 'id_transaccion');
     }
 
     public function partidas()
@@ -91,7 +66,8 @@ class Factura extends Transaccion
     }
 
     public function scopePendientePago($query){
-        return $query->whereIn('estado', [1,2]);
+        return $query->where('estado', '=', 1)
+            ->where('saldo', '>', 0.99);
     }
 
     public function scopeConDocumento($query){
@@ -103,34 +79,36 @@ class Factura extends Transaccion
         return '$ ' . number_format($pagar,2);
     }
 
-
-    public function getEstado($estado)
+    public function getEstadoStringAttribute()
     {
-        if($estado==0){
+        if($this->estado==0){
             $estado='Registrada';
         }
-        if ($estado==1){
+        elseif ($this->estado==1 && abs($this->ordenesPago->sum('monto'))<1){
             $estado='Revisada';
+        }elseif ($this->estado==1 && abs($this->monto+$this->ordenesPago->sum('monto'))>1){
+            $estado='Saldo Pendiente ';
         }
-        if($estado==2){
+        elseif($this->estado==2){
             $estado='Pagada';
         }
         return $estado;
     }
 
-    public function getTipo($tipo)
-    {
+    public function getACuentaFormatAttribute()    {
+        return '$ '.number_format(abs($this->ordenesPago->sum('monto')),2,".",",");
+    }
 
-        if($tipo==0){
+    public function getTipoTransaccionStringAttribute()   {
+        if($this->opciones==0){
             $tipo='Factura';
         }
-        if($tipo==1){
+        if($this->opciones==1){
             $tipo='Gastos Varios';
         }
-        if($tipo==65537){
+        if($this->opciones==65537){
             $tipo='Materiales / Servicios';
         }
-
         return $tipo;
     }
 }
