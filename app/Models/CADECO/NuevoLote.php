@@ -127,7 +127,6 @@ class NuevoLote extends Ajuste
 
     public function respaldarAjuste($motivo)
     {
-
         $datos = [
             'id_transaccion' => $this->id_transaccion,
             'numero_folio' => $this->numero_folio,

@@ -143,16 +143,22 @@ class AjusteNegativo extends Ajuste
     {
 
         $datos = [
-            'id_transaccion' => $this->id_transaccion,
-            'numero_folio' => $this->numero_folio,
-            'id_almacen' => $this->id_almacen,
-            'opciones' => $this->opciones,
-            'monto' => $this->monto,
-            'saldo' => $this->saldo,
-            'referencia' => $this->referencia,
-            'comentario' => $this->comentario,
-            'observaciones' => $this->observaciones,
-            'motivo_eliminacion' => $motivo,
+            $datos = [
+                'id_transaccion' => $this->id_transaccion,
+                'numero_folio' => $this->numero_folio,
+                'id_almacen' => $this->id_almacen,
+                'opciones' => $this->opciones,
+                'monto' => $this->monto,
+                'saldo' => $this->saldo,
+                'referencia' => $this->referencia,
+                'comentario' => $this->comentario,
+                'observaciones' => $this->observaciones,
+                'fecha' => $this->fecha,
+                'tipo_transaccion' => $this->tipo_transaccion,
+                'FechaHoraRegistro' => $this->FechaHoraRegistro,
+                'id_obra' => $this->id_obra,
+                'motivo_eliminacion' => $motivo
+            ];
         ];
 
         $ajuste_respaldo = AjusteEliminado::query()->create($datos);
