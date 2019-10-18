@@ -18,7 +18,8 @@ class EmpresaObserver
      */
     public function creating(Empresa $empresa)
     {
-        $empresa->FechaHoraRegistro = date('Y-m-d h:i:s');
+        $empresa->razon_social = mb_strtoupper($empresa->razon_social);
+        $empresa->FechaHoraRegistro = date('Y-m-d H:i:s');
         $empresa->UsuarioRegistro = auth()->id();
     }
 }

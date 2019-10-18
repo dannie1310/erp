@@ -11,26 +11,21 @@ namespace App\Observers\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\SolicitudPagoAnticipado;
+use App\Models\CADECO\Transaccion;
 
-class SolicitudPagoAnticipadoObserver
+class SolicitudPagoAnticipadoObserver extends TransaccionObserver
 {
     /**
      * @param SolicitudPagoAnticipado $solicitud
      * @throws \Exception
      */
-    public function creating(SolicitudPagoAnticipado $solicitud)
+    public function creating(Transaccion $solicitud)
     {
-        if (!$solicitud->validaTipoAntecedente()) {
-            throw New \Exception('La transacción antecedente no es válida');
-        }
+        parent::creating($solicitud);
         $solicitud->validarAntecedente();
         $solicitud->tipo_transaccion = 72;
         $solicitud->opciones = 327681;
         $solicitud->estado = 0;
-        $solicitud->id_usuario = auth()->id();
-        $solicitud->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $solicitud->FechaHoraRegistro = date('Y-m-d h:i:s');
-        $solicitud->id_obra = Context::getIdObra();
     }
 
     public function created(SolicitudPagoAnticipado $solicitud)
