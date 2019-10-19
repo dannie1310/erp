@@ -1,6 +1,7 @@
 <template>
         <span>
- <button @click="init" type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
+            <button  @click="init" type="button" class="btn btn-primary" v-if="this.id_subcontrato">Ver Formato</button>
+            <button @click="init" type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF" v-else><i class="fa fa-file-pdf-o"></i> </button>
 
              <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
                  <div class="modal-dialog modal-lg" id="mdialTamanio">
@@ -23,7 +24,7 @@
 
 <script>
     export default {
-        props: ['id'],
+        props: ['id','id_subcontrato'],
         methods: {
             init() {
                 this.pdf()
