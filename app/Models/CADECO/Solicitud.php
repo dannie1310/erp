@@ -24,8 +24,7 @@ class Solicitud extends Transaccion
 
     public function pago()
     {
-        return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion')
-            ->where('tipo_transaccion', '=', 82);
+        return $this->HasOne(Pago::class,'id_antecedente','id_transaccion');
     }
 
     public function fondo()
