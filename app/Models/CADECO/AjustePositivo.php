@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class AjustePositivo extends Ajuste
@@ -17,7 +18,8 @@ class AjustePositivo extends Ajuste
         'id_almacen',
         'referencia',
         'observaciones',
-        'id_usuario'
+        'id_usuario',
+        'fecha'
     ];
 
     protected static function boot()

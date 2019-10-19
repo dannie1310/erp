@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class AjusteNegativo extends Ajuste
@@ -17,6 +18,7 @@ class AjusteNegativo extends Ajuste
         'id_almacen',
         'referencia',
         'observaciones',
+        'fecha',
         'id_usuario'
     ];
 

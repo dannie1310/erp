@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class NuevoLote extends Ajuste
@@ -16,6 +17,7 @@ class NuevoLote extends Ajuste
     protected $fillable = [
         'id_almacen',
         'referencia',
+        'fecha',
         'observaciones',
     ];
 
