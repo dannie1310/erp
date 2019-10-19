@@ -50,9 +50,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $id_cuenta = "";
             $tipo_cuenta_moneda = '';
             $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->first();
-            $factura = Factura::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
             $factura = Factura::find($pago['id_transaccion']);
-            $solicitud = Solicitud::query()->where('id_transaccion', '=', $pago['id_transaccion'])->first();
             $solicitud = Solicitud::find($pago['id_transaccion']);
             $saldo_documento_format = 0;
             $referencia_documento = null;
