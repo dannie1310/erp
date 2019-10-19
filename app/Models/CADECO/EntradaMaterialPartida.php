@@ -20,6 +20,10 @@ class EntradaMaterialPartida extends Item
         });
     }
 
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class,'id_almacen');
+    }
     public function entrada()
     {
         return $this->belongsTo(EntradaMaterial::class, 'id_transaccion', 'id_transaccion');
@@ -33,6 +37,11 @@ class EntradaMaterialPartida extends Item
     public function concepto()
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function material()
+    {
+        return $this->belongsTo(Material::class,  'id_material');
     }
 
     public function movimiento()

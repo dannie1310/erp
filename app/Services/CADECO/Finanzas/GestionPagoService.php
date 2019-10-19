@@ -424,6 +424,4 @@ class GestionPagoService
         );
     }
 
-
-
 }

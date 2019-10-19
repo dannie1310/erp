@@ -56,4 +56,13 @@ class SalidaAlmacenController extends Controller
         return $this->traitDestroy($request, $id);
     }
 
+    public function pdfSalidaAlmacen($id)
+    {
+        if(auth()->user()->can('consultar_salida_almacen')) {
+            return $this->service->pdfSalidaAlmacen($id)->create();
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+
+    }
+
 }
