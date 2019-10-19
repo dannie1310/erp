@@ -119,9 +119,9 @@ class AjusteNegativo extends Ajuste
             $inventario = Inventario::query()->where('id_lote', '=', $partida->item_antecedente)
                 ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first();
 
-            if($partida->cantidad>$inventario->cantidad)
+            if(($partida->cantidad+$inventario->cantidad) >$inventario->cantidad)
             {
-                abort(400, 'Error en el proceso de eliminación de ajustes. (Saldo menor)');
+                abort(400, 'Error en el proceso de eliminación de ajustes. (Saldo mayor)');
             }
 
             Inventario::query()->where('id_lote','=', $partida->item_antecedente)->update(array('saldo'=>$inventario->saldo+$partida->cantidad));
