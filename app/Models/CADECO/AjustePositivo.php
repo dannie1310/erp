@@ -42,6 +42,7 @@ class AjustePositivo extends Ajuste
             $datos = [
                 'id_almacen' => $data['id_almacen'],
                 'referencia' => $data['referencia'],
+                'fecha' =>  date_format(new DateTime($data['fecha']), 'Y-m-d'),
                 'observaciones' => $data['observaciones'],
             ];
             $ajusteTransaccion = $this->create($datos);

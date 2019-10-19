@@ -25,6 +25,5 @@ class AjustePositivoObserver extends TransaccionObserver
         $ajustePositivo->tipo_transaccion = 35;
         $ajustePositivo->opciones = 0;
         $ajustePositivo->estado = 0;
-        $ajustePositivo->fecha = date('Y-m-d H:i:s');
     }
 }

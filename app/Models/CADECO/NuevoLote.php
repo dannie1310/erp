@@ -40,6 +40,7 @@ class NuevoLote extends Ajuste
             $transaccion = $this->create([
                 'id_almacen' => $data['id_almacen'],
                 'referencia' => $data['referencia'],
+                'fecha' =>  date_format(new DateTime($data['fecha']), 'Y-m-d'),
                 'observaciones' => $data['observaciones'],
             ]);
             $monto = 0;
