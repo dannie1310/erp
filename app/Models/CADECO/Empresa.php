@@ -41,6 +41,9 @@ class Empresa extends Model
         return $this->hasMany(Cuenta::class, 'id_empresa', 'id_empresa');
     }
 
+    public function compras(){
+        return $this->hasMany(OrdenCompra::class, 'id_empresa', 'id_empresa');
+    }
     public function subcontrato(){
         return $this->hasMany(Subcontrato::class, 'id_empresa', 'id_empresa');
     }
@@ -67,6 +70,11 @@ class Empresa extends Model
     public function scopeParaSubcontratistas($query)
     {
         return $query->has('subcontrato')->has('estimacion')->distinct('id_empresa')->orderBy('razon_social');
+    }
+
+    public function scopeParaOrdenCompra($query)
+    {
+        return $query->has('compras')->distinct('id_empresa')->orderBy('razon_social');
     }
 
     public function scopeResponsableFondoFijo($query)
