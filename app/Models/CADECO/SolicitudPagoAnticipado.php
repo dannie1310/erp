@@ -12,7 +12,7 @@ namespace App\Models\CADECO;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
 
-class SolicitudPagoAnticipado extends Transaccion
+class SolicitudPagoAnticipado extends Solicitud
 {
     public const TIPO_ANTECEDENTE = null;
 
@@ -43,8 +43,7 @@ class SolicitudPagoAnticipado extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 72)
-                ->where('opciones', '=', 327681);
+            return $query->where('opciones', '=', 327681);
         });
     }
 
@@ -96,5 +95,10 @@ class SolicitudPagoAnticipado extends Transaccion
         if ($subcontrato != null && $subcontrato->montoDisponible < round($this->monto,2)){
             throw New \Exception('Este subcontrato no cuenta con el saldo disponible para lo que solicita.');
         }
+    }
+
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 }

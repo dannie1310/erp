@@ -383,15 +383,7 @@ class SalidaAlmacen extends Transaccion
         try{
             DB::connection('cadeco')->beginTransaction();
             $this->validarRegistro($data);
-            $datos = [
-                'id_almacen' => $data['id_almacen'],
-                'id_concepto' => $data['id_concepto'],
-                'id_empresa' => $data['id_empresa'],
-                'opciones' => $data['opciones'],
-                'referencia' => $data['referencia'],
-                'observaciones' => $data['observaciones'],
-            ];
-            $salidaTransaccion = $this->create($datos);
+            $salidaTransaccion = $this->create($data);
             $partida = new SalidaAlmacenPartida();
             $partida->registrar($data['partidas'], $salidaTransaccion->toArray());
 

@@ -90,6 +90,20 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_carga_layout_pago')">
+                        <router-link :to="{name: 'carga-masiva'}" class="nav-link" :class="{active: this.$route.name == 'carga-masiva'}">
+                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
+                            <p>Carga Masiva</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item" v-if="$root.can('consultar_factura')">
+                <router-link :to="{name: 'factura'}" class="nav-link">
+                    <i class="fa fa-circle nav-icon"></i>
+                    <p>Facturas</p>
+                </router-link>
             </li>
         </ul>
     </nav>
@@ -108,7 +122,8 @@
             },
             pagos() {
                 return this.$root.can([
-                    'consultar_pagos'
+                    'consultar_pagos',
+                    'consultar_carga_layout_pago'
                 ]);
             },
             cuenta_bancaria(){

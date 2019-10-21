@@ -18,8 +18,10 @@ use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Repositories\Repository;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Zend\Validator\Date;
 
 class GestionPagoService
 {
@@ -73,6 +75,7 @@ class GestionPagoService
             'referencia' => $pago['referencia'],
             'referencia_docto' => $data->Referencia,
             'origen_docto' => $data->origenDocumento->OrigenDocumento,
+            'fecha_pago' => $pago['fecha']
         );
     }
 
@@ -136,6 +139,7 @@ class GestionPagoService
                 'monto_bitacora' => $pagos->resumen['monto_a_pagar'],
                 'hash_file_bitacora' => $file_fingerprint]);
             $partida_remesa = null;
+
             foreach ($pagos->bitacora as $pago) {
                 if($pago['pagable']) {
 
@@ -145,10 +149,14 @@ class GestionPagoService
 
                         $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $pago['id_distribucion_recurso'])->where('id_documento', '=', $pago['id_documento'])->first();
                         if($partida_remesa->pagable) {
+                            $fecha = DateTime::createFromFormat('d/m/Y', $pago['fecha_pago']);
                             $data = array(
                                 //"id_cuenta" => $partida_remesa->id_cuenta_cargo,
                                 "id_empresa" => $partida_remesa->documento->IDDestinatario,
                                 "id_moneda" => $partida_remesa->documento->IDMoneda,
+                                "fecha" => $fecha->format('Y-m-d'),
+                                "cumplimiento" => $fecha->format('Y-m-d'),
+                                "vencimiento" => $fecha->format('Y-m-d'),
                                 "monto" => -1 * abs($partida_remesa->documento->MontoTotalSolicitado),
                                 //"saldo" => -1 * abs($partida_remesa->documento->MontoTotalSolicitado),
                                 "referencia" => $pago['referencia'],
@@ -250,20 +258,21 @@ class GestionPagoService
 //                            'plaza' => '',
 //                            'id_moneda' => 1
 //                        ]);
-
+                        $fecha = DateTime::createFromFormat('d/m/Y', $pago['fecha_pago']);
                         $data = array(
                             "id_cuenta" => $pago['cuenta_cargo']['id_cuenta_cargo'],
                             "id_empresa" => $empresa->id_empresa,
                             "id_moneda" => 1,
+                            "fecha" => $fecha->format('Y-m-d'),
+                            "cumplimiento" => $fecha->format('Y-m-d'),
+                            "vencimiento" => $fecha->format('Y-m-d'),
                             "monto" => -1 * abs($pago['monto']),
                             "saldo" => -1 * abs($pago['monto']),
                             "referencia" => $pago['referencia'],
                             "destino" => $empresa->razon_social,
                             "observaciones" => $pago['concepto']
                         );
-
                         $pago_remesa = PagoACuenta::query()->create($data);
-
                     }
                     $archivo_bitacora->partidas()->create([
                         'id_distribucion_recursos_rem_partida' => $partida_remesa?$partida_remesa->id:$partida_remesa,
@@ -363,6 +372,7 @@ class GestionPagoService
                                     'referencia' => $pago['referencia'],
                                     'referencia_docto' => '   N/A   ',
                                     'origen_docto' => '   N/A   ',
+                                    'fecha_pago' => $pago['fecha']
                                 );
                             }else {
                                 $registros_bitacora[] = array(
@@ -390,6 +400,7 @@ class GestionPagoService
                                     'referencia' => $pago['referencia'],
                                     'referencia_docto' => '   N/A   ',
                                     'origen_docto' => '   N/A   ',
+                                    'fecha_pago' => $pago['fecha']
                                 );
                             }
                         }else{
@@ -409,7 +420,5 @@ class GestionPagoService
             'resumen' => $this->resumenBitacora($registros_bitacora, $bitacora_nombre)
         );
     }
-
-
 
 }

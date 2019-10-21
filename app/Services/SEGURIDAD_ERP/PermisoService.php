@@ -3,6 +3,7 @@
 
 namespace App\Services\SEGURIDAD_ERP;
 
+use App\CSV\seguridad\PermisoObra;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Permiso;
@@ -10,6 +11,7 @@ use App\Repositories\Repository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PermisoService
 {
@@ -223,6 +225,7 @@ class PermisoService
 
     public function porObra($id)
     {
+
         $obra =  ConfiguracionObra::query()->withoutGlobalScopes()->find($id);
 
         $query = DB::select('SELECT DISTINCT
@@ -306,6 +309,10 @@ class PermisoService
                  ', [1]);
 
         $permisos = collect($query);
+
+       if (request('excel')){
+           return $permisos;
+       }
         $perPage     = request('limit');
         $page = request('limit') && request('offset') != '' ? (request('offset') / request('limit')) + 1 : 1;
         request()->merge(['page' => $page]);
@@ -317,6 +324,19 @@ class PermisoService
             count($permisos),
             $perPage
         );
+
+
+
         return $paginator;
+    }
+
+    public function descargaListadoPermisosObra($id){
+
+        $permisos=$this->porObra($id)->toArray();
+
+        $excel = new PermisoObra($permisos);
+
+        return Excel::download($excel,'ListadoDePermisosPorObra.xlsx');
+
     }
 }

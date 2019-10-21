@@ -26,9 +26,10 @@ class Concepto extends Model
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
+            return $query->where('id_obra', '=', Context::getIdObra())->where('activo','=',1);
         });
     }
+
 
     public function getAncestrosAttribute($nivel)
     {

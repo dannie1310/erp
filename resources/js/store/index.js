@@ -34,6 +34,8 @@ import sucursal from './modules/cadeco/sucursal';
 //COMPRAS
 import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
+import materialFamilia from './modules/compras/material-familia';
+import itemContratista from './modules/compras/item-contratista';
 
 //CONFIGURACION
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
@@ -66,16 +68,18 @@ import subcontrato from './modules/contratos/subcontrato';
 import contratoProyectado from './modules/contratos/contrato-proyectado';
 
 //FINANZAS
-import ctg_tipo_fondo from './modules/finanzas/ctg-tipo-fondo';
-import cuenta_bancaria_empresa from './modules/finanzas/cuenta-bancaria-empresa';
+import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
+import ctgTipoFondo from './modules/finanzas/ctg-tipo-fondo';
+import cuentaBancariaEmpresa from './modules/finanzas/cuenta-bancaria-empresa';
 import datosEstimaciones from './modules/finanzas/estimacion';
-import distribuir_recurso_remesa from './modules/finanzas/distribuir-recurso-remesa';
-import gestion_pago from './modules/finanzas/gestion-pago';
+import distribuirRecursoRemesa from './modules/finanzas/distribuir-recurso-remesa';
+import factura from './modules/finanzas/factura';
+import gestionPago from './modules/finanzas/gestion-pago';
 import pago from './modules/finanzas/pago';
-import pago_anticipado from './modules/finanzas/solicitud-pago-anticipado';
+import pagoAnticipado from './modules/finanzas/solicitud-pago-anticipado';
 import remesa from './modules/finanzas/remesa';
-import solicitud_alta from './modules/finanzas/solicitud-alta-cuenta-bancaria';
-import solicitud_baja from './modules/finanzas/solicitud-baja-cuenta-bancaria';
+import solicitudAlta from './modules/finanzas/solicitud-alta-cuenta-bancaria';
+import solicitudBaja from './modules/finanzas/solicitud-baja-cuenta-bancaria';
 
 //TESORERIA
 import movimientoBancario from './modules/tesoreria/movimiento-bancario';
@@ -130,6 +134,8 @@ export default new Vuex.Store({
 
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
+        'compras/material-familia' : materialFamilia,
+        'compras/item-contratista' : itemContratista,
 
         'configuracion/area-subcontratante' : areaSubcontratante,
 
@@ -139,16 +145,18 @@ export default new Vuex.Store({
         'contratos/subcontrato': subcontrato,
         'contratos/contrato-proyectado': contratoProyectado,
 
-        'finanzas/ctg-tipo-fondo': ctg_tipo_fondo,
-        'finanzas/cuenta-bancaria-empresa': cuenta_bancaria_empresa,
+        'finanzas/carga-masiva-pago' : cargaMasivaPago,
+        'finanzas/ctg-tipo-fondo': ctgTipoFondo,
+        'finanzas/cuenta-bancaria-empresa': cuentaBancariaEmpresa,
         'finanzas/estimacion' : datosEstimaciones,
-        'finanzas/distribuir-recurso-remesa': distribuir_recurso_remesa,
-        'finanzas/gestion-pago': gestion_pago,
+        'finanzas/distribuir-recurso-remesa': distribuirRecursoRemesa,
+        'finanzas/factura': factura,
+        'finanzas/gestion-pago': gestionPago,
         'finanzas/pago': pago,
-        'finanzas/solicitud-pago-anticipado': pago_anticipado,
+        'finanzas/solicitud-pago-anticipado': pagoAnticipado,
         'finanzas/remesa': remesa,
-        'finanzas/solicitud-alta-cuenta-bancaria' : solicitud_alta,
-        'finanzas/solicitud-baja-cuenta-bancaria' : solicitud_baja,
+        'finanzas/solicitud-alta-cuenta-bancaria' : solicitudAlta,
+        'finanzas/solicitud-baja-cuenta-bancaria' : solicitudBaja,
 
 
         'contabilidad/cierre-periodo': cierrePeriodo,

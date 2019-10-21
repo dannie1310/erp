@@ -2,14 +2,14 @@
     <span>
         <button @click="init" v-if="$root.can('agregar_conteos_manuales')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-plus" v-else></i>
-            Registrar Conteo
+            <i class="fa fa-hand-paper" v-else></i>
+            Registro Manual
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR CONTEO MANUAL</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-hand-paper"></i> Registrar conteo manualmente</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -236,6 +236,7 @@
             },
 
             getConteo(){
+                this.cargando = true;
                 this.conteos = [];
                 return this.$store.dispatch('almacenes/ctg-tipo-conteo/index', {
                     params: {
@@ -244,6 +245,7 @@
                 })
                     .then(data => {
                         this.conteos = data.data;
+                        this.cargando = false;
                     })
             },
 

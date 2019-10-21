@@ -25,7 +25,6 @@ class OrdenPagoObserver
         }
         $ordenPago->tipo_transaccion = 68;
         $ordenPago->opciones = 0;
-        $ordenPago->fecha = date('Y-m-d');
         $ordenPago->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
         $ordenPago->FechaHoraRegistro = date('Y-m-d h:i:s');
         $ordenPago->id_obra = Context::getIdObra();

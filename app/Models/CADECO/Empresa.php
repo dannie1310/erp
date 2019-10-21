@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
+use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
@@ -49,6 +50,10 @@ class Empresa extends Model
         return $this->hasMany(Estimacion::class, 'id_empresa', 'id_empresa');
     }
 
+    public function facturas(){
+        return $this->belongsTo(Documento::class, 'id_empresa', 'IDDestinatario');
+    }
+
     public function cuentasBancarias()
     {
         return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
@@ -62,6 +67,10 @@ class Empresa extends Model
     public function scopeBancos($query)
     {
         return $query->where('tipo_empresa', '=', 8);
+    }
+
+    public function scopeFacturasAutorizadas($query){
+        return $query->has('facturas')->distinct('id_empresa');
     }
 
     public function scopeParaSubcontratistas($query)
@@ -111,5 +120,9 @@ class Empresa extends Model
     public function scopeTipoContratista($query)
     {
         return $query->where('tipo_empresa','!=',1);
+    }
+    public function scopeContratista($query)
+    {
+        return $query->where('tipo_empresa','=',2)->orWhere('tipo_empresa','=',3);
     }
 }

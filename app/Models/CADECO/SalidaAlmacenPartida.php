@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Compras\ItemContratista;
 use Illuminate\Support\Facades\DB;
 
 class SalidaAlmacenPartida extends Item
@@ -19,6 +20,7 @@ class SalidaAlmacenPartida extends Item
         'cantidad',
         'importe',
         'id_almacen',
+        'id_concepto',
         'id_material',
         'unidad'
     ];
@@ -30,6 +32,11 @@ class SalidaAlmacenPartida extends Item
         self::addGlobalScope(function ($query){
             return $query->whereHas('salida')->where('estado', '>=', 0);
         });
+    }
+
+    public function contratista()
+    {
+        return $this->belongsTo(ItemContratista::class, 'id_item', 'id_item');
     }
 
     public function salida()
@@ -54,64 +61,112 @@ class SalidaAlmacenPartida extends Item
 
     public function registrar($partidas,$salidas)
     {
-        abort(400, $salidas['opciones']);
         try {
             foreach ($partidas as $p) {
                 $inventario = Inventario::query()->where( 'id_material', '=', $p[0]['id'] )
                     ->where( 'id_almacen', '=', $salidas['id_almacen'] )
                     ->where( 'saldo', '>', 0 )->orderBy( 'id_lote' )->get()->toArray();
 
-                if($inventario == []){
-                    abort(400,"La cantida es mayor a la existencia");
-                }
-                $item = $this->create( [
-                    'id_almacen' => $p[2]['id'],
-                    'id_material' => $p[0]['id'],
-                    'unidad' => $p[0]['unidad'],
-                    'cantidad' => $p[1],
-                    'id_transaccion' => $salidas['id_transaccion']
-                ] );
-                foreach ($inventario as $i) {
-                    $monto = $i['monto_total'] / $i['cantidad'];
-                    if ($p[1] <= 0) {
-                        break;
+                if (count( $inventario ) == 1 && $inventario[0]['saldo'] < $p[1]) {
+                    abort( 400, "La cantida es mayor a la existencia" );
+                }elseif ($inventario == []) {
+                    abort( 400, "La cantida es mayor a la existencia" );
+                }else{
+                    if ($salidas['opciones'] == 1) {
+                        $item = $this->create( [
+                            'id_concepto' => $p[2]['id'],
+                            'id_material' => $p[0]['id'],
+                            'unidad' => $p[0]['unidad'],
+                            'cantidad' => $p[1],
+                            'id_transaccion' => $salidas['id_transaccion']
+                        ] );
                     } else {
-                        if ($p[1] >= $i['saldo']) {
-                            $p[1] = $p[1] - $i['saldo'];
-                            Inventario::query()->create( [
-                                'lote_antecedente' => $i['id_lote'],
-                                'id_almacen' => $p[2]['id'],
-                                'id_material' => $p[0]['id'],
-                                'cantidad' => $i['saldo'],
-                                'saldo' => $i['saldo'],
-                                'id_item' => $item['id_item'],
-                                'monto_total' => $monto * $i['saldo'],
-                            ] );
-                            Inventario::query()->where( 'id_lote', '=', $i['id_lote'] )->update( ['saldo' => 0] );
-
-                        } else {
-                            $i['saldo'] = $i['saldo'] - $p[1];
-                            Inventario::query()->create( [
-                                'lote_antecedente' => $i['id_lote'],
-                                'id_almacen' => $p[2]['id'],
-                                'id_material' => $p[0]['id'],
-                                'cantidad' => $p[1],
-                                'id_item' => $item['id_item'],
-                                'saldo' => $p[1],
-                                'monto_total' => $monto * $p[1],
-                            ] );
-                            Inventario::query()->where( 'id_lote', '=', $i['id_lote'] )->update( ['saldo' => $i['saldo']] );
+                        $item = $this->create( [
+                            'id_almacen' => $p[2]['id'],
+                            'id_material' => $p[0]['id'],
+                            'unidad' => $p[0]['unidad'],
+                            'cantidad' => $p[1],
+                            'id_transaccion' => $salidas['id_transaccion']
+                        ] );
+                    }
+                    foreach ($inventario as $i) {
+                        $monto = $i['monto_total'] / $i['cantidad'];
+                        if ($p[1] <= 0) {
                             break;
+                        } else {
+                            if ($p[1] >= $i['saldo']) {
+                                $p[1] = $p[1] - $i['saldo'];
+                                if ($salidas['opciones'] == 1) {
+                                    Movimiento::query()->create( [
+                                        'lote_antecedente' => $i['id_lote'],
+                                        'id_concepto' => $p[2]['id'],
+                                        'id_material' => $p[0]['id'],
+                                        'cantidad' => $i['saldo'],
+                                        'saldo' => $i['saldo'],
+                                        'id_item' => $item['id_item'],
+                                        'monto_total' => $monto * $i['saldo'],
+                                        'monto_pagado' => $monto * $i['saldo'],
+                                    ] );
+                                } else {
+                                    Inventario::query()->create( [
+                                        'lote_antecedente' => $i['id_lote'],
+                                        'id_almacen' => $p[2]['id'],
+                                        'id_material' => $p[0]['id'],
+                                        'cantidad' => $i['saldo'],
+                                        'saldo' => $i['saldo'],
+                                        'id_item' => $item['id_item'],
+                                        'monto_total' => $monto * $i['saldo'],
+                                    ] );
+                                }
+                                Inventario::query()->where( 'id_lote', '=', $i['id_lote'] )->update( ['saldo' => 0] );
+
+                            } else {
+                                $i['saldo'] = $i['saldo'] - $p[1];
+                                if ($salidas['opciones'] == 1) {
+                                    Movimiento::query()->create( [
+                                        'lote_antecedente' => $i['id_lote'],
+                                        'id_concepto' => $p[2]['id'],
+                                        'id_material' => $p[0]['id'],
+                                        'cantidad' => $p[1],
+                                        'id_item' => $item['id_item'],
+                                        'monto_pagado' => $monto * $p[1],
+                                        'monto_total' => $monto * $p[1],
+                                    ] );
+                                } else {
+                                    Inventario::query()->create( [
+                                        'lote_antecedente' => $i['id_lote'],
+                                        'id_almacen' => $p[2]['id'],
+                                        'id_material' => $p[0]['id'],
+                                        'cantidad' => $p[1],
+                                        'id_item' => $item['id_item'],
+                                        'saldo' => $p[1],
+                                        'monto_total' => $monto * $p[1],
+                                    ] );
+                                }
+                                Inventario::query()->where( 'id_lote', '=', $i['id_lote'] )->update( ['saldo' => $i['saldo']] );
+                                break;
+                            }
                         }
                     }
-                }
-                $inventarios = Inventario::query()->where( 'id_item', '=', $item->id_item )->get()->toArray();
-                $monto_total = 0;
-                foreach ($inventarios as $invs) {
-                    $monto_total = $monto_total + $invs['monto_total'];
+                    if ($salidas['opciones'] == 1) {
+                        $inventarios = Movimiento::query()->where( 'id_item', '=', $item->id_item )->get()->toArray();
+                    } else {
+                        $inventarios = Inventario::query()->where( 'id_item', '=', $item->id_item )->get()->toArray();
 
+                    }
+                    $monto_total = 0;
+                    foreach ($inventarios as $invs) {
+                        $monto_total = $monto_total + $invs['monto_total'];
+
+                    }
+                    Item::query()->where( 'id_item', '=', $item->toArray()['id_item'] )->update( ['importe' => $monto_total] );
+
+                    if ($p[4] || $p[5]) {
+                        ItemContratista::query()->create( ['id_item' => $item->toArray()['id_item'],
+                            'id_empresa' => $p[4]['id'],
+                            'con_cargo' => $p[5]] );
+                    }
                 }
-                Item::query()->where( 'id_item', '=', $item->toArray()['id_item'] )->update( ['importe' => $monto_total] );
             }
         }catch (\Exception $e){
             DB::connection('cadeco')->rollBack();

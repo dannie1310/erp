@@ -3,13 +3,13 @@
         <button @click="init" v-if="$root.can('agregar_conteos_codigo_barra')" class="btn btn-app btn-info pull-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-barcode" v-else></i>
-            Registrar con Código de Barras
+            Registro con Código
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR CON CÓDIGO DE BARRAS</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-barcode"></i> Registrar conteo con código de barras</h5>
                         <button type="button" class="close" @click="cerrar" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -18,8 +18,8 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="barcodeValue" class="col-sm-3 col-form-label">Código de barras: </label>
-                                        <div class="col-sm-9">
+                                        <label for="barcodeValue" class="col-sm-4 col-form-label">Código de barras: </label>
+                                        <div class="col-sm-8">
                                               <input
                                                       ref="barcodeValue"
                                                       name="barcodeValue"
@@ -27,13 +27,12 @@
                                                       v-validate="{required: true}"
                                                       class="form-control"
                                                       id="barcodeValue"
-                                                      placeholder="Código de barra"
+                                                      placeholder="Escanear código de barras"
                                                       v-model="barcodeValue"
                                                       :class="{'is-invalid': errors.has('barcodeValue')}"
                                                       v-on:keyup.enter="findCodigo"
                                               />
                                               <barcode v-bind:value="barcodeValue">
-                                                Escanear el código de barras.
                                               </barcode>
                                         </div>
                                     </div>
@@ -44,8 +43,8 @@
                             <div class="row" v-if="marbete && barcodeValue && tipoConteo">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="id_marbete" class="col-sm-3 col-form-label">Marbete: </label>
-                                        <div class="col-sm-9">
+                                        <label for="id_marbete" class="col-sm-4 col-form-label">Marbete: </label>
+                                        <div class="col-sm-8">
                                             <input
                                                     type="text"
                                                     name="id_marbete"
@@ -65,8 +64,8 @@
                             <div class="row" v-if="marbete && barcodeValue && tipoConteo">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="tipo_conteo" class="col-sm-3 col-form-label">Numero de Conteo: </label>
-                                        <div class="col-sm-9">
+                                        <label for="tipo_conteo" class="col-sm-4 col-form-label">Número de Conteo: </label>
+                                        <div class="col-sm-8">
                                             <input
                                                     type="text"
                                                     name="tipo_conteo"
@@ -86,8 +85,8 @@
                              <div class="row" v-if="marbete && barcodeValue && tipoConteo">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="cantidad_nuevo" class="col-sm-3 col-form-label">Nuevos: </label>
-                                        <div class="col-sm-9">
+                                        <label for="cantidad_nuevo" class="col-sm-4 col-form-label">Nuevos: </label>
+                                        <div class="col-sm-8">
                                             <input
                                                     ref="input"
                                                     step="any"
@@ -109,8 +108,8 @@
                             <div class="row" v-if="marbete && barcodeValue && tipoConteo">
                                 <div class="col-md-12" v-if="checkedMostrar">
                                     <div class="form-group row error-content">
-                                        <label for="cantidad_usados" class="col-sm-3 col-form-label">Usados: </label>
-                                        <div class="col-sm-9">
+                                        <label for="cantidad_usados" class="col-sm-4 col-form-label">Usados: </label>
+                                        <div class="col-sm-8">
                                             <input
                                                     step="any"
                                                     type="number"
@@ -129,8 +128,8 @@
                                 </div>
                                 <div class="col-md-12" v-if="checkedMostrar">
                                     <div class="form-group row error-content">
-                                        <label for="cantidad_inservible" class="col-sm-3 col-form-label">Inservibles: </label>
-                                        <div class="col-sm-9">
+                                        <label for="cantidad_inservible" class="col-sm-4 col-form-label">Inservibles: </label>
+                                        <div class="col-sm-8">
                                             <input
                                                     step="any"
                                                     type="number"
@@ -149,7 +148,7 @@
                                 </div>
                             </div>
                              <label for="seguir" @click="foco">Captura Continua</label>
-                            <input type="checkbox" id="seguir" value="seguir" v-model="seguir"  @click="foco">
+                            <input type="checkbox" id="seguir" value="seguir" v-model="seguir"  @click="foco" >
                              <label for="mostrar" v-if="marbete && barcodeValue && tipoConteo"  @click="foco">Más información</label>
                             <input type="checkbox" id="mostrar" value="mostrar" v-model="checkedMostrar" v-if="marbete && barcodeValue && tipoConteo"  @click="foco">
                             </form>
@@ -178,7 +177,7 @@
                 marbetes:[],
                 conteos:[],
                 barcodeValue: '',
-                seguir: '',
+                seguir: true,
                 checkedMostrar: false,
                 dato:{
                     id_marbete:'',
