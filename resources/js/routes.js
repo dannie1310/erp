@@ -300,6 +300,70 @@ export const routes = [
         ]
     },
     {
+        path: '/sao/catalogos',
+        components: {
+            default: require('./components/catalogos/partials/Layout.vue'),
+            menu: require('./components/catalogos/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'catalogos',
+                component: require('./components/catalogos/Index'),
+                meta: {
+                    title: 'Catalogos',
+                    breadcrumb: {parent:'home', name: 'CATALOGOS'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'insumo-maquinaria',
+                component: require('./components/catalogos/insumo-maquinaria/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'insumo-maquinaria',
+                        component: require('./components/catalogos/insumo-maquinaria/Index'),
+                        meta: {
+                            title: 'Catalogo de Maquinaria',
+                            breadcrumb: {parent: 'catalogos', name: 'CATALOGO DE MAQUINARIA'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia-maq',
+                        name: 'familia-maq',
+                        component: require('./components/catalogos/insumo-maquinaria/familia/Index'),
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'insumo-maquinaria',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    },
+                    {
+                        path: 'maquinaria',
+                        name: 'maquinaria',
+                        component: require('./components/catalogos/insumo-maquinaria/maquinaria/Index'),
+                        meta: {
+                            title: 'Maquinaria',
+                            breadcrumb: {
+                                parent: 'insumo-maquinaria',
+                                name: 'MAQUINARIA'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/compras',
         components: {
             default: require('./components/compras/partials/Layout.vue'),

@@ -10,17 +10,16 @@ namespace App\Observers\CADECO;
 
 
 use App\Models\CADECO\Banco;
+use App\Models\CADECO\Empresa;
 
-class BancoObserver
+class BancoObserver extends EmpresaObserver
 {
     /**
      * @param Banco $banco
      */
-    public function creating(Banco $banco)
+    public function creating(Empresa $banco)
     {
+        parent::creating($banco);
         $banco->tipo_empresa = 8;
-        $banco->UsuarioRegistro = auth()->id();
-        $banco->razon_social = mb_strtoupper($banco->razon_social);
-        $banco->FechaHoraRegistro = date('Y-m-d h:i:s');
     }
 }
