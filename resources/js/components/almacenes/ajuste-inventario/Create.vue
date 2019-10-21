@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row error-content">
-                                        <label for="fecha" class="col-sm-2 col-form-label">Fecha de Solicitud: </label>
+                                        <label for="fecha" class="col-sm-2 col-form-label">Fecha: </label>
                                         <div class="col-sm-10">
                                             <datepicker v-model = "fecha"
                                                         name = "fecha"
