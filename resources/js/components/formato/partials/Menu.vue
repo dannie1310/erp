@@ -22,6 +22,31 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_formato_estimacion')">
+                        <router-link :to="{name: 'formato-estimacion'}" class="nav-link" :class="{active: this.$route.name == 'formato-estimacion'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Estimación</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-cart-arrow-down"></i>
+                    <p>
+                        Compra
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_orden_compra')">
+                        <router-link :to="{name: 'formato-orden-compra'}" class="nav-link" :class="{active: this.$route.name == 'formato-orden-compra'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Orden de Compra</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>
