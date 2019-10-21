@@ -11,7 +11,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
-                                        <label for="id_empresa">Contratista</label>
+                                        <label for="id_empresa">Contratista:</label>
                                         <select
                                                 type="text"
                                                 name="id_empresa"
@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
-                                        <label for="id_subcontrato">Subcontrato</label>
+                                        <label for="id_subcontrato">Subcontrato:</label>
                                         <select
                                                 :disabled="!id_empresa"
                                                 type="text"
@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
-                                        <label for="id_estimacion">Estimación</label>
+                                        <label for="id_estimacion">Estimación:</label>
                                         <select
                                                 :disabled="!id_subcontrato"
                                                 type="text"
