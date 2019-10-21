@@ -216,7 +216,7 @@
             },
 
             store() {
-                return this.$store.dispatch('tesoreria/traspaso-entre-cuentas/store', this.$data)
+                return this.$store.dispatch('finanzas/traspaso-entre-cuentas/store', this.$data)
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created', data)

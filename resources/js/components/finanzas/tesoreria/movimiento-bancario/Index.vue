@@ -51,27 +51,19 @@
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: { include: ['cuenta.empresa','transaccion'], sort: 'numero_folio', order: 'DESC'},
                 search: '',
                 cargando: false
             }
         },
 
         mounted() {
-            this.paginate({
-                'include': 'cuenta.empresa,transaccion',
-                'sort': 'numero_folio',
-                'order': 'DESC'
-            })
+            this.paginate(this.query)
         },
 
         methods: {
             created() {
-                this.paginate({
-                    'include': 'cuenta.empresa,transaccion',
-                    'sort': 'numero_folio',
-                    'order': 'DESC'
-                })
+                this.paginate(this.query)
             },
 
             paginate(payload = {}) {
@@ -130,11 +122,7 @@
             },
             query: {
                 handler (query) {
-                    this.paginate({...query,
-                        include: 'cuenta.empresa,transaccion',
-                        'sort': 'numero_folio',
-                        'order': 'DESC'
-                    })
+                    this.paginate(query)
                 },
                 deep: true
             },
@@ -146,7 +134,7 @@
                 this.timer = setTimeout(() => {
                     this.query.search = val;
                     this.query.offset = 0;
-                    this.paginate({...this.query, include: 'cuenta.empresa,transaccion'})
+                    this.paginate(this.query)
                 }, 500);
             },
             cargando(val) {
