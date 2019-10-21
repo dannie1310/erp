@@ -6,31 +6,46 @@
                     <div class="invoice p-3 mb-3">
                      <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row justify-content-between">
-                                <div class="col-md-4">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group row error-content">
-                                                <label for="referencia" class="col-sm-2 col-form-label">Referencia: </label>
-                                                <div class="col-sm-10">
-                                                    <input
-                                                        type="text"
-                                                        step="any"
-                                                        name="referencia"
-                                                        data-vv-as="Referencia"
-                                                        v-validate="{required: true}"
-                                                        class="form-control"
-                                                        id="referencia"
-                                                        placeholder="Referencia"
-                                                        v-model="referencia"
-                                                        :class="{'is-invalid': errors.has('referencia')}">
-                                                    <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
-                                                </div>
-                                            </div>
+                            <div class= "row">
+                                <div class="col-md-6">
+                                    <div class="form-group row error-content">
+                                        <label for="referencia" class="col-sm-2 col-form-label">Referencia: </label>
+                                        <div class="col-sm-10">
+                                            <input
+                                                    type="text"
+                                                    step="any"
+                                                    name="referencia"
+                                                    data-vv-as="Referencia"
+                                                    v-validate="{required: true}"
+                                                    class="form-control"
+                                                    id="referencia"
+                                                    placeholder="Referencia"
+                                                    v-model="referencia"
+                                                    :class="{'is-invalid': errors.has('referencia')}">
+                                            <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-6">
+                                    <div class="form-group row error-content">
+                                        <label for="fecha" class="col-sm-2 col-form-label">Fecha de Solicitud: </label>
+                                        <div class="col-sm-10">
+                                            <datepicker v-model = "fecha"
+                                                        name = "fecha"
+                                                        :format = "formatoFecha"
+                                                        :bootstrap-styling = "true"
+                                                        class = "form-control"
+                                                        v-validate="{required: true}"
+                                                        :class="{'is-invalid': errors.has('fecha')}"
+                                            ></datepicker>
+                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
@@ -58,7 +73,7 @@
                             </div>
                         </div>
                      </form>
-                    </div>
+                   </div>
                 </div>
             </div>
 
@@ -75,13 +90,13 @@
 
             <div class="tab-content" id="nav-tabContent">
                 <div aria-labelledby="nav-home-tab" class="tab-pane fade show active" id="nav-home" role="tabpanel">
-                    <ajuste-positivo v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia"></ajuste-positivo>
+                    <ajuste-positivo v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia" v-bind:fecha="fecha"></ajuste-positivo>
                 </div>
                 <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
-                    <ajuste-negativo v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia"></ajuste-negativo>
+                    <ajuste-negativo v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia" v-bind:fecha="fecha"></ajuste-negativo>
                 </div>
                 <div aria-labelledby="nav-contact-tab" class="tab-pane fade" id="nav-contact" role="tabpanel" style="display:block;">
-                    <nuevo-lote v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia"></nuevo-lote>
+                    <nuevo-lote v-bind:id_almacen="id_almacen" :key="id_almacen" v-bind:referencia="referencia" v-bind:fecha="fecha"></nuevo-lote>
                 </div>
             </div>
         </nav>
@@ -92,14 +107,16 @@
     import AjusteNegativo from "./ajuste-negativo/Create";
     import AjustePositivo from "./ajuste-positivo/Create";
     import NuevoLote from "./nuevo-lote/Create";
+    import datepicker from 'vuejs-datepicker';
     export default {
         name: "ajuste-create",
-        components: {AjusteNegativo, AjustePositivo, NuevoLote},
+        components: {AjusteNegativo, AjustePositivo, NuevoLote, datepicker},
         data() {
             return {
                 cargando: false,
                 id_almacen: '',
                 referencia: '',
+                fecha: '',
                 almacenes: [],
             }
         },
@@ -107,6 +124,9 @@
             this.getAlmacen();
         },
         methods: {
+            formatoFecha(date){
+                return moment(date).format('YYYY-MM-DD');
+            },
             getAlmacen() {
                 this.almacenes = [];
                 return this.$store.dispatch('cadeco/almacen/index', {
