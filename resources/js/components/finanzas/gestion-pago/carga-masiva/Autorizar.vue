@@ -26,7 +26,7 @@
                                     <b>Monto Total de Layout:</b>
                                 </td>
                                 <td class="bg-gray-light">
-                                    $&nbsp; {{(parseFloat(layout.monto)).formatMoney(2,'.',',')}}
+                                    {{layout.monto_format}}
                                 </td>
                                 <td class="bg-gray-light">
 <!--                                    <b>Monto de Está Dispersion:</b>-->
@@ -46,7 +46,7 @@
                                  {{ layout.usuario.nombre }}
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
-                                    <b>Fecha de Registro de Carga:</b>
+                                    <b>Fecha de Carga:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
                                     {{ layout.fecha_registro }}
@@ -79,14 +79,18 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Concepto</th>
+                                <th>Documento</th>
+                                <th>Fecha</th>
+                                <th>Vencto.</th>
+                                <th>Moneda</th>
+                                <th>Importe</th>
+                                <th>Saldo</th>
                                 <th>Beneficiario</th>
-                                <th>Importe Documento</th>
                                 <th>Cuenta Cargo</th>
                                 <th>Fecha Pago</th>
-                                <th>Tipo Cambio</th>
-                                <th>Importe Pagado</th>
                                 <th>Referencia Pago</th>
+                                <th>Tipo Cambio</th>
+                                <th>Monto Pagado</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
