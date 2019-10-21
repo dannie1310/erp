@@ -65,6 +65,7 @@ class LayoutPago extends Model
 
             foreach ($data['pagos'] as $pago)
             {
+                $fecha_pago = DateTime::createFromFormat('d/m/Y', ($pago['fecha_pago'])?$pago['fecha_pago']:$pago['fecha_pago_s']);
                 if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
                     $layout_pagos->partidas()->create([
                         'id_layout_pagos' => $layout_pagos->id,
@@ -74,7 +75,7 @@ class LayoutPago extends Model
                         'tipo_cambio' => $pago['tipo_cambio'],
                         'cuenta_cargo' => $pago['id_cuenta_cargo'] ? Cuenta::query()->where('id_cuenta', $pago['id_cuenta_cargo'])->pluck('numero')->toArray()['0'] : 0,
                         'id_cuenta_cargo' => $pago['id_cuenta_cargo'] ?  $pago['id_cuenta_cargo'] : 0,
-                        'fecha_pago' => $pago['fecha_pago'] ? date_format(new DateTime($pago['fecha_pago']), 'd-m-Y') : date_format(new DateTime($pago['fecha_pago_s']), 'd-m-Y'),
+                        'fecha_pago' => $fecha_pago->format('Y-m-d'),
                         'monto_pagado' => $pago['monto_pagado'],
                         'referencia_pago' => $pago['referencia_pago'],
                         'id_documento_remesa' => $pago['id_documento'],

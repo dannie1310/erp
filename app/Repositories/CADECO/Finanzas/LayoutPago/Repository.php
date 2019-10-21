@@ -13,9 +13,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Factura;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
-use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Solicitud;
-use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\CADECO\Obra;
 use DateTime;
@@ -52,7 +50,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->first();
             $factura = Factura::find($pago['id_transaccion']);
             $solicitud = Solicitud::find($pago['id_transaccion']);
-            $saldo_documento_format = 0;
+            $saldo_documento_format = '$ 0.0';
+            $saldo_documento = 0;
             $referencia_documento = null;
             if ($factura == null && $solicitud != null) // Solicitud
             {
