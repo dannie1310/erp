@@ -24,6 +24,5 @@ class AjusteNegativoObserver extends TransaccionObserver
         $ajusteNegativo->tipo_transaccion = 35;
         $ajusteNegativo->opciones = 1;
         $ajusteNegativo->estado = 0;
-        $ajusteNegativo->fecha = date('Y-m-d H:i:s');
     }
 }

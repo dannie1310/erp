@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class AjustePositivo extends Ajuste
@@ -17,7 +18,8 @@ class AjustePositivo extends Ajuste
         'id_almacen',
         'referencia',
         'observaciones',
-        'id_usuario'
+        'id_usuario',
+        'fecha'
     ];
 
     protected static function boot()
@@ -42,6 +44,7 @@ class AjustePositivo extends Ajuste
             $datos = [
                 'id_almacen' => $data['id_almacen'],
                 'referencia' => $data['referencia'],
+                'fecha' =>  date_format(new DateTime($data['fecha']), 'Y-m-d'),
                 'observaciones' => $data['observaciones'],
             ];
             $ajusteTransaccion = $this->create($datos);
