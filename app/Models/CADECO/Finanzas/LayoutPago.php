@@ -62,11 +62,12 @@ class LayoutPago extends Model
                 'nombre_layout_pagos' => $data['nombre_archivo'],
                 'monto_layout_pagos' => $monto_pagado
             ]);
-
+            $contador_pagos = 0;
             foreach ($data['pagos'] as $pago)
             {
                 $fecha_pago = DateTime::createFromFormat('d/m/Y', ($pago['fecha_pago'])?$pago['fecha_pago']:$pago['fecha_pago_s']);
-                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+                    $contador_pagos ++;
                     $layout_pagos->partidas()->create([
                         'id_layout_pagos' => $layout_pagos->id,
                         'id_transaccion' => $pago['id_transaccion'],
@@ -84,7 +85,14 @@ class LayoutPago extends Model
                     ]);
                 }
             }
-            DB::connection('cadeco')->commit();
+            if(count($layout_pagos->partidas) == $contador_pagos && count($layout_pagos->partidas) >0){
+                DB::connection('cadeco')->commit();
+            }
+            else{
+                DB::connection('cadeco')->rollBack();
+                abort(400, 'Hubo un error durante el registro de las partidas');
+            }
+
             return $layout_pagos;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
@@ -107,7 +115,7 @@ class LayoutPago extends Model
     {
         $monto_total = 0;
         foreach ($partidas as $pago) {
-            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
                 $monto_total += $pago['monto_pagado'];
             }
         }

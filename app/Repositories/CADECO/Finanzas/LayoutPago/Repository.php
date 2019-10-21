@@ -263,7 +263,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                             );
                         }else{
                             return array(
-                                'id' => 0, 'estado' => 1, 'descripcion' => 'Pagable N/A'
+                                'id' => 0, 'estado' => 10, 'descripcion' => 'Pagable N/A'
                             );
                         }
                     }
@@ -302,7 +302,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         {
             if($partida->layoutPago()->where('estado', '!=', '-1')->first() != null) {
                 return array(
-                    'id' => 0, 'estado' => -1, 'descripcion' => 'Registrado Previamente'
+                    'id' => 0, 'estado' => -1, 'descripcion' => 'Registro Previo'
                 );
             }
         }
