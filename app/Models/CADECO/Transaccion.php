@@ -127,6 +127,18 @@ class Transaccion extends Model
         return date_format($date,"Y-m-d");
 
     }
+    public function getVencimientoFormatAttribute()
+    {
+        $date = date_create($this->vencimiento);
+        return date_format($date,"d/m/Y");
+
+    }
+    public function getCumplimientoFormatAttribute()
+    {
+        $date = date_create($this->cumplimiento);
+        return date_format($date,"d/m/Y");
+
+    }
     public function  getObservacionesFormatAttribute(){
         return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
     }
