@@ -65,7 +65,11 @@ class LayoutPago extends Model
             $contador_pagos = 0;
             foreach ($data['pagos'] as $pago)
             {
-                $fecha_pago = DateTime::createFromFormat('d/m/Y', ($pago['fecha_pago'])?$pago['fecha_pago']:$pago['fecha_pago_s']);
+                if(array_key_exists ('fecha_pago_s', $pago)){
+                    $fecha_pago =New DateTime($pago['fecha_pago_s']);
+                }else{
+                    $fecha_pago = DateTime::createFromFormat('d/m/Y', $pago['fecha_pago']);
+                }
                 if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
                     $contador_pagos ++;
                     $layout_pagos->partidas()->create([
