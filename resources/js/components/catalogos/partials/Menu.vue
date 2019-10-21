@@ -4,13 +4,13 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">CATALOGOS</li>
+            <li class="nav-header">CATÁLOGOS</li>
 
             <li class="nav-item" v-if="$root.can('consultar_familia_maquinaria')|| $root.can('consultar_insumo_maquinaria')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-tractor"></i>
                     <p>
-                        Catalogo de Maquinaria
+                        Catálogo de Maquinaria
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -28,6 +28,66 @@
                         <router-link :to="{name: 'maquinaria'}" class="nav-link" :class="{active: this.$route.name == 'maquinaria'}">
                             <i class="fa fa-circle-o nav-icon"></i>
                             <p>Insumo Maquinaria</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item" v-if="$root.can('consultar_familia_servicio')|| $root.can('consultar_insumo_servicio')">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-cogs"></i>
+                    <p>
+                        Catálogo de Servicios
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_familia_servicio')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'cat-familia-serv'}" class="nav-link" :class="{active: this.$route.name == 'cat-familia-serv'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Familia de Servicios</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_servicio')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'cat-servicio'}" class="nav-link" :class="{active: this.$route.name == 'cat-servicio'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Insumo Servicios</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item" v-if="catalogo || $root.can('consultar_insumo_material')|| $root.can('consultar_insumo_herramienta_equipo')">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>
+                        Catálogo de Insumos
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'cat-familia'}" class="nav-link" :class="{active: this.$route.name == 'cat-familia'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Familia</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_material')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'cat-material'}" class="nav-link" :class="{active: this.$route.name == 'cat-material'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Material</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_herramienta_equipo')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'cat-herramienta'}" class="nav-link" :class="{active: this.$route.name == 'cat-herramienta'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Herramienta y Equipo</p>
                         </router-link>
                     </li>
                 </ul>

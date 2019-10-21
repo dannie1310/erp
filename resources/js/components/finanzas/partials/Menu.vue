@@ -109,7 +109,7 @@
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-cogs"></i>
                     <p>
-                        Catalogo de Insumos
+                        Catálogo de Insumos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
