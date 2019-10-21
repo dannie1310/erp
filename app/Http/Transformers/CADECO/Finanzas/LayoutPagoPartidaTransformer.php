@@ -3,7 +3,6 @@
 
 namespace App\Http\Transformers\CADECO\Finanzas;
 
-use App\Http\Transformers\CADECO\Contabilidad\FacturaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\SolicitudTransformer;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
@@ -36,12 +35,13 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'fecha_pago' => date('Y-m-d', strtotime($model->fecha_pago)),
+            'fecha_pago_format' => date('d/m/Y', strtotime($model->fecha_pago)),
             'id_layout_pagos' => $model->id_layout_pagos,
             'id_transaccion' => $model->id_transaccion,
             'id_refente'=>$model->id_referente,
             'monto_transaccion' => $model->monto_transaccion,
-            'monto_transaccion_format' => '$ ' . number_format($model->monto_transaccion,2),
-            'monto_transaccion_format_2' =>  number_format($model->monto_transaccion,2),
+            'monto_transaccion_format' => '$ ' . number_format($model->monto_transaccion,2,".",","),
+            'monto_transaccion_format_2' =>  number_format($model->monto_transaccion,2,".",","),
             'id_moneda' => $model->id_moneda,
             'tipo_cambio' => $model->tipo_cambio,
             'cuenta_cargo' => $model->cuenta_cargo,

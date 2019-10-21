@@ -56,9 +56,11 @@ class FacturaTransformer extends TransformerAbstract
             'opciones_format'=>$model->tipo_transaccion_string,
             'cumplimiento' => (string)$model->cumplimiento_form,
             'vencimiento' => $model->vencimiento_form,
+            'vencimiento_format' => $model->vencimiento_format,
             'tipo_cambio' => $model->tipo_cambio,
             'a_pagar' => $model->autorizado,
-            'a_cuenta' => $model->a_cuenta_format
+            'a_cuenta' => $model->a_cuenta_format,
+            'moneda' => $model->moneda->nombre
         ];
     }
 
