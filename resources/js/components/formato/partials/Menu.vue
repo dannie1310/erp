@@ -8,9 +8,9 @@
             <li class="nav-header">MÓDULOS</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-book"></i>
+                    <i class="nav-icon fa fa-building"></i>
                     <p>
-                        Estimación
+                        Contratos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -35,7 +35,7 @@
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-cart-arrow-down"></i>
                     <p>
-                        Compra
+                        Compras
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>

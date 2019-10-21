@@ -11,7 +11,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
-                                        <label for="id_empresa">Proveedor</label>
+                                        <label for="id_empresa">Proveedor:</label>
                                         <select
                                                 type="text"
                                                 name="id_empresa"
@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
-                                        <label for="id_subcontrato">Orden Compra</label>
+                                        <label for="id_subcontrato">Orden Compra:</label>
                                         <select
                                                 :disabled="!id_empresa"
                                                 type="text"
