@@ -11,7 +11,8 @@ namespace App\Models\CADECO;
 
 class PagoACuenta extends Transaccion
 {
-    public const TIPO_ANTECEDENTE = null;
+    public const TIPO_ANTECEDENTE = 72;
+    public const OPCION_ANTECEDENTE = 327681;
 
     protected $fillable = [
         'id_antecedente',

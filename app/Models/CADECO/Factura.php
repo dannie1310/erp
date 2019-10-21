@@ -95,8 +95,16 @@ class Factura extends Transaccion
         return $estado;
     }
 
+    public function pagos(){
+
+    }
+
     public function getACuentaFormatAttribute()    {
         return '$ '.number_format(abs($this->ordenesPago->sum('monto')),2,".",",");
+    }
+
+    public function getSaldoFormatAttribute()    {
+        return '$ '.number_format(abs($this->saldo),2,".",",");
     }
 
     public function getTipoTransaccionStringAttribute()   {

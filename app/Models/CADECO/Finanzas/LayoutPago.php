@@ -62,10 +62,12 @@ class LayoutPago extends Model
                 'nombre_layout_pagos' => $data['nombre_archivo'],
                 'monto_layout_pagos' => $monto_pagado
             ]);
-
+            $contador_pagos = 0;
             foreach ($data['pagos'] as $pago)
             {
-                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+                $fecha_pago = DateTime::createFromFormat('d/m/Y', ($pago['fecha_pago'])?$pago['fecha_pago']:$pago['fecha_pago_s']);
+                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+                    $contador_pagos ++;
                     $layout_pagos->partidas()->create([
                         'id_layout_pagos' => $layout_pagos->id,
                         'id_transaccion' => $pago['id_transaccion'],
@@ -74,7 +76,7 @@ class LayoutPago extends Model
                         'tipo_cambio' => $pago['tipo_cambio'],
                         'cuenta_cargo' => $pago['id_cuenta_cargo'] ? Cuenta::query()->where('id_cuenta', $pago['id_cuenta_cargo'])->pluck('numero')->toArray()['0'] : 0,
                         'id_cuenta_cargo' => $pago['id_cuenta_cargo'] ?  $pago['id_cuenta_cargo'] : 0,
-                        'fecha_pago' => $pago['fecha_pago'] ? date_format(new DateTime($pago['fecha_pago']), 'd-m-Y') : date_format(new DateTime($pago['fecha_pago_s']), 'd-m-Y'),
+                        'fecha_pago' => $fecha_pago->format('Y-m-d'),
                         'monto_pagado' => $pago['monto_pagado'],
                         'referencia_pago' => $pago['referencia_pago'],
                         'id_documento_remesa' => $pago['id_documento'],
@@ -83,7 +85,14 @@ class LayoutPago extends Model
                     ]);
                 }
             }
-            DB::connection('cadeco')->commit();
+            if(count($layout_pagos->partidas) == $contador_pagos && count($layout_pagos->partidas) >0){
+                DB::connection('cadeco')->commit();
+            }
+            else{
+                DB::connection('cadeco')->rollBack();
+                abort(400, 'Hubo un error durante el registro de las partidas');
+            }
+
             return $layout_pagos;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
@@ -106,7 +115,7 @@ class LayoutPago extends Model
     {
         $monto_total = 0;
         foreach ($partidas as $pago) {
-            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
                 $monto_total += $pago['monto_pagado'];
             }
         }
