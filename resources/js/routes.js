@@ -879,6 +879,24 @@ export const routes = [
                 ]
             },
             {
+                path:'factura',
+                component: require('./components/finanzas/factura/Layout'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'factura',
+                        component: require('./components/finanzas/factura/Index'),
+                        meta:{
+                            title: 'Facturas',
+                            breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
+                        }
+                    },
+
+                ]
+            },
+            {
                 path:'fondo',
                 component: require('./components/finanzas/fondo/Layout.vue'),
                 children: [
@@ -1154,25 +1172,44 @@ export const routes = [
                     },
                 ]
             },
-
             {
-                path:'factura',
-                component: require('./components/finanzas/factura/Layout'),
+                path: 'tesoreria',
+                component: require('./components/finanzas/tesoreria/Layout'),
                 children: [
                     {
-                        path:'/',
-                        name: 'factura',
-                        component: require('./components/finanzas/factura/Index'),
-                        meta:{
-                            title: 'Facturas',
-                            breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_banco'
+                        path: '/',
+                        name: 'tesoreria',
+                        component: require('./components/finanzas/tesoreria/Index'),
+                        meta: {
+                            title: 'Tesorería',
+                            breadcrumb: {parent: 'finanzas', name: 'TESORERÍA'},
+                            middleware: [auth, context],
                         }
                     },
-
+                    {
+                        path: 'movimiento-bancario',
+                        name: 'movimiento-bancario',
+                        component: require('./components/finanzas/tesoreria/movimiento-bancario/Index'),
+                        meta: {
+                            title: 'Movimientos Bancarios',
+                            breadcrumb: {parent: 'tesoreria', name: 'MOVIMIENTOS BANCARIOS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_movimiento_bancario'
+                        }
+                    },
+                    {
+                        path: 'traspaso-entre-cuentas',
+                        name: 'traspaso-entre-cuentas',
+                        component: require('./components/finanzas/tesoreria/traspaso-entre-cuentas/Index'),
+                        meta: {
+                            title: 'Traspasos entre Cuentas',
+                            breadcrumb: {parent: 'tesoreria', name: 'TRASPASOS ENTRE CUENTAS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_traspaso_cuenta'
+                        }
+                    },
                 ]
-            },
+            }
         ]
     },
     {
@@ -1203,59 +1240,6 @@ export const routes = [
                     permission: 'consultar_formato_orden_pago_estimacion'
                 }
             },
-        ]
-    },
-    {
-        path: '/sao/tesoreria',
-        components: {
-            default: require('./components/tesoreria/partials/Layout.vue'),
-            menu: require('./components/tesoreria/partials/Menu.vue')
-        },
-        children: [
-            {
-                path: '',
-                name: 'tesoreria',
-                component: require('./components/tesoreria/Index'),
-                meta: {
-                    title: 'Tesorería',
-                    breadcrumb: { parent: 'home', name: 'TESORERIA'},
-                    middleware: [auth, context, access]
-                }
-            },
-            {
-                path: 'movimiento-bancario',
-                component: require('./components/tesoreria/movimiento-bancario/Layout.vue'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'movimiento-bancario',
-                        component: require('./components/tesoreria/movimiento-bancario/Index'),
-                        meta: {
-                            title: 'Movimientos Bancarios',
-                            breadcrumb: {parent: 'tesoreria', name: 'MOVIMIENTOS BANCARIOS'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_movimiento_bancario'
-                        }
-                    }
-                ]
-            },
-            {
-                path: 'traspaso-entre-cuentas',
-                component: require('./components/tesoreria/traspaso-entre-cuentas/Layout.vue'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'traspaso-entre-cuentas',
-                        component: require('./components/tesoreria/traspaso-entre-cuentas/Index'),
-                        meta: {
-                            title: 'Traspasos entre Cuentas',
-                            breadcrumb: {parent: 'tesoreria', name: 'TRASPASOS ENTRE CUENTAS'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_traspaso_cuenta'
-                        }
-                    }
-                ]
-            }
         ]
     },
     {
