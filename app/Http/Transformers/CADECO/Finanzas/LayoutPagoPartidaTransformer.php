@@ -51,8 +51,15 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
             'referencia_pago' => $model->referencia_pago,
             'id_documento_remesa' => $model->id_documento_remesa,
             'id_transaccion_pago' => $model->id_transaccion_pago,
+            'referencia' => $model->documento_pagable->referencia_pagable,
+            'fecha_format' => $model->documento_pagable->fecha_format,
+            'vencimiento_format' => $model->documento_pagable->vencimiento_format,
+            'saldo_format'=>(string) '$ '.number_format(($model->documento_pagable->saldo_pagable),2,".",","),
+            'beneficiario'=>$model->documento_pagable->beneficiario,
+            'folio_pago_format'=>$model->folio_pago_format,
+            'clase_badge_estado'=>($model->pago)?"badge badge-success":"badge badge-primary",
+            'estado'=>($model->pago)?"Pagado":"Por Autorizar",
         ];
-
     }
 
     /**

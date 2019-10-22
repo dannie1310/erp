@@ -23,7 +23,7 @@
                                     <b>Monto Layout:</b>
                                 </td>
                                 <td class="bg-gray-light text-right">
-                                    {{layout.monto_layout_pagos}}
+                                    {{layout.monto_format}}
                                 </td>
                                 <td class="bg-gray-light" colspan="2"><b>Estado:</b><br> </td>
                                 <td class="bg-gray-light"><estatus-label :value="layout.estado"></estatus-label></td>
@@ -53,7 +53,7 @@
                                     <b>Fecha de Autorización:</b>
                                 </td>
                                 <td colspan="2" class="bg-gray-light">
-                                    {{layout.fecha_autorizizacion}}
+                                    {{layout.fecha_autorizacion}}
                                 </td>
                             </tr>
                             </tbody>
@@ -68,33 +68,40 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Concepto</th>
+                                <th>Documento</th>
+                                <th>Fecha</th>
+                                <th>Vencto.</th>
+                                <th>Moneda</th>
+                                <th>Importe</th>
+                                <th>Saldo</th>
                                 <th>Beneficiario</th>
-                                <th>Importe Documento</th>
                                 <th>Cuenta Cargo</th>
                                 <th>Fecha Pago</th>
-                                <th>Tipo Cambio</th>
-                                <th>Importe Pagado</th>
                                 <th>Referencia Pago</th>
+                                <th>Tipo Cambio</th>
+                                <th>Monto Pagado</th>
+                                <th>Folio de Pago</th>
                                 <th>Estado</th>
+                                <th> </th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr v-for="(doc, i) in layout.partidas.data">
                                 <td>{{i+1}}</td>
-                                <td v-if="doc.factura">{{doc.factura.observaciones}}</td>
-                                <td v-else-if="doc.solicitud">{{doc.solicitud.observaciones}}</td>
-                                <td v-if="doc.factura">{{doc.factura.empresa.razon_social}}</td>
-                                <td v-else-if="doc.solicitud.empresa">{{doc.solicitud.empresa.razon_social}}</td>
-                                <td v-else-if="doc.solicitud.fondo">{{doc.solicitud.fondo.descripcion}}</td>
-                                <td>{{doc.monto_transaccion_format}}</td>
+                                <td >{{doc.referencia}}</td>
+                                <td >{{doc.fecha_format}}</td>
+                                <td >{{doc.vencimiento_format}}</td>
+                                <td >{{doc.moneda.nombre}}</td>
+                                <td style="text-align:right">{{doc.monto_transaccion_format}}</td>
+                                <td style="text-align:right">{{doc.saldo_format}}</td>
+                                <td>{{doc.beneficiario}}</td>
                                 <td>{{doc.cuenta_cargo}}</td>
-                                <td>{{doc.fecha_pago}}</td>
-                                <td>{{doc.tipo_cambio}}</td>
-                                <td>{{doc.monto_pagado_format}}</td>
+                                <td>{{doc.fecha_pago_format}}</td>
                                 <td>{{doc.referencia_pago}}</td>
-                                <td v-if="doc.id_transaccion_pago===null"><small class="badge-primary">Aplicado</small></td>
-                                <td v-else><small class="badge-success">Pagado</small></td>
+                                <td style="text-align:right">{{doc.tipo_cambio}}</td>
+                                <td style="text-align:right">{{doc.monto_pagado_format}}</td>
+                                <td >{{doc.folio_pago_format}}</td>
+                                <td style="text-align:center"><small :class="[doc.clase_badge_estado]">{{doc.estado}}</small></td>
                             </tr>
                             </tbody>
                         </table>
