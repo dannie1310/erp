@@ -129,8 +129,13 @@
                                                             <label v-if = "doc.tipo_destino == 2" v-model="doc.destino">{{doc.descripcion_destino.descripcion}}</label>
                                                             <label v-else-if="doc.tipo_destino == 1" v-model="doc.destino">{{doc.descripcion_destino.path}}</label>
                                                         </td>
+
+                                                        <td v-if="doc.cantidad_pendiente != 0 && doc.destino=== undefined">1</td>
+                                                        <td v-else-if="doc.cantidad_pendiente != 0 && doc.destino != ''">2</td>
+                                                        <td v-else>3</td>
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
-                                                        <td class="text-center" v-if="doc.cantidad_pendiente != 0"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)"></i>{{doc.contratista}}</td>
+                                                        <td class="text-center" v-if="doc.cantidad_pendiente != 0 && doc.contratista_seleccionado === undefined"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)"></i>{{doc.contratista}}</td>
+                                                        <td class="text-center" v-else-if="doc.cantidad_pendiente != 0 && doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)"></i></td>
                                                         <td v-else></td>
                                                     </tr>
                                                 </tbody>
@@ -233,7 +238,7 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AGREGAR CONTRATISTA</h5>
+                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> SELECCIONAR UN CONTRATISTA</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -242,7 +247,7 @@
                             <div class="modal-body">
                                 <fieldset class="form-group">
                                     <div class="row"  v-if="contratistas">
-                                          <div class="col-md-8">
+                                          <div class="col-md-12">
                                             <div class="form-group error-content">
                                                 <label for="empresa_contratista">Empresa Contratista:</label>
                                                    <select
@@ -261,10 +266,9 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                         <div class="col-md-6">
+                                         <div class="col-md-12">
                                             <div class="form-group row error-content">
-                                                <label for="opcion" class="col-sm-3 col-form-label">Tipo: </label>
-                                                <div class="col-sm-10">
+                                                <div class="col-sm-12">
                                                     <div class="btn-group btn-group-toggle">
                                                         <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
                                                             <input type="radio"
@@ -287,7 +291,7 @@
                              <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                                 <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Contratista</button>
-                                <button type="button" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == ''" @click="seleccionarContratista">Registrar Contratista</button>
+                                <button type="button" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == '' || contratista.opcion === ''" @click="seleccionarContratista">Registrar Contratista</button>
                             </div>
                          </form>
                     </div>
@@ -328,9 +332,7 @@
                     opcion:''
                 },
                 contratistas:[],
-                datos_extra: {},
-                id_partida_temporal : '',
-                contratista_use : ''
+                id_partida_temporal : ''
             }
         },
         mounted() {
@@ -424,16 +426,6 @@
                     })
             },
 
-            findContratista() {
-                this.$store.commit('cadeco/empresa/SET_EMPRESA', null);
-                return this.$store.dispatch('cadeco/empresa/find', {
-                    id: this.contratista.empresa_contratista,
-                    params: {}
-                }).then(data => {
-                    this.emp_cont = data;
-                })
-            },
-
             store() {
                 return this.$store.dispatch('almacenes/entrada-almacen/store', this.$data)
                     .then((data) => {
@@ -442,14 +434,11 @@
             },
 
             modalContratista(i){
-                console.log("valor index", i, this.contratista)
                 this.id_partida_temporal = i;
                 if(this.partidas[this.id_partida_temporal].contratista_seleccionado == undefined || this.partidas[this.id_partida_temporal].contratista_seleccionado == ''){
-                    console.log("vaciar?", this.id_partida_temporal, i)
                     this.contratista.empresa_contratista = '';
                     this.contratista.opcion = '';
                 }else{
-                    console.log("con datos: ", this.id_partida_temporal, i, this.partidas[this.id_partida_temporal].contratista_seleccionado, this.contratista)
                     this.contratista = this.partidas[this.id_partida_temporal].contratista_seleccionado;
                 }
                 if(this.contratistas.length == 0){
@@ -482,10 +471,6 @@
             },
 
             validate() {
-                if(this.contratista.empresa_contratista != '' || this.contratista.opcion != '') {
-                    console.log("AQUUI?? djkfhf")
-                    this.findContratista();
-                }
                 this.$validator.validate().then(result => {
                     if (result) {
                         // if(this.destino_temporal == '')
