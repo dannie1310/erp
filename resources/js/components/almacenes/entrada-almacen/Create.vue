@@ -4,13 +4,6 @@
             <div class="row">
                 <div class="col-12">
                     <div class="invoice p-3 mb-3">
-                        <div class="row">
-                            <div class="col-12">
-                                <h4>
-                                    <i class="fa fa-list"></i> Registrar Entrada de Almacén
-                                </h4>
-                            </div>
-                        </div>
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
                                 <div class="row justify-content-end">
@@ -131,11 +124,11 @@
                                                             <small class="badge" :class="{'badge-success':true}">
                                                                 <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
                                                             </small>
-                                                            <label v-if="doc.destino.tipo_destino === 1">{{doc.destino.destino.path}}</label>
+                                                            <label v-if="doc.destino.tipo_destino === 1"  :title="`${doc.destino.destino.path}`">{{doc.destino.destino.descripcion}}</label>
                                                             <label v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</label>
                                                         </td>
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
-                                                        <td class="text-center" v-if="doc.cantidad_pendiente != 0 && doc.contratista_seleccionado === undefined"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)"></i>{{doc.contratista}}</td>
+                                                        <td class="text-center" v-if="doc.cantidad_pendiente != 0 && (doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)"></i>{{doc.contratista}}</td>
                                                         <td class="text-center" v-else-if="doc.cantidad_pendiente != 0 && doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)"></i></td>
                                                         <!--<td v-else></td>-->
                                                     </tr>
@@ -427,13 +420,6 @@
                     })
             },
 
-            store() {
-                return this.$store.dispatch('almacenes/entrada-almacen/store', this.$data)
-                    .then((data) => {
-                        this.$router.push({name: 'entrada-almacen'});
-                    });
-            },
-
             modalContratista(i){
                 this.id_partida_temporal = i;
                 if(this.partidas[this.id_partida_temporal].contratista_seleccionado == undefined || this.partidas[this.id_partida_temporal].contratista_seleccionado == ''){
@@ -472,12 +458,45 @@
             },
 
             validate() {
+                var error_cantidad = 0;
+                var error_destino = 0;
                 this.$validator.validate().then(result => {
                     if (result) {
-                       this.store()
+                        this.$data.partidas.forEach(function(element) {
+                            if(element.cantidad_ingresada  === undefined || element.cantidad_ingresada == ""){
+                                error_cantidad = error_cantidad + 1
+                            }
+                            if(element.destino  === undefined || element.destino == ''){
+                                error_destino = error_destino + 1
+                            }
+                       });
+
+                        if(error_cantidad > error_destino)
+                        {
+                            swal('¡Error!', 'Debe colocar un destino a la cantidad de entrada.', 'error')
+                        }
+
+                        else if(error_cantidad < error_destino)
+                        {
+                            swal('¡Error!', 'Debe colocar una cantidad al destino seleccionado en el material.', 'error')
+                        }
+                        else if(error_cantidad == error_destino && error_cantidad == this.$data.partidas.length){
+                            swal('¡Error!', 'Debe registrar un material a esta entrada de almacén.', 'error')
+                        }
+                        else {
+                            this.store()
+                        }
                     }
                 });
             },
+
+            store() {
+                return this.$store.dispatch('almacenes/entrada-almacen/store', this.$data)
+                    .then((data) => {
+                        this.$router.push({name: 'entrada-almacen'});
+                    });
+            },
+
             salir(){
                 this.$router.push({name: 'entrada-almacen'});
             },
