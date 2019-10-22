@@ -1,13 +1,13 @@
 <template>
     <treeselect
-            :class="{error: error}"
-            :async="true"
-            :load-options="loadOptions"
-            v-model="val"
-            loadingText="Cargando"
-            searchPromptText="Escriba para buscar..."
-            noResultsText="Sin Resultados"
-            :placeholder="placeholder ? placeholder : '-- Buscar en Familia Materiales -- '"
+        :class="{error: error}"
+        :async="true"
+        :load-options="loadOptions"
+        v-model="val"
+        loadingText="Cargando"
+        searchPromptText="Escriba para buscar..."
+        noResultsText="Sin Resultados"
+        :placeholder="placeholder ? placeholder : '-- Buscar en Familia -- '"
     >
     </treeselect>
 </template>

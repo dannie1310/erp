@@ -96,6 +96,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MaterialController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\MaterialController@store');
         });
 
         // MONEDA
@@ -117,6 +118,12 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\SucursalController@store');
+        });
+
+        //UNIDAD
+        $api->group(['prefix'=>'unidad'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\UnidadController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
         });
 
     });
@@ -372,14 +379,6 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-orden-compra', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@pdfOrdenCompra')->where(['id' => '[0-9]+']);
-        });
-
-        // MATERIALES
-        $api->group(['prefix' => 'material'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\MaterialController@index');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\MaterialController@paginate');
-            $api->get('{id}','App\Http\Controllers\v1\CADECO\Compras\MaterialController@show')->where(['id' => '[0-9]+']);
-            $api->post('/','App\Http\Controllers\v1\CADECO\Compras\MaterialController@store');
         });
 
         // SOLICITUD DE COMPRA
