@@ -92,7 +92,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(doc, i) in orden_compra.partidas.data">
+                                                    <tr v-for="(doc, i) in partidas">
                                                         <td v-if="doc.cantidad_pendiente != 0">{{i+1}}</td>
                                                         <td v-if="doc.cantidad_pendiente != 0">{{doc.material.numero_parte}}</td>
                                                         <td v-if="doc.cantidad_pendiente != 0">{{doc.material.descripcion}}</td>
@@ -238,7 +238,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                         <form role="form"@submit.prevent="modificarContratista">
+                         <form role="form">
                             <div class="modal-body">
                                 <fieldset class="form-group">
                                     <div class="row"  v-if="contratistas">
@@ -307,6 +307,7 @@
                 id_orden_compra : '',
                 ordenes_compra : [],
                 orden_compra : [],
+                partidas : [],
                 empresa : '',
                 remision : '',
                 cargando: false,
@@ -351,6 +352,7 @@
                 this.id_concepto_temporal = '';
                 this.almacenes = [];
                 this.descripcion_temporal = [];
+                this.partidas = [];
             },
             getOrdenesCompra() {
                 return this.$store.dispatch('compras/orden-compra/index', {
@@ -367,7 +369,8 @@
                 })
             },
             getOrdenCompra() {
-                this.orden_compra = [];
+                this.orden_compra = []
+                this.partidas = []
                 return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id_orden_compra,
                     params: {
@@ -376,6 +379,7 @@
                 })
                     .then(data => {
                         this.orden_compra = data;
+                        this.partidas = data.partidas.data;
                     })
             },
             getAlmacenes() {
@@ -396,7 +400,7 @@
                     }
                 })
                     .then(data => {
-                        this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = data;
+                        this.partidas[this.index_temporal].descripcion_destino = data;
                     })
             },
 
@@ -407,7 +411,7 @@
                     }
                 })
                     .then(data => {
-                        this.orden_compra.partidas.data[this.index_temporal].descripcion_destino = data;
+                        this.partidas[this.index_temporal].descripcion_destino = data;
                     })
             },
 
@@ -438,15 +442,16 @@
             },
 
             modalContratista(i){
-                console.log("valor index", i, this.contratista, this.orden_compra.partidas.data[this.id_partida_temporal].contratista_seleccionado )
+                console.log("valor index", i, this.contratista)
                 this.id_partida_temporal = i;
-                if(this.orden_compra.partidas.data[this.id_partida_temporal].contratista_seleccionado == undefined || this.orden_compra.partidas.data[this.id_partida_temporal].contratista_seleccionado == ''){
+                if(this.partidas[this.id_partida_temporal].contratista_seleccionado == undefined || this.partidas[this.id_partida_temporal].contratista_seleccionado == ''){
+                    console.log("vaciar?", this.id_partida_temporal, i)
                     this.contratista.empresa_contratista = '';
                     this.contratista.opcion = '';
                 }else{
-                    this.contratista = this.orden_compra.partidas.data[this.id_partida_temporal].contratista_seleccionado;
+                    console.log("con datos: ", this.id_partida_temporal, i, this.partidas[this.id_partida_temporal].contratista_seleccionado, this.contratista)
+                    this.contratista = this.partidas[this.id_partida_temporal].contratista_seleccionado;
                 }
-
                 if(this.contratistas.length == 0){
                     this.getContratista()
                 }
@@ -454,23 +459,24 @@
             },
 
             seleccionarContratista() {
-                this.orden_compra.partidas.data[this.id_partida_temporal].contratista_seleccionado = this.contratista;
+                this.partidas[this.id_partida_temporal].contratista_seleccionado = this.contratista;
                 this.id_partida_temporal = ''
+                this.contratista = {
+                    empresa_contratista: '',
+                    opcion:''
+                };
                 $(this.$refs.contratista).modal('hide');
             },
 
             quitarContratista(){
                 this.cargando = true;
-                this.orden_compra.partidas.data[this.id_partida_temporal].contratista_seleccionado  = '';
+                this.partidas[this.id_partida_temporal].contratista_seleccionado  = '';
                 this.id_partida_temporal = '';
-                $(this.$refs.contratista).modal('hide');
-                this.$validator.reset();
-                this.cargando = false;
-            },
+                this.contratista = {
+                    empresa_contratista: '',
+                    opcion:''
+                };
 
-            modificarContratista(){
-                this.cargando = true;
-                this.orden_compra.partidas.data[this.id_partida_temporal].contratista_seleccionado = this.contratista;
                 $(this.$refs.contratista).modal('hide');
                 this.cargando = false;
             },
@@ -508,8 +514,8 @@
                 $(this.$refs.modal).modal('show');
             },
             seleccionar() {
-                this.orden_compra.partidas.data[this.index_temporal].destino = this.destino_temporal;
-                this.orden_compra.partidas.data[this.index_temporal].tipo_destino = this.tipo_temporal;
+                this.partidas[this.index_temporal].destino = this.destino_temporal;
+                this.partidas[this.index_temporal].tipo_destino = this.tipo_temporal;
 
                 if (this.tipo_temporal == 1) {
                     this.getConcepto();
