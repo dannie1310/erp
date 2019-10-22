@@ -119,8 +119,8 @@ class EntradaMaterial extends Transaccion
                 array_push($mensaje_items,  "-ContraRecibo: # " . $contra_recibo->numero_folio . " Factura: # " . $factura->numero_folio ." \n" );
             }
 
-            if($inventario == null && $movimiento == null){
-                array_push($mensaje_items,  "-No existe un inventario ni movimiento \n");
+            if($item['id_almacen'] != null && $inventario == null && $movimiento == null){
+                array_push($mensaje_items,  "-No existe un inventario ni movimiento \n". $inventario . $movimiento. $item['id_item'] );
             }
 
             if($inventario != null && $inventario->cantidad != $inventario->saldo){
@@ -147,7 +147,6 @@ class EntradaMaterial extends Transaccion
                 }
             }
         }
-
         $mensaje_items = array_unique($mensaje_items);
 
         if($mensaje_items != [])
@@ -289,7 +288,7 @@ class EntradaMaterial extends Transaccion
 
             $inventario = InventarioEliminado::query()->where('id_item', $partida['id_item'])->first();
             $movimiento = MovimientoEliminado::query()->where('id_item', $partida['id_item'])->first();
-            if ($inventario == null && $movimiento == null)
+            if ($partida['id_almacen'] != null  && $inventario == null && $movimiento == null)
             {
                 DB::connection('cadeco')->rollBack();
                 abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
@@ -408,12 +407,12 @@ class EntradaMaterial extends Transaccion
 
             foreach ($data['partidas'] as $item){
                 if(isset($item['cantidad_ingresada']) == true) {
-                    if ($item['tipo_destino'] == 1) {
-                        $entrada->partidas()->create([
+                    if ($item['destino']['tipo_destino'] == 1) {
+                        $item_guardado = $entrada->partidas()->create([
                             'item_antecedente' => $item['id'],
                             'id_transaccion' => $entrada->id_transaccion,
                             'id_antecedente' => $entrada->id_antecedente,
-                            'id_concepto' => $item['destino'],
+                            'id_concepto' => $item['destino']['id_destino'],
                             'id_material' => $item['material']['id'],
                             'unidad' => $item['material']['unidad'],
                             'numero' => $item['numero'],
@@ -425,12 +424,12 @@ class EntradaMaterial extends Transaccion
                             'precio_unitario' => $item['precio_material']
                         ]);
                     }
-                    if ($item['tipo_destino'] == 2) {
-                        $entrada->partidas()->create([
+                    if ($item['destino']['tipo_destino'] == 2) {
+                        $item_guardado = $entrada->partidas()->create([
                             'item_antecedente' => $item['id'],
                             'id_transaccion' => $entrada->id_transaccion,
                             'id_antecedente' => $entrada->id_antecedente,
-                            'id_almacen' => $item['destino'],
+                            'id_almacen' => $item['destino']['id_destino'],
                             'id_material' => $item['material']['id'],
                             'unidad' => $item['material']['unidad'],
                             'numero' => $item['numero'],
@@ -441,6 +440,12 @@ class EntradaMaterial extends Transaccion
                             'saldo' => $item['precio_material'] * $item['cantidad_ingresada'],
                             'precio_unitario' => $item['precio_material']
                         ]);
+                    }
+
+                    if(isset($item['contratista_seleccionado']) ){
+                        ItemContratista::query()->create( ['id_item' => $item_guardado->id_item,
+                            'id_empresa' => $item['contratista_seleccionado']['empresa_contratista'],
+                            'con_cargo' => $item['contratista_seleccionado']['opcion']]);
                     }
                 }
             }

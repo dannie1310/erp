@@ -137,7 +137,7 @@
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
                                                         <td class="text-center" v-if="doc.cantidad_pendiente != 0 && doc.contratista_seleccionado === undefined"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)"></i>{{doc.contratista}}</td>
                                                         <td class="text-center" v-else-if="doc.cantidad_pendiente != 0 && doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)"></i></td>
-                                                        <td v-else></td>
+                                                        <!--<td v-else></td>-->
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -474,12 +474,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        // if(this.destino_temporal == '')
-                        // {
-                        //     swal('¡Error!', 'Debe seleccionar un destino.', 'error')
-                        // }else {
-                            this.store()
-                        //}
+                       this.store()
                     }
                 });
             },
