@@ -95,6 +95,10 @@ class Concepto extends Model
     {
         return $query->has('cuentaConcepto', '=', 0);
     }
+    public function scopeNivel($query, $id)
+    {
+        return $query->where('id_concepto','=', $id);
+    }
 
     public function cuentaConcepto()
     {
