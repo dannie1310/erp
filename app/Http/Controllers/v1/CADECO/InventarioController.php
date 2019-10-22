@@ -1,21 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jfesquivel
- * Date: 07/02/19
- * Time: 04:51 PM
- */
+
 
 namespace App\Http\Controllers\v1\CADECO;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\AlmacenTransformer;
-use App\Services\CADECO\AlmacenService;
+use App\Http\Transformers\CADECO\Compras\InventarioTransformer;
+use App\Services\CADECO\InventarioService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
 
-class AlmacenController extends Controller
+class InventarioController extends Controller
 {
     use ControllerTrait;
 
@@ -25,12 +20,12 @@ class AlmacenController extends Controller
     protected $fractal;
 
     /**
-     * @var AlmacenService
+     * @var InventarioService
      */
     protected $service;
 
     /**
-     * @var AlmacenTransformer
+     * @var InventarioTransformer
      */
     protected $transformer;
 
@@ -38,10 +33,10 @@ class AlmacenController extends Controller
      * AlmacenController constructor.
      *
      * @param Manager $fractal
-     * @param AlmacenService $service
-     * @param AlmacenTransformer $transformer
+     * @param InventarioService $service
+     * @param InventarioTransformer $transformer
      */
-    public function __construct(Manager $fractal, AlmacenService $service, AlmacenTransformer $transformer)
+    public function __construct(Manager $fractal, InventarioService $service, InventarioTransformer $transformer)
     {
         $this->middleware('auth:api');
         $this->middleware('context');
@@ -50,4 +45,5 @@ class AlmacenController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
 }

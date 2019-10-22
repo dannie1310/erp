@@ -1,19 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jfesquivel
- * Date: 07/02/19
- * Time: 04:45 PM
- */
+
 
 namespace App\Services\CADECO;
 
 
-use App\Models\CADECO\Almacen;
-use App\Models\CADECO\Material;
+use App\Models\CADECO\Inventario;
 use App\Repositories\Repository;
 
-class AlmacenService
+class InventarioService
 {
     /**
      * @var Repository
@@ -23,9 +17,9 @@ class AlmacenService
     /**
      * AlmacenService constructor.
      *
-     * @param Almacen $model
+     * @param Inventario $model
      */
-    public function __construct(Almacen $model)
+    public function __construct(Inventario $model)
     {
         $this->repository = new Repository($model);
     }
@@ -34,9 +28,9 @@ class AlmacenService
     {
         return $this->repository->all($data);
     }
-
     public function show($id)
     {
         return $this->repository->show($id);
     }
+
 }
