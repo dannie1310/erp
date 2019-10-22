@@ -163,18 +163,21 @@ $api->version('v1', function ($api) {
             $api->group(['prefix' => 'positivo'], function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@show')->where(['id' => '[0-9]+']);
+                $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@destroy')->where(['id' => '[0-9]+']);
             });
 
             //AJUSTE NEGATIVO (-)
             $api->group(['prefix' => 'negativo'], function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@show')->where(['id' => '[0-9]+']);
+                $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@destroy')->where(['id' => '[0-9]+']);
             });
 
             //NUEVO LOTE
             $api->group(['prefix' => 'nuevo-lote'], function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@show')->where(['id' => '[0-9]+']);
+                $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@destroy')->where(['id' => '[0-9]+']);
             });
 
         });
