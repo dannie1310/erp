@@ -34,7 +34,6 @@ class PagoFactura extends Pago
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             return $query->where('opciones', '=', 0);
         });
@@ -43,4 +42,9 @@ class PagoFactura extends Pago
     public function empresa(){
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
+
+    public function orden_pago(){
+        return $this->belongsTo(OrdenPago::class, 'numero_folio', 'numero_folio');
+    }
+    //TODO: Generar relación con factura, manythroug causa problemas por que los modelos tienen el mismo nombre de tabla
 }

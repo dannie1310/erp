@@ -26,7 +26,6 @@ class PagoReposicionFFObserver extends TransaccionObserver
     public function created(PagoReposicionFF $pago)
     {
         $pago->fondo->aumentaSaldo($pago);
-        $pago->cuenta->disminuyeSaldo($pago);
         $pago->solicitud->actualizaEstadoPagada();
     }
 }

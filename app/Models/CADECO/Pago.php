@@ -34,7 +34,6 @@ class Pago extends Transaccion
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 82)
                 ->where('estado', '!=', -2);

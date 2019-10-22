@@ -37,7 +37,6 @@ class Transaccion extends Model
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             if(auth()->user()->id_contratista){
                 if(($contratista = CtgContratista::query()->find(auth()->user()->id_contratista)) && auth()->user()->usuario_estado == 3){

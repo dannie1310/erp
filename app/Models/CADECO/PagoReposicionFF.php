@@ -8,7 +8,7 @@
 
 namespace App\Models\CADECO;
 
-class PagoReposicionFF extends Transaccion
+class PagoReposicionFF extends Pago
 {
     public const TIPO_ANTECEDENTE = 72;
     public const OPCION_ANTECEDENTE = 1;
@@ -40,14 +40,6 @@ class PagoReposicionFF extends Transaccion
                 ->where('opciones', '=', 1)
                 ->where('estado', '!=', -2);
         });
-    }
-
-    public function moneda(){
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
-    }
-
-    public function cuenta(){
-        return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
     }
 
     public function fondo()
