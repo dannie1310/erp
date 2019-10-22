@@ -122,17 +122,18 @@
                                                              </small>
                                                         </td>
                                                         <td v-else-if="doc.cantidad_pendiente != 0"></td>
-                                                        <td v-if="doc.cantidad_pendiente != 0">
+                                                        <td v-if="doc.cantidad_pendiente != 0 && doc.destino ===  undefined">
                                                             <small class="badge" :class="{'badge-success':true}">
                                                                 <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
                                                             </small>
-                                                            <label v-if = "doc.tipo_destino == 2" v-model="doc.destino">{{doc.descripcion_destino.descripcion}}</label>
-                                                            <label v-else-if="doc.tipo_destino == 1" v-model="doc.destino">{{doc.descripcion_destino.path}}</label>
                                                         </td>
-
-                                                        <td v-if="doc.cantidad_pendiente != 0 && doc.destino=== undefined">1</td>
-                                                        <td v-else-if="doc.cantidad_pendiente != 0 && doc.destino != ''">2</td>
-                                                        <td v-else>3</td>
+                                                        <td v-if="doc.cantidad_pendiente != 0 && doc.destino">
+                                                            <small class="badge" :class="{'badge-success':true}">
+                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
+                                                            </small>
+                                                            <label v-if="doc.destino.tipo_destino === 1">{{doc.destino.destino.path}}</label>
+                                                            <label v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</label>
+                                                        </td>
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
                                                         <td class="text-center" v-if="doc.cantidad_pendiente != 0 && doc.contratista_seleccionado === undefined"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)"></i>{{doc.contratista}}</td>
                                                         <td class="text-center" v-else-if="doc.cantidad_pendiente != 0 && doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)"></i></td>
@@ -165,7 +166,7 @@
                             </div>
                             <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary":disabled="errors.count() > 0">Registrar</button>
+                                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Registrar</button>
                              </div>
                         </form>
                     </div>
@@ -173,7 +174,7 @@
             </div>
         </nav>
         <nav>
-            <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg" >
                     <div class="modal-content">
                         <div class="modal-header">
@@ -182,7 +183,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form role="form" @submit.prevent="seleccionar">
+                        <form role="form">
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-12">
@@ -226,7 +227,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                    <button  class="btn btn-primary" data-dismiss="modal" v-on:click="seleccionar">Seleccionar</button>
+                                    <button  type="button"  class="btn btn-primary" v-on:click="seleccionar">Seleccionar</button>
                              </div>
                         </form>
                     </div>
@@ -316,13 +317,10 @@
                 remision : '',
                 cargando: false,
                 bandera : 0,
-                destino_temporal : '',
                 index_temporal : '',
-                tipo_temporal : '',
                 id_almacen_temporal : '',
                 id_concepto_temporal : '',
                 almacenes : [],
-                descripcion_temporal : [],
                 cargos: {
                     1: "Con Cargo",
                     0: "Sin Cargo"
@@ -330,6 +328,11 @@
                 contratista: {
                     empresa_contratista: '',
                     opcion:''
+                },
+                destino_seleccionado: {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
                 },
                 contratistas:[],
                 id_partida_temporal : ''
@@ -347,13 +350,10 @@
                 this.remision = '';
                 this.cargando = false;
                 this.bandera = 0;
-                this.destino_temporal = '';
                 this.index_temporal = '';
-                this.tipo_temporal = '';
                 this.id_almacen_temporal = '';
                 this.id_concepto_temporal = '';
                 this.almacenes = [];
-                this.descripcion_temporal = [];
                 this.partidas = [];
             },
             getOrdenesCompra() {
@@ -397,23 +397,24 @@
 
             getAlmacen() {
                 return this.$store.dispatch('cadeco/almacen/find', {
-                    id: this.destino_temporal,
+                    id: this.destino_seleccionado.id_destino,
                     params: {
                     }
                 })
                     .then(data => {
-                        this.partidas[this.index_temporal].descripcion_destino = data;
+                        this.destino_seleccionado.destino = data;
                     })
+
             },
 
             getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
-                    id: this.destino_temporal,
+                    id: this.destino_seleccionado.id_destino,
                     params: {
                     }
                 })
                     .then(data => {
-                        this.partidas[this.index_temporal].descripcion_destino = data;
+                        this.destino_seleccionado.destino = data;
                     })
             },
 
@@ -486,28 +487,31 @@
                 this.$router.push({name: 'entrada-almacen'});
             },
             destino(i) {
-                 this.destino_temporal = '';
-                 this.index_temporal = '';
-                 this.id_almacen_temporal = '';
-                 this.id_concepto_temporal = '';
-                 this.tipo_temporal = '';
-                 this.descripcion = '';
                 this.index_temporal = i;
+                if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
+                    this.destino_seleccionado.tipo_destino =  '';
+                    this.destino_seleccionado.destino = '';
+                    this.destino_seleccionado.id_destino = '';
+                }else {
+                    this.destino_seleccionado = this.partidas[this.index_temporal].destino;
+                }
+
                 if(this.almacenes.length == 0) {
                     this.getAlmacenes();
                 }
-                $(this.$refs.modal).modal('show');
+                $(this.$refs.modal_destino).modal('show');
             },
             seleccionar() {
-                this.partidas[this.index_temporal].destino = this.destino_temporal;
-                this.partidas[this.index_temporal].tipo_destino = this.tipo_temporal;
-
-                if (this.tipo_temporal == 1) {
-                    this.getConcepto();
-                }
-                if (this.tipo_temporal == 2) {
-                    this.getAlmacen();
-                }
+                this.partidas[this.index_temporal].destino = this.destino_seleccionado;
+                this.index_temporal = '';
+                this.destino_seleccionado = {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                };
+                this.id_concepto_temporal = '';
+                this.id_almacen_temporal = '';
+                $(this.$refs.modal_destino).modal('hide');
             }
         },
         watch: {
@@ -519,15 +523,17 @@
             id_concepto_temporal(value){
                 if(value !== '' && value !== null && value !== undefined){
                     this.id_almacen_temporal = '';
-                    this.destino_temporal = value;
-                    this.tipo_temporal = 1;
+                    this.destino_seleccionado.id_destino = value;
+                    this.destino_seleccionado.tipo_destino = 1;
+                    this.getConcepto();
                 }
             },
             id_almacen_temporal(value){
                 if(value !== '' && value !== null && value !== undefined){
                     this.id_concepto_temporal = '';
-                    this.destino_temporal = value;
-                    this.tipo_temporal = 2;
+                    this.destino_seleccionado.id_destino = value;
+                    this.destino_seleccionado.tipo_destino = 2;
+                    this.getAlmacen();
                 }
             }
         }
