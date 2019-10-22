@@ -19,6 +19,7 @@ use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Cuenta;
 
 class LayoutPagoPartida extends Model
 {
@@ -84,6 +85,10 @@ class LayoutPagoPartida extends Model
     public function moneda()
     {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
+
+    public function cuenta(){
+        return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta_cargo');
     }
 
     public function validarRegistro()

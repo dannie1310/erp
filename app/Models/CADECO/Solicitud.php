@@ -16,7 +16,6 @@ class Solicitud extends Transaccion
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 72);
         });
@@ -44,25 +43,11 @@ class Solicitud extends Transaccion
 
     public function generaPago($data)
     {
-        if (is_null($this->pago_cuenta)) {
-            $data = array(
-                "id_empresa" => $this->id_empresa,
-                "id_moneda" => $this->id_moneda,
-                "fecha" => $this->fecha,
-                "cumplimiento" => $this->fecha,
-                "vencimiento" => $this->fecha,
-                "monto" => -1 * abs($this->monto),
-                "referencia" => $this->referencia,
-                "id_cuenta" => $this->id_cuenta,
-                "destino" => $this->destino,
-                "observaciones" => $this->observaciones,
-                "id_referente" => $this->id_referente,
-            );
-            $pago = PagoACuenta::query()->create($data);
-            return $pago->id_transaccion;
-        } else {
-            return $this->pago_cuenta->id_transaccion;
+        $pago = null;
+        if($this->opciones == 1){
+            $pago = SolicitudReposicionFF::find($this->id_transaccion)->generaPago($data);
         }
+        return $pago->id_transaccion;
     }
 
     public function scopePendientePago($query)

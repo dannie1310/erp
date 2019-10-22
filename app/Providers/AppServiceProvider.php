@@ -151,6 +151,8 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
+use App\Observers\CADECO\PagoReposicionFFObserver;
+use App\Models\CADECO\PagoReposicionFF;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -205,6 +207,7 @@ class AppServiceProvider extends ServiceProvider
             DistribucionRecursoRemesaPartida::observe(DistribucionRecursoRemesaPartidaObserver::class);
             LayoutPago::observe(LayoutPagoObserver::class);
             LayoutPagoPartida::observe(LayoutPagoPartidaObserver::class);
+            PagoReposicionFF::observe(PagoReposicionFFObserver::class);
 
             /**
              * FinanzasCBE
