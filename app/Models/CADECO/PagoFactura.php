@@ -8,7 +8,7 @@
 
 namespace App\Models\CADECO;
 
-class Pago extends Transaccion
+class PagoFactura extends Pago
 {
     public const TIPO_ANTECEDENTE = null;
 
@@ -36,15 +36,11 @@ class Pago extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 82)
-                ->where('estado', '!=', -2);
+            return $query->where('opciones', '=', 0);
         });
     }
-    public function moneda(){
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
-    }
 
-    public function cuenta(){
-        return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
+    public function empresa(){
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 }

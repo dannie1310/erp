@@ -88,9 +88,4 @@ class SolicitudReposicionFF extends Solicitud
         $this->estado = 2;
         $this->save();
     }
-
-    public function scopePendientePago($query)
-    {
-        return $query->where('estado', '!=', 2);
-    }
 }

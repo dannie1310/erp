@@ -13,6 +13,7 @@ use App\Models\CADECO\Factura;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\PagoFactura;
 use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\Solicitud;
 use App\Models\CADECO\Transaccion;
@@ -20,6 +21,7 @@ use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Cuenta;
+use App\Models\CADECO\Finanzas\DocumentoPagable;
 
 class LayoutPagoPartida extends Model
 {
@@ -57,6 +59,10 @@ class LayoutPagoPartida extends Model
         return $this->belongsTo(Solicitud::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function documento_pagable(){
+        return $this->belongsTo(DocumentoPagable::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function transaccion()
     {
         return $this->belongsTo(Transaccion::class, 'id_transaccion');
@@ -70,6 +76,11 @@ class LayoutPagoPartida extends Model
     public function pagoVario()
     {
         return $this->belongsTo(PagoVario::class,'id_transaccion_pago', 'id_transaccion');
+    }
+
+    public function pagoFactura()
+    {
+        return $this->belongsTo(PagoFactura::class,'id_transaccion_pago', 'id_transaccion');
     }
 
     public function pagoACuenta()
@@ -103,6 +114,14 @@ class LayoutPagoPartida extends Model
 
         if($this->tipo_cambio < 1){
             abort(403, 'El tipo de camio no puede ser cero.');
+        }
+    }
+
+    public function getFolioPagoFormatAttribute(){
+        if($this->pago){
+            return $this->pago->numero_folio_format;
+        }else{
+            return '-';
         }
     }
 }
