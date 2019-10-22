@@ -11,9 +11,10 @@ namespace App\Observers\CADECO;
 
 use App\Facades\Context;
 use App\Models\CADECO\Pago;
+use App\Models\CADECO\PagoFactura;
 use App\Models\CADECO\Transaccion;
 
-class PagoObserver extends TransaccionObserver
+class PagoFacturaObserver extends PagoObserver
 {
     /**
      * @param Pago $pago
@@ -22,10 +23,11 @@ class PagoObserver extends TransaccionObserver
     public function creating(Transaccion $pago)
     {
         parent::creating($pago);
-        $pago->tipo_transaccion = 82;
+        $pago->opciones = 0;
     }
 
     public function created(Pago $pago){
-        $pago->cuenta->disminuyeSaldo($pago);
+        parent::created($pago);
+        $pago->orden_pago->factura->disminuyeSaldo($pago);
     }
 }

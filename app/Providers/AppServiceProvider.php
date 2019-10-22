@@ -30,6 +30,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EmpresaFondoFijo;
 use App\Models\CADECO\EntradaMaterial;
 use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Factura;
 use App\Models\CADECO\Familia;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
@@ -104,6 +105,7 @@ use App\Observers\CADECO\EmpresaFondoFijoObserver;
 use App\Observers\CADECO\EmpresaObserver;
 use App\Observers\CADECO\EntradaMaterialObserver;
 use App\Observers\CADECO\EstimacionObserver;
+use App\Observers\CADECO\FacturaObserver;
 use App\Observers\CADECO\FamiliaObserver;
 use App\Observers\CADECO\Finanzas\ConfiguracionEstimacionObserver;
 use App\Observers\CADECO\Finanzas\CuentaBancariaEmpresaObserver;
@@ -153,6 +155,8 @@ use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
+use App\Models\CADECO\PagoFactura;
+use App\Observers\CADECO\PagoFacturaObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -208,6 +212,12 @@ class AppServiceProvider extends ServiceProvider
             LayoutPago::observe(LayoutPagoObserver::class);
             LayoutPagoPartida::observe(LayoutPagoPartidaObserver::class);
             PagoReposicionFF::observe(PagoReposicionFFObserver::class);
+            Pago::observe(PagoObserver::class);
+            OrdenPago::observe(OrdenPagoObserver::class);
+            PagoFactura::observe(PagoFacturaObserver::class);
+            PagoACuenta::observe(PagoACuentaObserver::class);
+            PagoVario::observe(PagoVarioObserver::class);
+            Factura::observe(FacturaObserver::class);
 
             /**
              * FinanzasCBE
@@ -272,10 +282,6 @@ class AppServiceProvider extends ServiceProvider
             NuevoLote::observe(NuevoLoteObserver::class);
             NuevoLotePartida::observe(NuevoLotePartidaObserver::class);
             OrdenCompra::observe(OrdenCompraObserver::class);
-            OrdenPago::observe(OrdenPagoObserver::class);
-            Pago::observe(PagoObserver::class);
-            PagoACuenta::observe(PagoACuentaObserver::class);
-            PagoVario::observe(PagoVarioObserver::class);
             SalidaAlmacen::observe(SalidaAlmacenObserver::class);
             SolicitudPagoAnticipado::observe(SolicitudPagoAnticipadoObserver::class);
             Subcontrato::observe(SubcontratoObserver::class);

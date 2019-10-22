@@ -10,13 +10,12 @@ namespace App\Models\CADECO;
 
 
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
-
+use Illuminate\Support\Facades\DB;
 class Factura extends Transaccion
 {
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 65)
                 ->where('estado', '!=', -2);
@@ -42,8 +41,26 @@ class Factura extends Transaccion
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
+    public function ordenesPago(){
+        return $this->hasMany(OrdenPago::class, 'id_referente', 'id_transaccion');
+    }
+
+    public function partidas()
+    {
+        return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function pagos(){
+        return $this->hasManyThrough(PagoFactura::class,OrdenPago::class, 'id_referente','numero_folio','id_transaccion','id_transaccion');
+    }
+
     public function generaOrdenPago($data)
     {
+        // TODO: Obtener el monto de los pagos relacionados a la factura para determinar si se debe actualizar el estado
+        DB::connection('cadeco')->beginTransaction();
+        $saldo_esperado = $this->saldo - ($data->monto_pagado);
+        $saldo_esperado_cuenta = $data->cuenta->saldo_real - ($data["monto_pagado"]);
+
         $datos = [
             'id_antecedente'=>$this->id_antecedente,
             'id_referente'=>$this->id_transaccion,
@@ -53,16 +70,10 @@ class Factura extends Transaccion
             'id_moneda'=> $data->id_moneda,
         ];
         $ordenPago= OrdenPago::create($datos);
-        return $ordenPago->generaPago($data);
-    }
-
-    public function ordenesPago(){
-        return $this->hasMany(OrdenPago::class, 'id_referente', 'id_transaccion');
-    }
-
-    public function partidas()
-    {
-        return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
+        $pago = $ordenPago->generaPago($data);
+        $this->validaSaldos($saldo_esperado, $saldo_esperado_cuenta, $pago);
+        DB::connection('cadeco')->commit();
+        return $pago;
     }
 
     public function scopePendientePago($query){
@@ -95,10 +106,6 @@ class Factura extends Transaccion
         return $estado;
     }
 
-    public function pagos(){
-
-    }
-
     public function getACuentaFormatAttribute()    {
         return '$ '.number_format(abs($this->ordenesPago->sum('monto')),2,".",",");
     }
@@ -118,5 +125,31 @@ class Factura extends Transaccion
             $tipo='Materiales / Servicios';
         }
         return $tipo;
+    }
+
+    private function validaSaldos($saldo_esperado, $saldo_esperado_cuenta, $pago){
+        $this->refresh();
+        $pago->load("cuenta");
+        if(abs($saldo_esperado_cuenta-$pago->cuenta->saldo_real)>1){
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Hubo un error durante la actualización del saldo de la cuenta');
+        }
+        if(abs($saldo_esperado-$this->saldo)>1){
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Hubo un error durante la actualización del saldo de la factura');
+        }
+    }
+
+    public function disminuyeSaldo(Transaccion $pago){
+        $this->saldo = $this->saldo - ($pago->monto * -1);
+        $this->save();
+        if($this->saldo<1){
+            $this->actualizaEstadoPagada();
+        }
+    }
+
+    public function actualizaEstadoPagada(){
+        $this->estado = 2;
+        $this->save();
     }
 }

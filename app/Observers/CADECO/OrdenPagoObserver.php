@@ -22,9 +22,7 @@ class OrdenPagoObserver extends TransaccionObserver
     public function creating(Transaccion $ordenPago)
     {
         parent::creating($ordenPago);
-        if (!$ordenPago->validaTipoAntecedente()) {
-            throw New \Exception('La transacción antecedente no es válida');
-        }
+        $ordenPago->numero_folio = $ordenPago->calcularFolio();
         $ordenPago->tipo_transaccion = 68;
         $ordenPago->opciones = 0;
     }
