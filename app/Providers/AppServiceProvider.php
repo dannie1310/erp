@@ -38,6 +38,7 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLog;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
+use App\Models\CADECO\Finanzas\Servicio;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;

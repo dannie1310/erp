@@ -93,4 +93,12 @@ class Obra extends Model
             return null;
         }
     }
+
+    public function cuentasObra(){
+        return $this->hasManyThrough(Cuenta::class,CuentaObra::class,'id_obra','id_cuenta', 'id_obra','id_cuenta');
+    }
+
+    public function cuentasPagadorasObra(){
+        return $this->hasManyThrough(CuentaPagadora::class,CuentaObra::class,'id_obra','id_cuenta', 'id_obra','id_cuenta');
+    }
 }

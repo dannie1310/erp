@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Rechazar">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar">
             <i class="fa fa-ban"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">

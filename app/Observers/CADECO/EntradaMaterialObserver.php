@@ -9,29 +9,20 @@
 namespace App\Observers\CADECO;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\EntradaMaterial;
+use App\Models\CADECO\Transaccion;
 
-class EntradaMaterialObserver
+class EntradaMaterialObserver extends TransaccionObserver
 {
     /**
      * @param EntradaMaterial $entradaMaterial
      */
-    public function creating(EntradaMaterial $entradaMaterial)
+    public function creating(Transaccion $entradaMaterial)
     {
+        parent::creating($entradaMaterial);
         $entradaMaterial->tipo_transaccion = 33;
         $entradaMaterial->estado = 0;
         $entradaMaterial->opciones = 1;
-        $entradaMaterial->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $entradaMaterial->FechaHoraRegistro = date('Y-m-d h:i:s');
-        $entradaMaterial->id_obra = Context::getIdObra();
-        $entradaMaterial->fecha = date('Y-m-d h:i:s');
-        $entradaMaterial->id_usuario = auth()->id();
-    }
-
-    public function created(EntradaMaterial $entradaMaterial)
-    {
-
     }
 
     public function deleting(EntradaMaterial $entradaMaterial)

@@ -11,7 +11,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
-                                        <label for="id_empresa">Contratista:</label>
+                                        <label for="id_empresa">Proveedor:</label>
                                         <select
                                                 type="text"
                                                 name="id_empresa"
@@ -22,7 +22,7 @@
                                                 v-model="id_empresa"
                                                 :class="{'is-invalid': errors.has('id_empresa')}"
                                         >
-                                            <option value>-- Contratista --</option>
+                                            <option value>-- Proveedor --</option>
                                             <option v-for="c in empresas" :value="c.id">{{ c.razon_social }}</option>
                                         </select>
                                         <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
-                                        <label for="id_subcontrato">Subcontrato:</label>
+                                        <label for="id_subcontrato">Orden Compra:</label>
                                         <select
                                                 :disabled="!id_empresa"
                                                 type="text"
@@ -39,39 +39,19 @@
                                                 v-validate="{required: true}"
                                                 class="form-control"
                                                 id="id_subcontrato"
-                                                v-model="id_subcontrato"
-                                                :class="{'is-invalid': errors.has('id_subcontrato')}"
+                                                v-model="id_orden_compra"
+                                                :class="{'is-invalid': errors.has('id_orden_compra')}"
                                         >
-                                            <option value>-- Subcontrato --</option>
-                                            <option v-for="c in subcontratos" :value="c.id">{{ c.referencia }}</option>
+                                            <option value>-- Orden Compra --</option>
+                                            <option v-for="c in ordenes_compras" :value="c.id">{{ c.numero_folio_format }} {{c.observaciones_format}}</option>
                                         </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_subcontrato')">{{ errors.first('id_subcontrato') }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group error-content">
-                                        <label for="id_estimacion">Estimación:</label>
-                                        <select
-                                                :disabled="!id_subcontrato"
-                                                type="text"
-                                                name="id_estimacion"
-                                                data-vv-as="Estimacion"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="id_estimacion"
-                                                v-model="id_estimacion"
-                                                :class="{'is-invalid': errors.has('id_estimacion')}"
-                                        >
-                                            <option value>-- Estimación --</option>
-                                            <option v-for="tipo in estimaciones" :value="tipo.id">{{ tipo.numero_folio }} - {{tipo.observaciones }}</option>
-                                        </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_estimacion')">{{ errors.first('id_estimacion') }}</div>
+                                        <div class="invalid-feedback" v-show="errors.has('id_orden_compra')">{{ errors.first('id_orden_compra') }}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer btn-group" v-if="id_estimacion">
-                            <PDF v-bind:id="id_estimacion" @click="validate"></PDF>
+                        <div class="modal-footer btn-group" v-if="id_orden_compra">
+                            <PDF v-bind:id="id_orden_compra" v-bind:id_empresa="id_empresa" @click="validate"></PDF>
                         </div>
                         <div class="modal-footer btn-group" v-else>
                             <button type="submit" class="btn btn-primary" @click="validate">Ver Formato</button>
@@ -85,19 +65,17 @@
 </template>
 
 <script>
-    import PDF from "./FormatoOrdenPago";
+    import PDF from "../../compras/orden-compra/partials/FormatoOrdenCompra";
     export default {
-        name: "formato-orden-pago-index",
+        name: "formato-orden-compra-index",
         components: {PDF},
         data() {
             return {
                 cargando: false,
                 id_empresa: '',
-                id_subcontrato:  '',
-                id_estimacion: '',
+                id_orden_compra:  '',
                 empresas: [],
-                subcontratos: [],
-                estimaciones: [],
+                ordenes_compras: [],
                 ok : false,
                 pdf_datos: ""
             }
@@ -113,23 +91,20 @@
                 $(this.$refs.modal).modal('show');
 
                 this.id_empresa = '';
-                this.id_subcontrato = '';
-                this.id_estimacion = '';
+                this.empresas = '';
 
                 this.$validator.reset()
                 this.cargando = false;
             },
             getEmpresas() {
                 this.id_empresa= '';
-                this.id_subcontrato=  '';
-                this.id_estimacion= '';
+                this.id_orden_compra=  '';
                 this.empresas= [];
-                this.subcontratos= [];
-                this.estimaciones= [];
+                this.ordenes_compras= [];
                 this.$store.commit('cadeco/empresa/SET_EMPRESAS', []);
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {scope: 'paraSubcontratistas'}
+                    params: {scope: 'paraOrdenCompra'}
                 })
                     .then(data => {
                         this.empresas = data.data
@@ -141,34 +116,21 @@
                         this.cargando = false;
                     })
             },
-            getSubcontrato() {
-                this.id_subcontrato=  '';
-                this.id_estimacion= '';
-                this.subcontratos= [];
-                this.estimaciones= [];
+            getOrdenCompra() {
+                this.id_orden_compra= '';
+                this.ordenes_compras= [];
                 return this.$store.dispatch('cadeco/empresa/find', {
                     id: this.id_empresa,
-                    params: { include: 'subcontratos' }
+                    params: { include: 'ordenes_compra' }
                 }).then(data => {
-                    this.subcontratos = data.subcontratos.data;
-                    if(this.subcontratos.length){
+                    this.ordenes_compras = data.ordenes_compra.data;
+                    if(this.ordenes_compras.length){
                         $(this.$refs.modal).modal('show');
 
                     }
                 })
                     .finally(() => {
                         this.cargando = false;
-                    })
-            },
-            getEstimaciones(){
-                this.id_estimacion= '';
-                this.estimaciones= [];
-                return this.$store.dispatch('contratos/subcontrato/find', {
-                    id: this.id_subcontrato,
-                    params: { include: 'estimaciones' }
-                })
-                    .then(data => {
-                        this.estimaciones = data.estimaciones.data;
                     })
             },
 
@@ -182,15 +144,9 @@
         },
         watch: {
             id_empresa(value) {
-                this.subcontratos = []
+                this.ordenes_compras = []
                 if (value) {
-                    this.getSubcontrato();
-                }
-            },
-            id_subcontrato(value){
-                this.estimaciones = []
-                if(value){
-                    this.getEstimaciones();
+                    this.getOrdenCompra();
                 }
             }
         }

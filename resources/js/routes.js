@@ -1101,6 +1101,51 @@ export const routes = [
                 ]
             },
             {
+                path: 'insumo-servicio',
+                component: require('./components/finanzas/insumo-servicio/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'insumo-servicio',
+                        component: require('./components/finanzas/insumo-servicio/Index'),
+                        meta: {
+                            title: 'Insumo de Servicios',
+                            breadcrumb: {parent: 'finanzas', name: 'INSUMO SERVICIO'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia-serv',
+                        name: 'familia-serv',
+                        component: require('./components/finanzas/insumo-servicio/familia/Index'),
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'insumo-servicio',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    },
+                    {
+                        path: 'material',
+                        name: 'material',
+                        component: require('./components/compras/catalogos/material/Index'),
+                        meta: {
+                            title: 'Material',
+                            breadcrumb: {
+                                parent: 'catalogo-insumo',
+                                name: 'MATERIAL'
+                            },
+                            middleware: [auth, context],
+                            // permission: 'consultar_entrada_almacen'
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'solicitud',
                 component: require('./components/finanzas/solicitud/Layout'),
                 children: [
@@ -1180,6 +1225,28 @@ export const routes = [
                     permission: 'consultar_formato_orden_pago_estimacion'
                 }
             },
+            {
+                path: 'estimacion',
+                name: 'formato-estimacion',
+                component: require('./components/formato/estimacion/Index'),
+                meta: {
+                    title: 'Formato Estimación',
+                    breadcrumb: {name: 'FORMATO ESTIMACIÓN', parent: 'formatos'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_formato_estimacion'
+                }
+            },
+            {
+                path: 'compra',
+                name: 'formato-orden-compra',
+                component: require('./components/formato/compra/Index'),
+                meta: {
+                    title: 'Formato Orden de Compra',
+                    breadcrumb: {name: 'FORMATO ORDEN COMPRA', parent: 'formatos'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_orden_compra'
+                }
+            }
         ]
     },
     {

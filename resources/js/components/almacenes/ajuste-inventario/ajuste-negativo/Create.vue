@@ -128,11 +128,12 @@
 <script>
     export default {
         name: "ajuste-negativo-create",
-        propos:['id_almacen', 'referencia'],
+        propos:['id_almacen', 'referencia', 'fecha'],
         data() {
             return {
                 cargando: false,
                 id_almacen: this.$attrs.id_almacen,
+                fecha: '',
                 referencia: '',
                 observaciones: '',
                 items: [],
@@ -190,10 +191,12 @@
                     this.getMateriales(this.id_almacen);
                 }
                 this.referencia = this.$attrs.referencia;
+                this.fecha = this.$attrs.fecha;
                 this.items.push(array);
             },
             validate() {
                 this.referencia = this.$attrs.referencia;
+                this.fecha = this.$attrs.fecha;
                 this.$validator.validate().then(result => {
                     if (result) {
                         if(this.items.length == 0){

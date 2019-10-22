@@ -12,27 +12,22 @@ namespace App\Observers\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\Debito;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\Transaccion;
 
-class DebitoObserver
+class DebitoObserver extends TransaccionObserver
 {
     /**
      * @param Debito $debito
-     * @throws \Exception
+     *  @throws \Exception
      */
-    public function creating(Debito $debito)
+    public function creating(Transaccion $debito)
     {
-        if (!$debito->validaTipoAntecedente()) {
-            throw New \Exception('La transacción antecedente no es válida');
-        }
+        parent::creating($debito);
         $debito->estado = 1;
         $debito->id_moneda = Obra::query()->find(Context::getIdObra())->id_moneda;
         $debito->opciones = 1;
         $debito->tipo_transaccion = 84;
         $debito->vencimiento = $debito->cumplimiento;
-        $debito->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $debito->FechaHoraRegistro = date('Y-m-d h:i:s');
-        $debito->id_obra = Context::getIdObra();
-        $debito->id_usuario = auth()->id();
     }
 
     public function updating(Debito $debito)

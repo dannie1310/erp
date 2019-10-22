@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class NuevoLote extends Ajuste
@@ -16,6 +17,7 @@ class NuevoLote extends Ajuste
     protected $fillable = [
         'id_almacen',
         'referencia',
+        'fecha',
         'observaciones',
     ];
 
@@ -40,6 +42,7 @@ class NuevoLote extends Ajuste
             $transaccion = $this->create([
                 'id_almacen' => $data['id_almacen'],
                 'referencia' => $data['referencia'],
+                'fecha' =>  date_format(new DateTime($data['fecha']), 'Y-m-d'),
                 'observaciones' => $data['observaciones'],
             ]);
             $monto = 0;
