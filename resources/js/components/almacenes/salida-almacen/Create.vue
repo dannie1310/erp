@@ -87,8 +87,25 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-12" v-if="dato.opciones == 1">
+                                <div class="form-group error-content">
+                                <label for="id_concepto">Concepto:</label>
+                                    <concepto-select
+                                            name="id_concepto"
+                                            data-vv-as="Concepto"
+                                            v-validate="{required: true}"
+                                            id="id_concepto"
+                                            v-model="id_concepto"
+                                            :error="errors.has('id_conceptos')"
+                                            ref="conceptoSelect"
+                                            :disableBranchNodes="false"
+                                            onselect="findConcepto"
+                                    ></concepto-select>
+                                <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                </div>
+                            </div>
                             <div class="row">
-                                <div class="col-md-12" v-if="id_almacen && dato.opciones">
+                                <div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">
                                     <div class="form-group">
                                         <div class="col-12">
                                             <button @click="agregar_partida"class="btn btn-app btn-info pull-right" :disabled="cargando">
@@ -305,11 +322,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" v-if="dato.opciones == 1">
+                                <div class="row" v-if="dato.opciones == 1 && concepto">
                                     <div class="col-md-12">
-                                        <div class="form-group row error-content">
-                                        <label for="id_conceptos">Concepto:</label>
-                                            <concepto-select
+                                        <div class="form-group error-content">
+                                        <label for="id_conceptos">Concepto: {{concepto.descripcion}}</label>
+                                            <ConceptoSelectHijo
                                                     name="id_conceptos"
                                                     data-vv-as="Concepto"
                                                     v-validate="{required: true}"
@@ -318,7 +335,8 @@
                                                     :error="errors.has('id_conceptos')"
                                                     ref="conceptoSelect"
                                                     :disableBranchNodes="true"
-                                            ></concepto-select>
+                                                    v-bind:nivel_id="concepto.id"
+                                            ></ConceptoSelectHijo>
                                         <div class="error-label" v-show="errors.has('id_conceptos')">{{ errors.first('id_conceptos') }}</div>
                                         </div>
                                     </div>
@@ -453,10 +471,10 @@
 <script>
     import Almacen from "../../cadeco/almacen/Select";
     import ConceptoSelect from "../../cadeco/concepto/Select";
-    import material from "../../../store/modules/cadeco/material";
+    import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
     export default {
         name: "salida-almacen-create",
-        components: {Almacen, ConceptoSelect},
+        components: {Almacen, ConceptoSelect,ConceptoSelectHijo},
         data() {
             return {
                 dato:{
@@ -492,6 +510,8 @@
                 materiales:[],
                 indice:'',
                 material:'',
+                concepto:'',
+                id_concepto:'',
                 almacen:'',
                 id_almacen:'',
                 cargando: false
@@ -588,6 +608,18 @@
                     this.material = data;
                 })
             },
+            findConcepto(value) {
+                this.concepto = '';
+                this.$store.commit('cadeco/concepto/SET_CONCEPTO', null);
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: value,
+                    params: {}
+                }).then(data => {
+                    this.concepto = data;
+                }).finally(() => {
+                    console.log("PANDA");
+                });
+            },
             findContratista() {
                 this.$store.commit('cadeco/empresa/SET_EMPRESA', null);
                 return this.$store.dispatch('cadeco/empresa/find', {
@@ -639,6 +671,7 @@
             },
             borrar(){
                 this.dato.partidas=[];
+                this.dato.id_concepto='';
             },
             borrarPartidas(i){
                 this.dato.partidas.splice(i,1);
@@ -668,7 +701,6 @@
                     this.findContratista();
                 }
                 this.findAlmacen().finally(() => {
-                    this.dato.id_concepto = this.almacen.id_padre;
                     this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
                 });
 
@@ -682,6 +714,12 @@
                 if(value != ''){
                     this.dato.id_almacen = value
                     this.dato.partidas=[];
+                }
+            },
+            id_concepto(value){
+                if(value != ''){
+                    this.dato.id_concepto = value
+                    this.findConcepto(value);
                 }
             }
         }
