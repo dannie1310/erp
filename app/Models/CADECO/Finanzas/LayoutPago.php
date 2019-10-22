@@ -16,6 +16,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Zend\Validator\Date;
+use App\Models\CADECO\Solicitud;
 
 class LayoutPago extends Model
 {
@@ -103,6 +104,34 @@ class LayoutPago extends Model
             abort(400, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function  autorizar(){
+        DB::connection('cadeco')->beginTransaction();
+        $partidas = $this->partidas;
+        foreach ($partidas as $partida) {
+            if (is_null($partida->id_transaccion_pago)) {
+                $transaccion = $partida->transaccion;
+
+                if ($transaccion->tipo_transaccion === '65') {
+                    $pago = Factura::query()->find($partida->id_transaccion)->generaOrdenPago($partida);
+                    $partida->id_transaccion_pago = $pago;
+                    $partida->save();
+                }
+
+                if ($transaccion->tipo_transaccion === '72') {
+                    $pago = Solicitud::find($partida->id_transaccion)->generaPago($partida);
+                    $partida->id_transaccion_pago = $pago;
+                    $partida->save();
+
+                }
+            }
+        }
+        $this->id_usuario_autorizo = auth()->id();
+        $this->fecha_hora_autorizado = date('Y-m-d H:i:s');
+        $this->estado = 1;
+        $this->save();
+        DB::connection('cadeco')->commit();
     }
 
     public function usuario()

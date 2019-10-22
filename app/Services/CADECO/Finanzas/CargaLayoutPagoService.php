@@ -60,40 +60,7 @@ class CargaLayoutPagoService
 
     public function autorizar($id)
     {
-
-        $layout = $this->repository->show($id);
-        $partidas = $layout->partidas;
-
-        foreach ($partidas as $partida) {
-            if (is_null($partida->id_transaccion_pago)) {
-                $transaccion = $partida->transaccion;
-
-                /*Facturas*/
-                if ($transaccion->tipo_transaccion === '65') {
-
-                    $pago = Factura::query()->find($partida->id_transaccion)->generaOrdenPago($partida);
-                    $partida->id_transaccion_pago = $pago;
-                    $partida->save();
-                }
-
-                /*Solicitud*/
-                if ($transaccion->tipo_transaccion === '72') {
-
-
-                    $pago = Solicitud::query()->find($partida->id_transaccion)->generaPago($partida);
-                    $partida->id_transaccion_pago = $pago;
-                    $partida->save();
-
-                }
-            }
-        }
-
-        /*Se autoriza el Layout de Pago*/
-        LayoutPago::query()->where('id', '=', $id)
-            ->update(['id_usuario_autorizo' => auth()->id(),
-                'fecha_hora_autorizado' => date('Y-m-d h:i:s'), 'estado' => 1]);
-
-
+        return $this->repository->show($id)->autorizar();
     }
 
     public function descargar_layout(){
