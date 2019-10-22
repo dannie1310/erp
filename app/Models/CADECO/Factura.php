@@ -92,6 +92,7 @@ class Factura extends Transaccion
 
     public function getEstadoStringAttribute()
     {
+        $estado = "";
         if($this->estado==0){
             $estado='Registrada';
         }

@@ -47,7 +47,7 @@ class Solicitud extends Transaccion
         if($this->opciones == 1){
             $pago = SolicitudReposicionFF::find($this->id_transaccion)->generaPago($data);
         }
-        return $pago->id_transaccion;
+        return $pago;
     }
 
     public function scopePendientePago($query)

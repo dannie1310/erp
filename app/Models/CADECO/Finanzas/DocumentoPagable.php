@@ -44,7 +44,12 @@ class DocumentoPagable extends Transaccion
 
     public function getSaldoPagableAttribute(){
         if($this->tipo_transaccion == 72){
-            return $this->monto;
+            if($this->estado ==2){
+                return 0;
+            }elseif($this->estado == 1){
+                return $this->monto;
+            }
+
         }elseif($this->tipo_transaccion == 65){
             return $this->saldo;
         }
