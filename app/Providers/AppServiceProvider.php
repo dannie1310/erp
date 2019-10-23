@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\CADECO\AjusteNegativo;
 use App\Models\CADECO\AjustePositivo;
 use App\Models\CADECO\Almacenes\AjusteEliminado;
+use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\SalidaEliminada;
@@ -57,6 +58,7 @@ use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\PagoAnticipoDestajo;
 use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\SalidaAlmacen;
 use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
@@ -81,6 +83,7 @@ use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
 use App\Observers\CADECO\Almacenes\AjusteEliminadoObserver;
+use App\Observers\CADECO\AnticipoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
@@ -133,6 +136,7 @@ use App\Observers\CADECO\NuevoLotePartidaObserver;
 use App\Observers\CADECO\OrdenCompraObserver;
 use App\Observers\CADECO\OrdenPagoObserver;
 use App\Observers\CADECO\PagoACuentaObserver;
+use App\Observers\CADECO\PagoAnticipoDestajoObserver;
 use App\Observers\CADECO\PagoObserver;
 use App\Observers\CADECO\PagoVarioObserver;
 use App\Observers\CADECO\SalidaAlmacenObserver;
@@ -225,6 +229,8 @@ class AppServiceProvider extends ServiceProvider
             PagoACuenta::observe(PagoACuentaObserver::class);
             PagoVario::observe(PagoVarioObserver::class);
             Factura::observe(FacturaObserver::class);
+            PagoAnticipoDestajo::observe(PagoAnticipoDestajoObserver::class);
+            Anticipo::observe(AnticipoObserver::class);
 
             /**
              * FinanzasCBE
