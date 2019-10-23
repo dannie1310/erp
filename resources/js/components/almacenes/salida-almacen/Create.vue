@@ -616,9 +616,7 @@
                     params: {}
                 }).then(data => {
                     this.concepto = data;
-                }).finally(() => {
-                    console.log("PANDA");
-                });
+                })
             },
             findContratista() {
                 this.$store.commit('cadeco/empresa/SET_EMPRESA', null);
