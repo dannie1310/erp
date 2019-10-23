@@ -51,13 +51,16 @@ class FacturaTransformer extends TransformerAbstract
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
             'fecha_format' => (string)$model->fecha_format,
-            'estado_format'=>$model->getEstado($model->estado),
+            'estado_format'=>$model->estado_string,
             'estado' => (int)$model->estado,
-            'opciones_format'=>$model->getTipo($model->opciones),
+            'opciones_format'=>$model->tipo_transaccion_string,
             'cumplimiento' => (string)$model->cumplimiento_form,
             'vencimiento' => $model->vencimiento_form,
+            'vencimiento_format' => $model->vencimiento_format,
             'tipo_cambio' => $model->tipo_cambio,
-            'a_pagar' => $model->autorizado
+            'a_pagar' => $model->autorizado,
+            'a_cuenta' => $model->a_cuenta_format,
+            'moneda' => $model->moneda->nombre
         ];
     }
 

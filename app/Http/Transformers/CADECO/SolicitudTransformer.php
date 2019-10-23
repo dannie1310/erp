@@ -42,15 +42,18 @@ class SolicitudTransformer extends TransformerAbstract
             'monto'=>(float)$model->monto,
             'total_format'=>(string)$model->monto_format,
             'monto_format'=>(string)$model->monto_format,
-            'referencia'=>(string)$model->referencia,
+            'saldo_format'=>(string)$model->monto_format,
+            'referencia'=>(string)'S/P '.$model->numero_folio_format,
             'retencion'=>(float)$model->retencion,
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
-            'fecha_format' => (string)$model->fecha_hora_registro_format,
+            'fecha_format' => (string)$model->fecha_format,
             'estado' => (int)$model->estado,
             'cumplimiento' => (string)$model->cumplimiento_form,
-            'vencimiento' => $model->vencimiento_form
+            'vencimiento' => $model->vencimiento_form,
+            'vencimiento_format' => $model->vencimiento_format,
+            'moneda' => $model->moneda->nombre
         ];
     }
     /**
