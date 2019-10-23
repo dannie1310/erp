@@ -36,7 +36,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'tipo:1', sort: 'id_material', order: 'desc'},
+                query: {scope:['tipo:1', 'insumos'], sort: 'id_material', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -52,10 +52,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/material-familia/paginate', { params: this.query})
+                return this.$store.dispatch('cadeco/material/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('compras/material-familia/SET_MATERIALES', data.data);
-                        this.$store.commit('compras/material-familia/SET_META', data.meta);
+                        this.$store.commit('cadeco/material/SET_MATERIALES', data.data);
+                        this.$store.commit('cadeco/material/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -64,10 +64,10 @@
         },
         computed: {
             materiales(){
-                return this.$store.getters['compras/material-familia/materiales'];
+                return this.$store.getters['cadeco/material/materiales'];
             },
             meta(){
-                return this.$store.getters['compras/material-familia/meta'];
+                return this.$store.getters['cadeco/material/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}

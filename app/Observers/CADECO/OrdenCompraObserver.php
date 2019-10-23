@@ -10,21 +10,15 @@ namespace App\Observers\CADECO;
 
 
 use App\Models\CADECO\OrdenCompra;
+use App\Models\CADECO\Transaccion;
 
-class OrdenCompraObserver
+class OrdenCompraObserver extends TransaccionObserver
 {
     /**
      * @param OrdenCompra $ordenCompra
-     * @throws \Exception
      */
-    public function creating(OrdenCompra $ordenCompra) //El creating que se encuentra en transaccion
+    public function creating(Transaccion $ordenCompra)
     {
-        if (!$ordenCompra->validaTipoAntecedente()) {
-            throw New \Exception('La transacción antecedente no es válida');
-        }
-        $ordenCompra->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $ordenCompra->FechaHoraRegistro = date('Y-m-d h:i:s');
-        $ordenCompra->id_obra = Context::getIdObra();
-        $ordenCompra->id_usuario = auth()->id();
+       parent::creating($ordenCompra);
     }
 }

@@ -23,8 +23,9 @@ class TransaccionObserver
         if (!$transaccion->validaTipoAntecedente()) {
             throw New \Exception('La transacción antecedente no es válida');
         }
-        $transaccion->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $transaccion->FechaHoraRegistro = date('Y-m-d h:i:s');
+        $transaccion->comentario = "I;". date("d/m/Y") ." ". date("H:i:s") .";ERP|". auth()->user()->usuario;
+        $transaccion->fecha = date('Y-m-d');
+        $transaccion->FechaHoraRegistro = date('Y-m-d H:i:s');
         $transaccion->id_obra = Context::getIdObra();
         $transaccion->id_usuario = auth()->id();
     }

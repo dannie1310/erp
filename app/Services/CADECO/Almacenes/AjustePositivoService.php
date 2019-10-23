@@ -30,6 +30,7 @@ class AjustePositivoService
             'id_almacen' => $data['id_almacen'],
             'referencia' => $data['referencia'],
             'observaciones' => $data['observaciones'],
+            'fecha' => $data['fecha'],
             'items' =>  $data['items']
         ];
 
@@ -39,5 +40,10 @@ class AjustePositivoService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data'][0]);
     }
 }

@@ -89,7 +89,7 @@
                                                 :class="{'is-invalid': errors.has('unidad')}"
                                             >
                                                     <option value>--Unidad--</option>
-                                                    <option v-for="unidad in unidades" :value="unidad.id">{{ unidad.descripcion }}</option>
+                                                    <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
                                             </select>
                                             <div class="invalid-feedback" v-show="errors.has('unidad')">{{ errors.first('unidad') }}</div>
                                         </div>
@@ -112,33 +112,14 @@
 </template>
 
 <script>
-    import FamiliaSelect from "../familia/Select";
+    import FamiliaSelect from "../../../cadeco/familia/Select";
     export default {
         name: "material-create",
         components: {FamiliaSelect},
         data() {
                 return {
                     cargando:false,
-                    unidades: [
-                        {id:'M', descripcion: 'M'},
-                        {id:'M2', descripcion: 'M2'},
-                        {id:'M3', descripcion: 'M3'},
-                        {id:'ML', descripcion: 'ML'},
-                        {id:'KG', descripcion: 'KG'},
-                        {id:'PZA', descripcion: 'PZA'},
-                        {id:'TON', descripcion: 'TON'},
-                        {id:'JOR', descripcion: 'JOR'},
-                        {id:'LOTE', descripcion: 'LOTE'},
-                        {id:'PAQ', descripcion: 'PAQ'},
-                        {id:'PAR', descripcion: 'PAR'},
-                        {id:'CAJA', descripcion: 'CAJA'},
-                        {id:'HORA', descripcion: 'HORA'},
-                        {id:'BLOCK', descripcion: 'BLOCK'},
-                        {id:'LITRO', descripcion: 'LITRO'},
-                        {id:'JGO', descripcion: 'JUEGO'},
-                        {id:'ROLLO', descripcion: 'ROLLO'},
-                        {id:'PULGADA', descripcion: 'PULGADA'}
-                    ],
+                    unidades: [],
                     dato: {
                         tipo: '',
                         unidad:'',
@@ -150,6 +131,9 @@
                     }
                 }
         },
+        mounted() {
+            this.getUnidades()
+        },
         methods: {
             init() {
                   this.cargando = false;
@@ -159,9 +143,16 @@
                     this.dato.nu_parte = '';
                 $(this.$refs.modal).modal('show');
             },
+            getUnidades() {
+                return this.$store.dispatch('cadeco/unidad/index', {
+                    params: {sort: 'unidad',  order: 'asc'}
+                })
+                    .then(data => {
+                        this.unidades= data.data;
+                    })
+            },
             store() {
-                console.log('Material:',this.dato.tipo,'Descripcion:',this.descripcion,'N° Parte',this.nu_parte,'Unidad',this.unidad);
-                return this.$store.dispatch('compras/material-familia/store', this.$data.dato)
+                return this.$store.dispatch('cadeco/material/store', this.$data.dato)
                     .then(data => {
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');
