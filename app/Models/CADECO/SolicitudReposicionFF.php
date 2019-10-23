@@ -76,7 +76,7 @@ class SolicitudReposicionFF extends Solicitud
         $pago->load("cuenta");
         if(abs($saldo_esperado_cuenta-$pago->cuenta->saldo_real)>1){
             DB::connection('cadeco')->rollBack();
-            abort(400, 'Hubo un error durante la actualización del saldo de la cuenta');
+            abort(400, 'Hubo un error durante la actualización del saldo de la cuenta por el pago de la solicitud de reposición de fondo.');
         }
         if(abs($saldo_esperado_fondo-$this->fondo->saldo)>1){
             DB::connection('cadeco')->rollBack();

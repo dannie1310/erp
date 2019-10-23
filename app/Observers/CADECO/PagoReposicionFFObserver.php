@@ -9,8 +9,9 @@
 namespace App\Observers\CADECO;
 use App\Models\CADECO\PagoReposicionFF;
 use App\Models\CADECO\Transaccion;
+use App\Models\CADECO\Pago;
 
-class PagoReposicionFFObserver extends TransaccionObserver
+class PagoReposicionFFObserver extends PagoObserver
 {
     /**
      * @param PagoReposicionFF $pago
@@ -23,8 +24,9 @@ class PagoReposicionFFObserver extends TransaccionObserver
         $pago->opciones = 1;
     }
 
-    public function created(PagoReposicionFF $pago)
+    public function created(Pago $pago)
     {
+        parent::created($pago);
         $pago->fondo->aumentaSaldo($pago);
         $pago->solicitud->actualizaEstadoPagada();
     }
