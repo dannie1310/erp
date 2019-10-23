@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\CADECO\AjusteNegativo;
 use App\Models\CADECO\AjustePositivo;
+use App\Models\CADECO\Almacenes\AjusteEliminado;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\SalidaEliminada;
@@ -79,6 +80,7 @@ use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
+use App\Observers\CADECO\Almacenes\AjusteEliminadoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
@@ -171,6 +173,11 @@ class AppServiceProvider extends ServiceProvider
         /**
          * CADECO
          */
+
+            /**
+             * Almacenes
+             */
+            AjusteEliminado::observe(AjusteEliminadoObserver::class);
 
             /**
              * Compras

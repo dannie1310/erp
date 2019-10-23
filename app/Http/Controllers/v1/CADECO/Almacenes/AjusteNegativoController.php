@@ -51,6 +51,7 @@ class AjusteNegativoController extends Controller
 
         $this->middleware('permiso:consultar_ajuste_negativo')->only(['show','paginate','index','find']);
         $this->middleware('permiso:registrar_ajuste_negativo')->only('store');
+        $this->middleware('permiso:eliminar_ajuste_negativo')->only('delete');
 
         $this->service = $service;
         $this->fractal = $fractal;
