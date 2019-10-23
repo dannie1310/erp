@@ -141,16 +141,15 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function getCSVData($file)
     {
         try{
-            $myfile = fopen($file, "r") or die("Unable to open file!");
-            $content = array();
+            $archivo_layout = fopen($file, "r") or die("No es posible abrir el archivo");
+            $contenido = array();
             $titulos = 0;
-            while(!feof($myfile)) {
-                $linea = explode(",",fgets($myfile));
+            while(!feof($archivo_layout)) {
+                $linea = explode(",",fgets($archivo_layout));
 
                 if($titulos > 0) {
-
                     if (count($linea) > 1 && count($linea) <= 11) {
-                        $content[] = array(
+                        $contenido[] = array(
                             "id_transaccion" => (int)str_replace(" ", "", $linea[0]),
                             "fecha_factura" => $linea[1],
                             "referencia_factura" => $linea[2],
@@ -164,7 +163,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                             "estado" => 1
                         );
                     }else{
-                        $content[] = array(
+                        $contenido[] = array(
                             "id_transaccion" => (int)str_replace(" ", "", $linea[0]),
                             "fecha_factura" => $linea[1],
                             "referencia_factura" => $linea[2],
@@ -181,8 +180,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 }
                 $titulos++;
             }
-            fclose($myfile);
-            return $content;
+            fclose($archivo_layout);
+            return $contenido;
         }catch (\Exception $e){
             throw New \Exception('Error al procesar el archivo: ' . $e->getMessage());
         }
@@ -191,13 +190,6 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function getAmount($money)
     {
         $cleanString = preg_replace('/([^0-9\.,])/i', '', $money);
-        /*$onlyNumbersString = preg_replace('/([^0-9])/i', '', $money);
-
-        $separatorsCountToBeErased = strlen($cleanString) - strlen($onlyNumbersString) - 1;
-
-        $stringWithCommaOrDot = preg_replace('/([,\.])/', '', $cleanString, $separatorsCountToBeErased);
-        $removedThousendSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '',  $stringWithCommaOrDot);*/
-
         return (float) str_replace(',', '.', $cleanString);
     }
 
@@ -297,15 +289,15 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function validarRegistroPrevio($transaccion)
     {
-        $partida = LayoutPagoPartida::query()->where('id_transaccion', $transaccion)->first();
-        if($partida != null)
+        /*$partida = LayoutPagoPartida::query()->where('id_transaccion', $transaccion)->first();
+        if($partida != null || $partida ==null)
         {
             if($partida->layoutPago()->where('estado', '!=', '-1')->first() != null) {
                 return array(
                     'id' => 0, 'estado' => -1, 'descripcion' => 'Registro Previo'
                 );
             }
-        }
+        }*/
     }
 
     public function create(array $data)
