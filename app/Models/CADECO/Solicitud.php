@@ -46,6 +46,8 @@ class Solicitud extends Transaccion
         $pago = null;
         if($this->opciones == 1){
             $pago = SolicitudReposicionFF::find($this->id_transaccion)->generaPago($data);
+        }elseif($this->opciones == 327681){
+            $pago = SolicitudPagoAnticipado::find($this->id_transaccion)->generaPago($data);
         }
         return $pago;
     }
@@ -53,5 +55,10 @@ class Solicitud extends Transaccion
     public function scopePendientePago($query)
     {
         return $query->where('estado', '!=', 2);
+    }
+
+    public function actualizaEstadoPagada(){
+        $this->estado = 2;
+        $this->save();
     }
 }

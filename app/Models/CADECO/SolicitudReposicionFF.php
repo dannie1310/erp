@@ -83,9 +83,4 @@ class SolicitudReposicionFF extends Solicitud
             abort(400, 'Hubo un error durante la actualización del saldo del fondo');
         }
     }
-
-    public function actualizaEstadoPagada(){
-        $this->estado = 2;
-        $this->save();
-    }
 }
