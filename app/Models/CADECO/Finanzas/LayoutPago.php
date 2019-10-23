@@ -123,8 +123,13 @@ class LayoutPago extends Model
 
                     if ($transaccion->tipo_transaccion === '72') {
                         $pago = Solicitud::find($partida->id_transaccion)->generaPago($partida);
-                        $partida->id_transaccion_pago = $pago->id_transaccion;
-                        $partida->save();
+                        if($pago){
+                            $partida->id_transaccion_pago = $pago->id_transaccion;
+                            $partida->save();
+                        }else{
+                            abort(400, "Hubo un error al generar el pago con referencia: ".$partida->referencia_pago . " tipo de solicitud no soportado");
+                        }
+
                     }
                 }
             }
