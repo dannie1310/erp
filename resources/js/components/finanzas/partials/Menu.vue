@@ -105,11 +105,11 @@
                     <p>Facturas</p>
                 </router-link>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_insumo_material')">
+            <li class="nav-item" v-if="$root.can('consultar_familia_servicio')|| $root.can('consultar_insumo_servicio')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-cogs"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>
-                        Insumo de Servicios
+                        Catálogos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -118,15 +118,15 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'familia-serv'}" class="nav-link" :class="{active: this.$route.name == 'familia-serv'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Familia</p>
+                            <p>Familia de Servicios</p>
                         </router-link>
                     </li>
                 </ul>
-                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_material')">
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_servicio')">
                     <li class="nav-item" >
-                        <router-link :to="{name: ''}" class="nav-link" :class="{active: this.$route.name == ''}">
+                        <router-link :to="{name: 'servicio'}" class="nav-link" :class="{active: this.$route.name == 'servicio'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Servicio</p>
+                            <p>Insumo Servicios</p>
                         </router-link>
                     </li>
                 </ul>

@@ -96,6 +96,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MaterialController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\MaterialController@store');
         });
 
         // MONEDA
@@ -117,6 +118,12 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\SucursalController@store');
+        });
+
+        //UNIDAD
+        $api->group(['prefix'=>'unidad'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\UnidadController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
         });
 
     });
@@ -156,18 +163,21 @@ $api->version('v1', function ($api) {
             $api->group(['prefix' => 'positivo'], function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@show')->where(['id' => '[0-9]+']);
+                $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@destroy')->where(['id' => '[0-9]+']);
             });
 
             //AJUSTE NEGATIVO (-)
             $api->group(['prefix' => 'negativo'], function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@show')->where(['id' => '[0-9]+']);
+                $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteNegativoController@destroy')->where(['id' => '[0-9]+']);
             });
 
             //NUEVO LOTE
             $api->group(['prefix' => 'nuevo-lote'], function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@show')->where(['id' => '[0-9]+']);
+                $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\NuevoLoteController@destroy')->where(['id' => '[0-9]+']);
             });
 
         });
@@ -372,14 +382,6 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-orden-compra', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@pdfOrdenCompra')->where(['id' => '[0-9]+']);
-        });
-
-        // MATERIALES
-        $api->group(['prefix' => 'material'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\MaterialController@index');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\MaterialController@paginate');
-            $api->get('{id}','App\Http\Controllers\v1\CADECO\Compras\MaterialController@show')->where(['id' => '[0-9]+']);
-            $api->post('/','App\Http\Controllers\v1\CADECO\Compras\MaterialController@store');
         });
 
         // SOLICITUD DE COMPRA

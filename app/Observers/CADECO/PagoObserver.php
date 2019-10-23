@@ -23,6 +23,9 @@ class PagoObserver extends TransaccionObserver
     {
         parent::creating($pago);
         $pago->tipo_transaccion = 82;
-        $pago->opciones = 0;
+    }
+
+    public function created(Pago $pago){
+        $pago->cuenta->disminuyeSaldo($pago);
     }
 }

@@ -51,6 +51,7 @@ class AjustePositivoController extends Controller
 
         $this->middleware('permiso:consultar_ajuste_positivo')->only(['show','paginate','index','find']);
         $this->middleware('permiso:registrar_ajuste_positivo')->only('store');
+        $this->middleware('permiso:eliminar_ajuste_positivo')->only('delete');
 
         $this->service = $service;
         $this->fractal = $fractal;

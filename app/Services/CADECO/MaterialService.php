@@ -41,6 +41,26 @@ class MaterialService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $material = $this->repository;
+
+        if(isset($data['descripcion'])) {
+            $salida = $material->where([['descripcion', 'LIKE', '%' . request('descripcion') . '%']]);
+        }
+        return $material->paginate($data);
+    }
+    public function store(array $data)
+    {
+        $datos = [
+            'nivel' => $data['tipo'],
+            'unidad' => $data['unidad'],
+            'descripcion' => $data['descripcion'],
+            'numero_parte' => $data['nu_parte'],
+            'tipo_material' => $data['tipo_material'],
+            'equivalencia' => $data['equivalencia'],
+            'marca' => $data['marca']
+
+        ];
+
+        return $this->repository->create($datos);
     }
 }

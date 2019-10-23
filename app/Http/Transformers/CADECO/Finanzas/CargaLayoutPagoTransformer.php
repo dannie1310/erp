@@ -42,9 +42,10 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'monto'=> '$ '.number_format($model->monto_layout_pagos, 2, '.', ''),
-            'fecha_registro' => date('d/m/Y', strtotime($model->fecha_hora_carga)),
-            'fecha_autorizacion'=>date('Y-m-d H:i:s', strtotime($model->fecha_hora_autorizado))
+            'monto_format'=> '$ '.number_format($model->monto_layout_pagos, 2, '.', ','),
+            'fecha_registro' => date('d-m-Y H:i:s', strtotime($model->fecha_hora_carga)),
+            'fecha_autorizacion'=>date('d-m-Y H:i:s', strtotime($model->fecha_hora_autorizado)),
+            'cantidad_documentos'=>$model->partidas->count(),
         ];
     }
 
@@ -73,7 +74,6 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
         return null;
     }
 
-
     /**
      * @param LayoutPago $model
      * @return \League\Fractal\Resource\Collection|null
@@ -84,7 +84,6 @@ class CargaLayoutPagoTransformer extends TransformerAbstract
             return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
-
     }
 
     /**
