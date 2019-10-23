@@ -48,7 +48,6 @@
 
         methods: {
             getRootNodes() {
-                console.log(this.nivel_id);
                 let self = this;
                 return self.$store.dispatch('cadeco/concepto/index', {
                     params: { scope: 'nivel:' + this.nivel_id }
