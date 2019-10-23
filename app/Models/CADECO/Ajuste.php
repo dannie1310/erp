@@ -9,6 +9,9 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Almacenes\AjusteEliminado;
+use App\Models\CADECO\Almacenes\ItemAjusteEliminado;
+
 class Ajuste extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;

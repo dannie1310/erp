@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudPagoAnticipado extends Solicitud
 {
@@ -59,6 +60,11 @@ class SolicitudPagoAnticipado extends Solicitud
         return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente');
     }
 
+    public function pago()
+    {
+        return $this->HasOne(PagoACuenta::class,'id_antecedente','id_transaccion');
+    }
+
     public function cancelar($id){
 
         $solicitud = SolicitudPagoAnticipado::find($id);
@@ -97,8 +103,50 @@ class SolicitudPagoAnticipado extends Solicitud
         }
     }
 
-    public function moneda()
+    public function generaPago($data)
     {
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+        $pago = $this->pago;
+        if($pago){
+            $this->actualizaEstadoPagada();
+            return $pago;
+        }else{
+            DB::connection('cadeco')->beginTransaction();
+            $saldo_esperado_cuenta = $data->cuenta->saldo_real - ($data["monto_pagado"]);
+            $datos_pago = array(
+                "id_antecedente" => $this->id_transaccion,
+                "fecha" => $data["fecha_pago"],
+                "estado" => 1,
+                "id_cuenta" =>  $data["id_cuenta_cargo"],
+                "id_costo" =>  $this->id_costo,
+                "id_empresa" =>  $this->id_empresa,
+                "id_moneda" =>  $data["id_moneda"],
+                "cumplimiento" => $data["fecha_pago"],
+                "vencimiento" => $data["fecha_pago"],
+                "monto" => -1 * abs($data["monto_pagado"]),
+                "saldo" => -1 * abs($data["monto_pagado"]),
+                "referencia" => $data["referencia_pago"],
+                "observaciones" => $this->observaciones,
+            );
+            $pago = $this->pago()->create($datos_pago);
+            $this->validaPago($pago);
+            $this->validaSaldos($saldo_esperado_cuenta, $pago);
+            DB::connection('cadeco')->commit();
+            return $pago;
+        }
+    }
+
+    private function validaPago(PagoACuenta $pago){
+        if(!$pago){
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Hubo un error durante el registro del pago');
+        }
+    }
+
+    private function validaSaldos($saldo_esperado_cuenta, $pago){
+        $pago->load("cuenta");
+        if(abs($saldo_esperado_cuenta-$pago->cuenta->saldo_real)>1){
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Hubo un error durante la actualización del saldo de la cuenta por el pago de la solicitud de reposición de fondo.');
+        }
     }
 }

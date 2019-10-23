@@ -15,7 +15,8 @@ class FamiliaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'hijos'
+        'hijos',
+        'hijosServicio'
     ];
 
     public function transform(Familia $model)
@@ -32,9 +33,26 @@ class FamiliaTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param Familia $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeHijos(Familia $model)
     {
         if($hijos=$model->hijos){
+            return $this->collection($hijos,new MaterialTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Familia $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeHijosServicio(Familia $model)
+    {
+//        dd($model->hijosServicio);
+        if($hijos=$model->hijosServicio){
             return $this->collection($hijos,new MaterialTransformer);
         }
         return null;

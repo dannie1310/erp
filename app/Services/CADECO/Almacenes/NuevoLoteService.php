@@ -40,9 +40,15 @@ class NuevoLoteService
             'id_almacen' => $data['id_almacen'],
             'referencia' => $data['referencia'],
             'observaciones' => $data['observaciones'],
+            'fecha' => $data['fecha'],
             'items' =>  $data['items']
         ];
 
         return $this->repository->create($datos);
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data'][0]);
     }
 }

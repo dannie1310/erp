@@ -3,6 +3,7 @@
 namespace App\Http\Transformers\CADECO;
 
 
+use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
 use App\Http\Transformers\CADECO\Contabilidad\CuentaEmpresaTransformer;
 use App\Http\Transformers\CADECO\Finanzas\CuentaBancariaEmpresaTransformer;
 use App\Models\CADECO\Empresa;
@@ -20,6 +21,7 @@ class EmpresaTransformer extends TransformerAbstract
         'cuentasEmpresa',
         'cuentas',
         'subcontratos',
+        'ordenes_compra',
         'cuentas_bancarias'
     ];
 
@@ -69,6 +71,19 @@ class EmpresaTransformer extends TransformerAbstract
         if($subcontratos = $model->subcontrato)
         {
             return $this->collection($subcontratos, new SubcontratoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeOrdenesCompra(Empresa $model)
+    {
+        if($compras = $model->compras)
+        {
+            return $this->collection($compras, new OrdenCompraTransformer);
         }
         return null;
     }

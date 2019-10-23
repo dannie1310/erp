@@ -29,13 +29,12 @@ import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
 import sucursal from './modules/cadeco/sucursal';
+import unidad from './modules/cadeco/unidad'
 
 
 //COMPRAS
 import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
-import materialFamilia from './modules/compras/material-familia';
-import itemContratista from './modules/compras/item-contratista';
 
 //CONFIGURACION
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
@@ -131,11 +130,10 @@ export default new Vuex.Store({
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
         'cadeco/sucursal': sucursal,
+        'cadeco/unidad': unidad,
 
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
-        'compras/material-familia' : materialFamilia,
-        'compras/item-contratista' : itemContratista,
 
         'configuracion/area-subcontratante' : areaSubcontratante,
 

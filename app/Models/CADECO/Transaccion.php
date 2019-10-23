@@ -14,6 +14,7 @@ use App\Models\SEGURIDAD_ERP\CtgContratista;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
+use App\Models\CADECO\Obra;
 
 class Transaccion extends Model
 {
@@ -36,7 +37,6 @@ class Transaccion extends Model
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             if(auth()->user()->id_contratista){
                 if(($contratista = CtgContratista::query()->find(auth()->user()->id_contratista)) && auth()->user()->usuario_estado == 3){
@@ -84,7 +84,7 @@ class Transaccion extends Model
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
             $antecedente = Transaccion::query()->withoutGlobalScope('tipo')->find($this->id_antecedente);
-            if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opcion != $this::OPCION_ANTECEDENTE)
+            if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opciones != $this::OPCION_ANTECEDENTE)
             {
                 return false;
             }
@@ -97,8 +97,9 @@ class Transaccion extends Model
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
-    public function moneda(){
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    public function obra()
+    {
+        return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
     }
 
     public function getCumplimientoAttribute($cumplimiento)
@@ -125,6 +126,18 @@ class Transaccion extends Model
         return date_format($date,"Y-m-d");
 
     }
+    public function getVencimientoFormatAttribute()
+    {
+        $date = date_create($this->vencimiento);
+        return date_format($date,"d/m/Y");
+
+    }
+    public function getCumplimientoFormatAttribute()
+    {
+        $date = date_create($this->cumplimiento);
+        return date_format($date,"d/m/Y");
+
+    }
     public function  getObservacionesFormatAttribute(){
         return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
     }
@@ -136,10 +149,6 @@ class Transaccion extends Model
     public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
-
-//    public function moneda(){
-//        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
-//    }
 
     public function getSubtotalAttribute()
     {
