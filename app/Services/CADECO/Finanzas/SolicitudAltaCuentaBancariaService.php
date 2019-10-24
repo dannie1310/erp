@@ -40,13 +40,18 @@ class SolicitudAltaCuentaBancariaService
 
     public function pdf($id){
         $proyectos = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
-        $obra = Context::getIdObra();
+        $obras = Obra::all('id_obra');
+        foreach ($obras as $obra)
+        {
+            $filename = $proyectos->id.'_'.$obra->id_obra.'_'.$id.'_alta_cuenta_bancaria.pdf';
+            $path = storage_path('Finanzas\solicitudes_cuentas_bancarias/'.$filename);
+            if(file_exists($path)){
+                break;
+            }
+        }
 
-        $filename = $proyectos->id.'_'.$obra.'_'.$id.'_alta_cuenta_bancaria.pdf';
-
-        $path = storage_path('Finanzas\solicitudes_cuentas_bancarias/'.$filename);
-
-        if(!file_exists($path)){
+        if(!file_exists($path))
+        {
             return "El archivo al cual intenta acceder no existe o no se encuentra disponible.";
         }else{
             return response()->file($path);
