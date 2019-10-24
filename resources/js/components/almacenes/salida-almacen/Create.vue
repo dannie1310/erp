@@ -7,12 +7,10 @@
                      <form role="form" @submit.prevent="validate">
                         <div class="body">
                             <div class="row">
-                                <div class="col-md-10">
-                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group error-content">
                                         <label for="fecha">Fecha:</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-12">
                                                 <datepicker v-model = "dato.fecha"
                                                             name = "fecha"
                                                             :format = "formatoFecha"
@@ -25,6 +23,7 @@
                                         </div>
                                     </div>
                                  </div>
+                                <div class="col-md-10"></div>
                             </div>
                              <div class="row">
                                 <!--Referencia-->
@@ -421,7 +420,7 @@
                                                                :id="'opcion' + key"
                                                                :value="key"
                                                                autocomplete="on"
-                                                               v-validate="{required: false}"
+                                                               v-validate="{required: true}"
                                                                v-model.number="contratista.opcion">
                                                             {{ cargo }}
                                                     </label>
@@ -435,7 +434,7 @@
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                             <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Contratista</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.opcion == '' || contratista.empresa_contratista == ''">Registrar Contratista</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == '' || (contratista.opcion != 0 && contratista.opcion != 1 )">Registrar Contratista</button>
                         </div>
                      </form>
                 </div>
