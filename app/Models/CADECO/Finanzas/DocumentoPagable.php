@@ -63,6 +63,16 @@ class DocumentoPagable extends Transaccion
         return '$ '.number_format(abs($this->saldo),2,".",",");
     }
 
+    public function getSaldoPagableFormatAttribute()    {
+        return '$ '.number_format(abs($this->saldo_pagable),2,".",",");
+    }
 
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
 
+    public function documento(){
+        return $this->belongsTo(Documento::class, 'id_transaccion', 'IDTransaccionCDC');
+    }
 }

@@ -58,11 +58,25 @@ class CargaLayoutPagoController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function presentaPagos(Request $request)
+    public function procesaLayoutPagos(Request $request)
     {
-        $respuesta = $this->service->validarLayout($request->pagos);
+        $respuesta = $this->service->procesaLayoutPagos($request->pagos);
         return response()->json($respuesta, 200);
     }
+
+    /*
+     * private function respondWithCollection($collection)
+    {
+        $resource = new Collection($collection, $this->transformer);
+
+        $this->parseIncludes();
+        $this->fractal->setSerializer(new ArraySerializer);
+        $response = $this->fractal->createData($resource)->toArray();
+
+        return response()->json($response, 200);
+    }
+     *
+     * */
 
     public function store(StoreCargaLayoutPagoRequest $request)
     {

@@ -46,11 +46,9 @@ class LayoutPago extends Model
     public function validarArchivo($archivo)
     {
         $file_fingerprint = hash_file('md5', $archivo);
-
         if($this->query()->where('hash_file_layout_pagos', '=', $file_fingerprint)->first()){
             abort(403, 'Archivo de carga masiva de pagos procesado previamente');
         }
-
         return $file_fingerprint;
     }
 
