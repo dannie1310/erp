@@ -90,7 +90,7 @@
                             id: cuenta.id,
                             fecha: cuenta.fecha_format,
                             empresa: cuenta.empresa.razon_social,
-                            tipo_empresa: cuenta.empresa.tipo_empresa,
+                            tipo_empresa: cuenta.empresa.tipo,
                             banco: cuenta.banco.razon_social,
                             cuenta: cuenta.cuenta,
                             estado: cuenta.movimiento_solicitud.estado_resultante_desc,
