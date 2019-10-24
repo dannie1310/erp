@@ -76,4 +76,9 @@ class Fondo extends Model
     {
         return $query->where('id_responsable', '>', 0);
     }
+
+    public function aumentaSaldo(PagoReposicionFF $pago){
+        $this->saldo = $this->saldo + ($pago->monto * -1);
+        $this->save();
+    }
 }

@@ -23,7 +23,7 @@ class OrdenPago extends Transaccion
         'tipo_transaccion',
         "id_empresa",
         "id_moneda",
-        "id_usuario"
+        "id_usuario",
     ];
 
     protected static function boot()
@@ -44,12 +44,17 @@ class OrdenPago extends Transaccion
 
     public function pago()
     {
-        return $this->belongsTo(Pago::class, 'numero_folio', 'numero_folio');
+        return $this->belongsTo(PagoFactura::class, 'numero_folio', 'numero_folio');
+    }
+
+    public static function calcularFolio()
+    {
+        $op = OrdenPago::orderBy('numero_folio', 'DESC')->first();
+        return $op ? $op->numero_folio + 1 : 1;
     }
 
     public function generaPago($data)
     {
-
             if (is_null($this->pago)){
                 $datos = [
                     'numero_folio' => $this->numero_folio,
@@ -65,13 +70,11 @@ class OrdenPago extends Transaccion
                     'cumpliemnto'=>$data->fecha_pago,
                     'vencimiento'=>$data->fecha_pago,
                 ];
-
-                $pago = Pago::query()->create($datos);
-
-                return $pago->id_transaccion;
+                $pago = PagoFactura::query()->create($datos);
+                return $pago;
             }else{
 
-                return $this->pago->id_transaccion;
+                return $this->pago;
             }
 
 

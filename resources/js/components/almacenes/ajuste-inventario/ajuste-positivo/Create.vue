@@ -128,13 +128,14 @@
 <script>
     export default {
         name: "ajuste-positivo-create",
-        propos:['id_almacen', 'referencia'],
+        propos:['id_almacen', 'referencia','fecha'],
         data() {
             return {
                 cargando: false,
                 id_almacen: this.$attrs.id_almacen,
                 referencia: '',
                 observaciones: '',
+                fecha: '',
                 items: [],
                 materiales: [],
                 bandera: 0
@@ -191,10 +192,12 @@
                     this.getMateriales(this.id_almacen);
                 }
                 this.referencia = this.$attrs.referencia;
+                this.fecha = this.$attrs.fecha;
                 this.items.push(array);
             },
             validate() {
                 this.referencia = this.$attrs.referencia;
+                this.fecha = this.$attrs.fecha;
                 this.$validator.validate().then(result => {
                     if (result) {
                         if(this.items.length == 0){

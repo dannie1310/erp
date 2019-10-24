@@ -21,6 +21,5 @@ class NuevoLoteObserver extends TransaccionObserver
         $nuevo_lote->tipo_transaccion = 35;
         $nuevo_lote->opciones = 2;
         $nuevo_lote->estado = 0;
-        $nuevo_lote->fecha = date('Y-m-d h:i:s');
     }
 }

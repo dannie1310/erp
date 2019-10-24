@@ -1371,6 +1371,28 @@ export const routes = [
                     permission: 'consultar_formato_orden_pago_estimacion'
                 }
             },
+            {
+                path: 'estimacion',
+                name: 'formato-estimacion',
+                component: require('./components/formato/estimacion/Index'),
+                meta: {
+                    title: 'Formato Estimación',
+                    breadcrumb: {name: 'FORMATO ESTIMACIÓN', parent: 'formatos'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_formato_estimacion'
+                }
+            },
+            {
+                path: 'compra',
+                name: 'formato-orden-compra',
+                component: require('./components/formato/compra/Index'),
+                meta: {
+                    title: 'Formato Orden de Compra',
+                    breadcrumb: {name: 'FORMATO ORDEN COMPRA', parent: 'formatos'},
+                    middleware: [auth, context, permission],
+                    permission: 'consultar_orden_compra'
+                }
+            }
         ]
     },
     {
