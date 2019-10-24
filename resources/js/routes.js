@@ -407,7 +407,18 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_solicitud_compra'
                         }
-                    }
+                    },
+                    {
+                        path: 'create',
+                        name: 'solicitud-compra-create',
+                        component: require('./components/compras/solicitud-compra/Create'),
+                        meta: {
+                            title: 'Registrar Solicitud de Compra',
+                            breadcrumb: { parent: 'compras', name: 'REGISTRAR'},
+                            middleware: [auth, context],
+                            // permission: 'registrar_solicitud_compra'
+                        }
+                    },
                 ]
             },
         ]

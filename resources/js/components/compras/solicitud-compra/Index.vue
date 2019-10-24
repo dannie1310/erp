@@ -1,16 +1,12 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <button @click="create_solicitud" v-if="" class="btn btn-app btn-info pull-right">
+                <i class="fa fa-plus"></i> Registrar Solicitud
+            </button>
+        </div>
+        <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -24,10 +20,11 @@
         <!-- /.col -->
     </div>
 </template>
-
 <script>
+  import Create from './Create';
     export default {
         name: "solicitud-compra-index",
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
@@ -69,7 +66,10 @@
                     .finally(() => {
                         this.cargando = false;
                     })
-            }
+            },
+            create_solicitud() {
+                this.$router.push({name: 'solicitud-compra-create'});
+            },
         },
         computed: {
             solicitudes(){
@@ -138,14 +138,5 @@
 </script>
 
 <style scoped>
-    .money
-    {
-        text-align: right;
-    }
-    .th_money
-    {
-        width: 150px;
-        max-width: 150px;
-        min-width: 100px;
-    }
+
 </style>
