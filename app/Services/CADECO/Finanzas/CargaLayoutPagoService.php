@@ -69,15 +69,12 @@ class CargaLayoutPagoService
         $pagables = 0;
         $monto_pagar = 0;
 
-        /*foreach ($data as $dato){
-            $dato['monto_pagado'];
-            if( $dato['datos_completos_correctos'] == 1) {
-                if ($dato['estado']['descripcion'] == 'Pagable' || $dato['estado']['descripcion'] == 'Pagable N/A') {
-                    $pagables++;
-                    $monto_pagar += $dato['monto_pagado'];
-                }
+        foreach ($data as $dato){
+            if ($dato['estado']['estado'] == 1 || $dato['estado']['estado'] == 10) {
+                $pagables++;
+                $monto_pagar += $dato['monto_pagado'];
             }
-        }*/
+        }
         return array(
             'pagables' => $pagables,
             'monto_a_pagar' => $monto_pagar,
@@ -119,27 +116,66 @@ class CargaLayoutPagoService
         $transaccion_pagable = $this->repository->getTransaccionPagable($partida[0]);
         $cuenta_cargo = $this->repository->validaCuentaCargo($partida[6]);
         $fecha_pago = $this->validaFechaPago($partida[7]);
-        $partida_completa = array(
-            "id_transaccion" => $transaccion_pagable->id_transaccion,
-            "fecha_documento" => $transaccion_pagable->fecha_format,
-            "vencimiento_documento" => $transaccion_pagable->vencimiento_format,
-            "beneficiario" => $transaccion_pagable->beneficiario,
-            "referencia_documento" => $transaccion_pagable->referencia_pagable,
-            "monto_documento" => $transaccion_pagable->monto,
-            "monto_documento_format" => $transaccion_pagable->monto_format,
-            "saldo_documento" => $transaccion_pagable->saldo_pagable,
-            "saldo_documento_format" => $transaccion_pagable->saldo_pagable_format,
-            "moneda_documento" => $transaccion_pagable->moneda->nombre,
+        $monto_pagado = $this->limpiaCadena($partida[10]);
+        $datos_documento =[];
+        if($transaccion_pagable){
+            $datos_documento = array(
+                "id_transaccion" => $transaccion_pagable->id_transaccion,
+                "fecha_documento" => $transaccion_pagable->fecha_format,
+                "vencimiento_documento" => $transaccion_pagable->vencimiento_format,
+                "beneficiario" => $transaccion_pagable->beneficiario,
+                "referencia_documento" => $transaccion_pagable->referencia_pagable,
+                "monto_documento" => $transaccion_pagable->monto,
+                "monto_documento_format" => $transaccion_pagable->monto_format,
+                "saldo_documento" => $transaccion_pagable->saldo_pagable,
+                "saldo_documento_format" => $transaccion_pagable->saldo_pagable_format,
+                "moneda_documento" => $transaccion_pagable->moneda->nombre,
+                "id_moneda" => $transaccion_pagable->moneda->id_moneda,
+                'id_documento_remesa' => $transaccion_pagable->id_documento_remesa,
+                'monto_autorizado_remesa' => $transaccion_pagable->monto_autorizado_remesa,
+            );
+        }
+        $datos_pago = array(
+
             "cuenta_cargo" => $partida[6], # IMPORTA
             "fecha_pago" => $fecha_pago, # IMPORTA
+            "fecha_pago_s" => $fecha_pago, # IMPORTA
             "referencia_pago" => $partida[8], # IMPORTA
             "tipo_cambio" => $partida[9], # IMPORTA
-            "monto_pagado" => $this->limpiaCadena($partida[10]), # IMPORTA
+            "monto_pagado" => $monto_pagado, # IMPORTA
             "mensaje" => "Hola",
-            "estado" => 1,
-            "id_cuenta_cargo" => $cuenta_cargo
+            "estado" => $this->getEstadoDocumento($transaccion_pagable, $monto_pagado),
+            "id_cuenta_cargo" => $cuenta_cargo,
+
         );
+        $partida_completa = array_merge($datos_pago,$datos_documento);
+
         return $partida_completa;
+    }
+    private function getEstadoDocumento($transaccion, $monto_pagado){
+        if($transaccion){
+            if($transaccion->saldo_pagable > 0 ){
+                if($transaccion->monto_autorizado_remesa>=$monto_pagado){
+                    $estado_array =  array(
+                        'estado' => 1, 'descripcion' => 'Pagable', 'clase_badge' => 'badge badge-success'
+                    );
+                } else {
+                    $estado_array =  array(
+                        'estado' => 10, 'descripcion' => 'Pagable N/A', 'clase_badge' => 'badge badge-success'
+                    );
+                }
+            } else{
+                $estado_array =  array(
+                    'estado' => 2, 'descripcion' => 'Pagada', 'clase_badge' => 'badge badge-warning'
+                );
+            }
+        }else{
+            $estado_array =  array(
+                'estado' => 0, 'descripcion' => 'No Encontrada', 'clase_badge' => 'badge badge-danger'
+            );
+
+        }
+        return $estado_array;
     }
 
     private function getCSVData($file)

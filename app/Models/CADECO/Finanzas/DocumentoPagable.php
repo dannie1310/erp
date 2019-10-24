@@ -11,6 +11,7 @@ use App\Models\CADECO\Finanzas\LayoutPagoPartida;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Moneda;
+use App\Models\MODULOSSAO\ControlRemesas\Documento;
 class DocumentoPagable extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
@@ -18,11 +19,31 @@ class DocumentoPagable extends Transaccion
     protected static function boot()
     {
         parent::boot();
+        self::addGlobalScope(function ($query) {
+            return $query->whereIn('tipo_transaccion',[65,72])
+                ->where('estado', '!=', -2);
+        });
     }
 
     public function partida_layout()
     {
         return $this->HasOne(LayoutPagoPartida::class,'id_transaccion','id_transaccion');
+    }
+
+    public function getMontoAutorizadoRemesaAttribute(){
+        if($this->documento){
+            return $this->documento->importe_total_procesado;
+        }else{
+            return 0;
+        }
+    }
+
+    public function getIdDocumentoRemesaAttribute(){
+        if($this->documento){
+            return $this->documento->IDDocumento;
+        }else{
+            return null;
+        }
     }
 
     public function getBeneficiarioAttribute(){
