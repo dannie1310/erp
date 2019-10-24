@@ -57,7 +57,7 @@ class Remesa extends Model
         return $query->has('remesaLiberada');
     }
 
-    public function getTipoAttibute(){
+    public function getTipoAttribute(){
         if($this->IDTipoRemesa == 1){
             return 'Ordinaria';
         }
