@@ -8,6 +8,8 @@
 
 namespace App\Repositories\CADECO\Finanzas\LayoutPago;
 
+use App\Models\CADECO\CuentaPagadora;
+use App\Models\CADECO\Finanzas\DocumentoPagable;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Facades\Context;
 use App\Models\CADECO\Cuenta;
@@ -34,12 +36,16 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $this->model = $model;
     }
 
-    public function validarLayout($layout)
+    public function validarArchivo($layout)
     {
-        $registros= array();
-        $hash_file =$this->model->validarArchivo($layout);
+        $this->model->validarArchivo($layout);
+    }
 
-        foreach ($this->getCSVData($layout) as $key => $pago) {
+    public function validarLayout($arreglo_pagos_layout)
+    {
+        $registros = array();
+
+        foreach ($arreglo_pagos_layout as $key => $pago) {
             $documento = Documento::query()->has('remesa')->where("IDTransaccionCDC", "=", $pago['id_transaccion'])->first();
             $transaccion = "";
             $pago_a_generar = "";
@@ -59,7 +65,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 $pago_a_generar = $documento ? $this->datosPago($documento->IDTipoDocumento) : '';
                 $saldo_documento_format = $solicitud->monto_format;
                 $saldo_documento = $solicitud->monto;
-                $referencia_documento = 'S/P '.$solicitud->numero_folio_format;
+                $referencia_documento = 'S/P ' . $solicitud->numero_folio_format;
             }
 
             if ($solicitud == null && $factura != null) // Factura
@@ -72,7 +78,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             }
 
             if ($cta_cargo == null) {
-                $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'], $transaccion ? $transaccion->moneda->id_moneda : '', '');
+                $tipo_cuenta_moneda = $this->validarTipoCambio($pago['tipo_cambio'], $transaccion ? $transaccion->moneda->id_moneda : '', '');
                 $ctas_cargo = Obra::find(Context::getIdObra())->cuentasPagadorasObra;
                 $cuenta_encontrada = false;
                 foreach ($ctas_cargo as $cta_cargo) {
@@ -84,11 +90,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                         'tipo_cuenta' => $cta_cargo->id_moneda
                     );
                 }
-                if(sizeof($ctas_cargo) == 1){
+                if (sizeof($ctas_cargo) == 1) {
                     $id_cuenta = $ctas_cargo[0]->id_cuenta;
                 }
             } else {
-                $tipo_cuenta_moneda =  $this->validarTipoCambio($pago['tipo_cambio'],$transaccion != null ? $transaccion->moneda->id_moneda : '', $cta_cargo->id_moneda);
+                $tipo_cuenta_moneda = $this->validarTipoCambio($pago['tipo_cambio'], $transaccion != null ? $transaccion->moneda->id_moneda : '', $cta_cargo->id_moneda);
                 $id_cuenta = $cta_cargo->id_cuenta;
                 $cuentas = array('id' => $cta_cargo->id_cuenta,
                     'numero' => $cta_cargo->numero,
@@ -125,72 +131,16 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 'pago_a_generar' => $pago_a_generar ? $pago_a_generar['pago_a_generar'] : "",
                 'aplicacion_manual' => $pago_a_generar ? $pago_a_generar['aplicacion_manual'] : "",
                 'estado' => $transaccion ? $this->validarEstatusPago($transaccion, $documento) : ['id' => 0, 'estado' => 0, 'descripcion' => 'No encontrada'],
-                'beneficiario' => $transaccion ? $transaccion->tipo_transaccion == 72 && $transaccion->opciones == 1 ? $transaccion->fondo->nombre : $transaccion->empresa->razon_social  : null,
+                'beneficiario' => $transaccion ? $transaccion->tipo_transaccion == 72 && $transaccion->opciones == 1 ? $transaccion->fondo->nombre : $transaccion->empresa->razon_social : null,
                 'referencia_docto' => $documento ? $documento->Referencia : null,
                 'origen_docto' => $documento ? $documento->origenDocumento->OrigenDocumento : null,
-                'fecha_limite' =>  date('d-m-Y')
+                'fecha_limite' => date('d-m-Y')
             );
         }
-
         return array(
             'data' => $registros,
             'resumen' => $this->resumenLayout($registros)
         );
-    }
-
-    public function getCSVData($file)
-    {
-        try{
-            $archivo_layout = fopen($file, "r") or die("No es posible abrir el archivo");
-            $contenido = array();
-            $titulos = 0;
-            while(!feof($archivo_layout)) {
-                $linea = explode(",",fgets($archivo_layout));
-
-                if($titulos > 0) {
-                    if (count($linea) > 1 && count($linea) <= 11) {
-                        $contenido[] = array(
-                            "id_transaccion" => (int)str_replace(" ", "", $linea[0]),
-                            "fecha_factura" => $linea[1],
-                            "referencia_factura" => $linea[2],
-                            "monto_factura" => $linea[4],
-                            "moneda_factura" => $linea[5],
-                            "cuenta_cargo" => $linea[6],
-                            "fecha_pago" => $linea[7],
-                            "referencia_pago" => $linea[8],
-                            "tipo_cambio" => $linea[9],
-                            "monto_pagado" => $this->getAmount(str_replace("\r\n", "", $linea[10])),
-                            "estado" => 1
-                        );
-                    }else{
-                        $contenido[] = array(
-                            "id_transaccion" => (int)str_replace(" ", "", $linea[0]),
-                            "fecha_factura" => $linea[1],
-                            "referencia_factura" => $linea[2],
-                            "monto_factura" => $linea[4],
-                            "moneda_factura" => $linea[5],
-                            "cuenta_cargo" => $linea[6],
-                            "fecha_pago" => $linea[7],
-                            "referencia_pago" => $linea[8],
-                            "tipo_cambio" => $linea[9],
-                            "monto_pagado" => $this->getAmount(str_replace("\r\n", "", $linea[10])),
-                            "estado" => 0
-                        );
-                    }
-                }
-                $titulos++;
-            }
-            fclose($archivo_layout);
-            return $contenido;
-        }catch (\Exception $e){
-            throw New \Exception('Error al procesar el archivo: ' . $e->getMessage());
-        }
-    }
-
-    public function getAmount($money)
-    {
-        $cleanString = preg_replace('/([^0-9\.,])/i', '', $money);
-        return (float) str_replace(',', '.', $cleanString);
     }
 
     public function resumenLayout($data)
@@ -198,9 +148,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $pagables = 0;
         $monto_pagar = 0;
 
-        foreach ($data as $dato){
+        foreach ($data as $dato) {
             $dato['monto_pagado'];
-            if( $dato['datos_completos_correctos'] == 1) {
+            if ($dato['datos_completos_correctos'] == 1) {
                 if ($dato['estado']['descripcion'] == 'Pagable' || $dato['estado']['descripcion'] == 'Pagable N/A') {
                     $pagables++;
                     $monto_pagar += $dato['monto_pagado'];
@@ -210,14 +160,14 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return array(
             'pagables' => $pagables,
             'monto_a_pagar' => $monto_pagar,
-            'nombre' => explode('.',"AAAAAA")[0]
+            'nombre' => explode('.', "AAAAAA")[0]
         );
     }
 
     public function datosPago($data)
     {
         $aplicacion_manual = false;
-        switch ((int)$data){
+        switch ((int)$data) {
             case 9:
             case 11:
                 $pago_a_generar = 'Pago';
@@ -242,47 +192,44 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function validarEstatusPago($transaccion, $documento)
     {
         $registrado = $this->validarRegistroPrevio($transaccion->id_transaccion);
-        if($registrado == null) {
-                if ($transaccion->tipo_transaccion == 65) {
-                    if($transaccion->saldo==0 || $transaccion->estado == 2){
+        if ($registrado == null) {
+            if ($transaccion->tipo_transaccion == 65) {
+                if ($transaccion->saldo == 0 || $transaccion->estado == 2) {
+                    return array(
+                        'id' => 0, 'estado' => 2, 'descripcion' => 'Pagada'
+                    );
+                } elseif ($transaccion->saldo > 0 && $transaccion->estado == 1) {
+                    if ($documento != null) {
                         return array(
-                            'id' => 0, 'estado' => 2, 'descripcion' => 'Pagada'
+                            'id' => 0, 'estado' => 1, 'descripcion' => 'Pagable'
                         );
-                    }elseif($transaccion->saldo>0 && $transaccion->estado == 1){
-                        if ($documento != null){
-                            return array(
-                                'id' => 0, 'estado' => 1, 'descripcion' => 'Pagable'
-                            );
-                        }else{
-                            return array(
-                                'id' => 0, 'estado' => 10, 'descripcion' => 'Pagable N/A'
-                            );
-                        }
-                    }
-                }
-                if ($transaccion->tipo_transaccion == 72) {
-                    if ($transaccion->estado == 2) {
+                    } else {
                         return array(
-                            'id' => 0, 'estado' => 2, 'descripcion' => 'Pagada'
+                            'id' => 0, 'estado' => 10, 'descripcion' => 'Pagable N/A'
                         );
                     }
                 }
+            }
+            if ($transaccion->tipo_transaccion == 72) {
+                if ($transaccion->estado == 2) {
+                    return array(
+                        'id' => 0, 'estado' => 2, 'descripcion' => 'Pagada'
+                    );
+                }
+            }
 
-                return array(
-                    'id' => 0, 'estado' => 1, 'descripcion' => 'Pagable'
-                );
+            return array(
+                'id' => 0, 'estado' => 1, 'descripcion' => 'Pagable'
+            );
         }
         return $registrado;
     }
 
     public function validarMontos($monto_factura, $monto_pago)
     {
-        if($monto_pago == 0.0 || ($monto_factura+1 <= $monto_pago || $monto_factura-1 >= $monto_pago))
-        {
+        if ($monto_pago == 0.0 || ($monto_factura + 1 <= $monto_pago || $monto_factura - 1 >= $monto_pago)) {
             return false;
-        }
-        else
-        {
+        } else {
             return true;
         }
     }
@@ -305,37 +252,35 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return $this->model->registar($data);
     }
 
-    public  function validarFecha($fecha)
+
+
+    public function validarFecha($fecha)
     {
 
         $fecha_correcta = DateTime::createFromFormat('d/m/Y', $fecha);
-        if($fecha_correcta != false)
-        {
-            if(strcmp($fecha_correcta->format('d/m/Y'), $fecha) == 0 && date('d/m/Y') >=  $fecha) {
+        if ($fecha_correcta != false) {
+            if (strcmp($fecha_correcta->format('d/m/Y'), $fecha) == 0 && date('d/m/Y') >= $fecha) {
                 return true;
             }
         }
 
-        $fecha_correcta =DateTime::createFromFormat('d-m-Y', $fecha);
-        if($fecha_correcta != false)
-        {
-            if(strcmp($fecha_correcta->format('d-m-Y'), $fecha) == 0 && date('d-m-Y') >=  $fecha) {
+        $fecha_correcta = DateTime::createFromFormat('d-m-Y', $fecha);
+        if ($fecha_correcta != false) {
+            if (strcmp($fecha_correcta->format('d-m-Y'), $fecha) == 0 && date('d-m-Y') >= $fecha) {
                 return true;
             }
         }
 
-        $fecha_correcta =DateTime::createFromFormat('Y-m-d', $fecha);
-        if($fecha_correcta != false)
-        {
-            if(strcmp($fecha_correcta->format('Y-m-d'), $fecha) == 0 && date('Y-m-d') >=  $fecha) {
+        $fecha_correcta = DateTime::createFromFormat('Y-m-d', $fecha);
+        if ($fecha_correcta != false) {
+            if (strcmp($fecha_correcta->format('Y-m-d'), $fecha) == 0 && date('Y-m-d') >= $fecha) {
                 return true;
             }
         }
 
         $fecha_correcta = DateTime::createFromFormat('Y/m/d', $fecha);
-        if($fecha_correcta != false)
-        {
-            if(strcmp($fecha_correcta->format('Y/m/d'), $fecha) == 0 && date('Y/m/d') >=  $fecha) {
+        if ($fecha_correcta != false) {
+            if (strcmp($fecha_correcta->format('Y/m/d'), $fecha) == 0 && date('Y/m/d') >= $fecha) {
                 return true;
             }
         }
@@ -345,13 +290,12 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function validarTipoCambio($tipo_cambio, $moneda_transaccion, $moneda_cuenta)
     {
-        if(($tipo_cambio == '' && $moneda_cuenta == '') || $moneda_cuenta == '')// Tipo cambio vacio y cuenta no encontrada
+        if (($tipo_cambio == '' && $moneda_cuenta == '') || $moneda_cuenta == '')// Tipo cambio vacio y cuenta no encontrada
         {
             return 2;
         }
 
-        if($moneda_transaccion =! "")
-        {
+        if ($moneda_transaccion = !"") {
             if (($tipo_cambio == 1 && $moneda_cuenta == 1 && $moneda_transaccion == 1) || ($tipo_cambio == 1 && $moneda_cuenta == $moneda_transaccion)) //Tipo cambio y todo en pesos
             {
                 return 1;
@@ -359,5 +303,24 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         }
 
         return 0;
+    }
+
+    public function getTransaccionPagable($id)
+    {
+        return DocumentoPagable::find($id);
+    }
+
+    public function getCuentasCargo()
+    {
+        return Obra::find(Context::getIdObra())->cuentasPagadorasObra;
+    }
+
+    public function validaCuentaCargo($cuenta){
+        $cuenta = CuentaPagadora::where("numero",$cuenta)->first();
+        if($cuenta){
+            return $cuenta->id_cuenta;
+        }else{
+            return false;
+        }
     }
 }
