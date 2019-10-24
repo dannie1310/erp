@@ -20,7 +20,7 @@ class LayoutPagoObserver
     {
         $layoutPago->validarRegistro();
         $layoutPago->id_usuario_carga = auth()->id();
-        $layoutPago->fecha_hora_carga = date('Y-m-d h:i:s');
+        $layoutPago->fecha_hora_carga = date('Y-m-d H:i:s');
         $layoutPago->estado = 0;
     }
 }

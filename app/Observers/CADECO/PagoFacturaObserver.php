@@ -3,32 +3,31 @@
  * Created by PhpStorm.
  * User: DBenitezc
  * Date: 09/09/2019
- * Time: 04:48 PM
+ * Time: 04:46 PM
  */
 
 namespace App\Observers\CADECO;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\PagoACuenta;
-use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Pago;
+use App\Models\CADECO\PagoFactura;
+use App\Models\CADECO\Transaccion;
 
-class PagoACuentaObserver extends PagoObserver
+class PagoFacturaObserver extends PagoObserver
 {
     /**
-     * @param PagoACuenta $pagoACuenta
+     * @param Pago $pago
      * @throws \Exception
      */
     public function creating(Transaccion $pago)
     {
         parent::creating($pago);
-        $pago->tipo_transaccion = 82;
-        $pago->opciones = 327681;
+        $pago->opciones = 0;
     }
 
-    public function created(Pago $pago)    {
+    public function created(Pago $pago){
         parent::created($pago);
-        $pago->solicitud->actualizaEstadoPagada();
+        $pago->orden_pago->factura->disminuyeSaldo($pago);
     }
 }

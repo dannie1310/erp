@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\CADECO\AjusteNegativo;
 use App\Models\CADECO\AjustePositivo;
+use App\Models\CADECO\Almacenes\AjusteEliminado;
+use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\SalidaEliminada;
@@ -30,6 +32,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EmpresaFondoFijo;
 use App\Models\CADECO\EntradaMaterial;
 use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Factura;
 use App\Models\CADECO\Familia;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
@@ -55,6 +58,7 @@ use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\PagoAnticipoDestajo;
 use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\SalidaAlmacen;
 use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
@@ -78,6 +82,8 @@ use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
+use App\Observers\CADECO\Almacenes\AjusteEliminadoObserver;
+use App\Observers\CADECO\AnticipoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
@@ -104,6 +110,7 @@ use App\Observers\CADECO\EmpresaFondoFijoObserver;
 use App\Observers\CADECO\EmpresaObserver;
 use App\Observers\CADECO\EntradaMaterialObserver;
 use App\Observers\CADECO\EstimacionObserver;
+use App\Observers\CADECO\FacturaObserver;
 use App\Observers\CADECO\FamiliaObserver;
 use App\Observers\CADECO\Finanzas\ConfiguracionEstimacionObserver;
 use App\Observers\CADECO\Finanzas\CuentaBancariaEmpresaObserver;
@@ -129,6 +136,7 @@ use App\Observers\CADECO\NuevoLotePartidaObserver;
 use App\Observers\CADECO\OrdenCompraObserver;
 use App\Observers\CADECO\OrdenPagoObserver;
 use App\Observers\CADECO\PagoACuentaObserver;
+use App\Observers\CADECO\PagoAnticipoDestajoObserver;
 use App\Observers\CADECO\PagoObserver;
 use App\Observers\CADECO\PagoVarioObserver;
 use App\Observers\CADECO\SalidaAlmacenObserver;
@@ -151,6 +159,10 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
+use App\Observers\CADECO\PagoReposicionFFObserver;
+use App\Models\CADECO\PagoReposicionFF;
+use App\Models\CADECO\PagoFactura;
+use App\Observers\CADECO\PagoFacturaObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -165,6 +177,11 @@ class AppServiceProvider extends ServiceProvider
         /**
          * CADECO
          */
+
+            /**
+             * Almacenes
+             */
+            AjusteEliminado::observe(AjusteEliminadoObserver::class);
 
             /**
              * Compras
@@ -205,6 +222,15 @@ class AppServiceProvider extends ServiceProvider
             DistribucionRecursoRemesaPartida::observe(DistribucionRecursoRemesaPartidaObserver::class);
             LayoutPago::observe(LayoutPagoObserver::class);
             LayoutPagoPartida::observe(LayoutPagoPartidaObserver::class);
+            PagoReposicionFF::observe(PagoReposicionFFObserver::class);
+            Pago::observe(PagoObserver::class);
+            OrdenPago::observe(OrdenPagoObserver::class);
+            PagoFactura::observe(PagoFacturaObserver::class);
+            PagoACuenta::observe(PagoACuentaObserver::class);
+            PagoVario::observe(PagoVarioObserver::class);
+            Factura::observe(FacturaObserver::class);
+            PagoAnticipoDestajo::observe(PagoAnticipoDestajoObserver::class);
+            Anticipo::observe(AnticipoObserver::class);
 
             /**
              * FinanzasCBE
@@ -269,10 +295,6 @@ class AppServiceProvider extends ServiceProvider
             NuevoLote::observe(NuevoLoteObserver::class);
             NuevoLotePartida::observe(NuevoLotePartidaObserver::class);
             OrdenCompra::observe(OrdenCompraObserver::class);
-            OrdenPago::observe(OrdenPagoObserver::class);
-            Pago::observe(PagoObserver::class);
-            PagoACuenta::observe(PagoACuentaObserver::class);
-            PagoVario::observe(PagoVarioObserver::class);
             SalidaAlmacen::observe(SalidaAlmacenObserver::class);
             SolicitudPagoAnticipado::observe(SolicitudPagoAnticipadoObserver::class);
             Subcontrato::observe(SubcontratoObserver::class);

@@ -8,42 +8,46 @@
 
 namespace App\Models\CADECO;
 
-
-class PagoACuenta extends Pago
+class PagoReposicionFF extends Pago
 {
     public const TIPO_ANTECEDENTE = 72;
-    public const OPCION_ANTECEDENTE = 327681;
+    public const OPCION_ANTECEDENTE = 1;
 
     protected $fillable = [
         'id_antecedente',
+        'id_referente',
         'tipo_transaccion',
         'fecha',
         'estado',
         'id_obra',
-        'id_costo',
-        "id_cuenta",
-        "id_empresa",
+        'id_cuenta',
         "id_moneda",
         'cumplimiento',
         'vencimiento',
+        "opciones",
         'monto',
         "saldo",
-        "tipo_cambio",
         'referencia',
         "destino",
         'observaciones',
+        "id_usuario"
     ];
     protected static function boot()
     {
         parent::boot();
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 82)
-                ->where('opciones', '=', 327681)
+                ->where('opciones', '=', 1)
                 ->where('estado', '!=', -2);
         });
     }
 
+    public function fondo()
+    {
+        return $this->belongsTo(Fondo::class, 'id_referente', 'id_fondo');
+    }
+
     public function solicitud(){
-        return $this->belongsTo(SolicitudPagoAnticipado::class, 'id_antecedente', 'id_transaccion');
+        return $this->belongsTo(SolicitudReposicionFF::class, 'id_antecedente', 'id_transaccion');
     }
 }

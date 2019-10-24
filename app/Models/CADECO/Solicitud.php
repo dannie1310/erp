@@ -16,7 +16,6 @@ class Solicitud extends Transaccion
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 72);
         });
@@ -24,8 +23,7 @@ class Solicitud extends Transaccion
 
     public function pago()
     {
-        return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion')
-            ->where('tipo_transaccion', '=', 82);
+        return $this->HasOne(Pago::class,'id_antecedente','id_transaccion');
     }
 
     public function fondo()
@@ -38,32 +36,31 @@ class Solicitud extends Transaccion
         return $this->belongsTo(PagoACuenta::class, 'id_referente', 'id_referente');
     }
 
+    public function moneda()
+    {
+        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+    }
 
     public function generaPago($data)
     {
-      if(is_null($this->pago_cuenta)){
-          $data = array(
-              "id_empresa" => $this->id_empresa,
-              "id_moneda" => $this->id_moneda,
-              "fecha" => $this->fecha,
-              "cumplimiento" => $this->fecha,
-              "vencimiento" => $this->fecha,
-              "monto" => -1 * abs($this->monto),
-              "referencia" => $this->referencia,
-              "id_cuenta" => $this->id_cuenta,
-              "destino" => $this->destino,
-              "observaciones" => $this->observaciones,
-              "id_referente"=> $this->id_referente,
-          );
-
-          $pago = PagoACuenta::query()->create($data);
-          return $pago->id_transaccion;
-      }else{
-
-          return $this->pago_cuenta->id_transaccion;
-      }
-
-
+        $pago = null;
+        if($this->opciones == 1){
+            $pago = SolicitudReposicionFF::find($this->id_transaccion)->generaPago($data);
+        }elseif($this->opciones == 327681){
+            $pago = SolicitudPagoAnticipado::find($this->id_transaccion)->generaPago($data);
+        }elseif($this->opciones == 131073){
+            $pago = SolicitudAnticipoDestajo::find($this->id_transaccion)->generaPago($data);
+        }
+        return $pago;
     }
 
+    public function scopePendientePago($query)
+    {
+        return $query->where('estado', '!=', 2);
+    }
+
+    public function actualizaEstadoPagada(){
+        $this->estado = 2;
+        $this->save();
+    }
 }
