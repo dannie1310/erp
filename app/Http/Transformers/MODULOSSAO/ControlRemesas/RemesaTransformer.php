@@ -38,9 +38,10 @@ class RemesaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'año' => $model->Anio,
             'semana' => $model->NumeroSemana,
-            'tipo' => $model->getTipoAttibute(),
+            'tipo' => $model->tipo,
             'folio' => $model->Folio,
-            'proyecto' => $model->IDProyecto
+            'proyecto' => $model->IDProyecto,
+            'proyecto_descripcion' => $model->proyecto->Nombre
         ];
     }
 
