@@ -6,6 +6,26 @@
                     <div class="invoice p-3 mb-3">
                      <form role="form" @submit.prevent="validate">
                         <div class="body">
+                            <div class="row">
+                                <div class="col-md-10">
+                                 </div>
+                                <div class="col-md-2">
+                                    <div class="form-group error-content">
+                                        <label for="fecha">Fecha:</label>
+                                        <div class="col-sm-10">
+                                                <datepicker v-model = "dato.fecha"
+                                                            name = "fecha"
+                                                            :format = "formatoFecha"
+                                                            :bootstrap-styling = "true"
+                                                            class = "form-control"
+                                                            v-validate="{required: true}"
+                                                            :class="{'is-invalid': errors.has('fecha')}"
+                                                ></datepicker>
+                                          <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                        </div>
+                                    </div>
+                                 </div>
+                            </div>
                              <div class="row">
                                 <!--Referencia-->
                                  <div class="col-md-6">
@@ -64,6 +84,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <hr>
                             <div class="row">
                                  <div class="col-md-6">
                                     <div class="form-group row error-content">
@@ -104,6 +125,7 @@
                                 <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
                                 </div>
                             </div>
+                            <hr>
                             <div class="row">
                                 <div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">
                                     <div class="form-group">
@@ -152,6 +174,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <hr>
                                 <div class="col-md-12">
                                     <div class="form-group error-content">
                                         <label for="observaciones">Observaciones:</label>
@@ -342,53 +365,6 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            <hr>
-                            <fieldset class="form-group">
-                                <div class="row"  v-if="contratistas">
-                                      <div class="col-md-8">
-                                        <div class="form-group error-content">
-                                            <label for="empresa_contratista">Empresa Contratista:</label>
-                                               <select
-                                                       class="form-control"
-                                                       name="empresa_contratista"
-                                                       data-vv-as="Material"
-                                                       v-model="contratista.empresa_contratista"
-                                                       v-validate="{required: false}"
-                                                       id="empresa_contratista"
-                                                       :class="{'is-invalid': errors.has('empresa_contratista')}">
-                                                <option value>-- Seleccione --</option>
-                                                <option v-for="(contratista, index) in contratistas" :value="contratista.id"
-                                                        data-toggle="tooltip" data-placement="left" :title="contratista.id ">
-                                                    {{ contratista.razon_social }}
-                                                </option>
-                                            </select>
-                                             <div class="invalid-feedback" v-show="errors.has('id')">{{ errors.first('id') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                     <div class="col-md-6">
-                                        <div class="form-group row error-content">
-                                            <label for="opcion" class="col-sm-3 col-form-label">Tipo: </label>
-                                            <div class="col-sm-10">
-                                                <div class="btn-group btn-group-toggle">
-                                                    <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
-                                                        <input type="radio"
-                                                               class="btn-group-toggle"
-                                                               name="opcion"
-                                                               :id="'opcion' + key"
-                                                               :value="key"
-                                                               autocomplete="on"
-                                                               v-validate="{required: false}"
-                                                               v-model.number="contratista.opcion">
-                                                            {{ cargo }}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </fieldset>
                         </div>
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -459,7 +435,7 @@
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                             <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Contratista</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == ''">Registrar Contratista</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.opcion == '' || contratista.empresa_contratista == ''">Registrar Contratista</button>
                         </div>
                      </form>
                 </div>
@@ -472,13 +448,16 @@
     import Almacen from "../../cadeco/almacen/Select";
     import ConceptoSelect from "../../cadeco/concepto/Select";
     import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
+    import datepicker from 'vuejs-datepicker';
+
     export default {
         name: "salida-almacen-create",
-        components: {Almacen, ConceptoSelect,ConceptoSelectHijo},
+        components: {Almacen, ConceptoSelect,ConceptoSelectHijo,datepicker},
         data() {
             return {
                 dato:{
                     id_concepto:'',
+                    fecha:'',
                     id_almacen:'',
                     id_empresa:'',
                     opciones:'',
@@ -522,6 +501,9 @@
             this.getEmpresas();
         },
         methods: {
+            formatoFecha(date){
+                return moment(date).format('YYYY-MM-DD');
+            },
             agregar_partida(){
                 this.getMateriales();
                 this.getAlmacenes();
@@ -678,14 +660,14 @@
                 if(parseInt(this.partida[1]) < parseInt(this.dato_partida.cantidad)) {
                     swal('¡Error!', 'La cantidad no puede ser mayor a la existencia.', 'error');
                     this.dato_partida.cantidad = '';
-                }else if( parseInt(this.dato_partida.cantidad)< 0){
+                }else if( parseFloat(this.dato_partida.cantidad)<= 0){
                     swal('¡Error!', 'La cantidad no puede ser cero o menor.', 'error');
                     this.dato_partida.cantidad = '';
                 }
             },
             validarAlmacen() {
                 if(this.id_almacen == this.dato_partida.destino){
-                    swal('¡Error!', 'No puede seleccionar el mismo almacén en el destino.', 'error');
+                    swal('¡Error!', 'No puede enviar la partida al mismo Almacén.', 'error');
                     this.dato_partida.destino='';
                 }
             },

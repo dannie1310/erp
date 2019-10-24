@@ -12,7 +12,7 @@
                     noOptionsText="No hay opciones disponibles"
                     :options="rootNodes"
                     :load-options="loadOptions"
-                    placeholder="-- Concepto --"
+                    placeholder="-- Destino --"
                     :disableBranchNodes="disableBranchNodes"
                     v-model="val"
         />

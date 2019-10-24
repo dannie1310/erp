@@ -35,6 +35,7 @@ import unidad from './modules/cadeco/unidad'
 //COMPRAS
 import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
+import itemContratista from './modules/compras/item-contratista';
 
 //CONFIGURACION
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
@@ -134,6 +135,7 @@ export default new Vuex.Store({
 
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
+        'compras/item-contratista' : itemContratista,
 
         'configuracion/area-subcontratante' : areaSubcontratante,
 
