@@ -159,7 +159,10 @@
                                                             <td v-if="partida[2].path" :title="partida[2].path">{{partida[2].descripcion}}</td>
                                                             <td v-else>{{partida[2].descripcion}}</td>
                                                             <td>
-                                                                <button type="button" @click="agregarContratista(index)" class="btn btn-sm btn-outline-secondary" title="Modificar contratista">
+                                                                <button type="button" @click="agregarContratista(index)" class="btn btn-sm" title="Entrega a contratista" v-if="partida[4] == '' && partida[5] == ''">
+                                                                    <i class="fa fa-user-o"></i>
+                                                                </button>
+                                                                <button type="button" @click="agregarContratista(index)" class="btn btn-sm" title="Entrega a contratista" v-else>
                                                                     <i class="fa fa-user"></i>
                                                                 </button>
                                                                 <button type="button" @click="borrarPartidas(index)" class="btn btn-sm btn-outline-danger" title="Eliminar partida">
@@ -673,13 +676,9 @@
                 this.$router.push({name: 'salida-almacen'});
             },
             validatePartida() {
-
-                this.findMaterial();
-                if(this.contratista.empresa_contratista != '') {
-                    this.findContratista();
-                }else{
+                this.findMaterial().finally(() => {
                     this.contratista.opcion = '';
-                }
+                });
                 this.findAlmacen().finally(() => {
                     this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
                 });
