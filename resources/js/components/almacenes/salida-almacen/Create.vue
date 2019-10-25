@@ -478,7 +478,7 @@
                 },
                 contratista: {
                     empresa_contratista: '',
-                    opcion:''
+                    opcion:0
                 },
                 emp_cont:'',
                 contratistas:[],
@@ -508,10 +508,10 @@
                 this.getAlmacenes();
                 this.getContratista();
                 this.cargando = true;
+                this.contratista.empresa_contratista = '';
+                this.contratista.opcion = 0;
                 this.dato_partida.cantidad ='';
                 this.dato_partida.destino ='';
-                this.contratista.empresa_contratista ='';
-                this.contratista.opcion ='';
                 this.partida ={};
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset();
@@ -521,7 +521,7 @@
                 this.indice = index;
                 if(this.dato.partidas[this.indice][4] == '' && this.dato.partidas[this.indice][5] == ''){
                     this.contratista.empresa_contratista = '';
-                    this.contratista.opcion = '';
+                    this.contratista.opcion = 0;
                 }else{
                     this.contratista.empresa_contratista = this.dato.partidas[this.indice][4].id;
                     this.contratista.opcion =  this.dato.partidas[this.indice][5];
@@ -533,7 +533,6 @@
                     this.cargando = false;
                     this.emp_cont='';
                 });
-
             },
             quitarContratista(){
                 this.cargando = true;
@@ -676,8 +675,10 @@
             validatePartida() {
 
                 this.findMaterial();
-                if(this.contratista.empresa_contratista != '' || this.contratista.opcion != '') {
+                if(this.contratista.empresa_contratista != '') {
                     this.findContratista();
+                }else{
+                    this.contratista.opcion = '';
                 }
                 this.findAlmacen().finally(() => {
                     this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
