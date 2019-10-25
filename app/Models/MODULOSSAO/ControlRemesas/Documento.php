@@ -134,10 +134,15 @@ class Documento extends Model
      * de modo que en el formulario de dispersión quede preseleccionado
      * */
     public function getCuentaAbonoAttribute(){
-        $cuentas = $this->empresa->cuentasBancarias;
-        if(sizeof($cuentas) === 1){
-            return $cuentas[0]->id;
-        }else{
+        if($this->empresa){
+            $cuentas = $this->empresa->cuentasBancarias;
+            if(sizeof($cuentas) === 1){
+                return $cuentas[0]->id;
+            }else{
+                return null;
+            }
+        }
+        else {
             return null;
         }
     }
