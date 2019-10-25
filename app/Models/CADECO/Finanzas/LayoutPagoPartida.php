@@ -41,7 +41,9 @@ class LayoutPagoPartida extends Model
         'monto_pagado',
         'referencia_pago',
         'id_documento_remesa',
-        'id_transaccion_pago'
+        'id_transaccion_pago',
+        'monto_autorizado_remesa',
+        'saldo_documento'
     ];
 
     public function layoutPago()
