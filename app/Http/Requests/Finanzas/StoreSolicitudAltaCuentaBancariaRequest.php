@@ -20,7 +20,7 @@ class StoreSolicitudAltaCuentaBancariaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('consultar_solicitud_alta_cuenta_bancaria_empresa');
+        return auth()->user()->can('solicitar_alta_cuenta_bancaria_empresa');
     }
 
     /**
