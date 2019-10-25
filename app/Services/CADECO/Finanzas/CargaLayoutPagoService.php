@@ -138,8 +138,8 @@ class CargaLayoutPagoService
         $datos_pago = array(
 
             "cuenta_cargo" => $partida[6], # IMPORTA
-            "fecha_pago" => $fecha_pago, # IMPORTA
-            "fecha_pago_s" => $fecha_pago, # IMPORTA
+            "fecha_pago" => $fecha_pago["fecha"], # IMPORTA
+            "fecha_pago_s" => $fecha_pago["fecha_hora"], # IMPORTA
             "referencia_pago" => $partida[8], # IMPORTA
             "tipo_cambio" => $partida[9], # IMPORTA
             "monto_pagado" => $monto_pagado, # IMPORTA
@@ -218,11 +218,10 @@ class CargaLayoutPagoService
 
     private function validaFechaPago($fecha_pago){
         $fecha_pago = DateTime::createFromFormat('d/m/Y', $fecha_pago);
-        /*if(array_key_exists ('fecha_pago_s', $pago)){
-            $fecha_pago =New DateTime($pago['fecha_pago_s']);
-        }else{
-            $fecha_pago = DateTime::createFromFormat('d/m/Y', $pago['fecha_pago']);
-        }*/
-        return $fecha_pago->format('Y-m-d');
+        $fechas = array(
+            "fecha_hora"=> $fecha_pago->format('Y-m-d H:i:s'),
+            "fecha"=>$fecha_pago->format('Y-m-d')
+        );
+        return $fechas;
     }
 }

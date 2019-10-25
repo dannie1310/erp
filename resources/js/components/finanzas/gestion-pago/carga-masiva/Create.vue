@@ -99,12 +99,14 @@
                                                                                 <datepicker v-model = "pago.fecha_pago_s"
                                                                                             name = "fecha_pago"
                                                                                             :format = "formatoFecha"
+                                                                                            :language = "es"
                                                                                             :bootstrap-styling = "true"
                                                                                             class = "form-control"
                                                                                             v-validate="{required: true}"
                                                                                             :class="{'is-invalid': errors.has('fecha_pago')}"
                                                                                             value=""
-                                                                                ></datepicker>
+                                                                                >
+                                                                                </datepicker>
                                                                                  <div class="invalid-feedback" v-show="errors.has('fecha_pago')">{{ errors.first('fecha_pago') }}</div>
                                                                             </div>
                                                                         </div>
@@ -200,11 +202,13 @@
 
 <script>
     import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "carga-masiva-create",
         components: {Datepicker},
         data() {
             return {
+                es: es,
                 cargando: false,
                 pagos:[],
                 resumen:[],
