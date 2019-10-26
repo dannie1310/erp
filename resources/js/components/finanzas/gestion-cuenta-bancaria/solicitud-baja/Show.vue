@@ -153,6 +153,7 @@
             pdf(){
                 var url = '/api/finanzas/gestion-cuenta-bancaria/solicitud-baja/pdf/' + this.id +'?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE BAJA DE CUENTA BANCARIA</iframe>');
+                $(this.$refs.modalPDF).draggable();
                 $(this.$refs.modalPDF).modal('show');
             },
         },

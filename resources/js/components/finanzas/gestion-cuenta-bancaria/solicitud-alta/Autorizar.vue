@@ -22,7 +22,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <th>Tipo de Beneficiario:</th>
-                                                            <td>{{solicitudAlta.empresa.tipo_empresa}}</td>
+                                                            <td>{{solicitudAlta.empresa.tipo}}</td>
                                                         </tr>
                                                         <tr>
                                                             <th>Beneficiario:</th>
@@ -112,6 +112,7 @@
             pdf(){
                 var url = '/api/finanzas/gestion-cuenta-bancaria/solicitud-alta/pdf/' + this.id +'?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE ALTA DE CUENTA BANCARIA</iframe>');
+                $(this.$refs.modalPDF).draggable();
                 $(this.$refs.modalPDF).modal('show');
             },
             autorizar() {
