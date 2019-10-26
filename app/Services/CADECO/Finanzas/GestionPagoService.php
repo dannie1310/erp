@@ -341,6 +341,7 @@ class GestionPagoService
                         }
                     } else {
                         $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
+                        $cuenta_abono?'':abort(403, 'El número de cuenta "' . $pago['cuenta_abono'] . '" no está registrado.' );
                         $documentos = Documento::query()->where('MontoTotalSolicitado', '=', $pago['monto'])->get();
                         $dist_part = DistribucionRecursoRemesaPartida::query()->transaccionPago()
                             ->where('id_cuenta_abono', '=', $cuenta_abono->id)
