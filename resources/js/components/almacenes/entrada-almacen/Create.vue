@@ -6,23 +6,47 @@
                     <div class="invoice p-3 mb-3">
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
-                                <div class="row justify-content-end">
-                                     <div class="col-4">
-                                        <div class="form-group row error-content">
-                                            <label for="remision">Remisión: </label>
-                                            <input
-                                                    type="text"
-                                                    data-vv-as="Remisión"
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
-                                                    :name="remision"
-                                                    placeholder="Remisión"
-                                                    v-model="remision"
-                                                    :class="{'is-invalid': errors.has('remision')}">
-                                            <div class="error-label" v-show="errors.has('remision')">{{ errors.first('remision') }}</div>
+                                <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row justify-content-end">
+                                        <div class="col-md-6">
+                                            <div class="form-group error-content">
+                                                <label for="fecha" class="col-sm-2 col-form-label">Fecha:</label>
+
+                                                        <datepicker v-model = "fecha"
+                                                                    name = "fecha"
+                                                                    :format = "formatoFecha"
+                                                                    :bootstrap-styling = "true"
+                                                                    class = "form-control"
+                                                                    v-validate="{required: true}"
+                                                                    :class="{'is-invalid': errors.has('fecha')}"
+                                                        ></datepicker>
+                                                  <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+
+                                            </div>
                                         </div>
-                                     </div>
+                                    </div>
+                                    <div class="row justify-content-start">
+                                         <div class="col-md-6">
+                                            <div class="form-group row error-content">
+                                                <label for="remision" class="col-sm-2 col-form-label">Remisión: </label>
+                                                <div class="col-sm-10">
+                                                    <input
+                                                            type="text"
+                                                            data-vv-as="Remisión"
+                                                            v-validate="{required: true}"
+                                                            class="form-control"
+                                                            :name="remision"
+                                                            placeholder="Remisión"
+                                                            v-model="remision"
+                                                            :class="{'is-invalid': errors.has('remision')}">
+                                                    <div class="error-label" v-show="errors.has('remision')">{{ errors.first('remision') }}</div>
+                                                </div>
+                                            </div>
+                                         </div>
+                                    </div>
                                 </div>
+                                    </div>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
@@ -297,11 +321,13 @@
 
 <script>
     import ConceptoSelect from "../../cadeco/concepto/Select";
+    import Datepicker from 'vuejs-datepicker';
     export default {
         name: "entrada-almacen-create",
-        components: {ConceptoSelect},
+        components: {ConceptoSelect, Datepicker},
         data() {
             return {
+                fecha : '',
                 id_orden_compra : '',
                 ordenes_compra : [],
                 orden_compra : [],
@@ -336,6 +362,7 @@
         },
         methods: {
             init() {
+                this.fecha = new Date();
                 this.cargando = true;
                 this.id_orden_compra = '';
                 this.ordenes_compra = [];
@@ -349,7 +376,11 @@
                 this.almacenes = [];
                 this.partidas = [];
             },
+            formatoFecha(date){
+                return moment(date).format('YYYY-MM-DD');
+            },
             getOrdenesCompra() {
+                this.fecha = new Date();
                 return this.$store.dispatch('compras/orden-compra/index', {
                     config: {
                         params: {

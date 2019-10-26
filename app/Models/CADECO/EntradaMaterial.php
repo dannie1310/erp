@@ -18,6 +18,7 @@ use App\Models\CADECO\Contabilidad\HistPoliza;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use Illuminate\Support\Facades\DB;
+use DateTime;
 
 class EntradaMaterial extends Transaccion
 {
@@ -400,7 +401,8 @@ class EntradaMaterial extends Transaccion
                 'id_sucursal' => $ordencompra->id_sucursal,
                 'referencia' => $data['remision'],
                 'id_moneda' => $ordencompra->id_moneda,
-                'observaciones' => $data['observaciones'],
+                'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
+                'observaciones' => $data['observaciones']
             ]);
 
             $oc_completa = $this->validarOrdenCompraCumplida($data['partidas']);
