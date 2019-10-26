@@ -328,6 +328,7 @@
         data() {
             return {
                 fecha : '',
+                fecha_hoy : '',
                 id_orden_compra : '',
                 ordenes_compra : [],
                 orden_compra : [],
@@ -380,6 +381,7 @@
                 return moment(date).format('YYYY-MM-DD');
             },
             getOrdenesCompra() {
+                this.fecha_hoy = new Date();
                 this.fecha = new Date();
                 return this.$store.dispatch('compras/orden-compra/index', {
                     config: {
@@ -504,7 +506,7 @@
 
                         if(error_cantidad > error_destino)
                         {
-                            swal('¡Error!', 'Debe colocar un destino a la cantidad de entrada.', 'error')
+                            swal('¡Error!', 'Ingrese un destino válido.', 'error')
                         }
 
                         else if(error_cantidad < error_destino)
@@ -513,6 +515,9 @@
                         }
                         else if(error_cantidad == error_destino && error_cantidad == this.$data.partidas.length){
                             swal('¡Error!', 'Debe registrar un material a esta entrada de almacén.', 'error')
+                        }
+                        else if(moment(this.fecha_hoy).format('YYYY-MM-DD') < moment(value).format('YYYY-MM-DD')){
+                            swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                         }
                         else {
                             this.store()
@@ -580,7 +585,14 @@
                     this.destino_seleccionado.tipo_destino = 2;
                     this.getAlmacen();
                 }
-            }
+            },
+            fecha(value){
+                 if(value != ''){
+                   if(moment(this.fecha_hoy).format('YYYY-MM-DD') < moment(value).format('YYYY-MM-DD')){
+                       swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
+                   }
+                }
+            },
         }
     }
 </script>
