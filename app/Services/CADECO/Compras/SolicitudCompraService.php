@@ -5,6 +5,7 @@ namespace App\Services\CADECO\Compras;
 
 
 use App\Models\CADECO\SolicitudCompra;
+use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\Repository;
 
 class SolicitudCompraService
@@ -26,5 +27,12 @@ class SolicitudCompraService
     public function paginate($data)
     {
         return $this->repository->paginate($data);
+    }
+
+
+    public function pdfCotizacion($id)
+    {
+        $pdf = new CotizacionTablaComparativaFormato($id);
+        return $pdf;
     }
 }
