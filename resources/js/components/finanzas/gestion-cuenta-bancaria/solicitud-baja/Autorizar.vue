@@ -96,7 +96,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" ref="modalPDF" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
+        <div class="modal fade" ref="modalPDF" tabindex="-1" role="dialog" aria-labelledby="PDFModal" style="overflow: hidden;">
              <div class="modal-dialog modal-lg" id="mdialTamanio">
                  <div class="modal-content">
                     <div class="modal-header">
@@ -127,6 +127,7 @@
                     params: {include: ['moneda', 'subcontrato', 'empresa', 'banco', 'tipo', 'plaza', 'movimientos.usuario', 'mov_estado']}
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-baja-cuenta-bancaria/SET_CUENTA', data);
+                    $(this.$refs.modal).draggable();
                     $(this.$refs.modal).modal('show');
                 })
             },
