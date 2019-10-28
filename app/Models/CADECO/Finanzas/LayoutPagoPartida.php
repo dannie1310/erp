@@ -119,6 +119,15 @@ class LayoutPagoPartida extends Model
         }
     }
 
+    public function getTipoCambioFormatAttribute(){
+        if($this->tipo_cambio > 1){
+            return number_format($this->tipo_cambio,4);
+        }else{
+            return 1;
+        }
+
+    }
+
     public function getFolioPagoFormatAttribute(){
         if($this->pago){
             return $this->pago->numero_folio_format;

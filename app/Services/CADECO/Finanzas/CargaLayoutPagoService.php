@@ -20,6 +20,7 @@ use App\Repositories\CADECO\Finanzas\LayoutPago\Repository;
 use App\Utils\Util;
 use Maatwebsite\Excel\Facades\Excel;
 use DateTime;
+use mysql_xdevapi\Exception;
 
 
 class CargaLayoutPagoService
@@ -46,6 +47,7 @@ class CargaLayoutPagoService
 
     public function procesaLayoutPagos($layout_pagos){
         $arreglo_para_vista_pagos_layout = [];
+        $cuentas_cargo = $this->repository->getCuentasCargo();
         $this->repository->validarArchivo($layout_pagos);
         try{
             $arreglo_contenido_archivo = $this->getCSVData($layout_pagos);
@@ -56,7 +58,7 @@ class CargaLayoutPagoService
         }
         $salida = array(
             'data' => $arreglo_para_vista_pagos_layout,
-            'cuentas_cargo' => $this->repository->getCuentasCargo(),
+            'cuentas_cargo' => $cuentas_cargo,
             'resumen' => $this->resumenLayout($arreglo_para_vista_pagos_layout)
         );
         #dd($salida);
@@ -84,13 +86,37 @@ class CargaLayoutPagoService
 
     public function store(array $data)
     {
+        $pagos = $data['pagos'];
+        $pagos = $this->validaTC($pagos);
         $datos = [
-            'pagos' => $data['pagos'],
+            'pagos' => $pagos,
             'resumen' => $data['resumen'],
             'file_pagos' => $data['file_pagos'],
             'nombre_archivo' => $data['file_pagos_name']
         ];
         return $this->repository->create($datos);
+    }
+    
+    private function validaTC($pagos){
+        $pagos_validados = array();
+        $message = "";
+        foreach($pagos as $i=>$pago){
+            if($pago["id_cuenta_cargo"]>0){
+                //obtener moneda de la cuenta cargo TODO: Esto tal vez se podría hacer desde el componente vue
+                $cuenta_cargo = $this->repository->getCuentaCargoPorID($pago["id_cuenta_cargo"]);
+                $pago["id_moneda_cuenta_cargo"] = $cuenta_cargo["id_moneda"];
+                if( $pago["id_moneda"] != $pago["id_moneda_cuenta_cargo"] && !($pago["tipo_cambio"]>1)){
+                    $message.="El tipo de cambio de la partida: ". ($i+1). " debe ser mayor a 1"."\n";
+                }elseif( $pago["id_moneda"] == $pago["id_moneda_cuenta_cargo"]){
+                    $pago["tipo_cambio"] =1;
+                }
+            }
+            $pagos_validados[] = $pago;
+        }
+        if($message != ""){
+            abort(400,$message);
+        }
+        return $pagos_validados;
     }
 
     public function autorizar($id)
@@ -98,7 +124,7 @@ class CargaLayoutPagoService
         return $this->repository->show($id)->autorizar();
     }
 
-    public function descargar_layout(){
+    public function descargarLayout(){
         return Excel::download(new PagoLayout(), 'LayoutRegistroPagos.csv');
     }
 
@@ -114,7 +140,7 @@ class CargaLayoutPagoService
 
     private function complementaPartida($partida){
         $transaccion_pagable = $this->repository->getTransaccionPagable($partida[0]);
-        $cuenta_cargo = $this->repository->validaCuentaCargo($partida[6]);
+        $cuenta_cargo = $this->repository->getCuentaCargo($partida[6]);
         $fecha_pago = $this->validaFechaPago($partida[7]);
         $monto_pagado = $this->limpiaCadena($partida[10]);
         $datos_documento =[];
@@ -145,7 +171,8 @@ class CargaLayoutPagoService
             "monto_pagado" => $monto_pagado, # IMPORTA
             "mensaje" => "Hola",
             "estado" => $this->getEstadoDocumento($transaccion_pagable, $monto_pagado),
-            "id_cuenta_cargo" => $cuenta_cargo,
+            "id_cuenta_cargo" => $cuenta_cargo["id_cuenta"],
+            "id_moneda_cuenta_cargo" =>  $cuenta_cargo["id_moneda"]
 
         );
         $partida_completa = array_merge($datos_pago,$datos_documento);

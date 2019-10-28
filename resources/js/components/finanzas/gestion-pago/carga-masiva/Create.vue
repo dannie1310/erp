@@ -302,7 +302,6 @@
                         }else{
                             this.cargarLayout()
                         }
-                        //this.cargarLayout()
                     }else{
                         if(this.$refs.carga_layout.value !== ''){
                             this.$refs.carga_layout.value = '';
