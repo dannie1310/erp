@@ -1,9 +1,9 @@
 <template>
     <div class="row">
         <div class="col-lg-10 offset-lg-1">
-<!--                <subcontratantes></subcontratantes>-->
+                <subcontratantes></subcontratantes>
                 <compradoras></compradoras>
-<!--                <solicitantes></solicitantes>-->
+                <solicitantes></solicitantes>
         </div>
     </div>
 </template>

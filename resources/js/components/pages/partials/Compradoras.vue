@@ -151,17 +151,16 @@
                         console.log(this.areas_disponibles[0]['descripcion']);
                     });
             },
-
             getAreasUsuario(user_id) {
                 this.areas_originales = []
                 this.areas_disponibles = this.areas_disponibles.concat(this.areas_asignados);
-                return this.$store.dispatch('configuracion/area-compradora/getAreasUsuario', user_id)
+                return this.$store.dispatch('configuracion/area-compradora/index', { params:{scope: 'usuario:' + user_id}})
                     .then(data => {
-                        data.data.forEach(perm=> {
+                        data.forEach(perm=> {
                             this.areas_originales.push(perm.id);
                         })
 
-                        this.areas_asignados = data.data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
+                        this.areas_asignados = data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
                         this.areas_disponibles = this.areas_disponibles.diff(this.areas_asignados);
                     });
             },
@@ -194,7 +193,7 @@
 
             asignar() {
                 this.guardando = true;
-                return this.$store.dispatch('configuracion/area-compradora/asignacionAreasCompradoras', {
+                return this.$store.dispatch('configuracion/area-compradora/asignar', {
                     user_id: this.form.user_id,
                     area_id: this.areas_asignados.map(area => (
                         area.id

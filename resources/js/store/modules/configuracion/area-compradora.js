@@ -1,4 +1,3 @@
-// const URI = '/api/CONFIGURACION/area-subcontratante/';
 const URI = '/api/CONFIGURACION/area-compradora/';
 
 export default {
@@ -15,7 +14,7 @@ export default {
     },
 
     actions: {
-        index(payload = {}) {
+        index(contex, payload = {}) {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI, { params: payload.params })
@@ -28,6 +27,19 @@ export default {
                         reject(error)
                     })
             });
+        },
+        paginate(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            })
         },
 
         find(payload) {
@@ -54,6 +66,44 @@ export default {
                     })
                     .catch(error => {
                         reject(error);
+                    });
+            });
+        },
+        asignar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Aplicar Cambios",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Continuar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI+'asignar', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Accion aplicada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
                     });
             });
         },

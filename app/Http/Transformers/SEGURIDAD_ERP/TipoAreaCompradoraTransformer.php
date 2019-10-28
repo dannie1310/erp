@@ -16,7 +16,6 @@ class TipoAreaCompradoraTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'descripcion' => $model->descripcion,
         ];
-
     }
 
 }
