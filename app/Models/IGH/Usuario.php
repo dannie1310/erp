@@ -11,6 +11,7 @@ namespace App\Models\IGH;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
+use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Models\SEGURIDAD_ERP\Google2faSecret;
 use App\Models\SEGURIDAD_ERP\Proyecto;
@@ -198,6 +199,12 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function areasSubcontratantes()
     {
         return $this->belongsToMany( TipoAreaSubcontratante::class, 'dbo.usuarios_areas_subcontratantes', 'id_usuario', 'id_area_subcontratante' );
+    }
+
+    public function areasCompradoras()
+    {
+
+        return $this->belongsToMany( TipoAreaCompradora::class, 'Compras.areas_compradoras_usuario', 'id_usuario', 'id_area_compradora' );
     }
 
     public function permisos()
