@@ -38,6 +38,6 @@ class SolicitudCompra extends Transaccion
     }
     public function cotizaciones()
     {
-        return $this->hasMany(Cotizacion::class, 'id_antecedente', 'id_transaccion');
+        return $this->hasMany(CotizacionCompra::class, 'id_antecedente', 'id_transaccion');
     }
 }

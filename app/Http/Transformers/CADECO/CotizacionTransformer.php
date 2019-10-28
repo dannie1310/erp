@@ -4,12 +4,12 @@
 namespace App\Http\Transformers\CADECO;
 
 
-use App\Models\CADECO\Cotizacion;
+use App\Models\CADECO\CotizacionCompra;
 use League\Fractal\TransformerAbstract;
 
 class CotizacionTransformer extends TransformerAbstract
 {
-    public function transform(Cotizacion $model)
+    public function transform(CotizacionCompra $model)
     {
         return [
             'id' => (int)$model->getKey(),

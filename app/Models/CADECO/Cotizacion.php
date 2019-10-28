@@ -4,20 +4,19 @@
 namespace App\Models\CADECO;
 
 
-class Cotizacion  extends Transaccion
+use App\Models\CADECO\Compras\CotizacionComplementoPartida;
+use Illuminate\Database\Eloquent\Model;
+
+class Cotizacion extends Model
 {
-    public const TIPO_ANTECEDENTE = 17;
+    protected $connection = 'cadeco';
+    protected $table = 'dbo.cotizaciones';
+    protected $primaryKey = 'id_transaccion';
 
-    protected static function boot()
-    {
-        parent::boot();
+    public $timestamps = false;
 
-        self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 18);
-        });
-    }
 
-    public function cotizaciones() {
-        return $this->hasMany(Cotizacion::class, 'id_transaccion', 'id_transaccion');
+    public function partida(){
+        return $this->belongsTo(CotizacionComplementoPartida::class,'id_transaccion', 'id_transaccion')->where('id_material', '=', $this->id_material);
     }
 }

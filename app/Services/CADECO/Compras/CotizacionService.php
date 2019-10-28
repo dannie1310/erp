@@ -4,7 +4,7 @@
 namespace App\Services\CADECO\Compras;
 
 
-use App\Models\CADECO\Cotizacion;
+use App\Models\CADECO\CotizacionCompra;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\Repository;
 
@@ -15,7 +15,7 @@ class CotizacionService
      */
     protected $repository;
 
-    public function __construct(Cotizacion $model)
+    public function __construct(CotizacionCompra $model)
     {
         $this->repository = new Repository($model);
     }
