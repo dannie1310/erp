@@ -74,6 +74,7 @@ class EntradaAlmacenService
         $datos = [
             'id_antecedente' => $data['id_orden_compra'],
             'remision' => $data['remision'],
+            'fecha' => $data['fecha'],
             'observaciones' => $data['orden_compra']['observaciones'],
             'partidas' =>  $data['partidas']
         ];

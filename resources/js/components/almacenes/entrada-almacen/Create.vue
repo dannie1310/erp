@@ -6,23 +6,47 @@
                     <div class="invoice p-3 mb-3">
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
-                                <div class="row justify-content-end">
-                                     <div class="col-4">
-                                        <div class="form-group row error-content">
-                                            <label for="remision">Remisión: </label>
-                                            <input
-                                                    type="text"
-                                                    data-vv-as="Remisión"
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
-                                                    :name="remision"
-                                                    placeholder="Remisión"
-                                                    v-model="remision"
-                                                    :class="{'is-invalid': errors.has('remision')}">
-                                            <div class="error-label" v-show="errors.has('remision')">{{ errors.first('remision') }}</div>
+                                <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row justify-content-end">
+                                        <div class="col-md-6">
+                                            <div class="form-group error-content">
+                                                <label for="fecha" class="col-sm-2 col-form-label">Fecha:</label>
+
+                                                        <datepicker v-model = "fecha"
+                                                                    name = "fecha"
+                                                                    :format = "formatoFecha"
+                                                                    :bootstrap-styling = "true"
+                                                                    class = "form-control"
+                                                                    v-validate="{required: true}"
+                                                                    :class="{'is-invalid': errors.has('fecha')}"
+                                                        ></datepicker>
+                                                  <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+
+                                            </div>
                                         </div>
-                                     </div>
+                                    </div>
+                                    <div class="row justify-content-start">
+                                         <div class="col-md-6">
+                                            <div class="form-group row error-content">
+                                                <label for="remision" class="col-sm-2 col-form-label">Remisión: </label>
+                                                <div class="col-sm-10">
+                                                    <input
+                                                            type="text"
+                                                            data-vv-as="Remisión"
+                                                            v-validate="{required: true}"
+                                                            class="form-control"
+                                                            :name="remision"
+                                                            placeholder="Remisión"
+                                                            v-model="remision"
+                                                            :class="{'is-invalid': errors.has('remision')}">
+                                                    <div class="error-label" v-show="errors.has('remision')">{{ errors.first('remision') }}</div>
+                                                </div>
+                                            </div>
+                                         </div>
+                                    </div>
                                 </div>
+                                    </div>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
@@ -297,11 +321,14 @@
 
 <script>
     import ConceptoSelect from "../../cadeco/concepto/Select";
+    import Datepicker from 'vuejs-datepicker';
     export default {
         name: "entrada-almacen-create",
-        components: {ConceptoSelect},
+        components: {ConceptoSelect, Datepicker},
         data() {
             return {
+                fecha : '',
+                fecha_hoy : '',
                 id_orden_compra : '',
                 ordenes_compra : [],
                 orden_compra : [],
@@ -336,6 +363,7 @@
         },
         methods: {
             init() {
+                this.fecha = new Date();
                 this.cargando = true;
                 this.id_orden_compra = '';
                 this.ordenes_compra = [];
@@ -349,7 +377,12 @@
                 this.almacenes = [];
                 this.partidas = [];
             },
+            formatoFecha(date){
+                return moment(date).format('YYYY-MM-DD');
+            },
             getOrdenesCompra() {
+                this.fecha_hoy = new Date();
+                this.fecha = new Date();
                 return this.$store.dispatch('compras/orden-compra/index', {
                     config: {
                         params: {
@@ -473,7 +506,7 @@
 
                         if(error_cantidad > error_destino)
                         {
-                            swal('¡Error!', 'Debe colocar un destino a la cantidad de entrada.', 'error')
+                            swal('¡Error!', 'Ingrese un destino válido.', 'error')
                         }
 
                         else if(error_cantidad < error_destino)
@@ -482,6 +515,9 @@
                         }
                         else if(error_cantidad == error_destino && error_cantidad == this.$data.partidas.length){
                             swal('¡Error!', 'Debe registrar un material a esta entrada de almacén.', 'error')
+                        }
+                        else if(moment(this.fecha_hoy).format('YYYY-MM-DD') < moment(value).format('YYYY-MM-DD')){
+                            swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                         }
                         else {
                             this.store()
@@ -549,7 +585,14 @@
                     this.destino_seleccionado.tipo_destino = 2;
                     this.getAlmacen();
                 }
-            }
+            },
+            fecha(value){
+                 if(value != ''){
+                   if(moment(this.fecha_hoy).format('YYYY-MM-DD') < moment(value).format('YYYY-MM-DD')){
+                       swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
+                   }
+                }
+            },
         }
     }
 </script>
