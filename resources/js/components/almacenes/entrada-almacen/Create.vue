@@ -36,11 +36,12 @@
                                                             data-vv-as="Remisión"
                                                             v-validate="{required: true}"
                                                             class="form-control"
-                                                            :name="remision"
+                                                            name="remision"
+                                                            id="remision"
                                                             placeholder="Remisión"
                                                             v-model="remision"
                                                             :class="{'is-invalid': errors.has('remision')}">
-                                                    <div class="error-label" v-show="errors.has('remision')">{{ errors.first('remision') }}</div>
+                                                    <div class="invalid-feedback" v-show="errors.has('remision')">{{ errors.first('remision') }}</div>
                                                 </div>
                                             </div>
                                          </div>
@@ -183,7 +184,7 @@
                             </div>
                             <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Registrar</button>
+                                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || orden_compra.length == 0">Registrar</button>
                              </div>
                         </form>
                     </div>
@@ -399,6 +400,7 @@
             getOrdenCompra() {
                 this.orden_compra = []
                 this.partidas = []
+                this.$validator.reset();
                 return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id_orden_compra,
                     params: {
@@ -474,6 +476,7 @@
                     opcion:''
                 };
                 $(this.$refs.contratista).modal('hide');
+                this.$validator.reset();
             },
 
             quitarContratista(){
@@ -511,7 +514,7 @@
                         {
                             swal('¡Error!', 'Ingrese un destino válido.', 'error');
                         }
-                        else if(moment(this.fecha_hoy).format('DD/MM/YYYY') < moment(this.fecha).format('DD/MM/YYYY')){
+                        else if(moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(this.fecha).format('YYYY/MM/DD')){
                             swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                         }
                         else {
@@ -557,6 +560,7 @@
                 this.id_concepto_temporal = '';
                 this.id_almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
             }
         },
         watch: {
@@ -583,7 +587,8 @@
             },
             fecha(value){
                  if(value != ''){
-                   if(moment(this.fecha_hoy).format('DD/MM/YYYY') < moment(value).format('DD/MM/YYYY')){
+                     console.log(moment(this.fecha_hoy).format('YYYY/MM/DD'), moment(value).format('YYYY/MM/DD'), moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(value).format('YYYY/MM/DD'))
+                   if(moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(value).format('YYYY/MM/DD')){
                        swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                    }
                 }
@@ -606,5 +611,10 @@
 </script>
 
 <style scoped>
-
+    .error-label {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+    }
 </style>
