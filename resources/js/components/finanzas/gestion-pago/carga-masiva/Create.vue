@@ -179,7 +179,6 @@
                                                                                     v-model="pago.monto_pagado"
                                                                                     :class="{'is-invalid': errors.has(`monto_pagado[${i}]`)}">
                                                                             <div class="invalid-feedback" v-show="errors.has(`monto_pagado[${i}]`)">{{ errors.first(`monto_pagado[${i}]`) }}</div>
-                                                                            <div  v-if="pago.monto_pagado > pago.saldo_documento" class="text-danger small">Supera el saldo de la transacción.</div>
                                                                         </div>
                                                                     </div>
                                                                </td>
