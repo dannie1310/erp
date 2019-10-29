@@ -119,6 +119,15 @@ class CargaLayoutPagoService
         return $pagos_validados;
     }
 
+    private function validaMontoPagadoDocumento($pagos){
+        $pagos_validados = array();
+        foreach($pagos as $i=>$pago){
+            $pago["monto_pagado_documento"] = number_format($pago["monto_pagado"] * $pago["tipo_cambio"],2,".","");
+            $pagos_validados[] = $pago;
+        }
+        return $pagos_validados;
+    }
+
     public function autorizar($id)
     {
         return $this->repository->show($id)->autorizar();
@@ -135,6 +144,8 @@ class CargaLayoutPagoService
                 $contenido[] = $this->complementaPartida($partida);
             }
         }
+        $contenido = $this->validaTC($contenido);
+        $contenido = $this->validaMontoPagadoDocumento($contenido);
         return $contenido;
     }
 
@@ -167,12 +178,13 @@ class CargaLayoutPagoService
             "fecha_pago" => $fecha_pago["fecha"], # IMPORTA
             "fecha_pago_s" => $fecha_pago["fecha_hora"], # IMPORTA
             "referencia_pago" => $partida[8], # IMPORTA
-            "tipo_cambio" => $partida[9], # IMPORTA
             "monto_pagado" => $monto_pagado, # IMPORTA
+            "monto_pagado_documento" => $monto_pagado, # IMPORTA
             "mensaje" => "Hola",
             "estado" => $this->getEstadoDocumento($transaccion_pagable, $monto_pagado),
             "id_cuenta_cargo" => $cuenta_cargo["id_cuenta"],
-            "id_moneda_cuenta_cargo" =>  $cuenta_cargo["id_moneda"]
+            "id_moneda_cuenta_cargo" =>  $cuenta_cargo["id_moneda"],
+            "tipo_cambio" => $partida[9], # IMPORTA
 
         );
         $partida_completa = array_merge($datos_pago,$datos_documento);

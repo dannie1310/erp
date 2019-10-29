@@ -58,8 +58,9 @@
                                                             <th>Cuenta Cargo</th>
                                                             <th>Fecha Pago</th>
                                                             <th>Referencia Pago</th>
+                                                            <th class="money">Monto Pagado<br>(Moneda Documento)</th>
                                                             <th>Tipo Cambio</th>
-                                                            <th>Monto Pagado<br>(Moneda Cuenta)</th>
+                                                            <th class="money">Monto Pagado<br>(Moneda Cuenta)</th>
                                                             <th>Estado</th>
                                                             <th> </th>
                                                         </tr>
@@ -91,9 +92,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </td>
-
                                                                 <td >
-
                                                                         <div class="form-group error-content" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
                                                                             <div class="form-group">
                                                                                 <datepicker v-model = "pago.fecha_pago_s"
@@ -110,7 +109,6 @@
                                                                                  <div class="invalid-feedback" v-show="errors.has('fecha_pago')">{{ errors.first('fecha_pago') }}</div>
                                                                             </div>
                                                                         </div>
-
                                                                 </td>
                                                                 <td >
                                                                     <div class="col-12">
@@ -128,6 +126,25 @@
                                                                         </div>
                                                                     </div>
                                                                 </td>
+                                                                <td >
+                                                                    <div class="col-12">
+                                                                        <div class="form-group error-content" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
+                                                                            <input
+                                                                                    readonly="readonly"
+                                                                                    type="number"
+                                                                                    step="any"
+                                                                                    data-vv-as="Monto Pagado Documento"
+                                                                                    v-validate="{required: true, min_value:0.1, max_value:(parseFloat(pago.saldo_documento)+parseInt(1)), decimal:2}"
+                                                                                    class="form-control"
+                                                                                    :name="`monto_pagado_documento[${i}]`"
+                                                                                    placeholder="Monto Pagado"
+                                                                                    v-model="pago.monto_pagado_documento"
+                                                                                    :class="{'is-invalid': errors.has(`monto_pagado_documento[${i}]`)}">
+                                                                            <div class="invalid-feedback" v-show="errors.has(`monto_pagado_documento[${i}]`)">{{ errors.first(`monto_pagado_documento[${i}]`) }}</div>
+                                                                            <div  v-if="pago.monto_pagado_documento > pago.saldo_documento" class="text-danger small">Supera el saldo de la transacción.</div>
+                                                                        </div>
+                                                                    </div>
+                                                               </td>
                                                                 <td >
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
@@ -315,5 +332,17 @@
 </script>
 
 <style scoped>
+thead th {text-align: center}
 
+th .money
+{
+    width: 150px;
+    max-width: 150px;
+    min-width: 100px;
+    text-align: center;
+}
+td .money
+{
+    text-align: right;
+}
 </style>
