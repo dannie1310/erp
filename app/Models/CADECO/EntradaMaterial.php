@@ -449,6 +449,12 @@ class EntradaMaterial extends Transaccion
                             'id_empresa' => $item['contratista_seleccionado']['empresa_contratista'],
                             'con_cargo' => $item['contratista_seleccionado']['opcion']]);
                     }
+
+                    $entrada = $ordencompra->partidas()->find($item['id']);
+                    $entrada = $entrada->entrega->update([
+                        'surtida' =>  $item['cantidad_ingresada']
+                    ]);
+//                    $entrada->save();
                 }
             }
 
