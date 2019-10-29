@@ -84,8 +84,8 @@ class LayoutPago extends Model
                         'monto_pagado' => $pago['monto_pagado'],
                         'referencia_pago' => $pago['referencia_pago'],
                         'id_documento_remesa' => $pago['id_documento_remesa'],
-                        'id_transaccion_pago' => NULL
-
+                        'monto_autorizado_remesa' => $pago['monto_autorizado_remesa'],
+                        'saldo_documento' => $pago['saldo_documento'],
                     ]);
                 }
             }

@@ -41,7 +41,9 @@ class LayoutPagoPartida extends Model
         'monto_pagado',
         'referencia_pago',
         'id_documento_remesa',
-        'id_transaccion_pago'
+        'id_transaccion_pago',
+        'monto_autorizado_remesa',
+        'saldo_documento'
     ];
 
     public function layoutPago()
@@ -115,6 +117,29 @@ class LayoutPagoPartida extends Model
         if($this->tipo_cambio < 1){
             abort(403, 'El tipo de camio no puede ser cero.');
         }
+    }
+
+    public function getTipoCambioFormatAttribute(){
+        if($this->tipo_cambio > 1){
+            return number_format($this->tipo_cambio,4);
+        }else{
+            return 1;
+        }
+
+    }
+
+    public function getMontoPagadoDocumentoAttribute(){
+        $monto_pagado = $this->monto_pagado * $this->tipo_cambio;
+        return $monto_pagado;
+    }
+
+    public function getMontoPagadoFormatAttribute(){
+        return "$ " . number_format($this->monto_pagado,2,".",",");
+    }
+
+    public function getMontoPagadoDocumentoFormatAttribute(){
+        $monto_pagado = $this->monto_pagado * $this->tipo_cambio;
+        return "$ " . number_format($monto_pagado,2,".",",");
     }
 
     public function getFolioPagoFormatAttribute(){

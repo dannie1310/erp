@@ -76,7 +76,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Carga Masiva",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -94,7 +94,7 @@ export default {
                             .post(URI, payload)
                             .then(r => r.data)
                             .then(data => {
-                                swal("Carga Manual registrada correctamente", {
+                                swal("Layout registrado correctamente", {
                                     icon: "success",
                                     timer: 2000,
                                     buttons: false

@@ -59,7 +59,7 @@
                                                             <th>Fecha Pago</th>
                                                             <th>Referencia Pago</th>
                                                             <th>Tipo Cambio</th>
-                                                            <th>Monto Pagado</th>
+                                                            <th>Monto Pagado<br>(Moneda Cuenta)</th>
                                                             <th>Estado</th>
                                                             <th> </th>
                                                         </tr>
@@ -99,12 +99,14 @@
                                                                                 <datepicker v-model = "pago.fecha_pago_s"
                                                                                             name = "fecha_pago"
                                                                                             :format = "formatoFecha"
+                                                                                            :language = "es"
                                                                                             :bootstrap-styling = "true"
                                                                                             class = "form-control"
                                                                                             v-validate="{required: true}"
                                                                                             :class="{'is-invalid': errors.has('fecha_pago')}"
                                                                                             value=""
-                                                                                ></datepicker>
+                                                                                >
+                                                                                </datepicker>
                                                                                  <div class="invalid-feedback" v-show="errors.has('fecha_pago')">{{ errors.first('fecha_pago') }}</div>
                                                                             </div>
                                                                         </div>
@@ -139,7 +141,6 @@
                                                                                     v-model="pago.tipo_cambio"
                                                                                     :class="{'is-invalid': errors.has(`tipo_cambio[${i}]`)}">
                                                                             <div class="invalid-feedback" v-show="errors.has(`tipo_cambio[${i}]`)">{{ errors.first(`tipo_cambio[${i}]`) }}</div>
-                                                                            <div  v-if="pago.bandera_TC == 0 && pago.tipo_cambio <= 1" class="text-danger small">El tipo de cambio no concuerda.</div>
                                                                         </div>
                                                                     </div>
                                                                 </td>
@@ -200,11 +201,13 @@
 
 <script>
     import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "carga-masiva-create",
         components: {Datepicker},
         data() {
             return {
+                es: es,
                 cargando: false,
                 pagos:[],
                 resumen:[],
@@ -298,7 +301,6 @@
                         }else{
                             this.cargarLayout()
                         }
-                        //this.cargarLayout()
                     }else{
                         if(this.$refs.carga_layout.value !== ''){
                             this.$refs.carga_layout.value = '';
