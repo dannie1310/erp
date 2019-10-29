@@ -181,7 +181,7 @@ class CargaLayoutPagoService
     }
     private function getEstadoDocumento($transaccion, $monto_pagado){
         if($transaccion){
-            if($transaccion->saldo_pagable > 0 ){
+            if($transaccion->saldo_pagable > 1){
                 if($transaccion->monto_autorizado_remesa>=$monto_pagado){
                     $estado_array =  array(
                         'estado' => 1, 'descripcion' => 'Pagable', 'clase_badge' => 'badge badge-success'
