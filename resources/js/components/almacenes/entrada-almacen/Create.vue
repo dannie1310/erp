@@ -465,6 +465,7 @@
                 if(this.contratistas.length == 0){
                     this.getContratista()
                 }
+                this.$validator.reset();
                 $(this.$refs.contratista).modal('show');
             },
 
@@ -489,6 +490,7 @@
                 };
 
                 $(this.$refs.contratista).modal('hide');
+                this.$validator.reset();
                 this.cargando = false;
             },
 
@@ -547,6 +549,7 @@
                 if(this.almacenes.length == 0) {
                     this.getAlmacenes();
                 }
+                this.$validator.reset();
                 $(this.$refs.modal_destino).modal('show');
             },
             seleccionar() {
