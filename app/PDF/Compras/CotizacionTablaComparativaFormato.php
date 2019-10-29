@@ -9,6 +9,7 @@ use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Transaccion;
+use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
 
 class CotizacionTablaComparativaFormato extends Rotation
@@ -35,6 +36,28 @@ class CotizacionTablaComparativaFormato extends Rotation
         $this->id=$id;
         $this->encabezado_pdf = utf8_decode($this->obra->facturar);
         $this->solicitud_compra = SolicitudCompra::query()->find( $id);
+
+        $verifica = new ValidacionSistema();
+        $datos_qr[] = "TABLA COMPARATIVA DE COTIZACIONES";
+        $datos_qr[] = date("d-m-Y");
+//        $datos_qr[] = $this->solicitud_compra->complemento->folio_compuesto;
+        $datos_qr[] = $this->solicitud_compra->numero_folio_format;
+        $datos_qr2["tipo"] = "tabla_comparativa";
+        $datos_qr2["base"] = Context::getDatabase();
+        $datos_qr2["tabla"] = "transacciones";
+        $datos_qr2["campo_id"] = "id_transaccion";
+        $datos_qr2["id"] = $this->solicitud_compra->id_transaccion;
+        $cadena_json_id = json_encode($datos_qr2);
+        $cadena_encriptar = $cadena_json_id . ">";
+        $cadena_encriptar .= implode("_",$datos_qr);
+        $firmada = $verifica->encripta($cadena_encriptar);
+        $this->cadena_qr = "http://portal-aplicaciones.grupohi.mx/sao/api/compras/solicitud-compra" . urlencode($firmada);
+        $this->cadena = $firmada;
+
+        $this->dato = $verifica->encripta($cadena_encriptar);
+
+        $this->qr_name = 'qrcode_'. mt_rand() .'.png';
+
     }
 
     function Header() {
@@ -496,7 +519,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                     $this->SetFont('Arial', 'B', $font);
                     $this->setY($y_ini);
                     $this->setX($x_ini);
-                    $this->MultiCell($anchos["og"], $heigth, ($cotizaciones[$i]["observaciones"]), 1, 'J', false);
+                    $this->MultiCell($anchos["og"], $heigth, utf8_decode($cotizaciones[$i]["observaciones"]), 1, 'J', false);
                     $this->y_fin_og_arr[] = $this->getY();
                     $x_ini += $anchos["og"];
                 }
@@ -528,28 +551,62 @@ class CotizacionTablaComparativaFormato extends Rotation
         $this->SetFont('Arial', 'BI', 5.5);
         $this->SetY(-4);
 
-        $this->SetY(-3.0);
-        //$this->image("http://saoweb.grupohi.mx/libraries/PHPQRCode/qr.php?cadena=".urlencode($this->cadena_qr), 0.75, $this->GetY(), 2.5, 2.5,'PNG');
-        $this->image("http://172.20.74.94/libraries/PHPQRCode/qr.php?cadena=".'urlencode($this->cadena_qr)', $this->GetX(), $this->GetY(), 2.65, 2.65,'PNG');
-        $this->SetY(-3.0);
-        $this->setX(3.0);
-        //$this->SetFont('Arial', '', 4.5);
-        $this->MultiCell(24.5, 0.4, '$this->cadena');
-        $this->SetY(16.5);
-        $this->setX(4.5);
+        if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
+            //if(true){
+            $this->SetFont('Arial', '', 6);
+            $this->SetFillColor(180, 180, 180);
+            $this->Cell(6.6, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(6.6, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            //$this->Cell(4.8, .5, 'APROBO', 'TRLB', 0, 'C',1);
+            $this->Cell(12.8, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+            //$this->Cell(3.9, .5, 'AUTORIZO', 'TRLB', 0, 'C',1);
+            $this->Ln();
+            $this->Cell(6.6, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.6, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'Control de Costos', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'Director de proyecto', 'TRLB', 0, 'C', 1);
+            //$this->Cell(5, .5, '', 'TRLB', 0, 'C');
+            $this->Ln();
+
+            $this->Cell(6.6, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(6.6, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(6.4, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(6.4, 1.2, '', 'TRLB', 0, 'C');
+            //$this->Cell(4.8, .9, '', 'TRLB', 0, 'C');
+            $this->Ln();
+            //$this->SetFont('Arial','',7);
+            $this->Cell(6.6, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.6, .4, 'C.P. ROGELIO HERNANDEZ BELTRAN', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            $this->Ln();
+        } else {
 
 
-        $this->SetFont('Arial', 'B', 6.5);
-        $this->SetTextColor('100,100,100');
-        $this->SetY(-1);
-        $this->Cell(27.5, .4, utf8_decode('Sistema de Administración de Obra'), 0, 0, 'R');
-        $this->SetY(-0.4);
-        $this->SetFont('Arial', 'BI', 6.5);
-        $this->SetTextColor('0,0,0');
-        $this->SetX(0.5);
-        $this->Cell(11.5, .4, (utf8_decode('Formato generado desde el módulo de ordenes de compra.')), 0, 0, 'L');
-        $this->Cell(16, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
-        //$this->y_para_descripcion=  $this->GetY();
+            $this->SetY(-3.5);
+            //$this->image("http://saoweb.grupohi.mx/libraries/PHPQRCode/qr.php?cadena=".urlencode($this->cadena_qr), 0.75, $this->GetY(), 2.5, 2.5,'PNG');
+            $this->image("http://172.20.74.94/libraries/PHPQRCode/qr.php?cadena=".urlencode($this->cadena_qr), $this->GetX(), $this->GetY(), 2.65, 2.65,'PNG');
+            $this->SetY(-3.5);
+            $this->setX(3.5);
+            //$this->SetFont('Arial', '', 4.5);
+            $this->MultiCell(24.5, 0.4, $this->cadena);
+            $this->SetY(16.5);
+            $this->setX(4.5);
+
+
+            $this->SetFont('Arial', 'B', 6.5);
+            $this->SetTextColor('100,100,100');
+            $this->SetY(-1.3);
+            $this->Cell(27.5, .4, utf8_decode('Sistema de Administración de Obra'), 0, 0, 'R');
+            $this->SetY(-0.9);
+            $this->SetFont('Arial', 'BI', 6.5);
+            $this->SetTextColor('0,0,0');
+            $this->SetX(1);
+            $this->Cell(11.5, .4, (utf8_decode('Formato generado desde el módulo de ordenes de compra.')), 0, 0, 'L');
+            $this->Cell(16, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
+            //$this->y_para_descripcion=  $this->GetY();
+        }
     }
     function create()
     {
