@@ -59,7 +59,7 @@
                                                             <th>Fecha Pago</th>
                                                             <th>Referencia Pago</th>
                                                             <th>Tipo Cambio</th>
-                                                            <th>Monto Pagado</th>
+                                                            <th>Monto Pagado<br>(Moneda Cuenta)</th>
                                                             <th>Estado</th>
                                                             <th> </th>
                                                         </tr>
@@ -141,7 +141,6 @@
                                                                                     v-model="pago.tipo_cambio"
                                                                                     :class="{'is-invalid': errors.has(`tipo_cambio[${i}]`)}">
                                                                             <div class="invalid-feedback" v-show="errors.has(`tipo_cambio[${i}]`)">{{ errors.first(`tipo_cambio[${i}]`) }}</div>
-                                                                            <div  v-if="pago.bandera_TC == 0 && pago.tipo_cambio <= 1" class="text-danger small">El tipo de cambio no concuerda.</div>
                                                                         </div>
                                                                     </div>
                                                                 </td>

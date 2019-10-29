@@ -106,7 +106,7 @@ class CargaLayoutPagoService
                 $cuenta_cargo = $this->repository->getCuentaCargoPorID($pago["id_cuenta_cargo"]);
                 $pago["id_moneda_cuenta_cargo"] = $cuenta_cargo["id_moneda"];
                 if( $pago["id_moneda"] != $pago["id_moneda_cuenta_cargo"] && !($pago["tipo_cambio"]>1)){
-                    $message.="El tipo de cambio de la partida: ". ($i+1). " debe ser mayor a 1"."\n";
+                    $message.="El tipo de cambio de la partida: ". ($i+1). " debe ser diferente a 1"."\n";
                 }elseif( $pago["id_moneda"] == $pago["id_moneda_cuenta_cargo"]){
                     $pago["tipo_cambio"] =1;
                 }

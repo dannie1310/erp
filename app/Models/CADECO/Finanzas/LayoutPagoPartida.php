@@ -128,6 +128,20 @@ class LayoutPagoPartida extends Model
 
     }
 
+    public function getMontoPagadoDocumentoAttribute(){
+        $monto_pagado = $this->monto_pagado * $this->tipo_cambio;
+        return $monto_pagado;
+    }
+
+    public function getMontoPagadoFormatAttribute(){
+        return "$ " . number_format($this->monto_pagado,2,".",",");
+    }
+
+    public function getMontoPagadoDocumentoFormatAttribute(){
+        $monto_pagado = $this->monto_pagado * $this->tipo_cambio;
+        return "$ " . number_format($monto_pagado,2,".",",");
+    }
+
     public function getFolioPagoFormatAttribute(){
         if($this->pago){
             return $this->pago->numero_folio_format;

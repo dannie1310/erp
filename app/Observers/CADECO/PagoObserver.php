@@ -23,6 +23,7 @@ class PagoObserver extends TransaccionObserver
     {
         parent::creating($pago);
         $pago->tipo_transaccion = 82;
+        $pago->estado = 1;
     }
 
     public function created(Pago $pago){

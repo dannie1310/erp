@@ -89,8 +89,9 @@
                                 <th>Cuenta Cargo</th>
                                 <th>Fecha Pago</th>
                                 <th>Referencia Pago</th>
+                                <th>Monto Pagado<br>(Moneda Documento)</th>
                                 <th>Tipo Cambio</th>
-                                <th>Monto Pagado</th>
+                                <th>Monto Pagado<br>(Moneda Cuenta)</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
@@ -115,6 +116,7 @@
                                 <td>{{doc.cuenta_cargo}}</td>
                                 <td>{{doc.fecha_pago_format}}</td>
                                 <td>{{doc.referencia_pago}}</td>
+                                <td style="text-align: right">{{doc.monto_pagado_documento_format}}</td>
                                 <td style="text-align: right">{{doc.tipo_cambio}}</td>
                                 <td style="text-align: right">{{doc.monto_pagado_format}}</td>
                                 <td v-if="doc.id_transaccion_pago===null">
