@@ -98,7 +98,7 @@ class LayoutPagoPartida extends Model
 
     public function moneda()
     {
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda_transaccion');
+        return $this->belongsTo(Moneda::class, 'id_moneda_transaccion', 'id_moneda');
     }
 
     public function cuenta(){

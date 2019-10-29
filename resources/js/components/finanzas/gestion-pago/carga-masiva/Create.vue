@@ -142,7 +142,7 @@
                                                                                     v-model="pago.monto_pagado_documento"
                                                                                     :class="{'is-invalid': errors.has(`monto_pagado_documento[${i}]`)}">
                                                                             <div class="invalid-feedback" v-show="errors.has(`monto_pagado_documento[${i}]`)">{{ errors.first(`monto_pagado_documento[${i}]`) }}</div>
-                                                                            <div  v-if="parseFloat(pago.monto_pagado_documento) > parseFloat(pago.saldo_documento)" class="text-danger small">Supera el saldo de la transacción.</div>
+                                                                            <div  v-if="parseFloat(pago.monto_pagado_documento) > (parseFloat(pago.saldo_documento) + parseFloat(0.99))" class="text-danger small">Supera el saldo de la transacción.</div>
                                                                         </div>
                                                                     </div>
                                                                </td>
@@ -172,7 +172,7 @@
                                                                                     type="number"
                                                                                     step="any"
                                                                                     data-vv-as="Monto Pagado"
-                                                                                    v-validate="{required: true, min_value:0.1, max_value:pago.saldo_documento+1, decimal:3}"
+                                                                                    v-validate="{required: true, decimal:2}"
                                                                                     class="form-control"
                                                                                     :name="`monto_pagado[${i}]`"
                                                                                     placeholder="Monto Pagado"
@@ -250,7 +250,7 @@
             },
             calcula_montos(partida_pago){
                 this.validaTC(partida_pago);
-                partida_pago.monto_pagado_documento = partida_pago.monto_pagado * partida_pago.tipo_cambio;
+                partida_pago.monto_pagado_documento = parseFloat(Math.round(partida_pago.monto_pagado * partida_pago.tipo_cambio * 100)/100).toFixed(2);
             },
             formatoFecha(date){
                 return moment(date).format('DD-MM-YYYY');
