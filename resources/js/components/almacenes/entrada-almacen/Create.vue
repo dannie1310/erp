@@ -114,7 +114,7 @@
                                                         <td v-if="doc.cantidad_pendiente != 0">{{doc.material.numero_parte}}</td>
                                                         <td v-if="doc.cantidad_pendiente != 0">{{doc.material.descripcion}}</td>
                                                         <td v-if="doc.cantidad_pendiente != 0">{{doc.material.unidad}}</td>
-                                                        <td v-if="doc.cantidad_pendiente != 0"></td>
+                                                        <td v-if="doc.cantidad_pendiente != 0">{{doc.entrega.fecha_format}}</td>
                                                         <td v-if="doc.cantidad_pendiente != 0">{{doc.cantidad_pendiente}}</td>
                                                         <td v-if="doc.cantidad_pendiente != 0">
                                                             <div class="col-12">
@@ -123,7 +123,7 @@
                                                                             type="number"
                                                                             step="any"
                                                                             data-vv-as="Cantidad Ingresada"
-                                                                            v-validate="{min_value:0.1, max_value:doc.cantidad_pendiente, decimal:2}"
+                                                                            v-validate="{min_value: 0.01, max_value:doc.cantidad_pendiente, decimal:2}"
                                                                             class="form-control"
                                                                             :name="`cantidad_ingresada[${i}]`"
                                                                             placeholder="Cantidad Ingresada"
@@ -378,7 +378,7 @@
                 this.partidas = [];
             },
             formatoFecha(date){
-                return moment(date).format('YYYY-MM-DD');
+                return moment(date).format('DD/MM/YYYY');
             },
             getOrdenesCompra() {
                 this.fecha_hoy = new Date();
@@ -402,7 +402,7 @@
                 return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id_orden_compra,
                     params: {
-                        include: ['empresa', 'partidas.material']
+                        include: ['empresa', 'partidas.material', 'partidas.entrega']
                     }
                 })
                     .then(data => {
@@ -491,36 +491,32 @@
             },
 
             validate() {
-                var error_cantidad = 0;
                 var error_destino = 0;
+                var item_a_guardar = 0;
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.$data.partidas.forEach(function(element) {
-                            if(element.cantidad_ingresada  === undefined || element.cantidad_ingresada == ""){
-                                error_cantidad = error_cantidad + 1
-                            }
-                            if(element.destino  === undefined || element.destino == ''){
-                                error_destino = error_destino + 1
+                            if(!(element.cantidad_ingresada  === undefined && element.destino  === undefined )){
+                                if(element.cantidad_ingresada > 0 && element.destino === undefined)
+                                {
+                                    error_destino = error_destino + 1
+                                }
+                                item_a_guardar = item_a_guardar + 1;
                             }
                        });
-
-                        if(error_cantidad > error_destino)
+                        if(item_a_guardar <= 0)
                         {
-                            swal('¡Error!', 'Ingrese un destino válido.', 'error')
-                        }
-
-                        else if(error_cantidad < error_destino)
-                        {
-                            swal('¡Error!', 'Debe colocar una cantidad al destino seleccionado en el material.', 'error')
-                        }
-                        else if(error_cantidad == error_destino && error_cantidad == this.$data.partidas.length){
                             swal('¡Error!', 'Debe registrar un material a esta entrada de almacén.', 'error')
                         }
-                        else if(moment(this.fecha_hoy).format('YYYY-MM-DD') < moment(value).format('YYYY-MM-DD')){
+                        else if (error_destino > 0)
+                        {
+                            swal('¡Error!', 'Ingrese un destino válido.', 'error');
+                        }
+                        else if(moment(this.fecha_hoy).format('DD/MM/YYYY') < moment(this.fecha).format('DD/MM/YYYY')){
                             swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                         }
                         else {
-                            this.store()
+                           this.store()
                         }
                     }
                 });
@@ -588,7 +584,7 @@
             },
             fecha(value){
                  if(value != ''){
-                   if(moment(this.fecha_hoy).format('YYYY-MM-DD') < moment(value).format('YYYY-MM-DD')){
+                   if(moment(this.fecha_hoy).format('DD/MM/YYYY') < moment(value).format('DD/MM/YYYY')){
                        swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                    }
                 }
