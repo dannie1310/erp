@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Repositories\SEGURIDAD_ERP\AreaCompradora;
+
+namespace App\Repositories\SEGURIDAD_ERP\AreaSolicitante;
 
 
 interface RepositoryInterface
