@@ -101,13 +101,13 @@ class CargaLayoutPagoService
         $pagos_validados = array();
         $message = "";
         foreach($pagos as $i=>$pago){
-            if($pago["id_cuenta_cargo"]>0){
+            if($pago["cuenta_cargo_obj"]["id_cuenta"]>0){
                 //obtener moneda de la cuenta cargo TODO: Esto tal vez se podría hacer desde el componente vue
-                $cuenta_cargo = $this->repository->getCuentaCargoPorID($pago["id_cuenta_cargo"]);
-                $pago["id_moneda_cuenta_cargo"] = $cuenta_cargo["id_moneda"];
-                if( $pago["id_moneda"] != $pago["id_moneda_cuenta_cargo"] && !($pago["tipo_cambio"]>1)){
+                /*$cuenta_cargo = $this->repository->getCuentaCargoPorID($pago["id_cuenta_cargo"]);
+                $pago["id_moneda_cuenta_cargo"] = $cuenta_cargo["id_moneda"];*/
+                if( $pago["id_moneda_transaccion"] != $pago["cuenta_cargo_obj"]["id_moneda"] && !($pago["tipo_cambio"]>1)){
                     $message.="El tipo de cambio de la partida: ". ($i+1). " debe ser diferente a 1"."\n";
-                }elseif( $pago["id_moneda"] == $pago["id_moneda_cuenta_cargo"]){
+                }elseif( $pago["id_moneda_transaccion"] == $pago["cuenta_cargo_obj"]["id_moneda"] ){
                     $pago["tipo_cambio"] =1;
                 }
             }
@@ -167,23 +167,22 @@ class CargaLayoutPagoService
                 "saldo_documento" => $transaccion_pagable->saldo_pagable,
                 "saldo_documento_format" => $transaccion_pagable->saldo_pagable_format,
                 "moneda_documento" => $transaccion_pagable->moneda->nombre,
-                "id_moneda" => $transaccion_pagable->moneda->id_moneda,
+                "id_moneda_transaccion" => $transaccion_pagable->moneda->id_moneda,
                 'id_documento_remesa' => $transaccion_pagable->id_documento_remesa,
                 'monto_autorizado_remesa' => $transaccion_pagable->monto_autorizado_remesa,
             );
         }
         $datos_pago = array(
-
-            "cuenta_cargo" => $partida[6], # IMPORTA
+            "cuenta_cargo_obj" => $cuenta_cargo, # IMPORTA
+            /*"cuenta_cargo" => $partida[6], # IMPORTA*/
             "fecha_pago" => $fecha_pago["fecha"], # IMPORTA
             "fecha_pago_s" => $fecha_pago["fecha_hora"], # IMPORTA
             "referencia_pago" => $partida[8], # IMPORTA
             "monto_pagado" => $monto_pagado, # IMPORTA
-            "monto_pagado_documento" => $monto_pagado, # IMPORTA
-            "mensaje" => "Hola",
+
             "estado" => $this->getEstadoDocumento($transaccion_pagable, $monto_pagado),
             "id_cuenta_cargo" => $cuenta_cargo["id_cuenta"],
-            "id_moneda_cuenta_cargo" =>  $cuenta_cargo["id_moneda"],
+            /*"id_moneda_cuenta_cargo" =>  $cuenta_cargo["id_moneda"],*/
             "tipo_cambio" => $partida[9], # IMPORTA
 
         );

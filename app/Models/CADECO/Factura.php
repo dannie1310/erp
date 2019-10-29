@@ -65,7 +65,7 @@ class Factura extends Transaccion
             'id_antecedente'=>$this->id_antecedente,
             'id_referente'=>$this->id_transaccion,
             'monto'=>-1*abs($data->monto_pagado_documento),
-            'tipo_cambio'=>1/$data->tipo_cambio,
+            'tipo_cambio'=>1/$data->tipo_cambio,// se registra el tipo de cambio inverso para seguir la lógica de CADECO
             'fecha'=>$data->fecha_pago,
             'id_empresa'=>$this->id_empresa,
             'id_moneda'=> $data->id_moneda,

@@ -78,6 +78,7 @@
                                                                 <td >
                                                                     <div class="col-12" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
                                                                         <select
+                                                                                v-on:change="changeCuenta(pago)"
                                                                             class="form-control"
                                                                             :name="`id_cuenta_cargo[${i}]`"
                                                                             v-model="pago.id_cuenta_cargo"
@@ -141,7 +142,7 @@
                                                                                     v-model="pago.monto_pagado_documento"
                                                                                     :class="{'is-invalid': errors.has(`monto_pagado_documento[${i}]`)}">
                                                                             <div class="invalid-feedback" v-show="errors.has(`monto_pagado_documento[${i}]`)">{{ errors.first(`monto_pagado_documento[${i}]`) }}</div>
-                                                                            <div  v-if="pago.monto_pagado_documento > pago.saldo_documento" class="text-danger small">Supera el saldo de la transacción.</div>
+                                                                            <div  v-if="parseFloat(pago.monto_pagado_documento) > parseFloat(pago.saldo_documento)" class="text-danger small">Supera el saldo de la transacción.</div>
                                                                         </div>
                                                                     </div>
                                                                </td>
@@ -149,6 +150,7 @@
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
                                                                             <input
+                                                                                    v-on:keyup="calcula_montos(pago)"
                                                                                     type="number"
                                                                                     data-vv-as="Tipo Cambio"
                                                                                     v-validate="{required: true, min_value: 1}"
@@ -166,6 +168,7 @@
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
                                                                             <input
+                                                                                    v-on:keyup="calcula_montos(pago)"
                                                                                     type="number"
                                                                                     step="any"
                                                                                     data-vv-as="Monto Pagado"
@@ -233,7 +236,23 @@
                 file_pagos_name : ''
             }
         },
+        computed:{
+
+        },
         methods: {
+            changeCuenta(partida_pago){
+                partida_pago.cuenta_cargo_obj = this.cuentas_cargo.find(x=>x.id_cuenta === partida_pago.id_cuenta_cargo);
+                this.calcula_montos(partida_pago);
+            },
+            validaTC(partida_pago){
+                if(parseInt(partida_pago.cuenta_cargo_obj.id_moneda) === parseInt( partida_pago.id_moneda_transaccion)){
+                    partida_pago.tipo_cambio = 1;
+                }
+            },
+            calcula_montos(partida_pago){
+                this.validaTC(partida_pago);
+                partida_pago.monto_pagado_documento = partida_pago.monto_pagado * partida_pago.tipo_cambio;
+            },
             formatoFecha(date){
                 return moment(date).format('DD-MM-YYYY');
             },
@@ -338,7 +357,7 @@ th .money
 {
     width: 150px;
     max-width: 150px;
-    min-width: 100px;
+    min-width: 150px;
     text-align: center;
 }
 td .money
