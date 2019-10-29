@@ -109,21 +109,21 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(doc, i) in partidas">
-                                                        <td v-if="doc.cantidad_pendiente != 0">{{i+1}}</td>
-                                                        <td v-if="doc.cantidad_pendiente != 0">{{doc.material.numero_parte}}</td>
-                                                        <td v-if="doc.cantidad_pendiente != 0">{{doc.material.descripcion}}</td>
-                                                        <td v-if="doc.cantidad_pendiente != 0">{{doc.material.unidad}}</td>
-                                                        <td v-if="doc.cantidad_pendiente != 0"></td>
-                                                        <td v-if="doc.cantidad_pendiente != 0">{{doc.cantidad_pendiente}}</td>
-                                                        <td v-if="doc.cantidad_pendiente != 0">
+                                                    <tr v-for="(doc, i) in partidas[0]">
+                                                        <td>{{i+1}}</td>
+                                                        <td>{{doc.material.numero_parte}}</td>
+                                                        <td>{{doc.material.descripcion}}</td>
+                                                        <td>{{doc.material.unidad}}</td>
+                                                        <td>{{doc.entrega.fecha_format}}</td>
+                                                        <td>{{doc.cantidad_pendiente}}</td>
+                                                        <td>
                                                             <div class="col-12">
                                                                 <div class="form-group error-content">
                                                                     <input
                                                                             type="number"
                                                                             step="any"
                                                                             data-vv-as="Cantidad Ingresada"
-                                                                            v-validate="{min_value:0.1, max_value:doc.cantidad_pendiente, decimal:2}"
+                                                                            v-validate="{min_value: 0.01, max_value:doc.cantidad_pendiente, decimal:2}"
                                                                             class="form-control"
                                                                             :name="`cantidad_ingresada[${i}]`"
                                                                             placeholder="Cantidad Ingresada"
@@ -133,18 +133,18 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="text-center" v-if="doc.cantidad_pendiente != 0 && parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)">
+                                                        <td class="text-center" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)">
                                                             <small class="badge" :class="{'badge-success':parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)}">
                                                                 <i class="fa fa-check-circle-o" aria-hidden="true"></i> Cumplido
                                                              </small>
                                                         </td>
-                                                        <td v-else-if="doc.cantidad_pendiente != 0"></td>
-                                                        <td v-if="doc.cantidad_pendiente != 0 && doc.destino ===  undefined">
+                                                        <td v-else></td>
+                                                        <td v-if="doc.destino ===  undefined">
                                                             <small class="badge" :class="{'badge-success':true}">
                                                                 <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
                                                             </small>
                                                         </td>
-                                                        <td v-if="doc.cantidad_pendiente != 0 && doc.destino">
+                                                        <td v-if="doc.destino">
                                                             <small class="badge" :class="{'badge-success':true}">
                                                                 <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
                                                             </small>
@@ -152,8 +152,8 @@
                                                             <label v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</label>
                                                         </td>
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
-                                                        <td class="text-center" v-if="doc.cantidad_pendiente != 0 && (doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)"></i>{{doc.contratista}}</td>
-                                                        <td class="text-center" v-else-if="doc.cantidad_pendiente != 0 && doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)"></i></td>
+                                                        <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)"></i>{{doc.contratista}}</td>
+                                                        <td class="text-center" v-else-if="doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)"></i></td>
                                                         <!--<td v-else></td>-->
                                                     </tr>
                                                 </tbody>
@@ -378,7 +378,7 @@
                 this.partidas = [];
             },
             formatoFecha(date){
-                return moment(date).format('YYYY-MM-DD');
+                return moment(date).format('DD/MM/YYYY');
             },
             getOrdenesCompra() {
                 this.fecha_hoy = new Date();
@@ -402,12 +402,11 @@
                 return this.$store.dispatch('compras/orden-compra/find', {
                     id: this.id_orden_compra,
                     params: {
-                        include: ['empresa', 'partidas.material']
+                        include: ['empresa', 'partidas.material', 'partidas.entrega']
                     }
                 })
                     .then(data => {
                         this.orden_compra = data;
-                        this.partidas = data.partidas.data;
                     })
             },
             getAlmacenes() {
@@ -455,11 +454,11 @@
 
             modalContratista(i){
                 this.id_partida_temporal = i;
-                if(this.partidas[this.id_partida_temporal].contratista_seleccionado == undefined || this.partidas[this.id_partida_temporal].contratista_seleccionado == ''){
+                if(this.partidas[0][this.id_partida_temporal].contratista_seleccionado == undefined || this.partidas[0][this.id_partida_temporal].contratista_seleccionado == ''){
                     this.contratista.empresa_contratista = '';
                     this.contratista.opcion = '';
                 }else{
-                    this.contratista = this.partidas[this.id_partida_temporal].contratista_seleccionado;
+                    this.contratista = this.partidas[0][this.id_partida_temporal].contratista_seleccionado;
                 }
                 if(this.contratistas.length == 0){
                     this.getContratista()
@@ -468,7 +467,7 @@
             },
 
             seleccionarContratista() {
-                this.partidas[this.id_partida_temporal].contratista_seleccionado = this.contratista;
+                this.partidas[0][this.id_partida_temporal].contratista_seleccionado = this.contratista;
                 this.id_partida_temporal = ''
                 this.contratista = {
                     empresa_contratista: '',
@@ -479,7 +478,7 @@
 
             quitarContratista(){
                 this.cargando = true;
-                this.partidas[this.id_partida_temporal].contratista_seleccionado  = '';
+                this.partidas[0][this.id_partida_temporal].contratista_seleccionado  = '';
                 this.id_partida_temporal = '';
                 this.contratista = {
                     empresa_contratista: '',
@@ -491,36 +490,32 @@
             },
 
             validate() {
-                var error_cantidad = 0;
                 var error_destino = 0;
+                var item_a_guardar = 0;
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.$data.partidas.forEach(function(element) {
-                            if(element.cantidad_ingresada  === undefined || element.cantidad_ingresada == ""){
-                                error_cantidad = error_cantidad + 1
-                            }
-                            if(element.destino  === undefined || element.destino == ''){
-                                error_destino = error_destino + 1
+                        this.$data.partidas[0].forEach(function(element) {
+                            if(!(element.cantidad_ingresada  === undefined && element.destino  === undefined )){
+                                if(element.cantidad_ingresada > 0 && element.destino === undefined)
+                                {
+                                    error_destino = error_destino + 1
+                                }
+                                item_a_guardar = item_a_guardar + 1;
                             }
                        });
-
-                        if(error_cantidad > error_destino)
+                        if(item_a_guardar <= 0)
                         {
-                            swal('¡Error!', 'Ingrese un destino válido.', 'error')
-                        }
-
-                        else if(error_cantidad < error_destino)
-                        {
-                            swal('¡Error!', 'Debe colocar una cantidad al destino seleccionado en el material.', 'error')
-                        }
-                        else if(error_cantidad == error_destino && error_cantidad == this.$data.partidas.length){
                             swal('¡Error!', 'Debe registrar un material a esta entrada de almacén.', 'error')
                         }
-                        else if(moment(this.fecha_hoy).format('YYYY-MM-DD') < moment(value).format('YYYY-MM-DD')){
+                        else if (error_destino > 0)
+                        {
+                            swal('¡Error!', 'Ingrese un destino válido.', 'error');
+                        }
+                        else if(moment(this.fecha_hoy).format('DD/MM/YYYY') < moment(this.fecha).format('DD/MM/YYYY')){
                             swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                         }
                         else {
-                            this.store()
+                           this.store()
                         }
                     }
                 });
@@ -538,12 +533,12 @@
             },
             destino(i) {
                 this.index_temporal = i;
-                if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
+                if(this.partidas[0][this.index_temporal].destino == undefined || this.partidas[0][this.index_temporal].destino == ''){
                     this.destino_seleccionado.tipo_destino =  '';
                     this.destino_seleccionado.destino = '';
                     this.destino_seleccionado.id_destino = '';
                 }else {
-                    this.destino_seleccionado = this.partidas[this.index_temporal].destino;
+                    this.destino_seleccionado = this.partidas[0][this.index_temporal].destino;
                 }
 
                 if(this.almacenes.length == 0) {
@@ -552,7 +547,7 @@
                 $(this.$refs.modal_destino).modal('show');
             },
             seleccionar() {
-                this.partidas[this.index_temporal].destino = this.destino_seleccionado;
+                this.partidas[0][this.index_temporal].destino = this.destino_seleccionado;
                 this.index_temporal = '';
                 this.destino_seleccionado = {
                     tipo_destino : '',
@@ -588,11 +583,24 @@
             },
             fecha(value){
                  if(value != ''){
-                   if(moment(this.fecha_hoy).format('YYYY-MM-DD') < moment(value).format('YYYY-MM-DD')){
+                   if(moment(this.fecha_hoy).format('DD/MM/YYYY') < moment(value).format('DD/MM/YYYY')){
                        swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                    }
                 }
             },
+            orden_compra(value){
+                var array_limpio = [];
+                if(value != ''){
+                    var items =  value.partidas.data
+                   items.forEach(function(element) {
+                        if(element.cantidad_pendiente!= 0){
+                            array_limpio.push(element);
+                        }
+                    });
+                    console.log(array_limpio)
+                   this.partidas.push(array_limpio)
+                }
+            }
         }
     }
 </script>

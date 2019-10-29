@@ -76,7 +76,7 @@ class EntradaAlmacenService
             'remision' => $data['remision'],
             'fecha' => $data['fecha'],
             'observaciones' => $data['orden_compra']['observaciones'],
-            'partidas' =>  $data['partidas']
+            'partidas' =>  $data['partidas'][0]
         ];
         return $this->repository->create($datos);
     }

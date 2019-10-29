@@ -27,7 +27,8 @@ class EntradaAlmacenPartidaTransformer extends TransformerAbstract
         'concepto',
         'material',
         'inventario',
-        'movimiento'
+        'movimiento',
+        'contratista'
     ];
 
     /**
@@ -117,6 +118,15 @@ class EntradaAlmacenPartidaTransformer extends TransformerAbstract
         if($mov = $model->movimiento)
         {
             return $this->item($mov, new MovimientoTransformer);
+        }
+        return null;
+    }
+
+    public function includeContratista(EntradaMaterialPartida $model)
+    {
+        if($contratista = $model->itemContratista)
+        {
+            return $this->item($contratista, new ItemContratistaTransformer);
         }
         return null;
     }

@@ -9,6 +9,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Compras\ItemContratista;
+
 class EntradaMaterialPartida extends Item
 {
     protected $fillable = [
@@ -67,5 +69,10 @@ class EntradaMaterialPartida extends Item
     public function movimiento()
     {
         return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
+    }
+
+    public function itemContratista()
+    {
+        return $this->belongsTo(ItemContratista::class, 'id_item');
     }
 }

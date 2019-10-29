@@ -17,4 +17,11 @@ class Entrega extends Model
     ];
 
     public $timestamps = false;
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
+
+    }
 }

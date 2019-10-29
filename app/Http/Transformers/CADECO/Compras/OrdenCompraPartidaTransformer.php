@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\CADECO\EntregaTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\OrdenCompraPartida;
 use League\Fractal\TransformerAbstract;
@@ -22,6 +23,7 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'material',
+        'entrega'
     ];
 
     /**
@@ -61,6 +63,19 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
         if($material = $model->material)
         {
             return $this->item($material, new MaterialTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param OrdenCompraPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEntrega(OrdenCompraPartida $model)
+    {
+        if($entrega = $model->entrega)
+        {
+            return $this->item($entrega, new EntregaTransformer);
         }
         return null;
     }

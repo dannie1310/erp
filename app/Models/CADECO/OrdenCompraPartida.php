@@ -18,9 +18,18 @@ class OrdenCompraPartida extends Item
         return $this->hasOne(OrdenCompraPartidaComplemento::class, 'id_item');
     }
 
+    public function entrega()
+    {
+        return $this->belongsTo(Entrega::class, 'id_item');
+    }
+
+    public function entradas()
+    {
+        return $this->hasMany(EntradaMaterialPartida::class, 'item_antecedente', 'id_item');
+    }
+
     public function getCantidadPendienteAttribute()
     {
-        $cantidad_entradas = EntradaMaterialPartida::query()->where('item_antecedente', '=', $this->id_item)->sum('cantidad');
-        return number_format(($this->cantidad - $cantidad_entradas),2,'.', '');
+        return number_format(($this->cantidad -  $this->entradas()->sum('cantidad')),2,'.', '');
     }
 }
