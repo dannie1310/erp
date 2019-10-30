@@ -116,7 +116,7 @@
                                                         <td>{{doc.material.descripcion}}</td>
                                                         <td>{{doc.material.unidad}}</td>
                                                         <td>{{doc.entrega.fecha_format}}</td>
-                                                        <td>{{doc.cantidad_pendiente}}</td>
+                                                        <td>{{doc.entrega.pendiente}}</td>
                                                         <td>
                                                             <div class="col-12">
                                                                 <div class="form-group error-content">
@@ -124,7 +124,7 @@
                                                                             type="number"
                                                                             step="any"
                                                                             data-vv-as="Cantidad Ingresada"
-                                                                            v-validate="{min_value: 0.01, max_value:doc.cantidad_pendiente, decimal:2}"
+                                                                            v-validate="{min_value: 0.01, max_value:doc.entrega.pendiente, decimal:2}"
                                                                             class="form-control"
                                                                             :name="`cantidad_ingresada[${i}]`"
                                                                             placeholder="Cantidad Ingresada"
@@ -134,8 +134,8 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="text-center" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)">
-                                                            <small class="badge" :class="{'badge-success':parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)}">
+                                                        <td class="text-center" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.entrega.pendiente)">
+                                                            <small class="badge" :class="{'badge-success':parseFloat(doc.cantidad_ingresada) == parseFloat(doc.entrega.pendiente)}">
                                                                 <i class="fa fa-check-circle-o" aria-hidden="true"></i> Cumplido
                                                              </small>
                                                         </td>
@@ -590,10 +590,9 @@
             },
             fecha(value){
                  if(value != ''){
-                     console.log(moment(this.fecha_hoy).format('YYYY/MM/DD'), moment(value).format('YYYY/MM/DD'), moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(value).format('YYYY/MM/DD'))
-                   if(moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(value).format('YYYY/MM/DD')){
+                     if(moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(value).format('YYYY/MM/DD')){
                        swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
-                   }
+                     }
                 }
             },
             orden_compra(value){

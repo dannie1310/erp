@@ -24,4 +24,9 @@ class Entrega extends Model
         return date_format($date,"d/m/Y");
 
     }
+
+    public function getPendienteEntregaAttribute()
+    {
+        return number_format(($this->cantidad - $this->surtida),2,'.', '');
+    }
 }
