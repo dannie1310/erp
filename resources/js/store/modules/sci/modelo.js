@@ -1,14 +1,14 @@
-const URI = '/api/almacen/';
+const URI = '/api/SCI/modelo/';
 
 export default {
     namespaced: true,
     state: {
-        almacenes: []
+        modelos: []
     },
 
     mutations: {
-        SET_ALMACENES(state, data) {
-            state.almacenes = data;
+        SET_MODELOS(state, data) {
+            state.modelos = data;
         },
         SET_META(state, data) {
             state.meta = data;
@@ -33,8 +33,8 @@ export default {
     },
 
     getters: {
-        almacenes(state) {
-            return state.almacenes
+        modelos(state) {
+            return state.modelos;
         },
         meta(state) {
             return state.meta;

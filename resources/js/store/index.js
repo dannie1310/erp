@@ -87,8 +87,11 @@ import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
+import ctgAreaCompradora from  './modules/seguridad/compras/ctg-area-compradora';
+import ctgAreaSolicitante from './modules/seguridad/compras/ctg-area-solicitante';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
+import ctgtipo from './modules/seguridad/compras/ctg-tipo';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -99,6 +102,11 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 //IGH
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
+
+
+//SCI
+import marca from "./modules/sci/marca";
+import modelo from "./modules/sci/modelo";
 
 Vue.use(Vuex);
 
@@ -177,14 +185,22 @@ export default new Vuex.Store({
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
 
+
+        'sci/marca': marca,
+        'sci/modelo': modelo,
+
+
         'tesoreria/movimiento-bancario': movimientoBancario,
         'tesoreria/tipo-movimiento': tipoMovimiento,
         'tesoreria/traspaso-entre-cuentas': traspaso,
 
+        'seguridad/compras/ctg-area-compradora': ctgAreaCompradora,
+        'seguridad/compras/ctg-area-solicitante': ctgAreaSolicitante,
+        'seguridad/compras/ctg-tipo': ctgtipo,
         'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
-        'seguridad/configuracion-obra': configuracionObra,
         'seguridad/finanzas/configuracion-remesa': configuracionRemesa,
+        'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/rol-personalizado': rolPersonalizado,

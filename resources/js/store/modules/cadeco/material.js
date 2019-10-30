@@ -120,6 +120,10 @@ export default {
         },
         meta(state) {
             return state.meta
+        },
+        currentMaterial(state) {
+            return state.currentMaterial;
         }
+
     }
 }

@@ -1,0 +1,114 @@
+<template>
+    <span>
+         <button type="button"  @click="init" class="btn btn-secondary" v-if="">
+           <i class="fa fa-list"></i>
+         </button>
+
+
+        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">CATÁLOGO DE DESTINOS</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form" >
+                        <div class="modal-body">
+                            <div class="row">
+
+                                <div class="col-md-6 mb-5">
+                                    <button type="button" class="btn btn-primary" v-if="" @click="changeConcepto"> + Conceptos </button>
+                                </div>
+
+
+                                <div class="col-md-6 mb-5">
+                                    <button type="button" class="btn btn-primary" v-if="" @click="changeActivo"> + Activos</button>
+                                </div>
+
+
+                                    <div class="col-md-12">
+                                            <div class="form-group" v-if="concepto">
+                                                 <label for="conceptoLabel">Conceptos</label>
+                                              <ConceptoSelect v-model="destino_concepto"></ConceptoSelect>
+                                           </div>
+                                    </div>
+
+
+
+                                    <div class="col-md-12">
+                                        <div class="form-group" v-if="activo">
+                                             <label for="activoLabel">Activos</label>
+                                            <select-almacenes v-model="destino_almacen"></select-almacenes>
+                                       </div>
+                                    </div>
+
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" v-if="activo || concepto" @click="show">Seleccionar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+    </span>
+</template>
+
+<script>
+
+    import ConceptoSelect from "../cadeco/concepto/Select";
+    import SelectAlmacenes from "../cadeco/almacen/Select";
+    export default {
+        name: "SelectDestino",
+        components: {SelectAlmacenes, ConceptoSelect},
+        data() {
+            return {
+                activo: false,
+                concepto: false,
+                destino_concepto:'',
+                destino_almacen:'',
+            }
+        },
+
+        mounted() {
+            this.activo=false;
+            this.concepto=false;
+        },
+
+        methods: {
+            init(){
+                $(this.$refs.modal).modal('show');
+                this.$validator.reset()
+            },
+            changeActivo() {
+                this.activo = !this.activo;
+                this.concepto = false;
+            },
+            changeConcepto()
+            {
+                this.concepto = !this.concepto;
+                this.activo = false;
+            },
+            show(){
+                console.log(this.destino_concepto);
+                console.log(this.destino_almacen);
+                $(this.$refs.modal).modal('hide');
+            }
+
+
+        },
+
+        computed: {
+
+
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

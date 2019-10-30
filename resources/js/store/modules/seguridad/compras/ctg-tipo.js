@@ -1,44 +1,49 @@
-const URI = '/api/almacen/';
+const URI = '/api/SEGURIDAD_ERP/compras/ctg_tipo/';
+
 
 export default {
     namespaced: true,
     state: {
-        almacenes: []
+        tipos: [],
+        currentTipo: null,
+        meta:{}
     },
-
-    mutations: {
-        SET_ALMACENES(state, data) {
-            state.almacenes = data;
+    mutations:{
+        SET_TIPOS(state, data){
+            state.tipos = data;
+        },
+        SET_TIPO(state,data){
+            state.currentTipo= data;
         },
         SET_META(state, data) {
             state.meta = data;
         },
     },
-
     actions: {
         index(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI, { params: payload.params })
                     .then(r => r.data)
-                    .then(data => {
+                    .then((data) => {
                         resolve(data);
                     })
                     .catch(error => {
-                        reject(error);
-                    });
+                        reject(error)
+                    })
             });
-        },
-
+        }
     },
 
     getters: {
-        almacenes(state) {
-            return state.almacenes
+        tipos(state) {
+            return state.tipos;
         },
         meta(state) {
             return state.meta;
         },
-
+        currentTipo(state) {
+            return state.currentTipo;
+        }
     }
 }
