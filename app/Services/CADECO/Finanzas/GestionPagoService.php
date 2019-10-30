@@ -60,18 +60,18 @@ class GestionPagoService
 
         return array(
             'id_documento' => $data->IDDocumento,
-            'id_distribucion_recurso' => $data->partidas->id_distribucion_recurso,
+            'id_distribucion_recurso' => $data->partidaVigente->id_distribucion_recurso,
             'id_transaccion' => $data->transaccion? $data->transaccion->id_transaccion:null,
             'id_transaccion_tipo' => $data->tipoDocumento->TipoDocumento,
             'pago_a_generar' => $pago_a_generar,
             'aplicacion_manual' => $aplicacion_manual,
-            'estado' => $data->partidas->estatus,
-            'pagable' => $data->partidas->pagable,
+            'estado' => $data->partidaVigente->estatus,
+            'pagable' => $data->partidaVigente->pagable,
             'concepto' => $data->Concepto,
             'beneficiario' => $data->Destinatario,
             'monto' => $pago['monto'],
-            'cuenta_cargo' => ['id_cuenta_cargo' => $data->partidas->cuentaCargo->id_cuenta, 'numero'=> $data->partidas->cuentaCargo->numero, 'abreviatura'=> $data->partidas->cuentaCargo->abreviatura, 'nombre' => $data->partidas->cuentaCargo->empresa->razon_social, 'id_empresa' => $data->partidas->cuentaCargo->empresa->id_empresa],
-            'cuenta_abono' => ['id_cuenta_abono' => $data->partidas->cuentaAbono->id, 'numero'=> $data->partidas->cuentaAbono->cuenta_clabe, 'abreviatura'=> $data->partidas->cuentaAbono->banco->ctg_banco->nombre_corto, 'nombre' => $data->partidas->cuentaAbono->banco->razon_social],
+            'cuenta_cargo' => ['id_cuenta_cargo' => $data->partidaVigente->cuentaCargo->id_cuenta, 'numero'=> $data->partidaVigente->cuentaCargo->numero, 'abreviatura'=> $data->partidaVigente->cuentaCargo->abreviatura, 'nombre' => $data->partidaVigente->cuentaCargo->empresa->razon_social, 'id_empresa' => $data->partidaVigente->cuentaCargo->empresa->id_empresa],
+            'cuenta_abono' => ['id_cuenta_abono' => $data->partidaVigente->cuentaAbono->id, 'numero'=> $data->partidaVigente->cuentaAbono->cuenta_clabe, 'abreviatura'=> $data->partidaVigente->cuentaAbono->banco->ctg_banco->nombre_corto, 'nombre' => $data->partidaVigente->cuentaAbono->banco->razon_social],
             'referencia' => $pago['referencia'],
             'referencia_docto' => $data->Referencia,
             'origen_docto' => $data->origenDocumento->OrigenDocumento,
@@ -332,10 +332,10 @@ class GestionPagoService
         foreach ($this->getTxtData($bitacora) as $key => $pago){
             $c_cargo = Cuenta::query()->where('numero', $pago['cuenta_abono'])->first();
             if(!$c_cargo){
-                $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->where('id_tipo_cuentas_obra', '=', 1)->first();
+                $cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->pagadora()->first();
                 if($cta_cargo) {
                     if (strlen($pago['concepto']) > 10 && is_numeric(substr($pago['concepto'], 1, 9))) {
-                        $documento = Documento::query()->where('IDDocumento', '=', substr($pago['concepto'], 1, 9))->first();
+                        $documento = Documento::where('IDDocumento', '=', substr($pago['concepto'], 1, 9))->first();
                         if ($documento) {
                             $registros_bitacora[] = $this->bitacoraPago($documento, $pago);
                         }
@@ -343,7 +343,7 @@ class GestionPagoService
                         $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
                         $cuenta_abono?'':abort(403, 'El número de cuenta "' . $pago['cuenta_abono'] . '" no está registrado.' );
                         $documentos = Documento::query()->where('MontoTotalSolicitado', '=', $pago['monto'])->get();
-                        $dist_part = DistribucionRecursoRemesaPartida::query()->transaccionPago()
+                        $dist_part = DistribucionRecursoRemesaPartida::query()->transaccionPago()->partidaVigente()
                             ->where('id_cuenta_abono', '=', $cuenta_abono->id)
                             ->whereIn('id_documento', $documentos->pluck('IDDocumento'))
                             ->whereNotIn('id_documento', array_values($doctos_repetidos))->get();
