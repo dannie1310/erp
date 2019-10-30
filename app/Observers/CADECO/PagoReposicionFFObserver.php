@@ -28,6 +28,9 @@ class PagoReposicionFFObserver extends PagoObserver
     {
         parent::created($pago);
         $pago->fondo->aumentaSaldo($pago);
+        if(abs(abs($pago->monto*(1/$pago->tipo_cambio))-$pago->solicitud->monto)>0.99){
+            $pago->solicitud->generaSolicitudComplemento();
+        }
         $pago->solicitud->actualizaEstadoPagada();
     }
 }
