@@ -22,7 +22,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use DateTime;
 use mysql_xdevapi\Exception;
 
-
 class CargaLayoutPagoService
 {
     /**
@@ -48,6 +47,7 @@ class CargaLayoutPagoService
     public function procesaLayoutPagos($layout_pagos){
         $arreglo_para_vista_pagos_layout = [];
         $cuentas_cargo = $this->repository->getCuentasCargo();
+        $fechas_validacion = $this->getFechasValidacion();
         $this->repository->validarArchivo($layout_pagos);
         try{
             $arreglo_contenido_archivo = $this->getCSVData($layout_pagos);
@@ -59,11 +59,21 @@ class CargaLayoutPagoService
         $salida = array(
             'data' => $arreglo_para_vista_pagos_layout,
             'cuentas_cargo' => $cuentas_cargo,
+            'fechas_validacion' => $fechas_validacion,
             'resumen' => $this->resumenLayout($arreglo_para_vista_pagos_layout)
         );
-        #dd($salida);
         return  $salida;
-        #return $this->repository->validarLayout($arreglo_pagos_layout);
+    }
+
+    private function getfechasValidacion(){
+        $hoy_str = date('Y-m-d');
+        $hoy = new DateTime();
+        $hace_2Y_str = date("Y-m-d",strtotime($hoy_str."- 2 years"));
+        $hace_2Y = DateTime::createFromFormat('Y-m-d', $hace_2Y_str);
+        return array(
+            "from"=>$hoy->format('Y-m-d H:i:s'),
+            "to"=>$hace_2Y->format('Y-m-d H:i:s'),
+        );
     }
 
     public function resumenLayout($data)
@@ -101,13 +111,13 @@ class CargaLayoutPagoService
         $pagos_validados = array();
         $message = "";
         foreach($pagos as $i=>$pago){
-            if($pago["id_cuenta_cargo"]>0){
+            if($pago["cuenta_cargo_obj"]["id_cuenta"]>0){
                 //obtener moneda de la cuenta cargo TODO: Esto tal vez se podría hacer desde el componente vue
-                $cuenta_cargo = $this->repository->getCuentaCargoPorID($pago["id_cuenta_cargo"]);
-                $pago["id_moneda_cuenta_cargo"] = $cuenta_cargo["id_moneda"];
-                if( $pago["id_moneda"] != $pago["id_moneda_cuenta_cargo"] && !($pago["tipo_cambio"]>1)){
+                /*$cuenta_cargo = $this->repository->getCuentaCargoPorID($pago["id_cuenta_cargo"]);
+                $pago["id_moneda_cuenta_cargo"] = $cuenta_cargo["id_moneda"];*/
+                if( $pago["id_moneda_transaccion"] != $pago["cuenta_cargo_obj"]["id_moneda"] && !($pago["tipo_cambio"]>1)){
                     $message.="El tipo de cambio de la partida: ". ($i+1). " debe ser diferente a 1"."\n";
-                }elseif( $pago["id_moneda"] == $pago["id_moneda_cuenta_cargo"]){
+                }elseif( $pago["id_moneda_transaccion"] == $pago["cuenta_cargo_obj"]["id_moneda"] ){
                     $pago["tipo_cambio"] =1;
                 }
             }
@@ -115,6 +125,15 @@ class CargaLayoutPagoService
         }
         if($message != ""){
             abort(400,$message);
+        }
+        return $pagos_validados;
+    }
+
+    private function validaMontoPagadoDocumento($pagos){
+        $pagos_validados = array();
+        foreach($pagos as $i=>$pago){
+            $pago["monto_pagado_documento"] = number_format($pago["monto_pagado"] * $pago["tipo_cambio"],2,".","");
+            $pagos_validados[] = $pago;
         }
         return $pagos_validados;
     }
@@ -135,6 +154,8 @@ class CargaLayoutPagoService
                 $contenido[] = $this->complementaPartida($partida);
             }
         }
+        $contenido = $this->validaTC($contenido);
+        $contenido = $this->validaMontoPagadoDocumento($contenido);
         return $contenido;
     }
 
@@ -156,23 +177,23 @@ class CargaLayoutPagoService
                 "saldo_documento" => $transaccion_pagable->saldo_pagable,
                 "saldo_documento_format" => $transaccion_pagable->saldo_pagable_format,
                 "moneda_documento" => $transaccion_pagable->moneda->nombre,
-                "id_moneda" => $transaccion_pagable->moneda->id_moneda,
+                "id_moneda_transaccion" => $transaccion_pagable->moneda->id_moneda,
                 'id_documento_remesa' => $transaccion_pagable->id_documento_remesa,
                 'monto_autorizado_remesa' => $transaccion_pagable->monto_autorizado_remesa,
             );
         }
         $datos_pago = array(
-
-            "cuenta_cargo" => $partida[6], # IMPORTA
+            "cuenta_cargo_obj" => $cuenta_cargo, # IMPORTA
+            /*"cuenta_cargo" => $partida[6], # IMPORTA*/
             "fecha_pago" => $fecha_pago["fecha"], # IMPORTA
             "fecha_pago_s" => $fecha_pago["fecha_hora"], # IMPORTA
             "referencia_pago" => $partida[8], # IMPORTA
-            "tipo_cambio" => $partida[9], # IMPORTA
             "monto_pagado" => $monto_pagado, # IMPORTA
-            "mensaje" => "Hola",
+
             "estado" => $this->getEstadoDocumento($transaccion_pagable, $monto_pagado),
             "id_cuenta_cargo" => $cuenta_cargo["id_cuenta"],
-            "id_moneda_cuenta_cargo" =>  $cuenta_cargo["id_moneda"]
+            /*"id_moneda_cuenta_cargo" =>  $cuenta_cargo["id_moneda"],*/
+            "tipo_cambio" => $partida[9], # IMPORTA
 
         );
         $partida_completa = array_merge($datos_pago,$datos_documento);
@@ -181,7 +202,7 @@ class CargaLayoutPagoService
     }
     private function getEstadoDocumento($transaccion, $monto_pagado){
         if($transaccion){
-            if($transaccion->saldo_pagable > 0 ){
+            if($transaccion->saldo_pagable > 1){
                 if($transaccion->monto_autorizado_remesa>=$monto_pagado){
                     $estado_array =  array(
                         'estado' => 1, 'descripcion' => 'Pagable', 'clase_badge' => 'badge badge-success'
@@ -245,6 +266,13 @@ class CargaLayoutPagoService
 
     private function validaFechaPago($fecha_pago){
         $fecha_pago = DateTime::createFromFormat('d/m/Y', $fecha_pago);
+        $hoy_str = date('Y-m-d');
+        $hoy = new DateTime();
+        $hace_2Y_str = date("Y-m-d",strtotime($hoy_str."- 2 years"));
+        $hace_2Y = DateTime::createFromFormat('Y-m-d', $hace_2Y_str);
+        if($fecha_pago>$hoy || $fecha_pago<$hace_2Y){
+            $fecha_pago = $hoy;
+        }
         $fechas = array(
             "fecha_hora"=> $fecha_pago->format('Y-m-d H:i:s'),
             "fecha"=>$fecha_pago->format('Y-m-d')

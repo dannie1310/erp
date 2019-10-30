@@ -58,8 +58,9 @@
                                                             <th>Cuenta Cargo</th>
                                                             <th>Fecha Pago</th>
                                                             <th>Referencia Pago</th>
+                                                            <th class="money">Monto Pagado<br>(Moneda Documento)</th>
                                                             <th>Tipo Cambio</th>
-                                                            <th>Monto Pagado<br>(Moneda Cuenta)</th>
+                                                            <th class="money">Monto Pagado<br>(Moneda Cuenta)</th>
                                                             <th>Estado</th>
                                                             <th> </th>
                                                         </tr>
@@ -77,6 +78,7 @@
                                                                 <td >
                                                                     <div class="col-12" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
                                                                         <select
+                                                                                v-on:change="changeCuenta(pago)"
                                                                             class="form-control"
                                                                             :name="`id_cuenta_cargo[${i}]`"
                                                                             v-model="pago.id_cuenta_cargo"
@@ -91,9 +93,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </td>
-
                                                                 <td >
-
                                                                         <div class="form-group error-content" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
                                                                             <div class="form-group">
                                                                                 <datepicker v-model = "pago.fecha_pago_s"
@@ -104,13 +104,13 @@
                                                                                             class = "form-control"
                                                                                             v-validate="{required: true}"
                                                                                             :class="{'is-invalid': errors.has('fecha_pago')}"
+                                                                                            :disabled-dates="fechasDeshabilitadas"
                                                                                             value=""
                                                                                 >
                                                                                 </datepicker>
                                                                                  <div class="invalid-feedback" v-show="errors.has('fecha_pago')">{{ errors.first('fecha_pago') }}</div>
                                                                             </div>
                                                                         </div>
-
                                                                 </td>
                                                                 <td >
                                                                     <div class="col-12">
@@ -132,6 +132,26 @@
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
                                                                             <input
+                                                                                    readonly="readonly"
+                                                                                    type="number"
+                                                                                    step="any"
+                                                                                    data-vv-as="Monto Pagado Documento"
+                                                                                    v-validate="{required: true, min_value:0.1, max_value:(parseFloat(pago.saldo_documento)+parseInt(1)), decimal:2}"
+                                                                                    class="form-control"
+                                                                                    :name="`monto_pagado_documento[${i}]`"
+                                                                                    placeholder="Monto Pagado"
+                                                                                    v-model="pago.monto_pagado_documento"
+                                                                                    :class="{'is-invalid': errors.has(`monto_pagado_documento[${i}]`)}">
+                                                                            <div class="invalid-feedback" v-show="errors.has(`monto_pagado_documento[${i}]`)">{{ errors.first(`monto_pagado_documento[${i}]`) }}</div>
+                                                                            <div  v-if="parseFloat(pago.monto_pagado_documento) > (parseFloat(pago.saldo_documento) + parseFloat(0.99))" class="text-danger small">Supera el saldo de la transacción.</div>
+                                                                        </div>
+                                                                    </div>
+                                                               </td>
+                                                                <td >
+                                                                    <div class="col-12">
+                                                                        <div class="form-group error-content" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
+                                                                            <input
+                                                                                    v-on:keyup="calcula_montos(pago)"
                                                                                     type="number"
                                                                                     data-vv-as="Tipo Cambio"
                                                                                     v-validate="{required: true, min_value: 1}"
@@ -149,17 +169,17 @@
                                                                     <div class="col-12">
                                                                         <div class="form-group error-content" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">
                                                                             <input
+                                                                                    v-on:keyup="calcula_montos(pago)"
                                                                                     type="number"
                                                                                     step="any"
                                                                                     data-vv-as="Monto Pagado"
-                                                                                    v-validate="{required: true, min_value:0.1, max_value:pago.saldo_documento+1, decimal:3}"
+                                                                                    v-validate="{required: true, decimal:2}"
                                                                                     class="form-control"
                                                                                     :name="`monto_pagado[${i}]`"
                                                                                     placeholder="Monto Pagado"
                                                                                     v-model="pago.monto_pagado"
                                                                                     :class="{'is-invalid': errors.has(`monto_pagado[${i}]`)}">
                                                                             <div class="invalid-feedback" v-show="errors.has(`monto_pagado[${i}]`)">{{ errors.first(`monto_pagado[${i}]`) }}</div>
-                                                                            <div  v-if="pago.monto_pagado > pago.saldo_documento" class="text-danger small">Supera el saldo de la transacción.</div>
                                                                         </div>
                                                                     </div>
                                                                </td>
@@ -202,9 +222,11 @@
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+
     export default {
         name: "carga-masiva-create",
         components: {Datepicker},
+
         data() {
             return {
                 es: es,
@@ -212,11 +234,29 @@
                 pagos:[],
                 resumen:[],
                 cuentas_cargo:[],
+                fechas_validacion:[],
                 file_pagos : null,
-                file_pagos_name : ''
+                file_pagos_name : '',
+                fechasDeshabilitadas:{}
             }
         },
+        computed:{
+
+        },
         methods: {
+            changeCuenta(partida_pago){
+                partida_pago.cuenta_cargo_obj = this.cuentas_cargo.find(x=>x.id_cuenta === partida_pago.id_cuenta_cargo);
+                this.calcula_montos(partida_pago);
+            },
+            validaTC(partida_pago){
+                if(parseInt(partida_pago.cuenta_cargo_obj.id_moneda) === parseInt( partida_pago.id_moneda_transaccion)){
+                    partida_pago.tipo_cambio = 1;
+                }
+            },
+            calcula_montos(partida_pago){
+                this.validaTC(partida_pago);
+                partida_pago.monto_pagado_documento = parseFloat(Math.round(partida_pago.monto_pagado * partida_pago.tipo_cambio * 100)/100).toFixed(2);
+            },
             formatoFecha(date){
                 return moment(date).format('DD-MM-YYYY');
             },
@@ -236,7 +276,11 @@
                         if(data.data.length > 0){
                             this.pagos = data.data;
                             this.cuentas_cargo = data.cuentas_cargo;
+                            this.fechas_validacion = data.fechas_validacion;
                             this.resumen = data.resumen;
+                            this.fechasDeshabilitadas.from=new Date(this.fechas_validacion.from);
+                            this.fechasDeshabilitadas.to=new Date(this.fechas_validacion.to);
+
                         }else{
                             if(this.$refs.carga_layout.value !== ''){
                                 this.$refs.carga_layout.value = '';
@@ -315,5 +359,17 @@
 </script>
 
 <style scoped>
+thead th {text-align: center}
 
+th .money
+{
+    width: 150px;
+    max-width: 150px;
+    min-width: 150px;
+    text-align: center;
+}
+td .money
+{
+    text-align: right;
+}
 </style>

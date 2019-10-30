@@ -76,16 +76,17 @@ class LayoutPago extends Model
                         'id_layout_pagos' => $layout_pagos->id,
                         'id_transaccion' => $pago['id_transaccion'],
                         'monto_transaccion' => $pago['monto_documento'],
-                        'id_moneda' => $pago['id_moneda'],
+                        'id_moneda_transaccion' => $pago['id_moneda_transaccion'],
+                        'id_moneda_cuenta_cargo' => $pago["cuenta_cargo_obj"]['id_moneda'],
                         'tipo_cambio' => $pago['tipo_cambio'],
-                        'cuenta_cargo' => $pago['cuenta_cargo'],
-                        'id_cuenta_cargo' => $pago['id_cuenta_cargo'] ?  $pago['id_cuenta_cargo'] : 0,
+                        'cuenta_cargo' => $pago["cuenta_cargo_obj"]['numero'],
+                        'id_cuenta_cargo' => $pago['id_cuenta_cargo'],
                         'fecha_pago' => $fecha_pago->format('Y-m-d'),
                         'monto_pagado' => $pago['monto_pagado'],
                         'referencia_pago' => $pago['referencia_pago'],
                         'id_documento_remesa' => $pago['id_documento_remesa'],
                         'monto_autorizado_remesa' => $pago['monto_autorizado_remesa'],
-                        'saldo_documento' => $pago['saldo_documento'],
+                        'saldo_transaccion' => $pago['saldo_documento'],
                     ]);
                 }
             }
@@ -157,7 +158,7 @@ class LayoutPago extends Model
     {
         $monto_total = 0;
         foreach ($partidas as $pago) {
-            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) ) {
+            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 ) ) {
                 $monto_total += $pago['monto_pagado'];
             }
         }

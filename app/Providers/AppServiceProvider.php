@@ -64,6 +64,7 @@ use App\Models\CADECO\SalidaAlmacen;
 use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
 use App\Models\CADECO\Seguridad\AuditoriaRolUser;
 use App\Models\CADECO\Seguridad\Rol;
+use App\Models\CADECO\SolicitudAnticipoDestajo;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
@@ -143,6 +144,7 @@ use App\Observers\CADECO\SalidaAlmacenObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaPermisoRolObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
 use App\Observers\CADECO\Seguridad\RolObserver;
+use App\Observers\CADECO\SolicitudAnticipoDestajoObserver;
 use App\Observers\CADECO\SolicitudPagoAnticipadoObserver;
 use App\Observers\CADECO\SubcontratoObserver;
 use App\Observers\CADECO\SubcontratosEstimaciones\FolioPorSubcontratoObserver;
@@ -231,6 +233,7 @@ class AppServiceProvider extends ServiceProvider
             Factura::observe(FacturaObserver::class);
             PagoAnticipoDestajo::observe(PagoAnticipoDestajoObserver::class);
             Anticipo::observe(AnticipoObserver::class);
+            SolicitudAnticipoDestajo::observe(SolicitudAnticipoDestajoObserver::class);
 
             /**
              * FinanzasCBE

@@ -47,13 +47,14 @@ class SolicitudReposicionFF extends Solicitud
                 "fecha" => $data["fecha_pago"],
                 "estado" => 1,
                 "id_cuenta" =>  $data["id_cuenta_cargo"],
-                "id_moneda" =>  $data["id_moneda"],
+                "destino" =>  $this->destino,
+                "id_moneda" =>  $data["id_moneda_cuenta_cargo"],
+                "tipo_cambio"=>1/$data["tipo_cambio"],
                 "cumplimiento" => $data["fecha_pago"],
                 "vencimiento" => $data["fecha_pago"],
                 "monto" => -1 * abs($data["monto_pagado"]),
                 "saldo" => -1 * abs($data["monto_pagado"]),
                 "referencia" => $data["referencia_pago"],
-                "destino" => $this->destino,
                 "observaciones" => $this->observaciones,
             );
             $pago = $this->pago()->create($datos_pago);
