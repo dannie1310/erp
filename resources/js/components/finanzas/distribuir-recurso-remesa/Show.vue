@@ -78,19 +78,23 @@
                         <table class="table table-striped">
                             <tbody>
                             <tr>
-                                <td colspan="2" class="bg-gray-light">
+                                <td  class="bg-gray-light">
+                                    <b>Proyecto:</b><br>
+                                    {{distribucion.remesa_liberada.remesa.proyecto_descripcion}}
+                                </td>
+                                <td class="bg-gray-light">
                                     <b>Año:</b><br>
                                     {{distribucion.remesa_liberada.remesa.año}}
                                 </td>
-                                <td colspan="2" class="bg-gray-light">
+                                <td  class="bg-gray-light">
                                     <b>Semana:</b><br>
                                     {{distribucion.remesa_liberada.remesa.semana}}
                                 </td>
-                                <td colspan="2" class="bg-gray-light">
+                                <td  class="bg-gray-light">
                                     <b>Tipo de Remesa: </b>
                                     <br>{{distribucion.remesa_liberada.remesa.tipo}}
                                 </td>
-                                <td colspan="2" class="bg-gray-light">
+                                <td  class="bg-gray-light">
                                     <b>Folio: <br>({{ distribucion.remesa_liberada.remesa.folio }})</b>
                                 </td>
                             </tr>
