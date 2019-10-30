@@ -158,7 +158,7 @@ class LayoutPago extends Model
     {
         $monto_total = 0;
         foreach ($partidas as $pago) {
-            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) ) {
+            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 ) ) {
                 $monto_total += $pago['monto_pagado'];
             }
         }
