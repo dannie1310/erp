@@ -49,8 +49,7 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
             'importe' => $model->importe,
             'precio_unitario' => $model->precio_unitario,
             'precio_material' => $model->precio_material,
-            'numero' => $model->numero,
-            'cantidad_pendiente' => $model->cantidadPendiente
+            'numero' => $model->numero
         ];
     }
 

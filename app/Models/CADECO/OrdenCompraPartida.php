@@ -27,9 +27,4 @@ class OrdenCompraPartida extends Item
     {
         return $this->hasMany(EntradaMaterialPartida::class, 'item_antecedente', 'id_item');
     }
-
-    public function getCantidadPendienteAttribute()
-    {
-        return number_format(($this->cantidad -  $this->entradas()->sum('cantidad')),2,'.', '');
-    }
 }

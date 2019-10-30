@@ -600,11 +600,10 @@
                 if(value != ''){
                     var items =  value.partidas.data
                    items.forEach(function(element) {
-                        if(element.cantidad_pendiente!= 0){
+                        if(element.entrega.pendiente!= 0){
                             array_limpio.push(element);
                         }
                     });
-                    console.log(array_limpio)
                    this.partidas.push(array_limpio)
                 }
             }
