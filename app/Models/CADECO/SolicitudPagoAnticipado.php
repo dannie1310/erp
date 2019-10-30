@@ -151,4 +151,28 @@ class SolicitudPagoAnticipado extends Solicitud
             abort(400, 'Hubo un error durante la actualización del saldo de la cuenta por el pago de la solicitud de reposición de fondo.');
         }
     }
+    public function generaSolicitudComplemento()
+    {
+        //TODO: MEJORAR FORMA DE OBTNER EL TIPO DE CAMBIO REQUERIDO
+        DB::connection('cadeco')->beginTransaction();
+        $datos_solicitud = array(
+            "id_antecedente" => $this->id_antecedente,
+            "fecha" => $this->fecha,
+            "id_costo" =>  $this->id_costo,
+            "id_empresa" =>  $this->id_empresa,
+            "id_moneda" =>  $this->id_moneda,
+            "cumplimiento" => $this->cumplimiento,
+            "vencimiento" => $this->vencimiento,
+            "monto" => $this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),
+            "saldo" => $this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),
+            "destino" => $this->destino,
+            "observaciones" => $this->observaciones,
+        );
+        $solicitud = SolicitudPagoAnticipado::create($datos_solicitud);
+        #$this->load("pago");
+        $this->monto = abs($this->pago->monto * (1/$this->pago->tipo_cambio));
+        $this->saldo = abs($this->pago->monto * (1/$this->pago->tipo_cambio));
+        $this->save();
+        DB::connection('cadeco')->commit();
+    }
 }
