@@ -104,6 +104,7 @@
                                                                                             class = "form-control"
                                                                                             v-validate="{required: true}"
                                                                                             :class="{'is-invalid': errors.has('fecha_pago')}"
+                                                                                            :disabled-dates="fechasDeshabilitadas"
                                                                                             value=""
                                                                                 >
                                                                                 </datepicker>
@@ -221,9 +222,11 @@
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+
     export default {
         name: "carga-masiva-create",
         components: {Datepicker},
+
         data() {
             return {
                 es: es,
@@ -231,8 +234,10 @@
                 pagos:[],
                 resumen:[],
                 cuentas_cargo:[],
+                fechas_validacion:[],
                 file_pagos : null,
-                file_pagos_name : ''
+                file_pagos_name : '',
+                fechasDeshabilitadas:{}
             }
         },
         computed:{
@@ -271,7 +276,11 @@
                         if(data.data.length > 0){
                             this.pagos = data.data;
                             this.cuentas_cargo = data.cuentas_cargo;
+                            this.fechas_validacion = data.fechas_validacion;
                             this.resumen = data.resumen;
+                            this.fechasDeshabilitadas.from=new Date(this.fechas_validacion.from);
+                            this.fechasDeshabilitadas.to=new Date(this.fechas_validacion.to);
+
                         }else{
                             if(this.$refs.carga_layout.value !== ''){
                                 this.$refs.carga_layout.value = '';

@@ -22,7 +22,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use DateTime;
 use mysql_xdevapi\Exception;
 
-
 class CargaLayoutPagoService
 {
     /**
@@ -48,6 +47,7 @@ class CargaLayoutPagoService
     public function procesaLayoutPagos($layout_pagos){
         $arreglo_para_vista_pagos_layout = [];
         $cuentas_cargo = $this->repository->getCuentasCargo();
+        $fechas_validacion = $this->getFechasValidacion();
         $this->repository->validarArchivo($layout_pagos);
         try{
             $arreglo_contenido_archivo = $this->getCSVData($layout_pagos);
@@ -59,11 +59,21 @@ class CargaLayoutPagoService
         $salida = array(
             'data' => $arreglo_para_vista_pagos_layout,
             'cuentas_cargo' => $cuentas_cargo,
+            'fechas_validacion' => $fechas_validacion,
             'resumen' => $this->resumenLayout($arreglo_para_vista_pagos_layout)
         );
-        #dd($salida);
         return  $salida;
-        #return $this->repository->validarLayout($arreglo_pagos_layout);
+    }
+
+    private function getfechasValidacion(){
+        $hoy_str = date('Y-m-d');
+        $hoy = new DateTime();
+        $hace_2Y_str = date("Y-m-d",strtotime($hoy_str."- 2 years"));
+        $hace_2Y = DateTime::createFromFormat('Y-m-d', $hace_2Y_str);
+        return array(
+            "from"=>$hoy->format('Y-m-d H:i:s'),
+            "to"=>$hace_2Y->format('Y-m-d H:i:s'),
+        );
     }
 
     public function resumenLayout($data)
@@ -256,6 +266,13 @@ class CargaLayoutPagoService
 
     private function validaFechaPago($fecha_pago){
         $fecha_pago = DateTime::createFromFormat('d/m/Y', $fecha_pago);
+        $hoy_str = date('Y-m-d');
+        $hoy = new DateTime();
+        $hace_2Y_str = date("Y-m-d",strtotime($hoy_str."- 2 years"));
+        $hace_2Y = DateTime::createFromFormat('Y-m-d', $hace_2Y_str);
+        if($fecha_pago>$hoy || $fecha_pago<$hace_2Y){
+            $fecha_pago = $hoy;
+        }
         $fechas = array(
             "fecha_hora"=> $fecha_pago->format('Y-m-d H:i:s'),
             "fecha"=>$fecha_pago->format('Y-m-d')
