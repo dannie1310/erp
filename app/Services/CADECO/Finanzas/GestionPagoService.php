@@ -17,6 +17,7 @@ use App\Models\CADECO\PagoACuenta;
 use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\MODULOSSAO\ControlRemesas\DocumentoProcesado;
 use App\Repositories\Repository;
 use DateTime;
 use Illuminate\Support\Facades\DB;
@@ -342,7 +343,7 @@ class GestionPagoService
                     } else {
                         $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
                         $cuenta_abono?'':abort(403, 'El número de cuenta "' . $pago['cuenta_abono'] . '" no está registrado.' );
-                        $documentos = Documento::query()->where('MontoTotalSolicitado', '=', $pago['monto'])->get();
+                        $documentos = DocumentoProcesado::procesoAutorizado()->whereRaw('(MontoAutorizadoPrimerEnvio + MontoAutorizadoSegundoEnvio) = '. $pago['monto'])->get();
                         $dist_part = DistribucionRecursoRemesaPartida::query()->transaccionPago()->partidaVigente()
                             ->where('id_cuenta_abono', '=', $cuenta_abono->id)
                             ->whereIn('id_documento', $documentos->pluck('IDDocumento'))
@@ -424,7 +425,4 @@ class GestionPagoService
             'resumen' => $this->resumenBitacora($registros_bitacora, $bitacora_nombre)
         );
     }
-
-
-
 }
