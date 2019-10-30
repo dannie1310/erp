@@ -19,6 +19,9 @@ class EntregaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'numero_entrega' => $model->numero_entrega,
+            'surtida' => $model->surtida,
+            'cantidad' => $model->cantidad,
+            'pendiente' => $model->pendiente_entrega,
             'fecha' => $model->fecha,
             'fecha_format' => $model->fecha_format
         ];

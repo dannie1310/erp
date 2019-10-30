@@ -449,11 +449,19 @@ class EntradaMaterial extends Transaccion
                             'id_empresa' => $item['contratista_seleccionado']['empresa_contratista'],
                             'con_cargo' => $item['contratista_seleccionado']['opcion']]);
                     }
+
+                    $entrega = $ordencompra->partidas()->find($item['id']);
+                    $entrega = $entrega->entrega->update([
+                        'surtida' =>  $item['cantidad_ingresada']
+                    ]);
                 }
             }
 
             if($oc_completa == true){
                 $ordencompra->estado = 2;
+                $ordencompra->save();
+            }else{
+                $ordencompra->estado = 1;
                 $ordencompra->save();
             }
 
@@ -480,7 +488,6 @@ class EntradaMaterial extends Transaccion
                 if(!($cantidad_item_orden > $cantidad_entradas && $cantidad_item_orden >= $cantidad_entradas+$i['cantidad_ingresada']))
                 {
                     abort(400, 'El material: ' . $i['material']['descripcion'] . '  sobrepasa la cantidad ingresada.');
-
                 }
             }
         }
