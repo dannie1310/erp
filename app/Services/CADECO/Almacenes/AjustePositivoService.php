@@ -30,6 +30,7 @@ class AjustePositivoService
             'id_almacen' => $data['id_almacen'],
             'referencia' => $data['referencia'],
             'observaciones' => $data['observaciones'],
+            'fecha' => $data['fecha'],
             'items' =>  $data['items']
         ];
 

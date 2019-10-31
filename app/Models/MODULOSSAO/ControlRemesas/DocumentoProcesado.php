@@ -13,4 +13,7 @@ class DocumentoProcesado extends Model
     protected $primaryKey = 'IDDocumento';
     public $timestamps = false;
 
+    public function scopeProcesoAutorizado($query){
+        return $query->where('IDProceso', '=', 4);
+    }
 }

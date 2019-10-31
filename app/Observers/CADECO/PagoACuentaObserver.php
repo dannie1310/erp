@@ -18,7 +18,7 @@ class PagoACuentaObserver extends PagoObserver
 {
     /**
      * @param PagoACuenta $pagoACuenta
-     * @throws \Exception
+     *  @throws \Exception
      */
     public function creating(Transaccion $pago)
     {

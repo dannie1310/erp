@@ -12,18 +12,17 @@ namespace App\Observers\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\Subcontrato;
+use App\Models\CADECO\Transaccion;
 
-class LiberacionFondoGarantiaObserver
+class LiberacionFondoGarantiaObserver extends TransaccionObserver
 {
     /**
      * @param LiberacionFondoGarantia $fondoGarantia
-     * @throws \Exception
+     *  @throws \Exception
      */
-    public function creating(LiberacionFondoGarantia $fondoGarantia)
+    public function creating(Transaccion $fondoGarantia)
     {
-        if (!$fondoGarantia->validaTipoAntecedente()) {
-            throw New \Exception('La transacción antecedente no es válida');
-        }
+        parent::creating($fondoGarantia);
         $subcontrato = Subcontrato::find($fondoGarantia->id_antecedente);
         $fondoGarantia->tipo_transaccion = 53;
         $fondoGarantia->opciones = 0;
@@ -31,10 +30,6 @@ class LiberacionFondoGarantiaObserver
         $fondoGarantia->id_empresa = $subcontrato->id_empresa;
         $fondoGarantia->id_moneda = $subcontrato->id_moneda;
         $fondoGarantia->saldo = $fondoGarantia->monto;
-        $fondoGarantia->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $fondoGarantia->FechaHoraRegistro = date('Y-m-d h:i:s');
-        $fondoGarantia->id_obra = Context::getIdObra();
-        $fondoGarantia->id_usuario = auth()->id();
     }
 
     public function updating(LiberacionFondoGarantia $fondoGarantia)

@@ -9,7 +9,6 @@
 namespace App\Observers\CADECO;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Transaccion;
 
@@ -17,7 +16,6 @@ class OrdenPagoObserver extends TransaccionObserver
 {
     /**
      * @param OrdenPago $ordenPago
-     * @throws \Exception
      */
     public function creating(Transaccion $ordenPago)
     {

@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         <div class="modal-footer btn-group" v-if="id_estimacion">
-                            <PDF v-bind:id="id_estimacion" @click="validate"></PDF>
+                            <PDF v-bind:id="id_estimacion" v-bind:id_subcontrato="id_subcontrato" @click="validate"></PDF>
                         </div>
                         <div class="modal-footer btn-group" v-else>
                             <button type="submit" class="btn btn-primary" @click="validate">Ver Formato</button>
@@ -85,9 +85,9 @@
 </template>
 
 <script>
-    import PDF from "./FormatoOrdenPago";
+    import PDF from "../../contratos/estimacion/FormatoEstimacion";
     export default {
-        name: "formato-orden-pago-index",
+        name: "formato-estimacion-index",
         components: {PDF},
         data() {
             return {

@@ -10,22 +10,17 @@ namespace App\Observers\CADECO;
 
 
 use App\Models\CADECO\EntradaMaterial;
+use App\Models\CADECO\Transaccion;
 
-class EntradaMaterialObserver
+class EntradaMaterialObserver extends TransaccionObserver
 {
     /**
      * @param EntradaMaterial $entradaMaterial
      * @throws \Exception
      */
-    public function creating(EntradaMaterial $entradaMaterial) //El creating que se encuentra en transaccion
+    public function creating(Transaccion $entradaMaterial)
     {
-        if (!$entradaMaterial->validaTipoAntecedente()) {
-            throw New \Exception('La transacción antecedente no es válida');
-        }
-        $entradaMaterial->comentario = "I;". date("d/m/Y") ." ". date("h:s") .";". auth()->user()->usuario;
-        $entradaMaterial->FechaHoraRegistro = date('Y-m-d h:i:s');
-        $entradaMaterial->id_obra = Context::getIdObra();
-        $entradaMaterial->id_usuario = auth()->id();
+        parent::creating($entradaMaterial);
     }
 
     public function deleting(EntradaMaterial $entradaMaterial)
