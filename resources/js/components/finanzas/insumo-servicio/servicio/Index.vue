@@ -28,11 +28,11 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
+                    { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                     { title: 'Familia', field: 'tipo_material',sortable: true},
                     { title: 'Número de Parte', field: 'numero_parte',sortable: true,  thComp: require('../../../globals/th-Filter')},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Unidad', field: 'unidad', sortable: true},
+                    { title: 'Unidad', field: 'unidad', thClass: 'th_unidad', tdClass: 'td_unidad', sortable: true},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
@@ -82,7 +82,7 @@
                     materiales.forEach(function (material, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            tipo_material: material.descripcion_padre,
+                            tipo_material: material.descripcion_familia,
                             descripcion: material.descripcion,
                             numero_parte: material.numero_parte,
                             unidad: material.unidad,
