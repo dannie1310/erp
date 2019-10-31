@@ -124,4 +124,13 @@ class Empresa extends Model
     {
         return $query->has('cuentasBancarias');
     }
+
+    public function scopeTipoContratista($query)
+    {
+        return $query->where('tipo_empresa','!=',1);
+    }
+    public function scopeContratista($query)
+    {
+        return $query->where('tipo_empresa','=',2)->orWhere('tipo_empresa','=',3);
+    }
 }
