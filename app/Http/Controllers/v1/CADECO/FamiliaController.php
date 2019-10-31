@@ -39,8 +39,8 @@ class FamiliaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:consultar_familia_material,consultar_familia_herramienta_equipo,consultar_familia_servicio')->only(['show','paginate','index','find']);
-        $this->middleware('permiso:registrar_familia_herramienta_equipo,registrar_familia_material,registrar_familia_servicio')->only('store');
+        $this->middleware('permiso:consultar_familia_material|consultar_familia_herramienta_equipo|consultar_familia_servicio')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:registrar_familia_herramienta_equipo|registrar_familia_material|registrar_familia_servicio')->only('store');
 
         $this->service = $service;
         $this->transformer = $transformer;
