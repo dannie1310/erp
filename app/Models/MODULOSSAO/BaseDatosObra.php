@@ -23,8 +23,17 @@ class BaseDatosObra extends Model
         });
     }
 
-    public function proyectoUnificado(){
-        return $this->belongsTo(UnificacionObra::class, 'IDBaseDatos', 'IDBaseDatos');
+    public function proyectosUnificados(){
+        return $this->hasMany(UnificacionObra::class, 'IDBaseDatos', 'IDBaseDatos');
     }
 
+    public function getIdsProyectosUnificadosAttribute(){
+        if($this->proyectosUnificados){
+            foreach ($this->proyectosUnificados as $p){
+                $ids[] = $p->IDProyecto;
+            }
+            return $ids;
+        }
+        return [];
+    }
 }

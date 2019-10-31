@@ -46,11 +46,9 @@ class LayoutPago extends Model
     public function validarArchivo($archivo)
     {
         $file_fingerprint = hash_file('md5', $archivo);
-
         if($this->query()->where('hash_file_layout_pagos', '=', $file_fingerprint)->first()){
             abort(403, 'Archivo de carga masiva de pagos procesado previamente');
         }
-
         return $file_fingerprint;
     }
 
@@ -72,21 +70,21 @@ class LayoutPago extends Model
                 }else{
                     $fecha_pago = DateTime::createFromFormat('d/m/Y', $pago['fecha_pago']);
                 }
-                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 ) ) {
                     $contador_pagos ++;
                     $layout_pagos->partidas()->create([
                         'id_layout_pagos' => $layout_pagos->id,
                         'id_transaccion' => $pago['id_transaccion'],
-                        'monto_transaccion' => $pago['monto_factura'],
+                        'monto_transaccion' => $pago['monto_documento'],
                         'id_moneda' => $pago['id_moneda'],
                         'tipo_cambio' => $pago['tipo_cambio'],
-                        'cuenta_cargo' => $pago['id_cuenta_cargo'] ? Cuenta::query()->where('id_cuenta', $pago['id_cuenta_cargo'])->pluck('numero')->toArray()['0'] : 0,
+                        'cuenta_cargo' => $pago['cuenta_cargo'],
                         'id_cuenta_cargo' => $pago['id_cuenta_cargo'] ?  $pago['id_cuenta_cargo'] : 0,
                         'fecha_pago' => $fecha_pago->format('Y-m-d'),
                         'monto_pagado' => $pago['monto_pagado'],
                         'referencia_pago' => $pago['referencia_pago'],
-                        'id_documento_remesa' => $pago['id_documento'],
-                        'id_transaccion_pago' => $pago['estado']['estado'] == 2 ? $pago['estado']['id'] : NULL
+                        'id_documento_remesa' => $pago['id_documento_remesa'],
+                        'id_transaccion_pago' => NULL
 
                     ]);
                 }
@@ -159,7 +157,7 @@ class LayoutPago extends Model
     {
         $monto_total = 0;
         foreach ($partidas as $pago) {
-            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 || $pago['estado']['estado'] == 2) ) {
                 $monto_total += $pago['monto_pagado'];
             }
         }
