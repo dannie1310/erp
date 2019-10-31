@@ -31,7 +31,7 @@
                                     <div class="col-md-12">
                                             <div class="form-group" v-if="concepto">
                                                  <label for="conceptoLabel">Conceptos</label>
-                                              <ConceptoSelect v-model="destino_concepto"></ConceptoSelect>
+                                              <ConceptoSelect v-model="destino_concepto" @input="changeConceptoValue"></ConceptoSelect>
                                            </div>
                                     </div>
 
@@ -40,7 +40,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group" v-if="activo">
                                              <label for="activoLabel">Activos</label>
-                                            <select-almacenes v-model="destino_almacen"></select-almacenes>
+                                            <select-almacenes v-model="destino_almacen" @input="changeAlmacenValue"></select-almacenes>
                                        </div>
                                     </div>
 
@@ -49,7 +49,7 @@
                         </div>
                         <div class="modal-footer">
                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" v-if="activo || concepto" @click="show">Seleccionar</button>
+                            <button type="button" class="btn btn-primary" v-if="activo || concepto" @click="setDestino">Seleccionar</button>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
@@ -67,11 +67,14 @@
         components: {SelectAlmacenes, ConceptoSelect},
         data() {
             return {
+                val:null,
                 activo: false,
                 concepto: false,
                 destino_concepto:'',
                 destino_almacen:'',
-            }
+                destino_concepto_arr:[] ,
+
+        }
         },
 
         mounted() {
@@ -93,11 +96,24 @@
                 this.concepto = !this.concepto;
                 this.activo = false;
             },
-            show(){
-                console.log(this.destino_concepto);
-                console.log(this.destino_almacen);
+            setDestino(){
+                this.$emit('input', this.val)
                 $(this.$refs.modal).modal('hide');
+            },
+            changeAlmacenValue(){
+                this.val = this.destino_almacen;
+            },
+            changeConceptoValue(){
+                return this.$store.dispatch('cadeco/concepto/find',{
+                    id:this.destino_concepto
+                })
+                 .then(data => {
+                     this.val = data;
+
+                })
+
             }
+
 
 
         },

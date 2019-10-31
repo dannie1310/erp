@@ -7,7 +7,7 @@
 
     <select class="form-control" id="id_tipo" v-if="!disabled"  v-model="val" >
         <option selected>-- Almacen--</option>
-       <option v-for="(almacen, index) in almacenes" :value="almacen.id" >{{ almacen.descripcion}}</option>
+       <option v-for="(almacen, index) in almacenes" :value="{value:almacen.id, text:almacen.descripcion }" >{{ almacen.descripcion}}</option>
     </select>
 
 
@@ -22,6 +22,7 @@
             return{
                 val: null,
                 disabled: true,
+                text: null,
 
             }
 

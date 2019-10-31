@@ -44,6 +44,16 @@
             meta(){
                 return this.$store.getters['sci/modelo/meta']
             }
+        },
+        watch: {
+            val() {
+                this.$emit('input', this.val)
+            },
+            value(value) {
+                if(!value) {
+                    this.val = null;
+                }
+            }
         }
     }
 </script>

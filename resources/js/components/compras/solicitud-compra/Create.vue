@@ -34,7 +34,7 @@
 
                                           <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="Ex">Área Responsable</label>
+                                            <label for="Ex">Área Solicitante</label>
                                             <CtgAreaSolicitanteSelect v-model="id_area"></CtgAreaSolicitanteSelect>
                                         </div>
                                     </div>
@@ -105,17 +105,27 @@
 
 
                                             <tbody >
-                                                <tr v-for="(row, i) in rows" v-bind:id="i">
-                                                    <td style="width: 260px;"><MaterialSelect v-model="row.descripcion" @input="setRowValues(i)" /></td>
-                                                    <td><input class="form-control" v-if="material" :value="material.numero_parte"/></td>
-                                                    <td><marca-select></marca-select></td>
-                                                    <td><modelo-select></modelo-select></td>
-                                                    <td><input type="number" class="form-control" v-model="row.cantidad"/></td>
-                                                    <td style="width:80px;"><input class="form-control" v-if="material" :value="material.unidad"/></td>
-                                                    <td><input type="date" name="fecha" class="form-control" data-vv-as="Fecha" v-model="row.fecha"></td>
-                                                    <td><input class="form-control" v-model="row.destino"/> </td>
-                                                    <td><SelectDestino v-model="destino"></SelectDestino></td>
-                                                    <td style="width: 160px;"><textarea class="form-control" v-model="row.observaciones"></textarea></td>
+                                                <tr v-for="(item, i) in items" v-bind:id="i">
+                                                    <td style="width: 260px;"><MaterialSelect scope="insumos" v-model="item.material" @input="setRowValues(item.material,i)"/> </td>
+
+                                                    <td style="width: 100px;"><input class="form-control"  v-model="item.numero_parte"   disabled/></td>
+
+                                                    <td><marca-select v-model="item.marca"></marca-select></td>
+
+                                                    <td><modelo-select v-model="item.modelo"></modelo-select></td>
+
+                                                    <td><input type="number" class="form-control" v-model="item.cantidad"/></td>
+
+                                                    <td style="width:80px;"><input class="form-control"  v-model="item.unidad" disabled/></td>
+
+                                                    <td><input type="date" name="fecha" class="form-control" data-vv-as="Fecha" v-model="item.fecha"></td>
+
+                                                    <td><input class="form-control" v-model="item.destino"/> </td>
+
+                                                    <td><SelectDestino v-model="item.id_destino" @input="setDestinoValues(item.id_destino, i)"/></td>
+
+                                                    <td style="width: 160px;"><textarea class="form-control" v-model="item.observaciones"></textarea></td>
+
                                                     <td> <button type="button" class="btn btn-outline-danger" v-if="" @click="removeRow(i)" title="Eliminar Partida"> <i class="fa fa-trash"></i></button></td>
                                                 </tr>
                                             </tbody>
@@ -177,11 +187,9 @@
                 id_area:'',
                 id_tipo:'',
                 destino:'',
-                unidad:'',
-                arr:{},
-                rows: [
+                items: [
                     {
-                        descripcion: "",
+                        material: "",
                         numero_parte: "",
                         marca: "",
                         modelo: "",
@@ -189,6 +197,7 @@
                         unidad: "",
                         fecha:"",
                         destino:"",
+                        id_destino:"",
                         observaciones:"",
                     }
                 ],
@@ -200,44 +209,39 @@
         },
         methods : {
             addRow(index){
-                    this.rows.splice(index + 1, 0, {});
+                    this.items.splice(index + 1, 0, {});
                     this.index = index+1;
             },
             removeRow(index){
-                this.rows.splice(index, 1);
+                this.items.splice(index, 1);
             },
             salir(){
                 this.$router.push({name: 'solicitud-compra'});
             },
             registrar() {
-                // console.log(this.id_tipo);
-                // console.log(this.destino);
-
-                // console.log(this.$refs.material.unidad);
-                console.log(MaterialSelect.methods.getMaterialInfo());
-                // console.log(MaterialSelect.data());
-                console.log(this.unidad);
-                // console.log(this.rows);
-
+                console.log(this.items);
             },
-            setRowValues(index){
-                console.log(index);
-                // console.log(material);
-                // this.arr = this.$store.state.material();
-                // console.log(this.arr);
+            setRowValues(material,i){
+                this.items[i].numero_parte = material.numero_parte;
+                this.items[i].unidad = material.unidad;
+            },
+            setDestinoValues(dest, i){
 
-               /*Aquí cambiamos los valores del arreglo de row dependiendo de la posición*/
+                if(dest.text){
+                    /*Almacen*/
+                    this.items[i].id_destino = dest.value;
+                    this.items[i].destino = dest.text;
+                }
+                if(dest.path){
+                   /*Concepto*/
+                    this.items[i].id_destino = dest.id;
+                    this.items[i].destino = dest.path;
+                }
 
             }
 
         },
-        computed: {
-            material() {
 
-
-               return this.$store.getters['cadeco/material/currentMaterial']
-            },
-        }
     }
 </script>
 

@@ -8,13 +8,9 @@
               loadingText="Cargando"
               searchPromptText="Escriba para buscar..."
               noResultsText="Sin Resultados"
-              :placeholder="placeholder ? placeholder : '--Material--'" :unidad="unidad" />
+              :placeholder="placeholder ? placeholder : '--Material--'" />
 
     </span>
-<!--    <p>{{unidad}}</p>-->
-
-
-
 </template>
 
 <script>
@@ -24,8 +20,7 @@
         data(){
             return {
                 val: null,
-                unidad:'',
-                numero_parte:'',
+                material: [],
                 options:{}
             }
         },
@@ -43,25 +38,18 @@
                             id: i.id,
                             label: i.descripcion,
                             numero_parte: i.numero_parte,
-                            unidad: i.unidad
+                            unidad: i.unidad,
                         }))
                         callback(null, this.options)
                     })
-            },
-            getMaterialInfo(){
-                return this.$store.getters['cadeco/material/currentMaterial']
             }
         },
         watch: {
             val() {
-                console.log("changing values");
                 this.options.filter(x=> x.id === this.val).map(x => {
-                    this.$store.commit('cadeco/material/SET_MATERIAL', x);
-                    this.unidad = x.unidad,
-                    this.numero_parte = x.numero_parte
-
+                    this.material = x;
                 });
-                this.$emit('input', this.val)
+                this.$emit('input', this.material)
             },
             value(value) {
                 if(!value) {
