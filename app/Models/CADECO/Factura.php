@@ -144,7 +144,7 @@ class Factura extends Transaccion
     }
 
     public function disminuyeSaldo(Transaccion $pago){
-        $this->saldo = $this->saldo - ($pago->orden_pago->monto * -1);
+        $this->saldo = number_format($this->saldo - ($pago->orden_pago->monto * -1),2,".","");
         $this->save();
         if($this->saldo<1){
             $this->actualizaEstadoPagada();

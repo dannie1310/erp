@@ -565,7 +565,7 @@ $api->version('v1', function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@show')->where(['id' => '[0-9]+']);
                 $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@autorizar')->where(['id' => '[0-9]+']);
-                $api->get('descargarLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@descargarLayout');
+                $api->get('descarga-layout', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@descargarLayout');
             });
         });
 

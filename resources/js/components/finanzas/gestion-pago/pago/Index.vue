@@ -44,7 +44,7 @@
                     { title: 'Beneficiario', field: 'destino', thComp:require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Cuenta', field: 'numero_cuenta',  thComp:require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Concepto', field: 'observaciones',  thComp:require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Importe', field: 'monto', sortable: true},
+                    { title: 'Monto', field: 'monto', thClass: 'th_money', tdClass: 'td_money', sortable: true},
                     { title: 'Moneda', field: 'id_moneda',  thComp:require('../../../globals/th-Filter'), sortable: true },
                     { title: 'Estado', field: 'estado',  thComp:require('../../../globals/th-Filter'), sortable: true },
                 ],

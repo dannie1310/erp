@@ -16,5 +16,54 @@
 @import '~bootstrap-pincode-input/css/bootstrap-pincode-input.css';
 
 * {
-  font-size: 14px;
+  font-size: 13px;
+}
+
+.td_money{
+  text-align: right;
+  width: 100px;
+  max-width: 100px;
+  min-width: 100px;
+}
+
+.th_money
+{
+  width: 100px;
+  max-width: 100px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.th_money_input
+{
+  width: 150px;
+  max-width: 150px;
+  min-width: 150px;
+  text-align: center;
+}
+
+.td_money_input
+{
+  width: 150px;
+  max-width: 150px;
+  min-width: 150px;
+}
+
+thead th {text-align: center}
+
+
+.fecha_hora
+{
+  text-align: center;
+  width: 150px;
+  max-width: 150px;
+  min-width: 150px;
+}
+
+.fecha
+{
+  text-align: center;
+  width: 80px;
+  max-width: 80px;
+  min-width: 80px;
 }

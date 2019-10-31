@@ -52,15 +52,15 @@
                                                             <th>Fecha</th>
                                                             <th>Vencto.</th>
                                                             <th>Moneda</th>
-                                                            <th>Importe</th>
-                                                            <th>Saldo</th>
+                                                            <th class="th_money">Importe</th>
+                                                            <th class="th_money">Saldo</th>
                                                             <th>Beneficiario</th>
                                                             <th>Cuenta Cargo</th>
                                                             <th>Fecha Pago</th>
                                                             <th>Referencia Pago</th>
-                                                            <th class="money">Monto Pagado<br>(Moneda Documento)</th>
+                                                            <th class="th_money_input">Monto Pagado<br>(Moneda Documento)</th>
                                                             <th>Tipo Cambio</th>
-                                                            <th class="money">Monto Pagado<br>(Moneda Cuenta)</th>
+                                                            <th class="th_money_input">Monto Pagado<br>(Moneda Cuenta)</th>
                                                             <th>Estado</th>
                                                             <th> </th>
                                                         </tr>
@@ -357,19 +357,3 @@
         }
     }
 </script>
-
-<style scoped>
-thead th {text-align: center}
-
-th .money
-{
-    width: 150px;
-    max-width: 150px;
-    min-width: 150px;
-    text-align: center;
-}
-td .money
-{
-    text-align: right;
-}
-</style>
