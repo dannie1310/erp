@@ -38,7 +38,7 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
             'fecha_pago_format' => date('d/m/Y', strtotime($model->fecha_pago)),
             'id_layout_pagos' => $model->id_layout_pagos,
             'id_transaccion' => $model->id_transaccion,
-            'id_refente'=>$model->id_referente,
+            'id_referente'=>$model->id_referente,
             'monto_transaccion' => $model->monto_transaccion,
             'monto_transaccion_format' => '$ ' . number_format($model->monto_transaccion,2,".",","),
             'monto_transaccion_format_2' =>  number_format($model->monto_transaccion,2,".",","),

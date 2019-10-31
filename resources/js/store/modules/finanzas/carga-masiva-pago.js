@@ -165,7 +165,7 @@ export default {
         descarga_layout(context, payload){
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'descarga_layout', { params: payload.params, responseType:'blob', })
+                    .get(URI + 'descarga-layout', { params: payload.params, responseType:'blob', })
                     .then(r => r.data)
                     .then(data => {
                         const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
