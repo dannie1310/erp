@@ -4,7 +4,7 @@
 namespace App\Observers\CADECO;
 
 
-use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\Pago;
 use App\Models\CADECO\Transaccion;
 
 class PagoACuentaPorAplicarObserver extends PagoObserver
@@ -18,5 +18,9 @@ class PagoACuentaPorAplicarObserver extends PagoObserver
         parent::creating($pago);
         $pago->tipo_transaccion = 82;
         $pago->opciones = 327681;
+    }
+    
+    public function created(Pago $pago)    {
+        parent::created($pago);
     }
 }
