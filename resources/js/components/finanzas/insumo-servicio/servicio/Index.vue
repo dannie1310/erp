@@ -30,6 +30,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Familia', field: 'tipo_material',sortable: true},
+                    { title: 'Número de Parte', field: 'numero_parte',sortable: true,  thComp: require('../../../globals/th-Filter')},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
                     { title: 'Unidad', field: 'unidad', sortable: true},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
@@ -83,6 +84,7 @@
                             index: (i + 1) + self.query.offset,
                             tipo_material: material.descripcion_padre,
                             descripcion: material.descripcion,
+                            numero_parte: material.numero_parte,
                             unidad: material.unidad,
                         })
                     });

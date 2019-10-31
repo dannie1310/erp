@@ -46,6 +46,12 @@ class MaterialService
         if(isset($data['descripcion'])) {
             $salida = $material->where([['descripcion', 'LIKE', '%' . request('descripcion') . '%']]);
         }
+
+        if(isset($data['numero_parte'])) {
+            $salida = $material->where([['numero_parte', 'LIKE', '%' . request('numero_parte') . '%']]);
+        }
+
+
         return $material->paginate($data);
     }
     public function store(array $data)
