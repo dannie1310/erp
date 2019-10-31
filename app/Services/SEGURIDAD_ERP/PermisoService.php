@@ -4,6 +4,7 @@
 namespace App\Services\SEGURIDAD_ERP;
 
 use App\CSV\seguridad\PermisoObra;
+use App\CSV\seguridad\PermisoUsuario;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Permiso;
@@ -129,6 +130,9 @@ class PermisoService
                  ORDER BY proyectos.base_datos ASC', [1]);
 
         $permisos = collect($query);
+        if (request('excel')){
+            return $permisos;
+        }
         $perPage     = request('limit');
         $page = request('limit') && request('offset') != '' ? (request('offset') / request('limit')) + 1 : 1;
         request()->merge(['page' => $page]);
@@ -337,6 +341,15 @@ class PermisoService
         $excel = new PermisoObra($permisos);
 
         return Excel::download($excel,'ListadoDePermisosPorObra.xlsx');
+
+    }
+    public function descargaListadoPermisosUsuario($id){
+
+        $permisos=$this->porUsuarioAuditoria($id)->toArray();
+
+        $excel = new PermisoUsuario($permisos);
+
+        return Excel::download($excel,'ListadoDePermisosPorUsuario.xlsx');
 
     }
 }
