@@ -76,7 +76,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Carga Masiva",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -94,7 +94,7 @@ export default {
                             .post(URI, payload)
                             .then(r => r.data)
                             .then(data => {
-                                swal("Carga Manual registrada correctamente", {
+                                swal("Layout registrado correctamente", {
                                     icon: "success",
                                     timer: 2000,
                                     buttons: false
@@ -165,7 +165,7 @@ export default {
         descarga_layout(context, payload){
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'descarga_layout', { params: payload.params, responseType:'blob', })
+                    .get(URI + 'descarga-layout', { params: payload.params, responseType:'blob', })
                     .then(r => r.data)
                     .then(data => {
                         const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
@@ -174,6 +174,7 @@ export default {
                         link.setAttribute('download', 'LayoutPendienesPagos_' + this._vm.$session.get('db') + '.csv');
                         document.body.appendChild(link);
                         link.click();
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error);

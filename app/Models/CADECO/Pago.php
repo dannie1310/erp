@@ -46,4 +46,19 @@ class Pago extends Transaccion
     public function cuenta(){
         return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
     }
+
+    public function getEstadoStringAttribute()
+    {
+        $estado = "";
+        if ($this->estado==0){
+            $estado='Por Autorizar';
+        }
+        elseif ($this->estado==1){
+            $estado='Por Conciliar';
+        }
+        elseif($this->estado==2){
+            $estado='Conciliado';
+        }
+        return $estado;
+    }
 }

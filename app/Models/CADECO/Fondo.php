@@ -78,7 +78,7 @@ class Fondo extends Model
     }
 
     public function aumentaSaldo(PagoReposicionFF $pago){
-        $this->saldo = $this->saldo + ($pago->monto * -1);
+        $this->saldo = $this->saldo + ($pago->monto * (1/$pago->tipo_cambio) * -1);
         $this->save();
     }
 }

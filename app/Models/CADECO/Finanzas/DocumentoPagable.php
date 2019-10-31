@@ -67,12 +67,12 @@ class DocumentoPagable extends Transaccion
         if($this->tipo_transaccion == 72){
             if($this->estado ==2){
                 return 0;
-            }elseif($this->estado == 1){
-                return $this->monto;
+            }elseif($this->estado == 0){
+                return number_format($this->monto,2,".","");
             }
 
         }elseif($this->tipo_transaccion == 65){
-            return $this->saldo;
+            return number_format($this->saldo,2,".","");
         }
     }
 
