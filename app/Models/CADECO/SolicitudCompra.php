@@ -4,8 +4,10 @@
 namespace App\Models\CADECO;
 
 
+use App\CSV\CotizacionLayout;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SolicitudCompra extends Transaccion
 {

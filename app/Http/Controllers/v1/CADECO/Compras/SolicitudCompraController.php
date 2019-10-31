@@ -54,5 +54,4 @@ class SolicitudCompraController extends Controller
         dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
 
     }
-
 }

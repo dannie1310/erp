@@ -377,6 +377,12 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'compras'], function ($api) {
 
          // ORDEN DE COMPRA
+        $api->group(['prefix' => 'cotizacion'], function ($api) {
+            $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@descargaLayout')->where(['id' => '[0-9]+']);
+
+        });
+
+         // ORDEN DE COMPRA
         $api->group(['prefix' => 'orden-compra'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@paginate');

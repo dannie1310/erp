@@ -49,4 +49,10 @@ class CotizacionController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function descargaLayout($id)
+    {
+
+        return $this->service->descargaLayout($id);
+    }
 }

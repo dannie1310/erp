@@ -19,4 +19,10 @@ class CotizacionService
     {
         $this->repository = new Repository($model);
     }
+
+
+    public function descargaLayout($id)
+    {
+        return $this->repository->show($id)->descargaLayout();
+    }
 }

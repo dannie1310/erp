@@ -4,7 +4,9 @@
 namespace App\Models\CADECO;
 
 
+use App\CSV\CotizacionLayout;
 use App\Models\CADECO\Compras\CotizacionComplemento;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CotizacionCompra  extends Transaccion
 {
@@ -28,4 +30,8 @@ class CotizacionCompra  extends Transaccion
         return $this->belongsTo(CotizacionComplemento::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function descargaLayout()
+    {
+        return Excel::download(new CotizacionLayout($this), 'LayoutCotizacion.xlsx');
+    }
 }
