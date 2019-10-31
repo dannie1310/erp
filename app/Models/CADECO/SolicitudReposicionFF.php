@@ -107,15 +107,15 @@ class SolicitudReposicionFF extends Solicitud
             "id_moneda" =>  $this->id_moneda,
             "cumplimiento" => $this->cumplimiento,
             "vencimiento" => $this->vencimiento,
-            "monto" => $this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),
-            "saldo" => $this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),
+            "monto" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
+            "saldo" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
             "destino" => $this->destino,
             "observaciones" => $this->observaciones,
         );
         $solicitud = SolicitudReposicionFF::create($datos_solicitud);
         #$this->load("pago");
-        $this->monto = abs($this->pago->monto * (1/$this->pago->tipo_cambio));
-        $this->saldo = abs($this->pago->monto * (1/$this->pago->tipo_cambio));
+        $this->monto = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
+        $this->saldo = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
         $this->save();
         DB::connection('cadeco')->commit();
     }

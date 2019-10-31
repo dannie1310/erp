@@ -61,10 +61,16 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         if($cuenta){
             return $cuenta;
         }else{
-            return array(
-                "id_cuenta"=>null,
-                "id_moneda"=>null,
-            );
+            $cuentas_cargo_obra = $this->getCuentasCargo();
+            if(sizeof($cuentas_cargo_obra)==1){
+                return $cuentas_cargo_obra[0];
+            }else{
+                return array(
+                    "id_cuenta"=>null,
+                    "id_moneda"=>null,
+                );
+            }
+
         }
     }
 

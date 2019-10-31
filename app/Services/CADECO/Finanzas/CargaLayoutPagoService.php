@@ -68,11 +68,11 @@ class CargaLayoutPagoService
     private function getfechasValidacion(){
         $hoy_str = date('Y-m-d');
         $hoy = new DateTime();
-        $hace_2Y_str = date("Y-m-d",strtotime($hoy_str."- 2 years"));
-        $hace_2Y = DateTime::createFromFormat('Y-m-d', $hace_2Y_str);
+        $hace_4Y_str = date("Y-m-d",strtotime($hoy_str."- 4 years"));
+        $hace_4Y = DateTime::createFromFormat('Y-m-d', $hace_4Y_str);
         return array(
             "from"=>$hoy->format('Y-m-d H:i:s'),
-            "to"=>$hace_2Y->format('Y-m-d H:i:s'),
+            "to"=>$hace_4Y->format('Y-m-d H:i:s'),
         );
     }
 
