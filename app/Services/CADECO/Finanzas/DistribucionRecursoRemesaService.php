@@ -201,7 +201,16 @@ class DistribucionRecursoRemesaService
     }
 
     public function autorizar($id){
-        return $this->repository->show($id)->autorizar();
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $resp = $this->repository->show($id)->autorizar();
+            DB::connection('cadeco')->commit();
+            return $resp;
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 
     public function cargaLayoutManual(Request $request, $id){

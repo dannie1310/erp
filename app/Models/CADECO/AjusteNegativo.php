@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Almacenes\AjusteEliminado;
 use App\Models\CADECO\Almacenes\ItemAjusteEliminado;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class AjusteNegativo extends Ajuste
@@ -19,6 +20,7 @@ class AjusteNegativo extends Ajuste
         'id_almacen',
         'referencia',
         'observaciones',
+        'fecha',
         'id_usuario'
     ];
 
@@ -44,6 +46,7 @@ class AjusteNegativo extends Ajuste
             $datos = [
                 'id_almacen' => $data['id_almacen'],
                 'referencia' => $data['referencia'],
+                'fecha' =>  date_format(new DateTime($data['fecha']), 'Y-m-d'),
                 'observaciones' => $data['observaciones'],
             ];
 

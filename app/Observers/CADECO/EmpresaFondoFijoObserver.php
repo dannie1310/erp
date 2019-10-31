@@ -9,18 +9,17 @@
 namespace App\Observers\CADECO;
 
 
+use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EmpresaFondoFijo;
 
-class EmpresaFondoFijoObserver
+class EmpresaFondoFijoObserver extends EmpresaObserver
 {
     /**
      * @param EmpresaFondoFijo $empresa
      */
-    public function creating(EmpresaFondoFijo $empresa)
+    public function creating(Empresa $empresa)
     {
+        parent::creating($empresa);
         $empresa->tipo_empresa = 32;
-        $empresa->razon_social= mb_strtoupper($empresa->razon_social);
-        $empresa->UsuarioRegistro = auth()->id();
-        $empresa->FechaHoraRegistro = date('Y-m-d h:i:s');
     }
 }

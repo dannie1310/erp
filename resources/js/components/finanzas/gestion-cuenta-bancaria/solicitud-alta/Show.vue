@@ -22,7 +22,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <th>Tipo de Beneficiario:</th>
-                                                            <td>{{solicitudAlta.empresa.tipo_empresa}}</td>
+                                                            <td>{{solicitudAlta.empresa.tipo}}</td>
                                                         </tr>
                                                         <tr>
                                                             <th>Beneficiario:</th>
@@ -95,7 +95,8 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" ref="modalPDF" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
+        <nav>
+        <div class="modal fade" ref="modalPDF" tabindex="1" role="dialog" aria-labelledby="PDFModal" style="overflow: hidden;">
              <div class="modal-dialog modal-lg" id="mdialTamanio">
                  <div class="modal-content">
                     <div class="modal-header">
@@ -111,6 +112,7 @@
                  </div>
              </div>
          </div>
+        </nav>
     </span>
 </template>
 
@@ -126,12 +128,14 @@
                     params: { include: ['moneda', 'subcontrato','empresa','banco','tipo','plaza','movimientos','movimientos.usuario','movimiento_solicitud'] }
                 }).then(data => {
                     this.$store.commit('finanzas/solicitud-alta-cuenta-bancaria/SET_CUENTA', data);
+                    $(this.$refs.modal).draggable();
                     $(this.$refs.modal).modal('show');
                 })
             },
             pdf(){
                 var url = '/api/finanzas/gestion-cuenta-bancaria/solicitud-alta/pdf/' + this.id +'?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">CONSULTA DE ARCHIVO DE SOPORTE SOLICITUD DE ALTA DE CUENTA BANCARIA</iframe>');
+                $(this.$refs.modalPDF).draggable();
                 $(this.$refs.modalPDF).modal('show');
             },
 
