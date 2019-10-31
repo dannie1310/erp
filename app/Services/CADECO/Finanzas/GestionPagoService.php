@@ -6,6 +6,7 @@ namespace App\Services\CADECO\Finanzas;
 
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Factura;
 use App\Models\CADECO\Finanzas\BitacoraSantander;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesa;
@@ -14,7 +15,9 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\PagoACuentaPorAplicar;
 use App\Models\CADECO\PagoVario;
+use App\Models\CADECO\Solicitud;
 use App\Models\CADECO\Transaccion;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\MODULOSSAO\ControlRemesas\DocumentoProcesado;
@@ -22,6 +25,7 @@ use App\Repositories\Repository;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use stdClass;
 use Zend\Validator\Date;
 
 class GestionPagoService
@@ -152,70 +156,23 @@ class GestionPagoService
                         $partida_remesa = DistribucionRecursoRemesaPartida::where('id_distribucion_recurso', '=', $pago['id_distribucion_recurso'])->where('id_documento', '=', $pago['id_documento'])->first();
                         if($partida_remesa->pagable) {
                             $fecha = DateTime::createFromFormat('d/m/Y', $pago['fecha_pago']);
-                            $data = array(
-                                //"id_cuenta" => $partida_remesa->id_cuenta_cargo,
-                                "id_empresa" => $partida_remesa->documento->IDDestinatario,
-                                "id_moneda" => $partida_remesa->documento->IDMoneda,
-                                "fecha" => $fecha->format('Y-m-d'),
-                                "cumplimiento" => $fecha->format('Y-m-d'),
-                                "vencimiento" => $fecha->format('Y-m-d'),
-                                "monto" => -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute()),
-                                //"saldo" => -1 * abs($partida_remesa->documento->MontoTotalSolicitado),
-                                "referencia" => $pago['referencia'],
-                                //"destino" => $partida_remesa->documento->Destinatario,
-                                //"observaciones" => $partida_remesa->documento->Observaciones
-                            );
                             if ($partida_remesa->documento->transaccion) {
                                 $transaccion = $partida_remesa->documento->transaccion;
                                 $pago_remesa = null;
+                                $partida_remesa->monto_pagado = $partida_remesa->documento->getImporteTotalProcesadoAttribute();
+                                $partida_remesa->fecha_pago = $fecha->format('Y-m-d');
+                                $partida_remesa->cuenta = $partida_remesa->cuentaCargo;
+                                $partida_remesa->referencia_pago = $pago['referencia'];
+                                $partida_remesa->tipo_cambio = $partida_remesa->documento->moneda->tipo_cambio;
                                 switch ($partida_remesa->documento->transaccion->tipo_transaccion) {
                                     case 65:
-                                        // se registra un pago
-                                        $data["id_antecedente"] = $transaccion->id_antecedente;
-                                        $data["id_referente"] = $transaccion->id_transaccion;
-                                        unset($data["referencia"]);
-                                        $o_pago = OrdenPago::create($data);
-                                        $o_pago = OrdenPago::query()->where('id_transaccion', '=', $o_pago->id_transaccion)->first();
-                                        unset($data["id_antecedente"]);
-                                        unset($data["id_referente"]);
-                                        $data["numero_folio"] = $o_pago->numero_folio;
-                                        $data["referencia"] = $pago['referencia'];
-                                        $data["estado"] = 2;
-                                        $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
-                                        $data["destino"] = $partida_remesa->documento->Destinatario;
-                                        $data["observaciones"] = $partida_remesa->documento->Observaciones;
-                                        $pago_remesa = Pago::query()->create($data);
-
+                                        $pago_remesa = Factura::find($transaccion->id_transaccion)->generaOrdenPago($partida_remesa);
                                         break;
                                     case 72:
-                                        if ($partida_remesa->documento->IDTipoDocumento == 12) {
-                                            unset($data["id_empresa"]);
-                                            $data["id_antecedente"] = $transaccion->id_transaccion;
-                                            $data["id_referente"] = $transaccion->id_referente;
-                                            $data["estado"] = 1;
-                                            $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
-                                            $data["saldo"] = -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute());
-                                            $data["destino"] = $partida_remesa->documento->Destinatario;
-                                            $data["observaciones"] = $partida_remesa->documento->Observaciones;
-                                            $pago_remesa = PagoVario::query()->create($data);
-
-
-                                        } else {
-                                            $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
-                                            $data["saldo"] = -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute());
-                                            $data["destino"] = $partida_remesa->documento->Destinatario;
-                                            $data["observaciones"] = $partida_remesa->documento->Observaciones;
-
-                                            $pago_remesa = PagoACuenta::query()->create($data);
+                                        $pago_remesa = Solicitud::find($transaccion->id_transaccion)->generaPago($partida_remesa);
+                                        if(!$pago_remesa){
+                                            abort(400, "Hubo un error al generar el pago con referencia: ". $pago['referencia'] . " tipo de solicitud no soportado");
                                         }
-                                        break;
-                                    default:
-                                        $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
-                                        $data["saldo"] = -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute());
-                                        $data["destino"] = $partida_remesa->documento->Destinatario;
-                                        $data["observaciones"] = $partida_remesa->documento->Observaciones;
-
-                                        $pago_remesa = PagoACuenta::query()->create($data);
                                         break;
                                 }
                                 $saldo_transaccion = abs($transaccion->saldo - $partida_remesa->documento->getImporteTotalProcesadoAttribute());
@@ -224,18 +181,33 @@ class GestionPagoService
                                 $transaccion->saldo = $saldo_transaccion;
                                 $transaccion->save();
 
-                            } else {
-                                $data["id_cuenta"] = $partida_remesa->id_cuenta_cargo;
-                                $data["saldo"] = -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute());
-                                $data["destino"] = $partida_remesa->documento->Destinatario;
-                                $data["observaciones"] = $partida_remesa->documento->Observaciones;
-
-                                $pago_remesa = PagoACuenta::query()->create($data);
+                            }
+                            else {
+                                $data = array(
+                                    "id_cuenta" => $partida_remesa->id_cuenta_cargo,
+                                    "id_empresa" => $partida_remesa->documento->IDDestinatario,
+                                    "id_moneda" => $partida_remesa->documento->IDMoneda,
+                                    "fecha" => $fecha->format('Y-m-d'),
+                                    "cumplimiento" => $fecha->format('Y-m-d'),
+                                    "vencimiento" => $fecha->format('Y-m-d'),
+                                    "monto" => -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute()),
+                                    "saldo" => -1 * abs($partida_remesa->documento->getImporteTotalProcesadoAttribute()),
+                                    "referencia" => $pago['referencia'],
+                                    "destino" => $partida_remesa->documento->Destinatario,
+                                    "observaciones" => $partida_remesa->documento->Observaciones,
+                                    "tipo_cambio" => $partida_remesa->documento->moneda->tipo_cambio
+                                );
+                                $pago_remesa = PagoACuentaPorAplicar::query()->create($data);
                             }
                             $distribucion = DistribucionRecursoRemesa::query()->find($pago['id_distribucion_recurso']);
                             $distribucion->estado = 3;
                             $distribucion->save();
 
+                            unset($partida_remesa->monto_pagado);
+                            unset($partida_remesa->fecha_pago);
+                            unset($partida_remesa->cuenta);
+                            unset($partida_remesa->referencia_pago);
+                            unset($partida_remesa->tipo_cambio);
                             $partida_remesa->estado = 2;
                             $partida_remesa->id_transaccion_pago = $pago_remesa->id_transaccion;
                             $partida_remesa->folio_partida_bancaria = $pago['referencia'];
@@ -250,8 +222,8 @@ class GestionPagoService
                     } else {
                         $empresa = Empresa::query()->create(
                             ['tipo_empresa' => 64,
-                            'razon_social' => $pago['cuenta_abono']['numero'],
-                            'rfc' => '']
+                                'razon_social' => $pago['cuenta_abono']['numero'],
+                                'rfc' => '']
                         );
 
 //                        $cuenta = CuentaBancariaEmpresa::query()->create([
@@ -275,9 +247,11 @@ class GestionPagoService
                             "saldo" => -1 * abs($pago['monto']),
                             "referencia" => $pago['referencia'],
                             "destino" => $empresa->razon_social,
-                            "observaciones" => $pago['concepto']
+                            "observaciones" => $pago['concepto'],
+                            "tipo_cambio" => 1
                         );
-                        $pago_remesa = PagoACuenta::query()->create($data);
+
+                        $pago_remesa = PagoACuentaPorAplicar::query()->create($data);
                     }
                     $archivo_bitacora->partidas()->create([
                         'id_distribucion_recursos_rem_partida' => $partida_remesa?$partida_remesa->id:$partida_remesa,
@@ -296,7 +270,6 @@ class GestionPagoService
             $archivo_bitacora->save();
 
             $this->guardar_bitacora($pagos->file_interbancario);
-
             DB::connection('cadeco')->commit();
             return $pagos;
 

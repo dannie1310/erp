@@ -7,7 +7,7 @@
                 Bitácora
                 (SANTANDER)
             </button>
-            <button  @click="create_pago" title="Crear" class="btn btn-app btn-info pull-right"   v-if="$root.can('cargar_bitacora')">
+            <button  @click="create_pago" title="Crear" class="btn btn-app btn-info pull-right"   v-if="$root.can('registrar_pago')">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-money" v-else></i>
                 Registrar Pago
@@ -41,11 +41,12 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Beneficiario', field: 'id_empresa', thComp:require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Cuenta', field: 'id_cuenta',  thComp:require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Beneficiario', field: 'destino', thComp:require('../../../globals/th-Filter'), sortable: true},
+                    { title: 'Cuenta', field: 'numero_cuenta',  thComp:require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Concepto', field: 'observaciones',  thComp:require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Importe', field: 'monto', sortable: true},
+                    { title: 'Monto', field: 'monto', thClass: 'th_money', tdClass: 'td_money', sortable: true},
                     { title: 'Moneda', field: 'id_moneda',  thComp:require('../../../globals/th-Filter'), sortable: true },
+                    { title: 'Estado', field: 'estado',  thComp:require('../../../globals/th-Filter'), sortable: true },
                 ],
                 data: [],
                 total: 0,
@@ -101,17 +102,16 @@
                     pagos.forEach(function (pago, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: `#${pago.numero_folio}`,
+                            numero_folio: pago.numero_folio_format,
                             fecha: pago.fecha_format,
-                            id_empresa: pago.empresa.razon_social.toUpperCase(),
-                            id_cuenta: pago.cuenta.numero,
+                            destino: pago.destino,
+                            numero_cuenta: pago.cuenta.numero,
                             observaciones: pago.observaciones.toLocaleUpperCase(),
-                            monto: `$ ${parseFloat(pago.monto).formatMoney(2)}`,
+                            monto: pago.monto_format,
+                            estado: pago.estado_string,
                             id_moneda:pago.moneda.nombre,
                         })
-
                     });
-
                 },
                 deep: true
             },

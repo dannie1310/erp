@@ -32,16 +32,19 @@ class LayoutPagoPartida extends Model
     protected $fillable = [
         'id_layout_pagos',
         'id_transaccion',
+        'id_moneda_transaccion',
         'monto_transaccion',
-        'id_moneda',
+        'saldo_transaccion',
         'tipo_cambio',
-        'cuenta_cargo',
         'id_cuenta_cargo',
+        'id_moneda_cuenta_cargo',
+        'cuenta_cargo',
         'fecha_pago',
         'monto_pagado',
         'referencia_pago',
         'id_documento_remesa',
-        'id_transaccion_pago'
+        'id_transaccion_pago',
+        'monto_autorizado_remesa',
     ];
 
     public function layoutPago()
@@ -95,7 +98,7 @@ class LayoutPagoPartida extends Model
 
     public function moneda()
     {
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
+        return $this->belongsTo(Moneda::class, 'id_moneda_transaccion', 'id_moneda');
     }
 
     public function cuenta(){
@@ -112,9 +115,31 @@ class LayoutPagoPartida extends Model
             abort(403, 'El monto pagado no debe ser cero.');
         }
 
-        if($this->tipo_cambio < 1){
-            abort(403, 'El tipo de camio no puede ser cero.');
+        if($this->tipo_cambio == 0){
+            abort(403, 'El tipo de cambio no puede ser cero.');
         }
+    }
+
+    public function getTipoCambioFormatAttribute(){
+        if($this->tipo_cambio > 1){
+            return number_format($this->tipo_cambio,4);
+        }else{
+            return 1;
+        }
+
+    }
+
+    public function getMontoPagadoDocumentoAttribute(){
+        $monto_pagado = $this->monto_pagado * $this->tipo_cambio;
+        return $monto_pagado;
+    }
+
+    public function getMontoPagadoFormatAttribute(){
+        return "$ " . number_format($this->monto_pagado,2,".",",");
+    }
+
+    public function getMontoPagadoDocumentoFormatAttribute(){
+        return "$ " . number_format($this->monto_pagado_documento,2,".",",");
     }
 
     public function getFolioPagoFormatAttribute(){

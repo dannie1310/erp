@@ -31,7 +31,7 @@
                     { title: 'Tipo', field: 'id_tipo', thComp: require('../../globals/th-Filter'), sortable: true },
                     { title: 'Descripción', field: 'descripcion', thComp: require('../../globals/th-Filter'), sortable:true},
                     { title: 'Responsable', field:'nombre', thComp: require('../../globals/th-Filter'), sortable:true},
-                    { title: 'Saldo',field: 'saldo', tdClass: 'money', thClass: 'th_money', sortable: true},
+                    { title: 'Saldo',field: 'saldo', tdClass: 'td_money', thClass: 'th_money', sortable: true},
                     { title: 'Fecha',field:'fecha',sortable:true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
                 ],

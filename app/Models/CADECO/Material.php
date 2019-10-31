@@ -71,7 +71,7 @@ class Material extends Model
         }
     }
 
-    public function getDescripcionPadreAttribute()
+    public function getDescripcionFamiliaAttribute()
     {
         $nivel = substr($this->nivel, 0,4);
         $regreso = Material::query()->where('nivel','=',$nivel)->where('tipo_material','=',$this->tipo_material)->pluck('descripcion')->first();

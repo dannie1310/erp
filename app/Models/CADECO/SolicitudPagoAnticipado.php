@@ -119,7 +119,9 @@ class SolicitudPagoAnticipado extends Solicitud
                 "id_cuenta" =>  $data["id_cuenta_cargo"],
                 "id_costo" =>  $this->id_costo,
                 "id_empresa" =>  $this->id_empresa,
-                "id_moneda" =>  $data["id_moneda"],
+                "destino" =>  $this->destino,
+                "id_moneda" =>  $data["id_moneda_cuenta_cargo"],
+                "tipo_cambio"=>1/$data["tipo_cambio"],
                 "cumplimiento" => $data["fecha_pago"],
                 "vencimiento" => $data["fecha_pago"],
                 "monto" => -1 * abs($data["monto_pagado"]),
@@ -148,5 +150,29 @@ class SolicitudPagoAnticipado extends Solicitud
             DB::connection('cadeco')->rollBack();
             abort(400, 'Hubo un error durante la actualización del saldo de la cuenta por el pago de la solicitud de reposición de fondo.');
         }
+    }
+    public function generaSolicitudComplemento()
+    {
+        //TODO: MEJORAR FORMA DE OBTNER EL TIPO DE CAMBIO REQUERIDO
+        DB::connection('cadeco')->beginTransaction();
+        $datos_solicitud = array(
+            "id_antecedente" => $this->id_antecedente,
+            "fecha" => $this->fecha,
+            "id_costo" =>  $this->id_costo,
+            "id_empresa" =>  $this->id_empresa,
+            "id_moneda" =>  $this->id_moneda,
+            "cumplimiento" => $this->cumplimiento,
+            "vencimiento" => $this->vencimiento,
+            "monto" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
+            "saldo" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
+            "destino" => $this->destino,
+            "observaciones" => $this->observaciones,
+        );
+        $solicitud = SolicitudPagoAnticipado::create($datos_solicitud);
+        #$this->load("pago");
+        $this->monto = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
+        $this->saldo = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
+        $this->save();
+        DB::connection('cadeco')->commit();
     }
 }

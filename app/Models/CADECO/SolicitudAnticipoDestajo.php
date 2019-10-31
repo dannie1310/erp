@@ -36,7 +36,8 @@ class SolicitudAnticipoDestajo extends Solicitud
         'opciones',
         'fecha',
         'id_costo',
-        'id_usuario'
+        'id_usuario',
+        'tipo_cambio'
     ];
 
     protected static function boot()
@@ -75,14 +76,14 @@ class SolicitudAnticipoDestajo extends Solicitud
                 "estado" => 1,
                 "id_cuenta" =>  $data["id_cuenta_cargo"],
                 "id_empresa" =>  $this->id_empresa,
-                "id_moneda" =>  $data["id_moneda"],
+                "destino" =>  $this->destino,
+                "id_moneda" =>  $data["id_moneda_cuenta_cargo"],
+                "tipo_cambio"=>1/$data["tipo_cambio"],
                 "cumplimiento" => $data["fecha_pago"],
                 "vencimiento" => $data["fecha_pago"],
                 "monto" => -1 * abs($data["monto_pagado"]),
                 "saldo" => -1 * abs($data["monto_pagado"]),
-                "tipo_cambio" => $data["tipo_cambio"],
                 "referencia" => $data["referencia_pago"],
-                "destino" => $this->destino,
                 "observaciones" => $this->observaciones,
             );
             $pago = $this->pago()->create($datos_pago);
@@ -106,5 +107,29 @@ class SolicitudAnticipoDestajo extends Solicitud
             DB::connection('cadeco')->rollBack();
             abort(400, 'Hubo un error durante la actualización del saldo de la cuenta por el pago de la solicitud de anticipo / destajo.');
         }
+    }
+    public function generaSolicitudComplemento()
+    {
+        //TODO: MEJORAR FORMA DE OBTNER EL TIPO DE CAMBIO REQUERIDO
+        DB::connection('cadeco')->beginTransaction();
+        $datos_solicitud = array(
+            "id_referente" => $this->id_referente,
+            "fecha" => $this->fecha,
+            "id_empresa" =>  $this->id_empresa,
+            "destino" =>  $this->destino,
+            "id_moneda" =>  $this->id_moneda,
+            "cumplimiento" => $this->cumplimiento,
+            "vencimiento" => $this->vencimiento,
+            "monto" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
+            "saldo" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
+            "destino" => $this->destino,
+            "observaciones" => $this->observaciones,
+        );
+        $solicitud = SolicitudAnticipoDestajo::create($datos_solicitud);
+        #$this->load("pago");
+        $this->monto = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
+        $this->saldo = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
+        $this->save();
+        DB::connection('cadeco')->commit();
     }
 }
