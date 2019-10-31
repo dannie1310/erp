@@ -118,7 +118,7 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'familia-serv'}" class="nav-link" :class="{active: this.$route.name == 'familia-serv'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Familia de Servicios</p>
+                            <p>Familias de Servicio</p>
                         </router-link>
                     </li>
                 </ul>
@@ -126,7 +126,7 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'servicio'}" class="nav-link" :class="{active: this.$route.name == 'servicio'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Insumo Servicios</p>
+                            <p>Servicios</p>
                         </router-link>
                     </li>
                 </ul>
