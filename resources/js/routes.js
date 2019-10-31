@@ -578,6 +578,23 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path: 'asignacion-compra',
+                component: require('./components/compras/asignacion-compra/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'asignacion-compra',
+                        component: require('./components/compras/asignacion-compra/Index'),
+                        meta: {
+                            title: 'ASIGNACIONES DE COMPRA',
+                            breadcrumb: {parent: 'compras', name: 'ASIGNACIONES DE COMPRA'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_compra'
+                        }
+                    }
+                ]
+            },
         ]
     },
     {

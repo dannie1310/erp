@@ -24,6 +24,23 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item" v-if="gestion_asignacion">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>
+                        Gestión de Asignaciones
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can(['consultar_solicitud_compra'])">
+                        <router-link :to="{name: 'asignacion-compra'}" class="nav-link" :class="{active: this.$route.name == 'asignacion-compra'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Asignaciones</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
             <li class="nav-item" v-if="gestion_orden_compra">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-server"></i>
@@ -105,6 +122,11 @@
                 ])
             },
             gestion_solicitud(){
+                return this.$root.can([
+                    'consultar_solicitud_compra'
+                ])
+            },
+            gestion_asignacion(){
                 return this.$root.can([
                     'consultar_solicitud_compra'
                 ])
