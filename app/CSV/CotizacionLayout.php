@@ -109,6 +109,40 @@ class CotizacionLayout implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return [$this->headerDinamicos['Precio Unitario']=>'B4'];
+        return array([
+            '   ',
+            '   ',
+            '   ',
+            '   ',
+            '   ',
+            'Conteo1',
+            '   ',
+            '   ',
+            '   ',
+            'Conteo2',
+            '   ',
+            '   ',
+            '   ',
+            'Conteo3',
+            '   ',
+            '   ',
+            '   ',
+        ], ['No. Marbete',
+            'Almacen',
+            'Id Material',
+            'Material',
+            'Saldo',
+            'usados',
+            'nuevos',
+            'inservibles',
+            'total',
+            'usados',
+            'nuevos',
+            'inservibles',
+            'total',
+            'usados',
+            'nuevos',
+            'inservibles',
+            'total',]);
     }
 }
