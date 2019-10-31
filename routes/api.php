@@ -651,6 +651,7 @@ $api->version('v1', function ($api) {
             $api->get('por-usuario-auditoria/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@porUsuarioAuditoria')->where(['id' => '[0-9]+']);
             $api->get('por-cantidad', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@porCantidad');
             $api->get('descarga_listado_permisos_obra/{id}','App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@descargaListadoPermisosObra');
+            $api->get('descarga_listado_permisos_usuario/{id}','App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@descargaListadoPermisosUsuario');
         });
 
         $api->group(['prefix' => 'rol'], function ($api) {

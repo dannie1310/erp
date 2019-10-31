@@ -7,7 +7,7 @@
                 Bitácora
                 (SANTANDER)
             </button>
-            <button  @click="create_pago" title="Crear" class="btn btn-app btn-info pull-right"   v-if="false">
+            <button  @click="create_pago" title="Crear" class="btn btn-app btn-info pull-right"   v-if="$root.can('registrar_pago')">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-money" v-else></i>
                 Registrar Pago
