@@ -130,7 +130,7 @@ class PermisoService
                  ORDER BY proyectos.base_datos ASC', [1]);
 
         $permisos = collect($query);
-        if (request('excel')){
+        if (request('query2')){
             return $permisos;
         }
         $perPage     = request('limit');
