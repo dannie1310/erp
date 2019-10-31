@@ -64,20 +64,6 @@ class CargaLayoutPagoController extends Controller
         return response()->json($respuesta, 200);
     }
 
-    /*
-     * private function respondWithCollection($collection)
-    {
-        $resource = new Collection($collection, $this->transformer);
-
-        $this->parseIncludes();
-        $this->fractal->setSerializer(new ArraySerializer);
-        $response = $this->fractal->createData($resource)->toArray();
-
-        return response()->json($response, 200);
-    }
-     *
-     * */
-
     public function store(StoreCargaLayoutPagoRequest $request)
     {
         return $this->traitStore($request);
