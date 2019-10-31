@@ -6,8 +6,8 @@
                 <i class="fa fa-plus" v-else></i>
                 Registrar Carga Masiva
             </button>
-            <button  @click="descarga_layout" title="Crear" class="btn btn-app btn-info pull-right"  v-if="$root.can('descargar_layout_pagos')" >
-                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <button  @click="descarga_layout" title="Crear" class="btn btn-app btn-info pull-right"  v-if="$root.can('descargar_layout_pagos')" :disabled="cargando_csv" >
+                <i class="fa fa-spin fa-spinner" v-if="cargando_csv"></i>
                 <i class="fa fa-download" v-else></i>
                 Descargar Layout
             </button>
@@ -52,6 +52,7 @@
                 query: {include: ['usuario','estado'], sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false,
+                cargando_csv: false
             }
         },
         mounted() {
@@ -78,10 +79,14 @@
                     })
             },
             descarga_layout(){
+                this.cargando_csv = true;
                 return this.$store.dispatch('finanzas/carga-masiva-pago/descarga_layout', {})
                     .then(() => {
                         this.$emit('success')
 
+                    })
+                    .finally(() => {
+                        this.cargando_csv = false;
                     })
             }
         },

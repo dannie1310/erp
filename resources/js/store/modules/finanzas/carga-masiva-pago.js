@@ -174,6 +174,7 @@ export default {
                         link.setAttribute('download', 'LayoutPendienesPagos_' + this._vm.$session.get('db') + '.csv');
                         document.body.appendChild(link);
                         link.click();
+                        resolve(data);
                     })
                     .catch(error => {
                         reject(error);
