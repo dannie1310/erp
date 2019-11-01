@@ -24,6 +24,7 @@ import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
 import familia from './modules/cadeco/familia';
 import fondo from './modules/cadeco/fondo';
+import Inventario from './modules/cadeco/inventario';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
@@ -35,8 +36,11 @@ import unidad from './modules/cadeco/unidad'
 import asignacionCompra from './modules/compras/asignacion-compra';
 import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
+import itemContratista from './modules/compras/item-contratista';
 
 //CONFIGURACION
+import areaCompradora from './modules/configuracion/area-compradora';
+import areaSolicitante from './modules/configuracion/area-solicitante';
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
 
 //CONTABILIDAD
@@ -123,6 +127,7 @@ export default new Vuex.Store({
         'cadeco/empresa': empresa,
         'cadeco/familia': familia,
         'cadeco/fondo': fondo,
+        'cadeco/inventario': Inventario,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
@@ -132,7 +137,10 @@ export default new Vuex.Store({
         'compras/asignacion-compra' : asignacionCompra,
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
+        'compras/item-contratista' : itemContratista,
 
+        'configuracion/area-compradora' : areaCompradora,
+        'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
 
         'contratos/estimacion' : estimacion,

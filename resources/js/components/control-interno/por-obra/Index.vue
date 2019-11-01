@@ -19,11 +19,11 @@
                             </select>
                         </div>
 
-                           <button @click="descargaListado" v-if="id_configuracion_obra" class="btn btn-app btn-info pull-right" :disabled="cargando_excel">
-            <i class="fa fa-spin fa-spinner" v-if="cargando_excel"></i>
-            <i class="fa fa-download" v-else></i>
-            Descargar excel
-        </button>
+                    <button @click="descargaListado" v-if="id_configuracion_obra" class="btn btn-app btn-info pull-right" :disabled="cargando_excel">
+                        <i class="fa fa-spin fa-spinner" v-if="cargando_excel"></i>
+                        <i class="fa fa-download" v-else></i>
+                        Descargar excel
+                    </button>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,6 @@
                 query: {},
                 query1: {},
                 query2: {},
-                cargando: false,
                 cargando_excel: false,
             }
         },

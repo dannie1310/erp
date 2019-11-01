@@ -5,9 +5,10 @@ namespace App\Services\CADECO\Almacenes;
 
 
 use App\Models\CADECO\Almacen;
+use App\Models\CADECO\Inventario;
 use App\Models\CADECO\SalidaAlmacen;
 use App\PDF\SalidaAlmacenFormato;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\SalidaAlmacen\Repository;
 
 class SalidaAlmacenService
 {
@@ -55,6 +56,10 @@ class SalidaAlmacenService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar($data['data'][0]);
+    }
+    public function store($data)
+    {
+        return $this->repository->create($data);
     }
 
     public function pdfSalidaAlmacen($id)

@@ -12,6 +12,18 @@ class SolicitudReposicionFF extends Solicitud
 {
     public const TIPO_ANTECEDENTE = null;
 
+    protected $fillable = [
+        "id_referente" ,
+        "fecha" ,
+        "id_moneda",
+        "cumplimiento",
+        "vencimiento",
+        "monto",
+        "saldo",
+        "destino",
+        "observaciones",
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -40,20 +52,21 @@ class SolicitudReposicionFF extends Solicitud
         }else{
             DB::connection('cadeco')->beginTransaction();
             $saldo_esperado_cuenta = $data->cuenta->saldo_real - ($data["monto_pagado"]);
-            $saldo_esperado_fondo = $this->fondo->saldo + $data["monto_pagado"];
+            $saldo_esperado_fondo = $this->fondo->saldo + ($data["monto_pagado"] * ($data["tipo_cambio"]));
             $datos_pago = array(
                 "id_antecedente" => $this->id_transaccion,
                 "id_referente" => $this->id_referente,
                 "fecha" => $data["fecha_pago"],
                 "estado" => 1,
                 "id_cuenta" =>  $data["id_cuenta_cargo"],
-                "id_moneda" =>  $data["id_moneda"],
+                "destino" =>  $this->destino,
+                "id_moneda" =>  $data["id_moneda_cuenta_cargo"],
+                "tipo_cambio"=>1/$data["tipo_cambio"],
                 "cumplimiento" => $data["fecha_pago"],
                 "vencimiento" => $data["fecha_pago"],
                 "monto" => -1 * abs($data["monto_pagado"]),
                 "saldo" => -1 * abs($data["monto_pagado"]),
                 "referencia" => $data["referencia_pago"],
-                "destino" => $this->destino,
                 "observaciones" => $this->observaciones,
             );
             $pago = $this->pago()->create($datos_pago);
@@ -82,5 +95,28 @@ class SolicitudReposicionFF extends Solicitud
             DB::connection('cadeco')->rollBack();
             abort(400, 'Hubo un error durante la actualización del saldo del fondo');
         }
+    }
+
+    public function generaSolicitudComplemento()
+    {
+        //TODO: MEJORAR FORMA DE OBTNER EL TIPO DE CAMBIO REQUERIDO
+        DB::connection('cadeco')->beginTransaction();
+        $datos_solicitud = array(
+            "id_referente" => $this->id_referente,
+            "fecha" => $this->fecha,
+            "id_moneda" =>  $this->id_moneda,
+            "cumplimiento" => $this->cumplimiento,
+            "vencimiento" => $this->vencimiento,
+            "monto" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
+            "saldo" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
+            "destino" => $this->destino,
+            "observaciones" => $this->observaciones,
+        );
+        $solicitud = SolicitudReposicionFF::create($datos_solicitud);
+        #$this->load("pago");
+        $this->monto = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
+        $this->saldo = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
+        $this->save();
+        DB::connection('cadeco')->commit();
     }
 }
