@@ -420,6 +420,7 @@ $api->version('v1', function ($api) {
         // SOLICITUD DE COMPRA
         $api->group(['prefix' => 'solicitud-compra'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@paginate');
+            $api->post('/','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@store');
         });
     });
 
@@ -669,6 +670,23 @@ $api->version('v1', function ($api) {
             $api->get('contexto', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ConfiguracionObraController@contexto');
         });
 
+
+        $api->group(['prefix'=>'compras'], function ($api){
+            $api->group(['prefix'=>'ctg_tipo'], function ($api){
+                    $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Compras\CtgTipoController@index');
+            });
+
+
+            $api->group(['prefix'=>'ctg_area_solicitante'], function($api){
+                    $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Compras\CtgAreaSolicitanteController@index');
+            });
+
+            $api->group(['prefix'=>'ctg_area_compradora'], function($api){
+                $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Compras\CtgAreaCompradoraController@index');
+            });
+
+        });
+
         $api->group(['prefix' => 'permiso'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@index');
             $api->get('por-usuario/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PermisoController@porUsuario')->where(['id' => '[0-9]+']);
@@ -715,6 +733,8 @@ $api->version('v1', function ($api) {
         $api->group(['prefix'=>'ctg_plaza'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgPlazaController@index');
         });
+
+
     });
 
     /** IGH */
@@ -725,8 +745,24 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\IGH\UsuarioController@show')->where(['id' => '[0-9]+']);
         });
 
+
         $api->group(['prefix' => 'menu'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\IGH\MenuController@index');
         });
+    });
+
+    /*SCI*/
+
+    $api->group(['middleware'=>'api', 'prefix'=> 'SCI'], function ($api){
+
+        $api->group(['prefix' => 'marca'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SCI\MarcaController@index');
+        });
+
+        $api->group(['prefix' => 'modelo'], function($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SCI\ModeloController@index');
+        });
+
+
     });
 });
