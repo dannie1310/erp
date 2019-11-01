@@ -174,12 +174,6 @@ class GestionPagoService
                                         }
                                         break;
                                 }
-                                $saldo_transaccion = abs($transaccion->saldo - $partida_remesa->documento->getImporteTotalProcesadoAttribute());
-
-                                $transaccion->estado = $saldo_transaccion > 0.99?1:2;
-                                $transaccion->saldo = $saldo_transaccion;
-                                $transaccion->save();
-
                             }
                             else {
                                 $data = array(
@@ -267,7 +261,7 @@ class GestionPagoService
 
             $archivo_bitacora->estado = 1;
             $archivo_bitacora->save();
-
+dd('stop pandita');
             $this->guardar_bitacora($pagos->file_interbancario);
             DB::connection('cadeco')->commit();
             return $pagos;
