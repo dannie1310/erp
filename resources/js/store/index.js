@@ -38,7 +38,8 @@ import ordenCompra from './modules/compras/orden-compra';
 import itemContratista from './modules/compras/item-contratista';
 
 //CONFIGURACION
-import areaCompradora from './modules/configuracion/area-compradora'
+import areaCompradora from './modules/configuracion/area-compradora';
+import areaSolicitante from './modules/configuracion/area-solicitante';
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
 
 //CONTABILIDAD
@@ -137,6 +138,7 @@ export default new Vuex.Store({
         'compras/item-contratista' : itemContratista,
 
         'configuracion/area-compradora' : areaCompradora,
+        'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
 
         'contratos/estimacion' : estimacion,

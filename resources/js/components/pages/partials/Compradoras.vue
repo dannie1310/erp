@@ -148,7 +148,6 @@
                 return this.$store.dispatch('configuracion/area-compradora/index')
                     .then(data => {
                         this.areas_disponibles = data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
-                        console.log(this.areas_disponibles[0]['descripcion']);
                     });
             },
             getAreasUsuario(user_id) {

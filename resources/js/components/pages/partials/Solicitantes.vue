@@ -145,7 +145,7 @@
 
             getAreaSub() {
                 this.areas_disponibles = [];
-                return this.$store.dispatch('configuracion/area-subcontratante/index')
+                return this.$store.dispatch('configuracion/area-solicitante/index')
                     .then(data => {
                         this.areas_disponibles = data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
                     });
@@ -154,13 +154,13 @@
             getAreasUsuario(user_id) {
                 this.areas_originales = []
                 this.areas_disponibles = this.areas_disponibles.concat(this.areas_asignados);
-                return this.$store.dispatch('configuracion/area-subcontratante/getAreasUsuario', user_id)
+                return this.$store.dispatch('configuracion/area-solicitante/index', { params:{scope: 'usuario:' + user_id}})
                     .then(data => {
-                        data.data.forEach(perm=> {
+                        data.forEach(perm=> {
                             this.areas_originales.push(perm.id);
                         })
 
-                        this.areas_asignados = data.data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
+                        this.areas_asignados = data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
                         this.areas_disponibles = this.areas_disponibles.diff(this.areas_asignados);
                     });
             },
@@ -193,7 +193,7 @@
 
             asignar() {
                 this.guardando = true;
-                return this.$store.dispatch('configuracion/area-subcontratante/asignacionAreasSubcontratantes', {
+                return this.$store.dispatch('configuracion/area-solicitante/asignar', {
                     user_id: this.form.user_id,
                     area_id: this.areas_asignados.map(area => (
                         area.id

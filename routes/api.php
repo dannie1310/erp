@@ -160,6 +160,12 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@show')->where(['id' => '[0-9]+']);
         });
+        $api->group(['prefix' => 'area-solicitante'], function ($api) {
+            $api->post('asignar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSolicitanteController@asignar');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSolicitanteController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSolicitanteController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSolicitanteController@show')->where(['id' => '[0-9]+']);
+        });
     });
 
     /**
