@@ -12,11 +12,22 @@ use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Contabilidad\HistPoliza;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class SalidaAlmacen extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
+
+    protected $fillable = [
+        'id_concepto',
+        'id_almacen',
+        'id_empresa',
+        'opciones',
+        'fecha',
+        'observaciones',
+        'referencia'
+    ];
 
     protected static function boot()
     {
@@ -327,6 +338,18 @@ class SalidaAlmacen extends Transaccion
 
     }
 
+    private function validarRegistro($data){
+        foreach ($data['partidas'] as $p){
+            if(Inventario::query()->where('id_almacen','=',$data['id_almacen'])->where('id_material','',$p[0]['id'])->first()){
+                abort(400, "No existe lote");
+            }
+            if($p[3]<$p[1]){
+                abort(400, "La cantida es mayor a la existencia");
+            }
+        }
+
+    }
+
     private function revisar_respaldos()
     {
         $partidas = $this->partidas()->get()->toArray();
@@ -355,6 +378,24 @@ class SalidaAlmacen extends Transaccion
         $salida = SalidaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
         if ($salida == null) {
             abort(400, 'Error en el proceso de eliminación de salida de almacén.');
+        }
+    }
+
+    public function registrar($data){
+        try{
+            $data['fecha']= date_format(new DateTime($data['fecha']), 'Y-m-d');
+            DB::connection('cadeco')->beginTransaction();
+            $this->validarRegistro($data);
+            $salidaTransaccion = $this->create($data);
+            $partida = new SalidaAlmacenPartida();
+            $partida->registrar($data['partidas'], $salidaTransaccion->toArray());
+
+            DB::connection('cadeco')->commit();
+            return $salidaTransaccion;
+        }catch (\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
         }
     }
 }

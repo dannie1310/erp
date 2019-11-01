@@ -69,7 +69,7 @@
                                                         <td v-if="doc.material">{{doc.material.numero_parte}}</td>
                                                         <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                         <td>{{doc.unidad}}</td>
-                                                        <td>{{doc.cantidad_format}}</td>
+                                                        <td>{{doc.cantidad_decimal}}</td>
                                                         <td v-if="doc.concepto" :title="`${doc.concepto.path}`"><u>{{doc.concepto.descripcion}}</u></td>
                                                         <td v-else-if="doc.almacen">{{doc.almacen.descripcion}}</td>
                                                         <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
@@ -131,7 +131,7 @@
                 this.$store.commit('almacenes/salida-almacen/SET_SALIDA', null);
                 return this.$store.dispatch('almacenes/salida-almacen/find', {
                     id: this.id,
-                    params: {include: ['almacen','partidas.movimiento.inventario','partidas.inventario','partidas.almacen','partidas.material','partidas.concepto']}
+                    params: {include: ['almacen','partidas.movimiento.inventario','partidas.inventario','partidas.almacen','partidas.material','partidas.concepto','contratista.empresa']}
                 }).then(data => {
                     this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
                     $(this.$refs.modal).modal('show');

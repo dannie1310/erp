@@ -241,6 +241,17 @@ export const routes = [
                             permission: 'consultar_salida_almacen'
 
                         }
+                    },
+                    {
+                        path:'create',
+                        name:'salida-create',
+                        component:require('./components/almacenes/salida-almacen/Create'),
+                        meta:{
+                            title:'Registrar Salida / Transferencia Almacén',
+                            breadcrumb: {parent: 'salida-almacen', name: 'SALIDA - TRANSFERENCIA ALMACEN'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_salida_almacen'
+                        }
                     }
                 ]
             },
@@ -1213,7 +1224,7 @@ export const routes = [
                                 name: 'PAGOS'
                             },
                             middleware: [auth, context, permission],
-                            permission: 'cargar_distribucion_recursos_remesa'
+                            permission: 'consultar_pagos'
                         }
                     },
                     {

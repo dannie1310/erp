@@ -13,13 +13,13 @@
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
-                                                        <th class="bg-gray-light">#</th>
+                                                        <th class="bg-gray-light th_index">#</th>
                                                         <th class="bg-gray-light">No de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
-                                                        <th class="bg-gray-light">Unidad</th>
-                                                        <th class="bg-gray-light">Cantidad a Restar</th>
-                                                        <th class="bg-gray-light">
-                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar">
+                                                        <th class="bg-gray-light th_unidad">Unidad</th>
+                                                        <th class="bg-gray-light th_money_input">Cantidad a Restar</th>
+                                                        <th class="bg-gray-light th_index">
+                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar" :disabled="cargando">
                                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                                 <i class="fa fa-plus" v-else></i>
                                                             </button>
@@ -83,7 +83,7 @@
                                                                  v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
                                                             </div>
                                                         </td>
-                                                        <td>
+                                                        <td style="text-align:center">
                                                             <button class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                         </td>
                                                     </tr>

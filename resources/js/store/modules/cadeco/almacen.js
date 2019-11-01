@@ -3,12 +3,16 @@ const URI = '/api/almacen/';
 export default {
     namespaced: true,
     state: {
-        almacenes: []
+        almacenes: [],
+        currentAlmacen: '',
     },
 
     mutations: {
         SET_ALMACENES(state, data) {
             state.almacenes = data;
+        },
+        SET_ALMACEN(state, data) {
+            state.currentAlmacen = data;
         },
         SET_META(state, data) {
             state.meta = data;
@@ -29,12 +33,41 @@ export default {
                     });
             });
         },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        // materiales(context, payload) {
+        //     return new Promise((resolve, reject) => {
+        //         axios
+        //             .get(URI + payload.id +'/materiales', { params: payload.params })
+        //             .then(r => r.data)
+        //             .then(data => {
+        //                 resolve(data);
+        //             })
+        //             .catch(error => {
+        //                 reject(error)
+        //             })
+        //     });
+        // },
 
     },
 
     getters: {
         almacenes(state) {
             return state.almacenes
+        },
+        currentAlmacen(state) {
+            return state.currentAlmacen
         },
         meta(state) {
             return state.meta;
