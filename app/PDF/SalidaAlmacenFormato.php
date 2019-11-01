@@ -203,7 +203,6 @@ if($this->PageNo()==1){
             foreach ($this->salida->partidas as $i => $p) {
                 $this->dim = $this->GetY();
 
-
                 $this->SetWidths([1, 2.5, 12, 2, 2]);
                 $this->SetRounds(['', '', '', '', '']);
                 $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
@@ -228,7 +227,7 @@ if($this->PageNo()==1){
 
                 $this->dim_2 = $this->GetY();
 
-                if($this->dim_2>24) {
+                if($this->dim_2>25.7) {
                     $this->AddPage();
                     $this->Ln(1.8);
                     $this->Ln(.7);
@@ -246,7 +245,7 @@ if($this->PageNo()==1){
                         $this->SetTextColors(['0,0,0', '0,0,0']);
 
                         $this->Row([
-                            "Destino:",
+                            "-i1Destino:",
                             utf8_decode($nivel),
                         ]);
 
@@ -316,7 +315,7 @@ if($this->PageNo()==1){
 
         $this->dim_2 = $this->GetY();
 
-        if($this->dim_2>24) {
+        if($this->dim_2>25.6) {
             $this->AddPage();
             $this->Ln(1.8);
             $this->Ln(.7);
@@ -377,22 +376,40 @@ if($this->PageNo()==1){
 
     public function Footer()
     {
-        $this->SetY(-3.5);
-        $this->SetX(14.7);
+        //Capturó
+        $this->SetY(-2.5);
+        $this->SetX(4);
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
 
 
-        $this->CellFitScale(4.89, .4, utf8_decode('Recibi'), 'TRLB', 0, 'C', 1);
+        $this->CellFitScale(4.89, .4, utf8_decode('Capturó'), 'TRLB', 0, 'C', 1);
         $this->Ln();
 
-        $this->SetX(14.7);
-        $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
+        $this->SetX(4);
+        $this->CellFitScale(4.89, 1, '', 'TRL', 0, 'C');
         $this->Ln();
-        $this->SetX(14.7);
-        $this->CellFitScale(4.89, .4, '', 'TRLB', 0, 'C', 1);
+        $this->SetX(4);
+        $this->CellFitScale(4.89, .4, "Nombre         Fecha         Firma", 'RLB', 0, 'C');
+
+        //Revisó
+        $this->SetY(-2.5);
+        $this->SetX(12);
+        $this->SetFont('Arial', '', 6);
+        $this->SetFillColor(180, 180, 180);
 
 
+        $this->CellFitScale(4.89, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+        $this->Ln();
+
+        $this->SetX(12);
+        $this->CellFitScale(4.89, 1, '', 'TRL', 0, 'C');
+        $this->Ln();
+        $this->SetX(12);
+        $this->CellFitScale(4.89, .4, "Nombre         Fecha         Firma", 'RLB', 0, 'C');
+
+
+        //PAGINA Y LEYENDA
         $this->SetY(-0.8);
         $this->SetX(14.7);
         $this->SetFont('Arial', 'B', 8);
@@ -407,9 +424,9 @@ if($this->PageNo()==1){
     function create()
     {
         $this->SetMargins(1, .5, 2);
+        $this->SetAutoPageBreak(true, 2);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 4);
         $this->partidas();
 
         try {

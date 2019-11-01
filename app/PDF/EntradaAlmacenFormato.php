@@ -281,22 +281,40 @@ class EntradaAlmacenFormato extends Rotation
 
     public function Footer()
     {
+        //Capturó
         $this->SetY(-3.5);
-        $this->SetX(14.7);
+        $this->SetX(4);
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
 
 
-        $this->CellFitScale(4.89, .4, utf8_decode('Recibi'), 'TRLB', 0, 'C', 1);
+        $this->CellFitScale(4.89, .4, utf8_decode('Capturó'), 'TRLB', 0, 'C', 1);
         $this->Ln();
 
-        $this->SetX(14.7);
-        $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
+        $this->SetX(4);
+        $this->CellFitScale(4.89, 1, '', 'TRL', 0, 'C');
         $this->Ln();
-        $this->SetX(14.7);
-        $this->CellFitScale(4.89, .4, '', 'TRLB', 0, 'C', 1);
+        $this->SetX(4);
+        $this->CellFitScale(4.89, .4, "Nombre         Fecha         Firma", 'RLB', 0, 'C');
+
+        //Revisó
+        $this->SetY(-3.5);
+        $this->SetX(12);
+        $this->SetFont('Arial', '', 6);
+        $this->SetFillColor(180, 180, 180);
 
 
+        $this->CellFitScale(4.89, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+        $this->Ln();
+
+        $this->SetX(12);
+        $this->CellFitScale(4.89, 1, '', 'TRL', 0, 'C');
+        $this->Ln();
+        $this->SetX(12);
+        $this->CellFitScale(4.89, .4, "Nombre         Fecha         Firma", 'RLB', 0, 'C');
+
+
+        //PAGINA Y LEYENDA
         $this->SetY(-0.8);
         $this->SetX(14.7);
         $this->SetFont('Arial', 'B', 8);
