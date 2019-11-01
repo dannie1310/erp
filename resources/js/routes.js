@@ -592,9 +592,31 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_solicitud_compra'
                         }
+                    },
+                    {
+                        path: 'create',
+                        name: 'asignacion-compra-create',
+                        component: require('./components/compras/asignacion-compra/Create'),
+                        meta: {
+                            title: 'REGISTRAR ASIGNACIÓN',
+                            breadcrumb: {parent: 'compras', name: 'REGISTRAR ASIGNACIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_compra'
+                        }
                     }
                 ]
             },
+            // {
+            //     path: 'create',
+            //     name: 'distribuir-recurso-remesa-create',
+            //     component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
+            //     meta: {
+            //         title: 'Registrar Dispersión de Recursos Autorizados',
+            //         breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
+            //         middleware: [auth, context, permission],
+            //         permission: 'registrar_distribucion_recursos_remesa'
+            //     }
+            // },
         ]
     },
     {
