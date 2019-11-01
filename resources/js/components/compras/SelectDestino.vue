@@ -1,6 +1,6 @@
 <template>
     <span>
-         <button type="button"  @click="init" class="btn btn-secondary" v-if="">
+         <button type="button"  @click="init" class="btn btn-sm btn-secondary" v-if="">
            <i class="fa fa-list"></i>
          </button>
 

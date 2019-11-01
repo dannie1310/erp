@@ -1,10 +1,10 @@
 <template>
     <span>
-        <div v-if="disabled" class="form-control">
+        <div v-if="disabled" class="form-control text-center">
             <i class="fa fa-spin fa-spinner"></i>
         </div>
 
-        <select class="form-control" v-if="!disabled" v-model="val">
+        <select class="form-control" v-if="!disabled" v-model="val" :class="{error: error}">
        <option disabled value>-- Área Solicitante--</option>
        <option v-for="area in areas" :value="area.id" >{{ area.descripcion}}</option>
         </select>
@@ -15,7 +15,7 @@
 <script>
     export default {
         name: "CtgAreaSolicitanteSelect",
-        components: {},
+        props:['value', 'error', 'scope'],
         data(){
             return{
                 val:null,
@@ -59,6 +59,8 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    .error {
+        border-color: #dc3545
+    }
 </style>

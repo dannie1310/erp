@@ -1,12 +1,12 @@
 <template>
     <span>
-        <div v-if="disabled" class="form-control">
+        <div v-if="disabled" class="form-control text-center">
                   <i class="fa fa-spin fa-spinner"></i>
         </div>
 
 
-    <select class="form-control" id="id_tipo" v-if="!disabled"  v-model="val" >
-        <option selected>-- Tipo --</option>
+    <select class="form-control" id="id_tipo" v-if="!disabled"  v-model="val" :class="{error: error}" >
+        <option disabled value>-- Tipo --</option>
        <option v-for="(tipo, index) in tipos" :value="tipo.id" >{{ tipo.descripcion}}</option>
     </select>
 
@@ -17,6 +17,7 @@
 <script>
     export default {
         name: "CtgTipoSelect",
+        props:['value', 'error', 'scope'],
         components: {},
         data(){
             return{
@@ -67,6 +68,8 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    .error {
+        border-color: #dc3545
+    }
 </style>

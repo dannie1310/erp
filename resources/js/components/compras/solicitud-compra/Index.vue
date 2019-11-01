@@ -96,7 +96,11 @@
                         fecha: new Date(solicitud.fecha).toDate(),
                         observaciones: solicitud.observaciones,
                         id_usuario: solicitud.usuario ? solicitud.usuario.nombre : '',
-                        buttons: $.extend({}, {})
+                        buttons: $.extend({}, {
+                            show: true,
+                            edit: true,
+                            id: solicitud.id
+                        })
                     }));
                 },
                 deep: true

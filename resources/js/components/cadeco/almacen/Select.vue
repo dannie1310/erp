@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div v-if="disabled" class="form-control">
+        <div v-if="disabled" class="form-control text-center">
                   <i class="fa fa-spin fa-spinner"></i>
         </div>
 

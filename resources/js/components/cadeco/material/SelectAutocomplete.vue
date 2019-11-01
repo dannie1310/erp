@@ -1,5 +1,4 @@
 <template>
-    <span>
           <treeselect
               :class="{error: error}"
               :async="true"
@@ -9,19 +8,18 @@
               searchPromptText="Escriba para buscar..."
               noResultsText="Sin Resultados"
               :placeholder="placeholder ? placeholder : '--Material--'" />
-
-    </span>
 </template>
 
 <script>
     export default {
-        props: ['scope', 'value', 'error', 'placeholder'],
         name: "SelectAutocomplete",
+        props: ['scope', 'value', 'error', 'placeholder'],
         data(){
             return {
                 val: null,
                 material: [],
-                options:{}
+                options:{},
+                disabled: true
             }
         },
         methods: {
@@ -34,12 +32,14 @@
                     }
                 })
                     .then(data => {
+                        this.disabled = false;
                         this.options = data.data.map(i => ({
                             id: i.id,
                             label: i.descripcion,
                             numero_parte: i.numero_parte,
                             unidad: i.unidad,
                         }))
+
                         callback(null, this.options)
                     })
             }

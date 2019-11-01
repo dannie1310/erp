@@ -1,10 +1,10 @@
 <template>
     <span>
-        <div v-if="disabled" class="form-control">
+        <div v-if="disabled" class="form-control text-center">
              <i class="fa fa-spin fa-spinner"></i>
          </div>
 
-        <select class="form-control" v-if="!disabled" v-model="val">
+        <select class="form-control" v-if="!disabled" v-model="val" :class="{error: error}">
             <option disabled value>--Modelo--</option>
             <option v-for="modelo in modelos" :value="modelo.id">{{modelo.modelo}}</option>
         </select>
@@ -14,6 +14,7 @@
 <script>
     export default {
         name: "ModeloSelect",
+        props:['value', 'error', 'scope'],
         data(){
             return {
                 val: null,

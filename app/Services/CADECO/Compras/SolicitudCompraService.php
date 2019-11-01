@@ -27,4 +27,9 @@ class SolicitudCompraService
     {
         return $this->repository->paginate($data);
     }
+
+    public function store($data)
+    {
+        dd("Aca", $data);
+    }
 }

@@ -9,12 +9,11 @@
 <!--        noResultsText="Sin Resultados"-->
 <!--        :placeholder="placeholder ? placeholder : '&#45;&#45;Marcas&#45;&#45;'" />-->
     <span>
-
-         <div v-if="disabled" class="form-control">
+         <div v-if="disabled" class="form-control text-center">
              <i class="fa fa-spin fa-spinner"></i>
          </div>
 
-        <select class="form-control" v-if="!disabled" v-model="val">
+        <select class="form-control" v-if="!disabled" v-model="val" :class="{error: error}">
             <option disabled value>--Marca--</option>
             <option v-for="marca in marcas" :value="marca.id">{{marca.marca}}</option>
         </select>
@@ -23,8 +22,8 @@
 
 <script>
     export default {
-        props: ['scope', 'value', 'error', 'placeholder'],
         name: "MarcaSelect",
+        props: ['scope', 'value', 'error', 'placeholder'],
         data(){
             return {
                 val:null,
@@ -32,18 +31,9 @@
             }
         },
         mounted() {
-            this.getMarcas()
+            this.getMarcas();
         },
-        watch: {
-            val() {
-                this.$emit('input', this.val)
-            },
-            value(value) {
-                if(!value) {
-                    this.val = null;
-                }
-            }
-        },
+
         methods : {
             loadOptions({actions, searchQuery, callback}){
                 this.$store.dispatch('sci/marca/index', {
@@ -97,7 +87,8 @@
 </script>
 
 <style>
-    .error > .vue-treeselect__control{
+    .error {
         border-color: #dc3545
     }
+
 </style>

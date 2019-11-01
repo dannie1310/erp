@@ -587,6 +587,18 @@ export const routes = [
                             // permission: 'registrar_solicitud_compra'
                         }
                     },
+                    {
+                        path: ':id',
+                        name: 'solicitud-compra-edit',
+                        component: require('./components/compras/solicitud-compra/Edit'),
+                        props: true,
+                        meta: {
+                            title: 'Editar Solicitud de Compra',
+                            breadcrumb: { parent: 'compras', name: 'EDITAR'},
+                            middleware: [auth, context],
+                            // permission: 'editar_solicitud_compra'
+                        }
+                    }
                 ]
             },
         ]
