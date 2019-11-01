@@ -82,6 +82,8 @@ use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
+use App\Models\SEGURIDAD_ERP\UsuarioAreaCompradora;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
@@ -164,6 +166,8 @@ use App\Observers\CADECO\Tesoreria\TraspasoCuentasObserver;
 use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
+use App\Observers\SEGURIDAD_ERP\TipoAreaCompradoraObserver;
+use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
@@ -264,6 +268,7 @@ class AppServiceProvider extends ServiceProvider
             AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
             AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
             Rol::observe(RolObserver::class);
+            TipoAreaCompradora::observe(TipoAreaCompradoraObserver::class);
 
             /**
              * SubcontratosEstimaciones
@@ -317,6 +322,7 @@ class AppServiceProvider extends ServiceProvider
         AuditoriaRolUsuario::observe(AuditoriaRolUsuarioObserver::class);
         ConfiguracionObra::observe(ConfiguracionObraObserver::class);
         \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
+        UsuarioAreaCompradora::observe(UsuarioAreaCompradoraObserver::class);
         UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
     }
 

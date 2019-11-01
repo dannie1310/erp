@@ -154,6 +154,12 @@ $api->version('v1', function ($api) {
             $api->get('por-usuario/{user_id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@porUsuario')->where(['user_id' => '[0-9]+']);
             $api->post('asignacion-areas-subcontratantes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@asignacionAreas');
         });
+        $api->group(['prefix' => 'area-compradora'], function ($api) {
+            $api->post('asignar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@asignar');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@show')->where(['id' => '[0-9]+']);
+        });
     });
 
     /**
