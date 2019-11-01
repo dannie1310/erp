@@ -112,41 +112,31 @@ class Transaccion extends Model
     {
         $date = date_create($this->FechaHoraRegistro);
         return date_format($date,"Y-m-d h:i:s a");
-
     }
-    public function getCumplimientoFormAttribute()
-    {
-        $date = date_create($this->cumplimiento);
-        return date_format($date,"Y-m-d");
 
-    }
-    public function getVencimientoFormAttribute()
-    {
-        $date = date_create($this->vencimiento);
-        return date_format($date,"Y-m-d");
-
-    }
     public function getVencimientoFormatAttribute()
     {
         $date = date_create($this->vencimiento);
         return date_format($date,"d/m/Y");
-
     }
     public function getCumplimientoFormatAttribute()
     {
         $date = date_create($this->cumplimiento);
         return date_format($date,"d/m/Y");
-
     }
-    public function  getObservacionesFormatAttribute(){
+
+    public function  getObservacionesFormatAttribute()
+    {
         return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
     }
 
-    public  function costo(){
+    public  function costo()
+    {
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 

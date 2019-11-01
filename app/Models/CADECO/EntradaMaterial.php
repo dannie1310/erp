@@ -18,11 +18,28 @@ use App\Models\CADECO\Contabilidad\HistPoliza;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use Illuminate\Support\Facades\DB;
+use DateTime;
 
 class EntradaMaterial extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 19;
 
+    protected $fillable = [
+        'id_antecedente',
+        'tipo_transaccion',
+        'id_empresa',
+        'id_sucursal',
+        'referencia',
+        'observaciones',
+        'id_usuario',
+        'id_moneda',
+        'estado',
+        'opciones',
+        'comentario',
+        'FechaHoraRegistro',
+        'id_obra',
+        'fecha'
+    ];
     protected static function boot()
     {
         parent::boot();
@@ -103,8 +120,8 @@ class EntradaMaterial extends Transaccion
                 array_push($mensaje_items,  "-ContraRecibo: # " . $contra_recibo->numero_folio . " Factura: # " . $factura->numero_folio ." \n" );
             }
 
-            if($inventario == null && $movimiento == null){
-                array_push($mensaje_items,  "-No existe un inventario ni movimiento \n");
+            if($item['id_almacen'] != null && $inventario == null && $movimiento == null){
+                array_push($mensaje_items,  "-No existe un inventario ni movimiento \n". $inventario . $movimiento. $item['id_item'] );
             }
 
             if($inventario != null && $inventario->cantidad != $inventario->saldo){
@@ -131,7 +148,6 @@ class EntradaMaterial extends Transaccion
                 }
             }
         }
-
         $mensaje_items = array_unique($mensaje_items);
 
         if($mensaje_items != [])
@@ -273,7 +289,7 @@ class EntradaMaterial extends Transaccion
 
             $inventario = InventarioEliminado::query()->where('id_item', $partida['id_item'])->first();
             $movimiento = MovimientoEliminado::query()->where('id_item', $partida['id_item'])->first();
-            if ($inventario == null && $movimiento == null)
+            if ($partida['id_almacen'] != null  && $inventario == null && $movimiento == null)
             {
                 DB::connection('cadeco')->rollBack();
                 abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
@@ -362,5 +378,138 @@ class EntradaMaterial extends Transaccion
             ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
             Item::destroy($item['id_item']);
         }
+    }
+
+    public function registrar($data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            //validaciones del antecedente
+            $ordencompra = OrdenCompra::query()->where('id_transaccion', '=', $data['id_antecedente'])
+                ->where('estado', '!=', 2)->first();
+
+            if($ordencompra == null)
+            {
+                abort(400, 'Está orden de compra ya está completa.');
+            }
+
+            $this->validarCantidades($data['partidas']);
+
+            $entrada = $this->create([
+                'id_antecedente' => $data['id_antecedente'],
+                'id_empresa' => $ordencompra->id_empresa,
+                'id_sucursal' => $ordencompra->id_sucursal,
+                'referencia' => $data['remision'],
+                'id_moneda' => $ordencompra->id_moneda,
+                'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
+                'observaciones' => $data['observaciones']
+            ]);
+
+            $oc_completa = $this->validarOrdenCompraCumplida($data['partidas']);
+
+            foreach ($data['partidas'] as $item){
+                if(isset($item['cantidad_ingresada']) == true) {
+                    if ($item['destino']['tipo_destino'] == 1) {
+                        $item_guardado = $entrada->partidas()->create([
+                            'item_antecedente' => $item['id'],
+                            'id_transaccion' => $entrada->id_transaccion,
+                            'id_antecedente' => $entrada->id_antecedente,
+                            'id_concepto' => $item['destino']['id_destino'],
+                            'id_material' => $item['material']['id'],
+                            'unidad' => $item['material']['unidad'],
+                            'numero' => $item['numero'],
+                            'cantidad_material' => $item['cantidad_material'],
+                            'cantidad' => $item['cantidad_ingresada'],
+                            'cantidad_original1' => $item['cantidad_ingresada'],
+                            'importe' => $item['precio_material'] * $item['cantidad_ingresada'],
+                            'saldo' => $item['precio_material'] * $item['cantidad_ingresada'],
+                            'precio_unitario' => $item['precio_material']
+                        ]);
+                    }
+                    if ($item['destino']['tipo_destino'] == 2) {
+                        $item_guardado = $entrada->partidas()->create([
+                            'item_antecedente' => $item['id'],
+                            'id_transaccion' => $entrada->id_transaccion,
+                            'id_antecedente' => $entrada->id_antecedente,
+                            'id_almacen' => $item['destino']['id_destino'],
+                            'id_material' => $item['material']['id'],
+                            'unidad' => $item['material']['unidad'],
+                            'numero' => $item['numero'],
+                            'cantidad_material' => $item['cantidad_material'],
+                            'cantidad' => $item['cantidad_ingresada'],
+                            'cantidad_original1' => $item['cantidad_ingresada'],
+                            'importe' => $item['precio_material'] * $item['cantidad_ingresada'],
+                            'saldo' => $item['precio_material'] * $item['cantidad_ingresada'],
+                            'precio_unitario' => $item['precio_material']
+                        ]);
+                    }
+
+                    if(isset($item['contratista_seleccionado']) ){
+                        ItemContratista::query()->create( ['id_item' => $item_guardado->id_item,
+                            'id_empresa' => $item['contratista_seleccionado']['empresa_contratista'],
+                            'con_cargo' => $item['contratista_seleccionado']['opcion']]);
+                    }
+
+                    $entrega = $ordencompra->partidas()->find($item['id']);
+                    $entrega = $entrega->entrega->update([
+                        'surtida' =>  $item['cantidad_ingresada']
+                    ]);
+                }
+            }
+
+            if($oc_completa == true){
+                $ordencompra->estado = 2;
+                $ordencompra->save();
+            }else{
+                $ordencompra->estado = 1;
+                $ordencompra->save();
+            }
+
+            DB::connection('cadeco')->commit();
+            return $entrada;
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function validarCantidades($partidas)
+    {
+        foreach ($partidas as $i){
+            if(isset($i['cantidad_ingresada']) == true) {
+                $cantidad_entradas = EntradaMaterialPartida::query()->where('item_antecedente', '=', $i['id'])->sum('cantidad');
+                $cantidad_item_orden = OrdenCompraPartida::query()->where('id_item', '=', $i['id'])->pluck('cantidad')->first();
+                if ($cantidad_item_orden < $cantidad_entradas)
+                {
+                    abort(400, 'El material: ' . $i['material']['descripcion'] . '  está entregado completamente.');
+                }
+
+                if(!($cantidad_item_orden > $cantidad_entradas && $cantidad_item_orden >= $cantidad_entradas+$i['cantidad_ingresada']))
+                {
+                    abort(400, 'El material: ' . $i['material']['descripcion'] . '  sobrepasa la cantidad ingresada.');
+                }
+            }
+        }
+    }
+
+    public function validarOrdenCompraCumplida($partidas)
+    {
+        $suma_totales = 0;
+        foreach ($partidas as $i) {
+            if(isset($i['cantidad_ingresada']) == true) {
+                $cantidad_entradas = EntradaMaterialPartida::query()->where('item_antecedente', '=', $i['item_antecedente'])->sum('cantidad');
+                $cantidad_item_orden = OrdenCompraPartida::query()->where('id_item', '=', $i['item_antecedente'])->pluck('cantidad')->first();
+
+                if ((float)$cantidad_item_orden == (float)$cantidad_entradas + (float)$i['cantidad_ingresada']) {
+                    $suma_totales = $suma_totales + 1;
+                }
+            }
+        }
+
+        if($suma_totales == count($partidas)){
+           return true;
+        }
+        return false;
     }
 }
