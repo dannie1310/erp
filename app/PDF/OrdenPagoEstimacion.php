@@ -45,21 +45,17 @@ class OrdenPagoEstimacion extends Rotation
         parent::__construct('P', 'cm', 'A4');
 
         $this->obra = Obra::find(Context::getIdObra());
-        $this->estimacion = Estimacion::where('id_transaccion', '=', $estimacion)->get();
+        $this->estimacion = Estimacion::find($estimacion);
 
-        $this->estimacion = $this->estimacion[0];
+        $this->objeto_contrato = Subcontratos::find($this->estimacion['id_antecedente']);
 
-        $this->objeto_contrato = Subcontratos::where('id_transaccion', '=', $this->estimacion->id_antecedente)->get();
-
-        if($this->objeto_contrato[0]['observacion'] == null)
+        if($this->objeto_contrato['observacion'] == null)
         {
-
-            $subcontrato_transaccion = Subcontrato::where('id_transaccion', '=', $this->estimacion->id_antecedente)->get();
-            $subcontrato_transaccion = $subcontrato_transaccion[0];
+         $subcontrato_transaccion = Subcontrato::find($this->estimacion['id_antecedente']);
 
             // Si existe el campo referencia, úsalo.
-            if ($subcontrato_transaccion->referencia)
-                $this->objeto_contrato = $subcontrato_transaccion->referencia;
+            if ($subcontrato_transaccion['referencia'])
+                $this->objeto_contrato = $subcontrato_transaccion['referencia'];
 
             // ¿No? obten la referencia del contrato proyectado
             else{
@@ -71,7 +67,7 @@ class OrdenPagoEstimacion extends Rotation
         }
 
         else
-            $this->objeto_contrato = $this->objeto_contrato[0]['observacion'];
+            $this->objeto_contrato = $this->objeto_contrato['observacion'];
     }
 
     function Header() {
