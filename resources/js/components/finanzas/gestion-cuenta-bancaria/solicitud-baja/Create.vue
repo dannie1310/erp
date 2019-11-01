@@ -131,7 +131,7 @@
                                         <div class="col-sm-10">
                                             <input type="file" class="form-control" id="archivo" @change="onFileChange"
                                                    row="3"
-                                                   v-validate="{required: true,  ext: ['pdf']}"
+                                                   v-validate="{required: true,  ext: ['pdf'], size: 3072}"
                                                    name="archivo"
                                                    data-vv-as="Archivo"
                                                    ref="archivo"

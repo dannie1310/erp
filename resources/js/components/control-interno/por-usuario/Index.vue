@@ -16,12 +16,20 @@
                         <div class="error-label" v-show="errors.has('user_id')">{{ errors.first('user_id') }}</div>
                     </div>
                 </div>
+                <div class="row">
+                     <div class="col-md-12">
+                         <button @click="descargaListado" v-if="form.user_id" class="btn btn-app btn-info pull-right" :disabled="cargando_excel">
+                            <i class="fa fa-spin fa-spinner" v-if="cargando_excel"></i>
+                            <i class="fa fa-download" v-else></i>
+                            Descargar excel
+                        </button>
+                     </div>
+                </div>
             </div>
         </div>
 
         <div class="card" id="Auditoria">
             <div class="row">
-
                     <div class="col-12">
                         <div class="card">
                             <!-- /.card-header -->
@@ -77,7 +85,10 @@
                 data: [],
                 total: 0,
                 query: {},
-                cargando: false
+                query2: {},
+                cargando: false,
+                cargando_excel: false,
+                usuario: '',
             }
         },
         mounted() {
@@ -86,8 +97,36 @@
             this.query.order = 'desc';
         },
         methods: {
+            descargaListado(){
+                this.cargando_excel = true;
+                this.query2.excel = true;
+                return this.$store.dispatch('seguridad/permiso/descargaListadoUsuario', {
+                    params: {query2:this.query2, usuario:this.usuario},
+                    id: this.form.user_id
+                })
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.cargando_excel = false;
+                    })
+            },
+
+            getUsuario() {
+                this.cargando = true;
+                return this.$store.dispatch('igh/usuario/find',{
+                    id: this.form.user_id,
+                    params: {}
+                })
+                    .then(data => {
+                        this.usuario = data;
+                        this.cargando = false;
+                    })
+
+            },
 
             paginate(user_id) {
+                this.cargando_excel = true;
+                this.cargando = true;
                 return this.$store.dispatch('seguridad/permiso/porUsuarioAuditoria', {
                     params: this.query,
                     id: user_id
@@ -103,6 +142,9 @@
                                 "total_pages": data.last_page,
                             }
                         });
+                    }).finally(() => {
+                        this.cargando = false;
+                        this.cargando_excel = false;
                     })
             }
         },
@@ -125,10 +167,12 @@
                 this.$validator.reset()
                 if (id) {
                     this.cargando = true;
-                    this.paginate(id)
-                        .finally(() => {
-                            this.cargando = false;
-                        });
+                    this.getUsuario().finally(() => {
+                        this.paginate(id)
+                            .finally(() => {
+                                this.cargando = false;
+                            });
+                    });
                 }else if(id === null){
                     this.cargando = true;
                     this.paginate(0)

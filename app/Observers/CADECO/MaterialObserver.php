@@ -1,0 +1,24 @@
+<?php
+
+
+namespace App\Observers\CADECO;
+
+
+use App\Models\CADECO\Material;
+
+class MaterialObserver
+{
+    /**
+     * @param Material $material
+     * @throws \Exception
+     */
+    public function creating(Material $material)
+    {
+        $material->validarExistente();
+        $material->nivel = $material->nivelConsecutivo();
+        $material->unidad_compra = $material->unidad;
+        $material->codigo_familia_ins = $material->numero_parte;
+        $material->FechaHoraRegistro = date('Y-m-d h:i:s');
+        $material->UsuarioRegistro = auth()->user()->usuario;
+    }
+}

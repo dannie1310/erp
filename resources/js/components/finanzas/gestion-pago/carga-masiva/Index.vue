@@ -6,8 +6,8 @@
                 <i class="fa fa-plus" v-else></i>
                 Registrar Carga Masiva
             </button>
-            <button  @click="descarga_layout" title="Crear" class="btn btn-app btn-info pull-right"  v-if="$root.can('descargar_layout_pagos')" >
-                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+            <button  @click="descarga_layout" title="Crear" class="btn btn-app btn-info pull-right"  v-if="$root.can('descargar_layout_pagos')" :disabled="cargando_csv" >
+                <i class="fa fa-spin fa-spinner" v-if="cargando_csv"></i>
                 <i class="fa fa-download" v-else></i>
                 Descargar Layout
             </button>
@@ -39,8 +39,9 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Fecha', field: 'fecha', sortable: true},
-                    { title: 'Importe', field: 'monto',tdClass: 'money', sortable: true},
+                    { title: 'Fecha', field: 'fecha', tdClass: 'fecha_hora', sortable: true},
+                    { title: 'Monto', field: 'monto', tdClass: 'td_money', sortable: true},
+                    { title: 'No. Doctos.', field: 'cantidad_documentos', tdClass: 'money', sortable: false},
                     { title: 'Usuario', field: 'usuario', sortable: true},
                     { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
@@ -51,6 +52,7 @@
                 query: {include: ['usuario','estado'], sort: 'id', order: 'desc'},
                 estado: "",
                 cargando: false,
+                cargando_csv: false
             }
         },
         mounted() {
@@ -77,10 +79,14 @@
                     })
             },
             descarga_layout(){
+                this.cargando_csv = true;
                 return this.$store.dispatch('finanzas/carga-masiva-pago/descarga_layout', {})
                     .then(() => {
                         this.$emit('success')
 
+                    })
+                    .finally(() => {
+                        this.cargando_csv = false;
                     })
             }
         },
@@ -105,12 +111,13 @@
                             index: (i + 1) + self.query.offset,
                             numero_folio:layout.id,
                             fecha: layout.fecha_registro,
-                            monto: layout.monto,
+                            monto: layout.monto_format,
+                            cantidad_documentos: layout.cantidad_documentos,
                             usuario: layout.usuario.nombre,
                             estado:layout.estado.descripcion,
                             buttons: $.extend({}, {
                                 id: layout.id,
-                                autorizar: true,
+                                autorizar: (layout.estado.estado == 0)?true:false,
                                 show: true
                             })
                         })
@@ -156,9 +163,3 @@
         }
     }
 </script>
-<style>
-    .money
-    {
-        text-align: right;
-    }
-</style>

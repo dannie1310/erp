@@ -29,7 +29,7 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_solicitud_alta_cuenta_bancaria_empresa')">
+                    <li class="nav-item" v-if="$root.can('consultar_cuentas_bancarias_empresa')">
                         <router-link :to="{name: 'cuenta-empresa-bancaria'}" class="nav-link" :class="{active: this.$route.name == 'cuenta-empresa-bancaria'}">
                             &nbsp;<i class="fa fa-circle-o nav-icon"></i>
                             <p>Cuentas Bancarias</p>
@@ -105,11 +105,11 @@
                     <p>Facturas</p>
                 </router-link>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_insumo_material')">
+            <li class="nav-item" v-if="$root.can('consultar_familia_servicio')|| $root.can('consultar_insumo_servicio')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-cogs"></i>
                     <p>
-                        Insumo de Servicios
+                        Catálogo de Insumos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -118,15 +118,38 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'familia-serv'}" class="nav-link" :class="{active: this.$route.name == 'familia-serv'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Familia</p>
+                            <p>Familias de Servicio</p>
                         </router-link>
                     </li>
                 </ul>
-                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_material')">
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_servicio')">
                     <li class="nav-item" >
-                        <router-link :to="{name: ''}" class="nav-link" :class="{active: this.$route.name == ''}">
+                        <router-link :to="{name: 'servicio'}" class="nav-link" :class="{active: this.$route.name == 'servicio'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Servicio</p>
+                            <p>Servicios</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item" v-if="tesoreria">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-circle"></i>
+                    <p>
+                        Tesorería
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_movimiento_bancario')">
+                        <router-link :to="{name: 'movimiento-bancario'}" class="nav-link" :class="{active: this.$route.name == 'movimiento-bancario'}">
+                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
+                            <p>Movimientos Bancarios</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_traspaso_cuenta')">
+                        <router-link :to="{name: 'traspaso-entre-cuentas'}" class="nav-link" :class="{active: this.$route.name == 'traspaso-entre-cuentas'}">
+                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
+                            <p>Traspasos Entre Cuentas</p>
                         </router-link>
                     </li>
                 </ul>
@@ -156,6 +179,12 @@
                 return this.$root.can([
                     'consultar_solicitud_alta_cuenta_bancaria_empresa',
                     'consultar_solicitud_baja_cuenta_bancaria_empresa'
+                ]);
+            },
+            tesoreria(){
+                return this.$root.can([
+                    'consultar_movimiento_bancario',
+                    'consultar_traspaso_cuenta'
                 ]);
             }
 

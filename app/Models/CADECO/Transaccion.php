@@ -37,7 +37,6 @@ class Transaccion extends Model
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             if(auth()->user()->id_contratista){
                 if(($contratista = CtgContratista::query()->find(auth()->user()->id_contratista)) && auth()->user()->usuario_estado == 3){
@@ -61,7 +60,7 @@ class Transaccion extends Model
 
     public function getMontoFormatAttribute()
     {
-        return '$ ' . number_format($this->monto,2);
+        return '$ ' . number_format(abs($this->monto),2);
     }
 
     public function getFechaFormatAttribute()
@@ -85,7 +84,7 @@ class Transaccion extends Model
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
             $antecedente = Transaccion::query()->withoutGlobalScope('tipo')->find($this->id_antecedente);
-            if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opcion != $this::OPCION_ANTECEDENTE)
+            if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opciones != $this::OPCION_ANTECEDENTE)
             {
                 return false;
             }
@@ -96,10 +95,6 @@ class Transaccion extends Model
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
-    }
-
-    public function moneda(){
-        return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
     public function obra()
@@ -117,21 +112,17 @@ class Transaccion extends Model
     {
         $date = date_create($this->FechaHoraRegistro);
         return date_format($date,"Y-m-d h:i:s a");
-
     }
 
-    public function getCumplimientoFormAttribute()
-    {
-        $date = date_create($this->cumplimiento);
-        return date_format($date,"Y-m-d");
-
-    }
-
-    public function getVencimientoFormAttribute()
+    public function getVencimientoFormatAttribute()
     {
         $date = date_create($this->vencimiento);
-        return date_format($date,"Y-m-d");
-
+        return date_format($date,"d/m/Y");
+    }
+    public function getCumplimientoFormatAttribute()
+    {
+        $date = date_create($this->cumplimiento);
+        return date_format($date,"d/m/Y");
     }
 
     public function  getObservacionesFormatAttribute()

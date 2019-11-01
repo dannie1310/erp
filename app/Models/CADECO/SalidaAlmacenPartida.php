@@ -68,9 +68,9 @@ class SalidaAlmacenPartida extends Item
                     ->where( 'saldo', '>', 0 )->orderBy( 'id_lote' )->get()->toArray();
 
                 if (count( $inventario ) == 1 && $inventario[0]['saldo'] < $p[1]) {
-                    abort( 400, "La cantida es mayor a la existencia" );
+                    abort( 400, "La cantidad de salida de algunos materiales ha superado su cantidad de existencia." );
                 }elseif ($inventario == []) {
-                    abort( 400, "La cantida es mayor a la existencia" );
+                    abort( 400, "La cantidad de salida de algunos materiales ha superado su cantidad de existencia." );
                 }else{
                     if ($salidas['opciones'] == 1) {
                         $item = $this->create( [
