@@ -28,14 +28,15 @@ class SolicitudCompraTransformer extends TransformerAbstract
         'usuario'
     ];
 
-    public function transform(SolicitudCompra $model)
+    public function transform(AsignacionCompra $model)
     {
         return [
             'id' => $model->getKey(),
-            'numero_folio' => $model->numero_folio,
+            'numero_folio_solicitud' => $model->solicitud,
+            'numero_folio_compuesto' => $model->numero_folio,
             'fecha' => $model->fecha,
             'observaciones' => $model->observaciones,
-            'numero_folio_format'=>(string)$model->numero_folio_format_orden,
+            'numero_folio_format'=>(string)$model->numero_folio_format_solicitud,
         ];
     }
 

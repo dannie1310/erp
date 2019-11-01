@@ -388,6 +388,11 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'solicitud-compra'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@paginate');
         });
+
+        // ASIGNACION DE COMPRA
+        $api->group(['prefix' => 'asignacion-compra'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionCompraController@paginate');
+        });
     });
 
     /**
