@@ -261,7 +261,6 @@ class GestionPagoService
 
             $archivo_bitacora->estado = 1;
             $archivo_bitacora->save();
-dd('stop pandita');
             $this->guardar_bitacora($pagos->file_interbancario);
             DB::connection('cadeco')->commit();
             return $pagos;
