@@ -29,7 +29,7 @@
                                                 :class="{'is-invalid': errors.has('id_remesa')}"
                                         >
                                             <option value>-- Seleccione una Remesa --</option>
-                                            <option v-for="rem in remesas" :value="rem.id">Año {{rem.año}}, Semana {{rem.semana}} Remesa {{rem.tipo}} ({{ rem.folio }})</option>
+                                            <option v-for="rem in remesas" :value="rem.id">Año {{rem.año}}, Semana {{rem.semana}} Remesa {{rem.tipo}} ({{ rem.folio }}) {{rem.proyecto_descripcion}}</option>
                                         </select>
                                         <div class="invalid-feedback" v-show="errors.has('id_remesa')">{{ errors.first('id_remesa') }}</div>
                                     </div>

@@ -28,15 +28,16 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Herramienta / Equipo', field: 'tipo_material',sortable: true},
+                    { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
+                    { title: 'Familia', field: 'familia',sortable: true},
+                    { title: 'Número de Parte', field: 'numero_parte',sortable: true,  thComp: require('../../../globals/th-Filter')},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Unidad', field: 'unidad', sortable: true},
+                    { title: 'Unidad', field: 'unidad', thClass: 'th_unidad', tdClass: 'td_unidad', sortable: true},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'tipo:4', sort: 'id_material', order: 'desc'},
+                query: {scope:['tipo:4', 'insumos'], sort: 'id_material', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -52,10 +53,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/material-familia/paginate', { params: this.query})
+                return this.$store.dispatch('cadeco/material/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('compras/material-familia/SET_MATERIALES', data.data);
-                        this.$store.commit('compras/material-familia/SET_META', data.meta);
+                        this.$store.commit('cadeco/material/SET_MATERIALES', data.data);
+                        this.$store.commit('cadeco/material/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -64,10 +65,10 @@
         },
         computed: {
             materiales(){
-                return this.$store.getters['compras/material-familia/materiales'];
+                return this.$store.getters['cadeco/material/materiales'];
             },
             meta(){
-                return this.$store.getters['compras/material-familia/meta'];
+                return this.$store.getters['cadeco/material/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -81,8 +82,9 @@
                     materiales.forEach(function (material, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            tipo_material: material.descripcion_padre,
+                            familia: material.descripcion_familia,
                             descripcion: material.descripcion,
+                            numero_parte: material.numero_parte,
                             unidad: material.unidad,
                         })
                     });

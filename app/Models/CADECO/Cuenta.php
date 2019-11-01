@@ -99,4 +99,9 @@ class Cuenta extends Model
     public function tiposCuentasObra(){
         return $this->belongsTo(CtgTipoCuentaObra::class, 'id_tipo_cuentas_obra', 'id');
     }
+
+    public function disminuyeSaldo(Transaccion $pago){
+        $this->saldo_real = $this->saldo_real - ($pago->monto * -1);
+        $this->save();
+    }
 }

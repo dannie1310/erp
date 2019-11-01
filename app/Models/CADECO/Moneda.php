@@ -35,6 +35,6 @@ class Moneda extends Model
 
     public function getTipoCambioAttribute()
     {
-        return $this->cambio ? $this->cambio->cambio : null;
+        return $this->cambio ? $this->cambio->cambio : $this->tipo == 1 ? 1: null;
     }
 }

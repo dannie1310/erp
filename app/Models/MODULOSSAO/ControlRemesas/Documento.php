@@ -82,6 +82,10 @@ class Documento extends Model
         return $this->belongsTo(Transaccion::class, 'IDTransaccionCDC', 'id_transaccion');
     }
 
+    public function partidasDispersion(){
+        return $this->hasMany(DistribucionRecursoRemesaPartida::class, 'id_documento', 'IDDocumento');
+    }
+
     public function  scopeDisponiblesParaDistribuir($query, $id_remesa){
 
         $existentes = DistribucionRecursoRemesa::select('id')->where('id_remesa', '=', $id_remesa)->where('estado','>=', 0)->get()->toArray();
@@ -94,6 +98,14 @@ class Documento extends Model
         $query->has('documentoProcesado', function ($q) {
             return $q->where('IDProceso', '=', 4);
         });
+    }
+
+    public function getPartidaVigenteAttribute(){
+        foreach ($this->partidasDispersion as $partida){
+            if($partida->estado >= 0){
+                return $partida;
+            }
+        }
     }
 
     public function getImporteTotalAttribute(){
@@ -134,10 +146,15 @@ class Documento extends Model
      * de modo que en el formulario de dispersión quede preseleccionado
      * */
     public function getCuentaAbonoAttribute(){
-        $cuentas = $this->empresa->cuentasBancarias;
-        if(sizeof($cuentas) === 1){
-            return $cuentas[0]->id;
-        }else{
+        if($this->empresa){
+            $cuentas = $this->empresa->cuentasBancarias;
+            if(sizeof($cuentas) === 1){
+                return $cuentas[0]->id;
+            }else{
+                return null;
+            }
+        }
+        else {
             return null;
         }
     }

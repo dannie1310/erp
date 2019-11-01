@@ -12,6 +12,7 @@ use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Contabilidad\HistPoliza;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class SalidaAlmacen extends Transaccion
@@ -23,6 +24,7 @@ class SalidaAlmacen extends Transaccion
         'id_almacen',
         'id_empresa',
         'opciones',
+        'fecha',
         'observaciones',
         'referencia'
     ];
@@ -381,6 +383,7 @@ class SalidaAlmacen extends Transaccion
 
     public function registrar($data){
         try{
+            $data['fecha']= date_format(new DateTime($data['fecha']), 'Y-m-d');
             DB::connection('cadeco')->beginTransaction();
             $this->validarRegistro($data);
             $salidaTransaccion = $this->create($data);

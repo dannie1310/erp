@@ -58,9 +58,9 @@ class CargaLayoutPagoController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function presentaPagos(Request $request)
+    public function procesaLayoutPagos(Request $request)
     {
-        $respuesta = $this->service->validarLayout($request->pagos);
+        $respuesta = $this->service->procesaLayoutPagos($request->pagos);
         return response()->json($respuesta, 200);
     }
 
@@ -74,7 +74,7 @@ class CargaLayoutPagoController extends Controller
         return $this->service->autorizar($data);
     }
 
-    public function descarga_layout(){
-        return $this->service->descargar_layout();
+    public function descargarLayout(){
+        return $this->service->descargarLayout();
     }
 }

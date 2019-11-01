@@ -16,6 +16,8 @@ use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Zend\Validator\Date;
+use App\Models\CADECO\Solicitud;
+use App\Models\CADECO\Factura;
 
 class LayoutPago extends Model
 {
@@ -44,11 +46,9 @@ class LayoutPago extends Model
     public function validarArchivo($archivo)
     {
         $file_fingerprint = hash_file('md5', $archivo);
-
         if($this->query()->where('hash_file_layout_pagos', '=', $file_fingerprint)->first()){
             abort(403, 'Archivo de carga masiva de pagos procesado previamente');
         }
-
         return $file_fingerprint;
     }
 
@@ -62,29 +62,81 @@ class LayoutPago extends Model
                 'nombre_layout_pagos' => $data['nombre_archivo'],
                 'monto_layout_pagos' => $monto_pagado
             ]);
-
+            $contador_pagos = 0;
             foreach ($data['pagos'] as $pago)
             {
-                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+                if(array_key_exists ('fecha_pago_s', $pago)){
+                    $fecha_pago =New DateTime($pago['fecha_pago_s']);
+                }else{
+                    $fecha_pago = DateTime::createFromFormat('d/m/Y', $pago['fecha_pago']);
+                }
+                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 ) ) {
+                    $contador_pagos ++;
                     $layout_pagos->partidas()->create([
                         'id_layout_pagos' => $layout_pagos->id,
                         'id_transaccion' => $pago['id_transaccion'],
-                        'monto_transaccion' => $pago['monto_factura'],
-                        'id_moneda' => $pago['id_moneda'],
+                        'monto_transaccion' => $pago['monto_documento'],
+                        'id_moneda_transaccion' => $pago['id_moneda_transaccion'],
+                        'id_moneda_cuenta_cargo' => $pago["cuenta_cargo_obj"]['id_moneda'],
                         'tipo_cambio' => $pago['tipo_cambio'],
-                        'cuenta_cargo' => $pago['id_cuenta_cargo'] ? Cuenta::query()->where('id_cuenta', $pago['id_cuenta_cargo'])->pluck('numero')->toArray()['0'] : 0,
-                        'id_cuenta_cargo' => $pago['id_cuenta_cargo'] ?  $pago['id_cuenta_cargo'] : 0,
-                        'fecha_pago' => $pago['fecha_pago'] ? date_format(new DateTime($pago['fecha_pago']), 'd-m-Y') : date_format(new DateTime($pago['fecha_pago_s']), 'd-m-Y'),
+                        'cuenta_cargo' => $pago["cuenta_cargo_obj"]['numero'],
+                        'id_cuenta_cargo' => $pago['id_cuenta_cargo'],
+                        'fecha_pago' => $fecha_pago->format('Y-m-d'),
                         'monto_pagado' => $pago['monto_pagado'],
                         'referencia_pago' => $pago['referencia_pago'],
-                        'id_documento_remesa' => $pago['id_documento'],
-                        'id_transaccion_pago' => $pago['estado']['estado'] == 2 ? $pago['estado']['id'] : NULL
-
+                        'id_documento_remesa' => $pago['id_documento_remesa'],
+                        'monto_autorizado_remesa' => $pago['monto_autorizado_remesa'],
+                        'saldo_transaccion' => $pago['saldo_documento'],
                     ]);
                 }
             }
-            DB::connection('cadeco')->commit();
+            if(count($layout_pagos->partidas) == $contador_pagos && count($layout_pagos->partidas) >0){
+                DB::connection('cadeco')->commit();
+            }
+            else{
+                DB::connection('cadeco')->rollBack();
+                abort(400, 'Hubo un error durante el registro de las partidas');
+            }
+
             return $layout_pagos;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function  autorizar(){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $partidas = $this->partidas;
+            foreach ($partidas as $partida) {
+                if (is_null($partida->id_transaccion_pago)) {
+                    $transaccion = $partida->transaccion;
+
+                    if ($transaccion->tipo_transaccion === '65') {
+                        $pago = Factura::find($partida->id_transaccion)->generaOrdenPago($partida);
+                        $partida->id_transaccion_pago = $pago->id_transaccion;
+                        $partida->save();
+                    }
+
+                    if ($transaccion->tipo_transaccion === '72') {
+                        $pago = Solicitud::find($partida->id_transaccion)->generaPago($partida);
+                        if($pago){
+                            $partida->id_transaccion_pago = $pago->id_transaccion;
+                            $partida->save();
+                        }else{
+                            abort(400, "Hubo un error al generar el pago con referencia: ".$partida->referencia_pago . " tipo de solicitud no soportado");
+                        }
+
+                    }
+                }
+            }
+            $this->id_usuario_autorizo = auth()->id();
+            $this->fecha_hora_autorizado = date('Y-m-d H:i:s');
+            $this->estado = 1;
+            $this->save();
+            DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
@@ -106,7 +158,7 @@ class LayoutPago extends Model
     {
         $monto_total = 0;
         foreach ($partidas as $pago) {
-            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 2) && $pago['datos_completos_correctos'] == 1) {
+            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 ) ) {
                 $monto_total += $pago['monto_pagado'];
             }
         }

@@ -219,7 +219,7 @@
                                         <div class="col-sm-10">
                                             <input type="file" class="form-control" id="archivo" @change="onFileChange"
                                                    row="3"
-                                                   v-validate="{required: true,  ext: ['pdf']}"
+                                                   v-validate="{required: true,  ext: ['pdf'], size: 3072}"
                                                    name="archivo"
                                                    data-vv-as="Archivo"
                                                    ref="archivo"
@@ -392,8 +392,8 @@
                         if (this.id_tipo == 2 && this.cuenta.length < 18) {
                             swal('¡Error!', 'La cuenta tipo interbancaria debe contar con 18 digitos.', 'error')
                         }
-                        else if (this.id_tipo == 1 && this.cuenta.length > 11) {
-                            swal('¡Error!', 'La cuenta de mismo banco debe contar con 11 digitos.', 'error')
+                        else if (this.id_tipo == 1 && this.cuenta.length != 11  && this.cuenta.length != 16) {
+                            swal('¡Error!', 'La cuenta de mismo banco debe contar con 11 o 16 digitos.', 'error')
                         }
                         else if (this.id_tipo == 2 && this.cuenta.length == 18 && this.cuenta.substring(0, 3) != this.banco_clave) {
                             swal('¡Error!', 'La cuenta no corresponde con la clave del banco.', 'error');

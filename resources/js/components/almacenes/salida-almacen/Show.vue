@@ -162,7 +162,8 @@
                          <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                             <button type="button" class="btn btn-danger" v-if="emp_cont" @click="quitarContratista">Quitar Contratista</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || cont.opcion > 1">Registrar Contratista</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || cont.opcion > 1" v-if="emp_cont">Actualizar Contratista</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || cont.opcion > 1" v-else>Registrar Contratista</button>
                         </div>
                      </form>
                 </div>
