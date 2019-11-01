@@ -29,6 +29,9 @@ class PagoACuentaObserver extends PagoObserver
 
     public function created(Pago $pago)    {
         parent::created($pago);
+        if(abs(abs($pago->monto*(1/$pago->tipo_cambio))-$pago->solicitud->monto)>0.99){
+            $pago->solicitud->generaSolicitudComplemento();
+        }
         $pago->solicitud->actualizaEstadoPagada();
     }
 }

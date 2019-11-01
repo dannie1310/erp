@@ -30,6 +30,7 @@ class PagoReposicionFF extends Pago
         'referencia',
         "destino",
         'observaciones',
+        'tipo_cambio',
         "id_usuario"
     ];
     protected static function boot()

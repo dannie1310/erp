@@ -35,15 +35,15 @@ class SalidaAlmacenFormato extends Rotation
         $this->obra = Obra::find(Context::getIdObra());
 
 
-        $this->salida = SalidaAlmacen::query()->find($id);
+        $this->salida = SalidaAlmacen::find($id);
 
 
 
-        $this->numero_folio = '#'.str_pad($this->salida['numero_folio'],5,0, STR_PAD_LEFT);
+        $this->numero_folio = $this->salida->numero_folio_format;
 
-        $this->fecha = substr($this->salida['fecha'], 0, 10);
+        $this->fecha = $this->salida->fecha_format;
 
-        $this->almacen = $this->salida->almacen['descripcion'];
+        $this->almacen = $this->salida->almacen->descripcion;
 
 
 
@@ -87,7 +87,7 @@ class SalidaAlmacenFormato extends Rotation
 
         $this->Cell(11.5);
         $this->Cell(4.5, .7, 'FECHA', 'LB', 0, 'L');
-        $this->Cell(3.5, .7, date("d-m-Y", strtotime($this->fecha)) . ' ', 'RB', 1, 'L');
+        $this->Cell(3.5, .7, $this->fecha, 'RB', 1, 'L');
         $this->Ln(.5);
 
         $this->SetFont('Arial', 'B', 13);
@@ -203,11 +203,10 @@ if($this->PageNo()==1){
             foreach ($this->salida->partidas as $i => $p) {
                 $this->dim = $this->GetY();
 
-
                 $this->SetWidths([1, 2.5, 12, 2, 2]);
                 $this->SetRounds(['', '', '', '', '']);
                 $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-                $this->SetAligns(['L', 'L', 'L', 'L', 'L']);
+                $this->SetAligns(['L', 'L', 'L', 'L', 'R']);
                 $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
 
                 $this->Row([
@@ -215,7 +214,7 @@ if($this->PageNo()==1){
                        $p->material['numero_parte'],
                        utf8_decode($p->material['descripcion']),
                        $p['unidad'],
-                       $p->cantidad
+                       $p->cantidad_format
                 ]);
 
                 /*Guiones*/
@@ -228,7 +227,7 @@ if($this->PageNo()==1){
 
                 $this->dim_2 = $this->GetY();
 
-                if($this->dim_2>24) {
+                if($this->dim_2>25.7) {
                     $this->AddPage();
                     $this->Ln(1.8);
                     $this->Ln(.7);
@@ -316,7 +315,7 @@ if($this->PageNo()==1){
 
         $this->dim_2 = $this->GetY();
 
-        if($this->dim_2>24) {
+        if($this->dim_2>25.6) {
             $this->AddPage();
             $this->Ln(1.8);
             $this->Ln(.7);
@@ -377,22 +376,40 @@ if($this->PageNo()==1){
 
     public function Footer()
     {
-        $this->SetY(-3.5);
-        $this->SetX(14.7);
+        //Capturó
+        $this->SetY(-2.5);
+        $this->SetX(4);
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
 
 
-        $this->CellFitScale(4.89, .4, utf8_decode('Recibi'), 'TRLB', 0, 'C', 1);
+        $this->CellFitScale(4.89, .4, utf8_decode('Capturó'), 'TRLB', 0, 'C', 1);
         $this->Ln();
 
-        $this->SetX(14.7);
-        $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
+        $this->SetX(4);
+        $this->CellFitScale(4.89, 1, '', 'TRL', 0, 'C');
         $this->Ln();
-        $this->SetX(14.7);
-        $this->CellFitScale(4.89, .4, '', 'TRLB', 0, 'C', 1);
+        $this->SetX(4);
+        $this->CellFitScale(4.89, .4, "Nombre         Fecha         Firma", 'RLB', 0, 'C');
+
+        //Revisó
+        $this->SetY(-2.5);
+        $this->SetX(12);
+        $this->SetFont('Arial', '', 6);
+        $this->SetFillColor(180, 180, 180);
 
 
+        $this->CellFitScale(4.89, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+        $this->Ln();
+
+        $this->SetX(12);
+        $this->CellFitScale(4.89, 1, '', 'TRL', 0, 'C');
+        $this->Ln();
+        $this->SetX(12);
+        $this->CellFitScale(4.89, .4, "Nombre         Fecha         Firma", 'RLB', 0, 'C');
+
+
+        //PAGINA Y LEYENDA
         $this->SetY(-0.8);
         $this->SetX(14.7);
         $this->SetFont('Arial', 'B', 8);
@@ -407,9 +424,9 @@ if($this->PageNo()==1){
     function create()
     {
         $this->SetMargins(1, .5, 2);
+        $this->SetAutoPageBreak(true, 2);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 4);
         $this->partidas();
 
         try {

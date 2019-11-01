@@ -32,7 +32,9 @@ class ConceptoTransformer extends TransformerAbstract
             'clave_concepto' => $model->clave_concepto,
             'descripcion' => $model->descripcion,
             'tiene_hijos' => $model->tieneHijos,
+            'nivel' => $model->nivel,
             'unidad' => $model->unidad,
+            'id_padre' => $model->id_padre,
             'path' => $model->path
         ];
     }

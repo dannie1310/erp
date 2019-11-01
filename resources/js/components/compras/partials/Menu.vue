@@ -32,7 +32,7 @@
             </li>
             <li class="nav-item" v-if="gestion_orden_compra">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>
                         Gestión de OC
                         <i class="right fa fa-angle-left"></i>
@@ -50,9 +50,9 @@
             </li>
             <li class="nav-item" v-if="catalogo || $root.can('consultar_insumo_material')|| $root.can('consultar_insumo_herramienta_equipo')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>
-                        Gestión de Insumos
+                        Catálogos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -61,7 +61,7 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'familia'}" class="nav-link" :class="{active: this.$route.name == 'familia'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Familia</p>
+                            <p>Familias</p>
                         </router-link>
                     </li>
                 </ul>
@@ -69,7 +69,7 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'material'}" class="nav-link" :class="{active: this.$route.name == 'material'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Material</p>
+                            <p>Materiales</p>
                         </router-link>
                     </li>
                 </ul>
@@ -77,7 +77,7 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'herramienta'}" class="nav-link" :class="{active: this.$route.name == 'herramienta'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Herramienta y Equipo</p>
+                            <p>Herramientas y Equipo</p>
                         </router-link>
                     </li>
                 </ul>

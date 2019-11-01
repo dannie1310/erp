@@ -71,7 +71,7 @@ class Material extends Model
         }
     }
 
-    public function getDescripcionPadreAttribute()
+    public function getDescripcionFamiliaAttribute()
     {
         $nivel = substr($this->nivel, 0,4);
         $regreso = Material::query()->where('nivel','=',$nivel)->where('tipo_material','=',$this->tipo_material)->pluck('descripcion')->first();
@@ -156,7 +156,7 @@ class Material extends Model
     {
         if($this->where('numero_parte','=', $this->numero_parte)->get()->toArray() != [])
         {
-            throw New \Exception('El articulo con el numero de parte "'.$this->numero_parte.'" ya existe.');
+            throw New \Exception('El articulo con el número de parte:"'.$this->numero_parte.'" ya existe.');
         }
     }
 

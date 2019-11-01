@@ -22,7 +22,6 @@ class SolicitudPagoAnticipadoObserver extends TransaccionObserver
     public function creating(Transaccion $solicitud)
     {
         parent::creating($solicitud);
-        $solicitud->validarAntecedente();
         $solicitud->tipo_transaccion = 72;
         $solicitud->opciones = 327681;
         $solicitud->estado = 0;
