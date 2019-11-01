@@ -1201,7 +1201,7 @@ export const routes = [
                                 name: 'PAGOS'
                             },
                             middleware: [auth, context, permission],
-                            permission: 'cargar_distribucion_recursos_remesa'
+                            permission: 'consultar_pagos'
                         }
                     },
                     {
