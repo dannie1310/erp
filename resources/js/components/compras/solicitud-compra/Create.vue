@@ -76,7 +76,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group">
                                         <label for="exampleInputEmail1">Folio Req. Origen</label>
-                                        <input type="email"
+                                        <input type="number"
                                                class="form-control"
                                                id="exampleInputEmail1"
                                                v-model="folio_requisicion"
@@ -148,28 +148,23 @@
                                                             scope="insumos"
                                                             :name="`material[${i}]`"
                                                             v-model="item.material"
-                                                            data-vv-as="Aux"
+                                                            data-vv-as="Material"
                                                             v-validate="{required: true}"
                                                             ref="MaterialSelect"
                                                             :disableBranchNodes="false"
                                                             :error="errors.has(`material[${i}]`)"
                                                             @input="setRowValues(item.material,i)"
-
-
-                                                        ></MaterialSelect>
+                                                            :clase="`${item.material}`"/>
 
                                                         <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
                                                     </td>
 
                                                     <td style="width: 100px;">
                                                         <input class="form-control"
-                                                               :name="`numero_parte[${i}]`"
+
                                                                v-model="item.numero_parte"
-                                                               data-vv-as="Numero de Parte"
-                                                               v-validate="{required: true}"
-                                                               :class="{'is-invalid': errors.has(`numero_parte[${i}]`)}"
                                                                disabled/>
-                                                         <div class="invalid-feedback" v-show="errors.has(`numero_parte[${i}]`)">{{ errors.first(`numero_parte[${i}]`) }}</div>
+<!--                                                         <div class="invalid-feedback" v-show="errors.has(`numero_parte[${i}]`)">{{ errors.first(`numero_parte[${i}]`) }}</div>-->
                                                     </td>
 
                                                     <td>
@@ -179,7 +174,7 @@
                                                             data-vv-as="Marca"
                                                             v-validate="{required: true}"
                                                             :error="errors.has( `marca[${i}]`)"
-                                                            ref="MarcaSelect"/>
+                                                            />
                                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`marca[${i}]`)">{{ errors.first(`marca[${i}]`) }}</div>
 
                                                     </td>
@@ -192,7 +187,7 @@
                                                             data-vv-as="Modelo"
                                                             v-validate="{required: true}"
                                                             :error="errors.has( `modelo[${i}]`)"
-                                                            ref="ModeloSelect"/>
+                                                             />
                                                           <div style="display:block" class="invalid-feedback" v-show="errors.has(`modelo[${i}]`)">{{ errors.first(`modelo[${i}]`) }}</div>
                                                     </td>
 
@@ -211,12 +206,9 @@
 
                                                     <td style="width:80px;">
                                                         <input class="form-control"
-                                                               :name="`unidad[${i}]`"
-                                                               data-vv-as="Unidad"
-                                                               v-validate="{required: true}"
-                                                               :class="{'is-invalid': errors.has(`unidad[${i}]`)}"
+
                                                                v-model="item.unidad" disabled/>
-                                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
+<!--                                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>-->
                                                     </td>
 
                                                     <td>
@@ -237,15 +229,23 @@
                                                                v-validate="{required: true}"
                                                                :class="{'is-invalid': errors.has(`destino[${i}]`)}"
                                                                v-model="item.destino"/>
-                                                        <div class="invalid-feedback" v-show="errors.has(`id_destino[${i}]`)">{{ errors.first(`id_destino[${i}]`) }}</div>
+
+                                                        <input class="form-control"
+                                                               :name="`id_destino[${i}]`"
+                                                               data-vv-as="Destino"
+                                                               v-validate="{required: true}"
+                                                               :class="{'is-invalid': errors.has(`destino[${i}]`)}"
+                                                               v-model="item.id_destino" hidden>
+
+                                                        <div class="invalid-feedback" v-show="errors.has(`destino[${i}]`)">{{ errors.first(`destino[${i}]`) }}</div>
                                                     </td>
 
                                                     <td>
+
                                                         <SelectDestino
-                                                            :name="`id_destino[${i}]`"
-                                                            v-validate="{required: true}"
-                                                            v-model="item.id_destino"
-                                                            @input="setDestinoValues(item.id_destino, i)"
+                                                            :name="`destino_id[${i}]`"
+                                                            v-model="item.aux"
+                                                            @input="setDestinoValues(item.aux, i)"
                                                         />
                                                     </td>
 
@@ -325,6 +325,7 @@
                 destino: '',
                 items: [
                     {
+                        aux:'',
                         material: "",
                         numero_parte: "",
                         marca: "",
@@ -357,7 +358,7 @@
             store() {
                 return this.$store.dispatch('compras/solicitud-compra/store',  this.$data )
                     .then((data) => {
-                        // $(this.$refs.modal).modal('hide');
+                        $(this.$refs.modal).modal('hide');
                         this.$emit('created',data)
 
                     })
@@ -366,6 +367,7 @@
             setRowValues(material,i){
                 this.items[i].numero_parte = material.numero_parte;
                 this.items[i].unidad = material.unidad;
+                this.items[i].material_status = true;
             },
             setDestinoValues(dest, i){
 
@@ -384,7 +386,6 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        console.log("Entro acá");
                         this.store()
                     }
                 });
@@ -395,7 +396,9 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    .error > .vue-treeselect__control{
+        border-color: #dc3545
+    }
 
 </style>
