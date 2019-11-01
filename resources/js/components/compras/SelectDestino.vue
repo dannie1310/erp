@@ -61,7 +61,7 @@
 <script>
 
     import ConceptoSelect from "../cadeco/concepto/Select";
-    import SelectAlmacenes from "../cadeco/almacen/Select";
+    import SelectAlmacenes from "../cadeco/almacen/SingleSelect";
     export default {
         name: "SelectDestino",
         components: {SelectAlmacenes, ConceptoSelect},
