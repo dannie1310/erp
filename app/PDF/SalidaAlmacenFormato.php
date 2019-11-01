@@ -35,15 +35,15 @@ class SalidaAlmacenFormato extends Rotation
         $this->obra = Obra::find(Context::getIdObra());
 
 
-        $this->salida = SalidaAlmacen::query()->find($id);
+        $this->salida = SalidaAlmacen::find($id);
 
 
 
-        $this->numero_folio = '#'.str_pad($this->salida['numero_folio'],5,0, STR_PAD_LEFT);
+        $this->numero_folio = $this->salida->numero_folio_format;
 
-        $this->fecha = substr($this->salida['fecha'], 0, 10);
+        $this->fecha = $this->salida->fecha_format;
 
-        $this->almacen = $this->salida->almacen['descripcion'];
+        $this->almacen = $this->salida->almacen->descripcion;
 
 
 
@@ -87,7 +87,7 @@ class SalidaAlmacenFormato extends Rotation
 
         $this->Cell(11.5);
         $this->Cell(4.5, .7, 'FECHA', 'LB', 0, 'L');
-        $this->Cell(3.5, .7, date("d-m-Y", strtotime($this->fecha)) . ' ', 'RB', 1, 'L');
+        $this->Cell(3.5, .7, $this->fecha, 'RB', 1, 'L');
         $this->Ln(.5);
 
         $this->SetFont('Arial', 'B', 13);
@@ -206,7 +206,7 @@ if($this->PageNo()==1){
                 $this->SetWidths([1, 2.5, 12, 2, 2]);
                 $this->SetRounds(['', '', '', '', '']);
                 $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-                $this->SetAligns(['L', 'L', 'L', 'L', 'L']);
+                $this->SetAligns(['L', 'L', 'L', 'L', 'R']);
                 $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
 
                 $this->Row([
@@ -214,7 +214,7 @@ if($this->PageNo()==1){
                        $p->material['numero_parte'],
                        utf8_decode($p->material['descripcion']),
                        $p['unidad'],
-                       $p->cantidad
+                       $p->cantidad_format
                 ]);
 
                 /*Guiones*/
@@ -245,7 +245,7 @@ if($this->PageNo()==1){
                         $this->SetTextColors(['0,0,0', '0,0,0']);
 
                         $this->Row([
-                            "-i1Destino:",
+                            "Destino:",
                             utf8_decode($nivel),
                         ]);
 
