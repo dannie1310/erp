@@ -18,13 +18,13 @@
 
 <script>
     export default {
-        name: "solicitud-compra-index",
+        name: "asignacion-compra-index",
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', sortable: true },
+                    { title: 'Número de Folio', field: 'numero_folio_solicitud', sortable: true },
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
                     { title: 'Registró', field: 'registro', sortable: false },
@@ -50,12 +50,12 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/solicitud-compra/paginate', {
+                return this.$store.dispatch('compras/asignacion-compra/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
-                        this.$store.commit('compras/solicitud-compra/SET_META', data.meta);
+                        this.$store.commit('compras/asignacion-compra/SET_ASIGNACIONES', data.data);
+                        this.$store.commit('compras/asignacion-compra/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -63,12 +63,12 @@
             }
         },
         computed: {
-            solicitudes(){
-                return this.$store.getters['compras/solicitud-compra/solicitudes'];
+            asignaciones(){
+                return this.$store.getters['compras/asignacion-compra/asignaciones'];
             },
 
             meta(){
-                return this.$store.getters['compras/solicitud-compra/meta'];
+                return this.$store.getters['compras/asignacion-compra/meta'];
             },
 
             tbodyStyle() {
@@ -76,16 +76,16 @@
             }
         },
         watch: {
-            solicitudes: {
-                handler(solicitudes) {
+            asignaciones: {
+                handler(asignaciones) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = solicitudes.map((solicitud, i) => ({
+                    self.$data.data = asignaciones.map((asignacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: `# ${solicitud.numero_folio}`,
-                        fecha: new Date(solicitud.fecha).toDate(),
-                        observaciones: solicitud.observaciones,
-                        registro: solicitud.usuario ? solicitud.usuario.nombre : '',
+                        numero_folio_solicitud: `# ${asignacion.numero_folio_solicitud}`,
+                        fecha: new Date(asignacion.fecha).toDate(),
+                        observaciones: asignacion.observaciones,
+                        registro: asignacion.usuario ? asignacion.usuario.nombre : '',
                         buttons: $.extend({}, {})
                     }));
                 },
