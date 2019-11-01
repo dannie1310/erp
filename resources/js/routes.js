@@ -485,6 +485,23 @@ export const routes = [
                 }
             },
             {
+                path: 'asignacion-proveedores',
+                component: require('./components/compras/asignacion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'asignacion-proveedores',
+                        component: require('./components/compras/asignacion/Index'),
+                        meta: {
+                            title: 'Asignación de Proveedores',
+                            breadcrumb: {parent: 'compras', name: 'ASIGNACIÓN DE PROVEEDORES'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
+            },
+
+            {
                 path: 'catalogo-insumo',
                 component: require('./components/compras/catalogos/Layout'),
                 children: [
