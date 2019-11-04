@@ -395,6 +395,13 @@ $api->version('v1', function ($api) {
      * COMPRAS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'compras'], function ($api) {
+        // ASIGNACIÓN
+        $api->group(['prefix' => 'asignacion'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/asignacion', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionController@asignacion')->where(['id' => '[0-9]+']);
+        });
 
          // ITEM CONTRATISTA
         $api->group(['prefix' => 'item-contratista'], function ($api) {
