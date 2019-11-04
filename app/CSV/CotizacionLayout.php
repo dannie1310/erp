@@ -3,12 +3,10 @@
 namespace App\CSV;
 
 use App\Models\CADECO\CotizacionCompra;
-use Maatwebsite\Excel\Classes\LaravelExcelWorksheet;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Facades\Excel;
 
 class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
 {
@@ -36,6 +34,9 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->protectCells('G4', $this->cotizacion->numero_folio);
                 $event->sheet->protectCells('G14:G20', $this->cotizacion->numero_folio);
                 $event->sheet->protectCells('L3', $this->cotizacion->numero_folio);
+                $objValidation = $event->sheet->getCell('J3')->getDataValidation();
+                $objValidation->setFormula1('php');
+
             },
         ];
     }
@@ -56,11 +57,14 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
 
     public function headings(): array
     {
-//        LaravelExcelWorksheet
+        $event = new AfterSheet();
+        $objValidation = $event->sheet->getCell('J3')->getDataValidation();
+        $objValidation->setFormula1('php');
+
         return array([' ',' ',' ',' ',' ',' ',$this->cotizacion->empresa->razon_social],
         ['#','DESCRIPCION','IDENTIFICADOR','UNIDAD','CANTIDAD_SOLICITADA','CANTIDAD_APROBADA','Precio Unitario','% Descuento','Precio Total','Moneda',
             'Precion Total Moneda Conversión','Observaciones'],
-         ['1','1','1','1','1','1','1','1','=G3*E3-((G3*H3*H3)/100)',$this->getFile()],
+         ['1','1','1','1','1','1','1','1','=G3*E3-((G3*H3*H3)/100)',$objValidation],
         [' ',' ',' ',' ',' ','%Descuento'],[' ',' ',' ',' ',' ','Subtotal Precios Peso (MXP)'],[' ',' ',' ',' ',' ','%Subtotal Precios Dolar (USD)'],[' ',' ',' ',' ',' ','Subtotal Precios EURO'],[' ',' ',' ',' ',' ','TC USD'],
         [' ',' ',' ',' ',' ','TC EURO'],[' ',' ',' ',' ',' ','Moneda de Conv.'],[' ',' ',' ',' ',' ','%Subtotal Moneda Conv.'],[' ',' ',' ',' ',' ','IVA'],[' ',' ',' ',' ',' ','Total'],
         [' ',' ',' ',' ',' ','Fecha de Cotizacion',date("d/m/Y")],[' ',' ',' ',' ',' ','Pago en Parcialdades (%)'],[' ',' ',' ',' ',' ','% Anticipo'],[' ',' ',' ',' ',' ','Credito (dias)'],[' ',' ',' ',' ',' ','Tiempo de Entraga (dias)'],
