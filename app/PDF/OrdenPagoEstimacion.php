@@ -49,25 +49,25 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->objeto_contrato = Subcontratos::find($this->estimacion['id_antecedente']);
 
-        if($this->objeto_contrato['observacion'] == null)
-        {
-         $subcontrato_transaccion = Subcontrato::find($this->estimacion['id_antecedente']);
+        if(!$this->objeto_contrato){
+            $this->objeto_contrato = null;
+        }else {
+            if ($this->objeto_contrato['observacion'] == null) {
+                $subcontrato_transaccion = Subcontrato::find( $this->estimacion['id_antecedente'] );
 
-            // Si existe el campo referencia, úsalo.
-            if ($subcontrato_transaccion['referencia'])
-                $this->objeto_contrato = $subcontrato_transaccion['referencia'];
+                // Si existe el campo referencia, úsalo.
+                if ($subcontrato_transaccion['referencia'])
+                    $this->objeto_contrato = $subcontrato_transaccion['referencia'];
 
-            // ¿No? obten la referencia del contrato proyectado
-            else{
-                dd("AQUI3");
-                $contrato_proyectado = ContratoProyectado::where('id_transaccion', '=', $subcontrato_transaccion->id_antecedente)->pluck('referencia')->first();
+                // ¿No? obten la referencia del contrato proyectado
+                else {
+                    $contrato_proyectado = ContratoProyectado::find( $subcontrato_transaccion['id_antecedente'] );
 
-                $this->objeto_contrato = $contrato_proyectado->referencia;
-            }
+                    $this->objeto_contrato = $contrato_proyectado->referencia;
+                }
+            } else
+                $this->objeto_contrato = $this->objeto_contrato['observacion'];
         }
-
-        else
-            $this->objeto_contrato = $this->objeto_contrato['observacion'];
     }
 
     function Header() {
