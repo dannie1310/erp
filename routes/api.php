@@ -410,7 +410,13 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Compras\ItemContratistaController@update')->where(['id' => '[0-9]+']);
         });
 
-        // ORDEN DE COMPRA
+         // COTIZACIÓN
+        $api->group(['prefix' => 'cotizacion'], function ($api) {
+            $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@descargaLayout')->where(['id' => '[0-9]+']);
+
+        });
+
+         // ORDEN DE COMPRA
         $api->group(['prefix' => 'orden-compra'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@paginate');
@@ -421,6 +427,7 @@ $api->version('v1', function ($api) {
         // SOLICITUD DE COMPRA
         $api->group(['prefix' => 'solicitud-compra'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@paginate');
+            $api->get('{id}/formato-cotizacion', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@pdfCotizacion')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@store');
         });
     });
