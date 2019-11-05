@@ -96,6 +96,11 @@ class Material extends Model
         return $this->hasMany(Inventario::class, 'id_material','id_material');
     }
 
+    public function Almacenes(){
+        return $this->belongsToMany(Almacen::class,'inventarios','id_material','id_almacen')
+            ->distinct();
+    }
+
     public function hijos()
     {
 //        dd($this);
@@ -172,5 +177,13 @@ class Material extends Model
         }
         $num = str_pad($num, 3, "0", STR_PAD_LEFT);
         return $this->nivel.'.'.$num.'.';
+    }
+
+    public function getSaldoInventarioAttribute(){
+        return $this->inventarios->sum('saldo');
+    }
+
+    public function getCantidadInventarioAttribute(){
+        return $this->inventarios->sum('cantidad');
     }
 }
