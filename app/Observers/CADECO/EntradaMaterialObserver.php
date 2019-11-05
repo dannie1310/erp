@@ -16,11 +16,13 @@ class EntradaMaterialObserver extends TransaccionObserver
 {
     /**
      * @param EntradaMaterial $entradaMaterial
-     * @throws \Exception
      */
     public function creating(Transaccion $entradaMaterial)
     {
         parent::creating($entradaMaterial);
+        $entradaMaterial->tipo_transaccion = 33;
+        $entradaMaterial->estado = 0;
+        $entradaMaterial->opciones = 1;
     }
 
     public function deleting(EntradaMaterial $entradaMaterial)

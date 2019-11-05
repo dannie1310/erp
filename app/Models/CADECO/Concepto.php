@@ -26,8 +26,32 @@ class Concepto extends Model
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
+            return $query->where('id_obra', '=', Context::getIdObra())->where('activo','=',1);
         });
+    }
+
+
+    public function getAncestrosAttribute($nivel)
+    {
+        $size = strlen($nivel)/4;
+        $first = 4;
+        $ancestro='';
+
+        for($i=0; $i<$size; $i++)
+        {
+            $aux = substr($nivel,0, $first);
+            $result = Concepto::query()->where('nivel', 'LIKE', $aux)->select('descripcion')->get()->first()->toArray();
+            if($i==0){
+                $ancestro = $result['descripcion'];
+            }else{
+                $ancestro .= '->' .$result['descripcion'];
+            }
+            $first+=4;
+
+        }
+
+       return $ancestro;
+
     }
 
     public function getPathAttribute()
@@ -70,6 +94,10 @@ class Concepto extends Model
     public function scopeSinCuenta($query)
     {
         return $query->has('cuentaConcepto', '=', 0);
+    }
+    public function scopeNivel($query, $id)
+    {
+        return $query->where('id_concepto','=', $id);
     }
 
     public function cuentaConcepto()

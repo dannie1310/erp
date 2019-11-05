@@ -33,7 +33,10 @@ class MaterialTransformer extends TransformerAbstract
             'descripcion' => $model->descripcion,
             'tiene_hijos' => $model->tiene_hijos,
             'numero_parte' => $model->numero_parte,
-            'unidad' => $model->unidad
+            'unidad' => $model->unidad,
+            'tipo_familia' => $model->tipo_familia,
+            'tipo_material_descripcion' => $model->tipo_material_descripcion,
+            'descripcion_familia' => $model->descripcion_familia
         ];
     }
 
@@ -62,6 +65,4 @@ class MaterialTransformer extends TransformerAbstract
         }
         return null;
     }
-
-
 }

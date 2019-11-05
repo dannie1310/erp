@@ -20,7 +20,7 @@ class MovimientoBancarioObserver
      */
     public function creating(MovimientoBancario $movimientoBancario)
     {
-        $mov = self::orderBy('numero_folio', 'DESC')->first();
+        $mov = $movimientoBancario->orderBy('numero_folio', 'DESC')->first();
         $folio = $mov ? $mov->numero_folio + 1 : 1;
 
         $movimientoBancario->estatus = 1;

@@ -37,6 +37,7 @@ class ConteoController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_conteos')->only(['paginate','index','show']);
         $this->middleware('permiso:cargar_layout_captura_conteos')->only('cargaLayout');
+        $this->middleware('permiso:agregar_conteos_codigo_barra')->only('storeCodigoBarra');
         $this->middleware('permiso:eliminar_conteos')->only('cancelar');
         $this->middleware('permiso:agregar_conteos_manuales')->only('store');
 
@@ -53,6 +54,11 @@ class ConteoController extends Controller
 
     public function cancelar(Request $request,$id){
         $respuesta = $this->service->cancelar($request->all(), $id);
+        return response()->json($respuesta, 200);
+    }
+
+    public function storeCodigoBarra(Request $request){
+        $respuesta = $this->service->storeCodigoBarra($request->all());
         return response()->json($respuesta, 200);
     }
 

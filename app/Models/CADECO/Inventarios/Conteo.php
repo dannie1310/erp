@@ -96,6 +96,8 @@ class Conteo extends Model
         if(count(Conteo::query()->where('id_marbete','=',$this->id_marbete)->where('tipo_conteo','=',$this->tipo_conteo)->get()) > 0){
             abort(400,'El conteo que intenta registrar ya existe');
         }
+        if($this->tipo_conteo > 3 || $this->tipo_conteo <= 0){
+            abort(400,'El número de conteo no es válido');
+        }
     }
-
 }

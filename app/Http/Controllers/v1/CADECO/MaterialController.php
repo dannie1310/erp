@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Services\CADECO\MaterialService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class MaterialController extends Controller
@@ -44,9 +45,17 @@ class MaterialController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_insumo_material|consultar_insumo_herramienta_equipo|consultar_insumo_servicio|consultar_insumo_maquinaria')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:registrar_insumo_material|registrar_insumo_herramienta_equipo|registrar_insumo_servicio|registrar_insumo_maquinaria')->only('store');
+
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function porInventario(Request $request)
+    {
+        return $this->service->porInventario($request->all());
     }
 }
