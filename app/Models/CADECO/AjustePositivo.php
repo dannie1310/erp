@@ -135,18 +135,17 @@ class AjustePositivo extends Ajuste
         try {
             DB::connection('cadeco')->beginTransaction();
 
-            $this->validarEliminacion();
-
             //Se realiza una revision de los respaldos
             $this->validarRespaldos();
 
             //Ser realizan los respaldos
             $this->respaldarItems();
             $this->respaldarAjuste($motivo);
-
-
+            //Se eliminan partidas de ajuste con foreach para llegar al observer
+            foreach($this->partidas as $partida){
+                $partida->delete();
+            }
             //Se elimina el ajuste
-            $this->partidas()->delete();
             $this->delete();
 
             DB::connection('cadeco')->commit();
@@ -156,30 +155,6 @@ class AjustePositivo extends Ajuste
             throw $e;
         }
     }
-
-
-    public function validarEliminacion()
-    {
-        $partidas = $this->partidas()->get()->toArray();
-
-        foreach ($this->partidas()->get() as $partida) {
-            $item = Item::query()->where('id_antecedente', '=', $partida->id_item)->first();
-
-            if (!is_null($item)) {
-                abort(400, "El item:" . $partida->id_item . " - " . $item->material->descricpion . "ya se encuentra asociado en otra transacción");
-            }
-            $inventario = Inventario::query()->where('id_lote', '=', $partida->item_antecedente)
-                ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first();
-
-            if ($partida->cantidad > $inventario->saldo) {
-                abort(400, 'Error en el proceso de eliminación de ajustes. (Saldo menor)');
-            }
-
-            Inventario::query()->where('id_lote', '=', $partida->item_antecedente)->update(array('saldo' => $inventario->saldo - $partida->cantidad));
-
-        }
-    }
-
 
     public function validarRespaldos()
     {
