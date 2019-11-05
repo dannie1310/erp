@@ -13,7 +13,7 @@ use App\Models\CADECO\Inventario;
 class InventarioObserver
 {
     /**
-     * @param AjustePositivoPartida $partida
+     * @param Inventario $inventario
      * @throws \Exception
      */
     public function updating(Inventario $inventario)
