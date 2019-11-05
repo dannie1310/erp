@@ -15,10 +15,17 @@ class AjustePositivoPartidaObserver
 {
     /**
      * @param AjustePositivoPartida $partida
-     * @throws \Exception
      */
     public function creating(AjustePositivoPartida $partida)
     {
         $partida->estado = 0;
+    }
+
+    /**
+     * @param AjustePositivoPartida $partida
+     */
+    public function created(AjustePositivoPartida $partida){
+        $partida->inventario->saldo = $partida->inventario->saldo + $partida->cantidad;
+        $partida->inventario->save();
     }
 }

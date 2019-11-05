@@ -33,10 +33,11 @@
                                                         <td>{{ i + 1}}</td>
                                                         <td style="width: 180px;">
                                                              <select
+
                                                                      :disabled = "!bandera"
                                                                      class="form-control"
                                                                      :name="`id_material[${i}]`"
-                                                                     v-model="item.id_material"
+                                                                     v-model="item.material"
                                                                      v-validate="{required: true }"
                                                                      data-vv-as="No de Parte"
                                                                      :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
@@ -50,10 +51,11 @@
                                                         </td>
                                                         <td>
                                                               <select
+
                                                                       :disabled = "!bandera"
                                                                       class="form-control"
                                                                       :name="`id_material[${i}]`"
-                                                                      v-model="item.id_material"
+                                                                      v-model="item.material"
                                                                       v-validate="{required: true }"
                                                                       data-vv-as="Descripción"
                                                                       :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
@@ -66,21 +68,21 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            {{item.id_material.unidad}}
+                                                            {{item.material.unidad}}
                                                         </td>
                                                         <td class="td_money">
-                                                            {{item.id_material.cantidad_almacen}}
+                                                            {{item.material.cantidad_almacen}}
                                                         </td>
                                                         <td class="td_money">
-                                                            {{item.id_material.saldo_almacen}}
+                                                            {{item.material.saldo_almacen}}
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.id_material"
+                                                                    :disabled = "!item.material"
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`cantidad[${i}]`"
-                                                                    v-model="item.cantidad"
+                                                                    v-model="item.material.cantidad"
                                                                     data-vv-as="Cantidad"
                                                                     v-validate="{required: true,min_value: 0.1}"
                                                                     class="form-control"
@@ -154,6 +156,9 @@
             init() {
                 this.cargando = true;
             },
+            /*changeSelect(item){
+                item.material = this.materiales.find(x=>x.id === item.id_material);
+            },*/
             getAlmacen(){
                 this.almacenes = [];
                 return this.$store.dispatch('cadeco/almacen/index', {
@@ -167,7 +172,7 @@
                         this.almacenes = data.data;
                     })
             },
-            getMateriales(id_almacen){
+            getMateriales(){
                 this.materiales = [];
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/almacen/find', {
@@ -175,7 +180,6 @@
                     params: { include: 'materiales_ajuste' }
                 })
                     .then(data => {
-                        console.log(data);
                         this.materiales = data.materiales_ajuste.data;
                         if( this.materiales.length != 0 ) {
                             this.bandera = 1;
@@ -215,11 +219,10 @@
             },*/
             agregar() {
                 var array = {
-                    'id_material' : '',
-                    'cantidad' : '',
+                    'material' : '',
                 }
                 if(this.materiales.length === 0 ) {
-                    this.getMateriales(this.id_almacen);
+                    this.getMateriales();
                 }
                 this.referencia = this.$attrs.referencia;
                 this.fecha = this.$attrs.fecha;
@@ -231,9 +234,9 @@
                 this.$validator.validate().then(result => {
                     if (result) {
                         if(this.items.length == 0){
-                            swal('¡Error!', 'Debe agregar ajustes de inventarios.', 'error')
+                            swal('¡Error!', 'Debe agregar al menos una partida.', 'error')
                         } else if(this.referencia == ''){
-                            swal('¡Error!', 'Debe agregar una referencia.', 'error')
+                            swal('¡Error!', 'Debe capturar una referencia.', 'error')
                         }
                         else {
                             this.store()
