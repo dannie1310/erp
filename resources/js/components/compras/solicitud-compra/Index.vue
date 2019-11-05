@@ -97,9 +97,11 @@
                         observaciones: solicitud.observaciones,
                         id_usuario: solicitud.usuario ? solicitud.usuario.nombre : '',
                         buttons: $.extend({}, {
+                            id: solicitud.id,
                             show: true,
                             edit: true,
-                            id: solicitud.id
+                            pdf: true,
+
                         })
                     }));
                 },

@@ -414,6 +414,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'solicitud-compra'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@paginate');
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@store');
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
         });
     });
 

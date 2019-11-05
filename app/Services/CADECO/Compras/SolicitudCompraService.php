@@ -5,9 +5,9 @@ namespace App\Services\CADECO\Compras;
 
 
 use App\Models\CADECO\SolicitudCompra;
-use App\Models\IGH\Usuario;
+use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use App\Repositories\Repository;
-use function GuzzleHttp\Psr7\str;
+
 
 class SolicitudCompraService
 {
@@ -93,5 +93,12 @@ class SolicitudCompraService
             return false;
 
         }
+    }
+
+
+    public function pdfSolicitudCompra($id)
+    {
+        $pdf = new SolicitudCompraFormato($id);
+        return $pdf;
     }
 }

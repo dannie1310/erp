@@ -45,4 +45,9 @@ class SolicitudCompraController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function pdfSolicitudCompra($id)
+    {
+        return $this->service->pdfSolicitudCompra($id)->create();
+    }
 }
