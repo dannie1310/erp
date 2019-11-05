@@ -28,4 +28,9 @@ class AjusteNegativoPartidaObserver
         $partida->inventario->saldo = $partida->inventario->saldo - $partida->cantidad;
         $partida->inventario->save();
     }
+
+    public function deleted(AjusteNegativoPartida $partida){
+        $partida->inventario->saldo = $partida->inventario->saldo + $partida->cantidad;
+        $partida->inventario->save();
+    }
 }
