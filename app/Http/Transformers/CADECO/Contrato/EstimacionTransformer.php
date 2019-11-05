@@ -45,58 +45,83 @@ class EstimacionTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
-            'folio'=> str_pad($model->numero_folio,6, 0, STR_PAD_LEFT),
+            'numero_folio_format' => $model->numero_folio_format,
             'observaciones' => $model->observaciones,
             'impuesto' => $model->impuesto,
+            'impuesto_format' => $model->impuesto_format,
             'monto' => $model->monto,
+            'monto_format' => $model->monto_format,
             'estado' => $model->estado,
-            'fecha' => Carbon::parse($model->fecha)->format('d-m-Y'),
-            'fecha_inicial'=>Carbon::parse($model->cumplimiento)->format('d-m-Y'),
-            'fecha_final' =>Carbon::parse($model->vencimiento)->format('d-m-Y'),
+            'fecha' => $model->fecha_format,
+            'fecha_inicial'=> $model->cumplimiento_form,
+            'fecha_final' => $model->vencimiento_form,
+            'subtotal' => $model->subtotal,
+            'subtotal_format' => $model->subtotal_format
         ];
     }
 
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeSubcontratoEstimacion(Estimacion $model)
     {
-        if ($subcontratoEstimacion = $model->subcontratoEstimacion) {
+        if ($subcontratoEstimacion = $model->subcontratoEstimacion)
+        {
             return $this->item($subcontratoEstimacion, new SubcontratoEstimacionTrasnformer);
         }
         return null;
     }
 
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeSubcontrato(Estimacion $model)
     {
-        if($subcontrato = $model->subcontrato) {
+        if($subcontrato = $model->subcontrato)
+        {
             return $this->item($subcontrato, new SubcontratoTransformer);
         }
         return null;
     }
 
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeEmpresa(Estimacion $model)
     {
-        if($empresa = $model->empresa) {
+        if($empresa = $model->empresa)
+        {
             return $this->item($empresa, new EmpresaTransformer);
         }
         return null;
     }
 
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeMoneda(Estimacion $model)
     {
-        if($moneda = $model->moneda) {
+        if($moneda = $model->moneda)
+        {
             return $this->item($moneda, new MonedaTransformer);
-
         }
         return null;
     }
 
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeItems(Estimacion $model)
     {
-        if($item= $model->item){
+        if($item= $model->item)
+        {
             return $this->collection($item, new ItemTransformer);
         }
         return null;
     }
-
-
-
 }
