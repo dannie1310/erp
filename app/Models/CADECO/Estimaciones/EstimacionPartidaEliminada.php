@@ -25,7 +25,8 @@ class EstimacionPartidaEliminada extends Model
         'id_concepto',
         'cantidad',
         'importe',
-        'precio_unitario'
+        'precio_unitario',
+        'estado'
     ];
 
     public $timestamps = false;

@@ -299,10 +299,10 @@ class Estimacion extends Transaccion
 
     public function prepoliza()
     {
-        return $this->belongsTo(Poliza::class, 'id_transaccion_sao', 'id_transaccion');
+        return $this->belongsTo(Poliza::class,  'id_transaccion', 'id_transaccion_sao');
     }
 
-    public function estimacion_eliminada()
+    public function estimacionEliminada()
     {
         return $this->belongsTo(EstimacionEliminada::class, 'id_transaccion');
     }
@@ -312,6 +312,7 @@ class Estimacion extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
                 $this->respaldar($motivo);
+                $this->partidas()->delete();
                 $this->delete();
             DB::connection('cadeco')->commit();
         }catch (\Exception $e) {
@@ -333,15 +334,15 @@ class Estimacion extends Transaccion
             abort(400, "No se puede eliminar está estimación porque se encuentra Autorizada.");
         }
 
-        if($this->prepoliza != null)
+        if($this->prepoliza()->first() != null)
         {
             if($this->prepoliza->estatus != -3)
             {
-                $mensaje = "-Prepoliza: # ".$this->prepoliza->id_int_poliza." \n";
+                $mensaje = $mensaje."-Prepoliza: # ".$this->prepoliza->id_int_poliza." \n";
             };
         }
 
-        if($this->facturas != null)
+        if($this->facturas()->first() != null)
         {
             $factura_item = [];
             foreach ($this->facturas as $factura){
@@ -379,7 +380,8 @@ class Estimacion extends Transaccion
                 'id_concepto' => $partida->id_concepto,
                 'cantidad' => $partida->cantidad,
                 'importe' => $partida->importe,
-                'precio_unitario' => $partida->precio_unitario
+                'precio_unitario' => $partida->precio_unitario,
+                'estado' => $partida->estado
             ]);
         }
 

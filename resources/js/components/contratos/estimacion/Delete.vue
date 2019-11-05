@@ -261,16 +261,7 @@
                 })
                     .then(data => {
                         this.$store.commit('contratos/estimacion/DELETE_ESTIMACION', {id: this.$data.id_estimacion})
-                        $(this.$refs.modal).modal('hide');
-                        this.$store.dispatch('contratos/estimacion/paginate', {
-                            params: {
-                                include: 'subcontrato.empresa', sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
-                            }
-                        })
-                            .then(data => {
-                                this.$store.commit('contratos/estimacion/SET_ESTIMACIONES', data.data);
-                                this.$store.commit('contratos/estimacion/SET_META', data.meta);
-                            })
+                        this.$router.push({name: 'estimacion'});
                     })
                     .finally( ()=>{
                         this.cargando = false;

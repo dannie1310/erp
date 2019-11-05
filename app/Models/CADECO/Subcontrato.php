@@ -203,14 +203,11 @@ class Subcontrato extends Transaccion
     }
 
     public function cambioEstadoEliminarEstimacion()
-    {dd($this->toArray());
-
+    {
         if($this->estado == 1)
         {
             $this->estado = 0;
             $this->save();
         }
-
-
     }
 }
