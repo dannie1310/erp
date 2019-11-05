@@ -20,4 +20,12 @@ class AjusteNegativoPartidaObserver
     {
         $partida->estado = 0;
     }
+
+    /**
+     * @param AjusteNegativoPartida $partida
+     */
+    public function created(AjusteNegativoPartida $partida){
+        $partida->inventario->saldo = $partida->inventario->saldo - $partida->cantidad;
+        $partida->inventario->save();
+    }
 }

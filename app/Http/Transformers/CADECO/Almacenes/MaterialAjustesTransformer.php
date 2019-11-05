@@ -28,6 +28,7 @@ class MaterialAjustesTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
+            'id_material' => $model->getKey(),
             'descripcion' => $model->descripcion,
             'numero_parte' => $model->numero_parte,
             'unidad' => $model->unidad,
