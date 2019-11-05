@@ -26,6 +26,11 @@ class SolicitudCompra extends Transaccion
         'fecha'
     ];
 
+    public function store()
+    {
+        dd("Vamos en el modelo");
+    }
+
     public function getRegistroAttribute()
     {
         $comentario = explode('|', $this->comentario);

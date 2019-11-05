@@ -24,6 +24,7 @@
                                                 :error="errors.has('id_area_compradora')"
                                                 id="id_area_compradora"
                                                 ref="CtgAreaCompradoraSelect"
+                                                scope="UsuarioBelongs"
                                                 />
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_compradora')">{{ errors.first('id_area_compradora') }}</div>
                                         </div>
@@ -55,6 +56,7 @@
                                                 v-model="id_area_solicitante"
                                                 v-validate="{required: true}"
                                                 :error="errors.has('id_area_solicitante')"
+                                                scope="UsuarioBelongs"
                                             />
                                              <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_solicitante')">{{ errors.first('id_area_solicitante') }}</div>
                                         </div>
@@ -327,6 +329,7 @@
                     {
                         aux:'',
                         material: "",
+                        id_material:"",
                         numero_parte: "",
                         marca: "",
                         modelo: "",
@@ -336,6 +339,8 @@
                         destino:"",
                         id_destino:"",
                         observaciones:"",
+                        destino_concepto: null,
+                        destino_almacen: null,
                     }
                 ],
             }
@@ -365,6 +370,7 @@
 
             },
             setRowValues(material,i){
+                this.items[i].id_material = material.id;
                 this.items[i].numero_parte = material.numero_parte;
                 this.items[i].unidad = material.unidad;
                 this.items[i].material_status = true;
@@ -373,13 +379,18 @@
 
                 if(dest.text){
                     /*Almacen*/
+                    this.items[i].destino_concepto=false;
+                    this.items[i].destino_almacen=true;
                     this.items[i].id_destino = dest.value;
                     this.items[i].destino = dest.text;
                 }
                 if(dest.path){
                    /*Concepto*/
+                    this.items[i].destino_concepto=true;
+                    this.items[i].destino_almacen=false;
                     this.items[i].id_destino = dest.id;
                     this.items[i].destino = dest.path;
+
                 }
 
             },

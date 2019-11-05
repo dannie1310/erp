@@ -40,7 +40,7 @@
         methods:{
             getAreasCompradoras(){
                 return this.$store.dispatch('seguridad/compras/ctg-area-compradora/index', {
-                    params: { sort: 'descripcion',  order: 'asc'}
+                    params: { scope: this.scope, sort: 'descripcion',  order: 'asc'}
                 })
                     .then(data => {
                         this.$store.commit('seguridad/compras/ctg-area-compradora/SET_AREAS', data.data);
