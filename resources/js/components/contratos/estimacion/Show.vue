@@ -221,11 +221,9 @@
             }
         },
         mounted() {
-
             this.obra = this.$session.get('obra');
             this.id = this.$route.params.id;
             this.find();
-
         },
         methods: {
             find() {

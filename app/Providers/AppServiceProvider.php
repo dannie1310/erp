@@ -32,6 +32,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EmpresaFondoFijo;
 use App\Models\CADECO\EntradaMaterial;
 use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Estimaciones\EstimacionEliminada;
 use App\Models\CADECO\Factura;
 use App\Models\CADECO\Familia;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
@@ -111,6 +112,7 @@ use App\Observers\CADECO\DescuentoFondoGarantiaObserver;
 use App\Observers\CADECO\EmpresaFondoFijoObserver;
 use App\Observers\CADECO\EmpresaObserver;
 use App\Observers\CADECO\EntradaMaterialObserver;
+use App\Observers\CADECO\Estimaciones\EstimacionEliminadaObserver;
 use App\Observers\CADECO\EstimacionObserver;
 use App\Observers\CADECO\FacturaObserver;
 use App\Observers\CADECO\FamiliaObserver;
@@ -215,6 +217,12 @@ class AppServiceProvider extends ServiceProvider
              * Contratos
              */
             AreaSubcontratante::observe(AreaSubcontratanteObserver::class);
+
+
+            /**
+             * Estimaciones
+             */
+            EstimacionEliminada::observe(EstimacionEliminadaObserver::class);
 
             /**
              * Finanzas

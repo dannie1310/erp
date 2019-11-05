@@ -103,7 +103,7 @@
                     default:
                         return {
                             color: '#d2d6de',
-                            descripcion: 'Descnocido'
+                            descripcion: 'Desconocido'
                         }
                 }
             }

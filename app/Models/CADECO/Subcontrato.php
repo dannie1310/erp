@@ -201,4 +201,16 @@ class Subcontrato extends Transaccion
 
         return $query->whereIn('id_transaccion', $transacciones);
     }
+
+    public function cambioEstadoEliminarEstimacion()
+    {dd($this->toArray());
+
+        if($this->estado == 1)
+        {
+            $this->estado = 0;
+            $this->save();
+        }
+
+
+    }
 }
