@@ -36,9 +36,9 @@
                                                                      :disabled = "!bandera"
                                                                      class="form-control"
                                                                      :name="`id_material[${i}]`"
-                                                                     v-model="item.id_material"
+                                                                     v-model="item.material"
                                                                      v-validate="{required: true }"
-                                                                     data-vv-as="No de Parte"
+                                                                     data-vv-as="No. de Parte"
                                                                      :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                              >
 
@@ -53,7 +53,7 @@
                                                                       :disabled = "!bandera"
                                                                       class="form-control"
                                                                       :name="`id_material[${i}]`"
-                                                                      v-model="item.id_material"
+                                                                      v-model="item.material"
                                                                       v-validate="{required: true }"
                                                                       data-vv-as="Descripcion"
                                                                       :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
@@ -66,21 +66,21 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            {{item.id_material.unidad}}
+                                                            {{item.material.unidad}}
                                                         </td>
                                                          <td class="td_money">
-                                                            {{item.id_material.cantidad_almacen}}
+                                                            {{item.material.cantidad_almacen}}
                                                         </td>
                                                         <td class="td_money">
-                                                            {{item.id_material.saldo_almacen}}
+                                                            {{item.material.saldo_almacen}}
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.id_material"
+                                                                    :disabled = "!item.material"
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`cantidad[${i}]`"
-                                                                    v-model="item.cantidad"
+                                                                    v-model="item.material.cantidad"
                                                                     data-vv-as="Cantidad"
                                                                     v-validate="{required: true, min_value: 0.1}"
                                                                     class="form-control"
@@ -214,8 +214,7 @@
             },*/
             agregar() {
                 var array = {
-                    'id_material' : '',
-                    'cantidad' : '',
+                    'material' : ''
                 }
                 if(this.materiales.length === 0 ) {
                     this.getMateriales(this.id_almacen);

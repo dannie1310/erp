@@ -14,7 +14,7 @@
                                                     <thead>
                                                     <tr>
                                                         <th class="bg-gray-light th_index">#</th>
-                                                        <th class="bg-gray-light">No de Parte</th>
+                                                        <th class="bg-gray-light">No. de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
                                                         <th class="bg-gray-light th_unidad">Unidad</th>
                                                         <th class="bg-gray-light th_money_input">Cantidad Ingresada</th>
