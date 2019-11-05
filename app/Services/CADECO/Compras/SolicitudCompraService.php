@@ -60,6 +60,7 @@ class SolicitudCompraService
         }
 
 
+
            //Crear Solicitud de compra
 
     }
@@ -95,6 +96,21 @@ class SolicitudCompraService
         }
     }
 
+
+    public function delete($data, $id)
+    {
+
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function update(array $data, $id)
+    {
+//        return $this->repository->update($data, $id);
+    }
 
     public function pdfSolicitudCompra($id)
     {
