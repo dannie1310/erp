@@ -223,6 +223,17 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_entrada_almacen'
                         }
+                    },
+                    {
+                        path: 'create',
+                        name: 'entrada-almacen-create',
+                        component: require('./components/almacenes/entrada-almacen/Create'),
+                        meta: {
+                            title: 'Registrar Entrada de Almacén',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'entrada-almacen'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_entrada_almacen']
+                        }
                     }
                 ]
             },
@@ -240,6 +251,17 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_salida_almacen'
 
+                        }
+                    },
+                    {
+                        path:'create',
+                        name:'salida-create',
+                        component:require('./components/almacenes/salida-almacen/Create'),
+                        meta:{
+                            title:'Registrar Salida / Transferencia Almacén',
+                            breadcrumb: {parent: 'salida-almacen', name: 'SALIDA - TRANSFERENCIA ALMACEN'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_salida_almacen'
                         }
                     }
                 ]
@@ -300,6 +322,174 @@ export const routes = [
         ]
     },
     {
+        path: '/sao/catalogos',
+        components: {
+            default: require('./components/catalogos/partials/Layout.vue'),
+            menu: require('./components/catalogos/partials/Menu.vue')
+        },
+        children: [
+            {
+                path: '',
+                name: 'catalogos',
+                component: require('./components/catalogos/Index'),
+                meta: {
+                    title: 'Catálogos',
+                    breadcrumb: {parent:'home', name: 'CATÁLOGOS'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'insumo-maquinaria',
+                component: require('./components/catalogos/insumo-maquinaria/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'insumo-maquinaria',
+                        component: require('./components/catalogos/insumo-maquinaria/Index'),
+                        meta: {
+                            title: 'Catálogo de Maquinaria',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE MAQUINARIA'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia-maq',
+                        name: 'familia-maq',
+                        component: require('./components/catalogos/insumo-maquinaria/familia/Index'),
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'insumo-maquinaria',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_maquinaria']
+                        }
+                    },
+                    {
+                        path: 'maquinaria',
+                        name: 'maquinaria',
+                        component: require('./components/catalogos/insumo-maquinaria/maquinaria/Index'),
+                        meta: {
+                            title: 'Maquinaria',
+                            breadcrumb: {
+                                parent: 'insumo-maquinaria',
+                                name: 'MAQUINARIA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_maquinaria']
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'insumo-servicio',
+                component: require('./components/finanzas/insumo-servicio/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'insumo-servicio',
+                        component: require('./components/finanzas/insumo-servicio/Index'),
+                        meta: {
+                            title: 'Catálogo de Servicio',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE SERVICIO'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia-serv',
+                        name: 'cat-familia-serv',
+                        component: require('./components/finanzas/insumo-servicio/familia/Index'),
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'insumo-servicio',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_servicio']
+                        }
+                    },
+                    {
+                        path: 'servicio',
+                        name: 'cat-servicio',
+                        component: require('./components/finanzas/insumo-servicio/servicio/Index'),
+                        meta: {
+                            title: 'Servicios',
+                            breadcrumb: {
+                                parent: 'insumo-servicio',
+                                name: 'SERVICIOS'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_servicio']
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'catalogo-insumos',
+                component: require('./components/compras/catalogos/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'catalogo-insumos',
+                        component: require('./components/compras/catalogos/Index'),
+                        meta: {
+                            title: 'Catálogo de Insumos',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE INSUMOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia',
+                        name: 'cat-familia',
+                        component: require('./components/compras/catalogos/familia/Index'),
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'catalogo-insumos',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_material','consultar_familia_herramienta_equipo']
+                        }
+                    },
+                    {
+                        path: 'material',
+                        name: 'cat-material',
+                        component: require('./components/compras/catalogos/material/Index'),
+                        meta: {
+                            title: 'Material',
+                            breadcrumb: {
+                                parent: 'catalogo-insumos',
+                                name: 'MATERIAL'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_material']
+                        }
+                    },
+                    {
+                        path: 'herramienta',
+                        name: 'cat-herramienta',
+                        component: require('./components/compras/catalogos/herramienta/Index'),
+                        meta: {
+                            title: 'Herramienta',
+                            breadcrumb: {
+                                parent: 'catalogo-insumos',
+                                name: 'HERRAMIENTA Y EQUIPOS'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_herramienta_equipo']
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/compras',
         components: {
             default: require('./components/compras/partials/Layout.vue'),
@@ -341,8 +531,8 @@ export const routes = [
                                 parent: 'catalogo-insumo',
                                 name: 'FAMILIA'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_material','consultar_familia_herramienta_equipo']
                         }
                     },
                     {
@@ -355,8 +545,8 @@ export const routes = [
                                 parent: 'catalogo-insumo',
                                 name: 'MATERIAL'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_material']
                         }
                     },
                     {
@@ -369,8 +559,8 @@ export const routes = [
                                 parent: 'catalogo-insumo',
                                 name: 'HERRAMIENTA Y EQUIPO'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_herramienta_equipo']
                         }
                     }
                 ]
@@ -888,6 +1078,24 @@ export const routes = [
                 ]
             },
             {
+                path:'factura',
+                component: require('./components/finanzas/factura/Layout'),
+                children: [
+                    {
+                        path:'/',
+                        name: 'factura',
+                        component: require('./components/finanzas/factura/Index'),
+                        meta:{
+                            title: 'Facturas',
+                            breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
+                        }
+                    },
+
+                ]
+            },
+            {
                 path:'fondo',
                 component: require('./components/finanzas/fondo/Layout.vue'),
                 children: [
@@ -1013,7 +1221,7 @@ export const routes = [
                                 name: 'PAGOS'
                             },
                             middleware: [auth, context, permission],
-                            permission: 'cargar_distribucion_recursos_remesa'
+                            permission: 'consultar_pagos'
                         }
                     },
                     {
@@ -1112,8 +1320,8 @@ export const routes = [
                                 parent: 'insumo-servicio',
                                 name: 'FAMILIA'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_servicio']
                         }
                     },
                     {
@@ -1126,8 +1334,8 @@ export const routes = [
                                 parent: 'insumo-servicio',
                                 name: 'SERVICIO'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_servicio']
                         }
                     }
                 ]
@@ -1163,25 +1371,44 @@ export const routes = [
                     },
                 ]
             },
-
             {
-                path:'factura',
-                component: require('./components/finanzas/factura/Layout'),
+                path: 'tesoreria',
+                component: require('./components/finanzas/tesoreria/Layout'),
                 children: [
                     {
-                        path:'/',
-                        name: 'factura',
-                        component: require('./components/finanzas/factura/Index'),
-                        meta:{
-                            title: 'Facturas',
-                            breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_banco'
+                        path: '/',
+                        name: 'tesoreria',
+                        component: require('./components/finanzas/tesoreria/Index'),
+                        meta: {
+                            title: 'Tesorería',
+                            breadcrumb: {parent: 'finanzas', name: 'TESORERÍA'},
+                            middleware: [auth, context],
                         }
                     },
-
+                    {
+                        path: 'movimiento-bancario',
+                        name: 'movimiento-bancario',
+                        component: require('./components/finanzas/tesoreria/movimiento-bancario/Index'),
+                        meta: {
+                            title: 'Movimientos Bancarios',
+                            breadcrumb: {parent: 'tesoreria', name: 'MOVIMIENTOS BANCARIOS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_movimiento_bancario'
+                        }
+                    },
+                    {
+                        path: 'traspaso-entre-cuentas',
+                        name: 'traspaso-entre-cuentas',
+                        component: require('./components/finanzas/tesoreria/traspaso-entre-cuentas/Index'),
+                        meta: {
+                            title: 'Traspasos entre Cuentas',
+                            breadcrumb: {parent: 'tesoreria', name: 'TRASPASOS ENTRE CUENTAS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_traspaso_cuenta'
+                        }
+                    },
                 ]
-            },
+            }
         ]
     },
     {
@@ -1233,59 +1460,6 @@ export const routes = [
                     middleware: [auth, context, permission],
                     permission: 'consultar_orden_compra'
                 }
-            }
-        ]
-    },
-    {
-        path: '/sao/tesoreria',
-        components: {
-            default: require('./components/tesoreria/partials/Layout.vue'),
-            menu: require('./components/tesoreria/partials/Menu.vue')
-        },
-        children: [
-            {
-                path: '',
-                name: 'tesoreria',
-                component: require('./components/tesoreria/Index'),
-                meta: {
-                    title: 'Tesorería',
-                    breadcrumb: { parent: 'home', name: 'TESORERIA'},
-                    middleware: [auth, context, access]
-                }
-            },
-            {
-                path: 'movimiento-bancario',
-                component: require('./components/tesoreria/movimiento-bancario/Layout.vue'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'movimiento-bancario',
-                        component: require('./components/tesoreria/movimiento-bancario/Index'),
-                        meta: {
-                            title: 'Movimientos Bancarios',
-                            breadcrumb: {parent: 'tesoreria', name: 'MOVIMIENTOS BANCARIOS'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_movimiento_bancario'
-                        }
-                    }
-                ]
-            },
-            {
-                path: 'traspaso-entre-cuentas',
-                component: require('./components/tesoreria/traspaso-entre-cuentas/Layout.vue'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'traspaso-entre-cuentas',
-                        component: require('./components/tesoreria/traspaso-entre-cuentas/Index'),
-                        meta: {
-                            title: 'Traspasos entre Cuentas',
-                            breadcrumb: {parent: 'tesoreria', name: 'TRASPASOS ENTRE CUENTAS'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_traspaso_cuenta'
-                        }
-                    }
-                ]
             }
         ]
     },

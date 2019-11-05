@@ -48,6 +48,7 @@ class PagoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_pagos')->only(['paginate']);
 
         $this->fractal = $fractal;
         $this->service = $service;

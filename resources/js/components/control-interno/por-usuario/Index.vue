@@ -88,6 +88,7 @@
                 query2: {},
                 cargando: false,
                 cargando_excel: false,
+                usuario: '',
             }
         },
         mounted() {
@@ -100,7 +101,7 @@
                 this.cargando_excel = true;
                 this.query2.excel = true;
                 return this.$store.dispatch('seguridad/permiso/descargaListadoUsuario', {
-                    params: this.query2,
+                    params: {query2:this.query2, usuario:this.usuario},
                     id: this.form.user_id
                 })
                     .then(() => {
@@ -109,6 +110,20 @@
                         this.cargando_excel = false;
                     })
             },
+
+            getUsuario() {
+                this.cargando = true;
+                return this.$store.dispatch('igh/usuario/find',{
+                    id: this.form.user_id,
+                    params: {}
+                })
+                    .then(data => {
+                        this.usuario = data;
+                        this.cargando = false;
+                    })
+
+            },
+
             paginate(user_id) {
                 this.cargando_excel = true;
                 this.cargando = true;
@@ -152,10 +167,12 @@
                 this.$validator.reset()
                 if (id) {
                     this.cargando = true;
-                    this.paginate(id)
-                        .finally(() => {
-                            this.cargando = false;
-                        });
+                    this.getUsuario().finally(() => {
+                        this.paginate(id)
+                            .finally(() => {
+                                this.cargando = false;
+                            });
+                    });
                 }else if(id === null){
                     this.cargando = true;
                     this.paginate(0)

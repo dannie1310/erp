@@ -21,5 +21,4 @@ class NuevoLotePartidaObserver
             'monto_pagado' => $nuevoLotePartida->importe - $nuevoLotePartida->saldo,
         ]);
     }
-
 }

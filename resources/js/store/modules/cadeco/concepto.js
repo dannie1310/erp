@@ -4,11 +4,15 @@ export default {
     namespaced: true,
     state: {
         conceptos: [],
+        currentConcepto: null,
     },
 
     mutations: {
         SET_CONCEPTOS(state, data) {
             state.conceptos = data;
+        },
+        SET_CONCEPTO(state, data) {
+            state.currentConcepto = data;
         },
     },
 
@@ -45,6 +49,9 @@ export default {
     getters: {
         conceptos(state) {
             return state.conceptos
+        },
+        currentConcepto(state) {
+            return state.currentConcepto
         },
     }
 }

@@ -31,6 +31,8 @@ use App\Models\CADECO\DescuentoFondoGarantia;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EmpresaFondoFijo;
 use App\Models\CADECO\EntradaMaterial;
+use App\Models\CADECO\EntradaMaterialPartida;
+use App\Models\CADECO\Entrega;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Estimaciones\EstimacionEliminada;
 use App\Models\CADECO\Factura;
@@ -59,6 +61,7 @@ use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\PagoACuenta;
+use App\Models\CADECO\PagoACuentaPorAplicar;
 use App\Models\CADECO\PagoAnticipoDestajo;
 use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\SalidaAlmacen;
@@ -82,6 +85,10 @@ use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
+use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante;
+use App\Models\SEGURIDAD_ERP\UsuarioAreaCompradora;
+use App\Models\SEGURIDAD_ERP\UsuarioAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
@@ -112,6 +119,8 @@ use App\Observers\CADECO\DescuentoFondoGarantiaObserver;
 use App\Observers\CADECO\EmpresaFondoFijoObserver;
 use App\Observers\CADECO\EmpresaObserver;
 use App\Observers\CADECO\EntradaMaterialObserver;
+use App\Observers\CADECO\EntradaMaterialPartidaObserver;
+use App\Observers\CADECO\EntregaObserver;
 use App\Observers\CADECO\Estimaciones\EstimacionEliminadaObserver;
 use App\Observers\CADECO\EstimacionObserver;
 use App\Observers\CADECO\FacturaObserver;
@@ -140,6 +149,7 @@ use App\Observers\CADECO\NuevoLotePartidaObserver;
 use App\Observers\CADECO\OrdenCompraObserver;
 use App\Observers\CADECO\OrdenPagoObserver;
 use App\Observers\CADECO\PagoACuentaObserver;
+use App\Observers\CADECO\PagoACuentaPorAplicarObserver;
 use App\Observers\CADECO\PagoAnticipoDestajoObserver;
 use App\Observers\CADECO\PagoObserver;
 use App\Observers\CADECO\PagoVarioObserver;
@@ -164,6 +174,10 @@ use App\Observers\CADECO\Tesoreria\TraspasoCuentasObserver;
 use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
+use App\Observers\SEGURIDAD_ERP\TipoAreaCompradoraObserver;
+use App\Observers\SEGURIDAD_ERP\TipoAreaSolicitanteObserver;
+use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
+use App\Observers\SEGURIDAD_ERP\UsuarioAreaSolicitanteObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
 use App\Observers\CADECO\PagoReposicionFFObserver;
 use App\Models\CADECO\PagoReposicionFF;
@@ -239,6 +253,7 @@ class AppServiceProvider extends ServiceProvider
             OrdenPago::observe(OrdenPagoObserver::class);
             PagoFactura::observe(PagoFacturaObserver::class);
             PagoACuenta::observe(PagoACuentaObserver::class);
+            PagoACuentaPorAplicar::observe(PagoACuentaPorAplicarObserver::class);
             PagoVario::observe(PagoVarioObserver::class);
             Factura::observe(FacturaObserver::class);
             PagoAnticipoDestajo::observe(PagoAnticipoDestajoObserver::class);
@@ -269,6 +284,8 @@ class AppServiceProvider extends ServiceProvider
             AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
             AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
             Rol::observe(RolObserver::class);
+            TipoAreaCompradora::observe(TipoAreaCompradoraObserver::class);
+            TipoAreaSolicitante::observe(TipoAreaSolicitanteObserver::class);
 
             /**
              * SubcontratosEstimaciones
@@ -300,7 +317,9 @@ class AppServiceProvider extends ServiceProvider
             DescuentoFondoGarantia::observe(DescuentoFondoGarantiaObserver::class);
             Empresa::observe(EmpresaObserver::class);
             EmpresaFondoFijo::observe(EmpresaFondoFijoObserver::class);
+            Entrega::observe(EntregaObserver::class);
             EntradaMaterial::observe(EntradaMaterialObserver::class);
+            EntradaMaterialPartida::observe(EntradaMaterialPartidaObserver::class);
             Estimacion::observe(EstimacionObserver::class);
             Familia::observe(FamiliaObserver::class);
             Fondo::observe(FondoObserver::class);
@@ -322,6 +341,8 @@ class AppServiceProvider extends ServiceProvider
         AuditoriaRolUsuario::observe(AuditoriaRolUsuarioObserver::class);
         ConfiguracionObra::observe(ConfiguracionObraObserver::class);
         \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
+        UsuarioAreaCompradora::observe(UsuarioAreaCompradoraObserver::class);
+        UsuarioAreaSolicitante::observe(UsuarioAreaSolicitanteObserver::class);
         UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
     }
 
