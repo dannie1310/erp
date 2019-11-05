@@ -33,7 +33,7 @@
                     { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter'), sortable: true },
                     { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date'), sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
-                    { title: 'Registró', field: 'id_usuario',  sortable: true },
+                    { title: 'Registró', field: 'id_usuario', sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
 
 

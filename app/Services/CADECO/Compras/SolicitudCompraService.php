@@ -5,6 +5,7 @@ namespace App\Services\CADECO\Compras;
 
 
 use App\Models\CADECO\SolicitudCompra;
+use App\Models\IGH\Usuario;
 use App\Repositories\Repository;
 use function GuzzleHttp\Psr7\str;
 
@@ -26,7 +27,23 @@ class SolicitudCompraService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
+        $solicitudes = $this->repository;
+
+        if(isset($data['numero_folio']))
+        {
+            $solicitudes = $solicitudes->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+        }
+
+        if(isset($data['fecha']))
+        {
+            $solicitudes = $solicitudes->where( [['fecha', '=', $data['fecha']]] );
+        }
+
+
+
+
+        return $solicitudes->paginate($data);
+
     }
 
     public function store($data)
