@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Compras\AsignacionTransformer;
 use App\Services\CADECO\Compras\AsignacionService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class AsignacionController extends Controller
@@ -53,5 +54,10 @@ class AsignacionController extends Controller
     {
         $this->service->asignacion($id)->create();
 //        dd('Asignación Controller',$id);
+    }
+
+    public function cargaLayout(Request $request){
+        $respuesta = $this->service->cargaLayout($request->file);
+        return response()->json($respuesta, 200);
     }
 }
