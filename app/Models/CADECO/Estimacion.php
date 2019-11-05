@@ -286,4 +286,19 @@ class Estimacion extends Transaccion
     public function items(){
         return $this->hasMany(EstimacionPartida::class, 'id_transaccion');
     }
+
+    public function getSubtotalAttribute()
+    {
+        return $this->monto - $this->impuesto;
+    }
+
+    public function getSubtotalFormatAttribute()
+    {
+        return '$ ' . number_format($this->subtotal,2);
+    }
+
+    public function getImpuestoFormatAttribute()
+    {
+        return '$ ' . number_format($this->impuesto,2);
+    }
 }
