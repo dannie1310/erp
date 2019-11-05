@@ -53,8 +53,8 @@ class EstimacionTransformer extends TransformerAbstract
             'monto_format' => $model->monto_format,
             'estado' => $model->estado,
             'fecha' => $model->fecha_format,
-            'fecha_inicial'=> $model->cumplimiento_form,
-            'fecha_final' => $model->vencimiento_form,
+            'fecha_inicial'=> $model->cumplimiento_format,
+            'fecha_final' => $model->vencimiento_format,
             'subtotal' => $model->subtotal,
             'subtotal_format' => $model->subtotal_format
         ];
