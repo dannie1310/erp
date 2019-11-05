@@ -27,9 +27,9 @@ class FacturaObserver extends TransaccionObserver
     }
 
     public function updating(Factura $factura){
-        if($factura->saldo<0)
+        if($factura->saldo<-0.01)
         {
-            throw New \Exception('El saldo de la factura no puede ser menor a 0');
+            throw New \Exception('El saldo de la factura '.$factura->referencia.' no puede ser menor a 0');
         }
     }
 }

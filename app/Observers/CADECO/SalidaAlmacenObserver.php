@@ -22,6 +22,8 @@ class SalidaAlmacenObserver extends TransaccionObserver
     public function creating(Transaccion $salida)
     {
        parent::creating($salida);
+        $salida->tipo_transaccion = 34;
+
     }
 
     public function deleting(SalidaAlmacen $salida)

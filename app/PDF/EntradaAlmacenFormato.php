@@ -34,11 +34,11 @@ class EntradaAlmacenFormato extends Rotation
         $this->obra = Obra::find(Context::getIdObra());
 
         $this->entrada = EntradaMaterial::query()->find($id);
-        $this->numero_folio = '#'.str_pad($this->entrada['numero_folio'],5,0, STR_PAD_LEFT);
-        $this->fecha = substr($this->entrada['fecha'], 0, 10);
+        $this->numero_folio = $this->entrada->numero_folio_format;
+        $this->fecha = substr($this->entrada->fecha_format, 0, 10);
 
 
-        $this->oc_folio = '#'.str_pad($this->entrada->ordenCompra['numero_folio'],5,0,STR_PAD_LEFT);
+        $this->oc_folio = $this->entrada->ordenCompra->numero_folio_format;
 
         $this->empresa = $this->entrada->empresa['razon_social'];
         $this->empresa_rfc = $this->entrada->empresa['rfc'];
@@ -71,7 +71,7 @@ class EntradaAlmacenFormato extends Rotation
            $this->SetX($x_f);
            $this->SetFont('Arial', 'B', 10);
            $this->Cell(4.5, .7, 'FECHA ', 'L', 0, 'L');
-           $this->Cell(3.5, .7, date("d-m-Y", strtotime($this->fecha)) . ' ', 'R', 0, 'L');
+           $this->Cell(3.5, .7, $this->fecha, 'R', 0, 'L');
            $this->Ln(.7);
 
            $this->Cell(11.5);
@@ -202,7 +202,7 @@ class EntradaAlmacenFormato extends Rotation
             $this->SetWidths([1,2.5,10,2,2,2]);
             $this->SetRounds(['','','','','','']);
             $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
-            $this->SetAligns(['L','L','L','L','L','C']);
+            $this->SetAligns(['L','L','L','L','R','C']);
             $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
 
             $this->Row([
@@ -210,7 +210,7 @@ class EntradaAlmacenFormato extends Rotation
                 $p->material['numero_parte'],
                 utf8_decode($p->material['descripcion']),
                $p['unidad'],
-                $p['cantidad'],
+                $p->cantidad_format,
                 date("d-m-Y", strtotime($p->material['FechaHoraRegistro']))
             ]);
 
@@ -281,22 +281,40 @@ class EntradaAlmacenFormato extends Rotation
 
     public function Footer()
     {
-        $this->SetY(-3.5);
-        $this->SetX(14.7);
+        //Capturó
+        $this->SetY(-2.5);
+        $this->SetX(4);
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180, 180, 180);
 
 
-        $this->CellFitScale(4.89, .4, utf8_decode('Recibi'), 'TRLB', 0, 'C', 1);
+        $this->CellFitScale(4.89, .4, utf8_decode('Capturó'), 'TRLB', 0, 'C', 1);
         $this->Ln();
 
-        $this->SetX(14.7);
-        $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
+        $this->SetX(4);
+        $this->CellFitScale(4.89, 1, '', 'TRL', 0, 'C');
         $this->Ln();
-        $this->SetX(14.7);
-        $this->CellFitScale(4.89, .4, '', 'TRLB', 0, 'C', 1);
+        $this->SetX(4);
+        $this->CellFitScale(4.89, .4, "Nombre         Fecha         Firma", 'RLB', 0, 'C');
+
+        //Revisó
+        $this->SetY(-2.5);
+        $this->SetX(12);
+        $this->SetFont('Arial', '', 6);
+        $this->SetFillColor(180, 180, 180);
 
 
+        $this->CellFitScale(4.89, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+        $this->Ln();
+
+        $this->SetX(12);
+        $this->CellFitScale(4.89, 1, '', 'TRL', 0, 'C');
+        $this->Ln();
+        $this->SetX(12);
+        $this->CellFitScale(4.89, .4, "Nombre         Fecha         Firma", 'RLB', 0, 'C');
+
+
+        //PAGINA Y LEYENDA
         $this->SetY(-0.8);
         $this->SetX(14.7);
         $this->SetFont('Arial', 'B', 8);

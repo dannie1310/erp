@@ -34,6 +34,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'folio', sortable: true },
+                    { title: 'Proyecto Remesa', field: 'proyecto_remesa', sortable: false },
                     { title: 'Remesa Liberada', field: 'remesa', sortable: false },
                     { title: 'Monto Remesa', field: 'monto_autorizado', tdClass: 'money',sortable: true },
                     { title: 'Monto Dispersado', field: 'monto_distribuido', tdClass: 'money', sortable: true },
@@ -92,6 +93,7 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             folio: 'REM-'+distribucion.folio,
+                            proyecto_remesa: distribucion.remesa_liberada.remesa.proyecto_descripcion,
                             remesa: 'Año: '+distribucion.remesa_liberada.remesa.año+' Semana: '+distribucion.remesa_liberada.remesa.semana+' Remesa: '+distribucion.remesa_liberada.remesa.tipo+' ('+distribucion.remesa_liberada.remesa.folio+')',
                             monto_autorizado: '$'+(parseFloat(distribucion.monto_autorizado)).formatMoney(2,'.',','),
                             monto_distribuido:  '$'+(parseFloat(distribucion.monto_distribuido)).formatMoney(2,'.',','),

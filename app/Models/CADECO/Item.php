@@ -44,7 +44,12 @@ class Item extends Model
 
     public function getCantidadFormatAttribute()
     {
-        return number_format($this->cantidad,2,'.', '');
+        return number_format($this->cantidad,2,'.', ',');
+
+    }
+    public function getCantidadDecimalAttribute()
+    {
+        return round($this->cantidad,2);
 
     }
 }

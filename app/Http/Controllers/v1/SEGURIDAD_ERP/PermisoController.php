@@ -75,5 +75,9 @@ class PermisoController extends Controller
     {
         return $this->service->descargaListadoPermisosObra($id);
     }
+    public function descargaListadoPermisosUsuario(Request $request, $id)
+    {
+        return $this->service->descargaListadoPermisosUsuario($id);
+    }
 
 }
