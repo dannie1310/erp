@@ -17,6 +17,8 @@
                                                         <th class="bg-gray-light">No de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
                                                         <th class="bg-gray-light th_unidad">Unidad</th>
+                                                        <th class="bg-gray-light th_money_input">Cantidad Ingresada</th>
+                                                        <th class="bg-gray-light th_money_input">Saldo Inventarios</th>
                                                         <th class="bg-gray-light th_money_input">Cantidad a Restar</th>
                                                         <th class="bg-gray-light th_index">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar" :disabled="cargando">
@@ -65,6 +67,12 @@
                                                         </td>
                                                         <td>
                                                             {{item.id_material.unidad}}
+                                                        </td>
+                                                         <td class="td_money">
+                                                            {{item.id_material.cantidad_almacen}}
+                                                        </td>
+                                                        <td class="td_money">
+                                                            {{item.id_material.saldo_almacen}}
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
@@ -162,6 +170,28 @@
             getMateriales(id_almacen){
                 this.materiales = [];
                 this.cargando = true;
+                return this.$store.dispatch('cadeco/almacen/find', {
+                    id: this.id_almacen,
+                    params: { include: 'materiales_ajuste' }
+                })
+                    .then(data => {
+                        console.log(data);
+                        this.materiales = data.materiales_ajuste.data;
+                        if( this.materiales.length != 0 ) {
+                            this.bandera = 1;
+                            this.cargando = false
+                        }
+                    })
+                    .finally(() => {
+                        if( this.materiales.length == 0 ) {
+                            swal('¡Error!', 'No existe ningun material disponible para ajustar.', 'error')
+                        }
+
+                    })
+            },
+            /*getMateriales(id_almacen){
+                this.materiales = [];
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: ['inventariosDistintoCero:'+id_almacen],
@@ -181,7 +211,7 @@
                             swal('¡Error!', 'No existe ningun material disponible para ajustar.', 'error')
                         }
                     })
-            },
+            },*/
             agregar() {
                 var array = {
                     'id_material' : '',
