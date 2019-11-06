@@ -16,16 +16,23 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                              <label for="dptoResponsable">Dpto.Responsable</label>
-                                            <CtgAreaCompradoraSelect
-                                                name="id_area_compradora"
-                                                data-vv-as="Dpto.Responsable"
-                                                v-model="id_area_compradora"
-                                                v-validate="{required: true}"
-                                                :error="errors.has('id_area_compradora')"
-                                                id="id_area_compradora"
-                                                ref="CtgAreaCompradoraSelect"
-                                                scope="UsuarioBelongs"
-                                                />
+
+                                            <span>
+                                                  <div v-if="disabled" class="form-control text-center">
+                                                     <i class="fa fa-spin fa-spinner"></i>
+                                                 </div>
+                                                <select class="form-control" v-if="!disabled"
+                                                        name="id_area_compradora"
+                                                        data-vv-as="Dpto.Responsable"
+                                                        v-model="id_area_compradora"
+                                                        v-validate="{required: true}"
+                                                        :error="errors.has('id_area_compradora')"
+                                                        id="id_area_compradora">
+                                                      <option value>-- Área Compradora--</option>
+                                                      <option v-for="area in areas_compradoras" :value="area.id" >{{ area.descripcion}}</option>
+                                                </select>
+                                            </span>
+
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_compradora')">{{ errors.first('id_area_compradora') }}</div>
                                         </div>
 
@@ -35,13 +42,22 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="tipo">Tipo</label>
-                                        <ctg-tipo-select
-                                            data-vv-as="Tipo"
-                                            id="id_tipo"
-                                            name="id_tipo"
-                                            :error="errors.has('id_tipo')"
-                                            v-validate="{required: true}"
-                                            v-model="id_tipo"/>
+                                                <span>
+                                                  <div v-if="disabled" class="form-control text-center">
+                                                     <i class="fa fa-spin fa-spinner"></i>
+                                                 </div>
+                                                <select class="form-control" v-if="!disabled"
+                                                        data-vv-as="Tipo"
+                                                        id="id_tipo"
+                                                        name="id_tipo"
+                                                        :error="errors.has('id_tipo')"
+                                                        v-validate="{required: true}"
+                                                        v-model="id_tipo">
+                                                      <option value>-- Tipo --</option>
+                                                  <option v-for="(tipo, index) in tipos" :value="tipo.id" >{{ tipo.descripcion}}</option>
+                                                </select>
+                                            </span>
+
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_tipo')">{{ errors.first('id_tipo') }}</div>
                                         </div>
                                     </div>
@@ -49,15 +65,24 @@
                                           <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="areaSolicitante">Área Solicitante</label>
-                                            <CtgAreaSolicitanteSelect
-                                                id="id_area_solicitante"
-                                                data-vv-as="Área Solicitante"
-                                                name="id_area_solicitante"
-                                                v-model="id_area_solicitante"
-                                                v-validate="{required: true}"
-                                                :error="errors.has('id_area_solicitante')"
-                                                scope="UsuarioBelongs"
-                                            />
+                                             <span>
+                                                <div v-if="disabled" class="form-control text-center">
+                                                    <i class="fa fa-spin fa-spinner"></i>
+                                                </div>
+
+                                                <select class="form-control" v-if="!disabled"
+                                                        id="id_area_solicitante"
+                                                        data-vv-as="Área Solicitante"
+                                                        name="id_area_solicitante"
+                                                        v-model="id_area_solicitante"
+                                                        v-validate="{required: true}"
+                                                        :error="errors.has('id_area_solicitante')">
+                                               <option value>-- Área Solicitante --</option>
+                                               <option v-for="area_s in areas_solicitantes" :value="area_s.id" >{{ area_s.descripcion}}</option>
+                                                </select>
+
+                                            </span>
+
                                              <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_solicitante')">{{ errors.first('id_area_solicitante') }}</div>
                                         </div>
                                     </div>
@@ -303,19 +328,20 @@
 
 <script>
     import MaterialSelect from "../../cadeco/material/SelectAutocomplete"
-    import CtgTipoSelect from "../../seguridad/compras/CtgTipoSelect";
     import SelectDestino from "../SelectDestino";
-    import CtgAreaSolicitanteSelect from "../../seguridad/compras/CtgAreaSolicitanteSelect";
-    import CtgAreaCompradoraSelect from "../../seguridad/compras/CtgAreaCompradoraSelect";
     import MarcaSelect from "../../sci/MarcaSelect";
     import ModeloSelect from "../../sci/ModeloSelect";
 
     export default {
         name: "solicitud-compra-create",
-        components: {MaterialSelect, ModeloSelect, MarcaSelect, CtgAreaCompradoraSelect, CtgAreaSolicitanteSelect, SelectDestino, CtgTipoSelect},
+        components: {MaterialSelect, ModeloSelect, MarcaSelect, SelectDestino },
         data(){
             return{
+                areas_compradoras: [],
+                areas_solicitantes:[],
+                tipos: [],
                 cargando: false,
+                disabled: true,
                 index:0,
                 id_area_compradora: '',
                 id_area_solicitante: '',
@@ -348,8 +374,38 @@
         },
         mounted() {
             this.$validator.reset()
+            this.getAreasCompradoras();
+            this.getTipos();
+            this.getAreasSolicitantes();
         },
         methods : {
+            getAreasCompradoras(){
+                return this.$store.dispatch('seguridad/compras/ctg-area-compradora/index', {
+                    params: { scope: 'UsuarioBelongs', sort: 'descripcion',  order: 'asc'}
+                })
+                    .then(data => {
+                        this.areas_compradoras = data.data;
+                        this.disabled = false;
+                    })
+            },
+            getTipos() {
+                return this.$store.dispatch('seguridad/compras/ctg-tipo/index', {
+                    params: {sort: 'descripcion',  order: 'asc'}
+                })
+                    .then(data => {
+                        this.tipos = data.data;
+                        this.disabled = false;
+                    })
+            },
+            getAreasSolicitantes(){
+                return this.$store.dispatch('seguridad/compras/ctg-area-solicitante/index', {
+                    params: { scope: 'UsuarioBelongs', sort: 'descripcion',  order: 'asc'}
+                })
+                    .then(data => {
+                      this.areas_solicitantes = data.data;
+                        this.disabled = false;
+                    })
+            },
             addRow(index){
                     this.items.splice(index + 1, 0, {});
                     this.index = index+1;
@@ -403,13 +459,21 @@
             },
 
         },
+        computed :{
+            areas(){
+                return this.$store.getters['seguridad/compras/ctg-area-compradora/areas']
+            },
+        }
 
     }
 </script>
 
 <style>
-    .error > .vue-treeselect__control{
+    .error > .vue-treeselect__control {
         border-color: #dc3545
     }
+     .error {
+         border-color: #dc3545
+     }
 
 </style>
