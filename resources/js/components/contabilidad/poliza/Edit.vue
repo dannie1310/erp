@@ -120,7 +120,7 @@
                                         <td>{{ i + 1 }}</td>
                                         <td>
                                             <span v-if="(movimiento.cuenta_contable && $root.can('editar_cuenta_contable_movimiento_prepoliza')) || $root.can('ingresar_cuenta_faltante_movimiento_prepoliza')">
-                                                <span v-if="movimiento.id_tipo_cuenta_contable == 1 && original.movimientos.data[i] ? original.movimientos.data[i].cuenta_contable !=null ? true : false : false">
+                                                <span v-if="movimiento.id_tipo_cuenta_contable == 1 && original.movimientos.data[i] ? movimientosOrdenados[i].cuenta_contable !=null ? true : false : false">
                                                     {{ movimiento.cuenta_contable }}
                                                 </span>
                                                 <span v-else>
@@ -459,7 +459,7 @@
             },
 
             movimientosOrdenados() {
-                return _.sortBy(this.poliza.movimientos.data, ['id_int_poliza_movimiento'])
+                return _.sortBy(this.poliza.movimientos.data, ['id_tipo_movimiento_poliza', 'concepto']);
 
             }
         }
