@@ -59,8 +59,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function getIdMonedaObra()
     {
         $moneda = Obra::find(Context::getIdObra())->moneda;
-        if($moneda[0]){
-            return $moneda[0]->id_moneda;
+        if($moneda){
+            return $moneda->id_moneda;
         }
         else {
                 return 1;

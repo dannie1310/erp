@@ -130,7 +130,12 @@ class LayoutPagoPartida extends Model
     }
 
     public function getMontoPagadoDocumentoAttribute(){
-        $monto_pagado = $this->monto_pagado * $this->tipo_cambio;
+        $moneda_obra = $this->transaccion->obra->moneda;
+        if($moneda_obra->id_moneda == $this->id_moneda_cuenta_cargo){
+            $monto_pagado = $this->monto_pagado / $this->tipo_cambio;
+        }else{
+            $monto_pagado = $this->monto_pagado * $this->tipo_cambio;
+        }
         return $monto_pagado;
     }
 

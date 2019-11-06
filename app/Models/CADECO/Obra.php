@@ -104,7 +104,7 @@ class Obra extends Model
 
     public function getMonedaAttribute()
     {
-        return Moneda::where("tipo",1)->get();
+        return Moneda::where("tipo",1)->first();
     }
 
 }
