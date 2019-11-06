@@ -22,6 +22,8 @@ class EntregaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'almacen',
+        'concepto'
 
     ];
 
@@ -43,6 +45,29 @@ class EntregaTransformer extends TransformerAbstract
             'id_concepto' => $model->id_concepto,
             'id_almacen' => $model->id_almacen
         ];
+    }
+
+    /**
+     * @param Entrega $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+
+    public function includeAlmacen(Entrega $model)
+    {
+        if($almacen = $model->almacen)
+        {
+            return $this->item($almacen, new AlmacenTransformer);
+        }
+        return null;
+    }
+
+    public function includeConcepto(Entrega $model)
+    {
+        if($concepto = $model->concepto)
+        {
+            return $this->item($concepto, new ConceptoTransformer);
+        }
+        return null;
     }
 
 }

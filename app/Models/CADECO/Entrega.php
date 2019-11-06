@@ -23,4 +23,16 @@ class Entrega extends Model
     ];
 
     public $timestamps = false;
+
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
+    }
+
+    public function concepto()
+    {
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
+
 }

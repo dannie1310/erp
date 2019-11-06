@@ -89,7 +89,7 @@
                                     <td>{{ item.entrega.cantidad }}</td>
                                     <td>{{ item.unidad }}</td>
                                     <td>{{ item.entrega.fecha }}</td>
-                                    <td>{{i}}</td>
+                                    <td v-if="item.entrega.almacen">{{ item.entrega.almacen.descripcion }}</td>  <td v-if="item.entrega.concepto">{{ item.entrega.concepto.path}}</td>
                                     <td>{{ item.complemento.observaciones }}</td>
 
                                 </tr>
@@ -130,7 +130,7 @@
                 return this.$store.dispatch('compras/solicitud-compra/find', {
                     id: this.id,
                     params:{
-                        include:['complemento', 'complemento.area_compradora', 'complemento.area_solicitante', 'complemento.tipo','partidas.material','partidas.entrega', 'partidas.complemento' ]
+                        include:['complemento', 'complemento.area_compradora', 'complemento.area_solicitante', 'complemento.tipo','partidas.material','partidas.entrega', 'partidas.complemento', 'partidas.entrega.almacen','partidas.concepto' ]
                     }
                 }).then(data => {
                     this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
