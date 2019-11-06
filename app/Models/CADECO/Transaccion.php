@@ -37,7 +37,6 @@ class Transaccion extends Model
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             if(auth()->user()->id_contratista){
                 if(($contratista = CtgContratista::query()->find(auth()->user()->id_contratista)) && auth()->user()->usuario_estado == 3){
@@ -138,20 +137,15 @@ class Transaccion extends Model
         $date = date_create($this->cumplimiento);
         return date_format($date,"d/m/Y");
     }
-
-
-    public function  getObservacionesFormatAttribute()
-    {
+    public function  getObservacionesFormatAttribute(){
         return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
     }
 
-    public  function costo()
-    {
+    public  function costo(){
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
 
-    public function usuario()
-    {
+    public function usuario(){
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 
