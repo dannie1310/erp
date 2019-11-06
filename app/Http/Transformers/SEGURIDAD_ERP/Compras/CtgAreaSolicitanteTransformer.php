@@ -33,7 +33,8 @@ class CtgAreaSolicitanteTransformer extends TransformerAbstract
     {
         return [
           'id' => $model->getKey(),
-          'descripcion' => $model->descripcion
+          'descripcion' => $model->descripcion,
+          'descripcion_corta' => $model->descripcion_corta,
         ];
     }
 
