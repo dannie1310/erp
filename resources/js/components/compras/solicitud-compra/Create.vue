@@ -90,12 +90,8 @@
 
                                     <div class="col-md-12">
                                        <div class="form-group">
-                                           <label for="concepto">Concepto</label>
-                                           <textarea class="form-control"
-                                                     id="concepto"
-                                                     name="concepto"
-                                                     v-model="concepto"
-                                                     rows="3"/>
+                                           <label for="exampleFormControlTextarea1">Concepto</label>
+                                           <textarea class="form-control" rows="3" id="concepto" name="concepto" v-model="concepto"></textarea>
                                        </div>
                                     </div>
 
@@ -151,8 +147,7 @@
                                                 <tr v-for="(item, i) in items">
                                                     <td style="width: 260px;">
                                                         <MaterialSelect
-                                                            scope="insumos".
-
+                                                            scope="insumos"
                                                             :name="`material[${i}]`"
                                                             v-model="item.material"
                                                             data-vv-as="Material"
