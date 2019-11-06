@@ -45,6 +45,7 @@ class LayoutPagoPartida extends Model
         'id_documento_remesa',
         'id_transaccion_pago',
         'monto_autorizado_remesa',
+        'monto_pagado_transaccion',
     ];
 
     public function layoutPago()
@@ -130,8 +131,8 @@ class LayoutPagoPartida extends Model
     }
 
     public function getMontoPagadoDocumentoAttribute(){
-        $monto_pagado = $this->monto_pagado * $this->tipo_cambio;
-        return $monto_pagado;
+
+        return $this->monto_pagado_transaccion;
     }
 
     public function getMontoPagadoFormatAttribute(){

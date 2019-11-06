@@ -58,17 +58,18 @@ class Factura extends Transaccion
     {
         // TODO: Obtener el monto de los pagos relacionados a la factura para determinar si se debe actualizar el estado
         DB::connection('cadeco')->beginTransaction();
-        $saldo_esperado = $this->saldo - ($data->monto_pagado_documento);
-        $saldo_esperado_cuenta = $data->cuenta->saldo_real - ($data->monto_pagado);
+        $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
+        $saldo_esperado = $this->saldo - ($data["monto_pagado_transaccion"]);
+        $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
 
         $datos = [
             'id_antecedente'=>$this->id_antecedente,
             'id_referente'=>$this->id_transaccion,
-            'monto'=>-1*abs($data->monto_pagado_documento),
-            'tipo_cambio'=>1/$data->tipo_cambio,// se registra el tipo de cambio inverso para seguir la lógica de CADECO
-            'fecha'=>$data->fecha_pago,
+            'monto'=>-1*abs($data["monto_pagado_transaccion"]),
+            'tipo_cambio'=>$data["tipo_cambio"],
+            'fecha'=>$data["fecha_pago"],
             'id_empresa'=>$this->id_empresa,
-            'id_moneda'=> $data->id_moneda,
+            'id_moneda'=> $data["id_moneda"],
         ];
         $ordenPago= OrdenPago::create($datos);
         $pago = $ordenPago->generaPago($data);

@@ -51,7 +51,8 @@ class SolicitudReposicionFF extends Solicitud
             return $pago;
         }else{
             DB::connection('cadeco')->beginTransaction();
-            $saldo_esperado_cuenta = $data->cuenta->saldo_real - ($data["monto_pagado"]);
+            $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
+            $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
             $saldo_esperado_fondo = $this->fondo->saldo + ($data["monto_pagado"] * ($data["tipo_cambio"]));
             $datos_pago = array(
                 "id_antecedente" => $this->id_transaccion,
@@ -61,7 +62,7 @@ class SolicitudReposicionFF extends Solicitud
                 "id_cuenta" =>  $data["id_cuenta_cargo"],
                 "destino" =>  $this->destino,
                 "id_moneda" =>  $data["id_moneda_cuenta_cargo"],
-                "tipo_cambio"=>1/$data["tipo_cambio"],
+                "tipo_cambio"=>$data["tipo_cambio"],
                 "cumplimiento" => $data["fecha_pago"],
                 "vencimiento" => $data["fecha_pago"],
                 "monto" => -1 * abs($data["monto_pagado"]),
@@ -93,7 +94,7 @@ class SolicitudReposicionFF extends Solicitud
         }
         if(abs($saldo_esperado_fondo-$this->fondo->saldo)>1){
             DB::connection('cadeco')->rollBack();
-            abort(400, 'Hubo un error durante la actualización del saldo del fondo');
+            abort(400, 'Hubo un error durante la actualización del saldo del fondo '.$this->fondo->descripcion);
         }
     }
 
