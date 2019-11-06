@@ -459,7 +459,8 @@
             },
 
             movimientosOrdenados() {
-                return _.sortBy(this.poliza.movimientos.data, ['id_tipo_movimiento_poliza', 'concepto'])
+                return _.sortBy(this.poliza.movimientos.data, ['id_int_poliza_movimiento'])
+
             }
         }
     }
