@@ -50,6 +50,7 @@ class SolicitudCompra extends Transaccion
         $comentario = explode('|', $this->comentario);
         return $comentario[1];
     }
+
     public function complemento(){
         return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
     }

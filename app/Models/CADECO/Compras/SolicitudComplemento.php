@@ -36,16 +36,6 @@ class SolicitudComplemento extends Model
         'timestamp_registro',
     ];
 
-    public function area_compradora()
-    {
-        return $this->belongsTo(CtgAreaCompradora::class, 'id','id_area_compradora');
-    }
-
-    public function area_solicitante()
-    {
-        return $this->belongsTo(CtgAreaSolicitante::class, 'id', 'id_area_solicitante');
-    }
-
     public function generaFolioCompuesto(){
 
         $count = $this->query()->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
@@ -59,6 +49,22 @@ class SolicitudComplemento extends Model
         return $folio;
 
     }
+
+    public function tipo()
+    {
+        return $this->belongsTo(CtgTipo::class, 'id_tipo', 'id');
+    }
+
+    public function area_compradora()
+    {
+        return $this->belongsTo(CtgAreaCompradora::class, 'id_area_compradora','id');
+    }
+
+    public function area_solicitante()
+    {
+        return $this->belongsTo(CtgAreaSolicitante::class, 'id_area_solicitante', 'id');
+    }
+
 
 
 

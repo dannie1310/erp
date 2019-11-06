@@ -5,6 +5,7 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Compras\SolicitudComplemento;
+use App\Models\CADECO\Compras\SolicitudPartidaComplemento;
 use App\Models\CADECO\Entrega;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudCompraPartida;
@@ -105,9 +106,15 @@ class SolicitudCompraService
 
            $partida= SolicitudCompraPartida::create($partida_datos);
 
+            /*Registro de Partida Complemento*/
+            $partida_complemento_datos = [
+                'id_item' => $partida->id_item,
+                'observaciones' => $item['observaciones']
+            ];
+            $partida_complemento = SolicitudPartidaComplemento::create($partida_complemento_datos);
+
+
             /*Registro de Entregas*/
-
-
             $datos_entrega = [
                 'id_item' => $partida->id_item,
                 'fecha' => $item['fecha'],

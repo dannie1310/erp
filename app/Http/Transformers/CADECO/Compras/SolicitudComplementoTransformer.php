@@ -10,11 +10,37 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgAreaCompradoraTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgAreaSolicitanteTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgTipoTransformer;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use League\Fractal\TransformerAbstract;
 
 class SolicitudComplementoTransformer extends TransformerAbstract
 {
+
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'area_compradora',
+        'area_solicitante',
+        'tipo',
+
+
+    ];
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+
+    ];
+
     public function transform(SolicitudComplemento $model)
     {
         return [
@@ -32,4 +58,53 @@ class SolicitudComplementoTransformer extends TransformerAbstract
 
         ];
     }
+
+    /**
+     * @param SolicitudComplemento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeAreaCompradora(SolicitudComplemento $model)
+    {
+
+        if($area = $model->area_compradora)
+        {
+            return $this->item($area, new CtgAreaCompradoraTransformer);
+        }
+        return null;
+    }
+
+
+    /**
+     * @param SolicitudComplemento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeAreaSolicitante(SolicitudComplemento $model)
+    {
+        if($area = $model->area_solicitante)
+        {
+            return $this->item($area, new CtgAreaSolicitanteTransformer);
+        }
+        return null;
+    }
+
+
+
+
+
+    /**
+     * @param SolicitudComplemento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipo(SolicitudComplemento $model)
+    {
+        if($tipo = $model->tipo)
+        {
+            return $this->item($tipo, new CtgTipoTransformer);
+        }
+        return null;
+
+    }
+
+
+
 }

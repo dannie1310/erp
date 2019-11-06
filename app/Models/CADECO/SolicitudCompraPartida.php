@@ -21,4 +21,17 @@ class SolicitudCompraPartida extends Item
         'id_concepto',
         'id_almacen'
     ];
+
+    public function entrega()
+    {
+        return $this->belongsTo(Entrega::class, 'id_item', 'id_item');
+    }
+
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'id_material', 'id_material');
+    }
+
+
+
 }

@@ -90,8 +90,12 @@
 
                                     <div class="col-md-12">
                                        <div class="form-group">
-                                           <label for="exampleFormControlTextarea1">Concepto</label>
-                                           <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                           <label for="concepto">Concepto</label>
+                                           <textarea class="form-control"
+                                                     id="concepto"
+                                                     name="concepto"
+                                                     v-model="concepto"
+                                                     rows="3"/>
                                        </div>
                                     </div>
 
