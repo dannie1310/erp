@@ -113,11 +113,6 @@ class LayoutPago extends Model
         return $partida;
     }
 
-    private function getMoneda( $partida){
-        $partida["id_moneda"] = $partida["id_moneda_transaccion"];
-        return $partida;
-    }
-
     public function  autorizar(){
         try{
             DB::connection('cadeco')->beginTransaction();
@@ -125,7 +120,6 @@ class LayoutPago extends Model
             foreach ($partidas as $partida) {
                 $partida_arr = $partida->toArray();
                 $partida_arr = $this->getTC($partida_arr);
-                $partida_arr = $this->getMoneda($partida_arr);
 
                 if (is_null($partida->id_transaccion_pago)) {
                     $transaccion = $partida->transaccion;
