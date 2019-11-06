@@ -48,6 +48,7 @@ class GestionPagoService
         $aplicacion_manual = false;
         switch ((int)$data->IDTipoDocumento){
             case 9:
+            case 10:
             case 11:
                 $pago_a_generar = 'Pago';
                 break;
