@@ -10,6 +10,7 @@ use App\Models\CADECO\Entrega;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudCompraPartida;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
+use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\Repository;
 
 
@@ -181,6 +182,12 @@ class SolicitudCompraService
     public function pdfSolicitudCompra($id)
     {
         $pdf = new SolicitudCompraFormato($id);
+        return $pdf;
+    }
+
+    public function pdfCotizacion($id)
+    {
+        $pdf = new CotizacionTablaComparativaFormato($id);
         return $pdf;
     }
 }
