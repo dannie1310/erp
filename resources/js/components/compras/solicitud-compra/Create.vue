@@ -195,26 +195,46 @@
                                                     </td>
 
                                                     <td>
-                                                        <marca-select
-                                                            :name="`marca[${i}]`"
-                                                            v-model="item.marca"
-                                                            data-vv-as="Marca"
-                                                            v-validate="{required: true}"
-                                                            :error="errors.has( `marca[${i}]`)"
-                                                            />
+
+                                                            <span>
+                                                                 <div v-if="disabled" class="form-control text-center">
+                                                                     <i class="fa fa-spin fa-spinner"></i>
+                                                                 </div>
+
+                                                                <select class="form-control" v-if="!disabled"
+                                                                        :name="`marca[${i}]`"
+                                                                        v-model="item.marca"
+                                                                        data-vv-as="Marca"
+                                                                        v-validate="{required: true}"
+                                                                        :error="errors.has( `marca[${i}]`)">
+                                                                    <option value>-- Marca --</option>
+                                                                    <option v-for="marca in marcas" :value="marca.id">{{marca.marca}}</option>
+                                                                </select>
+                                                            </span>
+
+
                                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`marca[${i}]`)">{{ errors.first(`marca[${i}]`) }}</div>
 
                                                     </td>
 
 
                                                     <td>
-                                                        <modelo-select
-                                                            :name="`modelo[${i}]`"
-                                                            v-model="item.modelo"
-                                                            data-vv-as="Modelo"
-                                                            v-validate="{required: true}"
-                                                            :error="errors.has( `modelo[${i}]`)"
-                                                             />
+                                                         <span>
+                                                            <div v-if="disabled" class="form-control text-center">
+                                                                 <i class="fa fa-spin fa-spinner"></i>
+                                                             </div>
+
+                                                            <select class="form-control" v-if="!disabled"
+                                                                    :name="`modelo[${i}]`"
+                                                                    v-model="item.modelo"
+                                                                    data-vv-as="Modelo"
+                                                                    v-validate="{required: true}"
+                                                                    :error="errors.has( `modelo[${i}]`)">
+                                                                <option value>-- Modelo --</option>
+                                                                <option v-for="modelo in modelos" :value="modelo.id">{{modelo.modelo}}</option>
+                                                            </select>
+                                                        </span>
+
                                                           <div style="display:block" class="invalid-feedback" v-show="errors.has(`modelo[${i}]`)">{{ errors.first(`modelo[${i}]`) }}</div>
                                                     </td>
 
@@ -329,17 +349,17 @@
 <script>
     import MaterialSelect from "../../cadeco/material/SelectAutocomplete"
     import SelectDestino from "../SelectDestino";
-    import MarcaSelect from "../../sci/MarcaSelect";
-    import ModeloSelect from "../../sci/ModeloSelect";
 
     export default {
         name: "solicitud-compra-create",
-        components: {MaterialSelect, ModeloSelect, MarcaSelect, SelectDestino },
+        components: {MaterialSelect, SelectDestino },
         data(){
             return{
                 areas_compradoras: [],
                 areas_solicitantes:[],
                 tipos: [],
+                marcas: [],
+                modelos: [],
                 cargando: false,
                 disabled: true,
                 index:0,
@@ -377,6 +397,8 @@
             this.getAreasCompradoras();
             this.getTipos();
             this.getAreasSolicitantes();
+            this.getMarcas();
+            this.getModelos();
         },
         methods : {
             getAreasCompradoras(){
@@ -412,6 +434,28 @@
             },
             removeRow(index){
                 this.items.splice(index, 1);
+            },
+            getMarcas() {
+                return this.$store.dispatch('sci/marca/index',{
+                    params: { sort: 'marca', order: 'asc'}
+                })
+                    .then(data => {
+                       this.marcas = data.data;
+                    })
+                    .finally(() => {
+                        this.disabled = false;
+                    })
+            },
+            getModelos(){
+                return this.$store.dispatch('sci/modelo/index',{
+                    params: { sort: 'modelo', order: 'asc'}
+                })
+                    .then(data => {
+                      this.modelos = data.data;
+                    })
+                    .finally(() => {
+                        this.disabled = false;
+                    })
             },
             salir(){
                 this.$router.push({name: 'solicitud-compra'});
