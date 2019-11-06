@@ -409,7 +409,7 @@ class Estimacion extends Transaccion
             'anticipo' => $this->anticipo,
             'tipo_cambio' => $this->anticipo,
             'comentario' => $this->comentario,
-            'observaciones' => $this->observaciones,
+            'observaciones' => $this->observaciones ? $this->observaciones : '',
             'FechaHoraRegistro' => $this->FechaHoraRegistro,
             'IVARetenido' => $this->IVARetenido,
             'id_usuario' => $this->id_usuario,

@@ -204,10 +204,11 @@ class Subcontrato extends Transaccion
 
     public function cambioEstadoEliminarEstimacion()
     {
-        if($this->estado == 1)
-        {
-            $this->estado = 0;
-            $this->save();
+        if ($this->estimaciones()->count('id_transaccion') == 0) {
+            if ($this->estado == 1) {
+                $this->estado = 0;
+                $this->save();
+            }
         }
     }
 }
