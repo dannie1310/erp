@@ -4,15 +4,16 @@
 namespace App\Models\CADECO;
 
 
+use App\CSV\CotizacionLayout;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\SolicitudCompraPartida;
 use App\Models\IGH\Usuario;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
 class SolicitudCompra extends Transaccion
 {
-
     public const TIPO_ANTECEDENTE = null;
 
     protected static function boot()
@@ -65,7 +66,8 @@ class SolicitudCompra extends Transaccion
         return $this->belongsTo(Usuario::class, 'registro', 'usuario');
     }
 
-
-
-
+    public function cotizaciones()
+    {
+        return $this->hasMany(CotizacionCompra::class, 'id_antecedente', 'id_transaccion');
+    }
 }
