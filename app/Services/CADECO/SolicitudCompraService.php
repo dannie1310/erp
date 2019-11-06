@@ -1,10 +1,13 @@
 <?php
 
 
-namespace App\Services\CADECO\Compras;
+namespace App\Services\CADECO;
 
 
+use App\Models\CADECO\Compras\SolicitudComplemento;
+use App\Models\CADECO\Entrega;
 use App\Models\CADECO\SolicitudCompra;
+use App\Models\CADECO\SolicitudCompraPartida;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use App\Repositories\Repository;
 
@@ -39,29 +42,88 @@ class SolicitudCompraService
             $solicitudes = $solicitudes->where( [['fecha', '=', $data['fecha']]] );
         }
 
-
-
-
         return $solicitudes->paginate($data);
 
     }
 
+
+
     public function store($data)
     {
 
-        /*Validamos Partidas*/
+        /*Validación de Partidas*/
         foreach ($data['items'] as $key => $item){
-
         $validacion= $this->validarPartidas($data['items'], $item, $key);
-
             if($validacion===true){
-                abort(400, 'No pueden existir dos partidas con el mismo material y mismo destino... Material: '.strval($key+1)." - ".strval($item['material']['label']));
+                abort(400, 'No pueden existir dos partidas con el mismo material y mismo destino... Material en Fila: '.strval($key+1)." - ".strval($item['material']['label']));
             }
         }
 
 
+        //Crear Solicitud de compra
+        $datos = [
+            'observaciones'=> $data['observaciones'],
+        ];
+        $solicitud = $this->repository->create($datos);
 
-           //Crear Solicitud de compra
+
+        //Crear el complemento
+
+            $datos_complemento = [
+                'id_transaccion'=>$solicitud->id_transaccion,
+                'id_area_compradora'=>$data['id_area_compradora'],
+                'id_tipo'=>$data['id_tipo'],
+                'id_area_solicitante'=>$data['id_area_solicitante'],
+                'fecha_requisicion_origen'=> $data['fecha_requisicion'],
+                'requisicion_origen'=>$data['folio_requisicion'],
+
+                ];
+            $complemento = SolicitudComplemento::create($datos_complemento);
+
+
+            /*Registro de partidas*/
+
+        foreach ($data['items'] as $key => $item){
+
+            $partida_datos = [
+                'id_transaccion'=>$solicitud->id_transaccion,
+                'id_material'=>$item['id_material'],
+                'unidad'=>$item['unidad']
+            ];
+
+
+
+            if($item['destino_concepto'] === true)
+            {
+                $partida_datos['id_concepto'] = $item['id_destino'];
+            }
+
+            if($item['destino_almacen'] === true)
+            {
+                $partida_datos['id_almacen'] = $item['id_destino'];
+            }
+
+           $partida= SolicitudCompraPartida::create($partida_datos);
+
+            /*Registro de Entregas*/
+
+
+            $datos_entrega = [
+                'id_item' => $partida->id_item,
+                'fecha' => $item['fecha'],
+                'numero_entrega'=> 1,
+                'cantidad' => $item['cantidad'],
+                'id_concepto' => $partida->id_concepto,
+                'id_almacen' => $partida->id_almacen
+            ];
+
+            $entrega = Entrega::create($datos_entrega);
+        }
+
+
+
+        return $solicitud;
+
 
     }
 
@@ -74,12 +136,9 @@ class SolicitudCompraService
 
                     if ($value['id_destino'] === $item['id_destino']) {
                         if ($value['destino_concepto'] === true && $item['destino_concepto'] === true) {
-//                       dd("aca",$value['destino_concepto']===$item['destino_concepto'] );
-//                            dd("aca1");
                             return true;
                         }
                         if ($value['destino_almacen'] === true && $item['destino_almacen'] === true) {
-//                            dd("aca2", $value['destino_almacen'], $item['destino_almacen']);
                             return true;
 
                         }
@@ -95,7 +154,6 @@ class SolicitudCompraService
 
         }
     }
-
 
     public function delete($data, $id)
     {

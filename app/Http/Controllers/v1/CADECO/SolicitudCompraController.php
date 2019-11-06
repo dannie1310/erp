@@ -1,13 +1,14 @@
 <?php
 
 
-namespace App\Http\Controllers\v1\CADECO\Compras;
+namespace App\Http\Controllers\v1\CADECO;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
-use App\Services\CADECO\Compras\SolicitudCompraService;
+use App\Http\Transformers\CADECO\SolicitudCompraTransformer;
+use App\Services\CADECO\SolicitudCompraService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class SolicitudCompraController extends Controller
@@ -50,4 +51,5 @@ class SolicitudCompraController extends Controller
     {
         return $this->service->pdfSolicitudCompra($id)->create();
     }
+
 }

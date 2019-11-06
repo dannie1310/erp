@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Transformers\CADECO\Compras;
+namespace App\Http\Transformers\CADECO;
 
 
 use App\Http\Transformers\IGH\UsuarioTransformer;

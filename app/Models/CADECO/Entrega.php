@@ -13,7 +13,13 @@ class Entrega extends Model
     protected $primaryKey = 'id_item';
 
     protected $fillable = [
-        'surtida'
+        'id_item',
+        'fecha',
+        'cantidad',
+        'numero_entrega',
+        'id_concepto',
+        'id_almacen',
+        'surtida',
     ];
 
     public $timestamps = false;
