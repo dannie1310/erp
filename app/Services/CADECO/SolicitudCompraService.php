@@ -71,12 +71,13 @@ class SolicitudCompraService
         //Crear el complemento
 
             $datos_complemento = [
-                'id_transaccion'=>$solicitud->id_transaccion,
-                'id_area_compradora'=>$data['id_area_compradora'],
-                'id_tipo'=>$data['id_tipo'],
-                'id_area_solicitante'=>$data['id_area_solicitante'],
-                'fecha_requisicion_origen'=> $data['fecha_requisicion'],
-                'requisicion_origen'=>$data['folio_requisicion'],
+                'id_transaccion' => $solicitud->id_transaccion,
+                'id_area_compradora'=> $data['id_area_compradora'],
+                'id_tipo' => $data['id_tipo'],
+                'concepto' => $data['concepto'],
+                'id_area_solicitante' => $data['id_area_solicitante'],
+                'fecha_requisicion_origen' => $data['fecha_requisicion'],
+                'requisicion_origen' => $data['folio_requisicion'],
 
                 ];
             $complemento = SolicitudComplemento::create($datos_complemento);

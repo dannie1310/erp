@@ -10,6 +10,8 @@
 namespace App\Http\Transformers\CADECO;
 
 
+use App\Http\Transformers\CADECO\Compras\SolicitudPartidaComplementoTransformer;
+use App\Models\CADECO\Compras\SolicitudPartidaComplemento;
 use App\Models\CADECO\SolicitudCompraPartida;
 use League\Fractal\TransformerAbstract;
 
@@ -22,6 +24,7 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'complemento',
         'entrega',
         'material',
 
@@ -54,11 +57,11 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
      * @return \League\Fractal\Resource\Item|null
      */
 
-    public function includeMaterial(SolicitudCompraPartida $model)
+    public function includeComplemento(SolicitudCompraPartida $model)
     {
-        if($material = $model->material)
+        if($complemento = $model->complemento)
         {
-            return $this->item($material, new MaterialTransformer);
+            return $this->item($complemento, new SolicitudPartidaComplementoTransformer);
         }
         return null;
     }
@@ -77,6 +80,22 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
         }
         return null;
     }
+
+    /**
+     * @param SolicitudCompraPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+
+    public function includeMaterial(SolicitudCompraPartida $model)
+    {
+        if($material = $model->material)
+        {
+            return $this->item($material, new MaterialTransformer);
+        }
+        return null;
+    }
+
+
 
 
 }

@@ -14,6 +14,7 @@ use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgAreaCompradoraTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgAreaSolicitanteTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgTipoTransformer;
 use App\Models\CADECO\Compras\SolicitudComplemento;
+use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 class SolicitudComplementoTransformer extends TransformerAbstract
@@ -51,7 +52,7 @@ class SolicitudComplementoTransformer extends TransformerAbstract
             'folio' => $model->folio_compuesto,
             'estado' => $model->estado,
             'concepto' => $model->concepto,
-            'fecha_requisicion_origen' => $model->fecha_requisicion_origen,
+            'fecha_requisicion_origen' => Carbon::parse($model->fecha_requisicion_origen)->format('d-m-Y'),
             'requisicion_origen' => $model->requisicion_origen,
             'registro' => $model->registro,
             'fecha_registro' =>$model->timestamp_registro,

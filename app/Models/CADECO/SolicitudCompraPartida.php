@@ -10,6 +10,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Compras\SolicitudPartidaComplemento;
+
 class SolicitudCompraPartida extends Item
 {
     protected $fillable = [
@@ -21,6 +23,11 @@ class SolicitudCompraPartida extends Item
         'id_concepto',
         'id_almacen'
     ];
+
+    public function complemento()
+    {
+        return $this->belongsTo(SolicitudPartidaComplemento::class, 'id_item', 'id_item');
+    }
 
     public function entrega()
     {
