@@ -511,7 +511,6 @@ export const routes = [
                     },
                 ]
             },
-
             {
                 path: 'catalogo-insumo',
                 component: require('./components/compras/catalogos/Layout'),
@@ -572,6 +571,22 @@ export const routes = [
                 ]
             },
             {
+                path: 'cotizacion',
+                component: require('./components/compras/cotizacion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'cotizacion',
+                        component: require('./components/compras/cotizacion/Index'),
+                        meta: {
+                            title: 'Cotizaciones',
+                            breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue'),
                 meta: {
@@ -628,7 +643,7 @@ export const routes = [
                         }
                     }
                 ]
-            },
+            }
         ]
     },
     {
