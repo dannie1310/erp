@@ -1,0 +1,50 @@
+<?php
+
+
+namespace App\Http\Controllers\v1\CADECO;
+
+
+use App\Http\Controllers\Controller;
+use App\Http\Transformers\CADECO\FamiliaTransformer;
+use App\Services\CADECO\FamiliaService;
+use App\Traits\ControllerTrait;
+use League\Fractal\Manager;
+
+class FamiliaController extends Controller
+{
+    use ControllerTrait;
+
+    /**
+     * @var FamiliaService
+     */
+    protected $service;
+
+    /**
+     * @var FamiliaTransformer
+     */
+    protected $transformer;
+
+    /**
+     * @var Manager
+     */
+    protected $fractal;
+
+    /**
+     * FamiliaController constructor.
+     * @param FamiliaService $service
+     * @param FamiliaTransformer $transformer
+     * @param Manager $fractal
+     */
+    public function __construct(FamiliaService $service, FamiliaTransformer $transformer, Manager $fractal)
+    {
+        $this->middleware('auth:api');
+        $this->middleware('context');
+        $this->middleware('permiso:consultar_familia_material|consultar_familia_herramienta_equipo|consultar_familia_servicio')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:registrar_familia_herramienta_equipo|registrar_familia_material|registrar_familia_servicio')->only('store');
+
+        $this->service = $service;
+        $this->transformer = $transformer;
+        $this->fractal = $fractal;
+    }
+
+}

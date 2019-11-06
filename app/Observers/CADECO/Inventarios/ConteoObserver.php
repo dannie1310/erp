@@ -12,6 +12,5 @@ class ConteoObserver
         $conteo->validar();
         $conteo->id_usuario = auth()->id();
         $conteo->fecha_hora_registro =  date('Y-m-d h:i:s');
-
     }
 }

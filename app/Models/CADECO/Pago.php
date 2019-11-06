@@ -8,10 +8,6 @@
 
 namespace App\Models\CADECO;
 
-use App\Models\CADECO\Moneda;
-use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Cuenta;
-
 class Pago extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
@@ -38,10 +34,8 @@ class Pago extends Transaccion
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 82)
-                ->where('opciones', '=', 0)
                 ->where('estado', '!=', -2);
         });
     }
@@ -53,7 +47,18 @@ class Pago extends Transaccion
         return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
     }
 
-    public function empresa(){
-        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
+    public function getEstadoStringAttribute()
+    {
+        $estado = "";
+        if ($this->estado==0){
+            $estado='Por Autorizar';
+        }
+        elseif ($this->estado==1){
+            $estado='Por Conciliar';
+        }
+        elseif($this->estado==2){
+            $estado='Conciliado';
+        }
+        return $estado;
     }
 }

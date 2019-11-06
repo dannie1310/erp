@@ -11,7 +11,8 @@ namespace App\Services\CADECO\Almacenes;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EntradaMaterial;
-use App\Repositories\Repository;
+use App\PDF\EntradaAlmacenFormato;
+use App\Repositories\CADECO\EntradaAlmacen\Repository;
 
 class EntradaAlmacenService
 {
@@ -60,5 +61,23 @@ class EntradaAlmacenService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar($data['data'][0]);
+    }
+
+    public function pdfEntradaAlmacen($id)
+    {
+        $pdf = new EntradaAlmacenFormato($id);
+        return $pdf;
+    }
+
+    public function store(array $data)
+    {
+        $datos = [
+            'id_antecedente' => $data['id_orden_compra'],
+            'remision' => $data['remision'],
+            'fecha' => $data['fecha'],
+            'observaciones' => $data['orden_compra']['observaciones'],
+            'partidas' =>  $data['partidas'][0]
+        ];
+        return $this->repository->create($datos);
     }
 }

@@ -45,6 +45,7 @@ class SalidaAlmacenController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_salida_almacen')->only(['show','paginate','index','find']);
         $this->middleware('permiso:eliminar_salida_almacen')->only(['destroy']);
+        $this->middleware('permiso:registrar_salida_almacen')->only(['store']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -54,6 +55,15 @@ class SalidaAlmacenController extends Controller
     public function destroy(DeleteSalidaAlmacenRequest $request, $id)
     {
         return $this->traitDestroy($request, $id);
+    }
+
+    public function pdfSalidaAlmacen($id)
+    {
+        if(auth()->user()->can('consultar_salida_almacen')) {
+            return $this->service->pdfSalidaAlmacen($id)->create();
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+
     }
 
 }

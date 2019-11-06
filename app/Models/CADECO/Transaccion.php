@@ -109,35 +109,22 @@ class Transaccion extends Model
         return substr($cumplimiento, 0, 10);
     }
 
-    public function getCumplimientoFormAttribute()
-    {
-        $date = date_create($this->cumplimiento);
-        return date_format($date,"Y-m-d");
-
-    }
-    public function getVencimientoFormAttribute()
-    {
-        $date = date_create($this->vencimiento);
-        return date_format($date,"Y-m-d");
-
-    }
-
     public function getFechaHoraRegistroFormatAttribute()
     {
         $date = date_create($this->FechaHoraRegistro);
         return date_format($date,"Y-m-d h:i:s a");
     }
 
-    public function getVencimientoFormatAttribute()
-    {
-        $date = date_create($this->vencimiento);
-        return date_format($date,"d/m/Y");
-    }
-
-    public function getCumplimientoFormatAttribute()
+    public function getCumplimientoFormAttribute()
     {
         $date = date_create($this->cumplimiento);
-        return date_format($date,"d/m/Y");
+        return date_format($date,"Y-m-d");
+    }
+
+    public function getVencimientoFormAttribute()
+    {
+        $date = date_create($this->vencimiento);
+        return date_format($date,"Y-m-d");
     }
 
     public function  getObservacionesFormatAttribute()

@@ -7,6 +7,25 @@
                      <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class= "row">
+                                <div class="offset-md-10 col-md-2">
+                                    <div class="form-group row error-content">
+                                        <label for="fecha" class="col-sm-2 col-form-label">Fecha: </label>
+                                            <datepicker v-model = "fecha"
+                                                        name = "fecha"
+                                                        :format = "formatoFecha"
+                                                        :language = "es"
+                                                        :bootstrap-styling = "true"
+                                                        :use-utc="true"
+                                                        class = "form-control"
+                                                        v-validate="{required: true}"
+                                                        :class="{'is-invalid': errors.has('fecha')}"
+                                            ></datepicker>
+                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class= "row">
                                 <div class="col-md-6">
                                     <div class="form-group row error-content">
                                         <label for="referencia" class="col-sm-2 col-form-label">Referencia: </label>
@@ -28,38 +47,17 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row error-content">
-                                        <label for="fecha" class="col-sm-2 col-form-label">Fecha: </label>
-                                        <div class="col-sm-10">
-                                            <datepicker v-model = "fecha"
-                                                        name = "fecha"
-                                                        :format = "formatoFecha"
-                                                        :bootstrap-styling = "true"
-                                                        class = "form-control"
-                                                        v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('fecha')}"
-                                            ></datepicker>
-                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group row error-content">
                                                 <label for="id_almacen" class="col-sm-2 col-form-label">Almacén: </label>
                                                 <div class="col-sm-10">
                                                     <select
-                                                        type="text"
-                                                        name="id_almacen"
-                                                        data-vv-as="Almacén"
-                                                        v-validate="{required: true}"
-                                                        class="form-control"
-                                                        id="id_almacen"
-                                                        v-model="id_almacen"
-                                                        :class="{'is-invalid': errors.has('id_almacen')}"
+                                                            type="text"
+                                                            name="id_almacen"
+                                                            data-vv-as="Almacén"
+                                                            v-validate="{required: true}"
+                                                            class="form-control"
+                                                            id="id_almacen"
+                                                            v-model="id_almacen"
+                                                            :class="{'is-invalid': errors.has('id_almacen')}"
                                                     >
                                                             <option value>-- Seleccione un almacén --</option>
                                                             <option v-for="almacen in almacenes" :value="almacen.id">{{ almacen.descripcion }}</option>
@@ -67,9 +65,8 @@
                                                     <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
                                 </div>
+
                             </div>
                         </div>
                      </form>
@@ -108,11 +105,13 @@
     import AjustePositivo from "./ajuste-positivo/Create";
     import NuevoLote from "./nuevo-lote/Create";
     import datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "ajuste-create",
         components: {AjusteNegativo, AjustePositivo, NuevoLote, datepicker},
         data() {
             return {
+                es: es,
                 cargando: false,
                 id_almacen: '',
                 referencia: '',
@@ -125,7 +124,7 @@
         },
         methods: {
             formatoFecha(date){
-                return moment(date).format('YYYY-MM-DD');
+                return moment(date).format('DD-MM-YYYY');
             },
             getAlmacen() {
                 this.almacenes = [];

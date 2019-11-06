@@ -10,17 +10,18 @@ namespace App\Http\Controllers\v1\CADECO\Almacenes;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Compras\DeleteEntradaAlmacenRequest;
+use App\Http\Requests\Almacenes\DeleteEntradaAlmacenRequest;
+use App\Http\Requests\Almacenes\StoreEntradaAlmacenRequest;
 use App\Http\Transformers\CADECO\Compras\EntradaAlmacenTransformer;
 use App\Services\CADECO\Almacenes\EntradaAlmacenService;
 use App\Traits\ControllerTrait;
-use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class EntradaAlmacenController extends Controller
 {
     use ControllerTrait {
         destroy as traitDestroy;
+        store as protected traitStore;
     }
 
     /**
@@ -50,6 +51,8 @@ class EntradaAlmacenController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_entrada_almacen')->only(['show','paginate','index','find']);
         $this->middleware('permiso:eliminar_entrada_almacen')->only('destroy');
+        $this->middleware('permiso:registrar_entrada_almacen')->only('store');
+      
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -59,5 +62,18 @@ class EntradaAlmacenController extends Controller
     public function destroy(DeleteEntradaAlmacenRequest $request, $id)
     {
         return $this->traitDestroy($request, $id);
+    }
+
+    public function pdfEntradaAlmacen($id)
+    {
+        if(auth()->user()->can('consultar_entrada_almacen')) {
+            return $this->service->pdfEntradaAlmacen($id)->create();
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+    }
+
+    public function store(StoreEntradaAlmacenRequest $request)
+    {
+        return $this->traitStore($request);
     }
 }

@@ -111,11 +111,11 @@ class InventarioMarbete extends Rotation
             $this->SetY($this->GetY() + 1.7);
             $this->SetFont('Arial', 'B', 9);
             $this->Cell(0.8);
-            $this->Code39($this->GetX() + 1.6,$this->GetY() +0.1, strval(str_pad($marbete->material->id_material, '6', 0, 0)) );
+            $this->Code39($this->GetX() + 1.6,$this->GetY() +0.1, strval($marbete->id) );
             $this->Cell(1.1);
-            $this->Code39($this->GetX() + 9.2,$this->GetY() +0.1, strval(str_pad($marbete->material->id_material, '6', 0, 0)) );
+            $this->Code39($this->GetX() + 9.2,$this->GetY() +0.1, strval($marbete->id.'C2') );
             $this->Cell(1.15);
-            $this->Code39($this->GetX() + 17 ,$this->GetY() +0.1, strval(str_pad($marbete->material->id_material, '6', 0, 0)) );
+            $this->Code39($this->GetX() + 17 ,$this->GetY() +0.1, strval($marbete->id.'C1') );
             $this->setFillColor('255','255','255');
 //            dd('pardo', $this->GetY(), $this->GetY() + $this->e, $this->e, $marbete->material->id_material);
             $this->SetY($this->GetY() + $this->e);

@@ -13,13 +13,15 @@
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
-                                                        <th class="bg-gray-light">#</th>
+                                                        <th class="bg-gray-light th_index">#</th>
                                                         <th class="bg-gray-light">No de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
-                                                        <th class="bg-gray-light">Unidad</th>
-                                                        <th class="bg-gray-light">Cantidad a Restar</th>
-                                                        <th class="bg-gray-light">
-                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar">
+                                                        <th class="bg-gray-light th_unidad">Unidad</th>
+                                                        <th class="bg-gray-light th_money_input">Cantidad Ingresada</th>
+                                                        <th class="bg-gray-light th_money_input">Saldo Inventarios</th>
+                                                        <th class="bg-gray-light th_money_input">Cantidad a Restar</th>
+                                                        <th class="bg-gray-light th_index">
+                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar" :disabled="cargando">
                                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                                 <i class="fa fa-plus" v-else></i>
                                                             </button>
@@ -34,9 +36,9 @@
                                                                      :disabled = "!bandera"
                                                                      class="form-control"
                                                                      :name="`id_material[${i}]`"
-                                                                     v-model="item.id_material"
+                                                                     v-model="item.material"
                                                                      v-validate="{required: true }"
-                                                                     data-vv-as="No de Parte"
+                                                                     data-vv-as="No. de Parte"
                                                                      :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                              >
 
@@ -51,7 +53,7 @@
                                                                       :disabled = "!bandera"
                                                                       class="form-control"
                                                                       :name="`id_material[${i}]`"
-                                                                      v-model="item.id_material"
+                                                                      v-model="item.material"
                                                                       v-validate="{required: true }"
                                                                       data-vv-as="Descripcion"
                                                                       :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
@@ -64,15 +66,21 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            {{item.id_material.unidad}}
+                                                            {{item.material.unidad}}
+                                                        </td>
+                                                         <td class="td_money">
+                                                            {{item.material.cantidad_almacen}}
+                                                        </td>
+                                                        <td class="td_money">
+                                                            {{item.material.saldo_almacen}}
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
-                                                                    :disabled = "!item.id_material"
+                                                                    :disabled = "!item.material"
                                                                     type="number"
                                                                     step="any"
                                                                     :name="`cantidad[${i}]`"
-                                                                    v-model="item.cantidad"
+                                                                    v-model="item.material.cantidad"
                                                                     data-vv-as="Cantidad"
                                                                     v-validate="{required: true, min_value: 0.1}"
                                                                     class="form-control"
@@ -83,7 +91,7 @@
                                                                  v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
                                                             </div>
                                                         </td>
-                                                        <td>
+                                                        <td style="text-align:center">
                                                             <button class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                         </td>
                                                     </tr>
@@ -162,6 +170,28 @@
             getMateriales(id_almacen){
                 this.materiales = [];
                 this.cargando = true;
+                return this.$store.dispatch('cadeco/almacen/find', {
+                    id: this.id_almacen,
+                    params: { include: 'materiales_ajuste' }
+                })
+                    .then(data => {
+                        console.log(data);
+                        this.materiales = data.materiales_ajuste.data;
+                        if( this.materiales.length != 0 ) {
+                            this.bandera = 1;
+                            this.cargando = false
+                        }
+                    })
+                    .finally(() => {
+                        if( this.materiales.length == 0 ) {
+                            swal('¡Error!', 'No existe ningun material disponible para ajustar.', 'error')
+                        }
+
+                    })
+            },
+            /*getMateriales(id_almacen){
+                this.materiales = [];
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
                         scope: ['inventariosDistintoCero:'+id_almacen],
@@ -181,11 +211,10 @@
                             swal('¡Error!', 'No existe ningun material disponible para ajustar.', 'error')
                         }
                     })
-            },
+            },*/
             agregar() {
                 var array = {
-                    'id_material' : '',
-                    'cantidad' : '',
+                    'material' : ''
                 }
                 if(this.materiales.length === 0 ) {
                     this.getMateriales(this.id_almacen);

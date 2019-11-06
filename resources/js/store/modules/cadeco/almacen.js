@@ -3,13 +3,17 @@ const URI = '/api/almacen/';
 export default {
     namespaced: true,
     state: {
-        almacenes: []
+        almacenes: [],
+        currentAlmacen: '',
     },
 
     mutations: {
         SET_ALMACENES(state, data) {
             state.almacenes = data;
-        }
+        },
+        SET_ALMACEN(state, data) {
+            state.currentAlmacen = data;
+        },
     },
 
     actions: {
@@ -17,6 +21,19 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -45,6 +62,9 @@ export default {
     getters: {
         almacenes(state) {
             return state.almacenes
+        },
+        currentAlmacen(state) {
+            return state.currentAlmacen
         }
     }
 }

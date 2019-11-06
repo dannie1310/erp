@@ -17,6 +17,17 @@ class Movimiento extends Model
     protected $table = 'movimientos';
     protected $primaryKey = 'id_movimiento';
 
+    protected $fillable = [
+        'id_item',
+        'id_concepto',
+        'id_material',
+        'cantidad',
+        'lote_antecedente',
+        'creado',
+        'monto_total',
+        'monto_pagado',
+    ];
+
     public $timestamps = false;
 
 

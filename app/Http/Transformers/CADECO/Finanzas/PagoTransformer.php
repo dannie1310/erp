@@ -43,12 +43,16 @@ class PagoTransformer extends TransformerAbstract
     {
       return [
           'id'=>$model->getKey(),
-          'numero_folio' =>$model->numero_folio,
-          'fecha_format'=>Carbon::parse($model->fecha)->format('d-m-Y'),
+          'numero_folio_format' =>$model->numero_folio_format,
+          /*'fecha_format'=>Carbon::parse($model->fecha)->format('d-m-Y'),*/
+          'fecha_format'=>$model->fecha_format,
           'monto'=>abs($model->monto),
+          'monto_format'=>($model->monto_format),
           'id_empresa'=>$model->id_empresa,
+          'destino'=>$model->destino,
           'observaciones'=>$model->observaciones,
           'id_moneda'=>$model->id_moneda,
+          'estado_string'=>$model->estado_string,
 
       ];
     }

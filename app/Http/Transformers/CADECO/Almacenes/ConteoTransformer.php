@@ -22,12 +22,12 @@ class ConteoTransformer extends TransformerAbstract
             'folio_marbete' => $model->folio_marbete,
             'cantidad_usados' => $model->cantidad_usados,
             'usado' => $model->usado,
-            'cantidad_nuevo' => $model->cantidad_nuevo,
+            'cantidad_nuevo' => number_format($model->cantidad_nuevo,2),
             'nuevo' => $model->nuevo,
-            'cantidad_inservible' => $model->cantidad_inservible,
-            'inservible' => $model->inservible,
-            'total' => $model->total,
-            'total_format' => $model->total_format,
+            'cantidad_inservible' => number_format($model->cantidad_inservible,2, ".",","),
+            'inservible' => number_format($model->inservible,2,".",","),
+            'total' => number_format($model->total,2,".",","),
+            'total_format' => number_format($model->total_format,2,".",","),
             'iniciales' => $model->iniciales,
             'observaciones' => $model->observaciones
         ];

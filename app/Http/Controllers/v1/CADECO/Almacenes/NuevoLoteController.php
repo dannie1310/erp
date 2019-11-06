@@ -51,6 +51,7 @@ class NuevoLoteController extends Controller
 
         $this->middleware('permiso:consultar_nuevo_lote')->only(['show','paginate','index','find']);
         $this->middleware('permiso:registrar_nuevo_lote')->only('store');
+        $this->middleware('permiso:eliminar_nuevo_lote')->only('delete');
 
         $this->service = $service;
         $this->fractal = $fractal;

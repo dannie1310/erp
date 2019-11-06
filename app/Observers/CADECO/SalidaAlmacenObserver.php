@@ -9,7 +9,6 @@
 namespace App\Observers\CADECO;
 
 
-use App\Facades\Context;
 use App\Models\CADECO\SalidaAlmacen;
 use App\Models\CADECO\Transaccion;
 
@@ -22,6 +21,7 @@ class SalidaAlmacenObserver extends TransaccionObserver
     public function creating(Transaccion $salida)
     {
        parent::creating($salida);
+        $salida->tipo_transaccion = 34;
     }
 
     public function deleting(SalidaAlmacen $salida)
