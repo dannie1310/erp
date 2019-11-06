@@ -69,7 +69,7 @@ class Factura extends Transaccion
             'tipo_cambio'=>$data["tipo_cambio"],
             'fecha'=>$data["fecha_pago"],
             'id_empresa'=>$this->id_empresa,
-            'id_moneda'=> $data["id_moneda"],
+            'id_moneda'=> $this->id_moneda,
         ];
         $ordenPago= OrdenPago::create($datos);
         $pago = $ordenPago->generaPago($data);
