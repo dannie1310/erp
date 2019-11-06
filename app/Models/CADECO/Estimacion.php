@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 class Estimacion extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 51;
+    public const OPCION_ANTECEDENTE = 2;
 
     protected $fillable = [
         'id_antecedente',
