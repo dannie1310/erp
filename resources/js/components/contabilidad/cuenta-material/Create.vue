@@ -27,7 +27,6 @@
                                                 id="id_material"
                                                 v-model="id_material"
                                                 :error="errors.has('id_material')"
-                                                scope="sinCuenta"
                                                 ref="selectMaterial"
                                                 :disableBranchNodes="false"
                                         ></material-select>

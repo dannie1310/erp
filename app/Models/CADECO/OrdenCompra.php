@@ -144,4 +144,13 @@ class OrdenCompra extends Transaccion
 
        return $query->whereIn('id_transaccion', $transacciones);
     }
+
+    public function scopeDisponibleEntradaAlmacen($query)
+    {
+        return $query->whereHas('partidas', function ($q) {
+            return $q->whereHas('entrega', function ($qu) {
+                return $qu->whereRaw('ROUND(cantidad, 2) - ROUND(surtida, 2) > 0')->where('surtida', '>=', '0');
+            });
+        })->where('estado', '!=', 2);
+    }
 }

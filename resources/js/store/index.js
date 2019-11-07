@@ -33,6 +33,7 @@ import unidad from './modules/cadeco/unidad'
 
 
 //COMPRAS
+import asignacion from "./modules/compras/asignacion";
 import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
 import itemContratista from './modules/compras/item-contratista';
@@ -141,6 +142,7 @@ export default new Vuex.Store({
         'cadeco/sucursal': sucursal,
         'cadeco/unidad': unidad,
 
+        'compras/asignacion' : asignacion,
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
         'compras/item-contratista' : itemContratista,
