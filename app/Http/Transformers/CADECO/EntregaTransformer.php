@@ -12,8 +12,27 @@ namespace App\Http\Transformers\CADECO;
 use App\Models\CADECO\Entrega;
 use League\Fractal\TransformerAbstract;
 
-class EntregaTransformer extends TransformerAbstract
-{
+class EntregaTransformer extends TransformerAbstract{
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'concepto',
+        'almacen'
+    ];
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+
+    ];
+
+
     public function transform(Entrega $model)
     {
         return [
@@ -28,7 +47,7 @@ class EntregaTransformer extends TransformerAbstract
             'id_almacen' => $model->id_almacen
         ];
     }
-}
+
 
 
 
@@ -45,6 +64,10 @@ class EntregaTransformer extends TransformerAbstract
         }
         return null;
     }
+    /**
+     * @param Entrega $model
+     * @return \League\Fractal\Resource\Item|null
+     */
 
     public function includeConcepto(Entrega $model)
     {
