@@ -61,6 +61,20 @@ export default {
             });
         },
 
+        almacen(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI+'almacen', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
         paginate(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -120,6 +134,10 @@ export default {
         },
         meta(state) {
             return state.meta
+        },
+        currentMaterial(state) {
+            return state.currentMaterial;
         }
+
     }
 }

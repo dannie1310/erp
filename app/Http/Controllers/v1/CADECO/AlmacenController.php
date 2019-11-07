@@ -50,6 +50,4 @@ class AlmacenController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
-
-
 }

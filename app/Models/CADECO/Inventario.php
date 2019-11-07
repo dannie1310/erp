@@ -9,7 +9,9 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Inventario extends Model
 {
@@ -19,11 +21,16 @@ class Inventario extends Model
 
     public $timestamps = false;
 
+    public $searchable = [
+        'id_material'
+    ];
+
     protected $fillable = [
         'id_item',
         'id_almacen',
         'id_material',
         'cantidad',
+        'lote_antecedente',
         'saldo',
         'monto_total',
         'monto_pagado',
@@ -53,4 +60,5 @@ class Inventario extends Model
     {
         return number_format($this->saldo,3,'.', '');
     }
+
 }

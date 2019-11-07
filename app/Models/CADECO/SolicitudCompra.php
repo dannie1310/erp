@@ -4,8 +4,13 @@
 namespace App\Models\CADECO;
 
 
+use App\CSV\CotizacionLayout;
+use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Transaccion;
+use App\Models\CADECO\SolicitudCompraPartida;
 use App\Models\IGH\Usuario;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 
 class SolicitudCompra extends Transaccion
 {
@@ -20,6 +25,21 @@ class SolicitudCompra extends Transaccion
         });
     }
 
+
+
+    protected $fillable = [
+        'id_transaccion',
+        'tipo_transaccion',
+        'numero_folio',
+        'fecha',
+        'estado',
+        'id_obra',
+        'comentario',
+        'observaciones',
+        'FechaHoraRegistro'
+    ];
+
+
     public $searchable = [
         'numero_folio',
         'observaciones',
@@ -32,8 +52,22 @@ class SolicitudCompra extends Transaccion
         return $comentario[1];
     }
 
+    public function complemento(){
+        return $this->belongsTo(SolicitudComplemento::class,'id_transaccion', 'id_transaccion');
+    }
+
+    public function partidas()
+    {
+        return $this->hasMany(SolicitudCompraPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'registro', 'usuario');
+    }
+
+    public function cotizaciones()
+    {
+        return $this->hasMany(CotizacionCompra::class, 'id_antecedente', 'id_transaccion');
     }
 }

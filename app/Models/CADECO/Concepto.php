@@ -26,7 +26,7 @@ class Concepto extends Model
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('id_obra', '=', Context::getIdObra());
+            return $query->where('id_obra', '=', Context::getIdObra())->where('activo','=',1);
         });
     }
 
@@ -94,6 +94,10 @@ class Concepto extends Model
     public function scopeSinCuenta($query)
     {
         return $query->has('cuentaConcepto', '=', 0);
+    }
+    public function scopeNivel($query, $id)
+    {
+        return $query->where('id_concepto','=', $id);
     }
 
     public function cuentaConcepto()
