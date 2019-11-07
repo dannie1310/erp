@@ -53,7 +53,7 @@ class SolicitudReposicionFF extends Solicitud
             DB::connection('cadeco')->beginTransaction();
             $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
             $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
-            $saldo_esperado_fondo = $this->fondo->saldo + ($data["monto_pagado"] * ($data["tipo_cambio"]));
+            $saldo_esperado_fondo = $this->fondo->saldo + ($data["monto_pagado"] * (1/$data["tipo_cambio"]));
             $datos_pago = array(
                 "id_antecedente" => $this->id_transaccion,
                 "id_referente" => $this->id_referente,
