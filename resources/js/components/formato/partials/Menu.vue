@@ -6,7 +6,7 @@
                  with font-awesome or any other icon font library -->
 
             <li class="nav-header">MÓDULOS</li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="contratos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-building"></i>
                     <p>
@@ -31,7 +31,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item">
+            <li class="nav-item"  v-if="compras">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-cart-arrow-down"></i>
                     <p>
@@ -61,7 +61,18 @@
             mostrarMenu(event) {
                 event.stopPropagation();
                 $(event.target).closest('li').toggleClass('menu-open');
-            }
+            },
+            computed:{
+                compras(){
+                    return this.$root.can([
+                        'consultar_orden_compra'
+                    ]);
+                },
+                contratos(){
+                    return this.$root.can(['consultar_formato_orden_pago_estimacion','consultar_formato_estimacion']);
+                }
+
+            },
         }
     }
 </script>
