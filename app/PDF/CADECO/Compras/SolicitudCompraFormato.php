@@ -237,7 +237,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetAligns(['C','C','C','C','C','C','C']);
         $this->Row(["#","Cant. Solicitada", "Cant. Autorizada", "Unidad", "No. Parte", utf8_decode("Descripción"), "Fecha. Req"]);
 
-
+        $this->image('http://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Examples.png', 0, 3.1, 21);
     }
 
     function firmas(){
@@ -315,7 +315,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetY(28.5);
         $this->setX(1);
         $this->SetTextColor('0,0,0');
-        $this->Cell(7, .4, utf8_decode('Formato generado desde el módulo de Solicitud de Pagos Anticipados. Fecha de registro: '), 0, 0, 'L');
+        $this->Cell(7, .4, utf8_decode('Formato generado desde el módulo de Compras. Fecha de registro: '), 0, 0, 'L');
 //        .date("Y-m-d H:m:s", strtotime($this->fecha_solicitud))
         $this->Ln(.5);
         $this->SetY(-0.9);
