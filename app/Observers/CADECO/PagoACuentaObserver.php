@@ -12,17 +12,26 @@ namespace App\Observers\CADECO;
 use App\Facades\Context;
 use App\Models\CADECO\PagoACuenta;
 use App\Models\CADECO\Transaccion;
+use App\Models\CADECO\Pago;
 
-class PagoACuentaObserver extends TransaccionObserver
+class PagoACuentaObserver extends PagoObserver
 {
     /**
      * @param PagoACuenta $pagoACuenta
      *  @throws \Exception
      */
-    public function creating(Transaccion $pagoACuenta)
+    public function creating(Transaccion $pago)
     {
-        parent::creating($pagoACuenta);
-        $pagoACuenta->tipo_transaccion = 82;
-        $pagoACuenta->opciones = 327681;
+        parent::creating($pago);
+        $pago->tipo_transaccion = 82;
+        $pago->opciones = 327681;
+    }
+
+    public function created(Pago $pago)    {
+        parent::created($pago);
+        if(abs(abs($pago->monto*(1/$pago->tipo_cambio))-$pago->solicitud->monto)>0.99){
+            $pago->solicitud->generaSolicitudComplemento();
+        }
+        $pago->solicitud->actualizaEstadoPagada();
     }
 }

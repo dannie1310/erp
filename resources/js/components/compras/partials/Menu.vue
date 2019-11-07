@@ -26,7 +26,7 @@
             </li>
             <li class="nav-item" v-if="gestion_orden_compra">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-server"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>
                         Gestión de OC
                         <i class="right fa fa-angle-left"></i>
@@ -42,6 +42,40 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item" v-if="catalogo || $root.can('consultar_insumo_material')|| $root.can('consultar_insumo_herramienta_equipo')">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-circle"></i>
+                    <p>
+                        Catálogos
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+
+                <ul class="nav nav-treeview" v-if="catalogo">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'familia'}" class="nav-link" :class="{active: this.$route.name == 'familia'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Familias</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_material')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'material'}" class="nav-link" :class="{active: this.$route.name == 'material'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Materiales</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_insumo_herramienta_equipo')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'herramienta'}" class="nav-link" :class="{active: this.$route.name == 'herramienta'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Herramientas y Equipo</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
@@ -52,6 +86,13 @@
         name: "compras-menu",
 
         computed: {
+
+            catalogo(){
+                return this.$root.can([
+                    'consultar_familia_material',
+                    'consultar_familia_herramienta_equipo'
+                ]);
+            },
             gestion_almacen() {
                 return this.$root.can([
                     'consultar_entrada_almacen',

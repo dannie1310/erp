@@ -11,8 +11,9 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
+use Illuminate\Support\Facades\DB;
 
-class SolicitudPagoAnticipado extends Transaccion
+class SolicitudPagoAnticipado extends Solicitud
 {
     public const TIPO_ANTECEDENTE = null;
 
@@ -43,8 +44,7 @@ class SolicitudPagoAnticipado extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 72)
-                ->where('opciones', '=', 327681);
+            return $query->where('opciones', '=', 327681);
         });
     }
 
@@ -58,6 +58,11 @@ class SolicitudPagoAnticipado extends Transaccion
 
     public function subcontrato(){
         return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente');
+    }
+
+    public function pago()
+    {
+        return $this->HasOne(PagoACuenta::class,'id_antecedente','id_transaccion');
     }
 
     public function cancelar($id){
@@ -96,5 +101,79 @@ class SolicitudPagoAnticipado extends Transaccion
         if ($subcontrato != null && $subcontrato->montoDisponible < round($this->monto,2)){
             throw New \Exception('Este subcontrato no cuenta con el saldo disponible para lo que solicita.');
         }
+    }
+
+    public function generaPago($data)
+    {
+        $pago = $this->pago;
+        if($pago){
+            $this->actualizaEstadoPagada();
+            return $pago;
+        }else{
+            DB::connection('cadeco')->beginTransaction();
+            $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
+            $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
+            $datos_pago = array(
+                "id_antecedente" => $this->id_transaccion,
+                "fecha" => $data["fecha_pago"],
+                "estado" => 1,
+                "id_cuenta" =>  $data["id_cuenta_cargo"],
+                "id_costo" =>  $this->id_costo,
+                "id_empresa" =>  $this->id_empresa,
+                "destino" =>  $this->destino,
+                "id_moneda" =>  $data["id_moneda_cuenta_cargo"],
+                "tipo_cambio"=>$data["tipo_cambio"],
+                "cumplimiento" => $data["fecha_pago"],
+                "vencimiento" => $data["fecha_pago"],
+                "monto" => -1 * abs($data["monto_pagado"]),
+                "saldo" => -1 * abs($data["monto_pagado"]),
+                "referencia" => $data["referencia_pago"],
+                "observaciones" => $this->observaciones,
+            );
+            $pago = $this->pago()->create($datos_pago);
+            $this->validaPago($pago);
+            $this->validaSaldos($saldo_esperado_cuenta, $pago);
+            DB::connection('cadeco')->commit();
+            return $pago;
+        }
+    }
+
+    private function validaPago(PagoACuenta $pago){
+        if(!$pago){
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Hubo un error durante el registro del pago');
+        }
+    }
+
+    private function validaSaldos($saldo_esperado_cuenta, $pago){
+        $pago->load("cuenta");
+        if(abs($saldo_esperado_cuenta-$pago->cuenta->saldo_real)>1){
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Hubo un error durante la actualización del saldo de la cuenta por el pago de la solicitud de reposición de fondo.');
+        }
+    }
+    public function generaSolicitudComplemento()
+    {
+        //TODO: MEJORAR FORMA DE OBTNER EL TIPO DE CAMBIO REQUERIDO
+        DB::connection('cadeco')->beginTransaction();
+        $datos_solicitud = array(
+            "id_antecedente" => $this->id_antecedente,
+            "fecha" => $this->fecha,
+            "id_costo" =>  $this->id_costo,
+            "id_empresa" =>  $this->id_empresa,
+            "id_moneda" =>  $this->id_moneda,
+            "cumplimiento" => $this->cumplimiento,
+            "vencimiento" => $this->vencimiento,
+            "monto" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
+            "saldo" => number_format($this->monto-(abs($this->pago->monto *  (1/$this->pago->tipo_cambio))),2,".",""),
+            "destino" => $this->destino,
+            "observaciones" => $this->observaciones,
+        );
+        $solicitud = SolicitudPagoAnticipado::create($datos_solicitud);
+        #$this->load("pago");
+        $this->monto = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
+        $this->saldo = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
+        $this->save();
+        DB::connection('cadeco')->commit();
     }
 }

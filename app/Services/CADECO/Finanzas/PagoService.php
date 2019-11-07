@@ -40,17 +40,12 @@ class PagoService
             $pagos = $pagos->where([['numero_folio','LIKE', '%'.$data['numero_folio'].'%']]);
         }
 
-        if(isset($data['id_empresa'])){
-            $empresa = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['id_empresa'].'%']])->get();
-
-                   foreach ($empresa as $e){
-                       $pagos= $pagos->where([['id_empresa', '=', $e->id_empresa]]);
-                   }
-
+        if(isset($data['destino'])){
+            $pagos = $pagos->where([['destino','LIKE', '%'.$data['destino'].'%']]);
         }
 
-        if(isset($data['id_cuenta'])){
-            $cuenta = Cuenta::query()->where([['id_cuenta', 'LIKE', '%'.$data['id_cuenta'].'%']])->get();
+        if(isset($data['numero_cuenta'])){
+            $cuenta = Cuenta::query()->where([['numero', 'LIKE', '%'.$data['numero_cuenta'].'%']])->get();
 
             foreach ($cuenta as $e){
                 $pagos= $pagos->where([['id_cuenta', '=', $e->id_cuenta]]);

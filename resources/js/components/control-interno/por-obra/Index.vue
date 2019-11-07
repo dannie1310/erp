@@ -18,6 +18,12 @@
                                 <option v-for="obra in configuracionesObra" :value="obra.id">{{ `${obra.nombre} ` }} ({{ `${obra.base_datos} ` }})</option>
                             </select>
                         </div>
+
+                    <button @click="descargaListado" v-if="id_configuracion_obra" class="btn btn-app btn-info pull-right" :disabled="cargando_excel">
+                        <i class="fa fa-spin fa-spinner" v-if="cargando_excel"></i>
+                        <i class="fa fa-download" v-else></i>
+                        Descargar excel
+                    </button>
                     </div>
                 </div>
             </div>
@@ -75,10 +81,12 @@
                     { title: 'Fecha de Asignación', field: 'fecha_asigno', sortable: false }
                 ],
                 data: [],
+                cargando: false,
                 total: 0,
                 query: {},
                 query1: {},
-                cargando: false
+                query2: {},
+                cargando_excel: false,
             }
         },
 
@@ -106,6 +114,7 @@
             paginate() {
                 if (this.id_configuracion_obra) {
                     this.cargando = true;
+                    this.cargando_excel = true;
 
                     return this.$store.dispatch('seguridad/permiso/porObra', {
                         params: this.query,
@@ -125,9 +134,24 @@
                         })
                         .finally(() => {
                             this.cargando = false;
+                            this.cargando_excel = false;
                         })
                 }
-            }
+            },
+            descargaListado(){
+                this.cargando_excel = true;
+                this.query2.excel = true;
+                return this.$store.dispatch('seguridad/permiso/descargaListado', {
+                    params: this.query2,
+                    id: this.id_configuracion_obra
+                })
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.cargando_excel = false;
+                    })
+            },
+
         },
 
         computed: {

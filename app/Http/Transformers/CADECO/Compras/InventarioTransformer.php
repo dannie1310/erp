@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\CADECO\AlmacenTransformer;
 use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\Inventario;
 use League\Fractal\TransformerAbstract;
@@ -21,7 +22,8 @@ class InventarioTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'material'
+        'material',
+        'almacen'
     ];
 
     /**
@@ -30,7 +32,8 @@ class InventarioTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'material',
+        'almacen'
     ];
 
     public function transform(Inventario $model)
@@ -56,6 +59,19 @@ class InventarioTransformer extends TransformerAbstract
         if($material = $model->material)
         {
             return $this->item($material, new MaterialTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Inventario $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeAlmacen(Inventario $model)
+    {
+        if($almacen = $model->almacen)
+        {
+            return $this->item($almacen, new AlmacenTransformer);
         }
         return null;
     }
