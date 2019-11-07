@@ -13,6 +13,8 @@ namespace App\PDF\CADECO\Compras;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use Ghidev\Fpdf\Rotation;
+use SimpleSoftwareIO\QrCode\BaconQrCodeGenerator;
+
 
 class SolicitudCompraFormato extends Rotation
 {
@@ -237,7 +239,9 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetAligns(['C','C','C','C','C','C','C']);
         $this->Row(["#","Cant. Solicitada", "Cant. Autorizada", "Unidad", "No. Parte", utf8_decode("Descripción"), "Fecha. Req"]);
 
-        $this->image('http://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Examples.png', 0, 3.1, 21);
+
+
+
     }
 
     function firmas(){
@@ -272,34 +276,22 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4,  "", 'TRLB', 0, 'C', 1);
         $this->Cell(0.73);
 
-
-//        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4, utf8_decode('Solicitó'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(0.73);
-//        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4, utf8_decode('Capturó'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(0.73);
-//        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4, utf8_decode('Aprobó'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(0.73);
-//
-//
-//
-//        $this->Cell(($this->GetPageWidth() - 3) / 3, 1.2, '', 'TRLB', 0, 'C');
-//        $this->Cell(0.73);
-//        $this->Cell(($this->GetPageWidth() - 3) / 3, 1.2, '', 'TRLB', 0, 'C');
-//        $this->Cell(0.73);
-//        $this->Cell(($this->GetPageWidth() - 3) / 3, 1.2, '', 'TRLB', 0, 'C');
-//        $this->Cell(0.73);
-//
-//
-//
-//        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4,  utf8_decode('RESPONSABLE DE ÁREA'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(0.73);
-//        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4,  utf8_decode('GERENCIA DE ÁREA'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(0.73);
-//        $this->Cell(($this->GetPageWidth() - 3) / 3, 0.4,  utf8_decode('DIRECCIÓN DE ÁREA'), 'TRLB', 0, 'C', 1);
-//        $this->Cell(0.73);
+        /*Code for QR CODE*/
+        $image = new BaconQrCodeGenerator;
+        $pic = $image->format('png')->generate('Bugs everywhere, regards');
+        $dataUri= 'data:image/png;base64,'.base64_encode($pic);
+        $pr = $this->getImage($dataUri);
+        $this->image($pr[0], 1,22.1,3,3, $pr[1]);
 
     }
 
+    function getImage($dataURI){
+        $img = explode(',',$dataURI,2);
+        $pic = 'data://text/plain;base64,'.$img[1];
+        $type = explode("/", explode(':', substr($dataURI, 0, strpos($dataURI, ';')))[1])[1]; //get the image type
+        if ($type=="png"||$type=="jpeg"||$type=="gif") return array($pic, $type);
+        return false;
+    }
     function Footer()
     {
         $this->firmas();
