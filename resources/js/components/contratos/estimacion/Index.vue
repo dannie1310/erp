@@ -103,7 +103,7 @@
                     default:
                         return {
                             color: '#d2d6de',
-                            descripcion: 'Descnocido'
+                            descripcion: 'Desconocido'
                         }
                 }
             }
@@ -137,8 +137,11 @@
                             aprobar: (this.$root.can('aprobar_estimacion_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
                             desaprobar: (this.$root.can('revertir_aprobacion_estimacion_subcontrato') && estimacion.estado == 1 ) ? true : undefined ,
                             id: estimacion.id,
-                            estimacion: estimacion
+                            estimacion: estimacion,
+                            estado: estimacion.estado,
+                            delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : true
                         })
+
                     }));
                 },
                 deep: true

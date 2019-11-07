@@ -11,7 +11,6 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
-use App\Http\Transformers\CADECO\ItemTransformer;
 use App\Http\Transformers\CADECO\SubcontratosEstimaciones\SubcontratoEstimacionTrasnformer;
 use App\Models\CADECO\Estimacion;
 use League\Fractal\TransformerAbstract;
@@ -29,8 +28,7 @@ class EstimacionTransformer extends TransformerAbstract
         'subcontrato',
         'empresa',
         'moneda',
-        'items',
-
+        'partidas'
     ];
 
     /**
@@ -56,6 +54,10 @@ class EstimacionTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeSubcontratoEstimacion(Estimacion $model)
     {
         if ($subcontratoEstimacion = $model->subcontratoEstimacion) {
@@ -64,6 +66,10 @@ class EstimacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeSubcontrato(Estimacion $model)
     {
         if($subcontrato = $model->subcontrato) {
@@ -72,6 +78,10 @@ class EstimacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeEmpresa(Estimacion $model)
     {
         if($empresa = $model->empresa) {
@@ -80,6 +90,10 @@ class EstimacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeMoneda(Estimacion $model)
     {
         if($moneda = $model->moneda) {
@@ -89,14 +103,15 @@ class EstimacionTransformer extends TransformerAbstract
         return null;
     }
 
-    public function includeItems(Estimacion $model)
+    /**
+     * @param Estimacion $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(Estimacion $model)
     {
-        if($item= $model->item){
-            return $this->collection($item, new ItemTransformer);
+        if($item = $model->partidas){
+            return $this->collection($item, new EstimacionPartidaTransformer);
         }
         return null;
     }
-
-
-
 }
