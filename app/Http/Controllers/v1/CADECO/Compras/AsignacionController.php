@@ -53,7 +53,6 @@ class AsignacionController extends Controller
     public function asignacion($id)
     {
         $this->service->asignacion($id)->create();
-//        dd('Asignación Controller',$id);
     }
 
     public function cargaLayout(Request $request){

@@ -42,8 +42,7 @@ class AsignacionService
     }
 
     public function cargaLayout($file){
-//        return [];
-//        dd($file);
+
         $conteos = $this->getCsvData($file);
         dd($conteos,'linea conteos');
 //        $layout = LayoutConteo::query()->create();
@@ -105,7 +104,6 @@ class AsignacionService
 
     public function getCsvData($file){
         $myfile = fopen($file, "r") or die("Unable to open file!");
-//        dd($myfile,'jorge');
         $content = array();
         $linea = 1;
         $i=0;
