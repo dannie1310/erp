@@ -42,7 +42,8 @@ class AjusteNegativo extends Ajuste
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            $this->validarPartidas($data['items'], $data['id_almacen']);
+            $this->validaSoporteInventarios($data);
+            $data = $this->complementaPartidas($data);
             $datos = [
                 'id_almacen' => $data['id_almacen'],
                 'referencia' => $data['referencia'],
@@ -51,8 +52,9 @@ class AjusteNegativo extends Ajuste
             ];
 
             $ajusteTransaccion = $this->create($datos);
-            $partida = new AjusteNegativoPartida();
-            $partida->registrar($data['items'], $ajusteTransaccion->id_almacen, $ajusteTransaccion->id_transaccion);
+            foreach ($data['partidas_registro'] as $datos_partida) {
+                $ajusteTransaccion->partidas()->create($datos_partida);
+            }
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -62,32 +64,76 @@ class AjusteNegativo extends Ajuste
         }
     }
 
-    public function validarPartidas($partidas, $id)
-    {
+    public function validaSoporteInventarios($data){
         $mensaje = "";
-        if ($partidas[0]['id_material'] == null) {
-            abort(400, "No se puede registrar un ajuste vacio");
-        }
-        foreach ($partidas as $partida) {
-            $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material']['id'])
-                ->where('id_almacen', '=', $id)
-                ->where('saldo', '!=', '0')
-                ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first()->toArray();
+        $id_almacen = $data["id_almacen"];
+        foreach ($data["items"] as $i=>$material) {
 
-            if ($inventarios['saldo'] < $partida['cantidad']) {
-                $mensaje = $mensaje . "-Item: " . $partida['id_material']['descripcion'] . "\n";
+            $partida = $material["material"];
+            $cantidad_total = $partida['cantidad'];
+            $inventarios = Inventario::query()->where('id_material', '=', $partida['id_material'])
+                ->where('id_almacen', '=', $id_almacen)
+                ->orderBy('id_lote', 'asc')->get();
+            $disponible_total = $inventarios->sum("saldo");
+
+            if ($cantidad_total > ($disponible_total + 0.01)) {
+                $mensaje .= "-La cantidad disponible para realizar el ajuste negativo de la partida # " . ($i+1) . " es: " . number_format($disponible_total, 2, ".", ",") . "\n";
             }
         }
-        if ($mensaje != "") {
-            abort(400, "No se puede registrar el ajuste de inventario debido a que los saldos no soportan el ajuste que desea realizar:\n " . $mensaje);
+        if($mensaje!=''){
+            abort(300,$mensaje);
         }
+    }
+
+    public function complementaPartidas($data){
+        $partidas_registro = array();
+        $id_almacen = $data["id_almacen"];
+        foreach ($data["items"] as $material){
+            $partida = $material["material"];
+            $cantidad_total = $partida['cantidad'];
+            $inventarios = Inventario::query()
+                ->where('id_material', '=', $partida['id_material'])
+                ->where('id_almacen', '=', $id_almacen)
+                ->where("saldo",">",0)
+                ->orderBy('id_lote', 'asc')->get();
+
+            foreach ($inventarios as $inventario){
+                $disponible_inventario = $inventario->saldo;
+                if($cantidad_total > 0) {
+                    if($cantidad_total >=$disponible_inventario) {
+                        $partidas_registro[] = [
+                            'item_antecedente' => $inventario->id_lote,
+                            'id_almacen' => $id_almacen,
+                            'id_material' => $inventario->id_material,
+                            'cantidad' => $disponible_inventario,
+                            'importe' => ($inventario->monto_total/$inventario->cantidad)*($disponible_inventario),
+                            'referencia' => $partida['unidad']
+                        ];
+                        $cantidad_total -= $disponible_inventario;
+                        $disponible_inventario = 0;
+                    } else{
+                        $partidas_registro[] = [
+                            'item_antecedente' => $inventario->id_lote,
+                            'id_almacen' => $id_almacen,
+                            'id_material' => $inventario->id_material,
+                            'cantidad' => $cantidad_total,
+                            'importe' => ($inventario->monto_total/$inventario->cantidad)*($cantidad_total),
+                            'referencia' => $partida['unidad']
+                        ];
+                        $disponible_inventario -= $cantidad_total;
+                        $cantidad_total -= $cantidad_total;
+                    }
+                }
+            }
+        }
+        $data["partidas_registro"] = $partidas_registro;
+        return $data;
     }
 
     public function eliminar($motivo)
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            $this->validarEliminacion();
             //Se realizan los respaldos
             $this->respaldarItems();
             $this->respaldarAjuste($motivo);
@@ -95,40 +141,16 @@ class AjusteNegativo extends Ajuste
             //Se realiza una revision de los respaldos
             $this->validarRespaldos();
 
-            //Se elimina el ajuste
-            $this->partidas()->delete();
+            //Se eliminan partidas de ajuste con foreach para llegar al observer
+            foreach($this->partidas as $partida){
+                $partida->delete();
+            }
             $this->delete();
-
             DB::connection('cadeco')->commit();
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
-        }
-    }
-
-    public function validarEliminacion()
-    {
-        $partidas = $this->partidas()->get()->toArray();
-
-        foreach($this->partidas()->get() as $partida) {
-            $item = Item::query()->where('id_antecedente','=', $partida->id_item)->first();
-
-            if(!is_null($item)){
-                abort(400, "El item:". $partida->id_item ." - ".$item->material->descricpion . "ya se encuentra asociado en otra transacción");
-            }
-
-
-            $inventario = Inventario::query()->where('id_lote', '=', $partida->item_antecedente)
-                ->selectRaw('SUM(cantidad) as cantidad, SUM(saldo) as saldo')->first();
-
-            if(($partida->cantidad+$inventario->cantidad) >$inventario->cantidad)
-            {
-                abort(400, 'Error en el proceso de eliminación de ajustes. (Saldo mayor)');
-            }
-
-            Inventario::query()->where('id_lote','=', $partida->item_antecedente)->update(array('saldo'=>$inventario->saldo+$partida->cantidad));
-
         }
     }
 

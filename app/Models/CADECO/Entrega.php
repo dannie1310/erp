@@ -11,7 +11,7 @@ class Entrega extends Model
     protected $connection = 'cadeco';
     protected $table = 'dbo.entregas';
     protected $primaryKey = 'id_item';
-
+    public $timestamps = false;
     protected $fillable = [
         'id_item',
         'fecha',
@@ -22,7 +22,19 @@ class Entrega extends Model
         'surtida',
     ];
 
-    public $timestamps = false;
+
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
+
+    }
+
+    public function getPendienteEntregaAttribute()
+    {
+        return number_format(($this->cantidad - $this->surtida),2,'.', '');
+    }
 
     public function almacen()
     {

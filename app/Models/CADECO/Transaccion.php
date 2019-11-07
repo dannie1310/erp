@@ -54,7 +54,8 @@ class Transaccion extends Model
         return '# ' . sprintf("%05d", $this->numero_folio);
     }
 
-    public function getNumeroFolioFormatOrdenAttribute(){
+    public function getNumeroFolioFormatOrdenAttribute()
+    {
         return '# '. str_pad($this->numero_folio, 5,"0",STR_PAD_LEFT);
     }
 
@@ -107,36 +108,34 @@ class Transaccion extends Model
         return substr($cumplimiento, 0, 10);
     }
 
-
     public function getFechaHoraRegistroFormatAttribute()
     {
         $date = date_create($this->FechaHoraRegistro);
-        return date_format($date,"Y-m-d h:i:s a");
-
+        return date_format($date,"d/m/Y h:i:s a");
     }
+
     public function getCumplimientoFormAttribute()
     {
         $date = date_create($this->cumplimiento);
-        return date_format($date,"Y-m-d");
-
+        return date_format($date,"d/m/Y");
     }
+
     public function getVencimientoFormAttribute()
     {
         $date = date_create($this->vencimiento);
-        return date_format($date,"Y-m-d");
-
+        return date_format($date,"d/m/Y");
     }
+
     public function getVencimientoFormatAttribute()
     {
         $date = date_create($this->vencimiento);
         return date_format($date,"d/m/Y");
-
     }
+
     public function getCumplimientoFormatAttribute()
     {
         $date = date_create($this->cumplimiento);
         return date_format($date,"d/m/Y");
-
     }
     public function  getObservacionesFormatAttribute(){
         return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
