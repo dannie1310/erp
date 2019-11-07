@@ -1,51 +1,36 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Luis M. Valencia
- * Date: 06/11/2019
- * Time: 01:13 p. m.
+ * User: DBenitezc
+ * Date: 28/10/2019
+ * Time: 07:21 PM
  */
-
 
 namespace App\Http\Transformers\CADECO;
 
 
 use App\Models\CADECO\Entrega;
-use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 class EntregaTransformer extends TransformerAbstract
 {
-    /**
-     * List of resources possible to include
-     *
-     * @var array
-     */
-    protected $availableIncludes = [
-        'almacen',
-        'concepto'
-
-    ];
-
-    /**
-     * List of resources to automatically include
-     *
-     * @var array
-     */
-    protected $defaultIncludes = [
-
-    ];
-
     public function transform(Entrega $model)
     {
         return [
-            'id_item' => $model->getKey(),
-            'fecha' => Carbon::parse($model->fecha)->format('d-m-Y'),
-            'cantidad'=> $model->cantidad,
+            'id' => $model->getKey(),
+            'numero_entrega' => $model->numero_entrega,
+            'surtida' => $model->surtida,
+            'cantidad' => $model->cantidad,
+            'pendiente' => $model->pendiente_entrega,
+            'fecha' => $model->fecha,
+            'fecha_format' => $model->fecha_format,
             'id_concepto' => $model->id_concepto,
             'id_almacen' => $model->id_almacen
         ];
     }
+}
+
+
 
     /**
      * @param Entrega $model

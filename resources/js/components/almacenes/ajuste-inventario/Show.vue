@@ -78,8 +78,8 @@
                                                         <td>{{doc.material.numero_parte}}</td>
                                                         <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                         <td>{{doc.material.unidad}}</td>
-                                                        <td>{{doc.cantidad}}</td>
-                                                        <td>{{parseFloat(doc.importe).formatMoney(2,'.',',')}}</td>
+                                                        <td class="td_money">{{doc.cantidad}}</td>
+                                                        <td class="td_money">{{parseFloat(doc.importe).formatMoney(2,'.',',')}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
