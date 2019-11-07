@@ -86,6 +86,7 @@ class LayoutPago extends Model
                         'referencia_pago' => $pago['referencia_pago'],
                         'id_documento_remesa' => $pago['id_documento_remesa'],
                         'monto_autorizado_remesa' => $pago['monto_autorizado_remesa'],
+                        'monto_pagado_transaccion' => $pago['monto_pagado_documento'],
                         'saldo_transaccion' => $pago['saldo_documento'],
                     ]);
                 }
@@ -106,22 +107,31 @@ class LayoutPago extends Model
         }
     }
 
+
+    private function getTC( $partida){
+        $partida["tipo_cambio"] = $partida["monto_pagado"] / $partida["monto_pagado_transaccion"];
+        return $partida;
+    }
+
     public function  autorizar(){
         try{
             DB::connection('cadeco')->beginTransaction();
             $partidas = $this->partidas;
             foreach ($partidas as $partida) {
+                $partida_arr = $partida->toArray();
+                $partida_arr = $this->getTC($partida_arr);
+
                 if (is_null($partida->id_transaccion_pago)) {
                     $transaccion = $partida->transaccion;
 
                     if ($transaccion->tipo_transaccion === '65') {
-                        $pago = Factura::find($partida->id_transaccion)->generaOrdenPago($partida);
+                        $pago = Factura::find($partida->id_transaccion)->generaOrdenPago($partida_arr);
                         $partida->id_transaccion_pago = $pago->id_transaccion;
                         $partida->save();
                     }
 
                     if ($transaccion->tipo_transaccion === '72') {
-                        $pago = Solicitud::find($partida->id_transaccion)->generaPago($partida);
+                        $pago = Solicitud::find($partida->id_transaccion)->generaPago($partida_arr);
                         if($pago){
                             $partida->id_transaccion_pago = $pago->id_transaccion;
                             $partida->save();

@@ -56,6 +56,17 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return Obra::find(Context::getIdObra())->cuentasPagadorasObra;
     }
 
+    public function getIdMonedaObra()
+    {
+        $moneda = Obra::find(Context::getIdObra())->moneda;
+        if($moneda){
+            return $moneda->id_moneda;
+        }
+        else {
+                return 1;
+            }
+    }
+
     public function getCuentaCargo($cuenta){
         $cuenta = CuentaPagadora::where("numero",$cuenta)->first();
         if($cuenta){

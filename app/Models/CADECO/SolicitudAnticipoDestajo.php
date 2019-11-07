@@ -68,7 +68,8 @@ class SolicitudAnticipoDestajo extends Solicitud
             return $pago;
         }else{
             DB::connection('cadeco')->beginTransaction();
-            $saldo_esperado_cuenta = $data->cuenta->saldo_real - ($data["monto_pagado"]);
+            $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
+            $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
             $datos_pago = array(
                 "id_antecedente" => $this->id_transaccion,
                 "id_referente" => $this->id_referente,
@@ -78,7 +79,7 @@ class SolicitudAnticipoDestajo extends Solicitud
                 "id_empresa" =>  $this->id_empresa,
                 "destino" =>  $this->destino,
                 "id_moneda" =>  $data["id_moneda_cuenta_cargo"],
-                "tipo_cambio"=>1/$data["tipo_cambio"],
+                "tipo_cambio"=>$data["tipo_cambio"],
                 "cumplimiento" => $data["fecha_pago"],
                 "vencimiento" => $data["fecha_pago"],
                 "monto" => -1 * abs($data["monto_pagado"]),
