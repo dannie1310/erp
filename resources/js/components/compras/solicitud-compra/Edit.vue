@@ -16,15 +16,6 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                              <label for="dptoResponsable">Dpto.Responsable</label>
-<!--                                            <CtgAreaCompradoraSelect-->
-<!--                                                name="id_area_compradora"-->
-<!--                                                data-vv-as="Dpto.Responsable"-->
-<!--                                                v-model="id_area_compradora"-->
-<!--                                                v-validate="{required: true}"-->
-<!--                                                :error="errors.has('id_area_compradora')"-->
-<!--                                                id="id_area_compradora"-->
-<!--                                                ref="CtgAreaCompradoraSelect"-->
-<!--                                            />-->
 
                                             <span>
                                                   <div v-if="disabled" class="form-control text-center">
@@ -36,9 +27,12 @@
                                                         v-model="id_area_compradora"
                                                         v-validate="{required: true}"
                                                         :error="errors.has('id_area_compradora')"
-                                                        id="id_area_compradora">
+                                                        id="id_area_compradora"
+                                                        @input="updateAttribute"
+                                                        :value="solicitud.complemento.area_compradora.id"
+                                                   >
                                                       <option value>-- Área Compradora--</option>
-                                                      <option v-for="area in areas_compradoras" :value="area.id" >{{ area.descripcion}}</option>
+                                                      <option v-for="area  in areas_compradoras"  :value="area.id">{{ area.descripcion}}</option>
                                                 </select>
                                             </span>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_area_compradora')">{{ errors.first('id_area_compradora') }}</div>
@@ -83,7 +77,8 @@
                                                         name="id_area_solicitante"
                                                         v-model="id_area_solicitante"
                                                         v-validate="{required: true}"
-                                                        :error="errors.has('id_area_solicitante')">
+                                                        :error="errors.has('id_area_solicitante')"
+                                                        :value="solicitud.complemento.area_solicitante.id">
                                                <option value>-- Área Solicitante --</option>
                                                <option v-for="area_s in areas_solicitantes" :value="area_s.id" >{{ area_s.descripcion}}</option>
                                                 </select>
@@ -354,6 +349,7 @@
 
     export default {
         name: "solicitud-compra-edit",
+        props: ['id'],
         components: {MaterialSelect,  SelectDestino },
         data(){
             return{
@@ -392,7 +388,8 @@
 
         },
         mounted() {
-            this.$validator.reset()
+            this.find();
+            this.$validator.reset();
             this.getAreasCompradoras();
             this.getTipos();
             this.getAreasSolicitantes();
@@ -400,6 +397,18 @@
             this.getModelos();
         },
         methods : {
+            find(){
+
+                this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
+                return this.$store.dispatch('compras/solicitud-compra/find', {
+                    id: this.id,
+                    params:{
+                        include:['complemento', 'complemento.area_compradora', 'complemento.area_solicitante', 'complemento.tipo','partidas.material','partidas.entrega', 'partidas.complemento', 'partidas.entrega.almacen','partidas.concepto' ]
+                    }
+                }).then(data => {
+                    this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
+                })
+            },
             getAreasCompradoras(){
                 return this.$store.dispatch('seguridad/compras/ctg-area-compradora/index', {
                     params: { scope: 'UsuarioBelongs', sort: 'descripcion',  order: 'asc'}
@@ -494,8 +503,16 @@
                     }
                 });
             },
+            updateAttribute(e) {
+                return this.$store.commit('compras/solicitud-compra/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: e.target.value})
+            }
 
         },
+        computed: {
+            solicitud() {
+                return this.$store.getters['compras/solicitud-compra/currentSolicitud']
+            }
+        }
 
     }
 </script>

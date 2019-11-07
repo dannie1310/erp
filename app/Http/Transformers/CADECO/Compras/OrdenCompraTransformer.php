@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\SolicitudCompraTransformer;
 use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
 
