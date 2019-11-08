@@ -148,7 +148,7 @@
                             edit: self.$root.can('editar_prepolizas_generadas') ? true : undefined,
                             show: true,
                             historico: false,
-                            estatus: (poliza.estatusPrepoliza.estatus != 2 && poliza.estatusPrepoliza.estatus != 3 && poliza.estatusPrepoliza.estatus != -3) ?  true : undefined,
+                            estatus: (poliza.estatusPrepoliza.estatus != 2 && poliza.estatusPrepoliza.estatus != 3 && poliza.estatusPrepoliza.estatus != 1 && poliza.estatusPrepoliza.estatus != -3) ?  true : undefined,
                             id: poliza.id
                         })
                     }));
