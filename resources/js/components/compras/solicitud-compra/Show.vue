@@ -20,7 +20,7 @@
                         </div>
 
                         <div class="col-md-4" v-if="solicitud.complemento.fecha_requisicion_origen">
-                              <label>Fecha Req. Origen:</label> {{ solicitud.complemento.fecha_requisicion_origen }}
+                              <label>Fecha Req. Origen:</label> {{ solicitud.complemento.fecha_requisicion_origen_format }}
                         </div>
 
                          <div class="col-md-4" v-if="solicitud.complemento.requisicion_origen">
@@ -88,7 +88,7 @@
                                     <td>{{i}}</td>
                                     <td>{{ item.entrega.cantidad }}</td>
                                     <td>{{ item.unidad }}</td>
-                                    <td>{{ item.entrega.fecha }}</td>
+                                    <td>{{ item.entrega.fecha_format }}</td>
                                     <td v-if="item.entrega.almacen">{{ item.entrega.almacen.descripcion }}</td>  <td v-if="item.entrega.concepto">{{ item.entrega.concepto.path}}</td>
                                     <td>{{ item.complemento.observaciones }}</td>
 

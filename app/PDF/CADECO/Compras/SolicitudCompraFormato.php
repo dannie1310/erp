@@ -12,6 +12,7 @@ namespace App\PDF\CADECO\Compras;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\SolicitudCompra;
 use Ghidev\Fpdf\Rotation;
 use SimpleSoftwareIO\QrCode\BaconQrCodeGenerator;
 
@@ -20,7 +21,6 @@ class SolicitudCompraFormato extends Rotation
 {
 
     protected $obra;
-    protected $pagoAnticipado;
     private $encabezado_pdf = '';
     var $encola = '';
 
@@ -43,6 +43,8 @@ class SolicitudCompraFormato extends Rotation
 
         parent::__construct('P', 'cm', 'A4');
         $this->obra = Obra::find(Context::getIdObra());
+        $this->solicitud = SolicitudCompra::find($id);
+
 
 
         $this->SetAutoPageBreak(true, 5);
@@ -165,27 +167,6 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetAligns(array('C'));
         $this->Ln(.5);
 
-
-//        if ($this->encola == "observaciones_encabezado") {
-//            $this->SetWidths(array(19.5));
-//            $this->SetRounds(array('12'));
-//            $this->SetRadius(array(0.2));
-//            $this->SetFills(array('180,180,180'));
-//            $this->SetTextColors(array('0,0,0'));
-//            $this->SetHeights(array(0.3));
-//            $this->SetFont('Arial', '', 6);
-//            $this->SetAligns(array('C'));
-//        } else if ($this->encola == "observaciones") {
-//            $this->SetRounds(array('34'));
-//            $this->SetRadius(array(0.2));
-//            $this->SetAligns(array('J'));
-//            $this->SetStyles(array('DF'));
-//            $this->SetFills(array('255,255,255'));
-//            $this->SetTextColors(array('0,0,0'));
-//            $this->SetHeights(array(0.3));
-//            $this->SetFont('Arial', '', 6);
-//            $this->SetWidths(array(19.5));
-//        }
     }
 
     function detallesSolicitudPagoAnticipado($x)
@@ -195,38 +176,76 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetX($x);
         $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FOLIO'), 'LT', 0, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.207 * $this->WidthTotal, 0.5, utf8_decode("# 555"), 'RT', 1, 'R');
+        $this->Cell(0.207 * $this->WidthTotal, 0.5, ''.utf8_decode($this->solicitud->complemento->folio_compuesto), 'RT', 1, 'R');
 
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->SetX($x);
         $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FECHA'), 'L', 0, 'L');
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.207 * $this->WidthTotal, 0.5, "22-10-2019", 'R', 1, 'R');
+        $this->Cell(0.207 * $this->WidthTotal, 0.5, ''.$this->solicitud->fecha_format, 'R', 1, 'R');
+
+        if(!is_null($this->solicitud->complemento->fecha_requisicion_origen))
+        {
+            $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+            $this->SetX($x);
+            $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FECHA REQ. O.'), 'L', 0, 'L');
+            $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+            $this->Cell(0.207 * $this->WidthTotal, 0.5, ''.date("d/m/Y", strtotime($this->solicitud->complemento->fecha_requisicion_origen)), 'R', 1, 'R');
+        }
 
 
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->SetX($x);
-        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FECHA REQ. O.'), 'L', 0, 'L');
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.207 * $this->WidthTotal, 0.5, "22-10-2019", 'R', 1, 'R');
+        if(!is_null($this->solicitud->complemento->requisicion_origen))
+        {
+            $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+            $this->SetX($x);
+            $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FOLIO REQ. O.'), 'L', 0, 'L');
+            $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+            $this->Cell(0.207 * $this->WidthTotal, 0.5, ''.$this->solicitud->complemento->requisicion_origen, 'R', 1, 'R');
+        }
 
 
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->SetX($x);
-        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FOLIO REQ. O.'), 'L', 0, 'L');
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.207 * $this->WidthTotal, 0.5, "22-10-2019", 'R', 1, 'R');
 
         $this->SetFont('Arial', 'B', 9);
         $this->SetX($x);
         $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FOLIO SAO'), 'LB', 0, 'L');
         $this->SetFont('Arial', 'B', '#' . 10);
-        $this->Cell(0.207 * $this->WidthTotal, 0.5,utf8_decode("555"), 'RB', 1, 'R');
+        $this->Cell(0.207 * $this->WidthTotal, 0.5,utf8_decode("000"), 'RB', 1, 'R');
 
     }
 
     function partidas(){
-        $this->Ln(.8);
+
+        /*Concepto*/
+        if(!is_null($this->solicitud->complemento->concepto)){
+            $this->Ln(.7);
+            $this->SetWidths(array(19.5));
+            $this->SetRounds(array('12'));
+            $this->SetRadius(array(0.2));
+            $this->SetFills(array('180,180,180'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetStyles(array('DF'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+            $this->SetAligns(array('C'));
+            $this->Row(array("Concepto"));
+            $this->SetRounds(array('34'));
+            $this->SetRadius(array(0.2));
+            $this->SetAligns(array('C'));
+            $this->SetStyles(array('DF'));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', "".$this->solicitud->complemento->concepto))));
+
+        }
+
+
+
+
+
+        /*Partidas*/
+        $this->Ln(.7);
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180);
         $this->SetWidths([0.5,1.5,1.5,2.5,2.5,9,2]);
@@ -239,6 +258,82 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetAligns(['C','C','C','C','C','C','C']);
         $this->Row(["#","Cant. Solicitada", "Cant. Autorizada", "Unidad", "No. Parte", utf8_decode("Descripción"), "Fecha. Req"]);
 
+
+
+        /*Imprimimos las partidas*/
+        foreach ( $this->solicitud->partidas as $i => $item) {
+
+            $this->SetWidths([0.5,1.5,1.5,2.5,2.5,9,2]);
+            $this->SetRounds(['','','','','','','']);
+            $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+            $this->SetAligns(['C','R','R','C','L','L','C']);
+            $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+
+            $this->Row([
+                $i+1,
+                $item->entrega->cantidad,
+                "-",
+                $item->unidad,
+                utf8_decode($item->material->numero_parte),
+                utf8_decode( $item->material->descripcion),
+                $item->entrega->fecha_format,
+            ]);
+
+
+
+            /*Destino de Concepto o Almacén */
+            $this->SetRounds(['4','','','','','','3']);
+            $this->SetRadius([0,0,0,0,0,0,0,0,0]);
+            $this->SetWidths([19.5]);
+            $this->SetAligns(['L']);
+            if(!is_null($item->entrega->concepto)){
+                $this->Row([utf8_decode($item->entrega->concepto->path)]);
+            }
+            if(!is_null($item->entrega->almacen)){
+                $this->Row([utf8_decode($item->entrega->almacen->descripcion)]);
+            }
+
+            /*Observaciones de partida*/
+            $this->SetRounds(['4','','','','','','3']);
+            $this->SetRadius([0,0,0,0,0,0,0,0,0]);
+            $this->SetWidths([19.5]);
+            $this->SetAligns(['L']);
+
+            if(!is_null($item->complemento->observaciones))
+            {
+                $this->Row([utf8_decode($item->complemento->observaciones)]);
+            }
+
+
+
+        }
+
+
+
+        /*Observaciones de la Solicitud*/
+        if(!is_null($this->solicitud->observaciones)){
+            $this->Ln(.7);
+            $this->SetWidths(array(19.5));
+            $this->SetRounds(array('12'));
+            $this->SetRadius(array(0.2));
+            $this->SetFills(array('180,180,180'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetStyles(array('DF'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+            $this->SetAligns(array('C'));
+            $this->Row(array("Observaciones"));
+            $this->SetRounds(array('34'));
+            $this->SetRadius(array(0.2));
+            $this->SetAligns(array('C'));
+            $this->SetStyles(array('DF'));
+            $this->SetFills(array('255,255,255'));
+            $this->SetTextColors(array('0,0,0'));
+            $this->SetHeights(array(0.5));
+            $this->SetFont('Arial', '', 6);
+            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', "".$this->solicitud->observaciones))));
+
+        }
 
 
 
@@ -307,8 +402,8 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetY(28.5);
         $this->setX(1);
         $this->SetTextColor('0,0,0');
-        $this->Cell(7, .4, utf8_decode('Formato generado desde el módulo de Compras. Fecha de registro: '), 0, 0, 'L');
-//        .date("Y-m-d H:m:s", strtotime($this->fecha_solicitud))
+        $this->Cell(7, .4, utf8_decode('Formato generado desde el módulo de Compras. Fecha de registro: '.$this->solicitud->fecha_format), 0, 0, 'L');
+
         $this->Ln(.5);
         $this->SetY(-0.9);
         $this->SetTextColor('0,0,0');
