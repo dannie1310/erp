@@ -616,6 +616,22 @@ export const routes = [
                 }]
             },
             {
+                path: 'requisicion',
+                component: require('./components/compras/requisicion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'requisicion',
+                        component: require('./components/compras/requisicion/Index'),
+                        meta: {
+                            title: 'Requisiciones',
+                            breadcrumb: {parent: 'compras', name: 'REQUISICIONES'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'solicitud-compra',
                 component: require('./components/compras/solicitud-compra/Layout'),
                 children: [

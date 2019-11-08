@@ -1,40 +1,46 @@
 <template>
-   <!-- <div class="row">
+    <div class="row">
+        <!-- <div class="col-12">
+            <button @click="create_solicitud" v-if="" class="btn btn-app btn-info pull-right">
+                <i class="fa fa-plus"></i> Registrar Solicitud
+            </button>
+        </div>-->
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
-              <!--  <div class="card-body">
+                <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
                     </div>
                 </div>
                 <!-- /.card-body -->
-            <!--</div>
+            </div>
             <!-- /.card -->
-    <!--</div>
-    <!-- /.col -->
-    <!--</div> -->
+        </div>
+        <!-- /.col -->
+    </div>
 </template>
-
 <script>
+    import Create from './Create';
     export default {
-        name: "cotizacion-index",
+        name: "requisicion-index",
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
-                    {title: '#', field: 'index', sortable: false},
-                    {title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter'), sortable: true},
-                    {title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date'), sortable: true},
-                    {title: 'Observaciones', field: 'observaciones', sortable: true},
-                    {title: 'Registró', field: 'id_usuario', sortable: true},
-                    {title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
+                    { title: '#', field: 'index', sortable: false },
+                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date'), sortable: true },
+                    { title: 'Observaciones', field: 'observaciones', sortable: true },
+                    { title: 'Registró', field: 'id_usuario', sortable: true },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
 
 
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'id_transaccion', order: 'desc'},
+                query: {sort: 'id_transaccion',  order: 'desc'},
                 search: '',
                 cargando: false
             }
@@ -67,16 +73,16 @@
 
         },
         computed: {
-            solicitudes() {
+            solicitudes(){
                 return this.$store.getters['compras/solicitud-compra/solicitudes'];
             },
 
-            meta() {
+            meta(){
                 return this.$store.getters['compras/solicitud-compra/meta'];
             },
 
             tbodyStyle() {
-                return this.cargando ? {'-webkit-filter': 'blur(2px)'} : {}
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
@@ -91,9 +97,11 @@
                         observaciones: solicitud.observaciones,
                         id_usuario: solicitud.usuario ? solicitud.usuario.nombre : '',
                         buttons: $.extend({}, {
+                            id: solicitud.id,
                             show: true,
                             edit: true,
-                            id: solicitud.id
+                            pdf: true,
+
                         })
                     }));
                 },
@@ -101,14 +109,14 @@
             },
 
             meta: {
-                handler(meta) {
+                handler (meta) {
                     let total = meta.pagination.total
                     this.$data.total = total
                 },
                 deep: true
             },
             query: {
-                handler() {
+                handler () {
                     this.paginate()
                 },
                 deep: true
