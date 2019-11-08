@@ -4,6 +4,8 @@
 namespace App\Services\CADECO;
 
 
+use App\Models\CADECO\Compras\ActivoFijo;
+use App\Models\CADECO\Compras\MaterialMarcaModelo;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Compras\SolicitudPartidaComplemento;
 use App\Models\CADECO\Entrega;
@@ -84,6 +86,18 @@ class SolicitudCompraService
             $complemento = SolicitudComplemento::create($datos_complemento);
 
 
+        /*Si es Activo Fijo*/
+        if($data['id_tipo']===3)
+        {
+            $data_af = [
+                'id_transaccion' => $solicitud->id_transaccion
+            ];
+            $activo = ActivoFijo::create($data_af);
+
+        }
+
+
+
             /*Registro de partidas*/
 
         foreach ($data['items'] as $key => $item){
@@ -114,6 +128,21 @@ class SolicitudCompraService
                 'observaciones' => $item['observaciones']
             ];
             $partida_complemento = SolicitudPartidaComplemento::create($partida_complemento_datos);
+
+
+//DESCOMENTAR
+            /*Registro en Materiales-Marcas-Modelos*/
+
+//            $datos_material = [
+//                'idmaterial' => $item['id_material'],
+//                'idMarca' => $item['marca'],
+//                'idModelo' => $item['modelo'],
+//            ];
+//
+//
+//            $mat_reg = MaterialMarcaModelo::query()->create($datos_material);
+
+
 
 
             /*Registro de Entregas*/

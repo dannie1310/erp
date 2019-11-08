@@ -36,6 +36,13 @@ class SolicitudComplemento extends Model
         'timestamp_registro',
     ];
 
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_requisicion_origen);
+        return date_format($date,"d/m/Y");
+
+    }
+
     public function generaFolioCompuesto(){
 
         $count = $this->query()->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();

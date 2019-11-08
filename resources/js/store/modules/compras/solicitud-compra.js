@@ -30,6 +30,11 @@ export default {
         },
         UPDATE_ATTRIBUTE(state, data) {
             state.currentSolicitud[data.attribute] = data.value
+        },
+        DELETE_SOLICITUD(state, id){
+            state.solicitudes = state.solicitudes.filter(marbete => {
+                return solicitud.id != id
+            });
         }
     },
 
