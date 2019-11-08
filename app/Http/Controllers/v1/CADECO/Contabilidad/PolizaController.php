@@ -64,6 +64,14 @@ class PolizaController extends Controller
         return $this->traitUpdate($request, $id);
     }
 
+    public function showEdit(Request $request, $id)
+    {
+        $item = $this->service->show($id);
+        if($item->estatus == 2 ||$item->estatus == 3 ||$item->estatus == -3)
+            abort(400,"La prepóliza no puede ser editada");
+        return $this->respondWithItem($item);
+    }
+
     public function validar(Request $request, $id)
     {
         $item = $this->service->validar($id);
