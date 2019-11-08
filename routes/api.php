@@ -336,7 +336,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'poliza'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@show')->where(['id' => '[0-9]+']);
-            $api->get('{id}/edit', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@showEdit')->where(['id' => '[0-9]+']);
+            $api->get('{id}/editar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@showEdit')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/omitir', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@omitir')->where(['id' => '[0-9]+']);
             $api->patch('{id}/validar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@validar')->where(['id' => '[0-9]+']);

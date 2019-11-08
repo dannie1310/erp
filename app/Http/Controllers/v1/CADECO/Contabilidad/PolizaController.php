@@ -49,7 +49,7 @@ class PolizaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        $this->middleware('permiso:consultar_prepolizas_generadas')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:consultar_prepolizas_generadas')->only(['show','showEdit','paginate','find','index']);
         $this->middleware('permiso:editar_prepolizas_generadas')->only('update');
         $this->middleware('permiso:validar_prepoliza')->only('validar');
         $this->middleware('permiso:omitir_prepoliza_generada')->only('omitir');

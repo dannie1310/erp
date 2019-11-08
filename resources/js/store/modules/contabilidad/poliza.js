@@ -61,7 +61,7 @@ export default {
 
         findEdit(context, payload) {
             return new Promise((resolve, reject) => {
-                axios.get(URI + payload.id + '/edit', { params: payload.params })
+                axios.get(URI + payload.id + '/editar', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
