@@ -181,7 +181,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
                         <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''">Eliminar</button>
                     </div>
                 </form>
@@ -266,6 +266,9 @@
                     .finally( ()=>{
                         this.cargando = false;
                     });
+            },
+            salir(){
+                this.$router.push({name: 'estimacion'});
             },
         },
         computed: {
