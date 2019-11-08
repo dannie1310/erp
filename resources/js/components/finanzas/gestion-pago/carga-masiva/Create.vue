@@ -235,6 +235,7 @@
                 resumen:[],
                 cuentas_cargo:[],
                 fechas_validacion:[],
+                id_moneda_obra: null,
                 file_pagos : null,
                 file_pagos_name : '',
                 fechasDeshabilitadas:{}
@@ -255,7 +256,13 @@
             },
             calcula_montos(partida_pago){
                 this.validaTC(partida_pago);
-                partida_pago.monto_pagado_documento = parseFloat(Math.round(partida_pago.monto_pagado * partida_pago.tipo_cambio * 100)/100).toFixed(2);
+                if(parseInt(partida_pago.cuenta_cargo_obj.id_moneda) === parseInt(this.id_moneda_obra))
+                {
+                    partida_pago.monto_pagado_documento = parseFloat(Math.round(partida_pago.monto_pagado / partida_pago.tipo_cambio * 100)/100).toFixed(2);
+                }else{
+                    partida_pago.monto_pagado_documento = parseFloat(Math.round(partida_pago.monto_pagado * partida_pago.tipo_cambio * 100)/100).toFixed(2);
+                }
+
             },
             formatoFecha(date){
                 return moment(date).format('DD-MM-YYYY');
@@ -280,6 +287,7 @@
                             this.resumen = data.resumen;
                             this.fechasDeshabilitadas.from=new Date(this.fechas_validacion.from);
                             this.fechasDeshabilitadas.to=new Date(this.fechas_validacion.to);
+                            this.id_moneda_obra = data.id_moneda_obra;
 
                         }else{
                             if(this.$refs.carga_layout.value !== ''){

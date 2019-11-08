@@ -19,4 +19,9 @@ class SolicitudPartidaComplemento extends Model
     protected $primaryKey = 'id_item';
     public $timestamps = false;
 
+    protected $fillable = [
+        'id_item',
+        'observaciones'
+    ];
+
 }

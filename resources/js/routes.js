@@ -223,6 +223,17 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_entrada_almacen'
                         }
+                    },
+                    {
+                        path: 'create',
+                        name: 'entrada-almacen-create',
+                        component: require('./components/almacenes/entrada-almacen/Create'),
+                        meta: {
+                            title: 'Registrar Entrada de Almacén',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'entrada-almacen'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_entrada_almacen']
+                        }
                     }
                 ]
             },

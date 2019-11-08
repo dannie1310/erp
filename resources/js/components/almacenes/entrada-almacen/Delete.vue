@@ -1,6 +1,6 @@
 <template>
     <span>
-         <button @click="find" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar">
+         <button @click="find" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
              <i class="fa fa-trash"></i>
          </button>
         <div class="modal fade" ref="modal" role="dialog">
@@ -64,6 +64,7 @@
                                                             <th>Unidad</th>
                                                             <th>Cantidad</th>
                                                             <th>Destino</th>
+                                                            <th>Entrega a Contratista</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -77,6 +78,9 @@
                                                             <td v-if="doc.almacen">{{doc.almacen.descripcion}}</td>
                                                             <td v-else-if="doc.concepto" :title="`${doc.concepto.path}`"><u>{{doc.concepto.descripcion}}</u></td>
                                                             <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
+                                                            <td v-if="doc.contratista && doc.contratista.con_cargo == 1"><i class="fa fa-user" aria-hidden="true" ></i> {{doc.contratista.empresa.razon_social}} (con cargo)</td>
+                                                            <td v-else-if="doc.contratista && doc.contratista.con_cargo == 0"><i class="fa fa-user-o" aria-hidden="true"></i> {{doc.contratista.empresa.razon_social}} (sin cargo)</td>
+                                                            <td v-else>-</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -141,7 +145,7 @@
                 this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', null);
                 return this.$store.dispatch('almacenes/entrada-almacen/find', {
                     id: this.id,
-                    params: { include: ['orden_compra', 'empresa', 'partidas', 'partidas.almacen', 'partidas.material', 'partidas.inventario', 'partidas.concepto', 'partidas.movimiento'] }
+                    params: { include: ['orden_compra', 'empresa','partidas.contratista', 'partidas.almacen', 'partidas.material', 'partidas.inventario', 'partidas.concepto', 'partidas.movimiento'] }
                 }).then(data => {
                     this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', data);
                     this.partidas = this.entrada.partidas.data;
