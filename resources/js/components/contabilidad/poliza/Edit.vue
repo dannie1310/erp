@@ -315,7 +315,7 @@
             find() {
                 this.cargando = true;
                 this.$store.commit('contabilidad/poliza/SET_POLIZA', null);
-                return this.$store.dispatch('contabilidad/poliza/find', {
+                return this.$store.dispatch('contabilidad/poliza/findEdit', {
                     id: this.id,
                     params: { include: 'transaccionAntecedente,movimientos,traspaso' }
                 })
