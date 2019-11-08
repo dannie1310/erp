@@ -61,19 +61,19 @@
             mostrarMenu(event) {
                 event.stopPropagation();
                 $(event.target).closest('li').toggleClass('menu-open');
+            }
+        },
+        computed:{
+            compras(){
+                return this.$root.can([
+                    'consultar_orden_compra'
+                ]);
             },
-            computed:{
-                compras(){
-                    return this.$root.can([
-                        'consultar_orden_compra'
-                    ]);
-                },
-                contratos(){
-                    return this.$root.can(['consultar_formato_orden_pago_estimacion','consultar_formato_estimacion']);
-                }
+            contratos(){
+                return this.$root.can(['consultar_formato_orden_pago_estimacion','consultar_formato_estimacion']);
+            }
 
-            },
-        }
+        },
     }
 </script>
 
