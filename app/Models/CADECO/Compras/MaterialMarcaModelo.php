@@ -19,12 +19,14 @@ class MaterialMarcaModelo extends Model
     protected $connection = 'cadeco';
     protected $table = 'Compras.materiales_marcas_modelos';
     protected $primaryKey = 'id_material';
+    public $timestamps = false;
+
 
 
     protected $fillable = [
         'id_material',
         'idMarca',
-        'idModelo'
+        'idModelo',
     ];
 
     public function marca()
