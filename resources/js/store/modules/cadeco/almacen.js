@@ -3,13 +3,17 @@ const URI = '/api/almacen/';
 export default {
     namespaced: true,
     state: {
-        almacenes: []
+        almacenes: [],
+        currentAlmacen: '',
     },
 
     mutations: {
         SET_ALMACENES(state, data) {
             state.almacenes = data;
-        }
+        },
+        SET_ALMACEN(state, data) {
+            state.currentAlmacen = data;
+        },
     },
 
     actions: {
@@ -58,6 +62,9 @@ export default {
     getters: {
         almacenes(state) {
             return state.almacenes
+        },
+        currentAlmacen(state) {
+            return state.currentAlmacen
         }
     }
 }

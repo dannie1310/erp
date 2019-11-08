@@ -26,7 +26,7 @@ class SalidaAlmacenTransformer extends TransformerAbstract
             'estado' => $model->estado,
             'estado_format' => $model->estado_format,
             'folio' => $model->numero_folio,
-            'operacion' => $model->operacion,
+//            'operacion' => $model->operacion,
             'opciones' => $model->opciones,
             'folio_format' => $model->numero_folio_format_orden
         ];
@@ -45,7 +45,7 @@ class SalidaAlmacenTransformer extends TransformerAbstract
     {
         if($partida = $model->partidas)
         {
-            return $this->collection($partida, new SalidaAlmacenPartidasTransformer);
+            return $this->collection($partida, new SalidaAlmacenPartidaTransformer);
         }
         return null;
     }
