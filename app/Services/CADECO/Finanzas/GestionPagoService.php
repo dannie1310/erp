@@ -159,17 +159,22 @@ class GestionPagoService
                             if ($partida_remesa->documento->transaccion) {
                                 $transaccion = $partida_remesa->documento->transaccion;
                                 $pago_remesa = null;
-                                $partida_remesa->monto_pagado = $partida_remesa->documento->getImporteTotalProcesadoAttribute();
-                                $partida_remesa->fecha_pago = $fecha->format('Y-m-d');
-                                $partida_remesa->cuenta = $partida_remesa->cuentaCargo;
-                                $partida_remesa->referencia_pago = $pago['referencia'];
-                                $partida_remesa->tipo_cambio = $partida_remesa->documento->moneda->tipo_cambio;
+                                $data = [
+                                    'monto_pagado_transaccion' => $partida_remesa->documento->getImporteTotalProcesadoAttribute(),
+                                    'id_cuenta_cargo' => $partida_remesa->cuentaCargo->id_cuenta,
+                                    'fecha_pago' => $fecha->format('Y-m-d'),
+                                    'monto_pagado' => $partida_remesa->documento->getImporteTotalProcesadoAttribute(),
+                                    'referencia_pago' => $pago['referencia'],
+                                    'id_moneda_cuenta_cargo' => $partida_remesa->cuentaCargo->id_moneda,
+                                    'tipo_cambio' => 1
+
+                                ];
                                 switch ($partida_remesa->documento->transaccion->tipo_transaccion) {
                                     case 65:
-                                        $pago_remesa = Factura::find($transaccion->id_transaccion)->generaOrdenPago($partida_remesa);
+                                        $pago_remesa = Factura::find($transaccion->id_transaccion)->generaOrdenPago($data);
                                         break;
                                     case 72:
-                                        $pago_remesa = Solicitud::find($transaccion->id_transaccion)->generaPago($partida_remesa);
+                                        $pago_remesa = Solicitud::find($transaccion->id_transaccion)->generaPago($data);
                                         if(!$pago_remesa){
                                             abort(400, "Hubo un error al generar el pago con referencia: ". $pago['referencia'] . " tipo de solicitud no soportado");
                                         }
@@ -197,11 +202,6 @@ class GestionPagoService
                             $distribucion->estado = 3;
                             $distribucion->save();
 
-                            unset($partida_remesa->monto_pagado);
-                            unset($partida_remesa->fecha_pago);
-                            unset($partida_remesa->cuenta);
-                            unset($partida_remesa->referencia_pago);
-                            unset($partida_remesa->tipo_cambio);
                             $partida_remesa->estado = 2;
                             $partida_remesa->id_transaccion_pago = $pago_remesa->id_transaccion;
                             $partida_remesa->folio_partida_bancaria = $pago['referencia'];
