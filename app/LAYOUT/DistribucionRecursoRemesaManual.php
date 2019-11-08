@@ -152,6 +152,7 @@ class DistribucionRecursoRemesaManual
     function elimina_caracteres_especiales($string){
         //echo $string;
         //$string = trim($string);
+
         $string = str_replace(
             array('á', 'à', 'ä', 'â', 'ã', 'å', 'ª', 'Á', 'À', 'Â', 'Ä', 'Å', 'Ã', 'Æ'),
             array('a', 'a', 'a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A', 'A', 'A', 'A'),
@@ -210,6 +211,9 @@ class DistribucionRecursoRemesaManual
             '',
             $string
         );
+
+        $string = preg_replace("/[^0-9a-zA-Z\s]+/", "", $string);
+        $string =  strtoupper($string);
 
         return preg_replace( "/\r|\n/", " ", $string );
 
