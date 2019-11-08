@@ -49,7 +49,7 @@ class PolizaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        $this->middleware('permiso:consultar_prepolizas_generadas')->only(['show','paginate','find','index']);
+        $this->middleware('permiso:consultar_prepolizas_generadas')->only(['show','showEdit','paginate','find','index']);
         $this->middleware('permiso:editar_prepolizas_generadas')->only('update');
         $this->middleware('permiso:validar_prepoliza')->only('validar');
         $this->middleware('permiso:omitir_prepoliza_generada')->only('omitir');
@@ -62,6 +62,14 @@ class PolizaController extends Controller
     public function update(UpdatePolizaRequest $request, $id)
     {
         return $this->traitUpdate($request, $id);
+    }
+
+    public function showEdit(Request $request, $id)
+    {
+        $item = $this->service->show($id);
+        if($item->estatus == 2 ||$item->estatus == 3 ||$item->estatus == -3)
+            abort(400,"La prepóliza no puede ser editada");
+        return $this->respondWithItem($item);
     }
 
     public function validar(Request $request, $id)
