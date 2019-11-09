@@ -91,7 +91,8 @@ class EstimacionTransformer extends TransformerAbstract
      */
     public function includeEmpresa(Estimacion $model)
     {
-        if($empresa = $model->empresa) {
+        if($empresa = $model->empresa)
+        {
             return $this->item($empresa, new EmpresaTransformer);
         }
         return null;
@@ -103,9 +104,9 @@ class EstimacionTransformer extends TransformerAbstract
      */
     public function includeMoneda(Estimacion $model)
     {
-        if($moneda = $model->moneda) {
+        if($moneda = $model->moneda)
+        {
             return $this->item($moneda, new MonedaTransformer);
-
         }
         return null;
     }
@@ -121,7 +122,4 @@ class EstimacionTransformer extends TransformerAbstract
         }
         return null;
     }
-
-
-
 }
