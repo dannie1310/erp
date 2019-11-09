@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 class Estimacion extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 51;
+    public const OPCION_ANTECEDENTE = 2;
 
     protected $fillable = [
         'id_antecedente',
@@ -415,5 +416,20 @@ class Estimacion extends Transaccion
             'id_usuario' => $this->id_usuario,
             'motivo_eliminacion' => $motivo,
         ]);
+    }
+
+    public function getSubtotalAttribute()
+    {
+        return $this->monto - $this->impuesto;
+    }
+
+    public function getSubtotalFormatAttribute()
+    {
+        return '$ ' . number_format($this->subtotal,2);
+    }
+
+    public function getImpuestoFormatAttribute()
+    {
+        return '$ ' . number_format($this->impuesto,2);
     }
 }

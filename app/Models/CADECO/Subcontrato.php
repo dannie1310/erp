@@ -171,7 +171,7 @@ class Subcontrato extends Transaccion
         return round($this->saldo - ($this->montoFacturadoEstimacion + $this->montoFacturadoSubcontrato + $this->MontoPagoAnticipado), 2);
     }
 
-    public function scopeSubcontratosDisponible($query)
+    public function scopeSubcontratosDisponible($query, $id_empresa)
     {
         $transacciones = DB::connection('cadeco')->select(DB::raw("          
                             select s.id_transaccion from transacciones s
@@ -195,7 +195,8 @@ class Subcontrato extends Transaccion
                             group by e.id_antecedente )
                             as facturado_e on facturado_e.id = s.id_transaccion
                             where s.tipo_transaccion = 51 and s.estado >= 0 and  s.id_obra =  ".Context::getIdObra()."  and s.opciones = 2
-                            and (ROUND(s.saldo, 2) - ROUND((ISNULL(sol.solicitado,0) + ISNULL(factura_anticipo.suma_anticipo, 0) + ISNULL(facturado_e.suma_e, 0)),2)) > 1 order by s.id_transaccion;"));
+                            and (ROUND(s.saldo, 2) - ROUND((ISNULL(sol.solicitado,0) + ISNULL(factura_anticipo.suma_anticipo, 0) + ISNULL(facturado_e.suma_e, 0)),2)) > 1 and s.id_empresa=".$id_empresa."
+                            order by s.id_transaccion;"));
 
         $transacciones = json_decode(json_encode($transacciones), true);
 

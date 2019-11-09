@@ -116,7 +116,6 @@
                     });
             },
             tiposMaterial(){
-                console.log(this.tipos_material);
                 if(typeof this.tipos_material !== 'undefined'){
                     return this.tipos_material;
                 }
