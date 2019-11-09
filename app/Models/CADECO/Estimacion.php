@@ -432,34 +432,4 @@ class Estimacion extends Transaccion
     {
         return '$ ' . number_format($this->impuesto,2);
     }
-
-    public function getSubtotalAttribute()
-    {
-        return $this->monto - $this->impuesto;
-    }
-
-    public function getSubtotalFormatAttribute()
-    {
-        return '$ ' . number_format($this->subtotal,2);
-    }
-
-    public function getImpuestoFormatAttribute()
-    {
-        return '$ ' . number_format($this->impuesto,2);
-    }
-
-    public function getSubtotalAttribute()
-    {
-        return $this->monto - $this->impuesto;
-    }
-
-    public function getSubtotalFormatAttribute()
-    {
-        return '$ ' . number_format($this->subtotal,2);
-    }
-
-    public function getImpuestoFormatAttribute()
-    {
-        return '$ ' . number_format($this->impuesto,2);
-    }
 }
