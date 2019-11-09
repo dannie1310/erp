@@ -815,7 +815,7 @@ export const routes = [
                         name: 'estimacion',
                         component: require('./components/contratos/estimacion/Index'),
                         meta: {
-                            title: 'ESTIMACIONES',
+                            title: 'Estimaciones',
                             breadcrumb: {parent: 'contratos', name: 'ESTIMACIONES'},
                             middleware: [auth, context],
 
@@ -826,10 +826,21 @@ export const routes = [
                         name: 'estimacion-create',
                         component: require('./components/contratos/estimacion/Create'),
                         meta: {
-                            title: 'ESTIMACIONES',
+                            title: 'Estimaciones',
                             breadcrumb: {parent: 'estimacion', name: 'NUEVA'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_estimacion_subcontrato'
+                        }
+                    },
+                    {
+                        path: ':id/eliminar',
+                        name: 'estimacion-delete',
+                        component: require('./components/contratos/estimacion/Delete'),
+                        meta: {
+                            title: 'Eliminar Estimación',
+                            breadcrumb: {parent: 'estimacion', name: 'ELIMINAR ESTIMACIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: 'eliminar_estimacion_subcontrato'
                         }
                     },
                     {
@@ -837,13 +848,12 @@ export const routes = [
                         name: 'estimacion-show',
                         component: require('./components/contratos/estimacion/Show'),
                         meta: {
-                            title: 'INFORMACIÓN DE ESTIMACIÓN',
+                            title: 'Información de Estimación',
                             breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
                             middleware: [auth, context,],
 
                         }
                     },
-
                     {
                         path: 'formato-orden-pago',
                         name: 'formato-orden-pago',
@@ -860,7 +870,6 @@ export const routes = [
                     },
                 ]
             },
-
             {
                 path: 'fondo-garantia',
                 component: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
