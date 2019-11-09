@@ -11,6 +11,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\CADECO\ItemTransformer;
 use App\Http\Transformers\CADECO\SubcontratosEstimaciones\SubcontratoEstimacionTrasnformer;
 use App\Models\CADECO\Estimacion;
 use League\Fractal\TransformerAbstract;
@@ -43,14 +44,18 @@ class EstimacionTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'numero_folio' => $model->numero_folio,
-            'folio'=> str_pad($model->numero_folio,6, 0, STR_PAD_LEFT),
+            'numero_folio_format' => $model->numero_folio_format,
             'observaciones' => $model->observaciones,
             'impuesto' => $model->impuesto,
+            'impuesto_format' => $model->impuesto_format,
             'monto' => $model->monto,
+            'monto_format' => $model->monto_format,
             'estado' => $model->estado,
-            'fecha' => Carbon::parse($model->fecha)->format('d-m-Y'),
-            'fecha_inicial'=>Carbon::parse($model->cumplimiento)->format('d-m-Y'),
-            'fecha_final' =>Carbon::parse($model->vencimiento)->format('d-m-Y'),
+            'fecha' => $model->fecha_format,
+            'fecha_inicial'=> $model->cumplimiento_format,
+            'fecha_final' => $model->vencimiento_format,
+            'subtotal' => $model->subtotal,
+            'subtotal_format' => $model->subtotal_format
         ];
     }
 
@@ -60,7 +65,8 @@ class EstimacionTransformer extends TransformerAbstract
      */
     public function includeSubcontratoEstimacion(Estimacion $model)
     {
-        if ($subcontratoEstimacion = $model->subcontratoEstimacion) {
+        if ($subcontratoEstimacion = $model->subcontratoEstimacion)
+        {
             return $this->item($subcontratoEstimacion, new SubcontratoEstimacionTrasnformer);
         }
         return null;
@@ -72,7 +78,8 @@ class EstimacionTransformer extends TransformerAbstract
      */
     public function includeSubcontrato(Estimacion $model)
     {
-        if($subcontrato = $model->subcontrato) {
+        if($subcontrato = $model->subcontrato)
+        {
             return $this->item($subcontrato, new SubcontratoTransformer);
         }
         return null;
@@ -84,7 +91,8 @@ class EstimacionTransformer extends TransformerAbstract
      */
     public function includeEmpresa(Estimacion $model)
     {
-        if($empresa = $model->empresa) {
+        if($empresa = $model->empresa)
+        {
             return $this->item($empresa, new EmpresaTransformer);
         }
         return null;
@@ -96,9 +104,9 @@ class EstimacionTransformer extends TransformerAbstract
      */
     public function includeMoneda(Estimacion $model)
     {
-        if($moneda = $model->moneda) {
+        if($moneda = $model->moneda)
+        {
             return $this->item($moneda, new MonedaTransformer);
-
         }
         return null;
     }

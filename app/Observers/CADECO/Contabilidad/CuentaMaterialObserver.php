@@ -19,6 +19,7 @@ class CuentaMaterialObserver
      */
     public function creating(CuentaMaterial $cuentaMaterial)
     {
+        $cuentaMaterial->validarRegistro();
         $cuentaMaterial->estatus = 1;
         $cuentaMaterial->registro = auth()->id();
         $cuentaMaterial->id_obra = Context::getIdObra();

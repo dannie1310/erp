@@ -45,33 +45,29 @@ class OrdenPagoEstimacion extends Rotation
         parent::__construct('P', 'cm', 'A4');
 
         $this->obra = Obra::find(Context::getIdObra());
-        $this->estimacion = Estimacion::where('id_transaccion', '=', $estimacion)->get();
+        $this->estimacion = Estimacion::find($estimacion);
 
-        $this->estimacion = $this->estimacion[0];
+        $this->objeto_contrato = Subcontratos::find($this->estimacion['id_antecedente']);
 
-        $this->objeto_contrato = Subcontratos::where('id_transaccion', '=', $this->estimacion->id_antecedente)->get();
+        if(!$this->objeto_contrato){
+            $this->objeto_contrato = null;
+        }else {
+            if ($this->objeto_contrato['observacion'] == null) {
+                $subcontrato_transaccion = Subcontrato::find( $this->estimacion['id_antecedente'] );
 
-        if($this->objeto_contrato[0]['observacion'] == null)
-        {
+                // Si existe el campo referencia, úsalo.
+                if ($subcontrato_transaccion['referencia'])
+                    $this->objeto_contrato = $subcontrato_transaccion['referencia'];
 
-            $subcontrato_transaccion = Subcontrato::where('id_transaccion', '=', $this->estimacion->id_antecedente)->get();
-            $subcontrato_transaccion = $subcontrato_transaccion[0];
+                // ¿No? obten la referencia del contrato proyectado
+                else {
+                    $contrato_proyectado = ContratoProyectado::find( $subcontrato_transaccion['id_antecedente'] );
 
-            // Si existe el campo referencia, úsalo.
-            if ($subcontrato_transaccion->referencia)
-                $this->objeto_contrato = $subcontrato_transaccion->referencia;
-
-            // ¿No? obten la referencia del contrato proyectado
-            else{
-                dd("AQUI3");
-                $contrato_proyectado = ContratoProyectado::where('id_transaccion', '=', $subcontrato_transaccion->id_antecedente)->pluck('referencia')->first();
-
-                $this->objeto_contrato = $contrato_proyectado->referencia;
-            }
+                    $this->objeto_contrato = $contrato_proyectado->referencia;
+                }
+            } else
+                $this->objeto_contrato = $this->objeto_contrato['observacion'];
         }
-
-        else
-            $this->objeto_contrato = $this->objeto_contrato[0]['observacion'];
     }
 
     function Header() {
