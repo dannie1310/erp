@@ -53,6 +53,7 @@ use App\Models\CADECO\Inventarios\ConteoCancelado;
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
+use App\Models\CADECO\Inventarios\Marbete;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\NuevoLote;
@@ -138,6 +139,7 @@ use App\Observers\CADECO\Inventarios\ConteoCanceladoObserver;
 use App\Observers\CADECO\Inventarios\InventarioFisicoObserver;
 use App\Observers\CADECO\Inventarios\LayoutConteoObserver;
 use App\Observers\CADECO\Inventarios\LayoutConteoPartidaObserver;
+use App\Observers\CADECO\Inventarios\MarbeteObserver;
 use App\Observers\CADECO\LiberacionFondoGarantiaObserver;
 use App\Observers\CADECO\MaterialObserver;
 use App\Observers\CADECO\NuevoLoteObserver;
@@ -182,6 +184,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      *
+     * Ordenado como la ubicación de los Modelos.
      * @return void
      */
     public function boot()
@@ -194,16 +197,6 @@ class AppServiceProvider extends ServiceProvider
              * Almacenes
              */
             AjusteEliminado::observe(AjusteEliminadoObserver::class);
-            Inventario::observe(InventarioObserver::class);
-            InventarioFisico::observe(InventarioFisicoObserver::class);
-            LayoutConteo::observe(LayoutConteoObserver::class);
-            LayoutConteoPartida::observe(LayoutConteoPartidaObserver::class);
-            Conteo::observe(ConteoObserver::class);
-            ConteoCancelado::observe(ConteoCanceladoObserver::class);
-            AjusteNegativo::observe(AjusteNegativoObserver::class);
-            AjustePositivo::observe(AjustePositivoObserver::class);
-            AjustePositivoPartida::observe(AjustePositivoPartidaObserver::class);
-            AjusteNegativoPartida::observe(AjusteNegativoPartidaObserver::class);
 
             /**
              * Compras
@@ -225,8 +218,8 @@ class AppServiceProvider extends ServiceProvider
             CuentaFondo::observe(CuentaFondoObserver::class);
             CuentaGeneral::observe(CuentaGeneralObserver::class);
             CuentaMaterial::observe(CuentaMaterialObserver::class);
-            Poliza::observe(PolizaObserver::class);
             PolizaMovimiento::observe(PolizaMovimientoObserver::class);
+            Poliza::observe(PolizaObserver::class);
             TipoCuentaContable::observe(TipoCuentaContableObserver::class);
 
             /**
@@ -244,18 +237,6 @@ class AppServiceProvider extends ServiceProvider
             DistribucionRecursoRemesaPartida::observe(DistribucionRecursoRemesaPartidaObserver::class);
             LayoutPago::observe(LayoutPagoObserver::class);
             LayoutPagoPartida::observe(LayoutPagoPartidaObserver::class);
-            PagoReposicionFF::observe(PagoReposicionFFObserver::class);
-            Pago::observe(PagoObserver::class);
-            OrdenPago::observe(OrdenPagoObserver::class);
-            PagoFactura::observe(PagoFacturaObserver::class);
-            PagoACuenta::observe(PagoACuentaObserver::class);
-            PagoACuentaPorAplicar::observe(PagoACuentaPorAplicarObserver::class);
-            PagoVario::observe(PagoVarioObserver::class);
-            Factura::observe(FacturaObserver::class);
-            PagoAnticipoDestajo::observe(PagoAnticipoDestajoObserver::class);
-            Anticipo::observe(AnticipoObserver::class);
-            SolicitudAnticipoDestajo::observe(SolicitudAnticipoDestajoObserver::class);
-            SolicitudReposicionFF::observe(SolicitudReposicionFFObserver::class);
 
             /**
              * FinanzasCBE
@@ -263,6 +244,16 @@ class AppServiceProvider extends ServiceProvider
             SolicitudAlta::observe(SolicitudAltaObserver::class);
             SolicitudBaja::observe(SolicitudBajaObserver::class);
             SolicitudMovimiento::observe(SolicitudMovimientoObserver::class);
+
+            /**
+             *Inventarios
+             */
+            Conteo::observe(ConteoObserver::class);
+            ConteoCancelado::observe(ConteoCanceladoObserver::class);
+            InventarioFisico::observe(InventarioFisicoObserver::class);
+            LayoutConteo::observe(LayoutConteoObserver::class);
+            LayoutConteoPartida::observe(LayoutConteoPartidaObserver::class);
+            Marbete::observe(MarbeteObserver::class);
 
             /**
              * Seguridad
@@ -291,6 +282,14 @@ class AppServiceProvider extends ServiceProvider
              */
             MovimientoBancario::observe(MovimientoBancarioObserver::class);
             TraspasoCuentas::observe(TraspasoCuentasObserver::class);
+
+
+
+            AjusteNegativo::observe(AjusteNegativoObserver::class);
+            AjusteNegativoPartida::observe(AjusteNegativoPartidaObserver::class);
+            AjustePositivo::observe(AjustePositivoObserver::class);
+            AjustePositivoPartida::observe(AjustePositivoPartidaObserver::class);
+            Anticipo::observe(AnticipoObserver::class);
             Banco::observe(BancoObserver::class);
             Credito::observe(CreditoObserver::class);
             Cuenta::observe(CuentaObserver::class);
@@ -300,15 +299,27 @@ class AppServiceProvider extends ServiceProvider
             EmpresaFondoFijo::observe(EmpresaFondoFijoObserver::class);
             EntradaMaterial::observe(EntradaMaterialObserver::class);
             Estimacion::observe(EstimacionObserver::class);
+            Factura::observe(FacturaObserver::class);
             Familia::observe(FamiliaObserver::class);
             Fondo::observe(FondoObserver::class);
+            Inventario::observe(InventarioObserver::class);
             LiberacionFondoGarantia::observe(LiberacionFondoGarantiaObserver::class);
             Material::observe(MaterialObserver::class);
             NuevoLote::observe(NuevoLoteObserver::class);
             NuevoLotePartida::observe(NuevoLotePartidaObserver::class);
             OrdenCompra::observe(OrdenCompraObserver::class);
+            OrdenPago::observe(OrdenPagoObserver::class);
+            PagoACuenta::observe(PagoACuentaObserver::class);
+            PagoACuentaPorAplicar::observe(PagoACuentaPorAplicarObserver::class);
+            PagoAnticipoDestajo::observe(PagoAnticipoDestajoObserver::class);
+            PagoFactura::observe(PagoFacturaObserver::class);
+            Pago::observe(PagoObserver::class);
+            PagoReposicionFF::observe(PagoReposicionFFObserver::class);
+            PagoVario::observe(PagoVarioObserver::class);
             SalidaAlmacen::observe(SalidaAlmacenObserver::class);
+            SolicitudAnticipoDestajo::observe(SolicitudAnticipoDestajoObserver::class);
             SolicitudPagoAnticipado::observe(SolicitudPagoAnticipadoObserver::class);
+            SolicitudReposicionFF::observe(SolicitudReposicionFFObserver::class);
             Subcontrato::observe(SubcontratoObserver::class);
             Sucursal::observe(SucursalObserver::class);
             Transaccion::observe(TransaccionObserver::class);
