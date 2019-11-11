@@ -147,6 +147,7 @@ export default{
             }
         },
         descargaLayout(context, payload){
+            console.log('asignacion', payload.id);
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'descargaLayout/'+ payload.id, { params: payload.params, responseType:'blob', })
@@ -162,66 +163,6 @@ export default{
                     .catch(error => {
                         reject(error);
                     })
-            });
-        },
-        descargar_resumen_conteos(contest, payload){
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + payload.id + '/descargar_resumen_conteo', { params: payload.params, responseType:'blob', })
-                    .then(r => r.data)
-                    .then(data => {
-                        const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.setAttribute('download', 'Layout-'+payload.id+'.csv');
-                        document.body.appendChild(link);
-                        link.click();
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
-        },
-        update(context, payload) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "¿Está seguro?",
-                    text: "Cerrar Inventario Físico",
-                    icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Cerrar',
-                            closeModal: false,
-                        }
-                    }
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .patch(URI + payload.id + '/actualizar', payload.data, { params: payload.params })
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("Inventario Físico cerrado correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    }).then(() => {
-                                        context.commit('UPDATE_INVENTARIOS',data);
-                                        resolve(data);
-                                    })
-                                })
-                                .catch(error => {
-                                    reject(error);
-                                })
-                        } else {
-                            reject();
-                        }
-                    });
             });
         },
     },
