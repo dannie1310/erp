@@ -58,31 +58,37 @@ class InventarioFisico extends Model
         return Excel::download(new InventarioFisicoLayoutResumen($this), 'Inventario_Resumen.csv');
     }
 
-    public function marbetes(){
+    public function marbetes()
+    {
         return $this->hasMany(Marbete::class, 'id_inventario_fisico','id');
     }
 
-    public function obra(){
+    public function obra()
+    {
         return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
     }
 
-    public function pdf_marbetes(){
+    public function pdf_marbetes()
+    {
         $marbetes = new InventarioMarbete($this);
         return $marbetes->create();
     }
 
-    public function validar(){
+    public function validar()
+    {
         if(InventarioFisico::query()->where('estado', '=',0)->first() != null){
             abort(400,'Existe un inventario físico no finalizado');
         }
         return true;
     }
 
-    public function tipoInventario(){
+    public function tipoInventario()
+    {
         return $this->belongsTo(CtgTipoInventario::class, 'id_tipo', 'id');
     }
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(Usuario::class, 'usuario_inicia', 'idusuario');
     }
 
@@ -96,7 +102,6 @@ class InventarioFisico extends Model
     public function getCantidadMarbetesAttribute()
     {
         return count($this->marbetes);
-
     }
 
     public function getEstadoFormatAttribute()
