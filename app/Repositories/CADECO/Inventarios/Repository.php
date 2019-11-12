@@ -255,7 +255,7 @@ where id_obra = ' . Context::getIdObra() . '
                     'id_material' => $q->id_material,
                     'saldo' => $q->existencia_sistema,
                     'folio' => $q->folio_marbete,
-                    'unidad' => $q->unidad
+                    'unidad' => $q->unidad != null ? $q->unidad : ''
                 ]);
             }
             return true;
@@ -419,7 +419,8 @@ select top '.$cantidad.' * from
                 'id_almacen' => $q->id_almacen,
                 'id_material' => $q->id_material,
                 'saldo' => $q->existencia_sistema,
-                'folio' => $q->folio_marbete
+                'folio' => $q->folio_marbete,
+                'unidad' => $q->unidad != null ? $q->unidad : ''
             ]);
         }
         return true;
