@@ -24,7 +24,7 @@ import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
 import familia from './modules/cadeco/familia';
 import fondo from './modules/cadeco/fondo';
-import Inventario from './modules/cadeco/inventario';
+import inventario from './modules/cadeco/inventario';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
@@ -34,6 +34,7 @@ import unidad from './modules/cadeco/unidad'
 
 //COMPRAS
 import asignacion from "./modules/compras/asignacion";
+import cotizacion from './modules/compras/cotizacion';
 import solicitudCompra from './modules/compras/solicitud-compra';
 import ordenCompra from './modules/compras/orden-compra';
 import itemContratista from './modules/compras/item-contratista';
@@ -135,7 +136,7 @@ export default new Vuex.Store({
         'cadeco/empresa': empresa,
         'cadeco/familia': familia,
         'cadeco/fondo': fondo,
-        'cadeco/inventario': Inventario,
+        'cadeco/inventario': inventario,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
@@ -143,6 +144,7 @@ export default new Vuex.Store({
         'cadeco/unidad': unidad,
 
         'compras/asignacion' : asignacion,
+        'compras/cotizacion' : cotizacion,
         'compras/solicitud-compra' : solicitudCompra,
         'compras/orden-compra' : ordenCompra,
         'compras/item-contratista' : itemContratista,

@@ -522,7 +522,6 @@ export const routes = [
                     },
                 ]
             },
-
             {
                 path: 'catalogo-insumo',
                 component: require('./components/compras/catalogos/Layout'),
@@ -583,6 +582,22 @@ export const routes = [
                 ]
             },
             {
+                path: 'cotizacion',
+                component: require('./components/compras/cotizacion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'cotizacion',
+                        component: require('./components/compras/cotizacion/Index'),
+                        meta: {
+                            title: 'Cotizaciones',
+                            breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue'),
                 meta: {
@@ -599,6 +614,22 @@ export const routes = [
                         permission: ['consultar_orden_compra']
                     }
                 }]
+            },
+            {
+                path: 'requisicion',
+                component: require('./components/compras/requisicion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'requisicion',
+                        component: require('./components/compras/requisicion/Index'),
+                        meta: {
+                            title: 'Requisiciones',
+                            breadcrumb: {parent: 'compras', name: 'REQUISICIONES'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
             },
             {
                 path: 'solicitud-compra',
@@ -639,7 +670,7 @@ export const routes = [
                         }
                     }
                 ]
-            },
+            }
         ]
     },
     {

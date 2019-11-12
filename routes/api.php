@@ -414,6 +414,7 @@ $api->version('v1', function ($api) {
 
          // COTIZACIÓN
         $api->group(['prefix' => 'cotizacion'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@paginate');
             $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@descargaLayout')->where(['id' => '[0-9]+']);
 
         });
