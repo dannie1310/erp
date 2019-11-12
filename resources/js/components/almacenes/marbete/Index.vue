@@ -109,7 +109,7 @@
             },
             query: {
                 handler(query) {
-                    this.paginate(query)
+                   this.paginate(query)
                 },
                 deep: true
             },

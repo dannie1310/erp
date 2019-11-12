@@ -80,14 +80,17 @@ class Marbete extends  Model
                         ->where('id_almacen', '=', $this->id_almacen)
                         ->selectRaw('SUM(monto_total)/SUM(cantidad) as precio_promedio')->first();
 
-        if(is_null($query))
+        if(is_null($query->precio_promedio))
         {
             $query_global = Inventario::where('id_material', '=', $this->id_material)
                 ->selectRaw('SUM(monto_total)/SUM(cantidad) as precio_promedio')->first();
-            return $query_global->precio_promedio;
+            if(!is_null($query_global->precio_promedio)) {
+                return $query_global->precio_promedio;
+            }else{
+                return 0;
+            }
         }else{
             return $query->precio_promedio;
         }
-        dd($query, $query_global, $this->id_material, $this->id_almacen);dd("AQ");
     }
 }
