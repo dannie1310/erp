@@ -103,7 +103,6 @@ class Material extends Model
 
     public function hijos()
     {
-//        dd($this);
         return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
             ->where('nivel', 'LIKE',  '009.___.');
     }
