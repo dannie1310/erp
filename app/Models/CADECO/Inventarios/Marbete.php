@@ -75,7 +75,6 @@ class Marbete extends  Model
 
     public function precioUnitarioPromedio()
     {
-        $query_global ='';
         $query = Inventario::where('id_material', '=', $this->id_material)
                         ->where('id_almacen', '=', $this->id_almacen)
                         ->selectRaw('SUM(monto_total)/SUM(cantidad) as precio_promedio')->first();

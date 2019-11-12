@@ -62,9 +62,13 @@ class MarbeteService
             ->where('inventarios.id_material','=', $data['id_material'])->sum('inventarios.saldo');
 
         $folio_arr = Marbete::query()->where('id_inventario_fisico','=', $inventario->id )
-            ->orderBy('folio', 'desc')->select('folio')->first()->toArray();
+            ->orderBy('folio', 'desc')->select('folio')->first();
 
-        $folio = $folio_arr['folio']+1;
+        if(is_null($folio_arr)){
+            $folio = 1;
+        }else {
+            $folio = $folio_arr->folio + 1;
+        }
 
         $datos = [
           'id_inventario_fisico'=> $inventario->id,
