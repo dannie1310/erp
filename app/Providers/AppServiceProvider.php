@@ -57,6 +57,7 @@ use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\CADECO\Inventarios\LayoutConteo;
 use App\Models\CADECO\Inventarios\LayoutConteoPartida;
 use App\Models\CADECO\Inventarios\Marbete;
+use App\Models\CADECO\Inventarios\MarbeteLog;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\NuevoLote;
@@ -149,6 +150,7 @@ use App\Observers\CADECO\Inventarios\ConteoCanceladoObserver;
 use App\Observers\CADECO\Inventarios\InventarioFisicoObserver;
 use App\Observers\CADECO\Inventarios\LayoutConteoObserver;
 use App\Observers\CADECO\Inventarios\LayoutConteoPartidaObserver;
+use App\Observers\CADECO\Inventarios\MarbeteLogObserver;
 use App\Observers\CADECO\Inventarios\MarbeteObserver;
 use App\Observers\CADECO\LiberacionFondoGarantiaObserver;
 use App\Observers\CADECO\MaterialObserver;
@@ -274,6 +276,7 @@ class AppServiceProvider extends ServiceProvider
             LayoutConteo::observe(LayoutConteoObserver::class);
             LayoutConteoPartida::observe(LayoutConteoPartidaObserver::class);
             Marbete::observe(MarbeteObserver::class);
+            MarbeteLog::observe(MarbeteLogObserver::class);
 
             /**
              * Seguridad

@@ -113,6 +113,7 @@ export default{
             });
         },
         descargar_resumen_conteos(contest, payload){
+            var fecha = new Date();
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + payload.id + '/descargar_resumen_conteo', { params: payload.params, responseType:'blob', })
@@ -121,7 +122,7 @@ export default{
                         const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
                         const link = document.createElement('a');
                         link.href = url;
-                        link.setAttribute('download', 'Layout-'+payload.id+'.csv');
+                        link.setAttribute('download',  'ResumenConteos_'+moment(fecha).format('DDMMYY_hhmmss')+'.csv');
                         document.body.appendChild(link);
                         link.click();
                         resolve(data);
