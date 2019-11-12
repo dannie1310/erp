@@ -36,7 +36,7 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
                 "material"=>$marbete->material->descripcion,
                 "unidad" => $marbete->unidad,
                 "saldo"=>$marbete->saldo,
-                "precio_unitario" => $marbete->precio_unitario != 0 ? $marbete->precio_unitario : $marbete->precioUnitarioPromedio(),
+                "precio_unitario" => number_format((float) ($marbete->precio_unitario != 0 ? $marbete->precio_unitario : $marbete->precioUnitarioPromedio()), 2, '.', ''),
                 "nuevo1"=>array_key_exists('1',$conteos)?$conteos[1]->cantidad_nuevo:'  ',
                 "usado1"=>array_key_exists('1',$conteos)?$conteos[1]->cantidad_usados:'  ',
                 "inservible1"=>array_key_exists('1',$conteos)?$conteos[1]->cantidad_inservible:'  ',
