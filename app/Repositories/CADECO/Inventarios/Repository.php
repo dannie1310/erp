@@ -140,6 +140,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 id_almacen,
 id_material,
 existencia_sistema,
+unidad,
 ROW_NUMBER() OVER(ORDER BY almacen, material) AS folio_marbete
 from(
 SELECT materiales_existencia.id_obra,
@@ -253,7 +254,8 @@ where id_obra = ' . Context::getIdObra() . '
                     'id_almacen' => $q->id_almacen,
                     'id_material' => $q->id_material,
                     'saldo' => $q->existencia_sistema,
-                    'folio' => $q->folio_marbete
+                    'folio' => $q->folio_marbete,
+                    'unidad' => $q->unidad != null ? $q->unidad : ''
                 ]);
             }
             return true;
@@ -270,6 +272,7 @@ where id_obra = ' . Context::getIdObra() . '
     id_almacen,
     id_material,
     existencia_sistema,
+    unidad,
     ROW_NUMBER() OVER(ORDER BY almacen, material) AS folio_marbete
     from(
     select top ' . $data['inventario'] . ' percent * from (
@@ -416,7 +419,8 @@ select top '.$cantidad.' * from
                 'id_almacen' => $q->id_almacen,
                 'id_material' => $q->id_material,
                 'saldo' => $q->existencia_sistema,
-                'folio' => $q->folio_marbete
+                'folio' => $q->folio_marbete,
+                'unidad' => $q->unidad != null ? $q->unidad : ''
             ]);
         }
         return true;
