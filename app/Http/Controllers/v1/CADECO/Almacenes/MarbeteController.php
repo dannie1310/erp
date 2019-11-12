@@ -55,6 +55,5 @@ class MarbeteController extends Controller
         $item = $this->service->showCodigo($id);
         return $this->respondWithItem($item);
     }
-
 }
 
