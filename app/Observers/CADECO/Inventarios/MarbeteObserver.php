@@ -10,6 +10,7 @@ namespace App\Observers\CADECO\Inventarios;
 
 
 use App\Models\CADECO\Inventarios\Marbete;
+use App\Models\CADECO\Inventarios\MarbeteLog;
 
 class MarbeteObserver
 {
@@ -20,5 +21,29 @@ class MarbeteObserver
     public function creating(Marbete $marbete)
     {
         $marbete->precio_unitario = $marbete->precioUnitarioPromedio();
+    }
+
+    public function created(Marbete $marbete)
+    {
+        MarbeteLog::create([
+            'id_marbete' => $marbete->id,
+            'description' => 'Marbete Creado'
+        ]);
+    }
+
+    public function updated(Marbete $marbete)
+    {
+        MarbeteLog::create([
+            'id_marbete' => $marbete->id,
+            'description' => "Marbete Editado"
+        ]);
+    }
+
+    public function deleted(Marbete $marbete)
+    {
+        MarbeteLog::create([
+            'id_marbete' => $marbete->id,
+            'description' => "Marbete Eliminando"
+        ]);
     }
 }
