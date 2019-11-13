@@ -6,11 +6,13 @@ namespace App\CSV;
 
 use App\Models\CADECO\Inventarios\Conteo;
 use App\Models\CADECO\Inventarios\InventarioFisico;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
 {
+    use Exportable;
     protected $inventario;
 
 
@@ -21,7 +23,6 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
     }
     public function collection()
     {
-
         $user = array();
         foreach ($this->inventario->marbetes as $marbete){
             $conteos = array();
@@ -96,5 +97,4 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
             'inservibles',
             'total',]);
     }
-
 }

@@ -60,8 +60,7 @@ class InventarioFisicoService
 
     public function descargaLayout($id)
     {
-
-            return $this->repository->show($id)->descargaLayout();
+        return $this->repository->show($id)->descargaLayout();
     }
 
     public function generar_resumen_conteos($id){
