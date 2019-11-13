@@ -142,7 +142,7 @@
                                                              <i class="fa fa-check-square-o" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.entrega.pendiente)"></i>
                                                              <i class="fa fa-square-o" v-else></i>
                                                         </td>
-                                                        <td v-else></td>
+
                                                         <td v-if="doc.destino ===  undefined">
                                                             <small class="badge" :class="{'badge-success':true}">
                                                                 <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)" style="cursor:pointer"></i>
