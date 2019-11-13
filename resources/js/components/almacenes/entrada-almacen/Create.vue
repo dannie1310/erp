@@ -8,15 +8,17 @@
                             <div class="modal-body">
                                 <div class="row">
                                 <div class="col-md-12">
-                                    <div class="row justify-content-end">
-                                        <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="offset-md-10 col-md-2">
                                             <div class="form-group error-content">
                                                 <label for="fecha" class="col-sm-2 col-form-label">Fecha:</label>
 
                                                         <datepicker v-model = "fecha"
                                                                     name = "fecha"
                                                                     :format = "formatoFecha"
+                                                                    :language = "es"
                                                                     :bootstrap-styling = "true"
+                                                                    :use-utc="true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
                                                                     :class="{'is-invalid': errors.has('fecha')}"
@@ -323,11 +325,13 @@
 <script>
     import ConceptoSelect from "../../cadeco/concepto/Select";
     import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "entrada-almacen-create",
         components: {ConceptoSelect, Datepicker},
         data() {
             return {
+                es:es,
                 fecha : '',
                 fecha_hoy : '',
                 id_orden_compra : '',
