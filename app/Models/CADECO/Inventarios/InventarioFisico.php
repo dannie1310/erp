@@ -56,7 +56,8 @@ class InventarioFisico extends Model
 
     public function generar_resumen_conteos()
     {
-        return Excel::download(new InventarioFisicoLayoutResumen($this), 'ResumenConteos_'.date('dmYY_His').'.csv');
+        (new InventarioFisicoLayoutResumen($this))->store('ResumenConteosNUEVOllll_'.date('dmYY_His').'.csv', 'inventario_fisico_descarga');
+        return (new InventarioFisicoLayoutResumen($this))->download('ResumenConteos_'.date('dmYY_His').'.csv', \Maatwebsite\Excel\Excel::CSV);
     }
 
     public function marbetes()

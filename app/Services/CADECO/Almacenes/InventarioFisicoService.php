@@ -7,7 +7,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Inventarios\InventarioFisico;
 use App\Models\IGH\Usuario;
 use App\Repositories\CADECO\Inventarios\Repository;
-use PhpParser\Node\Stmt\Return_;
+use Illuminate\Support\Facades\Storage;
 
 class InventarioFisicoService
 {
@@ -63,8 +63,8 @@ class InventarioFisicoService
         return $this->repository->show($id)->descargaLayout();
     }
 
-    public function generar_resumen_conteos($id){
+    public function generar_resumen_conteos($id)
+    {
         return $this->repository->show($id)->generar_resumen_conteos();
     }
-
 }
