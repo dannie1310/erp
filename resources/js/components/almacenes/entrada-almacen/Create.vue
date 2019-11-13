@@ -7,13 +7,12 @@
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
                                 <div class="row">
-                                <div class="col-md-12">
-                                    <div class="row">
+
+
                                         <div class="offset-md-10 col-md-2">
                                             <div class="form-group error-content">
-                                                <label for="fecha" class="col-sm-2 col-form-label">Fecha:</label>
-
-                                                        <datepicker v-model = "fecha"
+                                                <label for="fecha" class="col-form-label">Fecha:</label>
+                                                    <datepicker v-model = "fecha"
                                                                     name = "fecha"
                                                                     :format = "formatoFecha"
                                                                     :language = "es"
@@ -24,15 +23,15 @@
                                                                     :class="{'is-invalid': errors.has('fecha')}"
                                                         ></datepicker>
                                                   <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row justify-content-start">
-                                         <div class="col-md-6">
+                                </div>
+
+                                    <div class="row ">
+                                         <div class="col-md-2">
                                             <div class="form-group row error-content">
-                                                <label for="remision" class="col-sm-2 col-form-label">Remisión: </label>
-                                                <div class="col-sm-10">
+                                                <label for="remision" class=" col-form-label col-md-6">Remisión: </label>
+                                                <div class="col-md-6" >
                                                     <input
                                                             type="text"
                                                             data-vv-as="Remisión"
@@ -47,14 +46,10 @@
                                                 </div>
                                             </div>
                                          </div>
-                                    </div>
-                                </div>
-                                    </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group row error-content">
-                                            <label for="id_orden_compra"  class="col-sm-2 col-form-label">Orden de Compra: </label>
-                                            <div class="col-sm-10">
+                                         <div class="col-md-2">
+                                             <div class="form-group row error-content">
+                                            <label for="id_orden_compra"  class="col-form-label col-md-6">Orden de Compra: </label>
+                                            <div class="col-md-6" >
                                                 <select
                                                         :disabled="!bandera"
                                                         type="text"
@@ -66,37 +61,46 @@
                                                         v-model="id_orden_compra"
                                                         :class="{'is-invalid': errors.has('id_orden_compra')}"
                                                 >
-                                                    <option value>-- Seleccione una Orden de Compra --</option>
-                                                    <option v-for="orden in ordenes_compra" :value="orden.id">{{ orden.numero_folio_format }} ({{ orden.dato_transaccion }})</option>
+                                                    <option value v-if="bandera">-- Seleccione --</option>
+                                                    <option value v-if="!bandera">Cargando...</option>
+                                                    <option v-for="orden in ordenes_compra" :value="orden.id">{{ orden.numero_folio_format }} </option>
                                                 </select>
                                                 <div class="error-label" v-show="errors.has('id_orden_compra')">{{ errors.first('id_orden_compra') }}</div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="row"  v-if="id_orden_compra != '' && orden_compra.empresa">
-                                     <div class="col-12">
-                                        <div class="form-group row error-content">
-                                            <label for="empresa" class="col-sm-2 col-form-label">Empresa: </label>
-                                            <div class="col-sm-10">
-                                                <input
-                                                        :disabled="true"
-                                                        type="text"
-                                                        data-vv-as="Empresa"
-                                                        class="form-control"
-                                                        :name="empresa"
-                                                        placeholder="Empresa"
-                                                        v-model="orden_compra.empresa.razon_social"
-                                                        :class="{'is-invalid': errors.has('empresa')}">
-                                                <div class="invalid-feedback" v-show="errors.has('empresa')">{{ errors.first('empresa') }}</div>
+                                         </div>
+                                        <div class="col-md-8" v-if="orden_compra.length != 0">
+                                            <div class="form-group row error-content">
+                                                <label for="empresa" class="col-md-2 col-form-label">Empresa: </label>
+                                                <div class="col-md-10">
+                                                    <input
+                                                            :disabled="true"
+                                                            type="text"
+                                                            data-vv-as="Empresa"
+                                                            class="form-control"
+                                                            :name="empresa"
+                                                            placeholder="Empresa"
+                                                            v-model="orden_compra.empresa.razon_social"
+                                                            :class="{'is-invalid': errors.has('empresa')}">
+                                                    <div class="invalid-feedback" v-show="errors.has('empresa')">{{ errors.first('empresa') }}</div>
+                                                </div>
                                             </div>
-                                        </div>
                                      </div>
-                                </div>
+                                    </div>
+
+
+ <div class="row" v-if="orden_compra.length != 0">
+                                    <div  class="col-12">
+                                        <hr />
+                                        <label class="col-form-label col-md-12">Partidas:</label>
+
+                                    </div>
+ </div>
+
                                 <div class="row" v-if="orden_compra.length != 0">
                                     <div  class="col-12">
                                         <div class="table-responsive">
-                                            <table class="table table-striped">
+                                            <table class="table table-bordered">
                                                 <thead>
                                                 <tr>
                                                     <th>#</th>
@@ -117,10 +121,9 @@
                                                         <td>{{doc.material.numero_parte}}</td>
                                                         <td>{{doc.material.descripcion}}</td>
                                                         <td>{{doc.material.unidad}}</td>
-                                                        <td>{{doc.entrega.fecha_format}}</td>
-                                                        <td>{{doc.entrega.pendiente}}</td>
-                                                        <td>
-                                                            <div class="col-12">
+                                                        <td class="fecha">{{doc.entrega.fecha_format}}</td>
+                                                        <td class="td_money">{{doc.entrega.pendiente}}</td>
+                                                        <td class="td_money_input">
                                                                 <div class="form-group error-content">
                                                                     <input
                                                                             type="number"
@@ -134,29 +137,27 @@
                                                                             :class="{'is-invalid': errors.has(`cantidad_ingresada[${i}]`)}">
                                                                     <div class="invalid-feedback" v-show="errors.has(`cantidad_ingresada[${i}]`)">{{ errors.first(`cantidad_ingresada[${i}]`) }}</div>
                                                                 </div>
-                                                            </div>
                                                         </td>
-                                                        <td class="text-center" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.entrega.pendiente)">
-                                                            <small class="badge" :class="{'badge-success':parseFloat(doc.cantidad_ingresada) == parseFloat(doc.entrega.pendiente)}">
-                                                                <i class="fa fa-check-circle-o" aria-hidden="true"></i> Cumplido
-                                                             </small>
+                                                        <td class="text-center" >
+                                                             <i class="fa fa-check-square-o" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.entrega.pendiente)"></i>
+                                                             <i class="fa fa-square-o" v-else></i>
                                                         </td>
                                                         <td v-else></td>
                                                         <td v-if="doc.destino ===  undefined">
                                                             <small class="badge" :class="{'badge-success':true}">
-                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
+                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)" style="cursor:pointer"></i>
                                                             </small>
                                                         </td>
                                                         <td v-if="doc.destino">
                                                             <small class="badge" :class="{'badge-success':true}">
-                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)"></i>
+                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)" style="cursor:pointer"></i>
                                                             </small>
                                                             <label v-if="doc.destino.tipo_destino === 1"  :title="`${doc.destino.destino.path}`">{{doc.destino.destino.descripcion}}</label>
                                                             <label v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</label>
                                                         </td>
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
-                                                        <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)"></i>{{doc.contratista}}</td>
-                                                        <td class="text-center" v-else-if="doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)"></i></td>
+                                                        <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)" style="cursor:pointer"></i>{{doc.contratista}}</td>
+                                                        <td class="text-center" v-else-if="doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)" style="cursor:pointer"></i></td>
                                                         <!--<td v-else></td>-->
                                                     </tr>
                                                 </tbody>
@@ -166,20 +167,22 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
+                                        <label for="observaciones" class="col-form-label">Observaciones: </label>
+                                    </div>
+                                 </div>
+                                <div class="row">
+                                    <div class="col-md-12">
                                         <div class="form-group row error-content">
-                                            <label for="observaciones" class="col-sm-2 col-form-label">Observaciones: </label>
-                                            <div class="col-sm-10">
-                                                <textarea
-                                                        name="observaciones"
-                                                        id="observaciones"
-                                                        class="form-control"
-                                                        v-model="orden_compra.observaciones"
-                                                        v-validate="{required: true}"
-                                                        data-vv-as="Observaciones"
-                                                        :class="{'is-invalid': errors.has('observaciones')}"
-                                                ></textarea>
+                                            <textarea
+                                                    name="observaciones"
+                                                    id="observaciones"
+                                                    class="form-control"
+                                                    v-model="orden_compra.observaciones"
+                                                    v-validate="{required: true}"
+                                                    data-vv-as="Observaciones"
+                                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                            ></textarea>
                                                 <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
-                                            </div>
                                         </div>
                                     </div>
                                  </div>
@@ -311,8 +314,8 @@
                             </div>
                              <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Contratista</button>
-                                <button type="button" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == '' || contratista.opcion === ''" @click="seleccionarContratista">Registrar Contratista</button>
+                                <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Selección</button>
+                                <button type="button" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == '' || contratista.opcion === ''" @click="seleccionarContratista">Seleccionar</button>
                             </div>
                          </form>
                     </div>
