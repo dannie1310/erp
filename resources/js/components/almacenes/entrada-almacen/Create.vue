@@ -139,25 +139,25 @@
                                                                 </div>
                                                         </td>
                                                         <td class="text-center" >
-                                                             <i class="fa fa-check-square-o" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.entrega.pendiente)"></i>
-                                                             <i class="fa fa-square-o" v-else></i>
+                                                             <i class="fa fa-check-square-o" style="font-size: 1.2em;" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.entrega.pendiente)"></i>
+                                                             <i class="fa fa-square-o" style="font-size:1.2em;" v-else></i>
                                                         </td>
 
                                                         <td v-if="doc.destino ===  undefined">
                                                             <small class="badge" :class="{'badge-success':true}">
-                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)" style="cursor:pointer"></i>
+                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)" style="cursor:pointer; font-size: 1.2em;"></i>
                                                             </small>
                                                         </td>
                                                         <td v-if="doc.destino">
                                                             <small class="badge" :class="{'badge-success':true}">
-                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)" style="cursor:pointer"></i>
+                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)" style="cursor:pointer; font-size: 1.2em;"></i>
                                                             </small>
                                                             <label v-if="doc.destino.tipo_destino === 1"  :title="`${doc.destino.destino.path}`">{{doc.destino.destino.descripcion}}</label>
                                                             <label v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</label>
                                                         </td>
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
-                                                        <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)" style="cursor:pointer"></i>{{doc.contratista}}</td>
-                                                        <td class="text-center" v-else-if="doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)" style="cursor:pointer"></i></td>
+                                                        <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)" style="cursor:pointer;font-size: 1.2em;"></i>{{doc.contratista}}</td>
+                                                        <td class="text-center" v-else-if="doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)" style="cursor:pointer; font-size: 1.2em;"></i></td>
                                                         <!--<td v-else></td>-->
                                                     </tr>
                                                 </tbody>
