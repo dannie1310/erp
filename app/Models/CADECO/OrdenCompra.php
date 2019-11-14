@@ -38,6 +38,11 @@ class OrdenCompra extends Transaccion
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursal()
+    {
+        return $this->hasOne(Sucursal::class, 'id_sucursal', 'id_sucursal');
+    }
+
     public function pago_anticipado()
     {
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');

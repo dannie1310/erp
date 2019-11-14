@@ -70,8 +70,8 @@
                                         </div>
                                          </div>
                                         <div class="col-md-8" v-if="orden_compra.length != 0">
-                                            <div class="form-group row error-content">
-                                                <label for="empresa" class="col-md-2 col-form-label">Empresa: </label>
+                                            <div class="form-group row">
+                                                <label for="empresa" class="col-md-2 col-form-label">Empresa / Sucursal: </label>
                                                 <div class="col-md-10">
                                                     <input
                                                             :disabled="true"
@@ -80,9 +80,8 @@
                                                             class="form-control"
                                                             :name="empresa"
                                                             placeholder="Empresa"
-                                                            v-model="orden_compra.empresa.razon_social"
-                                                            :class="{'is-invalid': errors.has('empresa')}">
-                                                    <div class="invalid-feedback" v-show="errors.has('empresa')">{{ errors.first('empresa') }}</div>
+                                                            v-model="orden_compra.empresa_sucursal"
+                                                            >
                                                 </div>
                                             </div>
                                      </div>
@@ -112,24 +111,24 @@
                                                     <th>Cantidad Ingresada</th>
                                                     <th>Cumplido</th>
                                                     <th>Destino</th>
-                                                    <th>Entrega a Contratista</th>
+                                                    <th class="th_icono"></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(doc, i) in partidas[0]">
+                                                    <tr v-for="(doc, i) in partidas">
                                                         <td>{{i+1}}</td>
-                                                        <td>{{doc.material.numero_parte}}</td>
-                                                        <td>{{doc.material.descripcion}}</td>
-                                                        <td>{{doc.material.unidad}}</td>
-                                                        <td class="fecha">{{doc.entrega.fecha_format}}</td>
-                                                        <td class="td_money">{{doc.entrega.pendiente}}</td>
+                                                        <td>{{doc.numero_parte}}</td>
+                                                        <td>{{doc.material}}</td>
+                                                        <td>{{doc.unidad}}</td>
+                                                        <td class="fecha">{{doc.fecha_entrega_format}}</td>
+                                                        <td class="td_money">{{doc.cantidad_pendiente}}</td>
                                                         <td class="td_money_input">
                                                                 <div class="form-group error-content">
                                                                     <input
                                                                             type="number"
                                                                             step="any"
                                                                             data-vv-as="Cantidad Ingresada"
-                                                                            v-validate="{min_value: 0.01, max_value:doc.entrega.pendiente, decimal:2}"
+                                                                            v-validate="{min_value: 0.01, max_value:doc.cantidad_pendiente, decimal:2}"
                                                                             class="form-control"
                                                                             :name="`cantidad_ingresada[${i}]`"
                                                                             placeholder="Cantidad Ingresada"
@@ -139,25 +138,29 @@
                                                                 </div>
                                                         </td>
                                                         <td class="text-center" >
-                                                             <i class="fa fa-check-square-o" style="font-size: 1.2em;" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.entrega.pendiente)"></i>
+                                                             <i class="fa fa-check-square-o" style="font-size: 1.2em;" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)"></i>
                                                              <i class="fa fa-square-o" style="font-size:1.2em;" v-else></i>
                                                         </td>
 
                                                         <td v-if="doc.destino ===  undefined">
                                                             <small class="badge" :class="{'badge-success':true}">
-                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)" style="cursor:pointer; font-size: 1.2em;"></i>
+                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="destino(i)" ></i>
                                                             </small>
                                                         </td>
                                                         <td v-if="doc.destino">
                                                             <small class="badge" :class="{'badge-success':true}">
-                                                                <i class="fa fa-sign-in" aria-hidden="true" v-on:click="destino(i)" style="cursor:pointer; font-size: 1.2em;"></i>
+                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="destino(i)" ></i>
                                                             </small>
-                                                            <label v-if="doc.destino.tipo_destino === 1"  :title="`${doc.destino.destino.path}`">{{doc.destino.destino.descripcion}}</label>
+                                                            <label v-if="doc.destino.tipo_destino === 1" style="text-decoration: underline"  :title="doc.destino.destino.path">{{doc.destino.destino.descripcion}}</label>
                                                             <label v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</label>
                                                         </td>
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
-                                                        <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )"><i class="fa fa-user-o" aria-hidden="true" v-on:click="modalContratista(i)" style="cursor:pointer;font-size: 1.2em;"></i>{{doc.contratista}}</td>
-                                                        <td class="text-center" v-else-if="doc.contratista_seleccionado != ''"><i class="fa fa-user" aria-hidden="true" v-on:click="modalContratista(i)" style="cursor:pointer; font-size: 1.2em;"></i></td>
+                                                        <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )">
+                                                            <i class="fa fa-user-o button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>{{doc.contratista}}
+                                                        </td>
+                                                        <td class="text-center" v-else-if="doc.contratista_seleccionado != ''">
+                                                            <i class="fa fa-user button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>
+                                                        </td>
                                                         <!--<td v-else></td>-->
                                                     </tr>
                                                 </tbody>
@@ -391,7 +394,7 @@
             getOrdenesCompra() {
                 this.fecha_hoy = new Date();
                 this.fecha = new Date();
-                return this.$store.dispatch('compras/orden-compra/index', {
+                return this.$store.dispatch('almacenes/entrada-almacen/get_ordenes_compra', {
                     config: {
                         params: {
                             scope: 'disponibleEntradaAlmacen',
@@ -399,8 +402,8 @@
                             order: 'desc'
                         }
                     }
-                }).then(data => {
-                    this.ordenes_compra = data;
+                }).then(ordenes_compra => {
+                    this.ordenes_compra = ordenes_compra.data;
                     this.bandera = 1;
                 })
             },
@@ -408,14 +411,13 @@
                 this.orden_compra = []
                 this.partidas = []
                 this.$validator.reset();
-                return this.$store.dispatch('compras/orden-compra/find', {
+                return this.$store.dispatch('almacenes/entrada-almacen/get_orden_compra', {
                     id: this.id_orden_compra,
-                    params: {
-                        include: ['empresa', 'partidas.material', 'partidas.entrega']
-                    }
+                    params: {include: ['partidas']}
                 })
                     .then(data => {
                         this.orden_compra = data;
+                        this.partidas = data.partidas.data;
                     })
             },
             getAlmacenes() {
@@ -602,18 +604,6 @@
                      }
                 }
             },
-            orden_compra(value){
-                var array_limpio = [];
-                if(value != ''){
-                    var items =  value.partidas.data
-                   items.forEach(function(element) {
-                        if(element.entrega.pendiente!= 0){
-                            array_limpio.push(element);
-                        }
-                    });
-                   this.partidas.push(array_limpio)
-                }
-            }
         }
     }
 </script>

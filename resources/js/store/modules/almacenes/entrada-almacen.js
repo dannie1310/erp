@@ -58,7 +58,32 @@ export default{
                     })
             });
         },
-
+        get_ordenes_compra(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'orden-compra', payload.config)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+        get_orden_compra(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'orden-compra/' + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
