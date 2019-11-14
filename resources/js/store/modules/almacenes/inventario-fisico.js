@@ -114,23 +114,36 @@ export default{
         },
         descargar_resumen_conteos(context, payload){
             var fecha = new Date();
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + payload.id + '/descargar_resumen_conteo', { params: payload.params })
-                    .then(r => r.data)
-                    .then(data => {
-                        var blob = new Blob([data]);
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = 'ResumenConteos_' + moment(fecha).format('DDMMYY_hhmmss') + '.csv';
-                        link.click();
-                        document.close();
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
+
+               var urr = URI + payload.id + '/descargar_resumen_conteo?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
+               var win = window.open(urr, "_blank");
+
+               win.onbeforeunload = ()=> {
+                   swal("Resumen descargados correctamente12323321.", {
+                       icon: "success",
+                       timer: 2000,
+                       buttons: false
+                   })
+               }
+
+
+            // return new Promise((resolve, reject) => {
+            //     axios
+            //         .get(URI + payload.id + '/descargar_resumen_conteo', { params: payload.params })
+            //         .then(r => r.data)
+            //         .then(data => {
+            //             var blob = new Blob([data]);
+            //             var link = document.createElement('a');
+            //             link.href = window.URL.createObjectURL(blob);
+            //             link.download = 'ResumenConteos_' + moment(fecha).format('DDMMYY_hhmmss') + '.csv';
+            //             link.click();
+            //             document.close();
+            //             resolve(data);
+            //         })
+            //         .catch(error => {
+            //             reject(error);
+            //         })
+            // });
         },
         update(context, payload) {
             return new Promise((resolve, reject) => {
