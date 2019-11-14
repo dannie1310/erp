@@ -74,7 +74,8 @@ class CargaLayoutPagoController extends Controller
         return $this->service->autorizar($data);
     }
 
-    public function descargarLayout(){
+    public function descargarLayout()
+    {
         return $this->service->descargarLayout();
     }
 }

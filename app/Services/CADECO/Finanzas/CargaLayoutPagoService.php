@@ -21,6 +21,7 @@ use App\Utils\Util;
 use Maatwebsite\Excel\Facades\Excel;
 use DateTime;
 use mysql_xdevapi\Exception;
+use Illuminate\Support\Facades\Storage;
 
 class CargaLayoutPagoService
 {
@@ -155,8 +156,12 @@ class CargaLayoutPagoService
         return $this->repository->show($id)->autorizar();
     }
 
-    public function descargarLayout(){
-        return Excel::download(new PagoLayout(), 'LayoutRegistroPagos.csv');
+    public function descargarLayout()
+    {
+        Storage::disk('inventario_fisico_descarga')->delete(Storage::disk('inventario_fisico_descarga')->allFiles());
+        $nombre_archivo = 'LayoutRegistroPagos_' . date('dmYY_His') . '.csv';
+        (new PagoLayout())->store($nombre_archivo, 'inventario_fisico_descarga');
+        return Storage::disk('inventario_fisico_descarga')->download($nombre_archivo);
     }
 
     private function getArreglo($arreglo){

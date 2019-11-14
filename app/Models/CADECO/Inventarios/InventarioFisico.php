@@ -11,7 +11,7 @@ use App\Models\CADECO\Obra;
 use App\Models\IGH\Usuario;
 use App\PDF\InventarioMarbete;
 use Illuminate\Database\Eloquent\Model;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class InventarioFisico extends Model
 {
@@ -51,11 +51,18 @@ class InventarioFisico extends Model
 
     public function descargaLayout()
     {
-        return Excel::download(new InventarioFisicoLayout($this), 'LayoutConteo.csv');
+        Storage::disk('inventario_fisico_descarga')->delete(Storage::disk('inventario_fisico_descarga')->allFiles());
+        $nombre_archivo = 'LayoutConteo_' . date('dmYY_His') . '.csv';
+        (new InventarioFisicoLayout($this))->store($nombre_archivo, 'inventario_fisico_descarga');
+        return Storage::disk('inventario_fisico_descarga')->download($nombre_archivo);
     }
 
-    public function generar_resumen_conteos(){
-        return Excel::download(new InventarioFisicoLayoutResumen($this), 'Inventario_Resumen.csv');
+    public function generar_resumen_conteos()
+    {
+        Storage::disk('inventario_fisico_descarga')->delete(Storage::disk('inventario_fisico_descarga')->allFiles());
+        $nombre_archivo = 'ResumenConteos_' . date('dmYY_His') . '.csv';
+        (new InventarioFisicoLayoutResumen($this))->store($nombre_archivo, 'inventario_fisico_descarga');
+        return Storage::disk('inventario_fisico_descarga')->download($nombre_archivo);
     }
 
     public function marbetes()
