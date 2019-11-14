@@ -13,7 +13,6 @@
     export default {
         name: "action-buttons",
         components: {PDF},
-        props: ['value'],
         data() {
             return {
                 cargando: false,
@@ -21,7 +20,8 @@
         },
         methods:{
             descargaLayout() {
-                return this.$store.dispatch('almacenes/inventario-fisico/descargaLayout', {id: this.value.id})
+                console.log('Descarga de Layouts');
+                return this.$store.dispatch('compras/asignacion/descargaLayout',{id: 5})
                     .then(() => {
                         this.$emit('success')
 

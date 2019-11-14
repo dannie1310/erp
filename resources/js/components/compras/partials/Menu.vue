@@ -116,6 +116,11 @@
                 return this.$root.can([
                     'consultar_solicitud_compra'
                 ])
+            },
+            gestion_asignacion(){
+                return this.$root.can([
+                    'consultar_solicitud_compra'
+                ])
             }
         },
         methods: {
