@@ -116,16 +116,14 @@ export default{
             var fecha = new Date();
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id + '/descargar_resumen_conteo', { params: payload.params, responseType:'blob', })
+                    .get(URI + payload.id + '/descargar_resumen_conteo', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
-                        var url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
-                        var  link = document.createElement('a');
-                        link.href = url;
-                        link.setAttribute('download',  'ResumenConteos_'+moment(fecha).format('DDMMYY_hhmmss')+'.csv');
-                        document.body.appendChild(link);
+                        var blob = new Blob([data]);
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = 'ResumenConteos_' + moment(fecha).format('DDMMYY_hhmmss') + '.csv';
                         link.click();
-                        document.body.removeChild(link);
                         document.close();
                         resolve(data);
                     })
