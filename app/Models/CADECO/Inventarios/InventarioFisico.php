@@ -12,6 +12,7 @@ use App\Models\IGH\Usuario;
 use App\PDF\InventarioMarbete;
 use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class InventarioFisico extends Model
 {
@@ -56,8 +57,12 @@ class InventarioFisico extends Model
 
     public function generar_resumen_conteos()
     {
-        (new InventarioFisicoLayoutResumen($this))->store('ResumenConteosNUEVOllll_'.date('dmYY_His').'.csv', 'inventario_fisico_descarga');
-        return (new InventarioFisicoLayoutResumen($this))->download('ResumenConteos_'.date('dmYY_His').'.csv', \Maatwebsite\Excel\Excel::CSV);
+        $nombre_archivo = '';
+        if(Storage::disk('inventario_fisico_descarga')->delete(Storage::disk('inventario_fisico_descarga')->allFiles()) == true) {
+            $nombre_archivo = 'ResumenConteos_' . date('dmYY_His') . '.csv';
+            (new InventarioFisicoLayoutResumen($this))->store($nombre_archivo, 'inventario_fisico_descarga');
+            return Storage::disk('inventario_fisico_descarga')->download($nombre_archivo);
+        }
     }
 
     public function marbetes()
