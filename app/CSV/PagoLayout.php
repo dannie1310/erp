@@ -5,12 +5,15 @@ namespace App\CSV;
 use App\Models\CADECO\Solicitud;
 use DateTime;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use App\Models\CADECO\Factura;
 
 class PagoLayout implements FromCollection, WithHeadings
 {
+    use Exportable;
+
     public function __construct()
     {
     }
