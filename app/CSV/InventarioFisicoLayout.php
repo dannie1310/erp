@@ -3,6 +3,7 @@
 
 namespace App\CSV;
 use App\Models\CADECO\Inventarios\InventarioFisico;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -10,6 +11,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class InventarioFisicoLayout implements FromCollection, WithHeadings
 {
+    use Exportable;
     protected $inventario;
 
 

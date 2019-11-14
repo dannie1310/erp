@@ -94,7 +94,10 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_SOPORTE_SOLICITUD_CUENTA_BANCARIA')),
         ],
-
+        'inventario_fisico_descarga' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_RESUMEN_LAYOUT_INVENTARIO_FISICO')),
+        ],
     ],
 
 ];
