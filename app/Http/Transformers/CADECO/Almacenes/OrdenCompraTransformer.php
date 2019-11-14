@@ -38,9 +38,7 @@ class OrdenCompraTransformer extends TransformerAbstract
             'id' => (int)$model->getKey(),
             'numero_folio_format' => (string)$model->numero_folio_format,
             'observaciones' => (string)$model->observaciones,
-            'observaciones_format' => (string)$model->observaciones_format,
             'empresa_sucursal'=> (string)$model->empresa->razon_social .' / '. (string)$model->sucursal->descripcion,
-
         ];
     }
 
