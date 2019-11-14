@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Services\CADECO;
+namespace App\Services\CADECO\Compras;
 
 
 use App\Models\CADECO\Compras\ActivoFijo;

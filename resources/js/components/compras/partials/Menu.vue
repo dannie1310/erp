@@ -6,30 +6,30 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
 
-            <li class="nav-item" v-if="$root.can('consultar_banco')">
-                <router-link :to="{name: 'requisicion'}" class="nav-link">
-                    <i class="fa fa-circle nav-icon"></i>
-                    <p>Requisiciones</p>
-                </router-link>
-            </li>
-            <li class="nav-item" v-if="$root.can('consultar_solicitud_compra')">
-                <router-link :to="{name: 'solicitud-compra'}" class="nav-link">
-                    <i class="fa fa-circle nav-icon"></i>
-                    <p>Solicitudes de Compra</p>
-                </router-link>
-            </li>
-            <li class="nav-item" v-if="$root.can('consultar_banco')">
-                <router-link :to="{name: 'cotizacion'}" class="nav-link">
-                    <i class="fa fa-circle nav-icon"></i>
-                    <p>Cotizaciones</p>
-                </router-link>
-            </li>
-            <li class="nav-item" v-if="$root.can('consultar_banco')">
-                <router-link :to="{name: 'asignacion-proveedores'}" class="nav-link">
-                    <i class="fa fa-circle nav-icon"></i>
-                    <p>Asignación de Proveedores</p>
-                </router-link>
-            </li>
+            <!--<li class="nav-item" v-if="$root.can('consultar_banco')">-->
+                <!--<router-link :to="{name: 'requisicion'}" class="nav-link">-->
+                    <!--<i class="fa fa-circle nav-icon"></i>-->
+                    <!--<p>Requisiciones</p>-->
+                <!--</router-link>-->
+            <!--</li>-->
+            <!--<li class="nav-item" v-if="$root.can('consultar_solicitud_compra')">-->
+                <!--<router-link :to="{name: 'solicitud-compra'}" class="nav-link">-->
+                    <!--<i class="fa fa-circle nav-icon"></i>-->
+                    <!--<p>Solicitudes de Compra</p>-->
+                <!--</router-link>-->
+            <!--</li>-->
+            <!--<li class="nav-item" v-if="$root.can('consultar_banco')">-->
+                <!--<router-link :to="{name: 'cotizacion'}" class="nav-link">-->
+                    <!--<i class="fa fa-circle nav-icon"></i>-->
+                    <!--<p>Cotizaciones</p>-->
+                <!--</router-link>-->
+            <!--</li>-->
+            <!--<li class="nav-item" v-if="$root.can('consultar_banco')">-->
+                <!--<router-link :to="{name: 'asignacion-proveedores'}" class="nav-link">-->
+                    <!--<i class="fa fa-circle nav-icon"></i>-->
+                    <!--<p>Asignación de Proveedores</p>-->
+                <!--</router-link>-->
+            <!--</li>-->
             <li class="nav-item" v-if="gestion_orden_compra">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-circle"></i>

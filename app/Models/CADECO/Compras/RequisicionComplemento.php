@@ -28,6 +28,4 @@ class RequisicionComplemento extends Model
         'registro',
         'timestamp_registro',
     ];
-
-
 }

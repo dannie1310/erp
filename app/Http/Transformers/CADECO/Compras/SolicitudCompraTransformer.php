@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Transformers\CADECO;
+namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\Compras\SolicitudComplementoTransformer;
