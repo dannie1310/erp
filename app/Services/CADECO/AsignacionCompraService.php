@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Services\CADECO\Compras;
+namespace App\Services\CADECO;
 
 
-use App\Models\CADECO\SolicitudCompra;
+use App\Models\CADECO\AsignacionCompra;
 use App\Repositories\Repository;
 
-class SolicitudCompraService
+class AsignacionCompraService
 {
     /**
      * @var Repository
@@ -16,9 +16,9 @@ class SolicitudCompraService
 
     /**
      * SolicitudCompraService constructor.
-     * @param SolicitudCompra $model
+     * @param AsignacionCompra $model
      */
-    public function __construct(SolicitudCompra $model)
+    public function __construct(AsignacionCompra $model)
     {
         $this->repository = new Repository($model);
     }
@@ -27,4 +27,5 @@ class SolicitudCompraService
     {
         return $this->repository->paginate($data);
     }
+
 }

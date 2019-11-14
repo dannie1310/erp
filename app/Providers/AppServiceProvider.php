@@ -11,6 +11,7 @@ use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
 use App\Models\CADECO\Compras\SalidaEliminada;
+use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Contabilidad\Apertura;
 use App\Models\CADECO\Contabilidad\Cierre;
 use App\Models\CADECO\Contabilidad\CuentaAlmacen;
@@ -74,6 +75,7 @@ use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
 use App\Models\CADECO\Seguridad\AuditoriaRolUser;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Models\CADECO\SolicitudAnticipoDestajo;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\SolicitudReposicionFF;
 use App\Models\CADECO\Subcontrato;
@@ -104,6 +106,7 @@ use App\Observers\CADECO\AnticipoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
+use App\Observers\CADECO\Compras\SolicitudComplementoObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
 use App\Observers\CADECO\Contabilidad\CierreObserver;
 use App\Observers\CADECO\Contabilidad\CuentaAlmacenObserver;
@@ -168,6 +171,7 @@ use App\Observers\CADECO\Seguridad\AuditoriaPermisoRolObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
 use App\Observers\CADECO\Seguridad\RolObserver;
 use App\Observers\CADECO\SolicitudAnticipoDestajoObserver;
+use App\Observers\CADECO\SolicitudCompraObserver;
 use App\Observers\CADECO\SolicitudPagoAnticipadoObserver;
 use App\Observers\CADECO\SolicitudReposicionFFObserver;
 use App\Observers\CADECO\SubcontratoObserver;
@@ -344,6 +348,7 @@ class AppServiceProvider extends ServiceProvider
             PagoReposicionFF::observe(PagoReposicionFFObserver::class);
             PagoVario::observe(PagoVarioObserver::class);
             SalidaAlmacen::observe(SalidaAlmacenObserver::class);
+            SolicitudCompra::observe(SolicitudCompraObserver::class);
             SolicitudAnticipoDestajo::observe(SolicitudAnticipoDestajoObserver::class);
             SolicitudPagoAnticipado::observe(SolicitudPagoAnticipadoObserver::class);
             SolicitudReposicionFF::observe(SolicitudReposicionFFObserver::class);
@@ -361,6 +366,10 @@ class AppServiceProvider extends ServiceProvider
         UsuarioAreaCompradora::observe(UsuarioAreaCompradoraObserver::class);
         UsuarioAreaSolicitante::observe(UsuarioAreaSolicitanteObserver::class);
         UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
+        /**
+         * COMPRAS
+         */
+        SolicitudComplemento::observe(SolicitudComplementoObserver::class);
     }
 
     /**
