@@ -107,9 +107,9 @@
             </li>
             <li class="nav-item" v-if="$root.can('consultar_familia_servicio')|| $root.can('consultar_insumo_servicio')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-cogs"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>
-                        Catálogo de Insumos
+                        Catálogos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
