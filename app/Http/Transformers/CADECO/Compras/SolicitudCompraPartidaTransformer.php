@@ -11,7 +11,8 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 
 use App\Http\Transformers\CADECO\Compras\SolicitudPartidaComplementoTransformer;
-use App\Models\CADECO\Compras\SolicitudPartidaComplemento;
+use App\Http\Transformers\CADECO\EntregaTransformer;
+use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\SolicitudCompraPartida;
 use League\Fractal\TransformerAbstract;
 
