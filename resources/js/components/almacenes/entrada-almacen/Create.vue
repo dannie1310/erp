@@ -143,17 +143,20 @@
                                                              <i class="fa fa-square-o" style="font-size:1.2em;" v-else></i>
                                                         </td>
 
-                                                        <td v-if="doc.destino ===  undefined">
-                                                            <small class="badge" :class="{'badge-success':true}">
-                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="destino(i)" ></i>
+                                                        <td  v-if="doc.destino ===  undefined" >
+                                                            <small class="badge badge-secondary">
+                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
                                                         </td>
-                                                        <td v-if="doc.destino">
-                                                            <small class="badge" :class="{'badge-success':true}">
-                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="destino(i)" ></i>
+                                                        <td v-else >
+                                                            <small class="badge badge-success" v-if="doc.destino.tipo_destino === 1" >
+                                                                <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
-                                                            <label v-if="doc.destino.tipo_destino === 1" style="text-decoration: underline"  :title="doc.destino.destino.path">{{doc.destino.destino.descripcion}}</label>
-                                                            <label v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</label>
+                                                             <small class="badge badge-success" v-else="doc.destino.tipo_destino === 2" >
+                                                                <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                            <span v-if="doc.destino.tipo_destino === 1" style="text-decoration: underline"  :title="doc.destino.destino.path">{{doc.destino.destino.descripcion}}</span>
+                                                            <span v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</span>
                                                         </td>
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
                                                         <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )">
@@ -212,7 +215,7 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg" >
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-th"></i> Selecciona un Destino:</h5>
+                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -261,7 +264,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                    <button  type="button"  class="btn btn-primary" v-on:click="seleccionar">Seleccionar</button>
+                                    <button  type="button"  class="btn btn-primary" v-on:click="seleccionarDestino">Seleccionar</button>
                              </div>
                         </form>
                     </div>
@@ -273,7 +276,7 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="modal-contratista"> <i class="fa fa-th"></i> SELECCIONAR UN CONTRATISTA</h5>
+                            <h5 class="modal-title" id="modal-contratista"> <i class="fa fa-user"></i> Seleccionar Contratista</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -555,7 +558,7 @@
             salir(){
                 this.$router.push({name: 'entrada-almacen'});
             },
-            destino(i) {
+            modalDestino(i) {
                 this.index_temporal = i;
                 if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
                     this.destino_seleccionado.tipo_destino =  '';
@@ -571,7 +574,7 @@
                 this.$validator.reset();
                 $(this.$refs.modal_destino).modal('show');
             },
-            seleccionar() {
+            seleccionarDestino() {
                 this.partidas[this.index_temporal].destino = this.destino_seleccionado;
                 this.index_temporal = '';
                 this.destino_seleccionado = {
