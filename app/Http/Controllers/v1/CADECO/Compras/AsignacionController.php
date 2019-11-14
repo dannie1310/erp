@@ -61,8 +61,9 @@ class AsignacionController extends Controller
         return response()->json($respuesta, 200);
     }
 
-    public function descargaLayout($id)
+    public function descargaLayout()
     {
-        var_dump('Descarga de layout de controlador asignacion',$id);
+//        var_dump('Descarga de layout de controlador asignacion controller');
+        return $this->service->descargaLayout();
     }
 }

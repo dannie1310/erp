@@ -41,6 +41,10 @@ class AsignacionService
         return $pdf;
     }
 
+    public function descargaLayout()
+    {
+        var_dump('Descarga de layout por asignacion services');
+    }
     public function cargaLayout($file){
 
         $conteos = $this->getCsvData($file);
