@@ -9,8 +9,6 @@
 namespace App\Http\Transformers\CADECO\Almacenes;
 
 
-use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\CADECO\Compras\OrdenCompraPartidaTransformer;
 use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
 
@@ -41,8 +39,8 @@ class OrdenCompraTransformer extends TransformerAbstract
             'numero_folio_format' => (string)$model->numero_folio_format,
             'observaciones' => (string)$model->observaciones,
             'observaciones_format' => (string)$model->observaciones_format,
-            'empresa'=> (string)$model->empresa->razon_social,
-            'sucursal'=> (string)$model->sucursal->descripcion,
+            'empresa_sucursal'=> (string)$model->empresa->razon_social .' / '. (string)$model->sucursal->descripcion,
+
         ];
     }
 
@@ -53,7 +51,7 @@ class OrdenCompraTransformer extends TransformerAbstract
      */
     public function includePartidas(OrdenCompra $model)
     {
-        if($partidas = $model->partidas){
+        if($partidas = $model->partidas()->DisponibleEntradaAlmacen()->get()){
             return $this->collection($partidas, new OrdenCompraPartidaTransformer);
         }
         return null;

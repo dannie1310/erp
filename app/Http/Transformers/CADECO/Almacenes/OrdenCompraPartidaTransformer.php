@@ -9,8 +9,6 @@
 namespace App\Http\Transformers\CADECO\Almacenes;
 
 
-use App\Http\Transformers\CADECO\EntregaTransformer;
-use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\OrdenCompraPartida;
 use League\Fractal\TransformerAbstract;
 
@@ -34,6 +32,10 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
             'cantidad_material' => $model->cantidad_material,
             'unidad' => $model->unidad,
             'material' => $model->material->descripcion,
+            'numero_parte'=>$model->material->numero_parte,
+            'fecha_entrega_format'=>$model->entrega->fecha_format,
+            'cantidad_pendiente'=>$model->entrega->pendiente_entrega,
+
         ];
     }
 }
