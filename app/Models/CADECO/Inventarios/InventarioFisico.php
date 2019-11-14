@@ -58,11 +58,10 @@ class InventarioFisico extends Model
     public function generar_resumen_conteos()
     {
         $nombre_archivo = '';
-        if(Storage::disk('inventario_fisico_descarga')->delete(Storage::disk('inventario_fisico_descarga')->allFiles()) == true) {
-            $nombre_archivo = 'ResumenConteos_' . date('dmYY_His') . '.csv';
-            (new InventarioFisicoLayoutResumen($this))->store($nombre_archivo, 'inventario_fisico_descarga');
-            return Storage::disk('inventario_fisico_descarga')->download($nombre_archivo);
-        }
+        Storage::disk('inventario_fisico_descarga')->delete(Storage::disk('inventario_fisico_descarga')->allFiles());
+        $nombre_archivo = 'ResumenConteos_' . date('dmYY_His') . '.csv';
+        (new InventarioFisicoLayoutResumen($this))->store($nombre_archivo, 'inventario_fisico_descarga');
+        return Storage::disk('inventario_fisico_descarga')->download($nombre_archivo);
     }
 
     public function marbetes()
