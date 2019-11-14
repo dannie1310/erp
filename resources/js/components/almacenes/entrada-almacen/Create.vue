@@ -465,11 +465,11 @@
 
             modalContratista(i){
                 this.id_partida_temporal = i;
-                if(this.partidas[0][this.id_partida_temporal].contratista_seleccionado == undefined || this.partidas[0][this.id_partida_temporal].contratista_seleccionado == ''){
+                if(this.partidas[this.id_partida_temporal].contratista_seleccionado == undefined || this.partidas[this.id_partida_temporal].contratista_seleccionado == ''){
                     this.contratista.empresa_contratista = '';
                     this.contratista.opcion = '';
                 }else{
-                    this.contratista = this.partidas[0][this.id_partida_temporal].contratista_seleccionado;
+                    this.contratista = this.partidas[this.id_partida_temporal].contratista_seleccionado;
                 }
                 if(this.contratistas.length == 0){
                     this.getContratista()
@@ -479,7 +479,7 @@
             },
 
             seleccionarContratista() {
-                this.partidas[0][this.id_partida_temporal].contratista_seleccionado = this.contratista;
+                this.partidas[this.id_partida_temporal].contratista_seleccionado = this.contratista;
                 this.id_partida_temporal = ''
                 this.contratista = {
                     empresa_contratista: '',
@@ -491,7 +491,7 @@
 
             quitarContratista(){
                 this.cargando = true;
-                this.partidas[0][this.id_partida_temporal].contratista_seleccionado  = '';
+                this.partidas[this.id_partida_temporal].contratista_seleccionado  = '';
                 this.id_partida_temporal = '';
                 this.contratista = {
                     empresa_contratista: '',
@@ -508,7 +508,7 @@
                 var item_a_guardar = 0;
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.$data.partidas[0].forEach(function(element) {
+                        this.$data.partidas.forEach(function(element) {
                             if(!(element.cantidad_ingresada  === undefined && element.destino  === undefined )){
                                 if(element.cantidad_ingresada > 0 && element.destino === undefined)
                                 {
@@ -547,12 +547,12 @@
             },
             destino(i) {
                 this.index_temporal = i;
-                if(this.partidas[0][this.index_temporal].destino == undefined || this.partidas[0][this.index_temporal].destino == ''){
+                if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
                     this.destino_seleccionado.tipo_destino =  '';
                     this.destino_seleccionado.destino = '';
                     this.destino_seleccionado.id_destino = '';
                 }else {
-                    this.destino_seleccionado = this.partidas[0][this.index_temporal].destino;
+                    this.destino_seleccionado = this.partidas[this.index_temporal].destino;
                 }
 
                 if(this.almacenes.length == 0) {
@@ -562,7 +562,7 @@
                 $(this.$refs.modal_destino).modal('show');
             },
             seleccionar() {
-                this.partidas[0][this.index_temporal].destino = this.destino_seleccionado;
+                this.partidas[this.index_temporal].destino = this.destino_seleccionado;
                 this.index_temporal = '';
                 this.destino_seleccionado = {
                     tipo_destino : '',
