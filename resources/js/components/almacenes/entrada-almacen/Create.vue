@@ -20,6 +20,7 @@
                                                                     :use-utc="true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
+                                                                    :disabled-dates="fechasDeshabilitadas"
                                                                     :class="{'is-invalid': errors.has('fecha')}"
                                                         ></datepicker>
                                                   <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
@@ -61,7 +62,7 @@
                                                         v-model="id_orden_compra"
                                                         :class="{'is-invalid': errors.has('id_orden_compra')}"
                                                 >
-                                                    <option value v-if="bandera">-- Seleccione --</option>
+                                                    <option value v-if="bandera">- Seleccione -</option>
                                                     <option value v-if="!bandera">Cargando...</option>
                                                     <option v-for="orden in ordenes_compra" :value="orden.id">{{ orden.numero_folio_format }} </option>
                                                 </select>
@@ -338,6 +339,7 @@
         data() {
             return {
                 es:es,
+                fechasDeshabilitadas:{},
                 fecha : '',
                 fecha_hoy : '',
                 id_orden_compra : '',
@@ -394,6 +396,7 @@
             getOrdenesCompra() {
                 this.fecha_hoy = new Date();
                 this.fecha = new Date();
+                this.fechasDeshabilitadas.from= new Date();
                 return this.$store.dispatch('almacenes/entrada-almacen/get_ordenes_compra', {
                     config: {
                         params: {
@@ -595,13 +598,6 @@
                     this.destino_seleccionado.id_destino = value;
                     this.destino_seleccionado.tipo_destino = 2;
                     this.getAlmacen();
-                }
-            },
-            fecha(value){
-                 if(value != ''){
-                     if(moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(value).format('YYYY/MM/DD')){
-                       swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
-                     }
                 }
             },
         }
