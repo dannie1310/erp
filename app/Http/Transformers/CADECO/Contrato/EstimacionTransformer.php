@@ -29,8 +29,7 @@ class EstimacionTransformer extends TransformerAbstract
         'subcontrato',
         'empresa',
         'moneda',
-        'items',
-
+        'partidas'
     ];
 
     /**
@@ -116,11 +115,10 @@ class EstimacionTransformer extends TransformerAbstract
      * @param Estimacion $model
      * @return \League\Fractal\Resource\Collection|null
      */
-    public function includeItems(Estimacion $model)
+    public function includePartidas(Estimacion $model)
     {
-        if($item= $model->item)
-        {
-            return $this->collection($item, new ItemTransformer);
+        if($item = $model->partidas){
+            return $this->collection($item, new EstimacionPartidaTransformer);
         }
         return null;
     }

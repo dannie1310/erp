@@ -6,7 +6,6 @@ namespace App\Observers\CADECO\Inventarios;
 
 use App\Facades\Context;
 use App\Models\CADECO\Inventarios\InventarioFisico;
-use App\Models\CADECO\Inventarios\Marbete;
 use Illuminate\Support\Facades\DB;
 
 class InventarioFisicoObserver

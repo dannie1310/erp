@@ -30,7 +30,7 @@
                                                       placeholder="Escanear código de barras"
                                                       v-model="barcodeValue"
                                                       :class="{'is-invalid': errors.has('barcodeValue')}"
-                                                      v-on:keyup.enter="findCodigo"
+                                                      v-on:keyup.enter="transformer"
                                               />
                                               <barcode v-bind:value="barcodeValue">
                                               </barcode>
@@ -190,6 +190,19 @@
             }
         },
         methods:{
+            transformer(){
+                if (this.barcodeValue[(this.barcodeValue.length)-2] == "c"){
+                    var marbete = this.barcodeValue.split("c");
+                    this.barcodeValue = marbete[0]+"C"+marbete[1];
+                    this.findCodigo();
+                }
+                else if(this.barcodeValue[(this.barcodeValue.length)-2] == "C"){
+                    this.findCodigo();
+                }else {
+                    swal('¡Error!', 'Número de Marbete Invalido.', 'error');
+                    this.barcodeValue='';
+                }
+            },
             findCodigo() {
                 var marbete = this.barcodeValue.split("C");
                 this.dato.id_marbete = marbete[0];

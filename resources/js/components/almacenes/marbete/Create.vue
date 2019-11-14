@@ -50,6 +50,7 @@
                                     <div class="form-group error-content" v-if="">
                                         <label for="id_material">Material</label>
                                                <select
+                                                   :disabled = "!bandera"
                                                    class="form-control"
                                                    name="id_material"
                                                    data-vv-as="Material"
@@ -92,20 +93,17 @@
                 materiales:[],
                 id_material: '',
                 id_almacen:'',
+                bandera: 0,
                 cargando: false
 
             }
         },
 
-        mounted() {
-            this.getAlmacenes()
-            this.getMateriales()
-
-        },
-
         methods: {
             init() {
                 $(this.$refs.modal).modal('show');
+                this.getAlmacenes()
+                this.getMateriales()
                 this.$validator.reset()
             },
             getAlmacenes() {
@@ -126,6 +124,7 @@
                     .then(data => {
                         this.materiales = data.data;
                         this.cargando = false;
+                        this.bandera = 1;
                     })
 
             },
