@@ -157,10 +157,17 @@
                                                         </td>
                                                         <!--<td v-else>{{doc.descripcion_destino}}</td>-->
                                                         <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )">
+                                                            <small class="badge badge-secondary">
                                                             <i class="fa fa-user-o button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>{{doc.contratista}}
+                                                            </small>
                                                         </td>
                                                         <td class="text-center" v-else-if="doc.contratista_seleccionado != ''">
-                                                            <i class="fa fa-user button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>
+                                                            <small class="badge badge-success" v-if="doc.contratista_seleccionado.opcion == 0">
+                                                                <i class="fa fa-user button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>
+                                                            </small>
+                                                            <small class="badge badge-danger" v-else >
+                                                                <i class="fa fa-user button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>
+                                                            </small>
                                                         </td>
                                                         <!--<td v-else></td>-->
                                                     </tr>
@@ -205,7 +212,7 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg" >
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> Selecciona un Destino:</h5>
+                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-th"></i> Selecciona un Destino:</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -215,7 +222,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group row error-content">
-                                            <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos</label>
+                                            <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
                                             <div class="col-sm-10">
                                                 <concepto-select
                                                         name="id_concepto"
@@ -234,7 +241,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group row error-content">
-                                            <label for="almacen" class="col-sm-2 col-form-label">Activos</label>
+                                            <label for="almacen" class="col-sm-2 col-form-label">Activos:</label>
                                             <div class="col-sm-10">
                                                 <select
                                                         name="id_almacen"
@@ -266,7 +273,7 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> SELECCIONAR UN CONTRATISTA</h5>
+                            <h5 class="modal-title" id="modal-contratista"> <i class="fa fa-th"></i> SELECCIONAR UN CONTRATISTA</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
