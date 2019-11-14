@@ -14,6 +14,9 @@ export default {
         SET_ALMACEN(state, data) {
             state.currentAlmacen = data;
         },
+        SET_META(state, data) {
+            state.meta = data;
+        },
     },
 
     actions: {
@@ -39,8 +42,8 @@ export default {
                         resolve(data);
                     })
                     .catch(error => {
-                        reject(error)
-                    })
+                        reject(error);
+                    });
             });
         },
         // materiales(context, payload) {
@@ -65,6 +68,10 @@ export default {
         },
         currentAlmacen(state) {
             return state.currentAlmacen
-        }
+        },
+        meta(state) {
+            return state.meta;
+        },
+
     }
 }

@@ -1,6 +1,6 @@
 <template>
       <span>
-         <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Show">
+         <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Show" v-if="$root.can('registrar_marbetes_manualmente')">
              <i class="fa fa-eye"></i>
          </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -78,8 +78,8 @@
                                                         <td>{{doc.material.numero_parte}}</td>
                                                         <td v-if="doc.material">{{doc.material.descripcion}}</td>
                                                         <td>{{doc.material.unidad}}</td>
-                                                        <td>{{doc.cantidad}}</td>
-                                                        <td>{{parseFloat(doc.importe).formatMoney(2,'.',',')}}</td>
+                                                        <td class="td_money">{{doc.cantidad}}</td>
+                                                        <td class="td_money">{{parseFloat(doc.importe).formatMoney(2,'.',',')}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -104,7 +104,7 @@
             </div>
         </div>
       </span>
-    
+
 </template>
 
 <script>

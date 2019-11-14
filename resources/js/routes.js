@@ -223,6 +223,17 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_entrada_almacen'
                         }
+                    },
+                    {
+                        path: 'create',
+                        name: 'entrada-almacen-create',
+                        component: require('./components/almacenes/entrada-almacen/Create'),
+                        meta: {
+                            title: 'Registrar Entrada de Almacén',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'entrada-almacen'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_entrada_almacen']
+                        }
                     }
                 ]
             },
@@ -496,6 +507,22 @@ export const routes = [
                 }
             },
             {
+                path: 'asignacion-proveedores',
+                component: require('./components/compras/asignacion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'asignacion-proveedores',
+                        component: require('./components/compras/asignacion/Index'),
+                        meta: {
+                            title: 'Asignación de Proveedores',
+                            breadcrumb: {parent: 'compras', name: 'ASIGNACIÓN DE PROVEEDORES'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'catalogo-insumo',
                 component: require('./components/compras/catalogos/Layout'),
                 children: [
@@ -555,6 +582,22 @@ export const routes = [
                 ]
             },
             {
+                path: 'cotizacion',
+                component: require('./components/compras/cotizacion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'cotizacion',
+                        component: require('./components/compras/cotizacion/Index'),
+                        meta: {
+                            title: 'Cotizaciones',
+                            breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'orden-compra',
                 component: require('./components/compras/orden-compra/partials/Layout.vue'),
                 meta: {
@@ -573,6 +616,22 @@ export const routes = [
                 }]
             },
             {
+                path: 'requisicion',
+                component: require('./components/compras/requisicion/Layout'),
+                children: [
+                    {
+                        path: '/',
+                        name: 'requisicion',
+                        component: require('./components/compras/requisicion/Index'),
+                        meta: {
+                            title: 'Requisiciones',
+                            breadcrumb: {parent: 'compras', name: 'REQUISICIONES'},
+                            middleware: [auth, context],
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'solicitud-compra',
                 component: require('./components/compras/solicitud-compra/Layout'),
                 children: [
@@ -586,48 +645,32 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_solicitud_compra'
                         }
-                    }
-                ]
-            },
-            {
-                path: 'asignacion-compra',
-                component: require('./components/compras/asignacion-compra/Layout'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'asignacion-compra',
-                        component: require('./components/compras/asignacion-compra/Index'),
-                        meta: {
-                            title: 'ASIGNACIONES DE COMPRA',
-                            breadcrumb: {parent: 'compras', name: 'ASIGNACIONES DE COMPRA'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_compra'
-                        }
                     },
                     {
                         path: 'create',
-                        name: 'asignacion-compra-create',
-                        component: require('./components/compras/asignacion-compra/Create'),
+                        name: 'solicitud-compra-create',
+                        component: require('./components/compras/solicitud-compra/Create'),
                         meta: {
-                            title: 'REGISTRAR ASIGNACIÓN',
-                            breadcrumb: {parent: 'compras', name: 'REGISTRAR ASIGNACIÓN'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_compra'
+                            title: 'Registrar Solicitud de Compra',
+                            breadcrumb: { parent: 'compras', name: 'REGISTRAR SOLICITUD DE COMPRA'},
+                            middleware: [auth, context],
+                            // permission: 'registrar_solicitud_compra'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'solicitud-compra-edit',
+                        component: require('./components/compras/solicitud-compra/Edit'),
+                        props: true,
+                        meta: {
+                            title: 'Editar Solicitud de Compra',
+                            breadcrumb: { parent: 'compras', name: 'EDITAR'},
+                            middleware: [auth, context],
+                            // permission: 'editar_solicitud_compra'
                         }
                     }
                 ]
-            },
-            // {
-            //     path: 'create',
-            //     name: 'distribuir-recurso-remesa-create',
-            //     component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
-            //     meta: {
-            //         title: 'Registrar Dispersión de Recursos Autorizados',
-            //         breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
-            //         middleware: [auth, context, permission],
-            //         permission: 'registrar_distribucion_recursos_remesa'
-            //     }
-            // },
+            }
         ]
     },
     {

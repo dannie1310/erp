@@ -43,4 +43,12 @@ class CuentaMaterial extends Model
     public function tipo(){
         return $this->belongsTo(TipoCuentaMaterial::class, 'id_tipo_cuenta_material', 'id');
     }
+
+    public function validarRegistro()
+    {
+        if($this->where('id_material', '=', $this->id_material)->where('estatus', 1)->where('id_tipo_cuenta_material', $this->id_tipo_cuenta_material)->count('id_material') != 0)
+        {
+            throw new \Exception("Existe una cuenta con el material seleccionado.", 400);
+        }
+    }
 }

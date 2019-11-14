@@ -6,12 +6,12 @@
  * Time: 09:20 PM
  */
 
-namespace App\Http\Requests\Compras;
+namespace App\Http\Requests\Almacenes;
 
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteSalidaAlmacenRequest extends FormRequest
+class DeleteEntradaAlmacenRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,7 +20,7 @@ class DeleteSalidaAlmacenRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('eliminar_salida_almacen');
+        return auth()->user()->can('eliminar_entrada_almacen');
     }
 
     /**
