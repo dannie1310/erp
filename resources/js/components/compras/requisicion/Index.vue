@@ -1,10 +1,10 @@
 <template>
     <div class="row">
-        <!-- <div class="col-12">
-            <button @click="create_solicitud" v-if="" class="btn btn-app btn-info pull-right">
-                <i class="fa fa-plus"></i> Registrar Solicitud
+        <div class="col-12">
+            <button @click="create_requisicion" v-if="" class="btn btn-app btn-info pull-right">
+                <i class="fa fa-plus"></i> Registrar Requisición
             </button>
-        </div>-->
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -67,7 +67,7 @@
                         this.cargando = false;
                     })
             },
-            create_solicitud() {
+            create_requisicion() {
                 this.$router.push({name: 'requisicion-create'});
             },
 

@@ -629,6 +629,18 @@ export const routes = [
                             middleware: [auth, context],
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'requisicion-create',
+                        component: require('./components/compras/requisicion/Create'),
+                        meta: {
+                            title: 'Registrar Requisición de Compra',
+                        breadcrumb: { parent: 'requisicion', name: 'REGISTRAR REQUISICIÓN'},
+                            middleware: [auth, context],
+                            // permission: 'registrar_solicitud_compra'
+                        }
+                    },
+
                 ]
             },
             {

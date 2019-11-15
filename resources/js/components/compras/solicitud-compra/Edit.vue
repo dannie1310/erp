@@ -345,7 +345,7 @@
 
 <script>
     import MaterialSelect from "../../cadeco/material/SelectAutocomplete"
-    import SelectDestino from "../SelectDestino";
+    import SelectDestino from "../../cadeco/destino/Select";
 
     export default {
         name: "solicitud-compra-edit",
