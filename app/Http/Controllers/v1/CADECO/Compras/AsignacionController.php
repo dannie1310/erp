@@ -42,7 +42,6 @@ class AsignacionController extends Controller
 
     public function __construct(Manager $fractal, AsignacionService $service, AsignacionTransformer $transformer)
     {
-//        var_dump('Controller asignacion');
         $this->middleware('auth:api');
         $this->middleware('context');
 

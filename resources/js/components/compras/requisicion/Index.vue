@@ -56,29 +56,29 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/solicitud-compra/paginate', {
+                return this.$store.dispatch('compras/requisicion/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
-                        this.$store.commit('compras/solicitud-compra/SET_META', data.meta);
+                        this.$store.commit('compras/requisicion/SET_REQUISICIONES', data.data);
+                        this.$store.commit('compras/requisicion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
             },
             create_solicitud() {
-                this.$router.push({name: 'solicitud-compra-create'});
+                this.$router.push({name: 'requisicion-create'});
             },
 
         },
         computed: {
-            solicitudes(){
-                return this.$store.getters['compras/solicitud-compra/solicitudes'];
+            requisiciones(){
+                return this.$store.getters['compras/requisicion/requisiciones'];
             },
 
             meta(){
-                return this.$store.getters['compras/solicitud-compra/meta'];
+                return this.$store.getters['compras/requisicion/meta'];
             },
 
             tbodyStyle() {
@@ -86,18 +86,18 @@
             }
         },
         watch: {
-            solicitudes: {
-                handler(solicitudes) {
+            requisiciones: {
+                handler(requisiciones) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = solicitudes.map((solicitud, i) => ({
+                    self.$data.data = requisiciones.map((requisicion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: `# ${solicitud.numero_folio}`,
-                        fecha: new Date(solicitud.fecha).toDate(),
-                        observaciones: solicitud.observaciones,
-                        id_usuario: solicitud.usuario ? solicitud.usuario.nombre : '',
+                        numero_folio: `# ${requisicion.numero_folio}`,
+                        fecha: new Date(requisicion.fecha).toDate(),
+                        observaciones: requisicion.observaciones,
+                        id_usuario: requisicion.usuario ? requisicion.usuario.nombre : '',
                         buttons: $.extend({}, {
-                            id: solicitud.id,
+                            id: requisicion.id,
                             show: true,
                             edit: true,
                             pdf: true,

@@ -34,11 +34,12 @@ import unidad from './modules/cadeco/unidad'
 
 //COMPRAS
 import asignacion from "./modules/compras/asignacion";
-import cotizacion from './modules/compras/cotizacion';
 import asignacionCompra from './modules/compras/asignacion-compra';
-import solicitudCompra from './modules/compras/solicitud-compra';
-import ordenCompra from './modules/compras/orden-compra';
+import cotizacion from './modules/compras/cotizacion';
 import itemContratista from './modules/compras/item-contratista';
+import ordenCompra from './modules/compras/orden-compra';
+import requisicion from './modules/compras/requisicion';
+import solicitudCompra from './modules/compras/solicitud-compra';
 
 //CONFIGURACION
 import areaCompradora from './modules/configuracion/area-compradora';
@@ -145,11 +146,12 @@ export default new Vuex.Store({
         'cadeco/unidad': unidad,
 
         'compras/asignacion' : asignacion,
-        'compras/cotizacion' : cotizacion,
         'compras/asignacion-compra' : asignacionCompra,
-        'compras/solicitud-compra' : solicitudCompra,
-        'compras/orden-compra' : ordenCompra,
+        'compras/cotizacion' : cotizacion,
         'compras/item-contratista' : itemContratista,
+        'compras/orden-compra' : ordenCompra,
+        'compras/requisicion' : requisicion,
+        'compras/solicitud-compra' : solicitudCompra,
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,

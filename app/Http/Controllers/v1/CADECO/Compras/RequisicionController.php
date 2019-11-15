@@ -9,7 +9,44 @@
 namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
-class RequisicionController
-{
+use App\Http\Controllers\Controller;
+use App\Http\Transformers\CADECO\Compras\RequisicionTransformer;
+use App\Services\CADECO\Compras\RequisicionService;
+use App\Traits\ControllerTrait;
+use League\Fractal\Manager;
 
+class RequisicionController extends Controller
+{
+    use ControllerTrait;
+
+    /**
+     * @var Manager
+     */
+    private $fractal;
+
+    /**
+     * @var RequisicionTransformer
+     */
+    private $transformer;
+
+    /**
+     * @var RequisicionService
+     */
+    private $service;
+
+    /**
+     * RequisicionController constructor.
+     * @param Manager $fractal
+     * @param RequisicionTransformer $transformer
+     * @param RequisicionService $service
+     */
+    public function __construct(Manager $fractal, RequisicionTransformer $transformer, RequisicionService $service)
+    {
+        $this->middleware('auth:api');
+        $this->middleware('context');
+
+        $this->fractal = $fractal;
+        $this->transformer = $transformer;
+        $this->service = $service;
+    }
 }
