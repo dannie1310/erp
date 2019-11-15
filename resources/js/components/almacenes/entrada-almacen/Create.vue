@@ -355,6 +355,7 @@
         components: {ConceptoSelect, Datepicker},
         data() {
             return {
+                datos_store:{},
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
@@ -531,6 +532,7 @@
             validate() {
                 var error_destino = 0;
                 var item_a_guardar = 0;
+                var partidas_store = [];
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.$data.partidas.forEach(function(element) {
@@ -543,6 +545,7 @@
                             if(element.cantidad_ingresada > 0)
                             {
                                 item_a_guardar = item_a_guardar + 1;
+                                partidas_store.push(element);
                             }
                        });
                         if(item_a_guardar <= 0)
@@ -557,14 +560,19 @@
                             swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                         }
                         else {
-                           this.store()
+                           this.store(partidas_store)
                         }
                     }
                 });
             },
 
-            store() {
-                return this.$store.dispatch('almacenes/entrada-almacen/store', this.$data)
+            store(partidas) {
+                this.datos_store ["id_orden_compra"] = this.id_orden_compra;
+                this.datos_store ["remision"] = this.remision;
+                this.datos_store ["fecha"] = this.fecha;
+                this.datos_store ["observaciones"] = this.orden_compra.observaciones;
+                this.datos_store ["partidas"] = partidas;
+                return this.$store.dispatch('almacenes/entrada-almacen/store', this.datos_store)
                     .then((data) => {
                         this.$router.push({name: 'entrada-almacen'});
                     });
