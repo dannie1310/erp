@@ -112,60 +112,67 @@
                                                     <th>Cantidad Ingresada</th>
                                                     <th>Cumplido</th>
                                                     <th>Destino</th>
+                                                    <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
                                                     <th class="th_icono"></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(doc, i) in partidas">
+                                                    <tr v-for="(partida, i) in partidas">
                                                         <td>{{i+1}}</td>
-                                                        <td>{{doc.numero_parte}}</td>
-                                                        <td>{{doc.material}}</td>
-                                                        <td>{{doc.unidad}}</td>
-                                                        <td class="fecha">{{doc.fecha_entrega_format}}</td>
-                                                        <td class="td_money">{{doc.cantidad_pendiente}}</td>
+                                                        <td>{{partida.numero_parte}}</td>
+                                                        <td>{{partida.material}}</td>
+                                                        <td>{{partida.unidad}}</td>
+                                                        <td class="fecha">{{partida.fecha_entrega_format}}</td>
+                                                        <td class="td_money">{{partida.cantidad_pendiente}}</td>
                                                         <td class="td_money_input">
                                                                 <div class="form-group error-content">
                                                                     <input
                                                                             type="number"
                                                                             step="any"
                                                                             data-vv-as="Cantidad Ingresada"
-                                                                            v-validate="{min_value: 0.01, max_value:doc.cantidad_pendiente, decimal:2}"
+                                                                            v-validate="{min_value: 0.01, max_value:partida.cantidad_pendiente, decimal:2}"
                                                                             class="form-control"
                                                                             :name="`cantidad_ingresada[${i}]`"
                                                                             placeholder="Cantidad Ingresada"
-                                                                            v-model="doc.cantidad_ingresada"
+                                                                            v-model="partida.cantidad_ingresada"
                                                                             :class="{'is-invalid': errors.has(`cantidad_ingresada[${i}]`)}">
                                                                     <div class="invalid-feedback" v-show="errors.has(`cantidad_ingresada[${i}]`)">{{ errors.first(`cantidad_ingresada[${i}]`) }}</div>
                                                                 </div>
                                                         </td>
                                                         <td class="text-center" >
-                                                             <i class="fa fa-check-square-o" style="font-size: 1.2em;" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)"></i>
+                                                             <i class="fa fa-check-square-o" style="font-size: 1.2em;" v-if="parseFloat(partida.cantidad_ingresada) == parseFloat(partida.cantidad_pendiente)"></i>
                                                              <i class="fa fa-square-o" style="font-size:1.2em;" v-else></i>
                                                         </td>
 
-                                                        <td  v-if="doc.destino ===  undefined" >
+                                                        <td  v-if="partida.destino ===  ''" >
                                                             <small class="badge badge-secondary">
                                                                 <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
+
                                                         </td>
                                                         <td v-else >
-                                                            <small class="badge badge-success" v-if="doc.destino.tipo_destino === 1" >
+                                                            <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
                                                                 <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
-                                                             <small class="badge badge-success" v-else="doc.destino.tipo_destino === 2" >
+                                                             <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
                                                                 <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
-                                                            <span v-if="doc.destino.tipo_destino === 1" style="text-decoration: underline"  :title="doc.destino.destino.path">{{doc.destino.destino.descripcion}}</span>
-                                                            <span v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</span>
+                                                            <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
+                                                            <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
+
                                                         </td>
-                                                        <!--<td v-else>{{doc.descripcion_destino}}</td>-->
-                                                        <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )">
+                                                        <td>
+                                                            <i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>
+                                                            <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" ></i>
+                                                        </td>
+                                                        <!--<td v-else>{{partida.descripcion_destino}}</td>-->
+                                                        <td class="text-center" v-if="(partida.contratista_seleccionado === undefined || partida.contratista_seleccionado === '' )">
                                                             <small class="badge badge-secondary">
-                                                            <i class="fa fa-user-o button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>{{doc.contratista}}
+                                                            <i class="fa fa-user-o button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>{{partida.contratista}}
                                                             </small>
                                                         </td>
-                                                        <td class="text-center" v-else-if="doc.contratista_seleccionado != ''">
-                                                            <small class="badge badge-success" v-if="doc.contratista_seleccionado.opcion == 0">
+                                                        <td class="text-center" v-else-if="partida.contratista_seleccionado != ''">
+                                                            <small class="badge badge-success" v-if="partida.contratista_seleccionado.opcion == 0">
                                                                 <i class="fa fa-user button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>
                                                             </small>
                                                             <small class="badge badge-danger" v-else >
@@ -371,6 +378,11 @@
                 contratista: {
                     empresa_contratista: '',
                     opcion:''
+                },
+                destino_copiado: {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
                 },
                 destino_seleccionado: {
                     tipo_destino : '',
@@ -586,6 +598,29 @@
                 this.id_almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
+            },
+            copiar_destino(partida){
+
+                this.destino_copiado = partida.destino;
+                console.log(partida);
+                console.log(partida.destino);
+
+                console.log(this.destino_seleccionado);
+            },
+            pegar_destino(partida){
+                partida.destino = {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                };
+                partida.destino.id_destino = this.destino_copiado.id_destino;
+                partida.destino.tipo_destino = this.destino_copiado.tipo_destino;
+                partida.destino.destino = this.destino_copiado.destino;
+
+                console.log(partida);
+
+                console.log(partida.destino.destino.descripcion);
+
             }
         },
         watch: {
