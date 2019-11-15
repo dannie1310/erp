@@ -47,18 +47,26 @@ i.button{
   text-align: center;
 }
 
-.td_index{
+.td_index, td.index{
   text-align: left;
   width: 60px;
   max-width: 60px;
   min-width: 60px;
 }
 
-.th_index
+.th_index, th.index
 {
-  width: 90px;
-  max-width: 90px;
-  min-width: 90px;
+  width: 60px;
+  max-width: 60px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.th_index_corto, th.index_corto
+{
+  width: 30px;
+  max-width: 30px;
+  min-width: 30px;
   text-align: center;
 }
 

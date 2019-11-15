@@ -101,7 +101,7 @@
                                             <table class="table table-bordered">
                                                 <thead>
                                                 <tr>
-                                                    <th>#</th>
+                                                    <th class="index_corto">#</th>
                                                     <th class="no_parte">No. Parte</th>
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
