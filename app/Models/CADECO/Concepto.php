@@ -118,6 +118,7 @@ class Concepto extends Model
     public function hijos()
     {
         return $this->hasMany(self::class, 'id_obra', 'id_obra')
-            ->where('nivel', 'LIKE', $this->nivel . '___.');
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ->whereNull('id_material');
     }
 }
