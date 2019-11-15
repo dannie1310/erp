@@ -35,6 +35,7 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
             'numero_parte'=>$model->material->numero_parte,
             'fecha_entrega_format'=>$model->entrega->fecha_format,
             'cantidad_pendiente'=>$model->entrega->pendiente_entrega,
+            'destino' => ''
 
         ];
     }
