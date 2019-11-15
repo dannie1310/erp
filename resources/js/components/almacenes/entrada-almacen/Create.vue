@@ -7,8 +7,6 @@
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
                                 <div class="row">
-
-
                                         <div class="offset-md-10 col-md-2">
                                             <div class="form-group error-content">
                                                 <label for="fecha" class="col-form-label">Fecha:</label>
@@ -104,14 +102,15 @@
                                                 <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>No. de Parte</th>
+                                                    <th class="no_parte">No. Parte</th>
                                                     <th>Descripción</th>
-                                                    <th>Unidad</th>
-                                                    <th>Fecha Entrega</th>
+                                                    <th class="unidad">Unidad</th>
+                                                    <th class="fecha">Fecha Entrega</th>
                                                     <th>Cantidad Pendiente</th>
                                                     <th>Cantidad Ingresada</th>
                                                     <th>Cumplido</th>
-                                                    <th>Destino</th>
+                                                    <th class="th_icono"></th>
+                                                    <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
                                                     <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
                                                     <th class="th_icono"></th>
                                                 </tr>
@@ -143,12 +142,10 @@
                                                              <i class="fa fa-check-square-o" style="font-size: 1.2em;" v-if="parseFloat(partida.cantidad_ingresada) == parseFloat(partida.cantidad_pendiente)"></i>
                                                              <i class="fa fa-square-o" style="font-size:1.2em;" v-else></i>
                                                         </td>
-
                                                         <td  v-if="partida.destino ===  ''" >
                                                             <small class="badge badge-secondary">
                                                                 <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
-
                                                         </td>
                                                         <td v-else >
                                                             <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
@@ -157,9 +154,12 @@
                                                              <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
                                                                 <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
+                                                        </td>
+                                                        <td  v-if="partida.destino ===  ''" >
+                                                        </td>
+                                                        <td v-else >
                                                             <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
                                                             <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
-
                                                         </td>
                                                         <td>
                                                             <i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>
@@ -534,8 +534,8 @@
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.$data.partidas.forEach(function(element) {
-                            if(!(element.cantidad_ingresada  === undefined && element.destino  === undefined )){
-                                if(element.cantidad_ingresada > 0 && element.destino === undefined)
+                            if(!(element.cantidad_ingresada  === undefined && element.destino  === '' )){
+                                if(element.cantidad_ingresada > 0 && element.destino === '')
                                 {
                                     error_destino = error_destino + 1
                                 }
@@ -544,7 +544,7 @@
                        });
                         if(item_a_guardar <= 0)
                         {
-                            swal('¡Error!', 'Debe registrar un material a esta entrada de almacén.', 'error')
+                            swal('¡Error!', 'Debe ingresar al menos un material.', 'error')
                         }
                         else if (error_destino > 0)
                         {

@@ -69,7 +69,21 @@ i.button{
   min-width: 90px;
 }
 
-.th_unidad
+th.no_parte, th_no_parte{
+  text-align: center;
+  width: 90px;
+  max-width: 90px;
+  min-width: 90px;
+}
+
+td.no_parte, td_no_parte{
+  text-align: left;
+  width: 90px;
+  max-width: 90px;
+  min-width: 90px;
+}
+
+th.unidad,.th_unidad
 {
   width: 60px;
   max-width: 60px;
@@ -77,7 +91,7 @@ i.button{
   text-align: center;
 }
 
-.th_money_input
+th.money_input,.th_money_input
 {
   width: 150px;
   max-width: 150px;
@@ -85,7 +99,7 @@ i.button{
   text-align: center;
 }
 
-.td_money_input
+td.money_input,.td_money_input
 {
   width: 150px;
   max-width: 150px;
