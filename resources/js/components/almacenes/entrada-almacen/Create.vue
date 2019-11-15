@@ -107,7 +107,7 @@
                                                     <th class="unidad">Unidad</th>
                                                     <th class="fecha">Fecha Entrega</th>
                                                     <th>Cantidad Pendiente</th>
-                                                    <th>Cantidad Ingresada</th>
+                                                    <th class="cantidad_input">Cantidad Ingresada</th>
                                                     <th>Cumplido</th>
                                                     <th class="th_icono"></th>
                                                     <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
@@ -121,9 +121,9 @@
                                                         <td>{{partida.numero_parte}}</td>
                                                         <td>{{partida.material}}</td>
                                                         <td>{{partida.unidad}}</td>
-                                                        <td class="fecha">{{partida.fecha_entrega_format}}</td>
+                                                        <td >{{partida.fecha_entrega_format}}</td>
                                                         <td class="td_money">{{partida.cantidad_pendiente}}</td>
-                                                        <td class="td_money_input">
+                                                        <td >
                                                                 <div class="form-group error-content">
                                                                     <input
                                                                             type="number"
