@@ -108,11 +108,11 @@
                                                     <th class="fecha">Fecha Entrega</th>
                                                     <th>Cantidad Pendiente</th>
                                                     <th class="cantidad_input">Cantidad Ingresada</th>
-                                                    <th>Cumplido</th>
-                                                    <th class="th_icono"></th>
+                                                    <th class="fecha">Cumplido</th>
+                                                    <th class="icono"></th>
                                                     <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
                                                     <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
-                                                    <th class="th_icono"></th>
+                                                    <th class="icono"></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
