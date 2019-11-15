@@ -71,7 +71,6 @@ class EntradaAlmacenService
 
     public function store(array $data)
     {
-        print_r($data);
         $datos = [
             'id_antecedente' => $data['id_orden_compra'],
             'remision' => $data['remision'],
@@ -79,7 +78,6 @@ class EntradaAlmacenService
             'observaciones' => $data['observaciones'],
             'partidas' =>  $data['partidas']
         ];
-        print_r($datos);
-        //return $this->repository->create($datos);
+        return $this->repository->create($datos);
     }
 }
