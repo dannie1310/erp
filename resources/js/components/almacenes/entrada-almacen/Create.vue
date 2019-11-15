@@ -539,6 +539,9 @@
                                 {
                                     error_destino = error_destino + 1
                                 }
+                            }
+                            if(element.cantidad_ingresada > 0)
+                            {
                                 item_a_guardar = item_a_guardar + 1;
                             }
                        });
