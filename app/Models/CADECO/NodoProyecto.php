@@ -24,6 +24,10 @@ class NodoProyecto extends Concepto
     }
 
     public function getPendientesAttribute(){
-        return CtgTipoNodo::whereNotIn('id', $this->nodoTipo->only('id_tipo_nodo'))->get();
+        return CtgTipoNodo::whereNotIn('id', $this->nodoTipo->pluck('id_tipo_nodo'))->get();
+    }
+
+    public function getAsignadosAttribute(){
+        return $this->nodoTipo()->with(['tipoNodo', 'concepto'])->get();
     }
 }

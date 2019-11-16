@@ -35,7 +35,7 @@ class NodoProyectoTransformer extends TransformerAbstract
             'descripcion' => $model->descripcion,
             'nivel' => $model->nivel,
             'path' => $model->path,
-            'tipos_asignados' => $model->nodoTipo,
+            'tipos_asignados' => $model->asignados,
             'tipos_pendiente_asignacion' => $model->pendientes
         ];
     }
