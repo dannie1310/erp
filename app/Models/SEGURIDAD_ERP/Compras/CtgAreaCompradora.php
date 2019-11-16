@@ -14,10 +14,9 @@ class CtgAreaCompradora extends Model
     public $timestamps = false;
 
 
-    public function scopeUsuarioBelongs($query)
+    public function scopeAsignadas($query)
     {
         return $query->join('Compras.areas_compradoras_usuario', 'Compras.ctg_areas_compradoras.id', 'Compras.areas_compradoras_usuario.id_area_compradora')
             ->where('Compras.areas_compradoras_usuario.id_usuario','=', auth()->id())->select('Compras.ctg_areas_compradoras.*');
     }
-
 }

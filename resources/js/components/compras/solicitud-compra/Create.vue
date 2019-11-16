@@ -402,7 +402,7 @@
         methods : {
             getAreasCompradoras(){
                 return this.$store.dispatch('seguridad/compras/ctg-area-compradora/index', {
-                    params: { scope: 'UsuarioBelongs', sort: 'descripcion',  order: 'asc'}
+                    params: { scope: 'asignadas', sort: 'descripcion',  order: 'asc'}
                 })
                     .then(data => {
                         this.areas_compradoras = data.data;
@@ -420,7 +420,7 @@
             },
             getAreasSolicitantes(){
                 return this.$store.dispatch('seguridad/compras/ctg-area-solicitante/index', {
-                    params: { scope: 'UsuarioBelongs', sort: 'descripcion',  order: 'asc'}
+                    params: { scope: 'signadas', sort: 'descripcion',  order: 'asc'}
                 })
                     .then(data => {
                       this.areas_solicitantes = data.data;
