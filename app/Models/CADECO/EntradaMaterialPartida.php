@@ -75,4 +75,9 @@ class EntradaMaterialPartida extends Item
     {
         return $this->belongsTo(ItemContratista::class, 'id_item');
     }
+
+    public function ordenCompraPartida()
+    {
+        return $this->belongsTo(OrdenCompraPartida::class, 'item_antecedente','id_item');
+    }
 }

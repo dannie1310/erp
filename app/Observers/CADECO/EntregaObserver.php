@@ -15,15 +15,12 @@ class EntregaObserver
 {
     /**
      * @param Entrega $entrega
+     * @throws \Exception
+     *
      */
     public function updating(Entrega $entrega)
     {
-        $entrega->surtida = $entrega->getOriginal('surtida') + $entrega->surtida;
-    }
-
-    public function updated(Entrega $entrega)
-    {
-        if($entrega->surtida > $entrega->cantidad)
+        if($entrega->surtida > ($entrega->cantidad+0.01))
         {
             throw New \Exception('La cantidad surtida sobrepasa la cantidad solicitada.');
         }

@@ -23,6 +23,7 @@ use DateTime;
 class EntradaMaterial extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 19;
+    public const OPCION_ANTECEDENTE = 1;
 
     protected $fillable = [
         'id_antecedente',
@@ -38,7 +39,8 @@ class EntradaMaterial extends Transaccion
         'comentario',
         'FechaHoraRegistro',
         'id_obra',
-        'fecha'
+        'fecha',
+        'anticipo'
     ];
     protected static function boot()
     {
@@ -320,17 +322,6 @@ class EntradaMaterial extends Transaccion
     }
 
     /**
-     * Antes de eliminar liberar la orden de compra
-     */
-    public function liberarOrdenCompra()
-    {
-        $oc = OrdenCompra::query()->where('id_transaccion', $this->id_antecedente)->first();
-        if($oc->estado == 2){
-            $oc->update(['estado' => 1]);
-        }
-    }
-
-    /**
      * Elimina las partidas
      */
     public function eliminar_partidas($partidas)
@@ -384,16 +375,7 @@ class EntradaMaterial extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            //validaciones del antecedente
-            $ordencompra = OrdenCompra::query()->where('id_transaccion', '=', $data['id_antecedente'])
-                ->where('estado', '!=', 2)->first();
-
-            if($ordencompra == null)
-            {
-                abort(400, 'Está orden de compra ya está completa.');
-            }
-
-            $this->validarCantidades($data['partidas']);
+            $ordencompra = OrdenCompra::find($data['id_antecedente']);
 
             $entrada = $this->create([
                 'id_antecedente' => $data['id_antecedente'],
@@ -401,13 +383,13 @@ class EntradaMaterial extends Transaccion
                 'id_sucursal' => $ordencompra->id_sucursal,
                 'referencia' => $data['remision'],
                 'id_moneda' => $ordencompra->id_moneda,
+                'anticipo' => $ordencompra->anticipo,
                 'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
                 'observaciones' => $data['observaciones']
             ]);
 
-            $oc_completa = $this->validarOrdenCompraCumplida($data['partidas']);
-
             foreach ($data['partidas'] as $item){
+                $item_antecedente = OrdenCompraPartida::find($item['id']);
                 if(isset($item['cantidad_ingresada']) == true) {
                     if ($item['destino']['tipo_destino'] == 1) {
                         $item_guardado = $entrada->partidas()->create([
@@ -415,15 +397,16 @@ class EntradaMaterial extends Transaccion
                             'id_transaccion' => $entrada->id_transaccion,
                             'id_antecedente' => $entrada->id_antecedente,
                             'id_concepto' => $item['destino']['id_destino'],
-                            'id_material' => $item['material']['id'],
-                            'unidad' => $item['material']['unidad'],
-                            'numero' => $item['numero'],
+                            'id_material' => $item['id_material'],
+                            'unidad' => $item['unidad'],
+                            'numero' => 0,
                             'cantidad_material' => $item['cantidad_material'],
                             'cantidad' => $item['cantidad_ingresada'],
                             'cantidad_original1' => $item['cantidad_ingresada'],
-                            'importe' => $item['precio_material'] * $item['cantidad_ingresada'],
-                            'saldo' => $item['precio_material'] * $item['cantidad_ingresada'],
-                            'precio_unitario' => $item['precio_material']
+                            'importe' => $item['precio_unitario'] * $item['cantidad_ingresada'],
+                            'saldo' => $item['precio_unitario'] * $item['cantidad_ingresada'],
+                            'precio_unitario' => $item['precio_unitario'],
+                            'anticipo' => $item_antecedente->anticipo
                         ]);
                     }
                     if ($item['destino']['tipo_destino'] == 2) {
@@ -432,15 +415,16 @@ class EntradaMaterial extends Transaccion
                             'id_transaccion' => $entrada->id_transaccion,
                             'id_antecedente' => $entrada->id_antecedente,
                             'id_almacen' => $item['destino']['id_destino'],
-                            'id_material' => $item['material']['id'],
-                            'unidad' => $item['material']['unidad'],
-                            'numero' => $item['numero'],
+                            'id_material' => $item['id_material'],
+                            'unidad' => $item['unidad'],
+                            'numero' => 0,
                             'cantidad_material' => $item['cantidad_material'],
                             'cantidad' => $item['cantidad_ingresada'],
                             'cantidad_original1' => $item['cantidad_ingresada'],
-                            'importe' => $item['precio_material'] * $item['cantidad_ingresada'],
-                            'saldo' => $item['precio_material'] * $item['cantidad_ingresada'],
-                            'precio_unitario' => $item['precio_material']
+                            'importe' => $item['precio_unitario'] * $item['cantidad_ingresada'],
+                            'saldo' => $item['precio_unitario'] * $item['cantidad_ingresada'],
+                            'precio_unitario' => $item['precio_unitario'],
+                            'anticipo' => $item_antecedente->anticipo
                         ]);
                     }
 
@@ -449,22 +433,10 @@ class EntradaMaterial extends Transaccion
                             'id_empresa' => $item['contratista_seleccionado']['empresa_contratista'],
                             'con_cargo' => $item['contratista_seleccionado']['opcion']]);
                     }
-
-                    $entrega = $ordencompra->partidas()->find($item['id']);
-                    $entrega = $entrega->entrega->update([
-                        'surtida' =>  $item['cantidad_ingresada']
-                    ]);
                 }
             }
 
-            if($oc_completa == true){
-                $ordencompra->estado = 2;
-                $ordencompra->save();
-            }else{
-                $ordencompra->estado = 1;
-                $ordencompra->save();
-            }
-
+            $ordencompra->cerrar();
             DB::connection('cadeco')->commit();
             return $entrada;
         }catch (\Exception $e) {
@@ -474,7 +446,7 @@ class EntradaMaterial extends Transaccion
         }
     }
 
-    public function validarCantidades($partidas)
+    /*public function validarCantidades($partidas)
     {
         foreach ($partidas as $i){
             if(isset($i['cantidad_ingresada']) == true) {
@@ -491,9 +463,9 @@ class EntradaMaterial extends Transaccion
                 }
             }
         }
-    }
+    }*/
 
-    public function validarOrdenCompraCumplida($partidas)
+    /*public function validarOrdenCompraCumplida($partidas)
     {
         $suma_totales = 0;
         foreach ($partidas as $i) {
@@ -511,5 +483,5 @@ class EntradaMaterial extends Transaccion
            return true;
         }
         return false;
-    }
+    }*/
 }

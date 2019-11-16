@@ -18,15 +18,31 @@ class Entrega extends Model
 
     public $timestamps = false;
 
+    public function ordenCompraPartida()
+    {
+        return $this->belongsTo(OrdenCompraPartida::class, 'id_item','id_item');
+    }
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha);
-        return date_format($date,"d/m/Y");
-
+        return date_format($date, "d/m/Y");
     }
 
     public function getPendienteEntregaAttribute()
     {
-        return number_format(($this->cantidad - $this->surtida),2,'.', '');
+        return number_format(($this->cantidad - $this->surtida), 2, '.', '');
+    }
+
+    public function setCumplida()
+    {
+        $this->surtida = $this->cantidad;
+    }
+
+    public function surte($cantidad)
+    {
+        $this->update([
+            'surtida' => $this->surtida + $cantidad
+        ]);
     }
 }
