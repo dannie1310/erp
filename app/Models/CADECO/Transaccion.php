@@ -153,4 +153,47 @@ class Transaccion extends Model
     {
         return $this->monto - $this->impuesto;
     }
+
+    public function moneda()
+    {
+        return $this->hasOne(Moneda::class, 'id_moneda','id_moneda');
+    }
+    public function getCambio($id_moneda,$fecha)
+    {
+        $moneda = Moneda::find($id_moneda);
+        if($moneda->tipo ==1)
+        {
+            return 1;
+        }
+        $cambio = Cambio::query()->where("id_moneda","=", $id_moneda)
+            ->where("fecha", "<=",$fecha)
+            ->orderBy("fecha","desc")->first();
+        if($cambio)
+        {
+            return $cambio->cambio;
+        }
+        else{
+            abort(500, "No hay cotización para la moneda");
+        }
+    }
+
+    public function getFactorConversionAttribute()
+    {
+        if(!$this->moneda)
+        {
+            return 1;
+        }
+        if(!$this->obra->moneda)
+        {
+            abort(500,"No se pudo determinar la moneda de la obra");
+        }
+        if($this->moneda->id_moneda == $this->obra->moneda->id_moneda)
+        {
+            return 1;
+        }
+        $tc_moneda_transaccion = $this->getCambio($this->id_moneda, $this->fecha);
+        $tc_moneda_obra = $this->getCambio($this->obra->id_moneda, $this->fecha);
+        return $tc_moneda_transaccion / $tc_moneda_obra;
+
+    }
 }
