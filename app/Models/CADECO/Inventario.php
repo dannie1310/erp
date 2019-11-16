@@ -33,7 +33,9 @@ class Inventario extends Model
         'lote_antecedente',
         'saldo',
         'monto_total',
+        'monto_original',
         'monto_pagado',
+        'monto_anticipo',
     ];
 
     public function almacen()

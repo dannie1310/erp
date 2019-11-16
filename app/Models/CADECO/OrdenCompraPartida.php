@@ -14,13 +14,18 @@ use App\Models\CADECO\Item;
 
 class OrdenCompraPartida extends Item
 {
+    public function ordenCompra()
+    {
+        return $this->belongsTo(OrdenCompra::class, 'id_transaccion','id_transaccion');
+    }
+
     public  function orden_partida_complemento(){
         return $this->hasOne(OrdenCompraPartidaComplemento::class, 'id_item');
     }
 
     public function entrega()
     {
-        return $this->belongsTo(Entrega::class, 'id_item');
+        return $this->hasOne(Entrega::class, 'id_item');
     }
 
     public function entradas()

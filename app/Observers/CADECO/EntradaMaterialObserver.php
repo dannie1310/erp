@@ -25,10 +25,26 @@ class EntradaMaterialObserver extends TransaccionObserver
         $entradaMaterial->opciones = 1;
     }
 
+    public function created(Transaccion $entradaMaterial)
+    {
+       $entradaMaterial->ordenCompra->update(["estado"=>1]);
+    }
+
     public function deleting(EntradaMaterial $entradaMaterial)
     {
         $items = $entradaMaterial->partidas()->get()->toArray();
         $entradaMaterial->eliminar_partidas($items);
-        $entradaMaterial->liberarOrdenCompra();
+    }
+    public function deleted(EntradaMaterial $entradaMaterial)
+    {
+        $ordenCompra =  $entradaMaterial->ordenCompra;
+        $entradas_restantes = $ordenCompra->entradasAlmacen;
+        if(count($entradas_restantes)==0){
+            $ordenCompra->update(["estado"=>0]);
+        }
+        else{
+            $ordenCompra->update(["estado"=>1]);
+        }
+
     }
 }

@@ -152,10 +152,21 @@ class OrdenCompra extends Transaccion
 
     public function scopeDisponibleEntradaAlmacen($query)
     {
-        return $query->whereHas('partidas', function ($q) {
-            return $q->whereHas('entrega', function ($qu) {
-                return $qu->whereRaw('ROUND(cantidad, 2) - ROUND(surtida, 2) > 0')->where('surtida', '>=', '0');
-            });
-        })->where('estado', '!=', 2);
+        return $query->where('estado', '!=', 2);
+    }
+    public function cerrar()
+    {
+        $partidas = $this->partidas;
+        $cantidad_surtida =0;
+        $cantidad_esperada =0;
+        foreach ($partidas as $partida)
+        {
+            $cantidad_surtida+= $partida->entrega->surtida;
+            $cantidad_esperada+= $partida->entrega->cantidad;
+        }
+        if(abs($cantidad_esperada-$cantidad_surtida)<=0.01)
+        {
+            $this->update(["estado"=>2]);
+        }
     }
 }
