@@ -57,7 +57,7 @@
 
             <li class="nav-header" v-if="true"><a href="#configuracion-conceptos">CONFIGURACIÓN CONCEPTOS</a></li>
             <li class="nav-item" v-if="true">
-                <a href="#conceptos" class="nav-link">
+                <a href="#configuracion_conceptos_nodo" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Conceptos</p>
                 </a>

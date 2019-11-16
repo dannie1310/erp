@@ -8,37 +8,23 @@
                 </button>
             </div>
         </div>
-        <div class="card-body" v-if="form">
-        <div class="row" role="form">
-            <div class="form-group col-md-6">
-                <label for="display_name">Nombre</label>
-                <input
-                    type="text"
-                    name="display_name"
-                    data-vv-as="Nombre"
-                    v-validate="{required: true, max: 255}"
-                    class="form-control"
-                    id="display_name"
+        <div class="card-body">
+            <h5 id="configuracion_conceptos_nodo">Configuración Nodo Tipo</h5>
 
-                    :class="{'is-invalid': errors.has('display_name')}"
-                >
-                <div class="invalid-feedback" v-show="errors.has('display_name')">{{ errors.first('display_name') }}</div>
-            </div>
-
-            <div class="form-group col-md-6">
-                <label for="description">Descripción</label>
-                <input
-                    type="text"
-                    name="description"
-                    data-vv-as="Descripción"
-                    v-validate="{required: true, max: 255}"
-                    class="form-control"
-                    id="description"
-
-                    :class="{'is-invalid': errors.has('description')}"
-                >
-                <div class="invalid-feedback" v-show="errors.has('description')">{{ errors.first('description') }}</div>
-            </div>
+            <div class="row" role="form">
+                <label for="nodo_proyecto" class="col-lg-2 col-form-label">Proyecto</label>
+                <div class="col-lg-4">
+                    <select class="form-control" id="nodo_proyecto" v-model="nodo_proyecto"
+                            v-validate="{integer: true}"
+                            name="nodo_proyecto"
+                            data-vv-as="nodo_proyecto"
+                            :class="{'is-invalid': errors.has('nodo_proyecto')}"
+                    >
+                        <option value>-- Proyecto --</option>
+                        <option v-for="concepto in conceptos" :value="concepto.id">{{ concepto.descripcion }}</option>
+                    </select>
+                    <div class="invalid-feedback" v-show="errors.has('nodo_proyecto')">{{ errors.first('nodo_proyecto') }}</div>
+                </div>
         </div>
         </div>
     </div>
@@ -50,12 +36,48 @@
         props: ['datosConcepto'],
         data() {
             return {
-                form: null
+                nodo_proyecto:'',
+                asignacion_nodo:[]
             }
         },
         mounted() {
-            this.form = JSON.parse(JSON.stringify(this.datosConcepto))
+            this.getNodos();
         },
+        methods: {
+            getNodos(){
+                return this.$store.dispatch('cadeco/concepto/index', {
+                    params: { scope:['roots']}
+                }).then(data => {
+                    this.$store.commit('cadeco/concepto/SET_CONCEPTOS', data.data)
+                })
+                .finally(() => {
+                    this.cargando = false;
+                });
+            },
+            getAsignacionesNodos(){
+                return this.$store.dispatch('configuracion/nodo-proyecto/find', {
+                    id:this.nodo_proyecto,
+                    params: {}
+                }).then(data => {
+                    this.asignacion_nodo =  data.data;
+                })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
+            }
+        },
+        computed: {
+            conceptos() {
+                return this.$store.getters['cadeco/concepto/conceptos']
+            },
+        },
+        watch:{
+            nodo_proyecto(id) {
+                if (id > 0) {
+                    this.getAsignacionesNodos();
+                }
+            },
+        }
     }
 </script>
 

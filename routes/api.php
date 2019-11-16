@@ -460,6 +460,20 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * CONFIGURACION
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'configuracion'], function ($api){
+        /// NODOS TIPO
+        $api->group(['prefix' => 'nodo-tipo'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoTipoController@show')->where(['id' => '[0-9]+']);
+        });
+        // NODOS PROYECTO
+        $api->group(['prefix' => 'nodo-proyecto'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoProyectoController@show')->where(['id' => '[0-9]+']);
+        });
+    });
+
+    /**
      * CONTRATOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contratos'], function ($api) {

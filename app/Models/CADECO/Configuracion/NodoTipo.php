@@ -19,15 +19,18 @@ class NodoTipo extends Model
         'id_concepto_proyecto',
     ];
 
-    public function tipoNodo(){
+    public function tipoNodo()
+    {
         return $this->belongsTo(CtgTipoNodo::class, 'id_tipo_nodo', 'id');
     }
 
-    public function concepto(){
+    public function concepto()
+    {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 
-    public function conceptoObra(){
+    public function conceptoProyecto()
+    {
         return $this->belongsTo(Concepto::class, 'id_concepto_proyecto', 'id_concepto');
     }
 }

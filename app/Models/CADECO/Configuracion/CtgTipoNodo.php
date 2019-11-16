@@ -11,6 +11,7 @@ class CtgTipoNodo extends Model
     public $timestamps = false;
     protected $connection = 'cadeco';
     protected $table = 'Configuracion.ctg_tipos_nodos';
+    protected $primaryKey = 'id';
 
 
     public function nodoTipo(){
