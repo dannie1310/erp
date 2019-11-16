@@ -25,7 +25,8 @@ class EntradaMaterialPartidaObserver
 
     public function created(EntradaMaterialPartida $partida)
     {
-        $pagado = round($partida->anticipo * $partida->precio_unitario * $partida->cantidad_original1 /100,2);
+        $factor = $partida->entrada->factor_conversion;
+        $pagado = round($partida->anticipo * $partida->precio_unitario * $partida->cantidad_original1  /100,2);
         if($partida->id_almacen != null) {
             Inventario::create([
                 'id_almacen' => $partida->id_almacen,
@@ -33,8 +34,10 @@ class EntradaMaterialPartidaObserver
                 'id_item' => $partida->id_item,
                 'cantidad' => $partida->cantidad,
                 'saldo' => $partida->cantidad,
-                'monto_total' => $partida->importe,
-                'monto_pagado' => $pagado,
+                'monto_total' => round($partida->importe * $factor,2),
+                'monto_original' => round($partida->importe * $factor,2),
+                'monto_pagado' => round($pagado *$factor,2),
+                'monto_anticipo' => 0
             ]);
         }
         if($partida->id_concepto != null) {
@@ -43,9 +46,9 @@ class EntradaMaterialPartidaObserver
                 'id_item' => $partida->id_item,
                 'id_material' => $partida->id_material,
                 'cantidad' => $partida->cantidad,
-                'monto_total' => $partida->importe,
-                'monto_original' => $partida->importe,
-                'monto_pagado' => $pagado,
+                'monto_total' => round($partida->importe * $factor,2),
+                'monto_original' => round($partida->importe * $factor,2),
+                'monto_pagado' => round($pagado * $factor,2),
             ]);
         }
         $partida->ordenCompraPartida->entrega->surte($partida->cantidad);
