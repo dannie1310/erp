@@ -79,6 +79,8 @@
                                 </div>
                                 <div class="d-flex flex-row-reverse">
                                     <div class="p-2">
+                                        <Layout></Layout>
+                                        &nbsp;
                                         <button type="button" class="btn btn-primary" @click="addPartidas()"> + Agregar Partida</button>
                                     </div>
                                 </div>
@@ -189,10 +191,11 @@
 </template>
 
 <script>
-    import MaterialSelect from "../../cadeco/material/SelectAutocomplete"
+    import MaterialSelect from "../../cadeco/material/SelectAutocomplete";
+    import Layout from "./CargaLayout"
     export default {
         name: "requisicion-create",
-        components: {MaterialSelect},
+        components: {MaterialSelect,Layout},
         data() {
             return {
                 areas_compradoras : [],
