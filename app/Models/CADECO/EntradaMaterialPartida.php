@@ -30,7 +30,8 @@ class EntradaMaterialPartida extends Item
         'precio_material',
         'precio_mano_obra',
         'cantidad_original1',
-        'saldo'
+        'saldo',
+        'anticipo'
     ];
 
     protected static function boot()
@@ -79,5 +80,19 @@ class EntradaMaterialPartida extends Item
     public function ordenCompraPartida()
     {
         return $this->belongsTo(OrdenCompraPartida::class, 'item_antecedente','id_item');
+    }
+
+    public function getPagadoRegistroAttribute()
+    {
+        $anticipo_entrada = round($this->anticipo * $this->precio_unitario * $this->cantidad_original1  /100,2);
+        $por_aplicar = $this->ordenCompraPartida->por_aplicar;
+        if($anticipo_entrada>$por_aplicar)
+        {
+            return $por_aplicar;
+        }
+        else
+        {
+            return $anticipo_entrada;
+        }
     }
 }
