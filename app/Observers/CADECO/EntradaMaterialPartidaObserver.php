@@ -26,6 +26,14 @@ class EntradaMaterialPartidaObserver
         {
             $partida->saldo = $partida->saldo-$pagado;
         }
+        if($partida->saldo<-0.01)
+        {
+            throw New \Exception('El saldo de la partida de entrada '.$partida->material->descripcion.' no puede ser menor a 0');
+        }
+        if($partida->saldo < 0.01)
+        {
+            $partida->estado = 1;
+        }
     }
 
     public function created(EntradaMaterialPartida $partida)
@@ -60,14 +68,6 @@ class EntradaMaterialPartidaObserver
         if($pagado > 0)
         {
             $partida->ordenCompraPartida->disminuyeSaldo($pagado);
-        }
-
-    }
-    public function updating(EntradaMaterialPartida $partida)
-    {
-        if($partida->saldo<-0.01)
-        {
-            throw New \Exception('El saldo de la partida de entrada '.$partida->material->descripcion.' no puede ser menor a 0');
         }
     }
 }
