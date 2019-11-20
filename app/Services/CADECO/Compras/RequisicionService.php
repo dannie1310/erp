@@ -36,6 +36,7 @@ class RequisicionService
     public function store($data)
     {
         $datos = [
+            'fecha' => $data['fecha'],
             'id_area_compradora' => $data['id_area_compradora'],
             'id_tipo' => $data['id_tipo'],
             'id_area_solicitante' => $data['id_area_solicitante'],

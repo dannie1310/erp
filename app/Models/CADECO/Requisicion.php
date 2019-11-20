@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\RequisicionComplemento;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class Requisicion extends Transaccion
@@ -53,7 +54,7 @@ class Requisicion extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             $requisicion = $this->create([
-                'fecha' => date('Y-m-d H:i:s'),
+                'fecha' => $datos['fecha'],
                'observaciones' => $datos['observaciones']
             ]);
 
