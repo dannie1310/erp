@@ -9,6 +9,9 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
+use App\Models\SEGURIDAD_ERP\Compras\CtgTipo;
 use Illuminate\Database\Eloquent\Model;
 
 class RequisicionComplemento extends Model
@@ -26,6 +29,27 @@ class RequisicionComplemento extends Model
         'folio_compuesto',
         'concepto',
         'registro',
-        'timestamp_registro',
     ];
+
+    public function tipo()
+    {
+        return $this->belongsTo(CtgTipo::class, 'id_tipo','id');
+    }
+
+    public function areaCompradora()
+    {
+        return $this->belongsTo(CtgAreaCompradora::class, 'id_area_compradora', 'id');
+    }
+
+    public function areaSolicitante()
+    {
+        return $this->belongsTo(CtgAreaSolicitante::class, 'id_area_solicitante', 'id');
+    }
+
+    public function generaFolioCompuesto()
+    {
+        $count = $this->with(['areaCompradora', 'tipo'])->count();
+        $count++;
+        return $this->areaCompradora->descripcion_corta.'-'.$this->tipo->descripcion_corta.'-'. $count;
+    }
 }

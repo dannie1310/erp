@@ -78,7 +78,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex flex-row-reverse">
-                                    <div class="p-2">
+                                    <div class="p-1">
                                         <button type="button" class="btn btn-primary" @click="addPartidas()"> + Agregar Partida</button>
                                     </div>
                                 </div>
@@ -99,8 +99,8 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr v-for="(partida, i) in partidas">
-                                                        <td>{{i+1}}</td>
-                                                        <td style="width: 180px;">
+                                                        <td v-model="partida.i">{{i+1}}</td>
+                                                        <td style="width: 180px;" v-if="partida.descripcion == ''">
                                                             <MaterialSelect
                                                                     scope="insumos"
                                                                     :name="`material[${i}]`"
@@ -112,10 +112,28 @@
                                                                     :error="errors.has(`material[${i}]`)"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
                                                         </td>
-                                                        <td v-if="partida.material != ''">
-                                                            <!--{{partida.material.numero_parte}}-->
-                                                        </td>
                                                         <td v-else></td>
+                                                        <td v-if="partida.material === ''">
+                                                            <div class="row ">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row error-content">
+                                                                        <div class="col-md-12" >
+                                                                            <input
+                                                                                    type="text"
+                                                                                    data-vv-as="Descripción"
+                                                                                    v-validate="{required: true}"
+                                                                                    class="form-control"
+                                                                                    :name="`descripcion[${i}]`"
+                                                                                    placeholder="Descripción"
+                                                                                    v-model="partida.descripcion"
+                                                                                    :class="{'is-invalid': errors.has(`descripcion[${i}]`)}">
+                                                                            <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td v-else>{{partida.material.label}}</td>
                                                         <td>
                                                              <input type="number"
                                                                     class="form-control"
@@ -127,14 +145,16 @@
                                                          <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
 
                                                         </td>
-                                                        <td v-if="partida.material != ''">{{partida.material.unidad}}</td>
-                                                        <td v-else></td>
-                                                        <td>
+                                                        <td v-if="partida.material === ''"></td>
+                                                        <td v-else>{{partida.material.unidad}}</td>
+                                                        <td style="width: 100px;">
                                                             <input type="date"
                                                                    :name="`fecha[${i}]`"
-                                                                   class="form-control"
+                                                                   class="form-control datepicker"
                                                                    data-vv-as="Fecha"
                                                                    v-validate="{required: true}"
+                                                                    :format = "formatoFecha"
+                                                                   data-date-end-date="0d"
                                                                    :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
                                                                    v-model="partida.fecha">
                                                             <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
@@ -206,8 +226,9 @@
                 index : 0,
                 partidas: [
                     {
-                        aux : '',
+                        i : '',
                         material : "",
+                        descripcion : "",
                         cantidad : "",
                         fecha : "",
                         observaciones : "",
@@ -222,6 +243,9 @@
             this.getTipos();
         },
         methods : {
+            formatoFecha(date){
+                return moment(date).format('DD/MM/YYYY');
+            },
             getAreasCompradoras() {
                 return this.$store.dispatch('seguridad/compras/ctg-area-compradora/index', {
                     params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
@@ -250,11 +274,31 @@
                     })
             },
             addPartidas(){
-                this.partidas.splice(this.index + 1, 0, {});
+                this.partidas.splice(this.index + 1, 0, {
+                    i : '',
+                    material : "",
+                    descripcion : "",
+                    cantidad : "",
+                    fecha : "",
+                    observaciones : "",
+                });
                 this.index = this.index+1;
             },
             salir(){
                 this.$router.push({name: 'requisicion'});
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                            this.store()
+                    }
+                });
+            },
+            store() {
+                return this.$store.dispatch('compras/requisicion/store', this.$data)
+                    .then((data) => {
+                        this.$router.push({name: 'requisicion'});
+                    });
             },
         }
     }

@@ -10,6 +10,8 @@ use App\Models\CADECO\Almacenes\AjusteEliminado;
 use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
+use App\Models\CADECO\Compras\RequisicionComplemento;
+use App\Models\CADECO\Compras\RequisicionPartidaComplemento;
 use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Contabilidad\Apertura;
@@ -70,6 +72,7 @@ use App\Models\CADECO\PagoACuenta;
 use App\Models\CADECO\PagoACuentaPorAplicar;
 use App\Models\CADECO\PagoAnticipoDestajo;
 use App\Models\CADECO\PagoVario;
+use App\Models\CADECO\Requisicion;
 use App\Models\CADECO\SalidaAlmacen;
 use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
 use App\Models\CADECO\Seguridad\AuditoriaRolUser;
@@ -105,6 +108,8 @@ use App\Observers\CADECO\Almacenes\AjusteEliminadoObserver;
 use App\Observers\CADECO\AnticipoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
+use App\Observers\CADECO\Compras\RequisicionComplementoObserver;
+use App\Observers\CADECO\Compras\RequisicionPartidaComplementoObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
 use App\Observers\CADECO\Compras\SolicitudComplementoObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
@@ -166,6 +171,7 @@ use App\Observers\CADECO\PagoACuentaPorAplicarObserver;
 use App\Observers\CADECO\PagoAnticipoDestajoObserver;
 use App\Observers\CADECO\PagoObserver;
 use App\Observers\CADECO\PagoVarioObserver;
+use App\Observers\CADECO\RequisicionObserver;
 use App\Observers\CADECO\SalidaAlmacenObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaPermisoRolObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
@@ -222,6 +228,8 @@ class AppServiceProvider extends ServiceProvider
              * Compras
              */
             EntradaEliminada::observe(EntradaEliminadaObserver::class);
+            RequisicionComplemento::observe(RequisicionComplementoObserver::class);
+            RequisicionPartidaComplemento::observe(RequisicionPartidaComplementoObserver::class);
             SalidaEliminada::observe(SalidaEliminadaObserver::class);
             SolicitudComplemento::observe(SolicitudComplementoObserver::class);
 
@@ -348,6 +356,7 @@ class AppServiceProvider extends ServiceProvider
             Pago::observe(PagoObserver::class);
             PagoReposicionFF::observe(PagoReposicionFFObserver::class);
             PagoVario::observe(PagoVarioObserver::class);
+            Requisicion::observe(RequisicionObserver::class);
             SalidaAlmacen::observe(SalidaAlmacenObserver::class);
             SolicitudCompra::observe(SolicitudCompraObserver::class);
             SolicitudAnticipoDestajo::observe(SolicitudAnticipoDestajoObserver::class);

@@ -10,7 +10,7 @@ namespace App\Services\CADECO\Compras;
 
 
 use App\Models\CADECO\Requisicion;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Compras\Requisicion\Repository;
 
 class RequisicionService
 {
@@ -33,4 +33,16 @@ class RequisicionService
         return $this->repository->paginate($data);
     }
 
+    public function store($data)
+    {
+        $datos = [
+            'id_area_compradora' => $data['id_area_compradora'],
+            'id_tipo' => $data['id_tipo'],
+            'id_area_solicitante' => $data['id_area_solicitante'],
+            'concepto' => $data['concepto'],
+            'partidas' => $data['partidas'],
+            'observaciones'=> $data['observaciones']
+        ];
+        return $this->repository->create($datos);
+    }
 }
