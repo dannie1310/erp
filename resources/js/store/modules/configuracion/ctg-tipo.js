@@ -1,19 +1,19 @@
-const URI = '/api/SEGURIDAD_ERP/compras/ctg_area_compradora/';
+const URI = '/api/configuracion/ctg_tipo/';
 
 
 export default {
     namespaced: true,
     state: {
-        area: [],
-        currentArea: null,
+        tipos: [],
+        currentTipo: null,
         meta:{}
     },
     mutations:{
-        SET_AREAS(state, data){
-            state.areas = data;
+        SET_TIPOS(state, data){
+            state.tipos = data;
         },
-        SET_AREA(state, data){
-            state.currentArea= data;
+        SET_TIPO(state,data){
+            state.currentTipo= data;
         },
         SET_META(state, data) {
             state.meta = data;
@@ -36,14 +36,14 @@ export default {
     },
 
     getters: {
-        areas(state) {
-            return state.areas;
+        tipos(state) {
+            return state.tipos;
         },
         meta(state) {
             return state.meta;
         },
-        currentArea(state) {
-            return state.currentArea;
+        currentTipo(state) {
+            return state.currentTipo;
         }
     }
 }

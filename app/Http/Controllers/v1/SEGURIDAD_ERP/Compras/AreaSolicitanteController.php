@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Http\Controllers\v1\SEGURIDAD_ERP;
+namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Compras;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\SEGURIDAD_ERP\TipoAreaSolicitanteTransformer;
-use App\Services\SEGURIDAD_ERP\AreaSolicitanteService;
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\TipoAreaSolicitanteTransformer;
+use App\Services\SEGURIDAD_ERP\Compras\AreaSolicitanteService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;

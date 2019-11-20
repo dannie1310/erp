@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Http\Controllers\v1\SEGURIDAD_ERP;
+namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Compras;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\SEGURIDAD_ERP\TipoAreaCompradoraTransformer;
-use App\Services\SEGURIDAD_ERP\AreaCompradoraService;
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\TipoAreaCompradoraTransformer;
+use App\Services\SEGURIDAD_ERP\Compras\AreaCompradoraService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
 
@@ -45,9 +45,6 @@ class AreaCompradoraController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
-
-
-
 
     public function asignar(Request $request){
 

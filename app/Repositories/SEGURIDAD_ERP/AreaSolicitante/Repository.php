@@ -4,8 +4,8 @@
 namespace App\Repositories\SEGURIDAD_ERP\AreaSolicitante;
 
 use App\Facades\Context;
-use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante as Model;
-use App\Models\SEGURIDAD_ERP\UsuarioAreaSolicitante;
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante as Model;
+use App\Models\SEGURIDAD_ERP\Compras\AreaSolicitanteUsuario;
 use Illuminate\Support\Facades\DB;
 
 class Repository extends \App\Repositories\Repository  implements RepositoryInterface
@@ -27,7 +27,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
     public function asignar($data)
     {
-        $usuario = new UsuarioAreaSolicitante();
+        $usuario = new AreaSolicitanteUsuario();
         $usuario->asignar($data);
     }
 }

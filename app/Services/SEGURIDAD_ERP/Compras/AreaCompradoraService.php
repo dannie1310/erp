@@ -1,29 +1,38 @@
 <?php
 
 
-namespace App\Services\SEGURIDAD_ERP;
+namespace App\Services\SEGURIDAD_ERP\Compras;
 
 
-use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
-use Illuminate\Support\Facades\DB;
-use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Repositories\SEGURIDAD_ERP\AreaCompradora\Repository;
 
 class AreaCompradoraService
 {
+    /**
+     * @var Repository
+     */
     protected $repository;
 
-    public function __construct(TipoAreaCompradora $model){
+    /**
+     * AreaCompradoraService constructor.
+     * @param CtgAreaCompradora $model
+     */
+    public function __construct(CtgAreaCompradora $model)
+    {
         $this->repository = new Repository($model);
     }
+
     public function index($data)
     {
         return $this->repository->all($data);
     }
+
     public function show($id)
     {
         return $this->repository->show($id);
     }
+
     public function paginate($data)
     {
         return $this->repository->paginate($data);
@@ -38,5 +47,4 @@ class AreaCompradoraService
     {
         return $this->repository->asignar($data);
     }
-
 }
