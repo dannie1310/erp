@@ -20,6 +20,7 @@ class RequisicionPartidaComplemento extends Model
 
     protected $fillable = [
         'id_item',
+        'descripcion_material',
         'observaciones',
         'fecha_entrega',
         'usuario_registo',

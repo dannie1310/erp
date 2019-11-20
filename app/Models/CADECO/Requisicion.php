@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\RequisicionComplemento;
 use Illuminate\Support\Facades\DB;
 
@@ -63,6 +64,8 @@ class Requisicion extends Transaccion
                 'id_area_solicitante' => $datos['id_area_solicitante'],
                 'concepto' => $datos['concepto']
             ]);
+
+            $requisicion_complemento->registrarActivoFijo($requisicion->id_transaccion);
 
             foreach ($datos['partidas'] as $partida)
             {
