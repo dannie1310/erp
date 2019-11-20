@@ -445,7 +445,6 @@ $api->version('v1', function ($api) {
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\RequisicionController@store');
         });
 
-
         // SOLICITUD DE COMPRA
         $api->group(['prefix' => 'solicitud-compra'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@paginate');
@@ -454,11 +453,6 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@update')->where(['id' => '[0-9]+']);
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@destroy')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
-        });
-
-        // ASIGNACION DE COMPRA
-        $api->group(['prefix' => 'asignacion-compra'], function ($api) {
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionCompraController@paginate');
         });
     });
 
