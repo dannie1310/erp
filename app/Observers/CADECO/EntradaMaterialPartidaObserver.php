@@ -21,12 +21,17 @@ class EntradaMaterialPartidaObserver
     public function creating(EntradaMaterialPartida $partida)
     {
         $partida->estado = 0;
+        $pagado =  $partida->pagado_registro;
+        if($pagado > 0)
+        {
+            $partida->saldo = $partida->saldo-$pagado;
+        }
     }
 
     public function created(EntradaMaterialPartida $partida)
     {
         $factor = $partida->entrada->factor_conversion;
-        $pagado = round($partida->anticipo * $partida->precio_unitario * $partida->cantidad_original1  /100,2);
+        $pagado =  $partida->pagado_registro;
         if($partida->id_almacen != null) {
             Inventario::create([
                 'id_almacen' => $partida->id_almacen,
@@ -52,5 +57,17 @@ class EntradaMaterialPartidaObserver
             ]);
         }
         $partida->ordenCompraPartida->entrega->surte($partida->cantidad);
+        if($pagado > 0)
+        {
+            $partida->ordenCompraPartida->disminuyeSaldo($pagado);
+        }
+
+    }
+    public function updating(EntradaMaterialPartida $partida)
+    {
+        if($partida->saldo<-0.01)
+        {
+            throw New \Exception('El saldo de la partida de entrada '.$partida->material->descripcion.' no puede ser menor a 0');
+        }
     }
 }
