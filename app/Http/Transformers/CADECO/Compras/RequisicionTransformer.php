@@ -22,6 +22,7 @@ class RequisicionTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'partidas',
+        'complemento'
     ];
 
     /**

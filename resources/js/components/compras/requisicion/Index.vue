@@ -98,10 +98,7 @@
                         id_usuario: requisicion.usuario ? requisicion.usuario.nombre : '',
                         buttons: $.extend({}, {
                             id: requisicion.id,
-                            show: true,
-                            edit: true,
-                            pdf: true,
-
+                            show: true
                         })
                     }));
                 },
