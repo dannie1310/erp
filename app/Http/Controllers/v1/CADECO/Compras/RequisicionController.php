@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Compras\RequisicionTransformer;
 use App\Services\CADECO\Compras\RequisicionService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class RequisicionController extends Controller
@@ -48,5 +49,13 @@ class RequisicionController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
         $this->service = $service;
+    }
+
+    public function cargaLayout(Request $request)
+    {
+//        dd('Carga de layout desde el controller Requisiciones', $request);
+        $res = $this->service->cargaLayout($request->file);
+//        dd('no paso');
+        return response()->json($res, 200);
     }
 }

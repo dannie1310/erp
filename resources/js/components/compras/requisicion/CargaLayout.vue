@@ -86,7 +86,27 @@
                 $(this.$refs.modal).modal('hide')
             },
             cargarLayout(){
-                console.log('Cargando Layouts');
+                var formData = new FormData();
+                formData.append('file',  this.file);
+                return this.$store.dispatch('compras/requisicion/cargaLayout',
+                    {
+                        data: formData,
+                        config: {
+                            params: { _method: 'POST'}
+                        }
+                    })
+                    .then(data => {
+                        this.$emit('change', data);
+                    }).finally(() => {
+                        this.$refs.carga_layout.value = '';
+                        this.file = null;
+                        this.file_name = '';
+                        this.$validator.errors.clear();
+                        setTimeout(() => {
+                            $(this.$refs.modal).modal('hide');
+
+                        }, 100);
+                    });
             },
             createImage(file, tipo) {
                 var reader = new FileReader();

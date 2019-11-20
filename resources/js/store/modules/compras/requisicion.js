@@ -144,6 +144,58 @@ export default {
                     });
             });
         },
+        cargaLayout(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar Layout de Requisición de Compra",
+                    text: "¿Está seguro/a de que desea cargar partidas?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Agregar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'layout', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    if(data.length > 0){
+                                        swal("No se pudieron cargar las siguientes partidas:"+data, {
+                                            buttons: {
+                                                confirm: {
+                                                    text: 'Aceptar',
+                                                    closeModal: true,
+                                                }
+                                            }
+                                        }).then(() => {
+                                            resolve(data);
+                                        })
+                                    }else{
+                                        swal("Partidas agregadas correctamente:"+data, {
+                                            icon: "success",
+                                            timer: 2000,
+                                            buttons: false
+                                        }).then(() => {
+                                            resolve(data);
+                                        })
+                                    }
+
+                                })
+                                .catch(error => {
+                                    reject('Archivo no procesable');
+                                })
+                        }
+                    });
+            });
+        },
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
