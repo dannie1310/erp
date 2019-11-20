@@ -6,6 +6,25 @@
                     <div class="invoice p-3 mb-3">
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
+                                <div class="row">
+                                    <div class="offset-md-10 col-md-2">
+                                        <div class="form-group error-content">
+                                            <label for="fecha" class="col-form-label">Fecha:</label>
+                                            <datepicker v-model = "fecha"
+                                                    name = "fecha"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    :use-utc="true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :disabled-dates="fechasDeshabilitadas"
+                                                    :class="{'is-invalid': errors.has('fecha')}"
+                                            ></datepicker>
+                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row justify-content-between">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -77,13 +96,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="d-flex flex-row-reverse">
-                                    <div class="p-1">
-                                        <button type="button" class="btn btn-primary" @click="addPartidas()"> + Agregar Partida</button>
-                                    </div>
-                                </div>
+                                <hr />
                                 <div class="row">
-                                    <div  class="col-12">
+                                    <div  class="col-md-12">
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <thead>
@@ -95,6 +110,11 @@
                                                     <th>Unidad</th>
                                                     <th>Fecha Entrega</th>
                                                     <th>Observaciones</th>
+                                                    <th>
+                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -168,6 +188,9 @@
                                                                       v-model="partida.observaciones"/>
                                                              <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                         </td>
+                                                         <td style="text-align:center">
+                                                            <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -210,11 +233,18 @@
 
 <script>
     import MaterialSelect from "../../cadeco/material/SelectAutocomplete"
+    import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "requisicion-create",
-        components: {MaterialSelect},
+        components: {MaterialSelect, Datepicker},
         data() {
             return {
+                cargando: false,
+                es:es,
+                fechasDeshabilitadas:{},
+                fecha : '',
+                fecha_hoy : '',
                 areas_compradoras : [],
                 areas_solicitantes : [],
                 tipos : [],
@@ -243,10 +273,34 @@
             this.getTipos();
         },
         methods : {
+            init() {
+                this.fecha = new Date();
+                this.cargando = true;
+                this.areas_compradoras = '';
+                this.areas_solicitantes = [];
+                this.tipos = [];
+                this.id_area_compradora = '';
+                this.id_tipo = '';
+                this.id_area_solicitante = '';
+                this.concepto = '';
+                this.observaciones = '';
+                this.index = 0;
+                this.partidas = [{
+                        i : '',
+                        material : "",
+                        descripcion : "",
+                        cantidad : "",
+                        fecha : "",
+                        observaciones : ""
+                }];
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
             getAreasCompradoras() {
+                this.fecha_hoy = new Date();
+                this.fecha = new Date();
+                this.fechasDeshabilitadas.from= new Date();
                 return this.$store.dispatch('seguridad/compras/ctg-area-compradora/index', {
                     params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
                 })
@@ -286,6 +340,9 @@
             },
             salir(){
                 this.$router.push({name: 'requisicion'});
+            },
+            destroy(index){
+                this.partidas.splice(index, 1);
             },
             validate() {
                 this.$validator.validate().then(result => {
