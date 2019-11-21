@@ -1,11 +1,10 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Luis M. Valencia
- * Date: 05/11/2019
- * Time: 08:08 p. m.
+ * User: DBenitezc
+ * Date: 20/11/2019
+ * Time: 02:05 PM
  */
-
 
 namespace App\Http\Transformers\CADECO\Compras;
 
@@ -13,12 +12,11 @@ namespace App\Http\Transformers\CADECO\Compras;
 use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgTipoTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Compras\TipoAreaCompradoraTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Compras\TipoAreaSolicitanteTransformer;
-use App\Models\CADECO\Compras\SolicitudComplemento;
+use App\Models\CADECO\Compras\RequisicionComplemento;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudComplementoTransformer extends TransformerAbstract
+class RequisicionComplementoTransformer extends TransformerAbstract
 {
-
     /**
      * List of resources possible to include
      *
@@ -27,9 +25,7 @@ class SolicitudComplementoTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'area_compradora',
         'area_solicitante',
-        'tipo',
-
-
+        'tipo'
     ];
 
     /**
@@ -41,72 +37,51 @@ class SolicitudComplementoTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(SolicitudComplemento $model)
+    public function transform(RequisicionComplemento $model)
     {
-//        dd("Dee");
-      return [
+        return [
             'id' => $model->getKey(),
-            'id_area_compradora' => $model->id_area_compradora,
-            'id_tipo' => $model->id_tipo,
-            'id_area_solicitante' => $model->id_area_solicitante,
             'folio' => $model->folio_compuesto,
-            'estado' => $model->estado,
-            'concepto' => $model->concepto,
-            'fecha_requisicion_origen_format' => $model->fecha_format,
-            'fecha_requisicion_origen' => $model->fecha_requisicion_origen,
-            'requisicion_origen' => $model->requisicion_origen,
-            'registro' => $model->registro,
-            'fecha_registro' =>$model->timestamp_registro,
-
+            'concepto' => $model->concepto
         ];
     }
 
     /**
-     * @param SolicitudComplemento $model
+     * @param RequisicionComplemento $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeAreaCompradora(SolicitudComplemento $model)
+    public function includeAreaCompradora(RequisicionComplemento $model)
     {
-
-        if($area = $model->area_compradora)
+        if($area = $model->areaCompradora)
         {
             return $this->item($area, new TipoAreaCompradoraTransformer);
         }
         return null;
     }
 
-
     /**
-     * @param SolicitudComplemento $model
+     * @param RequisicionComplemento $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeAreaSolicitante(SolicitudComplemento $model)
+    public function includeAreaSolicitante(RequisicionComplemento $model)
     {
-        if($area = $model->area_solicitante)
+        if($area = $model->areaSolicitante)
         {
             return $this->item($area, new TipoAreaSolicitanteTransformer);
         }
         return null;
     }
 
-
-
-
-
     /**
-     * @param SolicitudComplemento $model
+     * @param RequisicionComplemento $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeTipo(SolicitudComplemento $model)
+    public function includeTipo(RequisicionComplemento $model)
     {
         if($tipo = $model->tipo)
         {
             return $this->item($tipo, new CtgTipoTransformer);
         }
         return null;
-
     }
-
-
-
 }

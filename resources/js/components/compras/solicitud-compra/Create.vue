@@ -401,16 +401,16 @@
         },
         methods : {
             getAreasCompradoras(){
-                return this.$store.dispatch('seguridad/compras/ctg-area-compradora/index', {
+                return this.$store.dispatch('configuracion/area-compradora/index', {
                     params: { scope: 'asignadas', sort: 'descripcion',  order: 'asc'}
                 })
                     .then(data => {
-                        this.areas_compradoras = data.data;
+                        this.areas_compradoras = data;
                         this.disabled = false;
                     })
             },
             getTipos() {
-                return this.$store.dispatch('seguridad/compras/ctg-tipo/index', {
+                return this.$store.dispatch('configuracion/ctg-tipo/index', {
                     params: {sort: 'descripcion',  order: 'asc'}
                 })
                     .then(data => {
@@ -419,11 +419,11 @@
                     })
             },
             getAreasSolicitantes(){
-                return this.$store.dispatch('seguridad/compras/ctg-area-solicitante/index', {
-                    params: { scope: 'signadas', sort: 'descripcion',  order: 'asc'}
+                return this.$store.dispatch('configuracion/area-solicitante/index', {
+                    params: { scope: 'asignadas', sort: 'descripcion',  order: 'asc'}
                 })
                     .then(data => {
-                      this.areas_solicitantes = data.data;
+                      this.areas_solicitantes = data;
                         this.disabled = false;
                     })
             },
@@ -504,7 +504,7 @@
         },
         computed :{
             areas(){
-                return this.$store.getters['seguridad/compras/ctg-area-compradora/areas']
+                return this.$store.getters['configuracion/area-compradora/areas']
             },
         }
 

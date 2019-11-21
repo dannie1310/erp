@@ -50,11 +50,8 @@ class SolicitudCompraService
 
     }
 
-
-
     public function store($data)
     {
-
         /*Validación de Partidas*/
         foreach ($data['items'] as $key => $item){
         $validacion= $this->validarPartidas($data['items'], $item, $key);

@@ -624,7 +624,7 @@ export const routes = [
                         name: 'requisicion',
                         component: require('./components/compras/requisicion/Index'),
                         meta: {
-                            title: 'Requisiciones',
+                            title: 'Requisiciones de Compra',
                             breadcrumb: {parent: 'compras', name: 'REQUISICIONES'},
                             middleware: [auth, context],
                         }

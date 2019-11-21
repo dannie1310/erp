@@ -1,21 +1,21 @@
 <?php
 
 
-namespace App\Models\SEGURIDAD_ERP;
+namespace App\Models\SEGURIDAD_ERP\Compras;
 
 
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
-class UsuarioAreaSolicitante extends Model
+class AreaCompradoraUsuario extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.Compras.areas_solicitantes_usuario';
+    protected $table = 'Compras.areas_compradoras_usuario';
 
     public $timestamps = false;
     protected $fillable = [
         'id_usuario',
-        'id_area_solicitante',
+        'id_area_compradora',
     ];
 
     public function asignar($data)
@@ -23,18 +23,19 @@ class UsuarioAreaSolicitante extends Model
         $usuarioArea = Usuario::query()->find($data['user_id']);
         $usuario = Usuario::query()->find('user_id');
         $area = $data['area_id'];
-        $usuarioArea->areasSolicitantes()->detach($usuarioArea->areasSolicitantes()->pluck('id_area_solicitante')->toArray());
+        $usuarioArea->areasCompradoras()->detach($usuarioArea->areasCompradoras()->pluck('id_area_compradora')->toArray());
         if($area =! [])
         {
             foreach ($data['area_id'] as $area_id)
             {
-                $datos = [
+            $datos = [
                     'id_usuario' => $data['user_id'],
-                    'id_area_solicitante' => $area_id,
-                ];
-                UsuarioAreaSolicitante::query()->create($datos);
-            }
+                    'id_area_compradora' => $area_id,
+                    ];
+                AreaCompradoraUsuario::query()->create($datos);
+                 }
         }
         return true;
     }
 }
+

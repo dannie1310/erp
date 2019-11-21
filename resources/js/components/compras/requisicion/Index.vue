@@ -31,6 +31,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Folio Compuesto', field: 'folio'},
                     { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date'), sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
                     { title: 'Registró', field: 'id_usuario', sortable: true },
@@ -40,7 +41,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'id_transaccion',  order: 'desc'},
+                query: {include: ['registro', 'complemento'], sort: 'id_transaccion',  order: 'desc'},
                 search: '',
                 cargando: false
             }
@@ -93,15 +94,13 @@
                     self.$data.data = requisiciones.map((requisicion, i) => ({
                         index: (i + 1) + self.query.offset,
                         numero_folio: `# ${requisicion.numero_folio}`,
+                        folio: requisicion.complemento ? requisicion.complemento.folio : '',
                         fecha: new Date(requisicion.fecha).toDate(),
                         observaciones: requisicion.observaciones,
-                        id_usuario: requisicion.usuario ? requisicion.usuario.nombre : '',
+                        id_usuario: requisicion.registro ? requisicion.registro.nombre : '',
                         buttons: $.extend({}, {
                             id: requisicion.id,
-                            show: true,
-                            edit: true,
-                            pdf: true,
-
+                            show: true
                         })
                     }));
                 },

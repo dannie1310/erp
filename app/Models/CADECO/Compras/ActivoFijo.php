@@ -22,6 +22,4 @@ class ActivoFijo extends Model
     protected $fillable = [
         'id_transaccion',
     ];
-
-
 }

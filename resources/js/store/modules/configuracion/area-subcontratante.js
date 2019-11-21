@@ -1,4 +1,4 @@
-const URI = '/api/CONFIGURACION/area-subcontratante/';
+const URI = '/api/configuracion/area-subcontratante/';
 
 export default {
     namespaced: true,

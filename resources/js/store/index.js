@@ -34,7 +34,6 @@ import unidad from './modules/cadeco/unidad'
 
 //COMPRAS
 import asignacion from "./modules/compras/asignacion";
-import asignacionCompra from './modules/compras/asignacion-compra';
 import cotizacion from './modules/compras/cotizacion';
 import itemContratista from './modules/compras/item-contratista';
 import ordenCompra from './modules/compras/orden-compra';
@@ -93,11 +92,9 @@ import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
-import ctgAreaCompradora from  './modules/seguridad/compras/ctg-area-compradora';
-import ctgAreaSolicitante from './modules/seguridad/compras/ctg-area-solicitante';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
-import ctgtipo from './modules/seguridad/compras/ctg-tipo';
+import ctgtipo from './modules/configuracion/ctg-tipo';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -146,7 +143,6 @@ export default new Vuex.Store({
         'cadeco/unidad': unidad,
 
         'compras/asignacion' : asignacion,
-        'compras/asignacion-compra' : asignacionCompra,
         'compras/cotizacion' : cotizacion,
         'compras/item-contratista' : itemContratista,
         'compras/orden-compra' : ordenCompra,
@@ -156,6 +152,7 @@ export default new Vuex.Store({
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
+        'configuracion/ctg-tipo': ctgtipo,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
@@ -207,9 +204,6 @@ export default new Vuex.Store({
         'sci/modelo': modelo,
 
 
-        'seguridad/compras/ctg-area-compradora': ctgAreaCompradora,
-        'seguridad/compras/ctg-area-solicitante': ctgAreaSolicitante,
-        'seguridad/compras/ctg-tipo': ctgtipo,
         'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
         'seguridad/finanzas/configuracion-remesa': configuracionRemesa,

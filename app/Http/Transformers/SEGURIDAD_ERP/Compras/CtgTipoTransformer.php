@@ -23,6 +23,5 @@ class CtgTipoTransformer extends TransformerAbstract
             'descripcion_corta' => $model->descripcion_corta
 
         ];
-
     }
 }
