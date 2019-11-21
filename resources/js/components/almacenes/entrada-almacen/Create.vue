@@ -250,18 +250,18 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group row error-content">
-                                            <label for="almacen" class="col-sm-2 col-form-label">Activos:</label>
+                                            <label for="id_almacen" class="col-sm-2 col-form-label">Activos:</label>
                                             <div class="col-sm-10">
                                                 <select
                                                         name="id_almacen"
                                                         id="id_almacen"
                                                         data-vv-as="Almacén"
                                                         class="form-control"
-                                                        v-model="id_almacen_temporal"
+                                                        v-model="almacen_temporal"
                                                         :class="{'is-invalid': errors.has('id_almacen')}"
                                                 >
-                                                    <option value>-- Almacén --</option>
-                                                    <option v-for="item in almacenes" :value="item.id">{{ item.descripcion }}</option>
+                                                    <option value="">-- Almacén --</option>
+                                                    <option v-for="almacen in almacenes" :value="almacen">{{ almacen.descripcion }}</option>
                                                 </select>
                                                 <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                             </div>
@@ -368,7 +368,7 @@
                 cargando: false,
                 bandera : 0,
                 index_temporal : '',
-                id_almacen_temporal : '',
+                almacen_temporal : '',
                 id_concepto_temporal : '',
                 almacenes : [],
                 cargos: {
@@ -407,7 +407,7 @@
                 this.cargando = false;
                 this.bandera = 0;
                 this.index_temporal = '';
-                this.id_almacen_temporal = '';
+                this.almacen_temporal = '';
                 this.id_concepto_temporal = '';
                 this.almacenes = [];
                 this.partidas = [];
@@ -454,18 +454,6 @@
                     .then(data => {
                         this.almacenes = data.data
                     })
-            },
-
-            getAlmacen() {
-                return this.$store.dispatch('cadeco/almacen/find', {
-                    id: this.destino_seleccionado.id_destino,
-                    params: {
-                    }
-                })
-                    .then(data => {
-                        this.destino_seleccionado.destino = data;
-                    })
-
             },
 
             getConcepto() {
@@ -605,17 +593,12 @@
                     id_destino : ''
                 };
                 this.id_concepto_temporal = '';
-                this.id_almacen_temporal = '';
+                this.almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
             copiar_destino(partida){
-
                 this.destino_copiado = partida.destino;
-                console.log(partida);
-                console.log(partida.destino);
-
-                console.log(this.destino_seleccionado);
             },
             pegar_destino(partida){
                 partida.destino = {
@@ -626,11 +609,6 @@
                 partida.destino.id_destino = this.destino_copiado.id_destino;
                 partida.destino.tipo_destino = this.destino_copiado.tipo_destino;
                 partida.destino.destino = this.destino_copiado.destino;
-
-                console.log(partida);
-
-                console.log(partida.destino.destino.descripcion);
-
             }
         },
         watch: {
@@ -641,18 +619,19 @@
             },
             id_concepto_temporal(value){
                 if(value !== '' && value !== null && value !== undefined){
-                    this.id_almacen_temporal = '';
+                    this.almacen_temporal = '';
                     this.destino_seleccionado.id_destino = value;
                     this.destino_seleccionado.tipo_destino = 1;
                     this.getConcepto();
                 }
             },
-            id_almacen_temporal(value){
+            almacen_temporal(value){
+                console.log(value);
                 if(value !== '' && value !== null && value !== undefined){
                     this.id_concepto_temporal = '';
-                    this.destino_seleccionado.id_destino = value;
+                    this.destino_seleccionado.id_destino = value.id;
                     this.destino_seleccionado.tipo_destino = 2;
-                    this.getAlmacen();
+                    this.destino_seleccionado.destino = value;
                 }
             },
         }
