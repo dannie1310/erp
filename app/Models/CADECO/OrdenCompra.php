@@ -38,6 +38,11 @@ class OrdenCompra extends Transaccion
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursal()
+    {
+        return $this->hasOne(Sucursal::class, 'id_sucursal', 'id_sucursal');
+    }
+
     public function pago_anticipado()
     {
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
@@ -143,5 +148,14 @@ class OrdenCompra extends Transaccion
 
 
        return $query->whereIn('id_transaccion', $transacciones);
+    }
+
+    public function scopeDisponibleEntradaAlmacen($query)
+    {
+        return $query->whereHas('partidas', function ($q) {
+            return $q->whereHas('entrega', function ($qu) {
+                return $qu->whereRaw('ROUND(cantidad, 2) - ROUND(surtida, 2) > 0')->where('surtida', '>=', '0');
+            });
+        })->where('estado', '!=', 2);
     }
 }

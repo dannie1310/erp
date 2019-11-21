@@ -11,6 +11,7 @@ namespace App\Http\Controllers\v1\CADECO\Contratos;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AprobarEstimacionRequest;
+use App\Http\Requests\DeleteEstimacionRequest;
 use App\Http\Requests\RevertirAprobacionEstimacionRequest;
 use App\Http\Requests\StoreEstimacionRequest;
 use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
@@ -24,6 +25,7 @@ class EstimacionController extends Controller
 {
     use ControllerTrait {
         store as protected traitStore;
+        destroy as protected traitDestroy;
     }
 
     /**
@@ -56,6 +58,7 @@ class EstimacionController extends Controller
         $this->middleware('permiso:registrar_estimacion_subcontrato')->only('store');
         $this->middleware('permiso:aprobar_estimacion_subcontrato')->only('aprobar');
         $this->middleware('permiso:revertir_aprobacion_estimacion_subcontrato')->only('revertirAprobacion');
+        $this->middleware('permiso:eliminar_estimacion_subcontrato')->only('destroy');
 
         $this->middleware('context');
 
@@ -106,5 +109,10 @@ class EstimacionController extends Controller
     public function showEstimacionTable($id)
     {
         return $this->service->showEstimacionTable($id);
+    }
+
+    public function destroy(DeleteEstimacionRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);
     }
 }

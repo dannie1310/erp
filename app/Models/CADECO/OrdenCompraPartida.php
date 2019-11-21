@@ -17,4 +17,22 @@ class OrdenCompraPartida extends Item
     public  function orden_partida_complemento(){
         return $this->hasOne(OrdenCompraPartidaComplemento::class, 'id_item');
     }
+
+    public function entrega()
+    {
+        return $this->belongsTo(Entrega::class, 'id_item');
+    }
+
+    public function entradas()
+    {
+        return $this->hasMany(EntradaMaterialPartida::class, 'item_antecedente', 'id_item');
+    }
+
+    public function scopeDisponibleEntradaAlmacen($query)
+    {
+        return $query->whereHas('entrega', function ($qu) {
+            return $qu->whereRaw('ROUND(cantidad, 2) - ROUND(surtida, 2) > 0');
+        });
+    }
+
 }

@@ -24,6 +24,7 @@ import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
 import familia from './modules/cadeco/familia';
 import fondo from './modules/cadeco/fondo';
+import inventario from './modules/cadeco/inventario';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
@@ -32,10 +33,16 @@ import unidad from './modules/cadeco/unidad'
 
 
 //COMPRAS
-import solicitudCompra from './modules/compras/solicitud-compra';
+import asignacion from "./modules/compras/asignacion";
+import cotizacion from './modules/compras/cotizacion';
+import itemContratista from './modules/compras/item-contratista';
 import ordenCompra from './modules/compras/orden-compra';
+import requisicion from './modules/compras/requisicion';
+import solicitudCompra from './modules/compras/solicitud-compra';
 
 //CONFIGURACION
+import areaCompradora from './modules/configuracion/area-compradora';
+import areaSolicitante from './modules/configuracion/area-solicitante';
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
 
 //CONTABILIDAD
@@ -73,22 +80,21 @@ import datosEstimaciones from './modules/finanzas/estimacion';
 import distribuirRecursoRemesa from './modules/finanzas/distribuir-recurso-remesa';
 import factura from './modules/finanzas/factura';
 import gestionPago from './modules/finanzas/gestion-pago';
+import movimientoBancario from './modules/finanzas/movimiento-bancario';
 import pago from './modules/finanzas/pago';
 import pagoAnticipado from './modules/finanzas/solicitud-pago-anticipado';
 import remesa from './modules/finanzas/remesa';
 import solicitudAlta from './modules/finanzas/solicitud-alta-cuenta-bancaria';
 import solicitudBaja from './modules/finanzas/solicitud-baja-cuenta-bancaria';
-
-//TESORERIA
-import movimientoBancario from './modules/tesoreria/movimiento-bancario';
-import tipoMovimiento from './modules/tesoreria/tipo-movimiento';
-import traspaso from './modules/tesoreria/traspaso-entre-cuentas';
+import tipoMovimiento from './modules/finanzas/tipo-movimiento';
+import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
+import ctgtipo from './modules/configuracion/ctg-tipo';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -99,6 +105,11 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 //IGH
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
+
+
+//SCI
+import marca from "./modules/sci/marca";
+import modelo from "./modules/sci/modelo";
 
 Vue.use(Vuex);
 
@@ -124,16 +135,24 @@ export default new Vuex.Store({
         'cadeco/empresa': empresa,
         'cadeco/familia': familia,
         'cadeco/fondo': fondo,
+        'cadeco/inventario': inventario,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
         'cadeco/sucursal': sucursal,
         'cadeco/unidad': unidad,
 
-        'compras/solicitud-compra' : solicitudCompra,
+        'compras/asignacion' : asignacion,
+        'compras/cotizacion' : cotizacion,
+        'compras/item-contratista' : itemContratista,
         'compras/orden-compra' : ordenCompra,
+        'compras/requisicion' : requisicion,
+        'compras/solicitud-compra' : solicitudCompra,
 
+        'configuracion/area-compradora' : areaCompradora,
+        'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
+        'configuracion/ctg-tipo': ctgtipo,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
@@ -144,15 +163,18 @@ export default new Vuex.Store({
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,
         'finanzas/cuenta-bancaria-empresa': cuentaBancariaEmpresa,
-        'finanzas/estimacion' : datosEstimaciones,
         'finanzas/distribuir-recurso-remesa': distribuirRecursoRemesa,
+        'finanzas/estimacion' : datosEstimaciones,
         'finanzas/factura': factura,
         'finanzas/gestion-pago': gestionPago,
+        'finanzas/movimiento-bancario': movimientoBancario,
         'finanzas/pago': pago,
-        'finanzas/solicitud-pago-anticipado': pagoAnticipado,
         'finanzas/remesa': remesa,
         'finanzas/solicitud-alta-cuenta-bancaria' : solicitudAlta,
         'finanzas/solicitud-baja-cuenta-bancaria' : solicitudBaja,
+        'finanzas/solicitud-pago-anticipado': pagoAnticipado,
+        'finanzas/tipo-movimiento': tipoMovimiento,
+        'finanzas/traspaso-entre-cuentas': traspaso,
 
 
         'contabilidad/cierre-periodo': cierrePeriodo,
@@ -177,14 +199,15 @@ export default new Vuex.Store({
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
 
-        'tesoreria/movimiento-bancario': movimientoBancario,
-        'tesoreria/tipo-movimiento': tipoMovimiento,
-        'tesoreria/traspaso-entre-cuentas': traspaso,
+
+        'sci/marca': marca,
+        'sci/modelo': modelo,
+
 
         'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
-        'seguridad/configuracion-obra': configuracionObra,
         'seguridad/finanzas/configuracion-remesa': configuracionRemesa,
+        'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/rol-personalizado': rolPersonalizado,

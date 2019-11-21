@@ -110,9 +110,9 @@ class EstimacionService
     {
         return $this->repository->show($id);
     }
+
     public function showEstimacionTable($id)
     {
-
         $estimacion= $this->repository->show($id);
         $numEstimacion=$estimacion->subcontratoEstimacion;
 
@@ -190,7 +190,6 @@ class EstimacionService
                $suma_estimadoAnterior += $cantidadEstimadoAnterior * $precioUnitario;
                $suma_acumulado += ($cantidadEstimadoAnterior) * $precioUnitario;
                $suma_porEstimar += ($cantidadContrato - ($cantidadEstimadoAnterior)) * $precioUnitario;
-
            }
       }
 
@@ -263,12 +262,14 @@ class EstimacionService
         }
     }
 
-
     public function pdfEstimacion($id)
     {
         $pdf = new EstimacionFormato($id);
         return $pdf;
     }
 
-
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data']);
+    }
 }

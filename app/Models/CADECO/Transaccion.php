@@ -145,7 +145,8 @@ class Transaccion extends Model
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 

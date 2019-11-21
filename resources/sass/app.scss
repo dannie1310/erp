@@ -19,6 +19,19 @@
   font-size: 13px;
 }
 
+i.button{
+  cursor:pointer;
+  font-size: 1.2em;
+}
+
+.th_icono, td_icono
+{
+  text-align: center;
+  width: 25px;
+  max-width: 25px;
+  min-width: 25px;
+}
+
 .td_money{
   text-align: right;
   width: 100px;

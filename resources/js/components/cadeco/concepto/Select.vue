@@ -26,8 +26,9 @@
         data() {
             return {
                 val: null,
+                text:null,
                 rootNodes: [],
-                disabled: true
+                disabled: true,
             }
         },
 
@@ -80,7 +81,8 @@
                     .catch(error => {
                         callback(new Error('Failed to load options: network error.'))
                     });
-            }
+            },
+
         },
 
         computed: {
