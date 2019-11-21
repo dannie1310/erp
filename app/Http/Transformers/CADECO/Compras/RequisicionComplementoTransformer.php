@@ -9,6 +9,9 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgTipoTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\TipoAreaCompradoraTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\TipoAreaSolicitanteTransformer;
 use App\Models\CADECO\Compras\RequisicionComplemento;
 use League\Fractal\TransformerAbstract;
 
@@ -20,7 +23,9 @@ class RequisicionComplementoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-       'area_compradora'
+        'area_compradora',
+        'area_solicitante',
+        'tipo'
     ];
 
     /**
@@ -41,11 +46,42 @@ class RequisicionComplementoTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param RequisicionComplemento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeAreaCompradora(RequisicionComplemento $model)
     {
         if($area = $model->areaCompradora)
         {
-            return $this->item();
+            return $this->item($area, new TipoAreaCompradoraTransformer);
         }
+        return null;
+    }
+
+    /**
+     * @param RequisicionComplemento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeAreaSolicitante(RequisicionComplemento $model)
+    {
+        if($area = $model->areaSolicitante)
+        {
+            return $this->item($area, new TipoAreaSolicitanteTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param RequisicionComplemento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipo(RequisicionComplemento $model)
+    {
+        if($tipo = $model->tipo)
+        {
+            return $this->item($tipo, new CtgTipoTransformer);
+        }
+        return null;
     }
 }
