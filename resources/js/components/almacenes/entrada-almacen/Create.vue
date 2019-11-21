@@ -15,7 +15,6 @@
                                                                     :format = "formatoFecha"
                                                                     :language = "es"
                                                                     :bootstrap-styling = "true"
-                                                                    :use-utc="true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
                                                                     :disabled-dates="fechasDeshabilitadas"
