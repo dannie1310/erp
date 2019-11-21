@@ -270,7 +270,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                    <button  type="button"  class="btn btn-primary" v-on:click="seleccionarDestino">Seleccionar</button>
+                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
                              </div>
                         </form>
                     </div>
@@ -464,6 +464,7 @@
                 })
                     .then(data => {
                         this.destino_seleccionado.destino = data;
+                        this.seleccionarDestino();
                     })
             },
 
@@ -597,6 +598,12 @@
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
+            cerrarModalDestino(){
+                this.id_concepto_temporal = '';
+                this.almacen_temporal = '';
+                $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
+            },
             copiar_destino(partida){
                 this.destino_copiado = partida.destino;
             },
@@ -626,12 +633,12 @@
                 }
             },
             almacen_temporal(value){
-                console.log(value);
                 if(value !== '' && value !== null && value !== undefined){
                     this.id_concepto_temporal = '';
                     this.destino_seleccionado.id_destino = value.id;
                     this.destino_seleccionado.tipo_destino = 2;
                     this.destino_seleccionado.destino = value;
+                    this.seleccionarDestino();
                 }
             },
         }
