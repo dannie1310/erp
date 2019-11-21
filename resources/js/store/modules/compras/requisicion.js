@@ -167,26 +167,13 @@ export default {
                                 .post(URI + 'layout', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    if(data.length > 0){
-                                        swal("No se pudieron cargar las siguientes partidas:"+data, {
-                                            buttons: {
-                                                confirm: {
-                                                    text: 'Aceptar',
-                                                    closeModal: true,
-                                                }
-                                            }
-                                        }).then(() => {
-                                            resolve(data);
-                                        })
-                                    }else{
-                                        swal("Partidas agregadas correctamente:"+data, {
+                                        swal("Partidas agregadas correctamente:", {
                                             icon: "success",
                                             timer: 2000,
                                             buttons: false
                                         }).then(() => {
                                             resolve(data);
                                         })
-                                    }
 
                                 })
                                 .catch(error => {

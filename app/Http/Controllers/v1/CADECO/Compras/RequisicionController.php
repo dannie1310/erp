@@ -53,9 +53,7 @@ class RequisicionController extends Controller
 
     public function cargaLayout(Request $request)
     {
-//        dd('Carga de layout desde el controller Requisiciones', $request);
-        $res = $this->service->cargaLayout($request->file);
-//        dd('no paso');
+         $res = $this->service->cargaLayout($request->file);
         return response()->json($res, 200);
     }
 }

@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Compras;
 
 
+use App\Models\CADECO\Material;
 use App\Models\CADECO\Requisicion;
 use App\Repositories\Repository;
 
@@ -28,6 +29,11 @@ class RequisicionService
         $this->repository = new Repository($model);
     }
 
+    public function index()
+    {
+        return $this->repository->all();
+    }
+
     public function paginate($data)
     {
         return $this->repository->paginate($data);
@@ -36,7 +42,39 @@ class RequisicionService
     public function cargaLayout($file)
     {
         $partidas = $this->getCsvData($file);
-        dd('Cargar Layout de servicio',$file);
+        $mensaje = array_pop($partidas);
+        $materiales = array();
+        $regresa = [];
+        foreach ($partidas as $partida)
+        {
+            if($partida['No PARTE'] != null) {
+                $material = Material::query()->where('numero_parte', '=', $partida['No PARTE'])->get(['descripcion', 'unidad', 'FechaHoraRegistro'])->first();
+                $materiales[] = array(
+                    'No Parte' => $partida['No PARTE'],
+                    'No Parte Equivalente' => $partida['No PARTE EQUIVALENTE'],
+                    'Pagina' => $partida['PAGINA'],
+                    'Descripcion' => $material->descripcion,
+                    'Unidad' => $material->unidad,
+                    'Ref' => $partida['REF.'],
+                    'Fecha' => $material->FechaHoraRegistro,
+                    'Cantidad' => $partida['CANTIDAD']
+                );
+            }else{
+                $materiales[] = array(
+                    'No Parte' => $partida['DESCRIPCION'],
+                    'No Parte Equivalente' => $partida['No PARTE EQUIVALENTE'],
+                    'Pagina' => $partida['PAGINA'],
+                    'Descripcion' => $partida['DESCRIPCION'],
+                    'Unidad' => $partida['UNIDAD'],
+                    'Ref' => $partida['REF.'],
+                    'Fecha' => null,
+                    'Cantidad' => $partida['CANTIDAD']
+                );
+            }
+        }
+        array_push($regresa,$materiales);
+        array_push($regresa,$mensaje);
+        return $regresa;
     }
 
     public function getCsvData($file)
@@ -51,20 +89,7 @@ class RequisicionService
             $renglon = explode(",",fgets($myfile));
             if($linea == 1){
                 $linea++;
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-                // $renglon = explode(",",fgets($myfile));
-
             }else{
-                // dd($renglon);
                 if(count($renglon) != 8) {
                     abort(400,'No se puede procesar la Requisición');
                 }else if(count($renglon) == 8 && $renglon[0] != '' && $renglon[5] != '' && $renglon[6] != '' && $renglon[7] != ''){
@@ -115,11 +140,6 @@ class RequisicionService
                         array_push($mensaje_rechazos , 'El campo CANTIDAD es obligatorio en la partida:'.$renglon[0]);
                     }
                 }
-                if($linea == 13){
-                    $mensaje_rechazos = array_unique($mensaje_rechazos);
-                    dd($mensaje_rechazos,$content);
-                }
-
                 $linea++;
             }
         }
@@ -128,18 +148,14 @@ class RequisicionService
         {
             $mensaje_fin = "";
             foreach ($mensaje_rechazos as $mensaje_rechazo) {
-                $mensaje_fin = $mensaje_fin . $mensaje_rechazo;
+                $mensaje_fin = $mensaje_fin . $mensaje_rechazo.' --';
             }
             $mensaje = $mensaje.$mensaje_fin;
+        }else{
+            $mensaje = 'Listo';
         }
-
-        if($mensaje != "")
-        {
-            abort(400,'No se realizó la carga de conteos debido a los siguientes errores:'.$mensaje);
-        }
-        fclose($myfile);
+        $content[] = array('Mensaje' => $mensaje);
         return $content;
-
     }
 
 }
