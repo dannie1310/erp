@@ -44,8 +44,10 @@ class EntradaAlmacenTransformer extends TransformerAbstract
             'estado' => $model->estado,
             'estado_format' => $model->estadoFormat,
             'folio' => $model->numero_folio,
-            'numero_folio_format' => $model->numero_folio_format_orden,
-            'referencia' => $model->referencia
+            'numero_folio_format' => $model->numero_folio_format,
+            'referencia' => $model->referencia,
+            'empresa_razon_social'=> $model->empresa->razon_social,
+            'orden_compra_numero_folio_format'=> $model->ordenCompra->numero_folio_format,
         ];
     }
 

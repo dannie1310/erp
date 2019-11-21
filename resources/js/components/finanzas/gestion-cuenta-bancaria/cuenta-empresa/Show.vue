@@ -65,7 +65,7 @@
                                             <tbody>
                                             <tr>
                                                 <th colspan="2">Solicitud de Alta:</th>
-                                                <td colspan="2">{{cuentaEmpresa.solicitud_alta.numero_folio_format_orden}}</td>
+                                                <td colspan="2">{{cuentaEmpresa.solicitud_alta.numero_folio_format}}</td>
                                             </tr>
                                             <tr v-for="(mov,i) in cuentaEmpresa.solicitud_alta.movimientos.data"  v-if="mov && mov.id_tipo_movimiento == 2">
                                                 <th>Fecha de Autorización:</th>
@@ -81,7 +81,7 @@
                                             <tbody>
                                             <tr>
                                                 <th colspan="2">Solicitud de Baja:</th>
-                                                <td colspan="2">{{cuentaEmpresa.solicitud_baja.numero_folio_format_orden}}</td>
+                                                <td colspan="2">{{cuentaEmpresa.solicitud_baja.numero_folio_format}}</td>
                                             </tr>
                                             <tr v-for="(mov_baja,i) in cuentaEmpresa.solicitud_baja.movimientos.data" v-if="mov_baja && mov_baja.id_tipo_movimiento == 2">
                                                 <th>Fecha de Autorización:</th>

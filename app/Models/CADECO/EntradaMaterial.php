@@ -76,6 +76,11 @@ class EntradaMaterial extends Transaccion
         return $this->hasMany(EntradaMaterialPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function entregasContratista()
+    {
+        return $this->hasManyThrough(ItemContratista::class,EntradaMaterialPartida::class,"id_transaccion","id_item","id_transaccion","id_item");
+    }
+
     public function sucursal()
     {
         return $this->belongsTo(Sucursal::class, 'id_sucursal');
