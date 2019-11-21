@@ -28,7 +28,7 @@ class SalidaAlmacenTransformer extends TransformerAbstract
             'folio' => $model->numero_folio,
 //            'operacion' => $model->operacion,
             'opciones' => $model->opciones,
-            'folio_format' => $model->numero_folio_format_orden
+            'folio_format' => $model->numero_folio_format
         ];
     }
 

@@ -86,7 +86,7 @@
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: cuenta.numero_folio_format_orden,
+                            folio: cuenta.numero_folio_format,
                             id: cuenta.id,
                             fecha: cuenta.fecha_format,
                             empresa: cuenta.empresa.razon_social,
