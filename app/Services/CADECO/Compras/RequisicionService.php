@@ -46,4 +46,9 @@ class RequisicionService
         ];
         return $this->repository->create($datos);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

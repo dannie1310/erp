@@ -9,10 +9,9 @@
 namespace App\Models\CADECO;
 
 
-use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\RequisicionComplemento;
-use DateTime;
 use Illuminate\Support\Facades\DB;
+use App\Models\IGH\Usuario;
 
 class Requisicion extends Transaccion
 {
@@ -47,6 +46,11 @@ class Requisicion extends Transaccion
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function registro()
+    {
+        return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 
     public function registrar($datos)

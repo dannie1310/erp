@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Requisicion;
 use League\Fractal\TransformerAbstract;
 
@@ -21,7 +22,8 @@ class RequisicionTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'partidas',
-        'complemento'
+        'complemento',
+        'registro'
     ];
 
     /**
@@ -66,6 +68,19 @@ class RequisicionTransformer extends TransformerAbstract
         if($complemento =  $model->complemento)
         {
             return $this->item($complemento, new RequisicionComplementoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Requisicion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeRegistro(Requisicion $model)
+    {
+        if($registro = $model->registro)
+        {
+            return $this->item($registro, new UsuarioTransformer);
         }
         return null;
     }
