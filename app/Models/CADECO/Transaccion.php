@@ -54,11 +54,6 @@ class Transaccion extends Model
         return '# ' . sprintf("%05d", $this->numero_folio);
     }
 
-    public function getNumeroFolioFormatOrdenAttribute()
-    {
-        return '# '. str_pad($this->numero_folio, 5,"0",STR_PAD_LEFT);
-    }
-
     public function getMontoFormatAttribute()
     {
         return '$ ' . number_format(abs($this->monto),2);
