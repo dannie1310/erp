@@ -37,12 +37,12 @@ class Entrega extends Model
     public function setCumplida()
     {
         $this->surtida = $this->cantidad;
+        $this->save();
     }
 
     public function surte($cantidad)
     {
-        $this->update([
-            'surtida' => $this->surtida + $cantidad
-        ]);
+        $this->surtida = $this->surtida + $cantidad;
+        $this->save();
     }
 }
