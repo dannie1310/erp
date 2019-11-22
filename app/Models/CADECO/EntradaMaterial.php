@@ -102,6 +102,112 @@ class EntradaMaterial extends Transaccion
         }
     }
 
+    public function getTransaccionesRelacionadasAttribute()
+    {
+
+        $transacciones = [];
+        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+        if ($poliza != null){
+            if($poliza->estatus != -3) {
+                $transacciones[] =[
+                    "numero_folio"=>$poliza->numero_folio_format,
+                    "fecha"=>$poliza->fecha_format,
+                    "fecha_hora_registro"=>$poliza->fecha_hora_registro_format,
+                    "fecha_hora_registro_orden"=>$poliza->fecha_hora_registro_orden,
+                    "tipo_transaccion"=>"Prepoliza",
+                    "concepto"=>$poliza->concepto,
+                ];
+            };
+        }
+        $items = $this->partidas()->get()->toArray();
+        foreach ($items as $item){
+            $inventario = Inventario::query()->where('id_item', $item['id_item'])->first();
+            $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->first();
+
+            $factura_part = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->first();
+            if($factura_part != null) {
+                $factura = Factura::query()->where('id_transaccion', $factura_part->id_transaccion)->first();
+                $contra_recibo = ContraRecibo::query()->where('id_transaccion', $factura->id_antecedente)->first();
+                $transacciones[] =[
+                    "numero_folio"=>$contra_recibo->numero_folio_format,
+                    "fecha"=>$contra_recibo->fecha_format,
+                    "fecha_hora_registro"=>$contra_recibo->fecha_hora_registro_format,
+                    "fecha_hora_registro_orden"=>$contra_recibo->fecha_hora_registro_orden,
+                    "tipo_transaccion"=>"Contrarecibo",
+                    "concepto"=>$contra_recibo->observaciones
+                ];
+                $transacciones[] =[
+                    "numero_folio"=>$factura->numero_folio_format,
+                    "fecha"=>$factura->fecha_format,
+                    "fecha_hora_registro"=>$factura->fecha_hora_registro_format,
+                    "fecha_hora_registro_orden"=>$factura->fecha_hora_registro_orden,
+                    "tipo_transaccion"=>"Factura",
+                    "concepto"=>$factura->observaciones
+                ];
+
+            }
+
+
+            if($inventario != null && $inventario->cantidad != $inventario->saldo){
+                $movimientos_salidas = Movimiento::query()->where('lote_antecedente', $inventario->id_lote)->get();
+                $inventarios_transferencias =  Inventario::query()->where('lote_antecedente', $inventario->id_lote)->get();
+
+                if($movimientos_salidas->toArray() != []) {
+                    foreach ($movimientos_salidas as $movimientos_salida) {
+                        $item_salida = SalidaAlmacenPartida::query()->where('id_item', $movimientos_salida->id_item)->first();
+                        $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
+                        $transacciones[] =[
+                            "numero_folio"=>$salida->numero_folio_format,
+                            "fecha"=>$salida->fecha_format,
+                            "fecha_hora_registro"=>$salida->fecha_hora_registro_format,
+                            "fecha_hora_registro_orden"=>$salida->fecha_hora_registro_orden,
+                            "tipo_transaccion"=>"Salida (Consumo)",
+                            "concepto"=>$salida->observaciones
+                        ];
+                    }
+                }
+                if($inventarios_transferencias->toArray() != []){
+                    foreach ($inventarios_transferencias as $inventarios_transferencia) {
+                        $item_salida = SalidaAlmacenPartida::query()->where('id_item', $inventarios_transferencia->id_item)->first();
+                        $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
+                        $transacciones[] =[
+                            "numero_folio"=>$salida->numero_folio_format,
+                            "fecha"=>$salida->fecha_format,
+                            "fecha_hora_registro"=>$salida->fecha_hora_registro_format,
+                            "tipo_transaccion"=>"Salida (Transferencia)",
+                            "fecha_hora_registro_orden"=>$salida->fecha_hora_registro_orden,
+                            "concepto"=>$salida->observaciones
+                        ];
+                    }
+                }
+            }
+        }
+
+        uasort($transacciones, $this->ordenar('fecha_hora_registro_orden'));
+
+        $transacciones = array_values(array_unique($transacciones,SORT_REGULAR ));
+
+        if($transacciones != [])
+        {
+
+            return $transacciones;
+        }
+        else
+            {
+                return null;
+            }
+    }
+
+    public function ordenar($clave)
+    {
+        return function ($a, $b) use ($clave)
+        {
+            return strcmp($a[$clave], $b[$clave]);
+        };
+    }
+
+
+
     /**
      * Reglas de negocio que debe cumplir la eliminación
      */
@@ -155,7 +261,7 @@ class EntradaMaterial extends Transaccion
                 }
             }
         }
-        $mensaje_items = array_unique($mensaje_items);
+        $mensaje_items = array_values(array_unique($mensaje_items));
 
         if($mensaje_items != [])
         {

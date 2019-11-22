@@ -106,7 +106,13 @@ class Transaccion extends Model
     public function getFechaHoraRegistroFormatAttribute()
     {
         $date = date_create($this->FechaHoraRegistro);
-        return date_format($date,"d/m/Y h:i:s a");
+        return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public function getFechaHoraRegistroOrdenAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"YmdHis");
     }
 
     public function getCumplimientoFormAttribute()
