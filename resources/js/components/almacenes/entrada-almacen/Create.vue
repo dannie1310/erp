@@ -7,7 +7,7 @@
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
                                 <div class="row">
-                                        <div class="offset-md-10 col-md-2">
+                                        <div class="col-md-2">
                                             <div class="form-group error-content">
                                                 <label for="fecha" class="col-form-label">Fecha:</label>
                                                     <datepicker v-model = "fecha"
