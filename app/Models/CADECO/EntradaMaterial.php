@@ -501,6 +501,7 @@ class EntradaMaterial extends Transaccion
 
             foreach ($data['partidas'] as $item){
                 $item_antecedente = OrdenCompraPartida::find($item['id']);
+                /*dd($item_antecedente->entrega->cantidad, $item_antecedente->entrega->surtida);*/
                 if(isset($item['cantidad_ingresada']) == true) {
                     if ($item['destino']['tipo_destino'] == 1) {
                         $item_guardado = $entrada->partidas()->create([
@@ -517,7 +518,7 @@ class EntradaMaterial extends Transaccion
                             'importe' => $item['precio_unitario'] * $item['cantidad_ingresada'],
                             'saldo' => $item['precio_unitario'] * $item['cantidad_ingresada'],
                             'precio_unitario' => $item['precio_unitario'],
-                            'anticipo' => $item_antecedente->anticipo
+                            'anticipo' => $item_antecedente->anticipo,
                         ]);
                     }
                     if ($item['destino']['tipo_destino'] == 2) {
@@ -535,7 +536,7 @@ class EntradaMaterial extends Transaccion
                             'importe' => $item['precio_unitario'] * $item['cantidad_ingresada'],
                             'saldo' => $item['precio_unitario'] * $item['cantidad_ingresada'],
                             'precio_unitario' => $item['precio_unitario'],
-                            'anticipo' => $item_antecedente->anticipo
+                            'anticipo' => $item_antecedente->anticipo,
                         ]);
                     }
 
@@ -543,6 +544,10 @@ class EntradaMaterial extends Transaccion
                         ItemContratista::query()->create( ['id_item' => $item_guardado->id_item,
                             'id_empresa' => $item['contratista_seleccionado']['empresa_contratista'],
                             'con_cargo' => $item['contratista_seleccionado']['opcion']]);
+                    }
+
+                    if($item["cumplido"] === true){
+                        $item_antecedente->entrega->setCumplida();
                     }
                 }
             }
@@ -556,43 +561,4 @@ class EntradaMaterial extends Transaccion
             throw $e;
         }
     }
-
-    /*public function validarCantidades($partidas)
-    {
-        foreach ($partidas as $i){
-            if(isset($i['cantidad_ingresada']) == true) {
-                $cantidad_entradas = EntradaMaterialPartida::query()->where('item_antecedente', '=', $i['id'])->sum('cantidad');
-                $cantidad_item_orden = OrdenCompraPartida::query()->where('id_item', '=', $i['id'])->pluck('cantidad')->first();
-                if ($cantidad_item_orden < $cantidad_entradas)
-                {
-                    abort(400, 'El material: ' . $i['material']['descripcion'] . '  está entregado completamente.');
-                }
-
-                if(!($cantidad_item_orden > $cantidad_entradas && $cantidad_item_orden >= $cantidad_entradas+$i['cantidad_ingresada']))
-                {
-                    abort(400, 'El material: ' . $i['material']['descripcion'] . '  sobrepasa la cantidad ingresada.');
-                }
-            }
-        }
-    }*/
-
-    /*public function validarOrdenCompraCumplida($partidas)
-    {
-        $suma_totales = 0;
-        foreach ($partidas as $i) {
-            if(isset($i['cantidad_ingresada']) == true) {
-                $cantidad_entradas = EntradaMaterialPartida::query()->where('item_antecedente', '=', $i['item_antecedente'])->sum('cantidad');
-                $cantidad_item_orden = OrdenCompraPartida::query()->where('id_item', '=', $i['item_antecedente'])->pluck('cantidad')->first();
-
-                if ((float)$cantidad_item_orden == (float)$cantidad_entradas + (float)$i['cantidad_ingresada']) {
-                    $suma_totales = $suma_totales + 1;
-                }
-            }
-        }
-
-        if($suma_totales == count($partidas)){
-           return true;
-        }
-        return false;
-    }*/
 }

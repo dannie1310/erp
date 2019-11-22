@@ -37,7 +37,7 @@ class OrdenCompraPartidaTransformer extends TransformerAbstract
             'cantidad_pendiente'=>$model->entrega->pendiente_entrega,
             'destino' => '',
             'precio_unitario'=>$model->precio_unitario,
-            'cumplido'=>0,
+            'cumplido'=>false,
             'id_material' => $model->material->id_material,
         ];
     }

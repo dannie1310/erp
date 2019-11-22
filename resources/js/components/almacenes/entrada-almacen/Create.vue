@@ -133,13 +133,15 @@
                                                                             :name="`cantidad_ingresada[${i}]`"
                                                                             placeholder="Cantidad Ingresada"
                                                                             v-model="partida.cantidad_ingresada"
-                                                                            :class="{'is-invalid': errors.has(`cantidad_ingresada[${i}]`)}">
+                                                                            :class="{'is-invalid': errors.has(`cantidad_ingresada[${i}]`)}"
+                                                                            v-on:keyup="validaCumplimiento(partida)">
                                                                     <div class="invalid-feedback" v-show="errors.has(`cantidad_ingresada[${i}]`)">{{ errors.first(`cantidad_ingresada[${i}]`) }}</div>
                                                                 </div>
                                                         </td>
                                                         <td class="text-center" >
-                                                             <i class="fa fa-check-square-o" style="font-size: 1.2em;" v-if="parseFloat(partida.cantidad_ingresada) == parseFloat(partida.cantidad_pendiente)"></i>
-                                                             <i class="fa fa-square-o" style="font-size:1.2em;" v-else></i>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="form-check-input button" id="defaultUnchecked" v-on:change="validaCumplimiento(partida)" v-model="partida.cumplido">
+                                                            </div>
                                                         </td>
                                                         <td  v-if="partida.destino ===  ''" >
                                                             <small class="badge badge-secondary">
@@ -515,6 +517,18 @@
                 $(this.$refs.contratista).modal('hide');
                 this.$validator.reset();
                 this.cargando = false;
+            },
+
+            validaCumplimiento(partida){
+                var diferencia;
+                diferencia = Math.abs(parseFloat(Math.round(partida.cantidad_pendiente).toFixed(2)) - parseFloat(Math.round(partida.cantidad_ingresada).toFixed(2)));
+                if(diferencia<0.01)
+                {
+                    partida.cumplido = true;
+                }
+                else if(parseFloat(Math.round(partida.cantidad_ingresada).toFixed(2)) == parseFloat(0)){
+                    partida.cumplido = false;
+                }
             },
 
             validate() {
