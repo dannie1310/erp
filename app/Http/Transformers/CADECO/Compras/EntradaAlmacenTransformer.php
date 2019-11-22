@@ -12,6 +12,7 @@ namespace App\Http\Transformers\CADECO\Compras;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Models\CADECO\EntradaMaterial;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\CADECO\Almacenes\EntradaAlmacenTransaccionesRelacionadasTransformer;
 
 class EntradaAlmacenTransformer extends TransformerAbstract
 {
@@ -23,7 +24,8 @@ class EntradaAlmacenTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'empresa',
         'partidas',
-        'orden_compra'
+        'orden_compra',
+        'transacciones_relacionadas'
     ];
 
     /**
@@ -48,8 +50,11 @@ class EntradaAlmacenTransformer extends TransformerAbstract
             'referencia' => $model->referencia,
             'empresa_razon_social'=> $model->empresa->razon_social,
             'orden_compra_numero_folio_format'=> $model->ordenCompra->numero_folio_format,
+            'solicitud_numero_folio_format'=> $model->ordenCompra->solicitud->numero_folio_format,
         ];
     }
+
+
 
     /**
      * @param EntradaMaterial $model
@@ -86,6 +91,15 @@ class EntradaAlmacenTransformer extends TransformerAbstract
         if($orden = $model->ordenCompra)
         {
             return $this->item($orden, new OrdenCompraTransformer);
+        }
+        return null;
+    }
+
+    public function includeTransaccionesRelacionadas(EntradaMaterial $model)
+    {
+        if($partida = $model->transacciones_relacionadas)
+        {
+            return $this->item($partida, new EntradaAlmacenTransaccionesRelacionadasTransformer());
         }
         return null;
     }
