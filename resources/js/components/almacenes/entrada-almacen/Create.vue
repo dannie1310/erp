@@ -10,6 +10,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group error-content">
                                                 <label for="fecha" class="col-form-label">Fecha:</label>
+
                                                     <datepicker v-model = "fecha"
                                                                     name = "fecha"
                                                                     :format = "formatoFecha"
@@ -21,15 +22,16 @@
                                                                     :class="{'is-invalid': errors.has('fecha')}"
                                                         ></datepicker>
                                                   <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+
                                             </div>
                                         </div>
                                 </div>
 
                                     <div class="row ">
                                          <div class="col-md-2">
-                                            <div class="form-group row error-content">
-                                                <label for="remision" class=" col-form-label col-md-6">Remisión: </label>
-                                                <div class="col-md-6" >
+                                            <div class="form-group  error-content">
+                                                <label for="remision" class=" col-form-label ">Remisión: </label>
+                                                <div  >
                                                     <input
                                                             type="text"
                                                             data-vv-as="Remisión"
@@ -45,9 +47,9 @@
                                             </div>
                                          </div>
                                          <div class="col-md-2">
-                                             <div class="form-group row error-content">
-                                            <label for="id_orden_compra"  class="col-form-label col-md-6">Orden de Compra: </label>
-                                            <div class="col-md-6" >
+                                             <div class="form-group error-content">
+                                            <label for="id_orden_compra"  class="col-form-label">Orden de Compra: </label>
+                                            <div >
                                                 <select
                                                         :disabled="!bandera"
                                                         type="text"
@@ -68,9 +70,9 @@
                                         </div>
                                          </div>
                                         <div class="col-md-8" v-if="orden_compra.length != 0">
-                                            <div class="form-group row">
-                                                <label for="empresa" class="col-md-2 col-form-label">Empresa / Sucursal: </label>
-                                                <div class="col-md-10">
+                                            <div class="form-group">
+                                                <label for="empresa" class="col-form-label">Empresa / Sucursal: </label>
+                                                <div >
                                                     <input
                                                             :disabled="true"
                                                             type="text"
@@ -526,7 +528,7 @@
                 {
                     partida.cumplido = true;
                 }
-                else if(parseFloat(Math.round(partida.cantidad_ingresada).toFixed(2)) == parseFloat(0)){
+                else if(parseFloat(Math.round(partida.cantidad_ingresada).toFixed(2)) == parseFloat(0) || partida.cantidad_ingresada==='' || partida.cantidad_ingresada  === undefined){
                     partida.cumplido = false;
                 }
             },
