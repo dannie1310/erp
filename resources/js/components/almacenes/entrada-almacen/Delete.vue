@@ -14,7 +14,7 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row"  v-if="entrada">
+                            <div class="row" v-if="entrada">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
@@ -70,23 +70,24 @@
                                                     </thead>
                                                     <tbody>
                                                     <template v-for="(partida, i) in entrada.partidas.data">
-                                                        <tr >
+                                                        <tr>
                                                             <td>{{i+1}}</td>
                                                             <td>{{partida.material_numero_parte}}</td>
-                                                            <td >{{partida.material_descripcion}}</td>
+                                                            <td>{{partida.material_descripcion}}</td>
                                                             <td>{{partida.unidad}}</td>
                                                             <td>{{partida.cantidad_format}}</td>
-                                                            <td v-if="partida.destino_path" :title="`${partida.destino_path}`"><u>{{partida.destino_descripcion}}</u></td>
-                                                            <td v-else >{{partida.destino_descripcion}}</td>
+                                                            <td v-if="partida.destino_path"
+                                                                :title="`${partida.destino_path}`"><u>{{partida.destino_descripcion}}</u></td>
+                                                            <td v-else>{{partida.destino_descripcion}}</td>
                                                         </tr>
                                                         <tr v-if="partida.contratista">
                                                             <td colspan="2">
-                                                                <span  v-if="partida.contratista.con_cargo == 0">
-                                                                    <i class="fa fa-user-o" aria-hidden="true" ></i>
+                                                                <span v-if="partida.contratista.con_cargo == 0">
+                                                                    <i class="fa fa-user-o" aria-hidden="true"></i>
                                                                     Sin Cargo a:
                                                                 </span>
-                                                                <span v-else >
-                                                                    <i class="fa fa-user" aria-hidden="true"  ></i>
+                                                                <span v-else>
+                                                                    <i class="fa fa-user" aria-hidden="true"></i>
                                                                     Con cargo a:
                                                                 </span>
                                                             </td>
@@ -110,11 +111,11 @@
 
                                     </div>
                                 </div>
-                                <div  v-if="entrada.transacciones_relacionadas"  class="card">
+                                <div v-if="entrada.transacciones_relacionadas" class="card">
                                     <div class="card-header">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <label ><i class="fas fa-clone" style="padding-right:3px"></i>Transacciones Relacionadas:</label>
+                                                <label><i class="fas fa-clone" style="padding-right:3px"></i>Transacciones Relacionadas:</label>
                                             </div>
                                         </div>
                                     </div>
@@ -134,12 +135,12 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="(transaccion, i) in entrada.transacciones_relacionadas">
-                                                            <td >{{i+1}}</td>
-                                                            <td >{{transaccion.tipo_transaccion}}</td>
-                                                            <td >{{transaccion.numero_folio}}</td>
-                                                            <td >{{transaccion.fecha}}</td>
-                                                            <td >{{transaccion.fecha_hora_registro}}</td>
-                                                            <td >{{transaccion.concepto}}</td>
+                                                            <td>{{i+1}}</td>
+                                                            <td>{{transaccion.tipo_transaccion}}</td>
+                                                            <td>{{transaccion.numero_folio}}</td>
+                                                            <td>{{transaccion.fecha}}</td>
+                                                            <td>{{transaccion.fecha_hora_registro}}</td>
+                                                            <td>{{transaccion.concepto}}</td>
                                                         </tr>
 
                                                     </tbody>
@@ -190,7 +191,7 @@
 <script>
     export default {
         name: "entrada-almacen-delete",
-        props: ['id' , 'pagina'],
+        props: ['id', 'pagina'],
         data() {
             return {
                 motivo: '',
@@ -198,13 +199,13 @@
             }
         },
         methods: {
-            find(){
+            find() {
                 this.motivo = '';
                 this.partidas = '';
                 this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', null);
                 return this.$store.dispatch('almacenes/entrada-almacen/find', {
                     id: this.id,
-                    params: { include: ['partidas','partidas.contratista'] }
+                    params: {include: ['partidas', 'partidas.contratista']}
                 }).then(data => {
                     this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', data);
                     this.partidas = this.entrada.partidas.data;
@@ -222,7 +223,7 @@
                         $(this.$refs.modal).modal('hide');
                         this.$store.dispatch('almacenes/entrada-almacen/paginate', {
                             params: {
-                                include: 'empresa', sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
+                                include: 'empresa', sort: 'numero_folio', order: 'desc', limit: 10, offset: this.pagina
                             }
                         })
                             .then(data => {
@@ -230,17 +231,16 @@
                                 this.$store.commit('almacenes/entrada-almacen/SET_META', data.meta);
                             })
                     })
-                    .finally( ()=>{
+                    .finally(() => {
                         this.cargando = false;
                     });
             },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.motivo == '') {
+                        if (this.motivo == '') {
                             swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
-                        }
-                        else {
+                        } else {
                             this.eliminar()
                         }
                     }

@@ -48,12 +48,11 @@ class EntradaAlmacenTransformer extends TransformerAbstract
             'folio' => $model->numero_folio,
             'numero_folio_format' => $model->numero_folio_format,
             'referencia' => $model->referencia,
-            'empresa_razon_social'=> $model->empresa->razon_social,
-            'orden_compra_numero_folio_format'=> $model->ordenCompra->numero_folio_format,
-            'solicitud_numero_folio_format'=> $model->ordenCompra->solicitud->numero_folio_format,
+            'empresa_razon_social' => $model->empresa->razon_social,
+            'orden_compra_numero_folio_format' => $model->ordenCompra->numero_folio_format,
+            'solicitud_numero_folio_format' => $model->ordenCompra->solicitud->numero_folio_format,
         ];
     }
-
 
 
     /**
@@ -62,8 +61,7 @@ class EntradaAlmacenTransformer extends TransformerAbstract
      */
     public function includeEmpresa(EntradaMaterial $model)
     {
-        if($empresa = $model->empresa)
-        {
+        if ($empresa = $model->empresa) {
             return $this->item($empresa, new EmpresaTransformer);
         }
         return null;
@@ -75,8 +73,7 @@ class EntradaAlmacenTransformer extends TransformerAbstract
      */
     public function includePartidas(EntradaMaterial $model)
     {
-        if($partida = $model->partidas)
-        {
+        if ($partida = $model->partidas) {
             return $this->collection($partida, new EntradaAlmacenPartidaTransformer);
         }
         return null;
@@ -88,8 +85,7 @@ class EntradaAlmacenTransformer extends TransformerAbstract
      */
     public function includeOrdenCompra(EntradaMaterial $model)
     {
-        if($orden = $model->ordenCompra)
-        {
+        if ($orden = $model->ordenCompra) {
             return $this->item($orden, new OrdenCompraTransformer);
         }
         return null;
@@ -97,8 +93,7 @@ class EntradaAlmacenTransformer extends TransformerAbstract
 
     public function includeTransaccionesRelacionadas(EntradaMaterial $model)
     {
-        if($partida = $model->transacciones_relacionadas)
-        {
+        if ($partida = $model->transacciones_relacionadas) {
             return $this->item($partida, new EntradaAlmacenTransaccionesRelacionadasTransformer());
         }
         return null;
