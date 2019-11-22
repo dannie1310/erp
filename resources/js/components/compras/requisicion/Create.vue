@@ -118,9 +118,9 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr v-for="(partida, i) in partidas">
-                                                        <td v-model="partida.i">{{i+1}}</td>
-                                                        <td style="width: 180px;" v-if="partida.descripcion == ''">
-                                                            <MaterialSelect
+                                                        <td>{{i+1}}</td>
+                                                        <td style="width: 180px;" v-if="partida.material === ''">
+                                                            <NumeroParteSelect
                                                                     scope="insumos"
                                                                     :name="`material[${i}]`"
                                                                     v-model="partida.material"
@@ -131,28 +131,20 @@
                                                                     :error="errors.has(`material[${i}]`)"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
                                                         </td>
-                                                        <td v-else></td>
-                                                        <td v-if="partida.material === ''">
-                                                            <div class="row ">
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group row error-content">
-                                                                        <div class="col-md-12" >
-                                                                            <input
-                                                                                    type="text"
-                                                                                    data-vv-as="Descripción"
-                                                                                    v-validate="{required: true}"
-                                                                                    class="form-control"
-                                                                                    :name="`descripcion[${i}]`"
-                                                                                    placeholder="Descripción"
-                                                                                    v-model="partida.descripcion"
-                                                                                    :class="{'is-invalid': errors.has(`descripcion[${i}]`)}">
-                                                                            <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                        <td v-else>{{partida.material.numero_parte}}</td>
+                                                        <td style="width: 180px;" v-if="partida.material === ''">
+                                                             <MaterialSelect
+                                                                     scope="insumos"
+                                                                     :name="`material[${i}]`"
+                                                                     v-model="partida.material"
+                                                                     data-vv-as="Material"
+                                                                     v-validate="{required: true}"
+                                                                     ref="MaterialSelect"
+                                                                     :disableBranchNodes="false"
+                                                                     :error="errors.has(`material[${i}]`)"/>
+                                                            <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
                                                         </td>
-                                                        <td v-else>{{partida.material.label}}</td>
+                                                        <td v-else>{{partida.material.descripcion}}</td>
                                                         <td>
                                                              <input type="number"
                                                                     class="form-control"
@@ -232,11 +224,12 @@
 
 <script>
     import MaterialSelect from "../../cadeco/material/SelectAutocomplete"
+    import NumeroParteSelect from "../../cadeco/material/SelectNumeroParteAutocomplete"
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "requisicion-create",
-        components: {MaterialSelect, Datepicker},
+        components: {MaterialSelect, Datepicker, NumeroParteSelect},
         data() {
             return {
                 cargando: false,
@@ -255,8 +248,9 @@
                 index : 0,
                 partidas: [
                     {
-                        i : '',
                         material : "",
+                        unidad : "",
+                        numero_partida : "",
                         descripcion : "",
                         cantidad : "",
                         fecha : "",

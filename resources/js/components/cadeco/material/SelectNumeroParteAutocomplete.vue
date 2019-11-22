@@ -1,18 +1,18 @@
 <template>
-          <treeselect
-              :class="{error: error}"
-              :async="true"
-              :load-options="loadOptions"
-              v-model="val"
-              loadingText="Cargando"
-              searchPromptText="Escriba para buscar..."
-              noResultsText="Sin Resultados"
-              :placeholder="placeholder ? placeholder : '--Material--'" />
+    <treeselect
+            :class="{error: error}"
+            :async="true"
+            :load-options="loadOptions"
+            v-model="val"
+            loadingText="Cargando"
+            searchPromptText="Escriba para buscar..."
+            noResultsText="Sin Resultados"
+            :placeholder="placeholder ? placeholder : '-- Número de Parte --'" />
 </template>
 
 <script>
     export default {
-        name: "SelectAutocomplete",
+        name: "SelectNumeroParteAutocomplete",
         props: ['scope', 'value', 'error', 'placeholder'],
         data(){
             return {
@@ -35,7 +35,7 @@
                         this.disabled = false;
                         this.options = data.data.map(i => ({
                             id: i.id,
-                            label: i.descripcion,
+                            label: i.numero_parte,
                             descripcion: i.descripcion,
                             numero_parte: i.numero_parte,
                             unidad: i.unidad
