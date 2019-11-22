@@ -169,4 +169,17 @@ class OrdenCompra extends Transaccion
             $this->update(["estado"=>2]);
         }
     }
+    public function getEstadoFormatAttribute()
+    {
+        switch ($this->estado){
+            case 0 :
+                return 'Registrada';
+            case 1:
+                return 'Suministro Parcial';
+            case 2:
+                return 'Suministrada';
+
+                break;
+        }
+    }
 }
