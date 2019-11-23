@@ -10,6 +10,7 @@ namespace App\Observers\CADECO;
 
 use App\Models\CADECO\Inventario;
 
+
 class InventarioObserver
 {
     /**
@@ -24,5 +25,10 @@ class InventarioObserver
         if($inventario->saldo > ($inventario->cantidad)+0.01){
             throw New \Exception('El saldo del lote ('.$inventario->id_lote.') '.$inventario->material->descripcion.' no puede ser mayor a '. $inventario->cantidad);
         }
+    }
+
+    public function deleting(Inventario $inventario)
+    {
+        $inventario->respaldar();
     }
 }

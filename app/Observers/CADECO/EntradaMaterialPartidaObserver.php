@@ -70,4 +70,24 @@ class EntradaMaterialPartidaObserver
             $partida->ordenCompraPartida->disminuyeSaldo($pagado);
         }
     }
+    public function deleting(EntradaMaterialPartida $partida)
+    {
+        if($partida->inventario)
+        {
+            $partida->inventario->delete();
+        } else if($partida->movimiento){
+            $partida->movimiento->delete();
+        }
+    }
+    public function deleted(EntradaMaterialPartida $partida)
+    {
+        $factor = $partida->entrada->factor_conversion;
+        $pagado =  $partida->pagado_registro;
+        $partida->ordenCompraPartida->entrega->recalculaSurtido();
+
+        /*if($pagado > 0)
+        {
+            $partida->ordenCompraPartida->disminuyeSaldo($pagado);
+        }*/
+    }
 }

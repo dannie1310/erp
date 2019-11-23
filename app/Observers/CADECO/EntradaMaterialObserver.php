@@ -40,10 +40,12 @@ class EntradaMaterialObserver extends TransaccionObserver
         $ordenCompra =  $entradaMaterial->ordenCompra;
         $entradas_restantes = $ordenCompra->entradasAlmacen;
         if(count($entradas_restantes)==0){
-            $ordenCompra->update(["estado"=>0]);
+            $ordenCompra->estado = 0;
+            $ordenCompra->save();
         }
         else{
-            $ordenCompra->update(["estado"=>1]);
+            $ordenCompra->estado = 1;
+            $ordenCompra->save();
         }
 
     }

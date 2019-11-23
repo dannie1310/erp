@@ -92,8 +92,9 @@ class EntradaMaterial extends Transaccion
             DB::connection('cadeco')->beginTransaction();
             $this->validarParaEliminar();
             $this->respaldar($motivo);
-            $this->revisar_respaldos();
+
             $this->delete();
+            $this->revisar_respaldos();
             DB::connection('cadeco')->commit();
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
@@ -146,7 +147,6 @@ class EntradaMaterial extends Transaccion
                 ];
 
             }
-
 
             if($inventario != null && $inventario->cantidad != $inventario->saldo){
                 $movimientos_salidas = Movimiento::query()->where('lote_antecedente', $inventario->id_lote)->get();
@@ -287,31 +287,6 @@ class EntradaMaterial extends Transaccion
             foreach ($partidas as $partida) {
 
                 /**
-                 * Respaldar el Inventario (existe cuando se envia la entrada un almacén)
-                 */
-                $inventario = Inventario::query()->where('id_item', $partida['id_item'])->first();
-
-                if($inventario != null)
-                {
-                    $respaldo_inventario = InventarioEliminado::query()->create(
-                        [
-                            'id_lote' => $inventario->id_lote,
-                            'lote_antecedente' => $inventario->lote_antecedente,
-                            'id_almacen' => $inventario->id_almacen,
-                            'id_material' => $inventario->id_material,
-                            'id_item' => $inventario->id_item,
-                            'saldo' => $inventario->saldo,
-                            'monto_total' => $inventario->monto_total,
-                            'monto_pagado' => $inventario->monto_pagado,
-                            'monto_aplicado' => $inventario->monto_aplicado,
-                            'fecha_desde' => $inventario->fecha_desde,
-                            'referencia' => $inventario->referencia,
-                            'monto_original' => $inventario->monto_original
-                        ]
-                    );
-                }
-
-                /**
                  * Respaldar el Movimiento (existe cuando se envia la entrada un concepto)
                  */
                 $movimiento = Movimiento::query()->where('id_item', $partida['id_item'])->first();
@@ -397,6 +372,12 @@ class EntradaMaterial extends Transaccion
      */
     private function revisar_respaldos()
     {
+
+        $entrada = EntradaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
+        if ($entrada == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de entrada de almacén, no se respaldo la entrada.');
+        }
         $partidas = $this->partidas()->get()->toArray();
         foreach ($partidas as $partida) {
 
@@ -405,31 +386,16 @@ class EntradaMaterial extends Transaccion
             if ($partida['id_almacen'] != null  && $inventario == null && $movimiento == null)
             {
                 DB::connection('cadeco')->rollBack();
-                abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
+                abort(400, 'Error en el proceso de eliminación de entrada de almacén, no se respaldaron movimientos o inventarios.');
             }
 
             $item = ItemEntradaEliminada::query()->where('id_item', $partida['id_item'])->first();
             if ($item == null)
             {
                 DB::connection('cadeco')->rollBack();
-                abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
+                abort(400, 'Error en el proceso de eliminación de entrada de almacén, no se respaldo partida.');
             }
         }
-
-        $entrada = EntradaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
-        if ($entrada == null) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, 'Error en el proceso de eliminación de entrada de almacén.');
-        }
-    }
-
-    /**
-     * Antes de eliminar deben regresar los saldos en la tabla de entrega
-     */
-    private function saldosOrdenCompra($item, $saldoInventario)
-    {
-        $entregas = Entrega::query()->where('id_item', $item)->first();
-        return $entregas->update( ['surtida' => $entregas['surtida']-$saldoInventario]);
     }
 
     /**
@@ -453,32 +419,9 @@ class EntradaMaterial extends Transaccion
             Poliza::query()->where('id_int_poliza',$poliza->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
         }
         foreach ($partidas as $item) {
-            $inventario = Inventario::query()->where('id_item', $item['id_item'])->first();
-            $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->first();
-
-            if($inventario != null)
-            {
-                $entregas = $this->saldosOrdenCompra($item['item_antecedente'], $inventario['saldo']);
-                if($entregas == true) {
-                    Inventario::destroy($inventario['id_lote']);
-                }else{
-                    DB::connection('cadeco')->rollBack();
-                    abort(400, 'Error al cambiar los saldos en la orden de compra');
-                }
-            }
-
-            if($movimiento != null)
-            {
-                $entregas = $this->saldosOrdenCompra($item['item_antecedente'], $movimiento['cantidad']);
-                if($entregas == true) {
-                    Movimiento::destroy($movimiento['id_movimiento']);
-                }else{
-                    DB::connection('cadeco')->rollBack();
-                    abort(400, 'Error al cambiar los saldos en la orden de compra');
-                }
-            }
             ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
-            Item::destroy($item['id_item']);
+            EntradaMaterialPartida::find($item['id_item'])->delete();
+
         }
     }
 
@@ -511,7 +454,7 @@ class EntradaMaterial extends Transaccion
                             'id_concepto' => $item['destino']['id_destino'],
                             'id_material' => $item['id_material'],
                             'unidad' => $item['unidad'],
-                            'numero' => 0,
+                            'numero' => 1,
                             'cantidad_material' => $item['cantidad_material'],
                             'cantidad' => $item['cantidad_ingresada'],
                             'cantidad_original1' => $item['cantidad_ingresada'],
