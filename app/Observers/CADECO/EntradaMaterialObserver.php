@@ -11,6 +11,7 @@ namespace App\Observers\CADECO;
 
 use App\Models\CADECO\EntradaMaterial;
 use App\Models\CADECO\Transaccion;
+use App\Models\CADECO\Compras\EntradaEliminada;
 
 class EntradaMaterialObserver extends TransaccionObserver
 {
@@ -34,6 +35,29 @@ class EntradaMaterialObserver extends TransaccionObserver
     {
         $items = $entradaMaterial->partidas()->get()->toArray();
         $entradaMaterial->eliminar_partidas($items);
+        EntradaEliminada::create(
+            [
+                'id_transaccion' => $entradaMaterial->id_transaccion,
+                'id_antecedente' => $entradaMaterial->id_antecedente,
+                'tipo_transaccion' => $entradaMaterial->tipo_transaccion,
+                'numero_folio' => $entradaMaterial->numero_folio,
+                'fecha' => $entradaMaterial->fecha,
+                'id_obra' => $entradaMaterial->id_obra,
+                'id_empresa' => $entradaMaterial->id_empresa,
+                'id_sucursal' => $entradaMaterial->id_sucursal,
+                'id_moneda' => $entradaMaterial->id_moneda,
+                'cumplimiento' => $entradaMaterial->cumplimiento,
+                'vencimiento' => $entradaMaterial->vencimiento,
+                'opciones' => $entradaMaterial->opciones,
+                'anticipo' => $entradaMaterial->anticipo,
+                'referencia' => $entradaMaterial->referencia,
+                'comentario' => $entradaMaterial->comentario,
+                'observaciones' => $entradaMaterial->observaciones,
+                'TipoLiberacion' => $entradaMaterial->TipoLiberacion,
+                'FechaHoraRegistro' => $entradaMaterial->FechaHoraRegistro,
+                'motivo_eliminacion'=>''
+            ]
+        );
     }
     public function deleted(EntradaMaterial $entradaMaterial)
     {

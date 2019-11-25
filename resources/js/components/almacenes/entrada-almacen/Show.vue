@@ -61,7 +61,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
-                                                            <th>No. de Parte</th>
+                                                            <th class="no_parte">No. de Parte</th>
                                                             <th>Material</th>
                                                             <th>Unidad</th>
                                                             <th>Cantidad</th>

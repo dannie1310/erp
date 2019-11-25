@@ -63,25 +63,4 @@ class Inventario extends Model
     {
         return number_format($this->saldo,3,'.', '');
     }
-
-    public function respaldar()
-    {
-        InventarioEliminado::create(
-            [
-                'id_lote' => $this->id_lote,
-                'lote_antecedente' => $this->lote_antecedente,
-                'id_almacen' => $this->id_almacen,
-                'id_material' => $this->id_material,
-                'id_item' => $this->id_item,
-                'saldo' => $this->saldo,
-                'monto_total' => $this->monto_total,
-                'monto_pagado' => $this->monto_pagado,
-                'monto_aplicado' => $this->monto_aplicado,
-                'fecha_desde' => $this->fecha_desde,
-                'referencia' => $this->referencia,
-                'monto_original' => $this->monto_original
-            ]
-        );
-    }
-
 }

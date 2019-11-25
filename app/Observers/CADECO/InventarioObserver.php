@@ -9,7 +9,7 @@
 namespace App\Observers\CADECO;
 
 use App\Models\CADECO\Inventario;
-
+use App\Models\CADECO\Compras\InventarioEliminado;
 
 class InventarioObserver
 {
@@ -29,6 +29,21 @@ class InventarioObserver
 
     public function deleting(Inventario $inventario)
     {
-        $inventario->respaldar();
+        InventarioEliminado::create(
+            [
+                'id_lote' => $inventario->id_lote,
+                'lote_antecedente' => $inventario->lote_antecedente,
+                'id_almacen' => $inventario->id_almacen,
+                'id_material' => $inventario->id_material,
+                'id_item' => $inventario->id_item,
+                'saldo' => $inventario->saldo,
+                'monto_total' => $inventario->monto_total,
+                'monto_pagado' => $inventario->monto_pagado,
+                'monto_aplicado' => $inventario->monto_aplicado,
+                'fecha_desde' => $inventario->fecha_desde,
+                'referencia' => $inventario->referencia,
+                'monto_original' => $inventario->monto_original
+            ]
+        );
     }
 }
