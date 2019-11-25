@@ -38,7 +38,9 @@ class RequisicionPartidaComplementoTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'observaciones' => $model->observaciones,
             'fecha_entrega' => $model->fecha_entrega,
-            'descripcion' => $model->descripcion_material
+            'descripcion' => $model->descripcion_material,
+            'numero_parte' => $model->numero_parte,
+            'unidad' => $model->unidad
         ];
     }
 }

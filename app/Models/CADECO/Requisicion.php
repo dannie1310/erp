@@ -84,6 +84,8 @@ class Requisicion extends Transaccion
                 $complemento =$item->complemento()->create([
                     'id_item' => $item->id_item,
                     'descripcion_material' => $partida['material'] ? NULL : $partida['descripcion'],
+                    'numero_parte' => $partida['material'] ? NULL : $partida['numero_parte'],
+                    'unidad' => $partida['material'] ? NULL : $partida['unidad'],
                     'observaciones' => $partida['observaciones'],
                     'fecha_entrega' => $partida['fecha']
                 ]);

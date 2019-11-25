@@ -76,11 +76,15 @@
                                                         <tr v-for="(doc, i) in requisicion.partidas.data">
                                                             <td>{{i+1}}</td>
                                                             <td v-if="doc.material">{{doc.material.numero_parte}}</td>
+                                                            <td v-else-if="doc.complemento">{{doc.complemento.numero_parte}}</td>
                                                             <td v-else></td>
                                                             <td v-if="doc.material">{{doc.material.descripcion}}</td>
-                                                            <td v-else>{{doc.complemento.descripcion}}</td>
+                                                            <td v-else-if="doc.complemento">{{doc.complemento.descripcion}}</td>
+                                                            <td v-else></td>
                                                             <td>{{doc.cantidad}}</td>
-                                                            <td>{{doc.unidad}}</td>
+                                                            <td v-if="doc.material">{{doc.material.unidad}}</td>
+                                                            <td v-else-if="doc.complemento">{{doc.complemento.unidad}}</td>
+                                                            <td v-else></td>
                                                             <td v-if="doc.complemento">{{doc.complemento.fecha_entrega}}</td>
                                                             <td v-if="doc.complemento">{{doc.complemento.observaciones}}</td>
                                                          </tr>
