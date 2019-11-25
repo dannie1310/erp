@@ -45,4 +45,11 @@ class Entrega extends Model
         $this->surtida = $this->surtida + $cantidad;
         $this->save();
     }
+
+    public function recalculaSurtido()
+    {
+        $surtido = $this->ordenCompraPartida->entradas->sum("cantidad");
+        $this->surtida = $surtido;
+        $this->save();
+    }
 }

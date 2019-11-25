@@ -61,7 +61,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
-                                                            <th>No. de Parte</th>
+                                                            <th class="no_parte">No. de Parte</th>
                                                             <th>Material</th>
                                                             <th>Unidad</th>
                                                             <th>Cantidad</th>
@@ -205,7 +205,7 @@
                 this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', null);
                 return this.$store.dispatch('almacenes/entrada-almacen/find', {
                     id: this.id,
-                    params: {include: ['partidas', 'partidas.contratista']}
+                    params: {include: ['partidas', 'partidas.contratista','transacciones_relacionadas']}
                 }).then(data => {
                     this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', data);
                     this.partidas = this.entrada.partidas.data;

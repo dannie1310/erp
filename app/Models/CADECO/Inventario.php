@@ -12,6 +12,7 @@ namespace App\Models\CADECO;
 use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\Compras\InventarioEliminado;
 
 class Inventario extends Model
 {
@@ -62,5 +63,4 @@ class Inventario extends Model
     {
         return number_format($this->saldo,3,'.', '');
     }
-
 }
