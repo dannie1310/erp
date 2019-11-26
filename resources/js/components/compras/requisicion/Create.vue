@@ -98,7 +98,7 @@
                                 <hr />
                                 <div class="d-flex flex-row-reverse">
                                     <div class="p-2">
-                                        <Layout></Layout>
+                                        <Layout v-model="partidasl" v-on:change="loader"></Layout>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -124,7 +124,7 @@
                                                 <tbody>
                                                     <tr v-for="(partida, i) in partidas">
                                                         <td v-model="partida.i">{{i+1}}</td>
-                                                        <td style="width: 180px;" v-if="partida.descripcion == ''">
+                                                        <td style="width: 180px;" v-if="partida.descripcion === ''">
                                                             <MaterialSelect
                                                                     scope="insumos"
                                                                     :name="`material[${i}]`"
@@ -136,8 +136,28 @@
                                                                     :error="errors.has(`material[${i}]`)"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
                                                         </td>
-                                                        <td v-else></td>
-                                                        <td v-if="partida.material === ''">
+                                                        <td v-else>
+                                                             <div class="row ">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row error-content">
+                                                                        <div class="col-md-12" >
+                                                                            <input
+                                                                                type="text"
+                                                                                data-vv-as="Descripción"
+                                                                                v-validate="{required: true}"
+                                                                                class="form-control"
+                                                                                :disabled="true"
+                                                                                v-model="partida.material"
+                                                                                :name="`descripcion[${i}]`"
+                                                                                placeholder="-----"
+                                                                                :class="{'is-invalid': errors.has(`descripcion[${i}]`)}">
+                                                                            <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td v-if="partida.material != ''">
                                                             <div class="row ">
                                                                 <div class="col-md-12">
                                                                     <div class="form-group row error-content">
@@ -147,6 +167,7 @@
                                                                                     data-vv-as="Descripción"
                                                                                     v-validate="{required: true}"
                                                                                     class="form-control"
+                                                                                    :disabled="partida.material != ''"
                                                                                     :name="`descripcion[${i}]`"
                                                                                     placeholder="Descripción"
                                                                                     v-model="partida.descripcion"
@@ -157,7 +178,25 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td v-else>{{partida.material.label}}</td>
+                                                        <td v-else><div class="row ">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group row error-content">
+                                                                        <div class="col-md-12" >
+                                                                            <input
+                                                                                type="text"
+                                                                                data-vv-as="Descripción"
+                                                                                v-validate="{required: true}"
+                                                                                class="form-control"
+                                                                                :name="`descripcion[${i}]`"
+                                                                                placeholder="Descripción"
+                                                                                v-model="partida.material.label"
+                                                                                :class="{'is-invalid': errors.has(`descripcion[${i}]`)}">
+                                                                            <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
                                                         <td>
                                                              <input type="number"
                                                                     class="form-control"
@@ -259,6 +298,8 @@
                 concepto : '',
                 observaciones : '',
                 index : 0,
+                cont : 0,
+                partidasl : [],
                 partidas: [
                     {
                         i : '',
@@ -276,6 +317,7 @@
             this.getAreasCompradoras();
             this.getAreasSolicitantes();
             this.getTipos();
+
         },
         methods : {
             init() {
@@ -290,6 +332,7 @@
                 this.concepto = '';
                 this.observaciones = '';
                 this.index = 0;
+                this.cont = 0;
                 this.partidas = [{
                         i : '',
                         material : "",
@@ -299,6 +342,8 @@
                         observaciones : ""
                 }];
             },
+
+
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
@@ -342,6 +387,26 @@
                     observaciones : "",
                 });
                 this.index = this.index+1;
+            },
+            loader(){
+                if(this.index == 0)
+                {
+                    this.partidas.splice(this.index, 1);
+                }
+                this.cont = 0;
+                while (this.cont < this.partidasl.length) {
+                    this.partidas.splice(this.index, 0, {
+                        i: '',
+                        material: this.partidasl[this.cont].no_parte,
+                        descripcion: this.partidasl[this.cont].descripcion,
+                        cantidad: this.partidasl[this.cont].cantidad,
+                        fecha: this.partidasl[this.cont].fecha,
+                        observaciones: "Observación"+this.index,
+                    });
+                    console.log(this.index);
+                    this.index = this.index + 1;
+                    this.cont = this.cont +1;
+                }
             },
             salir(){
                 this.$router.push({name: 'requisicion'});

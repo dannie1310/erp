@@ -46,8 +46,11 @@
 </template>
 
 <script>
+    import Create from "./Create";
+
     export default {
         name: "carga-layout",
+        components: {Create},
         data() {
             return {
                 cargando: false,
@@ -75,6 +78,7 @@
             load() {
                 this.$refs.carga_layout.value = '';
                 this.file = null;
+                this.data = null;
                 this.$validator.errors.clear();
 
                 $(this.$refs.modal).modal('show');
@@ -96,7 +100,9 @@
                         }
                     })
                     .then(data => {
-                        this.$emit('change', data);
+                        this.data = data;
+                        this.$emit('input', this.data);
+                        this.$emit('change');
                     }).finally(() => {
                         this.$refs.carga_layout.value = '';
                         this.file = null;
@@ -104,9 +110,11 @@
                         this.$validator.errors.clear();
                         setTimeout(() => {
                             $(this.$refs.modal).modal('hide');
-
                         }, 100);
-                    });
+                        // Create.methods.loader();
+
+                    })
+
             },
             createImage(file, tipo) {
                 var reader = new FileReader();

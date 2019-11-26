@@ -45,31 +45,31 @@ class RequisicionService
             if($partida['No PARTE'] != null) {
                 $material = Material::query()->where('numero_parte', '=', $partida['No PARTE'])->get(['descripcion', 'unidad', 'FechaHoraRegistro'])->first();
                 $materiales[] = array(
-                    'No Parte' => $partida['No PARTE'],
-                    'No Parte Equivalente' => $partida['No PARTE EQUIVALENTE'],
-                    'Pagina' => $partida['PAGINA'],
-                    'Descripcion' => $material->descripcion,
-                    'Unidad' => $material->unidad,
-                    'Ref' => $partida['REF.'],
-                    'Fecha' => $material->FechaHoraRegistro,
-                    'Cantidad' => $partida['CANTIDAD']
+                    'no_parte' => $partida['No PARTE'],
+                    'no_parte_equi' => $partida['No PARTE EQUIVALENTE'],
+                    'pag' => $partida['PAGINA'],
+                    'descripcion' => $material->descripcion,
+                    'unidad' => $material->unidad,
+                    'ref' => $partida['REF.'],
+                    'fecha' => date('Y-m-d'),
+                    'cantidad' => $partida['CANTIDAD']
                 );
             }else{
                 $materiales[] = array(
-                    'No Parte' => $partida['DESCRIPCION'],
-                    'No Parte Equivalente' => $partida['No PARTE EQUIVALENTE'],
-                    'Pagina' => $partida['PAGINA'],
-                    'Descripcion' => $partida['DESCRIPCION'],
-                    'Unidad' => $partida['UNIDAD'],
-                    'Ref' => $partida['REF.'],
-                    'Fecha' => null,
-                    'Cantidad' => $partida['CANTIDAD']
+                    'no_parte' => '',
+                    'no_parte_equi' => $partida['No PARTE EQUIVALENTE'],
+                    'pag' => $partida['PAGINA'],
+                    'descripcion' => $partida['DESCRIPCION'],
+                    'unidad' => $partida['UNIDAD'],
+                    'ref' => $partida['REF.'],
+                    'fecha' => date('Y-m-d'),
+                    'cantidad' => $partida['CANTIDAD']
                 );
             }
         }
         array_push($regresa,$materiales);
         array_push($regresa,$mensaje);
-        return $regresa;
+        return $materiales;
     }
 
     public function getCsvData($file)
@@ -152,8 +152,6 @@ class RequisicionService
         $content[] = array('Mensaje' => $mensaje);
         return $content;
     }
-
-}
 
     public function store($data)
     {
