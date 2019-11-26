@@ -10,8 +10,11 @@ use App\Models\CADECO\Almacenes\AjusteEliminado;
 use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
+use App\Models\CADECO\Compras\RequisicionComplemento;
+use App\Models\CADECO\Compras\RequisicionPartidaComplemento;
 use App\Models\CADECO\Compras\MovimientoEliminado;
 use App\Models\CADECO\Compras\SalidaEliminada;
+use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\CADECO\Contabilidad\Apertura;
 use App\Models\CADECO\Contabilidad\Cierre;
 use App\Models\CADECO\Contabilidad\CuentaAlmacen;
@@ -46,7 +49,6 @@ use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaLog;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Finanzas\LayoutPago;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
-use App\Models\CADECO\Finanzas\Servicio;
 use App\Models\CADECO\FinanzasCBE\SolicitudAlta;
 use App\Models\CADECO\FinanzasCBE\SolicitudBaja;
 use App\Models\CADECO\FinanzasCBE\SolicitudMovimiento;
@@ -72,11 +74,13 @@ use App\Models\CADECO\PagoACuenta;
 use App\Models\CADECO\PagoACuentaPorAplicar;
 use App\Models\CADECO\PagoAnticipoDestajo;
 use App\Models\CADECO\PagoVario;
+use App\Models\CADECO\Requisicion;
 use App\Models\CADECO\SalidaAlmacen;
 use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
 use App\Models\CADECO\Seguridad\AuditoriaRolUser;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Models\CADECO\SolicitudAnticipoDestajo;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\SolicitudReposicionFF;
 use App\Models\CADECO\Subcontrato;
@@ -93,10 +97,8 @@ use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
-use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante;
-use App\Models\SEGURIDAD_ERP\UsuarioAreaCompradora;
-use App\Models\SEGURIDAD_ERP\UsuarioAreaSolicitante;
+use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
+use App\Models\SEGURIDAD_ERP\Compras\AreaSolicitanteUsuario;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\CADECO\AjusteNegativoObserver;
 use App\Observers\CADECO\AjusteNegativoPartidaObserver;
@@ -106,7 +108,10 @@ use App\Observers\CADECO\Almacenes\AjusteEliminadoObserver;
 use App\Observers\CADECO\AnticipoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
+use App\Observers\CADECO\Compras\RequisicionComplementoObserver;
+use App\Observers\CADECO\Compras\RequisicionPartidaComplementoObserver;
 use App\Observers\CADECO\Compras\SalidaEliminadaObserver;
+use App\Observers\CADECO\Compras\SolicitudComplementoObserver;
 use App\Observers\CADECO\Contabilidad\AperturaObserver;
 use App\Observers\CADECO\Contabilidad\CierreObserver;
 use App\Observers\CADECO\Contabilidad\CuentaAlmacenObserver;
@@ -168,11 +173,13 @@ use App\Observers\CADECO\PagoACuentaPorAplicarObserver;
 use App\Observers\CADECO\PagoAnticipoDestajoObserver;
 use App\Observers\CADECO\PagoObserver;
 use App\Observers\CADECO\PagoVarioObserver;
+use App\Observers\CADECO\RequisicionObserver;
 use App\Observers\CADECO\SalidaAlmacenObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaPermisoRolObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
 use App\Observers\CADECO\Seguridad\RolObserver;
 use App\Observers\CADECO\SolicitudAnticipoDestajoObserver;
+use App\Observers\CADECO\SolicitudCompraObserver;
 use App\Observers\CADECO\SolicitudPagoAnticipadoObserver;
 use App\Observers\CADECO\SolicitudReposicionFFObserver;
 use App\Observers\CADECO\SubcontratoObserver;
@@ -189,8 +196,6 @@ use App\Observers\CADECO\Tesoreria\TraspasoCuentasObserver;
 use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
-use App\Observers\SEGURIDAD_ERP\TipoAreaCompradoraObserver;
-use App\Observers\SEGURIDAD_ERP\TipoAreaSolicitanteObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSolicitanteObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaSubcontratanteObserver;
@@ -223,7 +228,10 @@ class AppServiceProvider extends ServiceProvider
              * Compras
              */
             EntradaEliminada::observe(EntradaEliminadaObserver::class);
+            RequisicionComplemento::observe(RequisicionComplementoObserver::class);
+            RequisicionPartidaComplemento::observe(RequisicionPartidaComplementoObserver::class);
             SalidaEliminada::observe(SalidaEliminadaObserver::class);
+            SolicitudComplemento::observe(SolicitudComplementoObserver::class);
 
             /**
              *Contabilidad
@@ -289,8 +297,6 @@ class AppServiceProvider extends ServiceProvider
             AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
             AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
             Rol::observe(RolObserver::class);
-            TipoAreaCompradora::observe(TipoAreaCompradoraObserver::class);
-            TipoAreaSolicitante::observe(TipoAreaSolicitanteObserver::class);
 
             /**
              * SubcontratosEstimaciones
@@ -350,7 +356,9 @@ class AppServiceProvider extends ServiceProvider
             Pago::observe(PagoObserver::class);
             PagoReposicionFF::observe(PagoReposicionFFObserver::class);
             PagoVario::observe(PagoVarioObserver::class);
+            Requisicion::observe(RequisicionObserver::class);
             SalidaAlmacen::observe(SalidaAlmacenObserver::class);
+            SolicitudCompra::observe(SolicitudCompraObserver::class);
             SolicitudAnticipoDestajo::observe(SolicitudAnticipoDestajoObserver::class);
             SolicitudPagoAnticipado::observe(SolicitudPagoAnticipadoObserver::class);
             SolicitudReposicionFF::observe(SolicitudReposicionFFObserver::class);
@@ -365,8 +373,6 @@ class AppServiceProvider extends ServiceProvider
         AuditoriaRolUsuario::observe(AuditoriaRolUsuarioObserver::class);
         ConfiguracionObra::observe(ConfiguracionObraObserver::class);
         \App\Models\SEGURIDAD_ERP\Rol::observe(\App\Observers\SEGURIDAD_ERP\RolObserver::class);
-        UsuarioAreaCompradora::observe(UsuarioAreaCompradoraObserver::class);
-        UsuarioAreaSolicitante::observe(UsuarioAreaSolicitanteObserver::class);
         UsuarioAreaSubcontratante::observe(UsuarioAreaSubcontratanteObserver::class);
     }
 

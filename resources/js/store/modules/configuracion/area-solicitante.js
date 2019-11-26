@@ -1,15 +1,23 @@
-const URI = '/api/CONFIGURACION/area-solicitante/';
+const URI = '/api/configuracion/area-solicitante/';
 
 export default {
     namespaced: true,
 
     state: {
-        roles: []
+        area: [],
+        currentArea: null,
+        meta:{}
     },
 
     mutations: {
-        SET_ROLES(state, data) {
-            state.roles = data;
+        SET_AREAS(state, data){
+            state.areas = data;
+        },
+        SET_AREA(state, data){
+            state.currentArea= data;
+        },
+        SET_META(state, data) {
+            state.meta = data;
         }
     },
 
@@ -153,8 +161,14 @@ export default {
     },
 
     getters: {
-        roles(state) {
-            return state.roles
+        areas(state) {
+            return state.areas;
+        },
+        meta(state) {
+            return state.meta;
+        },
+        currentArea(state) {
+            return state.currentArea;
         }
     }
 }
