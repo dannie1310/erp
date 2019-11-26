@@ -41,9 +41,18 @@ class CuentaEmpresa extends Model
 
     public function validaCuenta()
     {
-        if($this->where('cuenta', $this->cuenta)->get()->toArray() != [])
+        $mensaje = "";
+        $cuentas_empresa = $this->where('cuenta', $this->cuenta)->get();
+        if($cuentas_empresa != null) {
+            foreach ($cuentas_empresa as $cuenta)
+            {
+                $mensaje .= "-".$cuenta->empresa->razon_social."\n";
+            }
+        }
+
+        if($mensaje != "")
         {
-            throw new \Exception('El número de cuenta "' . $this->cuenta . '" se encuentra registrado previamente.', 400);
+            throw new \Exception('La cuenta "' . $this->cuenta . '" está asociada a (los) siguiente(s) proveedor(es):'."\n".$mensaje, 400);
         }
     }
 }
