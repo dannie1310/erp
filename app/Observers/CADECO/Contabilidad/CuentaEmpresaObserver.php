@@ -19,6 +19,7 @@ class CuentaEmpresaObserver
      */
     public function creating(CuentaEmpresa $cuentaEmpresa)
     {
+        $cuentaEmpresa->validaCuenta();
         $cuentaEmpresa->estatus = 1;
         $cuentaEmpresa->registro = auth()->id();
         $cuentaEmpresa->id_obra = Context::getIdObra();
