@@ -96,6 +96,11 @@
                                     </div>
                                 </div>
                                 <hr />
+                                <div class="d-flex flex-row-reverse">
+                                    <div class="p-2">
+                                        <Layout v-model="partidas"></Layout>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
@@ -170,12 +175,13 @@
                                                             <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
                                                         </td>
                                                         <td v-else>{{partida.material.descripcion}}</td>
-                                                        <td v-if="partida.i === 0">
-                                                            <button  type="button" class="btn btn-outline-primary btn-sm" @click="manual(i)"><i class="fa fa-hand-paper-o" /></button>
+                                                        <td style="width: 30px;" v-if="partida.i === 0">
+                                                            <button  type="button" class="btn btn-outline-primary btn-sm" @click="manual(i)" title="Ingresar material manualmente"><i class="fa fa-hand-paper-o" /></button>
                                                         </td>
-                                                        <td v-else>
-                                                            <button type="button" class="btn btn-outline-primary btn-sm" @click="busqueda(i)"><i class="fa fa-refresh" /></button>
+                                                        <td style="width: 30px;" v-else-if="partida.i === 1">
+                                                            <button type="button" class="btn btn-outline-primary btn-sm" @click="busqueda(i)" title="Buscar material"><i class="fa fa-refresh" /></button>
                                                         </td>
+                                                        <td style="width: 30px;" v-else></td>
                                                         <td>
                                                             <input type="number"
                                                                     class="form-control"
@@ -201,6 +207,7 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
                                                         </td>
+                                                        <td style="width: 100px;" v-else-if="partida.unidad">{{partida.unidad}}</td>
                                                         <td style="width: 100px;" v-else>{{partida.material.unidad}}</td>
                                                         <td style="width: 50px;">
                                                             <input type="date"
@@ -271,9 +278,10 @@
     import NumeroParteSelect from "../../cadeco/material/SelectNumeroParteAutocomplete"
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import Layout from "./CargaLayout"
     export default {
         name: "requisicion-create",
-        components: {MaterialSelect, Datepicker, NumeroParteSelect},
+        components: {MaterialSelect, Datepicker,NumeroParteSelect, Layout},
         data() {
             return {
                 cargando: false,
@@ -295,7 +303,7 @@
                         i : 0,
                         material : "",
                         unidad : "",
-                        numero_partida : "",
+                        numero_parte : "",
                         descripcion : "",
                         cantidad : "",
                         fecha : "",
@@ -327,6 +335,8 @@
                 this.partidas = [{
                         i : 0,
                         material : "",
+                        unidad : "",
+                        numero_parte : "",
                         descripcion : "",
                         cantidad : "",
                         fecha : "",
@@ -379,6 +389,8 @@
                     i : 0,
                     material : "",
                     descripcion : "",
+                    unidad : "",
+                    numero_parte : "",
                     cantidad : "",
                     fecha : "",
                     observaciones : "",
@@ -398,7 +410,7 @@
             busqueda(index){
                 this.partidas[index].unidad = ""
                 this.partidas[index].descripcion = ""
-                this.partidas[index].numero_partida = ""
+                this.partidas[index].numero_parte = ""
                 this.partidas[index].i = 0;
             },
             validate() {

@@ -441,6 +441,7 @@ $api->version('v1', function ($api) {
         //REQUISICIÓN
         $api->group(['prefix' => 'requisicion'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@index');
+            $api->post('layout', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@cargaLayout');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\RequisicionController@store');
