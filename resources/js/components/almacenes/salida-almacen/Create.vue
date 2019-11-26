@@ -65,23 +65,21 @@
                                  </div>
 
                                 <div class="col-md-12" v-if="empresas">
-                                    <div class="form-group error-content">
+                                    <div class="form-group">
                                         <label for="id_empresa">Contratista/Destajista solicitante del material:</label>
                                            <select
                                                class="form-control"
                                                name="id_empresa"
                                                data-vv-as="Empresa"
                                                v-model="dato.id_empresa"
-                                               v-validate="{required: true}"
                                                id="id_empresa"
-                                               :class="{'is-invalid': errors.has('id_empresa')}">
+                                               >
                                             <option value>-- Seleccione una Empresa --</option>
                                             <option v-for="(empresa, index) in empresas" :value="empresa.id"
                                                     data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
                                                 {{ empresa.razon_social }}
                                             </option>
                                         </select>
-                                         <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -198,7 +196,7 @@
                         </div>
                          <div class="footer">
                            <button type="button" class="btn btn-secondary"  @click="index">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.partidas > 0">Guardar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.partidas.length == 0">Guardar</button>
                         </div>
                      </form>
                     </div>
