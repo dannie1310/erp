@@ -399,6 +399,9 @@
         },
         mounted() {
             this.getOrdenesCompra();
+            this.fecha_hoy = new Date();
+            this.fecha = new Date();
+            this.fechasDeshabilitadas.from= new Date();
         },
         methods: {
             init() {
@@ -420,9 +423,6 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             getOrdenesCompra() {
-                this.fecha_hoy = new Date();
-                this.fecha = new Date();
-                this.fechasDeshabilitadas.from= new Date();
                 return this.$store.dispatch('almacenes/entrada-almacen/get_ordenes_compra', {
                     config: {
                         params: {
