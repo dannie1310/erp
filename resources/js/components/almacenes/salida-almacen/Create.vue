@@ -14,9 +14,11 @@
                                                 <datepicker v-model = "dato.fecha"
                                                             name = "fecha"
                                                             :format = "formatoFecha"
+                                                            :language = "es"
                                                             :bootstrap-styling = "true"
                                                             class = "form-control"
                                                             v-validate="{required: true}"
+                                                            :disabled-dates="fechasDeshabilitadas"
                                                             :class="{'is-invalid': errors.has('fecha')}"
                                                 ></datepicker>
                                           <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
@@ -451,12 +453,15 @@
     import ConceptoSelect from "../../cadeco/concepto/Select";
     import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
     import datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
 
     export default {
         name: "salida-almacen-create",
         components: {Almacen, ConceptoSelect,ConceptoSelectHijo,datepicker},
         data() {
             return {
+                es:es,
+                fechasDeshabilitadas:{},
                 dato:{
                     id_concepto:'',
                     fecha:'',
@@ -501,10 +506,12 @@
         },
         mounted() {
             this.getEmpresas();
+            this.dato.fecha = new Date();
+            this.fechasDeshabilitadas.from= new Date();
         },
         methods: {
             formatoFecha(date){
-                return moment(date).format('YYYY-MM-DD');
+                return moment(date).format('DD/MM/YYYY');
             },
             agregar_partida(){
                 this.getMateriales();
