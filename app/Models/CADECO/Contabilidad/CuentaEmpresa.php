@@ -38,4 +38,12 @@ class CuentaEmpresa extends Model
     {
         return $this->belongsTo(TipoCuentaEmpresa::class, 'id_tipo_cuenta_empresa', 'id');
     }
+
+    public function validaCuenta()
+    {
+        if($this->where('cuenta', $this->cuenta)->get()->toArray() != [])
+        {
+            throw new \Exception('El número de cuenta "' . $this->cuenta . '" se encuentra registrado previamente.', 400);
+        }
+    }
 }
