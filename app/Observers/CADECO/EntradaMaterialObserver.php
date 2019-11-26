@@ -28,7 +28,8 @@ class EntradaMaterialObserver extends TransaccionObserver
 
     public function created(Transaccion $entradaMaterial)
     {
-       $entradaMaterial->ordenCompra->update(["estado"=>1]);
+        $entradaMaterial->ordenCompra->estado = 1;
+        $entradaMaterial->ordenCompra->save();
     }
 
     public function deleting(EntradaMaterial $entradaMaterial)
@@ -55,22 +56,21 @@ class EntradaMaterialObserver extends TransaccionObserver
                 'observaciones' => $entradaMaterial->observaciones,
                 'TipoLiberacion' => $entradaMaterial->TipoLiberacion,
                 'FechaHoraRegistro' => $entradaMaterial->FechaHoraRegistro,
-                'motivo_eliminacion'=>''
+                'motivo_eliminacion' => ''
             ]
         );
     }
+
     public function deleted(EntradaMaterial $entradaMaterial)
     {
-        $ordenCompra =  $entradaMaterial->ordenCompra;
+        $ordenCompra = $entradaMaterial->ordenCompra;
         $entradas_restantes = $ordenCompra->entradasAlmacen;
-        if(count($entradas_restantes)==0){
+        if (count($entradas_restantes) == 0) {
             $ordenCompra->estado = 0;
             $ordenCompra->save();
-        }
-        else{
+        } else {
             $ordenCompra->estado = 1;
             $ordenCompra->save();
         }
-
     }
 }
