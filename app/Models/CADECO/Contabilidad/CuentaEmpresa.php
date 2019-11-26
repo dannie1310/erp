@@ -38,4 +38,21 @@ class CuentaEmpresa extends Model
     {
         return $this->belongsTo(TipoCuentaEmpresa::class, 'id_tipo_cuenta_empresa', 'id');
     }
+
+    public function validaCuenta()
+    {
+        $mensaje = "";
+        $cuentas_empresa = $this->where('cuenta', $this->cuenta)->get();
+        if($cuentas_empresa != null) {
+            foreach ($cuentas_empresa as $cuenta)
+            {
+                $mensaje .= "-".$cuenta->empresa->razon_social."\n";
+            }
+        }
+
+        if($mensaje != "")
+        {
+            throw new \Exception('La cuenta "' . $this->cuenta . '" está asociada a (los) siguiente(s) proveedor(es):'."\n".$mensaje, 400);
+        }
+    }
 }

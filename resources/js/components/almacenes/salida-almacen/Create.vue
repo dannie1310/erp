@@ -14,9 +14,11 @@
                                                 <datepicker v-model = "dato.fecha"
                                                             name = "fecha"
                                                             :format = "formatoFecha"
+                                                            :language = "es"
                                                             :bootstrap-styling = "true"
                                                             class = "form-control"
                                                             v-validate="{required: true}"
+                                                            :disabled-dates="fechasDeshabilitadas"
                                                             :class="{'is-invalid': errors.has('fecha')}"
                                                 ></datepicker>
                                           <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
@@ -63,23 +65,21 @@
                                  </div>
 
                                 <div class="col-md-12" v-if="empresas">
-                                    <div class="form-group error-content">
+                                    <div class="form-group">
                                         <label for="id_empresa">Contratista/Destajista solicitante del material:</label>
                                            <select
                                                class="form-control"
                                                name="id_empresa"
                                                data-vv-as="Empresa"
                                                v-model="dato.id_empresa"
-                                               v-validate="{required: true}"
                                                id="id_empresa"
-                                               :class="{'is-invalid': errors.has('id_empresa')}">
+                                               >
                                             <option value>-- Seleccione una Empresa --</option>
                                             <option v-for="(empresa, index) in empresas" :value="empresa.id"
                                                     data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
                                                 {{ empresa.razon_social }}
                                             </option>
                                         </select>
-                                         <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -196,7 +196,7 @@
                         </div>
                          <div class="footer">
                            <button type="button" class="btn btn-secondary"  @click="index">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.partidas > 0">Guardar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.partidas.length == 0">Guardar</button>
                         </div>
                      </form>
                     </div>
@@ -451,12 +451,15 @@
     import ConceptoSelect from "../../cadeco/concepto/Select";
     import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
     import datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
 
     export default {
         name: "salida-almacen-create",
         components: {Almacen, ConceptoSelect,ConceptoSelectHijo,datepicker},
         data() {
             return {
+                es:es,
+                fechasDeshabilitadas:{},
                 dato:{
                     id_concepto:'',
                     fecha:'',
@@ -501,10 +504,12 @@
         },
         mounted() {
             this.getEmpresas();
+            this.dato.fecha = new Date();
+            this.fechasDeshabilitadas.from= new Date();
         },
         methods: {
             formatoFecha(date){
-                return moment(date).format('YYYY-MM-DD');
+                return moment(date).format('DD/MM/YYYY');
             },
             agregar_partida(){
                 this.getMateriales();
