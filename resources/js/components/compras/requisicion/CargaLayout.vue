@@ -111,8 +111,6 @@
                         setTimeout(() => {
                             $(this.$refs.modal).modal('hide');
                         }, 100);
-                        // Create.methods.loader();
-
                     })
 
             },
