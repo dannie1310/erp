@@ -39,7 +39,6 @@ class RequisicionService
         $partidas = $this->getCsvData($file);
         $mensaje = array_pop($partidas);
         $materiales = array();
-        $regresa = [];
         foreach ($partidas as $partida)
         {
             if($partida['No PARTE'] != null) {
@@ -54,31 +53,31 @@ class RequisicionService
                         'unidad' => $material->unidad
                     ],
                     'numero_parte' => '',
-//                    'no_parte_equi' => $partida['No PARTE EQUIVALENTE'],
-//                    'pag' => $partida['PAGINA'],
+                    'no_parte_equi' => $partida['No PARTE EQUIVALENTE'],
+                    'pag' => $partida['PAGINA'],
                     'descripcion' =>'',
                     'unidad' => '',
-//                    'ref' => $partida['REF.'],
+                    'ref' => $partida['REF.'],
                     'fecha' => date('Y-m-d'),
-                    'cantidad' => $partida['CANTIDAD']
+                    'cantidad' => $partida['CANTIDAD'],
+                    'observaciones' => ''
                 );
             }else{
                 $materiales[] = array(
                     'i' => 1,
                     'material' => '',
                     'numero_parte' => '',
-//                    'no_parte_equi' => $partida['No PARTE EQUIVALENTE'],
-//                    'pag' => $partida['PAGINA'],
+                    'no_parte_equi' => $partida['No PARTE EQUIVALENTE'],
+                    'pag' => $partida['PAGINA'],
                     'descripcion' => $partida['DESCRIPCION'],
                     'unidad' => $partida['UNIDAD'],
-//                    'ref' => $partida['REF.'],
+                    'ref' => $partida['REF.'],
                     'fecha' => date('Y-m-d'),
-                    'cantidad' => $partida['CANTIDAD']
+                    'cantidad' => $partida['CANTIDAD'],
+                    'observaciones' => ''
                 );
             }
         }
-        array_push($regresa,$materiales);
-        array_push($regresa,$mensaje);
         return $materiales;
     }
 
@@ -124,7 +123,7 @@ class RequisicionService
                         'REF.' =>  $renglon[4],
                         'UNIDAD' =>  $renglon[5],
                         'DESCRIPCION' =>  $renglon[6],
-                        'CANTIDAD' =>  number_format($renglon[7],2,'.',','),
+                        'CANTIDAD' =>  $renglon[7]
                     );
                 }else
                 {
