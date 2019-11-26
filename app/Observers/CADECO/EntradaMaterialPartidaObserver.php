@@ -18,6 +18,7 @@ class EntradaMaterialPartidaObserver
 {
     /**
      * @param EntradaMaterialPartida $partida
+     * @throws \Exception
      */
     public function creating(EntradaMaterialPartida $partida)
     {
@@ -37,6 +38,9 @@ class EntradaMaterialPartidaObserver
         }
     }
 
+    /**
+     * @param EntradaMaterialPartida $partida
+     */
     public function created(EntradaMaterialPartida $partida)
     {
         $factor = $partida->entrada->factor_conversion;
@@ -53,6 +57,7 @@ class EntradaMaterialPartidaObserver
                 'monto_pagado' => round($pagado *$factor,2),
                 'monto_anticipo' => 0
             ]);
+            $partida->ajustarValoresConsumos();
         }
         if($partida->id_concepto != null) {
             Movimiento::create([

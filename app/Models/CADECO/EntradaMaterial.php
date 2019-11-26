@@ -405,7 +405,7 @@ class EntradaMaterial extends Transaccion
             return $entrada;
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
+            abort(500, $e->getMessage());
             throw $e;
         }
     }
