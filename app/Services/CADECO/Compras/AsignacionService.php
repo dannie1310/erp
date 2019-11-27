@@ -5,7 +5,7 @@ namespace App\Services\CADECO\Compras;
 
 
 use App\Models\CADECO\Compras\Asignacion;
-use App\PDF\AsignacionFormato;
+use App\PDF\Compras\AsignacionFormato;
 use App\Repositories\Repository;
 
 class AsignacionService

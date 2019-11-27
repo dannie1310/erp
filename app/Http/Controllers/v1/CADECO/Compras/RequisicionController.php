@@ -56,4 +56,9 @@ class RequisicionController extends Controller
          $res = $this->service->cargaLayout($request->file);
         return response()->json($res, 200);
     }
+
+    public function pdfRequisicion($id)
+    {
+        return $this->service->pdfRequisicion($id)->create();
+    }
 }

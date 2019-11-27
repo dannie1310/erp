@@ -445,6 +445,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\RequisicionController@store');
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@pdfRequisicion')->where(['id' => '[0-9]+']);
         });
 
         // SOLICITUD DE COMPRA

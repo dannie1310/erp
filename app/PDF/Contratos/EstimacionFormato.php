@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\PDF;
+namespace App\PDF\Contratos;
 
 use App\Facades\Context;
 use App\Models\CADECO\Estimacion;

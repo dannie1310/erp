@@ -6,7 +6,7 @@
  * Time: 11:01 AM
  */
 
-namespace App\PDF;
+namespace App\PDF\Finanzas;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;

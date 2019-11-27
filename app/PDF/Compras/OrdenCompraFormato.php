@@ -7,7 +7,7 @@
  */
 
 
-namespace App\PDF;
+namespace App\PDF\Compras;
 
 
 use App\Models\CADECO\Almacen;
