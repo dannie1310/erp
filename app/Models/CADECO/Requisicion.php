@@ -100,4 +100,33 @@ class Requisicion extends Transaccion
             throw $e;
         }
     }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validarParaEliminar();
+            $this->respaldar($motivo);
+            $this->revisar_respaldos();
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Reglas de negocio que debe cumplir la eliminación
+     */
+    private function validarParaEliminar()
+    {
+        $mensaje = "";
+
+        if($mensaje != "")
+        {
+            abort(400, "No se puede eliminar la requisición debido a que existen las siguientes transacciones relacionadas:\n". $mensaje. "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        }
+    }
 }

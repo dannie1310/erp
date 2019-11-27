@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteRequisicionRequest;
 use App\Http\Transformers\CADECO\Compras\RequisicionTransformer;
 use App\Services\CADECO\Compras\RequisicionService;
 use App\Traits\ControllerTrait;
@@ -18,7 +19,9 @@ use League\Fractal\Manager;
 
 class RequisicionController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait {
+        destroy as traitDestroy;
+    }
 
     /**
      * @var Manager
@@ -60,5 +63,10 @@ class RequisicionController extends Controller
     public function pdfRequisicion($id)
     {
         return $this->service->pdfRequisicion($id)->create();
+    }
+
+    public function destroy(DeleteRequisicionRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);
     }
 }

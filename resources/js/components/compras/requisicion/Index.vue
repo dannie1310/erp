@@ -100,7 +100,8 @@
                         id_usuario: requisicion.registro ? requisicion.registro.nombre : '',
                         buttons: $.extend({}, {
                             id: requisicion.id,
-                            show: true
+                            show: true,
+                            delete: self.$root.can('eliminar_entrada_almacen') ? true : false
                         })
                     }));
                 },

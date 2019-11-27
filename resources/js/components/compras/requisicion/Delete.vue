@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Show" v-if="$root.can('registrar_marbetes_manualmente')">
-            <i class="fa fa-eye"></i>
+        <button @click="find" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+            <i class="fa fa-trash"></i>
         </button>
-         <div class="modal fade" ref="modal" role="dialog">
+        <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> REQUISICIÓN DE COMPRA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-trash"></i> REQUISICIÓN DE COMPRA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -92,7 +92,7 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <hr />
+                                        <br />
                                         <div class="row">
                                             <div class="col-md-2">
                                                 <h6><b>Observaciones:</b></h6>
@@ -101,12 +101,33 @@
                                                <h6>{{requisicion.observaciones}}</h6>
                                             </div>
                                         </div>
+                                        <hr />
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group row error-content">
+                                                     <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea
+                                                                name="motivo"
+                                                                id="motivo"
+                                                                class="form-control"
+                                                                v-model="motivo"
+                                                                v-validate="{required: true}"
+                                                                data-vv-as="Motivo"
+                                                                :class="{'is-invalid': errors.has('motivo')}"
+                                                        ></textarea>
+                                                        <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''">Eliminar</button>
                         </div>
                     </form>
                 </div>
@@ -117,11 +138,12 @@
 
 <script>
     export default {
-        name: "requisicion-show",
+        name: "requisicion-delete",
         props: ['id'],
         data() {
             return {
-                requisicion : []
+                motivo: '',
+                requisicion: ''
             }
         },
         methods: {
@@ -135,7 +157,42 @@
                     this.requisicion = data;
                     $(this.$refs.modal).modal('show');
                 })
-            }
+            },
+            eliminar() {
+                this.cargando = true;
+                return this.$store.dispatch('compras/requisicion/eliminar', {
+                    id: this.id,
+                    params: {data: [this.$data.motivo]}
+                })
+                    .then(data => {
+                        this.$store.commit('compras/requisicion/DELETE_ENTRADA', {id: this.id})
+                        $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('compras/requisicion/paginate', {
+                            params: {
+                               sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('compras/requisicion/SET_ENTRADAS', data.data);
+                                this.$store.commit('compras/requisicion/SET_META', data.meta);
+                            })
+                    })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        if(this.motivo == '') {
+                            swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
+                        }
+                        else {
+                            this.eliminar()
+                        }
+                    }
+                });
+            },
         }
     }
 </script>

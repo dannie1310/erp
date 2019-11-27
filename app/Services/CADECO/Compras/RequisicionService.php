@@ -180,6 +180,10 @@ class RequisicionService
     {
         $pdf = new RequisicionFormato($id);
         return $pdf;
+    }
 
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data'][0]);
     }
 }
