@@ -94,6 +94,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <hr>
                             <template v-if="dato.opciones == 1">
                                 <div class="row">
                                     <div class="col-md-12" >
@@ -156,10 +157,11 @@
                                         </div>
 
                                 </div>
+                                <hr>
 
                             </template>
 
-                            <hr>
+
                             <div class="row">
                                 <div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">
                                     <div class="form-group">
@@ -246,20 +248,24 @@
                                                             </div>
                                                             </td>
                                                             <td  v-if="partida.destino ===  ''" >
-                                                                <small class="badge badge-secondary">
-                                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                                </small>
-                                                            </td>
-                                                            <td v-else >
-                                                                <small class="badge badge-success">
-                                                                    <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                                </small>
-                                                            </td>
-                                                            <td  v-if="partida.destino ===  ''" >
-                                                            </td>
-                                                            <td v-else >
-                                                                <span style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
-                                                            </td>
+                                                            <small class="badge badge-secondary">
+                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                        </td>
+                                                        <td v-else >
+                                                            <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
+                                                                <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                             <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
+                                                                <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                        </td>
+                                                        <td  v-if="partida.destino ===  ''" >
+                                                        </td>
+                                                        <td v-else >
+                                                            <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
+                                                            <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
+                                                        </td>
                                                             <td>
                                                                 <i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>
                                                                 <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" ></i>
@@ -301,7 +307,7 @@
                 </div>
             </div>
         </nav>
-        <nav v-if="concepto.id>0 && concepto.id !==undefined">
+        <nav >
             <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg" >
                     <div class="modal-content">
@@ -313,7 +319,7 @@
                         </div>
                         <form role="form">
                             <div class="modal-body">
-                                <div class="row">
+                                <div class="row" v-if="concepto.id>0 && concepto.id !==undefined && dato.opciones==1">
                                     <div class="col-12">
                                         <div class="form-group row error-content">
                                             <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
@@ -327,6 +333,25 @@
                                                         :disableBranchNodes="true"
                                                         v-bind:nivel_id="concepto.id"
                                                 ></ConceptoSelectHijo>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" v-if="dato.opciones==65537">
+                                    <div class="col-12">
+                                        <div class="form-group row error-content">
+                                            <label for="id_concepto" class="col-sm-2 col-form-label">Activos:</label>
+                                            <div class="col-sm-10">
+                                                <select
+                                                        name="id_almacen"
+                                                        id="id_almacen_temporal"
+                                                        data-vv-as="Almacén"
+                                                        class="form-control"
+                                                        v-model="almacen_temporal"
+                                                >
+                                                    <option value="">-- Almacén --</option>
+                                                    <option v-for="almacen in almacenes" :value="almacen">{{ almacen.descripcion }}</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -366,7 +391,7 @@
                     fecha:'',
                     id_almacen:'',
                     id_empresa:'',
-                    opciones:'',
+                    opciones:1,
                     referencia:'',
                     observaciones:'',
                     partidas:[]
@@ -727,6 +752,15 @@
                     this.destino_seleccionado.id_destino = value;
                     this.destino_seleccionado.tipo_destino = 1;
                     this.getConcepto();
+                }
+            },
+            almacen_temporal(value){
+                if(value !== '' && value !== null && value !== undefined){
+                    this.id_concepto_temporal = '';
+                    this.destino_seleccionado.id_destino = value.id;
+                    this.destino_seleccionado.tipo_destino = 2;
+                    this.destino_seleccionado.destino = value;
+                    this.seleccionarDestino();
                 }
             },
         }
