@@ -21,7 +21,7 @@
     },
     "dependencies": {
         "@riophae/vue-treeselect": "0.0.38",
-        "admin-lte": "^3.0.0-alpha",
+        "admin-lte": "^3.0.1",
         "basscss-background-colors": "^2.1.0",
         "bootstrap-pincode-input": "^1.6.1",
         "chart.js": "^2.7.3",
