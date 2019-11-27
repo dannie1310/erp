@@ -10,9 +10,9 @@ try {
     window.moment = require('moment');
     require('moment/locale/es');
     moment.locale('es');
-    require('admin-lte/plugins/daterangepicker/daterangepicker')
-    require('admin-lte/plugins/datepicker/bootstrap-datepicker')
-    require('admin-lte/plugins/datepicker/locales/bootstrap-datepicker.es')
+    require('admin-lte/plugins/daterangepicker/daterangepicker');
+    /*require('admin-lte/plugins/datepicker/bootstrap-datepicker')*/
+    /*require('admin-lte/plugins/datepicker/locales/bootstrap-datepicker.es')*/
     window.Chart = require('chart.js')
     window.VueTreeselect = require('@riophae/vue-treeselect');
     window.LOAD_CHILDREN_OPTIONS = require('@riophae/vue-treeselect');
