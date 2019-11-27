@@ -53,9 +53,4 @@ class MaterialController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
-
-    public function porInventario(Request $request)
-    {
-        return $this->service->porInventario($request->all());
-    }
 }
