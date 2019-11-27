@@ -72,6 +72,7 @@
                             </div>
                             <hr>
                             <div class="row">
+                                <!--Tipo-->
                                  <div class="col-md-6">
                                     <div class="form-group row error-content">
                                         <label for="opciones" class="col-sm-3 col-form-label">Tipo: </label>
@@ -97,6 +98,7 @@
                             <hr>
                             <template v-if="dato.opciones == 1">
                                 <div class="row">
+                                    <!--Concepto raíz-->
                                     <div class="col-md-12" >
                                         <div class="form-group error-content">
                                         <label for="id_concepto">Concepto:</label>
@@ -115,11 +117,12 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!--Entrega a contratista-->
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input button" id="con_prestamo" v-model="dato.con_prestamo" >
-                                            <label class="custom-control-label" for="con_prestamo">Con préstamo a contratista</label>
+                                            <label class="custom-control-label" for="con_prestamo">Entrega a contratista</label>
                                         </div>
                                     </div>
                                         <div class="col-md-8" v-if="dato.con_prestamo">
@@ -158,10 +161,7 @@
 
                                 </div>
                                 <hr>
-
                             </template>
-
-
                             <div class="row">
                                 <div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">
                                     <div class="form-group">
@@ -365,8 +365,6 @@
                 </div>
             </div>
         </nav>
-
-
     </span>
 </template>
 
@@ -386,6 +384,7 @@
                 fechasDeshabilitadas:{},
                 dato:{
                     con_prestamo: 0,
+                    folio_vale: '',
                     opcion_cargo: 1,
                     id_concepto:'',
                     fecha:'',
@@ -463,58 +462,7 @@
                 if(this.materiales.length === 0 ) {
                     this.getMateriales();
                 }
-
                 this.dato.partidas.push(array);
-                /*this.getMateriales();
-                this.getAlmacenes();
-                this.getContratista();
-                this.cargando = true;
-                this.contratista.empresa_contratista = '';
-                this.contratista.opcion = 0;
-                this.dato_partida.cantidad ='';
-                this.dato_partida.destino ='';
-                this.partida ={};
-                $(this.$refs.modal).modal('show');
-                this.$validator.reset();
-                this.cargando = false;*/
-            },
-            agregarContratista(index){
-                this.indice = index;
-                if(this.dato.partidas[this.indice][4] == '' && this.dato.partidas[this.indice][5] == ''){
-                    this.contratista.empresa_contratista = '';
-                    this.contratista.opcion = 0;
-                }else{
-                    this.contratista.empresa_contratista = this.dato.partidas[this.indice][4].id;
-                    this.contratista.opcion =  this.dato.partidas[this.indice][5];
-                }
-                this.getContratista().then(data =>{
-                    this.cargando = true;
-                    $(this.$refs.contratista).modal('show');
-                    this.$validator.reset();
-                    this.cargando = false;
-                    this.emp_cont='';
-                });
-            },
-            quitarContratista(){
-                this.cargando = true;
-                this.dato.partidas[this.indice][4] = '';
-                this.dato.partidas[this.indice][5] = '';
-                $(this.$refs.contratista).modal('hide');
-                this.$validator.reset();
-                this.emp_cont='';
-                this.cargando = false;
-            },
-            modificarContratista(){
-                this.cargando = true;
-                this.findContratista().then(data => {
-                    this.dato.partidas[this.indice][4] = this.emp_cont;
-                    this.dato.partidas[this.indice][5] = this.contratista.opcion;
-                    $(this.$refs.contratista).modal('hide');
-                    this.$validator.reset();
-                    this.cargando = false;
-                    this.emp_cont='';
-                });
-
             },
             getContratista() {
                 return this.$store.dispatch('cadeco/empresa/index', {
