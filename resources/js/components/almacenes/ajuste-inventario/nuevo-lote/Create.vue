@@ -120,7 +120,7 @@
                                                             </div>
                                                         </td>
                                                         <td style="text-align:center">
-                                                            <button class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                         </td>
                                                     </tr>
                                                     </tbody>
