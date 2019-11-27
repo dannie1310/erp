@@ -115,33 +115,48 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-2">
                                         <div class="custom-control custom-switch">
-                                            <input type="checkbox" class="custom-control-input" id="customSwitch1">
-                                            <label class="custom-control-label" for="customSwitch1">Con Préstamo a contratista</label>
+                                            <input type="checkbox" class="custom-control-input button" id="con_prestamo" v-model="dato.con_prestamo" >
+                                            <label class="custom-control-label" for="con_prestamo">Con préstamo a contratista</label>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12" v-if="empresas && dato.opciones == 1">
-                                        <div class="form-group">
-                                            <label for="id_empresa">Contratista/Destajista solicitante del material:</label>
+                                        <div class="col-md-8" v-if="dato.con_prestamo">
                                             <select
                                                     class="form-control"
                                                     name="id_empresa"
                                                     data-vv-as="Empresa"
                                                     v-model="dato.id_empresa"
                                                     id="id_empresa"
+                                                    :disabled="!dato.con_prestamo"
                                             >
-                                                    <option value>-- Seleccione una Empresa --</option>
+                                                    <option v-if="dato.con_prestamo" value>-- Seleccione --</option>
+                                                    <option value v-if="!dato.con_prestamo">-- No Aplica --</option>
                                                     <option v-for="(empresa, index) in empresas" :value="empresa.id"
                                                             data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
                                                         {{ empresa.razon_social }}
                                                     </option>
                                             </select>
                                         </div>
-                                    </div>
+                                        <div class="col-md-2" v-if="dato.con_prestamo">
+                                            <div class="btn-group btn-group-toggle">
+                                                    <label class="btn btn-outline-primary" :class="dato.opcion_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                        <input type="radio"
+                                                               :disabled="!dato.con_prestamo"
+                                                               class="btn-group-toggle "
+                                                               name="opcion_cargo"
+                                                               :id="'opcion_cargo' + key"
+                                                               :value="key"
+
+                                                               v-validate="{required: true}"
+                                                               v-model.number="dato.opcion_cargo">
+                                                            {{ cargo }}
+                                                    </label>
+                                                </div>
+                                        </div>
+
                                 </div>
+
                             </template>
 
                             <hr>
@@ -326,73 +341,7 @@
             </div>
         </nav>
 
-        <div class="modal fade" ref="contratista" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AGREGAR CONTRATISTA</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                     <form role="form" @submit.prevent="modificarContratista">
-                        <div class="modal-body">
-                            <fieldset class="form-group">
-                                <div class="row"  v-if="contratistas">
-                                      <div class="col-md-8">
-                                        <div class="form-group error-content">
-                                            <label for="empresa_contratista">Empresa Contratista:</label>
-                                               <select
-                                                       class="form-control"
-                                                       name="empresa_contratista"
-                                                       data-vv-as="Material"
-                                                       v-model="contratista.empresa_contratista"
-                                                       v-validate="{required: false}"
-                                                       id="empresa_contratista"
-                                                       :class="{'is-invalid': errors.has('empresa_contratista')}">
-                                                <option value>-- Seleccione --</option>
-                                                <option v-for="(contratista, index) in contratistas" :value="contratista.id"
-                                                        data-toggle="tooltip" data-placement="left" :title="contratista.id ">
-                                                    {{ contratista.razon_social }}
-                                                </option>
-                                            </select>
-                                             <div class="invalid-feedback" v-show="errors.has('id')">{{ errors.first('id') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                     <div class="col-md-6">
-                                        <div class="form-group row error-content">
-                                            <label for="opcion" class="col-sm-3 col-form-label">Tipo: </label>
-                                            <div class="col-sm-10">
-                                                <div class="btn-group btn-group-toggle">
-                                                    <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
-                                                        <input type="radio"
-                                                               class="btn-group-toggle"
-                                                               name="opcion"
-                                                               :id="'opcion' + key"
-                                                               :value="key"
-                                                               autocomplete="on"
-                                                               v-validate="{required: true}"
-                                                               v-model.number="contratista.opcion">
-                                                            {{ cargo }}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </fieldset>
-                        </div>
-                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Contratista</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == '' || (contratista.opcion != 0 && contratista.opcion != 1 )">Registrar Contratista</button>
-                        </div>
-                     </form>
-                </div>
-            </div>
-          </div>
+
     </span>
 </template>
 
@@ -411,6 +360,8 @@
                 es:es,
                 fechasDeshabilitadas:{},
                 dato:{
+                    con_prestamo: 0,
+                    opcion_cargo: 1,
                     id_concepto:'',
                     fecha:'',
                     id_almacen:'',
