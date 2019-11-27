@@ -94,41 +94,56 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12" v-if="empresas && dato.opciones == 1">
-                                    <div class="form-group">
-                                        <label for="id_empresa">Contratista/Destajista solicitante del material:</label>
-                                           <select
-                                                   class="form-control"
-                                                   name="id_empresa"
-                                                   data-vv-as="Empresa"
-                                                   v-model="dato.id_empresa"
-                                                   id="id_empresa"
-                                           >
-                                            <option value>-- Seleccione una Empresa --</option>
-                                            <option v-for="(empresa, index) in empresas" :value="empresa.id"
-                                                    data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
-                                                {{ empresa.razon_social }}
-                                            </option>
-                                        </select>
+                            <template v-if="dato.opciones == 1">
+                                <div class="row">
+                                    <div class="col-md-12" >
+                                        <div class="form-group error-content">
+                                        <label for="id_concepto">Concepto:</label>
+                                            <concepto-select
+                                                    name="id_concepto"
+                                                    data-vv-as="Concepto"
+                                                    v-validate="{required: true}"
+                                                    id="id_concepto"
+                                                    v-model="id_concepto"
+                                                    :error="errors.has('id_concepto')"
+                                                    ref="conceptoSelect"
+                                                    :disableBranchNodes="false"
+                                                    onselect="findConcepto"
+                                            ></concepto-select>
+                                        <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                        </div>
                                     </div>
                                 </div>
-                            <div class="col-md-12" v-if="dato.opciones == 1">
-                                <div class="form-group error-content">
-                                <label for="id_concepto">Concepto:</label>
-                                    <concepto-select
-                                            name="id_concepto"
-                                            data-vv-as="Concepto"
-                                            v-validate="{required: true}"
-                                            id="id_concepto"
-                                            v-model="id_concepto"
-                                            :error="errors.has('id_concepto')"
-                                            ref="conceptoSelect"
-                                            :disableBranchNodes="false"
-                                            onselect="findConcepto"
-                                    ></concepto-select>
-                                <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                                            <label class="custom-control-label" for="customSwitch1">Con Préstamo a contratista</label>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="row">
+                                    <div class="col-md-12" v-if="empresas && dato.opciones == 1">
+                                        <div class="form-group">
+                                            <label for="id_empresa">Contratista/Destajista solicitante del material:</label>
+                                            <select
+                                                    class="form-control"
+                                                    name="id_empresa"
+                                                    data-vv-as="Empresa"
+                                                    v-model="dato.id_empresa"
+                                                    id="id_empresa"
+                                            >
+                                                    <option value>-- Seleccione una Empresa --</option>
+                                                    <option v-for="(empresa, index) in empresas" :value="empresa.id"
+                                                            data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
+                                                        {{ empresa.razon_social }}
+                                                    </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
                             <hr>
                             <div class="row">
                                 <div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">
