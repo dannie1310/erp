@@ -53,17 +53,4 @@ class RequisicionObserver extends TransaccionObserver
             ]
         );
     }
-
-    public function deleted(EntradaMaterial $entradaMaterial)
-    {
-        $ordenCompra = $entradaMaterial->ordenCompra;
-        $entradas_restantes = $ordenCompra->entradasAlmacen;
-        if (count($entradas_restantes) == 0) {
-            $ordenCompra->estado = 0;
-            $ordenCompra->save();
-        } else {
-            $ordenCompra->estado = 1;
-            $ordenCompra->save();
-        }
-    }
 }
