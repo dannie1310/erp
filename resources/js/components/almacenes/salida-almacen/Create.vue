@@ -236,7 +236,7 @@
                                                                         type="number"
                                                                         step="any"
                                                                         :name="`cantidad[${i}]`"
-                                                                        v-model="partida.material.cantidad"
+                                                                        v-model="partida.cantidad"
                                                                         data-vv-as="Cantidad"
                                                                         v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:2}"
                                                                         class="form-control"
