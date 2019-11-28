@@ -17,7 +17,7 @@ class RequisicionFormato extends Rotation
     protected $id_requisicion;
     protected $requisicion;
 
-    private $encola = '',
+    private $encola = 'panda',
         $encabezado_pdf,
         $conFirmaDAF = false,
         $id_tipo_fianza = 0,
@@ -48,7 +48,7 @@ class RequisicionFormato extends Rotation
     {
         $residuo = $this->PageNo() % 2;
 
-        if ($residuo > 0) {
+        if (true) {
             $postTitle = .7;
 
 
@@ -162,7 +162,7 @@ class RequisicionFormato extends Rotation
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
             $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', "".$this->requisicion->complemento->concepto))));
-
+            $this->Ln(.8);
 
             // Cuadro partidas
             if ($this->encola == "partida") {
@@ -191,8 +191,9 @@ class RequisicionFormato extends Rotation
 
     public function partidas()
     {
+        $this->encola = "partida";
         $count_partidas = count($this->requisicion->partidas);
-        $this->Ln(.8);
+
         $this->SetFillColor(180, 180, 180);
         $this->SetWidths([1, 4, 7, 2, 2.5, 3]);
         $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF']);
@@ -204,10 +205,15 @@ class RequisicionFormato extends Rotation
         $this->SetAligns(['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C']);
         $this->Row(["#", "No. Parte", utf8_decode("Descripción"), "Cantidad", "Unidad", "Fecha Requerida"]);
 
+
         foreach ($this->requisicion->partidas as $i => $p) {
             $this->dim = $this->GetY();
+            if ($this->dim > 23.0) {
+                $this->AddPage();
+                $this->dim_aux = 1;
+            }
             $this->SetWidths([1, 4, 7, 2, 2.5, 3]);
-            $this->encola = "partida";
+
             $this->SetRounds(['', '', '', '', '', '']);
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
             $this->SetAligns(['C', 'R', 'C', 'L', 'L', 'R']);
@@ -235,15 +241,12 @@ class RequisicionFormato extends Rotation
                     $this->SetRadius([0.2]);
                 }
 
-                $this->encola = "observaciones_partida";
+//                $this->encola = "observaciones_partida";
                 $this->Row([html_entity_decode(mb_convert_encoding($p->complemento->observaciones, 'HTML-ENTITIES', 'UTF-8'))]);
             }
-            $this->dim = $this->GetY();
+//            $this->dim = $this->GetY();
 
-            if ($this->dim > 19.8) {
-                $this->AddPage();
-                $this->dim_aux = 1;
-            }
+
         }
 
         $this->Ln(.7);
