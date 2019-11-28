@@ -32,7 +32,8 @@ class MaterialSalidasTransformer extends TransformerAbstract
             'descripcion' => $model->descripcion,
             'numero_parte' => $model->numero_parte,
             'unidad' => $model->unidad,
-            'saldo_almacen' => $model->saldo_almacen,
+            'saldo_almacen' => $model->saldo_almacen_dd,
+            'saldo_almacen_format' => $model->saldo_almacen_format,
             'cantidad_almacen' => $model->cantidad_almacen,
         ];
     }
