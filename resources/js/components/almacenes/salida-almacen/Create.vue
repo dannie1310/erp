@@ -228,7 +228,7 @@
                                                                 {{partida.material.unidad}}
                                                             </td>
                                                             <td class="money">
-                                                                {{partida.material.saldo_almacen}}
+                                                                {{partida.material.saldo_almacen_format}}
                                                             </td>
                                                             <td>
                                                                 <input
