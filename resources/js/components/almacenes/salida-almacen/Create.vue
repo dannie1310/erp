@@ -188,7 +188,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr v-for="(partida, i) in dato.partidas">
+                                                        <tr v-for="(partida, i) in partidas">
                                                             <td>{{ i + 1}}</td>
                                                             <td>
                                                                 <select
@@ -300,7 +300,7 @@
                         </div>
                          <div class="footer">
                            <button type="button" class="btn btn-secondary"  @click="index">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.partidas.length == 0">Guardar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || partidas.length == 0">Guardar</button>
                         </div>
                      </form>
                     </div>
@@ -395,6 +395,7 @@
                     observaciones:'',
                     partidas:[]
                 },
+                partidas:[],
                 tipos: {
                     1: "Consumo",
                     65537: "Transferencia"
@@ -413,7 +414,6 @@
                 },
                 emp_cont:'',
                 contratistas:[],
-                partida:{},
                 empresas:[],
                 almacenes:[],
                 materiales:[],
@@ -462,7 +462,7 @@
                 if(this.materiales.length === 0 ) {
                     this.getMateriales();
                 }
-                this.dato.partidas.push(array);
+                this.partidas.push(array);
             },
             getContratista() {
                 return this.$store.dispatch('cadeco/empresa/index', {
@@ -503,15 +503,6 @@
 
                     })
             },
-            findMaterial() {
-                this.$store.commit('cadeco/material/SET_MATERIAL', null);
-                return this.$store.dispatch('cadeco/material/find', {
-                    id: this.partida[0],
-                    params: {}
-                }).then(data => {
-                    this.material = data;
-                })
-            },
             getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
                     id: this.destino_seleccionado.id_destino,
@@ -534,7 +525,7 @@
                         this.concepto = data;
                     });
                 } else {
-                    this.dato.partidas.forEach(function(partida) {
+                    this.partidas.forEach(function(partida) {
                         partida.destino = '';
                     });
                 }
@@ -581,24 +572,86 @@
                     })
             },
             validate() {
+                var error_destino_no_ingresado = 0;
+                var error_destino_repetido = 0;
+                var contador_material_destino = [];
+                var material_aviso = [];
+                var destino_aviso = [];
+                var partidas_store = [];
+                var aviso_repetido = "\n";
+
+
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        this.$data.partidas.forEach(function(element) {
+                            if(!(element.cantidad  === undefined && element.destino  === '' )){
+                                if(element.cantidad > 0 && element.destino === '')
+                                {
+                                    error_destino_no_ingresado = error_destino_no_ingresado + 1
+                                } else {
+                                    /*Validación para evitar que un mismo material se cargue mas de una vez a un mismo concepto*/
+                                    if(isNaN(contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()]))
+                                    {
+                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = parseInt("1");
+                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                    }else{
+                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] += parseInt("1");
+                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                    }
+                                }
+                            }
+                            partidas_store.push({
+                                id_destino : element.destino.id_destino,
+                                id_material : element.material.id_material,
+                                unidad : element.material.unidad,
+                                cantidad: element.cantidad,
+                            });
+
+                        });
+
+                        for(var i in contador_material_destino)
+                        {
+                            if(parseInt(contador_material_destino[i])>1)
+                            {
+                                error_destino_repetido++;
+                                aviso_repetido += '-'+material_aviso[i] +"->"+ destino_aviso[i] +"\n";
+                            }
+                        }
+
+                        if (error_destino_no_ingresado > 0)
+                        {
+                            swal('Atención', 'Ingrese un destino válido en todas las partidas.', 'warning');
+                        }
+                        else if (error_destino_repetido > 0)
+                        {
+                            if(this.dato.opciones == 1){
+                                swal('Atención', 'Un mismo insumo se intenta cargar  mas de una vez a un mismo concepto, favor de corregir:'+aviso_repetido, 'warning');
+                            }else if(this.dato.opciones == 65537){
+                                swal('Atención', 'Un mismo insumo se intenta enviar  mas de una vez a un mismo almacén, favor de corregir:'+aviso_repetido, 'warning');
+                            }
+
+                        }
+                        else {
+                            this.store(partidas_store)
+                        }
                     }
                 });
             },
-            store() {
+            store(partidas) {
+                this.dato.partidas = partidas;
                 return this.$store.dispatch('almacenes/salida-almacen/store', this.dato)
                     .then((data) => {
                         this.$router.push({name: 'salida-almacen'});
                     });
             },
             borrar(){
-                this.dato.partidas=[];
+                this.partidas=[];
                 this.dato.id_concepto='';
             },
             borrarPartida(i){
-                this.dato.partidas.splice(i,1);
+                this.partidas.splice(i,1);
             },
             validarCantidad() {
                 if(parseInt(this.partida[1]) < parseInt(this.dato_partida.cantidad)) {
@@ -618,36 +671,24 @@
             index(){
                 this.$router.push({name: 'salida-almacen'});
             },
-            validatePartida() {
-                this.findMaterial().finally(() => {
-                    this.contratista.opcion = '';
-                });
-                this.findAlmacen().finally(() => {
-                    this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
-                });
-
-                this.emp_cont='';
-                $(this.$refs.modal).modal('hide');
-
-            },
             modalDestino(i) {
                 if(this.id_concepto == null || this.id_concepto == undefined)
                 {
                     swal('Atención', 'Seleccione el concepto raíz', 'warning');
                 }
                 this.index_temporal = i;
-                if(this.dato.partidas[this.index_temporal].destino == undefined || this.dato.partidas[this.index_temporal].destino == ''){
+                if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
                     this.destino_seleccionado.tipo_destino =  '';
                     this.destino_seleccionado.destino = '';
                     this.destino_seleccionado.id_destino = '';
                 }else {
-                    this.destino_seleccionado = this.dato.partidas[this.index_temporal].destino;
+                    this.destino_seleccionado = this.partidas[this.index_temporal].destino;
                 }
                 this.$validator.reset();
                 $(this.$refs.modal_destino).modal('show');
             },
             seleccionarDestino() {
-                this.dato.partidas[this.index_temporal].destino = this.destino_seleccionado;
+                this.partidas[this.index_temporal].destino = this.destino_seleccionado;
                 this.index_temporal = '';
                 this.destino_seleccionado = {
                     tipo_destino : '',
@@ -683,7 +724,7 @@
             id_almacen(value){
                 if(value != ''){
                     this.dato.id_almacen = value;
-                    this.dato.partidas=[];
+                    this.partidas=[];
                     this.materiales = [];
                     this.bandera = 0;
                 }
@@ -708,7 +749,11 @@
                     this.destino_seleccionado.id_destino = value.id;
                     this.destino_seleccionado.tipo_destino = 2;
                     this.destino_seleccionado.destino = value;
-                    this.seleccionarDestino();
+                    if(value.id != this.id_almacen) {
+                        this.seleccionarDestino();
+                    } else {
+                        swal('Atención', 'No puede seleccionar como destino el almacén origen.', 'warning');
+                    }
                 }
             },
         }
