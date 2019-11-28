@@ -49,6 +49,10 @@ class RequisicionController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_requisicion_compra')->only(['show', 'paginate', 'index', 'find', 'pdfRequisicion']);
+        $this->middleware('permiso:eliminar_requisicion_compra')->only('destroy');
+        $this->middleware('permiso:registrar_requisicion_compra')->only('store');
+
         $this->fractal = $fractal;
         $this->transformer = $transformer;
         $this->service = $service;
