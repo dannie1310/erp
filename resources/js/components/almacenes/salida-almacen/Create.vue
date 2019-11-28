@@ -170,7 +170,7 @@
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th class="bg-gray-light index_corto">#</th>
+                                                            <th class="index_corto">#</th>
                                                             <th class="no_parte_input">No. de Parte</th>
                                                             <th>Material</th>
                                                             <th class="unidad">Unidad</th>
@@ -179,7 +179,7 @@
                                                             <th class="icono"></th>
                                                             <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
                                                             <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
-                                                             <th class="bg-gray-light th_index">
+                                                             <th class="th_index">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
                                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                                 <i class="fa fa-plus" v-else></i>

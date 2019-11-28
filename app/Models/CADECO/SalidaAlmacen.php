@@ -338,18 +338,6 @@ class SalidaAlmacen extends Transaccion
 
     }
 
-    private function validarRegistro($data){
-        foreach ($data['partidas'] as $p){
-            if(Inventario::query()->where('id_almacen','=',$data['id_almacen'])->where('id_material','',$p[0]['id'])->first()){
-                abort(400, "No existe lote");
-            }
-            if($p[3]<$p[1]){
-                abort(400, "La cantida es mayor a la existencia");
-            }
-        }
-
-    }
-
     private function revisar_respaldos()
     {
         $partidas = $this->partidas()->get()->toArray();
@@ -383,15 +371,43 @@ class SalidaAlmacen extends Transaccion
 
     public function registrar($data){
         try{
-            $data['fecha']= date_format(new DateTime($data['fecha']), 'Y-m-d');
-            DB::connection('cadeco')->beginTransaction();
-            $this->validarRegistro($data);
-            $salidaTransaccion = $this->create($data);
-            $partida = new SalidaAlmacenPartida();
-            $partida->registrar($data['partidas'], $salidaTransaccion->toArray());
+            print_r($data);
 
-            DB::connection('cadeco')->commit();
-            return $salidaTransaccion;
+            DB::connection('cadeco')->beginTransaction();
+            $salida = $this->create(
+                [
+                    'id_empresa' => $data["id_empresa"],
+                    'id_concepto' => $data["id_concepto"],
+                    'id_almacen' => $data["id_almacen"],
+                    'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
+                    'referencia' => $data["referencia"],
+                    'observaciones' => $data['observaciones']
+                ]
+            );
+
+            foreach ($data['partidas'] as $item){
+                print_r($item);
+                $item_guardado = $salida->partidas()->create([
+                    'id_transaccion' => $salida->id_transaccion,
+                    'id_concepto' => $item['destino']['id_destino'],
+                    'id_material' => $item['id_material'],
+                    'unidad' => $item['unidad'],
+                    'numero' => 0,
+                    'cantidad' => $item['cantidad'],
+                    'importe' => $item['precio_unitario'] * $item['cantidad_ingresada'],
+                ]);
+
+                if($data["con_prestamo"] == 1){
+                    ItemContratista::query()->create( ['id_item' => $item_guardado->id_item,
+                        'id_empresa' => $data['id_empresa'],
+                        'con_cargo' => $data['opcion_cargo']]);
+                }
+            }
+
+            abort(400, 'eli');
+
+            /*DB::connection('cadeco')->commit();
+            return $salidaTransaccion;*/
         }catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
