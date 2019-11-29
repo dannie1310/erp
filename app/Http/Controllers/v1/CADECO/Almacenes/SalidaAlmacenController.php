@@ -5,7 +5,7 @@ namespace App\Http\Controllers\v1\CADECO\Almacenes;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Compras\DeleteSalidaAlmacenRequest;
+use App\Http\Requests\Almacenes\DeleteSalidaAlmacenRequest;
 use App\Http\Transformers\CADECO\Compras\SalidaAlmacenTransformer;
 use App\Services\CADECO\Almacenes\SalidaAlmacenService;
 use App\Traits\ControllerTrait;
