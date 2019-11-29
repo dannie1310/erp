@@ -23,6 +23,7 @@ class EntradaMaterialPartidaObserver
     public function creating(EntradaMaterialPartida $partida)
     {
         $partida->estado = 0;
+        /*Amoritzación de anticipo, esta lógica estaba incluida en el stored procedure: sp_entrada_material*/
         $pagado =  $partida->pagado_registro;
         if($pagado > 0)
         {
@@ -73,6 +74,7 @@ class EntradaMaterialPartidaObserver
         $partida->ordenCompraPartida->entrega->surte($partida->cantidad);
         if($pagado > 0)
         {
+            /*Amoritzación de anticipo, esta lógica estaba incluida en el stored procedure: sp_entrada_material*/
             $partida->ordenCompraPartida->disminuyeSaldo($pagado);
         }
     }
