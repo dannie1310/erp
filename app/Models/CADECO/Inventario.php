@@ -39,6 +39,16 @@ class Inventario extends Model
         'monto_anticipo',
     ];
 
+    public function movimientos()
+    {
+        return $this->hasMany(Movimiento::class, 'lote_antecedente', 'id_lote');
+    }
+
+    public function inventarios_hijos()
+    {
+        return $this->hasMany(Inventario::class, 'lote_antecedente', 'id_lote');
+    }
+
     public function almacen()
     {
         return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
@@ -54,13 +64,136 @@ class Inventario extends Model
         return $this->hasMany(Item::class, 'id_item', 'id_item');
     }
 
+    public function items_ajuste()
+    {
+        return $this->hasMany(ItemAjuste::class, 'item_antecedente', 'id_lote');
+    }
+
     public function getCantidadFormatAttribute()
     {
-        return number_format($this->cantidad,3,'.', '');
+        return number_format($this->cantidad, 3, '.', '');
     }
 
     public function getSaldoFormatAttribute()
     {
-        return number_format($this->saldo,3,'.', '');
+        return number_format($this->saldo, 3, '.', '');
+    }
+
+    public function disminuyeSaldo($cantidad)
+    {
+        $this->saldo = $this->saldo - $cantidad;
+        $this->save();
+    }
+
+    /**
+     * Este método implementa la lógica del stored procedure: sp_distribuir_pagado_inventarios y se invoca al generar
+     * una salida o un pago
+     **/
+    public function distribuirPagoInventarios()
+    {
+        $tipo_distribucion = null;
+        if ($this->cantidad <= 0) {
+            throw New \Exception('Cantidad erronea para el lote:' . $this->id_lote);
+        }
+        if (in_array($this->almacen->tipo_almacen, [0, 3, 4]) || in_array($this->material->tipo_material, [1, 2])) {
+            $tipo_distribucion = 1;
+            $monto_aplicado = $this->distribucionProporcional();
+        } else if (in_array($this->material->tipo_material, [4, 8])) {
+            $tipo_distribucion = 2;
+            $monto_aplicado = $this->distribucionRentas();
+        }
+        if ($tipo_distribucion == null) {
+            throw New \Exception('No se puede determinar el tipo de distribución del lote:' . $this->id_lote);
+        }
+        $this->aplicarMontoPorAjustes($monto_aplicado);
+    }
+
+    private function distribucionProporcional()
+    {
+        $por_aplicar = $this->monto_pagado;
+        $monto_aplicado = 0;
+        $movimientos = $this->movimientos()->where("cantidad", ">", 0)->get();
+        $inventarios = $this->inventarios_hijos;
+        foreach ($movimientos as $movimiento) {
+            $monto_pagado = round($por_aplicar * $movimiento->cantidad / $this->cantidad, 2);
+            $movimiento->monto_pagado = $monto_pagado;
+            $movimiento->save();
+            $monto_aplicado += $monto_pagado;
+        }
+        foreach ($inventarios as $inventario) {
+            if ($inventario->cantidad > 0) {
+                $monto_pagado = round($por_aplicar * $inventario->cantidad / $this->cantidad, 2);
+                $inventario->monto_pagado = $monto_pagado;
+                $inventario->save();
+                $inventario->distribuirPagoInventarios();
+                $monto_aplicado += $monto_pagado;
+            } else {
+                $monto_pagado = round($por_aplicar * (-1) * $inventario->cantidad / $this->cantidad, 2);
+                $inventario->monto_pagado = $monto_pagado;
+                $inventario->save();
+                /*Inferencia de consumo, se actualizan los movimientos*/
+                $movimientos_inferidos = Movimiento::where("id_item", "=", $inventario->id_item)
+                    ->where("id_material", "=", $this->id_material)
+                    ->get();
+                $inventarios_inferidos = Inventario::where("id_item", "=", $inventario->id_item)
+                    ->where("id_material", "=", $this->id_material)
+                    ->get();
+                $monto_pagado_inventarios_inferidos = $inventarios_inferidos->sum("monto_pagado");
+                foreach ($movimientos_inferidos as $movimiento_inferido) {
+                    $movimiento_inferido->monto_pagado = $monto_pagado_inventarios_inferidos;
+                    $movimiento_inferido->save();
+                }
+                $monto_aplicado += $monto_pagado;
+            }
+        }
+        return $monto_aplicado;
+    }
+
+    private function distribucionRentas()
+    {
+        $por_aplicar = $this->monto_pagado - $this->monto_aplicado;
+        $monto_aplicado = $this->monto_aplicado;
+        if ($por_aplicar >= 0) {
+            $movimientos = $this->movimientos()->whereRaw("monto_total >monto_pagado")->orderBy("id_movimiento")->get();
+            foreach ($movimientos as $movimiento) {
+                $por_pagar = $movimiento->monto_total - $movimiento->monto_pagado;
+                if ($por_pagar > $por_aplicar) {
+                    $por_pagar = $por_aplicar;
+                }
+                $movimiento->monto_pagado = $movimiento->monto_pagado + $por_pagar;
+                $por_aplicar -= $por_pagar;
+                $monto_aplicado += $por_pagar;
+                if (!($por_aplicar > 0)) {
+                    break;
+                }
+            }
+        } else {
+            $movimientos = $this->movimientos()->where("monto_pagado", ">", 0)->orderBy("id_movimiento", "desc")->get();
+            foreach ($movimientos as $movimiento) {
+                $por_pagar = $movimiento->monto_pagado * (-1);
+                if ($por_pagar < $por_aplicar) {
+                    $por_pagar = $por_aplicar;
+                }
+                $movimiento->monto_pagado = $movimiento->monto_pagado + $por_pagar;
+                $por_aplicar -= $por_pagar;
+                $monto_aplicado += $por_pagar;
+                if (!($por_aplicar < 0)) {
+                    break;
+                }
+            }
+
+        }
+        return $monto_aplicado;
+    }
+    private function aplicarMontoPorAjustes($monto_aplicado)
+    {
+        $items_ajuste = $this->items_ajuste;
+        $monto_aplicado_ia = 0;
+        foreach($items_ajuste as $item_ajuste)
+        {
+            $monto_aplicado_ia += ($items_ajuste->importe - $items_ajuste->saldo);
+        }
+        $this->monto_aplicado = round($monto_aplicado+$monto_aplicado_ia,2);
+        $this->save();
     }
 }
