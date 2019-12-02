@@ -49,6 +49,11 @@ class Inventario extends Model
         return $this->hasMany(Inventario::class, 'lote_antecedente', 'id_lote');
     }
 
+    public function inventario()
+    {
+        return $this->belongsTo(Inventario::class, 'lote_antecedente', 'id_lote');
+    }
+
     public function almacen()
     {
         return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
@@ -82,6 +87,12 @@ class Inventario extends Model
     public function disminuyeSaldo($cantidad)
     {
         $this->saldo = $this->saldo - $cantidad;
+        $this->save();
+    }
+
+    public function aumentaSaldo($cantidad)
+    {
+        $this->saldo = $this->saldo + $cantidad;
         $this->save();
     }
 
