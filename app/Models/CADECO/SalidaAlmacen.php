@@ -4,6 +4,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Almacenes\EntregaContratista;
 use App\Models\CADECO\Compras\InventarioEliminado;
 use App\Models\CADECO\Compras\ItemSalidaEliminada;
 use App\Models\CADECO\Compras\ItemContratista;
@@ -46,6 +47,11 @@ class SalidaAlmacen extends Transaccion
     public function partidas()
     {
         return $this->hasMany(SalidaAlmacenPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function entrega_contratista()
+    {
+        return $this->hasOne(EntregaContratista::class,'id_transaccion', 'id_transaccion');
     }
 
     public function getEstadoFormatAttribute()
@@ -397,6 +403,10 @@ class SalidaAlmacen extends Transaccion
                     ]
                 );
             }
+            if ($data["con_prestamo"] == 1) {
+                $salida->entrega_contratista->tipo = $data["opcion_cargo"];
+                $salida->entrega_contratista->save();
+            }
 
             foreach ($data['partidas'] as $item) {
                 if ($data["opciones"] == 1) {
@@ -424,7 +434,6 @@ class SalidaAlmacen extends Transaccion
                     ]);
                 }
             }
-            //abort("bla");
             DB::connection('cadeco')->commit();
             return $salida;
         } catch (\Exception $e) {

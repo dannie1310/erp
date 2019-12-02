@@ -9,6 +9,7 @@
 namespace App\Observers\CADECO;
 
 use App\Models\CADECO\Movimiento;
+use App\Models\CADECO\Compras\MovimientoEliminado;
 
 
 class MovimientoObserver

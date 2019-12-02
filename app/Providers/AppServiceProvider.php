@@ -7,6 +7,7 @@ use App\Models\CADECO\AjusteNegativoPartida;
 use App\Models\CADECO\AjustePositivo;
 use App\Models\CADECO\AjustePositivoPartida;
 use App\Models\CADECO\Almacenes\AjusteEliminado;
+use App\Models\CADECO\Almacenes\EntregaContratista;
 use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
@@ -104,6 +105,7 @@ use App\Observers\CADECO\AjusteNegativoPartidaObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
 use App\Observers\CADECO\AjustePositivoPartidaObserver;
 use App\Observers\CADECO\Almacenes\AjusteEliminadoObserver;
+use App\Observers\CADECO\Almacenes\EntregaContratistaObserver;
 use App\Observers\CADECO\AnticipoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
@@ -220,6 +222,7 @@ class AppServiceProvider extends ServiceProvider
              * Almacenes
              */
             AjusteEliminado::observe(AjusteEliminadoObserver::class);
+            EntregaContratista::observe(EntregaContratistaObserver::class);
 
             /**
              * Compras
