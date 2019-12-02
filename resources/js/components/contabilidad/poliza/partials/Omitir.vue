@@ -1,5 +1,5 @@
 <template>
-    <button v-if="$root.can('omitir_prepoliza_generada') && (poliza.estatus == -2 || poliza.estatus == -1 || poliza.estatus == 0)" class="btn btn-app btn-info pull-right" @click="omitir">
+    <button v-if="$root.can('omitir_prepoliza_generada') && (poliza.estatus == -2 || poliza.estatus == -1 || poliza.estatus == 0)" class="btn btn-app btn-info float-right" @click="omitir">
         <i class="fa fa-thumbs-o-down"></i> Omitir
     </button>
 </template>

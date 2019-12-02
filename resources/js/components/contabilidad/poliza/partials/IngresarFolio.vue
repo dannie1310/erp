@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button v-if="$root.can('ingresar_folio_contpaq') && (poliza.estatus == -1 || poliza.estatus == 0)" class="btn btn-app btn-info pull-right" @click="openModal">
+        <button v-if="$root.can('ingresar_folio_contpaq') && (poliza.estatus == -1 || poliza.estatus == 0)" class="btn btn-app btn-info float-right" @click="openModal">
             <i class="fa fa-i-cursor"></i> Ingrear Folio Contpaq
         </button>
 

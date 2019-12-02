@@ -18,7 +18,7 @@
                 </div>
                 <div class="row">
                      <div class="col-md-12">
-                         <button @click="descargaListado" v-if="form.user_id" class="btn btn-app btn-info pull-right" :disabled="cargando_excel">
+                         <button @click="descargaListado" v-if="form.user_id" class="btn btn-app btn-info float-right" :disabled="cargando_excel">
                             <i class="fa fa-spin fa-spinner" v-if="cargando_excel"></i>
                             <i class="fa fa-download" v-else></i>
                             Descargar excel

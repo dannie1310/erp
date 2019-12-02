@@ -35,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-                    <button class="btn btn-outline-success pull-right" :disabled="!sistemas_desasignados.length && !sistemas_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
+                    <button class="btn btn-outline-success float-right" :disabled="!sistemas_desasignados.length && !sistemas_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
                 <div>
                  </div>
             </div>

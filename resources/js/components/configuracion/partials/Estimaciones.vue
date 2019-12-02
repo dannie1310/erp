@@ -163,7 +163,7 @@
 
             <div class="form-group row">
                 <div class="col">
-                    <button type="submit" @click="validate" class="btn btn-outline-primary pull-right" :disabled="!cambio || !cambio_store|| this.bandera == 0">
+                    <button type="submit" @click="validate" class="btn btn-outline-primary float-right" :disabled="!cambio || !cambio_store|| this.bandera == 0">
                         <i class="fa fa-save"></i>
                     </button>
                 </div>
