@@ -5,20 +5,20 @@
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content" v-if="cargando">
-                    <div>
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-spin fa-spinner"></i>CARGANDO</h5>
-                    </div>
-                </div>
-                <div class="modal-content" v-else>
+                <div class="modal-content" >
                     <div class="modal-header" v-if="salida">
-                        <h5 class="modal-title" id="exampleModalLongTitle" v-if="salida.opciones == 1"> <i class="fa fa-th"></i> VISUALIZAR SALIDA DE  ALMACÉN</h5>
-                        <h5 class="modal-title" id="exampleModalLongTitle" v-else> <i class="fa fa-th"></i> VISUALIZAR TRANSFERENCIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle" v-if="salida.opciones == 1"> <i class="fa fa-sign-out"></i>SALIDA DE  ALMACÉN</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle" v-else> <i class="fa fa-th"></i>TRANSFERENCIA DE ALMACÉN</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" v-if="cargando">
+                         <div>
+                             <h5  id="exampleModalLongTitle"><i class="fa fa-spin fa-spinner"></i>CARGANDO</h5>
+                         </div>
+                    </div>
+                    <div class="modal-body" v-else>
                         <div class="row" v-if="salida">
                             <div class="col-12">
                                 <div class="invoice p-3 mb-3">
@@ -51,7 +51,7 @@
                                     </div>
                                      <div class="row">
                                         <div class="col-12">
-                                            <h6><b>Detalle de las partidas</b></h6>
+                                           <b>Detalle de las partidas</b>
                                         </div>
                                      </div>
                                     <div class="row">
@@ -65,7 +65,7 @@
                                                         <th>Unidad</th>
                                                         <th>Cantidad</th>
                                                         <th>Destino</th>
-                                                        <th>Contratista</th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -78,14 +78,9 @@
                                                         <td v-if="doc.concepto" :title="`${doc.concepto.path}`"><u>{{doc.concepto.descripcion}}</u></td>
                                                         <td v-else-if="doc.almacen">{{doc.almacen.descripcion}}</td>
                                                         <td class="text-danger"  v-else>No se encuentra ningun almacén asignado</td>
-                                                        <td>
-                                                            <button type="button" @click="agregarContratista(i)" class="btn btn-sm btn-outline-secondary" title="Modificar contratista">
-                                                                    <i class="fa fa-user"></i>
-                                                            </button>
-                                                        </td>
                                                     </tr>
                                                     <tr v-if="salida.observaciones" class="invoice p-3 mb-3">
-                                                        <td colspan="7"><b>Observaciones: </b>{{salida.observaciones}}</td>
+                                                        <td colspan="6"><b>Observaciones: </b>{{salida.observaciones}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
