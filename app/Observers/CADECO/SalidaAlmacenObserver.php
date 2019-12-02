@@ -9,6 +9,7 @@
 namespace App\Observers\CADECO;
 
 
+use App\Models\CADECO\Almacenes\EntregaContratista;
 use App\Models\CADECO\SalidaAlmacen;
 use App\Models\CADECO\Transaccion;
 
@@ -22,6 +23,16 @@ class SalidaAlmacenObserver extends TransaccionObserver
     {
        parent::creating($salida);
         $salida->tipo_transaccion = 34;
+    }
+
+    public function created(Transaccion $salida)
+    {
+        if($salida->id_empresa != null)
+        {
+            EntregaContratista::create([
+                'id_transaccion' => $salida->id_transaccion,
+            ]);
+        }
     }
 
     public function deleting(SalidaAlmacen $salida)
