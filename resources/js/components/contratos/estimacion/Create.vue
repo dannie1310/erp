@@ -209,7 +209,7 @@
 
 		 <div class="row">
 			<div class="col-md-12">
-				<button class="btn btn-info pull-right" type="submit" @click="validate"
+				<button class="btn btn-info float-right" type="submit" @click="validate"
 						:disabled="errors.count() > 0">
 					Guardar
 				</button>

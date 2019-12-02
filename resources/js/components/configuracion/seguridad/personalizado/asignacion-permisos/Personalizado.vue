@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div>
-                     <button class="btn btn-outline-success pull-right" :disabled="!permisos_desasignados.length && !permisos_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
+                     <button class="btn btn-outline-success float-right" :disabled="!permisos_desasignados.length && !permisos_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
                  </div>
             </div>
 

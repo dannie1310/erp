@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" class="btn btn-app btn-info pull-right">
+        <button @click="init" class="btn btn-app btn-info float-right">
             <i class="fa fa-plus"></i> Registrar Traspaso
         </button>
 

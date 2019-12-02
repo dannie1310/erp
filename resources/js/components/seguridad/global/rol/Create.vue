@@ -71,7 +71,7 @@
 
             <div class="form-group row" style="margin-top: 15px">
                 <div class="col">
-                    <button type="submit" @click="validate" class="btn btn-outline-primary pull-right" :disabled="guardando">
+                    <button type="submit" @click="validate" class="btn btn-outline-primary float-right" :disabled="guardando">
                         <i class="fa fa-spin fa-spinner" v-if="guardando"></i>
                         <i class="fa fa-save" v-else></i>
                     </button>
