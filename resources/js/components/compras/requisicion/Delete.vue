@@ -35,7 +35,7 @@
                                                             <td class="bg-gray-light">{{requisicion.numero_folio_format}}</td>
                                                             <td class="bg-gray-light"><b>Folio Compuesto:</b></td>
                                                             <td class="bg-gray-light" v-if = "requisicion.complemento">{{requisicion.complemento.folio}}</td>
-                                                            <td v-else></td>
+                                                            <td class="bg-gray-light" v-else></td>
                                                         </tr>
                                                         <tr  v-if="requisicion.complemento">
                                                             <td class="bg-gray-light"><b>Departamento Responsable:</b></td>
