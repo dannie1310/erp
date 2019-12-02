@@ -35,7 +35,11 @@ class SalidaAlmacenPartidaTransformer extends TransformerAbstract
             'cantidad_material' => $model->cantidad_material,
             'cantidad_format' => $model->cantidad_format,
             'cantidad_decimal' => $model->cantidad_decimal,
-            'saldo' => $model->saldo
+            'saldo' => $model->saldo,
+            'material_numero_parte' => $model->material->numero_parte,
+            'material_descripcion' => $model->material->descripcion,
+            'destino_descripcion' => $model->destino->descripcion,
+            'destino_path' => $model->destino->path,
         ];
     }
 

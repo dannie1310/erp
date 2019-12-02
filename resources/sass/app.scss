@@ -42,6 +42,11 @@ i.button
   min-width: 25px;
 }
 
+td.numero_folio, th.numero_folio
+{
+  width: 70px;
+}
+
 .td_money, td.money{
   text-align: right;
   width: 100px;

@@ -24,7 +24,7 @@
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
                                             <div class="col-12">
-                                                <h5>Datos de la Entrada de Almacén</h5>
+                                                <b>Datos de la Entrada de Almacén</b>
                                             </div>
                                         </div>
                                         <div class="row">
