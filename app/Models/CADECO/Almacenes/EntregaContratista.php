@@ -29,6 +29,16 @@ class EntregaContratista extends Model
         return $this->belongsTo(SalidaAlmacen::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function getNumeroFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->numero_folio);
+    }
+
+    public function getTipoStringAttribute()
+    {
+        return ($this->tipo == 0)?"Sin Cargo":"Con Cargo";
+    }
+
     public static function calcularFolio($id_empresa)
     {
         $entrega = EntregaContratista::join("dbo.transacciones", "transacciones.id_transaccion", "Almacenes.entregas_contratista.id_transaccion")
