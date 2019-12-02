@@ -17,10 +17,17 @@ class RequisicionPartidaObserver
     /**
      * @param RequisicionPartida $partida
      */
+    public function deleting(RequisicionPartida $partida)
+    {
+        if($partida->complemento)
+        {
+            $partida->complemento->delete();
+        }
+    }
+
     public function deleted(RequisicionPartida $partida)
     {
-      dd($partida);
-        RequisicionPartidaEliminada::query()->create(
+        RequisicionPartidaEliminada::create(
             [
                 'id_item' => $partida->id_item,
                 'id_transaccion' => $partida->id_transaccion,
@@ -31,7 +38,7 @@ class RequisicionPartidaObserver
                 'numero_parte' => $partida->complemento->numero_parte,
                 'observaciones' => $partida->complemento->observaciones,
                 'fecha_entrega' => $partida->complemento->fecha_entrega,
-                'usuario_registo' => $partida->complemento->usuario_registo,
+                'usuario_registo' => $partida->complemento->usuario_registro ? $partida->complemento->usuario_registro : '',
                 'timestamp_registro' => $partida->complemento->timestamp_registro
             ]
         );

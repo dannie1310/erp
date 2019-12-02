@@ -29,6 +29,11 @@ class RequisicionObserver extends TransaccionObserver
     public function deleting(Requisicion $requisicion)
     {
         $requisicion->eliminar_partidas();
+        if($requisicion->complemento)
+        {
+            $requisicion->complemento->delete();
+        }
+
         RequisicionEliminada::create(
             [
                 'id_transaccion' => $requisicion->id_transaccion,
@@ -36,21 +41,30 @@ class RequisicionObserver extends TransaccionObserver
                 'numero_folio' => $requisicion->numero_folio,
                 'fecha' => $requisicion->fecha,
                 'estado' => $requisicion->estado,
+                'opciones' => $requisicion->opciones,
                 'id_obra' => $requisicion->id_obra,
                 'id_empresa' => $requisicion->id_empresa,
                 'comentario' => $requisicion->comentario,
                 'observaciones' => $requisicion->observaciones,
                 'FechaHoraRegistro' => $requisicion->FechaHoraRegistro,
                 'id_usuario' => $requisicion->id_usuario,
-                'id_area_compradora' => $requisicion->complemento->id_area_compradora,
-                'id_tipo' => $requisicion->complemento->id_tipo,
-                'id_area_solicitante' => $requisicion->complemento->id_area_solicitante,
-                'folio_compuesto' => $requisicion->complemento->folio_compuesto,
-                'concepto' => $requisicion->complemento->concepto,
-                'registro' => $requisicion->complemento->registro,
-                'timestamp_registro' => $requisicion->complemento->timestamp_registro,
+                'id_area_compradora' => $requisicion->complemento ? $requisicion->complemento->id_area_compradora : '',
+                'id_tipo' => $requisicion->complemento ? $requisicion->complemento->id_tipo : '',
+                'id_area_solicitante' => $requisicion->complemento ? $requisicion->complemento->id_area_solicitante : '',
+                'folio_compuesto' => $requisicion->complemento ? $requisicion->complemento->folio_compuesto : '',
+                'concepto' => $requisicion->complemento ? $requisicion->complemento->concepto : '',
+                'registro' => $requisicion->complemento ? $requisicion->complemento->registro : '',
+                'timestamp_registro' => $requisicion->complemento ? $requisicion->complemento->timestamp_registro : '',
                 'motivo_eliminacion' => ''
             ]
         );
+    }
+
+    public function deleted(Requisicion $requisicion)
+    {
+        if($requisicion->activoFijo)
+        {
+            $requisicion->activoFijo->delete();
+        }
     }
 }

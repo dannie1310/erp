@@ -23,6 +23,7 @@ class RequisicionEliminada extends Model
         'numero_folio',
         'fecha',
         'estado',
+        'opciones',
         'id_obra',
         'id_empresa',
         'comentario',

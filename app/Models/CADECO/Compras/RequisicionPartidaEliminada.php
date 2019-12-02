@@ -27,7 +27,7 @@ class RequisicionPartidaEliminada extends Model
         'numero_parte',
         'observaciones',
         'fecha_entrega',
-        'usuario_registro',
+        'usuario_registo',
         'timestamp_registro'
     ];
 

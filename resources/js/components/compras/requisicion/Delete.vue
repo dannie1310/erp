@@ -28,7 +28,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <td colspan="2"><b>Fecha:</b></td>
-                                                            <td colspan="2" class="bg-gray-light">{{requisicion.fecha}}</td>
+                                                            <td colspan="2" class="bg-gray-light">{{requisicion.fecha_format}}</td>
                                                         </tr>
                                                         <tr>
                                                             <td class="bg-gray-light"><b>Folio:</b></td>
@@ -165,15 +165,15 @@
                     params: {data: [this.$data.motivo]}
                 })
                     .then(data => {
-                        this.$store.commit('compras/requisicion/DELETE_ENTRADA', {id: this.id})
+                        this.$store.commit('compras/requisicion/DELETE_REQUISICION', {id: this.id})
                         $(this.$refs.modal).modal('hide');
                         this.$store.dispatch('compras/requisicion/paginate', {
                             params: {
-                               sort: 'numero_folio', order: 'desc', limit:10, offset:this.pagina
+                                include: ['registro', 'complemento'], sort: 'id_transaccion',  order: 'desc', limit:10, offset:this.pagina
                             }
                         })
                             .then(data => {
-                                this.$store.commit('compras/requisicion/SET_ENTRADAS', data.data);
+                                this.$store.commit('compras/requisicion/SET_REQUISICIONES', data.data);
                                 this.$store.commit('compras/requisicion/SET_META', data.meta);
                             })
                     })

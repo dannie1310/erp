@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\RequisicionComplemento;
 use App\Models\CADECO\Compras\RequisicionEliminada;
 use App\Models\CADECO\Compras\RequisicionPartidaEliminada;
@@ -53,6 +54,11 @@ class Requisicion extends Transaccion
     public function registro()
     {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
+    }
+
+    public function activoFijo()
+    {
+        return $this->belongsTo(ActivoFijo::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function registrar($datos)
@@ -133,7 +139,9 @@ class Requisicion extends Transaccion
 
     public function eliminar_partidas()
     {
-        dd($this->partidas()->get()->toArray());
+        foreach ($this->partidas as $partida){
+            $partida->delete();
+        }
     }
 
     private function revisar_respaldos($motivo)
@@ -147,9 +155,8 @@ class Requisicion extends Transaccion
             $requisicion_respaldo->motivo_eliminacion = $motivo;
             $requisicion_respaldo->save();
         }
-        dd($this->partidas());
-        foreach ($this->partidas() as $partida) {
-            dd($partida);
+
+        foreach ($this->partidas as $partida) {
             $item = RequisicionPartidaEliminada::find($partida->id_item);
             if ($item == null)
             {
