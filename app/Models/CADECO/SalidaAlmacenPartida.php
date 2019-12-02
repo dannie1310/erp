@@ -139,4 +139,13 @@ class SalidaAlmacenPartida extends Item
         $item = SalidaAlmacenPartida::find($this->id_item);
         $item->update(["importe" => $importe]);
     }
+
+    public function getDestinoAttribute()
+    {
+        if ($this->concepto) {
+            return $this->concepto;
+        } else {
+            return $this->almacen;
+        }
+    }
 }
