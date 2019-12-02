@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button class="btn btn-app btn-info pull-right" data-toggle="modal" data-target="#agregar-cuentas-modal" v-if="$root.can('ingresar_cuenta_faltante_movimiento_prepoliza') && movs.length">
+        <button class="btn btn-app btn-info float-right" data-toggle="modal" data-target="#agregar-cuentas-modal" v-if="$root.can('ingresar_cuenta_faltante_movimiento_prepoliza') && movs.length">
             <i class="fa fa-dollar"></i> Ingresar cuentas faltantes
         </button>
         <div ref="modalCuentasFaltantes" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="agregar-cuentas-modal">

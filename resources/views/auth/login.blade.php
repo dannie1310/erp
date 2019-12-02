@@ -22,10 +22,12 @@
 </head>
 <body>
 <div id="content">
-    <div class="login-box">
-        <div class="login-logo">
-            <img src="{{URL::asset('/img/logo_hc.png')}}" class="img-responsive img-rounded" width="100%">
+    <div class="row">
+        <div class="login-logo offset-4 centered">
+            <img src="{{URL::asset('/img/logo_hc.png')}}" class="img-responsive img-rounded" width="70%">
         </div>
+    </div>
+    <diV class="login-box offset-4 centered">
 
         <div class="card">
             <div class="card-body login-card-body">

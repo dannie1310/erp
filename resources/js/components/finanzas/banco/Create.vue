@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_banco')" class="btn btn-app btn-info pull-right">
+        <button @click="init" v-if="$root.can('registrar_banco')" class="btn btn-app btn-info float-right">
             <i class="fa fa-plus"></i> Registrar Banco
         </button>
 

@@ -109,7 +109,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button  type="button" class="btn btn-secondary pull-right" @click="index" >Cerrar</button>
+                <button  type="button" class="btn btn-secondary float-right" @click="index" >Cerrar</button>
             </div>
         </div>
     </div>

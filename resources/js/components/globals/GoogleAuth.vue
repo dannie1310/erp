@@ -36,7 +36,7 @@
                         <center>
                             <input type="text" ref="code">
                         </center>
-                         <button type="button" @click="closeWindow" class="btn btn-danger pull-right">Cancelar</button>
+                         <button type="button" @click="closeWindow" class="btn btn-danger float-right">Cancelar</button>
                     </span>
                 </div>
             </div>
