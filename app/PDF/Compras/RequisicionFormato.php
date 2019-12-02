@@ -17,7 +17,7 @@ class RequisicionFormato extends Rotation
     protected $id_requisicion;
     protected $requisicion;
 
-    private $encola = 'panda',
+    private $encola = '',
         $encabezado_pdf,
         $conFirmaDAF = false,
         $id_tipo_fianza = 0,
@@ -72,7 +72,7 @@ class RequisicionFormato extends Rotation
             $this->SetX($x_f);
             $this->SetFont('Arial', 'B', 12);
             $this->Cell(4.5, .7, 'FOLIO ', 'L', 0, 'L');
-            $this->Cell(3.5, .7, $this->requisicion->complemento->folio_compuesto, 'R', 0, 'L');
+            $this->Cell(3.5, .7, $this->requisicion->complemento ? $this->requisicion->complemento->folio_compuesto : '', 'R', 0, 'L');
             $this->Ln(.7);
 
             $this->Cell(11.5);
@@ -161,7 +161,7 @@ class RequisicionFormato extends Rotation
             $this->SetTextColors(array('0,0,0'));
             $this->SetHeights(array(0.5));
             $this->SetFont('Arial', '', 6);
-            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', "".$this->requisicion->complemento->concepto))));
+            $this->Row(array(utf8_decode(str_replace(array("\r", "\n"), '', "".$this->requisicion->complemento ? $this->requisicion->complemento->concepto: ''))));
             $this->Ln(.8);
 
             // Cuadro partidas
