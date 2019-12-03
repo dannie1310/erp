@@ -29,6 +29,9 @@ class InventarioObserver
 
     public function deleting(Inventario $inventario)
     {
+        if($inventario->inventario){
+            $inventario->inventario->aumentaSaldo($inventario->cantidad);
+        }
         InventarioEliminado::create(
             [
                 'id_lote' => $inventario->id_lote,

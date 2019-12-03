@@ -16,6 +16,9 @@ class MovimientoObserver
 {
     public function deleting(Movimiento $movimiento)
     {
+        if($movimiento->inventario){
+            $movimiento->inventario->aumentaSaldo($movimiento->cantidad);
+        }
         MovimientoEliminado::create(
             [
                 'id_movimiento' => $movimiento->id_movimiento,
@@ -29,5 +32,7 @@ class MovimientoObserver
                 'creado' => $movimiento->creado
             ]
         );
+
+
     }
 }
