@@ -26,10 +26,10 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Número de Folio', field: 'numero_folio', sortable: true },
-                    { title: 'Área Subcontratante', field: 'id_area_subcontratante',thComp: require('../../globals/th-Filter'), sortable: false },
+                    { title: 'Área Subcontratante', field: 'id_area_subcontratante',thComp: require('../../globals/th-Filter').default, sortable: false },
                     { title: 'Fecha Contrato Proyectado', field: 'fecha', sortable: true },
                     { title: 'Referencia Contrato Proyectado', field: 'referencia', sortable: false },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

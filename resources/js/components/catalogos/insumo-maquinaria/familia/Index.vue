@@ -30,7 +30,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,

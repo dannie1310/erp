@@ -45,7 +45,7 @@
                     { title: 'Cuenta Destino', field: 'cuenta_destino', sortable: false },
                     { title: 'Importe', field: 'importe', sortable: true},
                     { title: 'Referencia', field: 'referencia'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

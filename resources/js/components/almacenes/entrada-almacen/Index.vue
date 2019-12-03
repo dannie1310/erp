@@ -33,13 +33,13 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha', field: 'fecha',sortable: true, thComp: require('../../globals/th-Date')},
-                    { title: 'Empresa', field: 'id_empresa',sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Empresa', field: 'id_empresa',sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Observaciones', field: 'observaciones', sortable: true},
                     { title: 'Estatus', field: 'estado', sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
