@@ -44,7 +44,7 @@
                     { title: 'No. Doctos.', field: 'cantidad_documentos', tdClass: 'money', sortable: false},
                     { title: 'Usuario', field: 'usuario', sortable: true},
                     { title: 'Estado', field: 'estado', sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
 
                 ],
                 data: [],

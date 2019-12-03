@@ -30,11 +30,11 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'folio', sortable: true},
-                    { title: 'Usuario Inició', field: 'usuario_inicia', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Usuario Inició', field: 'usuario_inicia', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha/Hora Inicio', field: 'fecha_hora_inicio', sortable: true},
                     { title: 'Cantidad de Marbetes', field: 'cantidad_marbetes'},
                     { title: 'Estado', field: 'estado', sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
