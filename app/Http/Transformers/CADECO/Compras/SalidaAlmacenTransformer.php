@@ -6,17 +6,17 @@ namespace App\Http\Transformers\CADECO\Compras;
 
 use App\Http\Transformers\CADECO\Almacenes\EntregaContratistaTransformer;
 use App\Http\Transformers\CADECO\AlmacenTransformer;
-use App\Http\Transformers\CADECO\EntregaTransformer;
 use App\Models\CADECO\SalidaAlmacen;
 use League\Fractal\TransformerAbstract;
-use PhpParser\Node\Scalar\String_;
+use App\Http\Transformers\CADECO\Almacenes\SalidaAlmacenTransaccionesRelacionadasTransformer;
 
 class SalidaAlmacenTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
         'almacen',
         'partidas',
-        'entrega_contratista'
+        'entrega_contratista',
+        'transacciones_relacionadas'
     ];
 
     public function transform(SalidaAlmacen $model) {
@@ -58,5 +58,13 @@ class SalidaAlmacenTransformer extends TransformerAbstract
         if($entrega_contratista = $model->entrega_contratista){
             return $this->item($entrega_contratista, new EntregaContratistaTransformer);
         }
+    }
+
+    public function includeTransaccionesRelacionadas(SalidaAlmacen $model)
+    {
+        if ($partida = $model->transacciones_relacionadas) {
+            return $this->item($partida, new SalidaAlmacenTransaccionesRelacionadasTransformer());
+        }
+        return null;
     }
 }
