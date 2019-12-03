@@ -109,7 +109,7 @@
                                                 <b>Observaciones:</b>
                                             </div>
                                             <div class="col-sm-10">
-                                               <h6>{{entrada.observaciones}}</h6>
+                                               {{entrada.observaciones}}
                                             </div>
                                         </div>
                                     </div>
