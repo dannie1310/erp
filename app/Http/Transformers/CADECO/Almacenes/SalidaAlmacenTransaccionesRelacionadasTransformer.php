@@ -10,7 +10,7 @@ namespace App\Http\Transformers\CADECO\Almacenes;
 
 use League\Fractal\TransformerAbstract;
 
-class EntradaAlmacenTransaccionesRelacionadasTransformer extends TransformerAbstract
+class SalidaAlmacenTransaccionesRelacionadasTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include

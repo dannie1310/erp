@@ -19,7 +19,7 @@
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
                                             <div class="col-12">
-                                                <h5>Datos de la Entrada de Almacén</h5>
+                                                <b>Datos de la Entrada de Almacén</b>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -52,7 +52,7 @@
                                         </div>
                                          <div class="row">
                                             <div class="col-12">
-                                                <h6><b>Detalle de las partidas</b></h6>
+                                                <b>Detalle de las partidas</b>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -102,10 +102,10 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-2">
-                                                <h6><b>Observaciones:</b></h6>
+                                                <b>Observaciones:</b>
                                             </div>
                                             <div class="col-sm-10">
-                                               <h6>{{entrada.observaciones}}</h6>
+                                               {{entrada.observaciones}}
                                             </div>
                                         </div>
 
