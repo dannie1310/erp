@@ -40,7 +40,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Tipo de Cuenta', field: 'id_int_tipo_cuenta_contable', sortable: true },
                     { title: 'Cuenta', field: 'cuenta_contable', sortable: true },
-                    { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

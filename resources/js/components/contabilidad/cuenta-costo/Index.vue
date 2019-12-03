@@ -41,7 +41,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Costo', field: 'costo', sortable: false },
                     { title: 'Cuenta Contable', field: 'cuenta', sortable: false },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

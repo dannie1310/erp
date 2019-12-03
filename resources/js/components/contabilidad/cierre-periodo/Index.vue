@@ -34,7 +34,7 @@
                     { title: 'Persona que cerró', field: 'registro', sortable: false },
                     { title: 'Fecha de Cierre', field: 'fecha_cierre', sortable: true },
                     { title: 'Estatus', field: 'estatus', tdComp: require('./partials/CierreEstatus')},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

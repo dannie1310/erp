@@ -33,7 +33,7 @@
                     { title: 'Registró', field: 'registro', sortable: false },
                     { title: 'Naturaleza de la Cuenta', field: 'id_naturaleza_poliza', sortable: true },
                     { title: 'Fecha y Hora de Registro', field: 'fecha_registro', sortable: false},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,

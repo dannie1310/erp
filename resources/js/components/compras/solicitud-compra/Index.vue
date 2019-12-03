@@ -37,7 +37,7 @@
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
                     { title: 'Registró', field: 'registro', sortable: false },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
 
 
                 ],

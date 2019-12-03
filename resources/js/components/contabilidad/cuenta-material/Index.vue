@@ -51,7 +51,7 @@
                     { title: 'Número de Parte', field: 'numero_parte', sortable: true },
                     { title: 'Tipo de Cuenta', field: 'tipo_cuenta', sortable: false },
                     { title: 'Cuenta Contable', field: 'cuenta', sortable: false },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

@@ -36,7 +36,7 @@
                     { title: 'Banco', field: 'banco', sortable: false},
                     { title: 'Cuenta/CLABE', field: 'cuenta', sortable: false },
                     { title: 'Estatus', field: 'estado'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,

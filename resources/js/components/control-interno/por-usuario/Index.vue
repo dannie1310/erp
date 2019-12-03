@@ -74,11 +74,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Permiso', field: 'permiso', sortable: false, thComp: require('../../globals/th-Filter')},
-                    { title: 'Rol', field: 'rol', sortable: false, thComp: require('../../globals/th-Filter') },
-                    { title: 'Sistema', field: 'sistema', sortable: false , thComp: require('../../globals/th-Filter')},
-                    { title: 'Proyecto', field: 'proyecto', sortable: false, thComp: require('../../globals/th-Filter') },
-                    { title: 'Obra', field: 'obra', sortable: false , thComp: require('../../globals/th-Filter') },
+                    { title: 'Permiso', field: 'permiso', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Rol', field: 'rol', sortable: false, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Sistema', field: 'sistema', sortable: false , thComp: require('../../globals/th-Filter').default},
+                    { title: 'Proyecto', field: 'proyecto', sortable: false, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Obra', field: 'obra', sortable: false , thComp: require('../../globals/th-Filter').default },
                     { title: 'Usuario que Asignó', field: 'asigno', sortable: false},
                     { title: 'Fecha de Asignación', field: 'fecha_asigno', sortable: false }
                 ],
