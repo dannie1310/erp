@@ -166,7 +166,7 @@
                                 <div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">
                                     <div class="form-group">
                                         <div v-if="id_almacen">
-                                             <div class="table-responsive">
+                                             <div >
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
@@ -179,7 +179,7 @@
                                                             <th class="icono"></th>
                                                             <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
                                                             <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
-                                                             <th class="th_index">
+                                                             <th class="icono">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
                                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                                 <i class="fa fa-plus" v-else></i>
