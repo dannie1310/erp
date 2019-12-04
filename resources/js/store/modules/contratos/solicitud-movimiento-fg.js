@@ -69,7 +69,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Solicitud de Movimiento a Fondo de Garantía",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: ['Cancelar',
                         {
@@ -105,7 +105,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Autorizar Solicitud de Movimiento a Fondo de Garantía",
-                    text: "¿Estás seguro/a de autorizar la solicitud de movimiento?",
+                    text: "¿Está seguro de autorizar la solicitud de movimiento?",
                     icon: "info",
                     buttons: [
                         'Cancelar',
@@ -144,7 +144,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cancelar Solicitud de Movimiento a Fondo de Garantía",
-                    text: "¿Estás seguro/a de cancelar la solicitud de movimiento?",
+                    text: "¿Está seguro de cancelar la solicitud de movimiento?",
                     dangerMode: true,
                     icon: "info",
                     content: {
@@ -193,7 +193,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Rechazae Solicitud de Movimiento a Fondo de Garantía",
-                    text: "¿Estás seguro/a de rechazar la solicitud de movimiento?",
+                    text: "¿Está seguro de rechazar la solicitud de movimiento?",
                     dangerMode: true,
                     icon: "info",
                     content: {
@@ -242,7 +242,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Revertir Autorización de Solicitud de Movimiento a Fondo de Garantía",
-                    text: "¿Estás seguro/a de revertir la autorización de la solicitud de movimiento?",
+                    text: "¿Está seguro de revertir la autorización de la solicitud de movimiento?",
                     dangerMode: true,
                     icon: "info",
                     content: {

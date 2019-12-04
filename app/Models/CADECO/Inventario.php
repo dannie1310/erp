@@ -89,7 +89,7 @@ class Inventario extends Model
         $this->saldo = $this->saldo - $cantidad;
         $this->save();
     }
-     /* Este método implementa la lógica delEste método implementa la lógica del
+     /* Este método implementa la lógica del procedimiento almacenado
      * sp_borra_transaccion y se detona al eliminar una salida de almacén
      * */
     public function aumentaSaldo($cantidad)
@@ -97,7 +97,7 @@ class Inventario extends Model
         $this->saldo = $this->saldo + $cantidad;
         $this->save();
     }
-    /* Este método implementa la lógica delEste método implementa la lógica del
+    /* Este método implementa la lógica del procedimiento almacenado
      * sp_borra_transaccion y se detona al eliminar una salida de almacén
      * */
     public function disminuyeMontoAplicado($monto_pagado_hijo)

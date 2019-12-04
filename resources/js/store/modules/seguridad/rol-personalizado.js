@@ -61,7 +61,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Asignar Roles",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     closeOnClickOutside: false,
                     buttons: {
@@ -104,7 +104,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Asignar/Desasignar Permisos",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     closeOnClickOutside: false,
                     buttons: {
@@ -147,7 +147,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Desasignar Roles",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     closeOnClickOutside: false,
                     buttons: {
@@ -190,7 +190,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Crear Rol",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: ['No, cancelar',
                         {

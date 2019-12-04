@@ -55,7 +55,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Habilitar/Deshabilitar Sistemas",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     closeOnClickOutside: false,
                     buttons: {

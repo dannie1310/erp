@@ -100,7 +100,7 @@ export default {
         actualiza(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Actualizar Contrato Proyectado",
                     icon: "warning",
                     buttons: {

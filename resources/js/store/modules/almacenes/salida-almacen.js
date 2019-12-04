@@ -76,8 +76,8 @@ export default {
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Salida/Transferencia de Almacén",
-                    text: "¿Estás seguro/a de que desea eliminar esta transacción?",
+                    title: "Eliminar Salida de Almacén",
+                    text: "¿Está seguro de eliminar esta transacción?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -117,8 +117,8 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar salida / transferencia de almacén",
-                    text: "¿Está seguro/a de que quiere registrar una salida / transferencia de almacén?",
+                    title: "Registrar salida de almacén",
+                    text: "¿Está seguro de que quiere registrar una salida de almacén?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -137,7 +137,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("salida / transferencia de almacén registrada correctamente", {
+                                    swal("Salida de almacén registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
