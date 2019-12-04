@@ -2,7 +2,7 @@
     <span>
         <div class="card" id="solicitantes">
             <div class="card-header">
-                <h3 class="card-title">Asignación de Áreas Solicitantes</h3>
+                <h6 class="card-title">Asignación de Áreas Solicitantes</h6>
             </div>
 
             <div class="card-body">

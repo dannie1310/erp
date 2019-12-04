@@ -1,9 +1,9 @@
 <template>
     <div class="card" id="seguridad-rol-create">
         <div class="card-header">
-            <h3 class="card-title">
+            <h6 class="card-title">
                 Crear Rol
-            </h3>
+            </h6>
         </div>
         <div class="card-body">
             <div class="row" role="form">
