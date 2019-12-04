@@ -25,7 +25,8 @@ class SalidaAlmacen extends Transaccion
         'opciones',
         'fecha',
         'observaciones',
-        'referencia'
+        'referencia',
+        'NumeroFolioAlt'
     ];
 
     protected static function boot()
@@ -357,5 +358,18 @@ class SalidaAlmacen extends Transaccion
             abort(400, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function getFolioAlm()
+    {
+        if(in_array($this->almacen->tipo_almacen,[5,0]))
+        {
+            $salida = SalidaAlmacen::orderBy('NumeroFolioAlt', 'DESC')->first();
+            return $salida ? $salida->NumeroFolioAlt + 1 : 1;
+        }
+        else {
+            return NULL;
+        }
+
     }
 }

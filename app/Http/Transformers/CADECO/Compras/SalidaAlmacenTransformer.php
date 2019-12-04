@@ -30,6 +30,7 @@ class SalidaAlmacenTransformer extends TransformerAbstract
             'estado_format' => $model->estado_format,
             'folio' => $model->numero_folio,
             'opciones' => $model->opciones,
+            'operacion' => $model->operacion,
             'folio_format' => $model->numero_folio_format,
             'almacen_descripcion' => $model->almacen->descripcion,
         ];
