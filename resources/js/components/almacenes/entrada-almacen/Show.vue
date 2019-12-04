@@ -13,12 +13,7 @@
                         </button>
                     </div>
                     <form role="form" @submit.prevent="validate">
-                        <div class="modal-body" v-if="cargando">
-                            <div>
-                                <h5 id="exampleModalLongTitle"><i class="fa fa-spin fa-spinner"></i>CARGANDO</h5>
-                            </div>
-                        </div>
-                        <div class="modal-body" v-else>
+                        <div class="modal-body">
                             <div class="row"  v-if="entrada">
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
@@ -194,7 +189,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>
