@@ -47,7 +47,7 @@
                     { title: 'Importe', field: 'importe'},
                     { title: 'Impuesto', field: 'impuesto'},
                     { title: 'Total', field: 'total'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

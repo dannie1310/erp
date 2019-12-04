@@ -33,16 +33,16 @@
              HeaderSettings: false,
              columns: [
                 { title: '#', field: 'index', sortable: false },
-                { title: 'Inventario Físico', field: 'inventario_fisico', thComp: require('../../globals/th-Filter')},
+                { title: 'Inventario Físico', field: 'inventario_fisico', thComp: require('../../globals/th-Filter').default},
                 { title: 'Folio', field: 'id_marbete', sortable: true},
-                { title: 'Tipo Conteo', field: 'tipo_conteo', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Tipo Conteo', field: 'tipo_conteo', sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Cantidad Usados', field: 'cantidad_usados', sortable: true},
                 { title: 'Cantidad Nuevos', field: 'cantidad_nuevo', sortable: true},
                 { title: 'Cantidad inservibles', field: 'cantidad_inservible', sortable: true},
                 { title: 'Total', field: 'total', sortable: true},
-                { title: 'Iniciales', field: 'iniciales', sortable: true, thComp: require('../../globals/th-Filter')},
+                { title: 'Iniciales', field: 'iniciales', sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Observaciones', field: 'observaciones'},
-                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
              ],
              data: [],
              total: 0,

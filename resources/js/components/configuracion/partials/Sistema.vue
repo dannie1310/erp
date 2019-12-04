@@ -2,7 +2,7 @@
     <span>
         <div class="card" id="configuracion-sistema">
             <div class="card-header">
-                <h3 class="card-title">Habilitación de Sistemas</h3>
+                <h6 class="card-title">Habilitación de Sistemas</h6>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-                    <button class="btn btn-outline-success pull-right" :disabled="!sistemas_desasignados.length && !sistemas_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
+                    <button class="btn btn-outline-success float-right" :disabled="!sistemas_desasignados.length && !sistemas_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
                 <div>
                  </div>
             </div>

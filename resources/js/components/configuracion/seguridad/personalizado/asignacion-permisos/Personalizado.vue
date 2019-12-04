@@ -2,7 +2,7 @@
     <span>
         <div class="card" id="asignar-permisos">
             <div class="card-header">
-                <h3 class="card-title">Asignación de Permisos</h3>
+                <h6 class="card-title">Asignación de Permisos</h6>
             </div>
             <div class="card-body">
                 <div class="form-group row">
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div>
-                     <button class="btn btn-outline-success pull-right" :disabled="!permisos_desasignados.length && !permisos_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
+                     <button class="btn btn-outline-success float-right" :disabled="!permisos_desasignados.length && !permisos_nuevos_asignados.length" @click="validate"><i class="fa fa-save"></i></button>
                  </div>
             </div>
 

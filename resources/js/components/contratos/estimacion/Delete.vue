@@ -10,7 +10,7 @@
                                     <div class="row">
                                         <div class="col-8 text-center mt-5">
                                             <h1>{{ obra.facturar }}</h1>
-                                            <h3 class="mt-5">Cuerpo de Estimación</h3>
+                                            <h6 class="mt-5">Cuerpo de Estimación</h6>
                                         </div>
                                     </div>
                                 </div>

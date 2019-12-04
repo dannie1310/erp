@@ -4,14 +4,13 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Almacenes\EntregaContratista;
 use App\Models\CADECO\Compras\InventarioEliminado;
 use App\Models\CADECO\Compras\ItemSalidaEliminada;
 use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Compras\MovimientoEliminado;
 use App\Models\CADECO\Compras\SalidaEliminada;
-use App\Models\CADECO\Contabilidad\HistPoliza;
 use App\Models\CADECO\Contabilidad\Poliza;
-use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 
@@ -26,21 +25,22 @@ class SalidaAlmacen extends Transaccion
         'opciones',
         'fecha',
         'observaciones',
-        'referencia'
+        'referencia',
+        'NumeroFolioAlt'
     ];
 
     protected static function boot()
     {
         parent::boot();
 
-        self::addGlobalScope('tipo',function ($query) {
+        self::addGlobalScope('tipo', function ($query) {
             return $query->where('tipo_transaccion', '=', 34);
         });
     }
 
     public function almacen()
     {
-        return $this->belongsTo(Almacen::class,'id_almacen','id_almacen');
+        return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
     }
 
     public function partidas()
@@ -48,9 +48,93 @@ class SalidaAlmacen extends Transaccion
         return $this->hasMany(SalidaAlmacenPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function entrega_contratista()
+    {
+        return $this->hasOne(EntregaContratista::class,'id_transaccion', 'id_transaccion');
+    }
+
+    public function getTransaccionesRelacionadasAttribute()
+    {
+        $transacciones = [];
+        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+        if ($poliza != null){
+            if($poliza->estatus != -3) {
+                $transacciones[] =[
+                    "numero_folio"=>$poliza->numero_folio_format,
+                    "fecha"=>$poliza->fecha_format,
+                    "fecha_hora_registro"=>$poliza->fecha_hora_registro_format,
+                    "fecha_hora_registro_orden"=>$poliza->fecha_hora_registro_orden,
+                    "tipo_transaccion"=>"Prepoliza",
+                    "concepto"=>$poliza->concepto,
+                ];
+            };
+        }
+        $items = $this->partidas()->get()->toArray();
+        foreach ($items as $item){
+            $inventario = Inventario::query()->where('id_item', $item['id_item'])->first();
+            $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->first();
+
+
+            if($inventario != null && $inventario->cantidad != $inventario->saldo){
+                $movimientos_salidas = Movimiento::query()->where('lote_antecedente', $inventario->id_lote)->get();
+                $inventarios_transferencias =  Inventario::query()->where('lote_antecedente', $inventario->id_lote)->get();
+
+                if($movimientos_salidas->toArray() != []) {
+                    foreach ($movimientos_salidas as $movimientos_salida) {
+                        $item_salida = SalidaAlmacenPartida::query()->where('id_item', $movimientos_salida->id_item)->first();
+                        $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
+                        $transacciones[] =[
+                            "numero_folio"=>$salida->numero_folio_format,
+                            "fecha"=>$salida->fecha_format,
+                            "fecha_hora_registro"=>$salida->fecha_hora_registro_format,
+                            "fecha_hora_registro_orden"=>$salida->fecha_hora_registro_orden,
+                            "tipo_transaccion"=>"Salida (Consumo)",
+                            "concepto"=>$salida->observaciones
+                        ];
+                    }
+                }
+                if($inventarios_transferencias->toArray() != []){
+                    foreach ($inventarios_transferencias as $inventarios_transferencia) {
+                        $item_salida = SalidaAlmacenPartida::query()->where('id_item', $inventarios_transferencia->id_item)->first();
+                        $salida = SalidaAlmacen::query()->where('id_transaccion', $item_salida->id_transaccion)->first();
+                        $transacciones[] =[
+                            "numero_folio"=>$salida->numero_folio_format,
+                            "fecha"=>$salida->fecha_format,
+                            "fecha_hora_registro"=>$salida->fecha_hora_registro_format,
+                            "tipo_transaccion"=>"Salida (Transferencia)",
+                            "fecha_hora_registro_orden"=>$salida->fecha_hora_registro_orden,
+                            "concepto"=>$salida->observaciones
+                        ];
+                    }
+                }
+            }
+        }
+
+        uasort($transacciones, $this->ordenar('fecha_hora_registro_orden'));
+
+        $transacciones = array_values(array_unique($transacciones,SORT_REGULAR ));
+
+        if($transacciones != [])
+        {
+            return $transacciones;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public function ordenar($clave)
+    {
+        return function ($a, $b) use ($clave)
+        {
+            return strcmp($a[$clave], $b[$clave]);
+        };
+    }
+
     public function getEstadoFormatAttribute()
     {
-        switch ($this->estado){
+        switch ($this->estado) {
             case 0 :
                 return 'Registrada';
                 break;
@@ -59,7 +143,7 @@ class SalidaAlmacen extends Transaccion
 
     public function getOperacionAttribute()
     {
-        switch ($this->opciones){
+        switch ($this->opciones) {
             case 1 :
                 return 'Salida de Almacén';
                 break;
@@ -69,83 +153,15 @@ class SalidaAlmacen extends Transaccion
         }
     }
 
-    public function eliminar_salida(){
-        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-        if ($poliza != null){
-            $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-            $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->get();
-
-            if($poliza_historico != null) {
-                HistPoliza::query()->where('id_int_poliza', $poliza_historico->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
-            }
-            if($poliza_movimiento != null) {
-                foreach ($poliza_movimiento as $i) {
-                    PolizaMovimiento::query()->where('id_int_poliza_movimiento', $i->id_int_poliza_movimiento)->update(['id_transaccion_sao' => NULL]);
-                }
-            }
-            Poliza::query()->where('id_int_poliza',$poliza->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
-        }
-
-        $items = $this->partidas()->get()->toArray();
-        foreach ($items as $item) {
-            $contratista  = ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
-
-            $movimiento = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
-            foreach ($movimiento as $mov){
-                $inventarios = Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->get()->toArray();
-                foreach ($inventarios as $inv) {
-                    $saldo = $inv['saldo'] + $mov['cantidad'];
-                    Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->update( ['saldo' => $saldo] );
-                    $saldo_inventario = Inventario::query()->where( 'id_lote', $mov['lote_antecedente'] )->first();
-                    if($saldo_inventario->saldo != $saldo){
-                        DB::connection('cadeco')->rollBack();
-                    }
-                }
-                Movimiento::destroy($mov['id_movimiento']);
-            }
-            Item::destroy($item['id_item']);
-        }
-    }
-    public function eliminar_transferencia(){
-        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-        if ($poliza != []){
-            $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-            $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-
-            HistPoliza::query()->where('id_int_poliza',$poliza->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
-            Poliza::query()->where('id_int_poliza',$poliza_historico->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
-            PolizaMovimiento::query()->where('id_int_poliza',$poliza_movimiento->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
-        }
-        $items = $this->partidas()->get()->toArray();
-        foreach ($items as $item) {
-            $inventario = Inventario::query()->where( 'id_item', $item['id_item'] )->get()->toArray();
-            foreach ($inventario as $inv) {
-                $inv_antecedente = Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->get()->toArray();
-                foreach ($inv_antecedente as $inv_ant){
-                    $saldo = $inv['cantidad'] + $inv_ant['saldo'];
-                    Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->update( ['saldo' => $saldo] );
-                    $saldo_inventario = Inventario::query()->where( 'id_lote', $inv['lote_antecedente'] )->first();
-                    if($saldo_inventario->saldo != $saldo){
-                        DB::connection('cadeco')->rollBack();
-                    }
-                }
-            }
-            Inventario::destroy( $inventario[0]['id_lote'] );
-            Item::destroy($item['id_item']);
-        }
-
-    }
-
     public function eliminar($motivo)
     {
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->validar();
-            $this->respaldar($motivo);
-            $this->revisar_respaldos();
             $this->delete();
+            $this->revisar_respaldos($motivo);
             DB::connection('cadeco')->commit();
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
@@ -155,217 +171,106 @@ class SalidaAlmacen extends Transaccion
     private function validar()
     {
         $mensaje = '';
-        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
+        $poliza = Poliza::query()->where('id_transaccion_sao', $this->id_transaccion)->first();
 
-        if ($poliza != null){
-            if($poliza->estatus != -3) {
+        if ($poliza != null) {
+            if ($poliza->estatus != -3) {
                 $mensaje = "-La salida se encuentra asociada a la Prepoliza: #" . $poliza->id_int_poliza . " \n";
             };
         }
         $items = $this->partidas()->get()->toArray();
 
-        foreach ($items as $item){
+        foreach ($items as $item) {
             $factura_part = FacturaPartida::query()->where('id_antecedente', '=', $item['id_transaccion'])->first();
-            if($factura_part != null){
+            if ($factura_part != null) {
                 $factura = Factura::query()->where('id_transaccion', $factura_part->id_transaccion)->first();
-                $mensaje = $mensaje."-Factura: # ". $factura->numero_folio." \n";
+                $mensaje = $mensaje . "-Factura: # " . $factura->numero_folio . " \n";
             }
-            if ($this->opciones == 65537){
+            if ($this->opciones == 65537) {
 
                 $inventarios = Inventario::query()->where('id_item', $item['id_item'])->get()->toArray();
 
-                if($inventarios == []){
-                    $mensaje = $mensaje."-No existe inventario\n";
+                if ($inventarios == []) {
+                    $mensaje = $mensaje . "-No existe inventario\n";
                 }
-                $cadena='-Existen transacciones relacionadas:
+                $cadena = '-Existen transacciones relacionadas:
                 ';
-                foreach ($inventarios as $inventario){
-                    $movimientos = Movimiento::query()->where('lote_antecedente','=', $inventario['id_lote'])->get()->toArray();
-                    if($movimientos != []){
-                        $i=0;
-                        foreach ($movimientos as $mov){
+                foreach ($inventarios as $inventario) {
+                    $movimientos = Movimiento::query()->where('lote_antecedente', '=', $inventario['id_lote'])->get()->toArray();
+                    if ($movimientos != []) {
+                        $i = 0;
+                        foreach ($movimientos as $mov) {
                             $i++;
-                            $partida =Item::query()->where('id_item','=',$mov['id_item'])->first();
-                            $transa = Transaccion::query()->where('id_transaccion','=',$partida['id_transaccion'])->first();
-                            if($mov != []){
-                                if($transa['tipo_transaccion'] == 34 && $transa['opciones'] == 1){
-                                    $cadena.=$i.') Salida: #'.
-                                        $transa['numero_folio'].'
+                            $partida = Item::query()->where('id_item', '=', $mov['id_item'])->first();
+                            $transa = Transaccion::query()->where('id_transaccion', '=', $partida['id_transaccion'])->first();
+                            if ($mov != []) {
+                                if ($transa['tipo_transaccion'] == 34 && $transa['opciones'] == 1) {
+                                    $cadena .= $i . ') Salida: #' .
+                                        $transa['numero_folio'] . '
                                         ';
                                 }
-                                if($transa['tipo_transaccion'] == 34 && $transa['opciones'] == 65537){
-                                    $cadena.=$i.') Transferencia: #'.
-                                        $transa['numero_folio'].'
+                                if ($transa['tipo_transaccion'] == 34 && $transa['opciones'] == 65537) {
+                                    $cadena .= $i . ') Transferencia: #' .
+                                        $transa['numero_folio'] . '
                                         ';
                                 }
                                 $mensaje = $cadena;
                             }
                         }
                     }
-                    if($inventario['cantidad'] != $inventario['saldo']){
-                        $mensaje = $mensaje."-La cantidad es diferente al saldo del inventario\n";
+                    if ($inventario['cantidad'] != $inventario['saldo']) {
+                        $mensaje = $mensaje . "-La cantidad es diferente al saldo del inventario\n";
                     }
                     $inventario_antecedente = Inventario::query()->where('id_lote', $inventario['lote_antecedente'])->get()->toArray();
-                    if($inventario_antecedente[0]['saldo']+$inventario['cantidad'] > $inventario_antecedente[0]['cantidad']){
-                        $mensaje = $mensaje."-El saldo es mayor a la cantidad del inventario antecedente\n";
+                    if ($inventario_antecedente[0]['saldo'] + $inventario['cantidad'] > $inventario_antecedente[0]['cantidad']) {
+                        $mensaje = $mensaje . "-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }
                 }
             }
-            if ($this->opciones == 1){
+            if ($this->opciones == 1) {
                 $movimientos = Movimiento::query()->where('id_item', $item['id_item'])->get()->toArray();
-                if($movimientos == []){
-                    $mensaje = $mensaje."-No existe movimiento\n";
+                if ($movimientos == []) {
+                    $mensaje = $mensaje . "-No existe movimiento\n";
                 }
-                foreach ($movimientos as $movimiento){
-                    $inv_antecedente = Inventario::query()->where('id_lote',$movimiento['lote_antecedente'])->get()->toArray();
-                    if($inv_antecedente[0]['saldo']+$movimiento['cantidad'] > $inv_antecedente[0]['cantidad']){
-                        $mensaje = $mensaje."-El saldo es mayor a la cantidad del inventario antecedente\n";
+                foreach ($movimientos as $movimiento) {
+                    $inv_antecedente = Inventario::query()->where('id_lote', $movimiento['lote_antecedente'])->get()->toArray();
+                    if ($inv_antecedente[0]['saldo'] + $movimiento['cantidad'] > $inv_antecedente[0]['cantidad']) {
+                        $mensaje = $mensaje . "-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }
                 }
             }
 
         }
-        if($mensaje != "")
-        {
+        if ($mensaje != "") {
             abort(400, "No se puede eliminar la salida de almacén debido a las siguientes razones:\n" . $mensaje . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
         }
     }
 
-    /**
-     *  Realiza funciones para despaldar todo lo implicado en la salida material y realizar los respaldos pertinentes.
-     */
-    private function respaldar($motivo)
+
+    private function revisar_respaldos($motivo)
     {
-
-            $partidas = $this->partidas()->get()->toArray();
-            foreach ($partidas as $partida) {
-
-                if($this->opciones == 65537 )
-                {
-                    /**
-                     * Respaldar el Inventario
-                     */
-                    $inventario = Inventario::query()->where('id_item', $partida['id_item'])->first()->toArray();
-                    $respaldo_inventario = InventarioEliminado::query()->create(
-                        [
-                            'id_lote' => $inventario['id_lote'],
-                            'lote_antecedente' => $inventario['lote_antecedente'],
-                            'id_almacen' => $inventario['id_almacen'],
-                            'id_material' => $inventario['id_material'],
-                            'id_item' => $inventario['id_item'],
-                            'saldo' => $inventario['saldo'],
-                            'monto_total' => $inventario['monto_total'],
-                            'monto_pagado' => $inventario['monto_pagado'],
-                            'monto_aplicado' => $inventario['monto_aplicado'],
-                            'fecha_desde' => $inventario['fecha_desde'],
-                            'referencia' => $inventario['referencia'],
-                            'monto_original' => $inventario['monto_original']
-                        ]
-                    );
-                }
-
-                if($this->opciones == 1){
-                    /**
-                     * Respaldar el movimiento
-                     */
-                    $movimiento = Movimiento::query()->where('id_item', $partida['id_item'])->first()->toArray();
-                    $respaldo_movimiento = MovimientoEliminado::query()->create(
-                        [
-                            'id_movimiento' => $movimiento['id_movimiento'],
-                            'id_concepto' => $movimiento['id_concepto'],
-                            'id_item' => $movimiento['id_item'],
-                            'id_material' => $movimiento['id_material'],
-                            'cantidad' => $movimiento['cantidad'],
-                            'monto_total' => $movimiento['monto_total'],
-                            'monto_pagado' => $movimiento['monto_pagado'],
-                            'monto_original' => $movimiento['monto_original'],
-                            'creado' => $movimiento['creado']
-                        ]
-                    );
-                }
-
-                /**
-                 * Respaldar el Item
-                 */
-                $respaldo_item = ItemSalidaEliminada::query()->create(
-                    [
-                        'id_item' => $partida['id_item'],
-                        'id_transaccion' => $partida['id_transaccion'],
-                        'id_antecedente' => $partida['id_antecedente'],
-                        'item_antecedente' => $partida['item_antecedente'],
-                        'id_almacen' => $partida['id_almacen'],
-                        'id_concepto' => $partida['id_concepto'],
-                        'id_material' => $partida['id_material'],
-                        'unidad' => $partida['unidad'],
-                        'numero' => $partida['numero'],
-                        'cantidad' => $partida['cantidad'],
-                        'cantidad_material' => $partida['cantidad_material'],
-                        'importe' => $partida['importe'],
-                        'saldo' => $partida['saldo'],
-                        'precio_unitario' => $partida['precio_unitario'],
-                        'anticipo' => $partida['anticipo'],
-                        'precio_material' => $partida['precio_material'],
-                        'referencia' => $partida['referencia'],
-                        'estado' => $partida['estado'],
-                        'cantidad_original1' => $partida['cantidad_original1'],
-                        'precio_original1' => $partida['precio_original1'],
-                        'id_asignacion' => $partida['id_asignacion']
-                    ]
-                );
-            }
-
-            /**
-             * Respaldo de Entrada Almacén
-             */
-            $respaldo_entrada = SalidaEliminada::query()->create(
-                [
-                    'id_transaccion' => $this->id_transaccion,
-                    'tipo_transaccion' => $this->tipo_transaccion,
-                    'numero_folio' => $this->numero_folio,
-                    'fecha' => $this->fecha,
-                    'id_obra' => $this->id_obra,
-                    'id_concepto' => $this->id_concepto,
-                    'id_empresa' => $this->id_empresa,
-                    'opciones' => $this->opciones,
-                    'diferencia' => $this->diferencia,
-                    'comentario' => $this->comentario,
-                    'observaciones' => $this->observaciones,
-                    'FechaHoraRegistro' => $this->FechaHoraRegistro,
-                    'NumeroFolioAlt' => $this->NumeroFolioAlt,
-                    'motivo_eliminacion' => $motivo
-                ]
-            );
-
-    }
-
-    private function validarRegistro($data){
-        foreach ($data['partidas'] as $p){
-            if(Inventario::query()->where('id_almacen','=',$data['id_almacen'])->where('id_material','',$p[0]['id'])->first()){
-                abort(400, "No existe lote");
-            }
-            if($p[3]<$p[1]){
-                abort(400, "La cantida es mayor a la existencia");
-            }
+        $salida = SalidaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
+        if ($salida == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la salida de almacén, no se generó el respaldo.');
+        }else{
+            $salida->motivo_eliminacion = $motivo;
+            $salida->save();
         }
-
-    }
-
-    private function revisar_respaldos()
-    {
         $partidas = $this->partidas()->get()->toArray();
         foreach ($partidas as $partida) {
 
-            if($this->opciones == 65537) {
-                $inventario = InventarioEliminado::query()->where( 'id_item', $partida['id_item'] )->first();
+            if ($this->opciones == 65537) {
+                $inventario = InventarioEliminado::query()->where('id_item', $partida['id_item'])->first();
                 if ($inventario == null) {
-                    abort( 400, 'Error en el proceso de eliminación de salida de almacén.' );
+                    abort(400, 'Error en el proceso de eliminación de salida de almacén, no se respaldo el lote.');
                 }
             }
 
-            if($this->opciones == 1){
+            if ($this->opciones == 1) {
                 $movimiento = MovimientoEliminado::query()->where('id_item', $partida['id_item'])->first();
                 if ($movimiento == null) {
-                    abort(400, 'Error en el proceso de eliminación de salida de almacén.');
+                    abort(400, 'Error en el proceso de eliminación de salida de almacén, no se respaldo el movimiento.');
                 }
             }
 
@@ -375,27 +280,96 @@ class SalidaAlmacen extends Transaccion
             }
         }
 
-        $salida = SalidaEliminada::query()->where('id_transaccion', $this->id_transaccion)->first();
-        if ($salida == null) {
-            abort(400, 'Error en el proceso de eliminación de salida de almacén.');
+    }
+
+    /**
+     * Elimina las partidas
+     */
+    public function eliminar_partidas($partidas)
+    {
+        foreach ($partidas as $item) {
+            ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
+            SalidaAlmacenPartida::find($item['id_item'])->delete();
         }
     }
 
-    public function registrar($data){
-        try{
-            $data['fecha']= date_format(new DateTime($data['fecha']), 'Y-m-d');
+    public function registrar($data)
+    {
+        try {
             DB::connection('cadeco')->beginTransaction();
-            $this->validarRegistro($data);
-            $salidaTransaccion = $this->create($data);
-            $partida = new SalidaAlmacenPartida();
-            $partida->registrar($data['partidas'], $salidaTransaccion->toArray());
+            if ($data["opciones"] == 1) {
+                $salida = $this->create(
+                    [
+                        'id_empresa' => $data["id_empresa"],
+                        'id_concepto' => $data["id_concepto"],
+                        'id_almacen' => $data["id_almacen"],
+                        'opciones' => $data["opciones"],
+                        'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
+                        'referencia' => $data["referencia"],
+                        'observaciones' => $data['observaciones']
+                    ]
+                );
+            } else {
+                $salida = $this->create(
+                    [
+                        'id_almacen' => $data["id_almacen"],
+                        'opciones' => $data["opciones"],
+                        'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
+                        'referencia' => $data["referencia"],
+                        'observaciones' => $data['observaciones']
+                    ]
+                );
+            }
+            if ($data["con_prestamo"] == 1) {
+                $salida->entrega_contratista->tipo = $data["opcion_cargo"];
+                $salida->entrega_contratista->save();
+            }
 
+            foreach ($data['partidas'] as $item) {
+                if ($data["opciones"] == 1) {
+                    $item_guardado = $salida->partidas()->create([
+                        'id_transaccion' => $salida->id_transaccion,
+                        'id_concepto' => $item['id_destino'],
+                        'id_material' => $item['id_material'],
+                        'unidad' => $item['unidad'],
+                        'numero' => 0,
+                        'cantidad' => $item['cantidad'],
+                    ]);
+                    if ($data["con_prestamo"] == 1) {
+                        ItemContratista::query()->create(['id_item' => $item_guardado->id_item,
+                            'id_empresa' => $data['id_empresa'],
+                            'con_cargo' => $data['opcion_cargo']]);
+                    }
+                } else {
+                    $salida->partidas()->create([
+                        'id_transaccion' => $salida->id_transaccion,
+                        'id_almacen' => $item['id_destino'],
+                        'id_material' => $item['id_material'],
+                        'unidad' => $item['unidad'],
+                        'numero' => 0,
+                        'cantidad' => $item['cantidad'],
+                    ]);
+                }
+            }
             DB::connection('cadeco')->commit();
-            return $salidaTransaccion;
-        }catch (\Exception $e){
+            return $salida;
+        } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function getFolioAlm()
+    {
+        if(in_array($this->almacen->tipo_almacen,[5,0]))
+        {
+            $salida = SalidaAlmacen::orderBy('NumeroFolioAlt', 'DESC')->first();
+            return $salida ? $salida->NumeroFolioAlt + 1 : 1;
+        }
+        else {
+            return NULL;
+        }
+
     }
 }

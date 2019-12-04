@@ -36,7 +36,7 @@
                     { title: 'Fecha y Hora de Registro', field: 'FechaHoraRegistro', sortable: true },
                     { title: 'Observaciones', field: 'observaciones', thComp: require('../../../globals/th-Filter'), sortable: true },
                     { title: 'Estatus', field: 'estado', tdComp: require('./partials/SolicitudEstatus')},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

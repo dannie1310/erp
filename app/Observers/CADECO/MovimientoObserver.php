@@ -9,26 +9,20 @@
 namespace App\Observers\CADECO;
 
 use App\Models\CADECO\Movimiento;
+use App\Models\CADECO\Compras\MovimientoEliminado;
 
 
 class MovimientoObserver
 {
-    /**
-     * @param Inventario $inventario
-     * @throws \Exception
-     */
-    public function updating(Movimiento $inventario)
-    {
-        if($inventario->saldo<-0.01){
-            throw New \Exception('El saldo del lote ('.$inventario->id_lote.') '.$inventario->material->descripcion.' no puede ser menor a 0');
-        }
-        if($inventario->saldo > ($inventario->cantidad)+0.01){
-            throw New \Exception('El saldo del lote ('.$inventario->id_lote.') '.$inventario->material->descripcion.' no puede ser mayor a '. $inventario->cantidad);
-        }
-    }
-
     public function deleting(Movimiento $movimiento)
     {
+        if($movimiento->inventario){
+            /* Este método implementa la lógica del procediminto almacenado
+             * sp_borra_transaccion y se detona al eliminar una salida de almacén (consumo)
+             * */
+            $movimiento->inventario->aumentaSaldo($movimiento->cantidad);
+            $movimiento->inventario->disminuyeMontoAplicado($movimiento->monto_pagado);
+        }
         MovimientoEliminado::create(
             [
                 'id_movimiento' => $movimiento->id_movimiento,
@@ -42,5 +36,7 @@ class MovimientoObserver
                 'creado' => $movimiento->creado
             ]
         );
+
+
     }
 }

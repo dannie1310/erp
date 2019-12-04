@@ -179,4 +179,14 @@ class Material extends Model
     public function getCantidadInventarioAttribute(){
         return $this->inventarios->sum('cantidad');
     }
+
+    public function getSaldoAlmacenFormatAttribute()
+    {
+        return number_format($this->saldo_almacen,2,".",",");
+    }
+
+    public function getSaldoAlmacenDdAttribute()
+    {
+        return number_format($this->saldo_almacen,2,".","");
+    }
 }

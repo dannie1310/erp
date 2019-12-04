@@ -1,7 +1,7 @@
 <template>
     <div class="card">
         <div class="card-header border-transparent">
-            <h3 class="card-title">Informe de permisos</h3>
+            <h6 class="card-title">Informe de permisos</h6>
 
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -27,10 +27,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Usuario', field: 'usuario', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Nombre de Usuario', field: 'nombre_completo', sortable: true, thComp: require('../../globals/th-Filter') },
-                    { title: 'Ubicación', field: 'ubicacion', sortable: true , thComp: require('../../globals/th-Filter')},
-                    { title: 'Departamento', field: 'departamento', sortable: true, thComp: require('../../globals/th-Filter') },
+                    { title: 'Usuario', field: 'usuario', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Nombre de Usuario', field: 'nombre_completo', sortable: true, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Ubicación', field: 'ubicacion', sortable: true , thComp: require('../../globals/th-Filter').default},
+                    { title: 'Departamento', field: 'departamento', sortable: true, thComp: require('../../globals/th-Filter').default },
                     { title: 'Usuario Corporativo', field: 'factor_es_corporativo', sortable: true, tdComp: require('./CorporativoEstatus') },
                     { title: 'Cantidad de Permisos', field: 'cantidad_permisos', sortable: true },
                     { title: 'Cantidad de Proyectos', field: 'cantidad_obras', sortable: true },

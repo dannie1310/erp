@@ -6,17 +6,20 @@
 @import 'variables';
 
 // Bootstrap
-@import '~font-awesome/scss/font-awesome';
+@import '~@fortawesome/fontawesome-free/css/fontawesome.css';
 @import '~admin-lte/dist/css/adminlte.css';
-@import '~admin-lte/plugins/daterangepicker/daterangepicker-bs3.css';
-@import '~admin-lte/plugins/datepicker/datepicker3.css';
+@import '~admin-lte/plugins/daterangepicker/daterangepicker.css';
+/*@import '~admin-lte/plugins/datepicker/datepicker3.css';*/
 @import '~jquery-ui/themes/base/all.css';
 @import '~@riophae/vue-treeselect/dist/vue-treeselect.css';
 @import '~vue2-dropzone/dist/vue2Dropzone.min.css';
 @import '~bootstrap-pincode-input/css/bootstrap-pincode-input.css';
 
-* {
+body, .form-control, .btn {
   font-size: 13px;
+}
+.form-control {
+  height: auto;
 }
 
 .button
@@ -34,9 +37,14 @@ i.button
 .th_icono, td_icono, td.icono, th.icono
 {
   text-align: center;
-  width: 25px;
-  max-width: 25px;
-  min-width: 25px;
+  width: 50px;
+  max-width: 50px;
+  min-width: 50px;
+}
+
+td.numero_folio, th.numero_folio
+{
+  width: 70px;
 }
 
 .td_money, td.money{
@@ -152,4 +160,15 @@ thead th {text-align: center}
   width: 80px;
   max-width: 80px;
   min-width: 80px;
+}
+
+.centered
+{
+  float:none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pull-right {
+  float: right !important;
 }
