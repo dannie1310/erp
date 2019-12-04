@@ -583,59 +583,68 @@
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.$data.partidas.forEach(function(element) {
-                            if(!(element.cantidad  === undefined && element.destino  === '' )){
-                                if(element.cantidad > 0 && element.destino === '')
-                                {
-                                    error_destino_no_ingresado = error_destino_no_ingresado + 1
-                                } else {
-                                    /*Validación para evitar que un mismo material se cargue mas de una vez a un mismo concepto*/
-                                    if(isNaN(contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()]))
+                        /*validar que se haya seleccionado contratista en caso de haber indicado que la salida es con préstamo*/
+
+                        if(this.$data.dato.con_prestamo === true && this.$data.dato.id_empresa === '')
+                        {
+                            swal('Atención', 'Seleccione el contratista al que se le hizo la entrega.', 'warning');
+                        }
+                        else{
+                            this.$data.partidas.forEach(function(element) {
+                                if(!(element.cantidad  === undefined && element.destino  === '' )){
+                                    if(element.cantidad > 0 && element.destino === '')
                                     {
-                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = parseInt("1");
-                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
-                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
-                                    }else{
-                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] += parseInt("1");
-                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
-                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                        error_destino_no_ingresado = error_destino_no_ingresado + 1
+                                    } else {
+                                        /*Validación para evitar que un mismo material se cargue mas de una vez a un mismo concepto*/
+                                        if(isNaN(contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()]))
+                                        {
+                                            contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = parseInt("1");
+                                            material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                            destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                        }else{
+                                            contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] += parseInt("1");
+                                            material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                            destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                        }
                                     }
                                 }
-                            }
-                            partidas_store.push({
-                                id_destino : element.destino.id_destino,
-                                id_material : element.material.id_material,
-                                unidad : element.material.unidad,
-                                cantidad: element.cantidad,
+                                partidas_store.push({
+                                    id_destino : element.destino.id_destino,
+                                    id_material : element.material.id_material,
+                                    unidad : element.material.unidad,
+                                    cantidad: element.cantidad,
+                                });
+
                             });
 
-                        });
-
-                        for(var i in contador_material_destino)
-                        {
-                            if(parseInt(contador_material_destino[i])>1)
+                            for(var i in contador_material_destino)
                             {
-                                error_destino_repetido++;
-                                aviso_repetido += '-'+material_aviso[i] +"->"+ destino_aviso[i] +"\n";
+                                if(parseInt(contador_material_destino[i])>1)
+                                {
+                                    error_destino_repetido++;
+                                    aviso_repetido += '-'+material_aviso[i] +"->"+ destino_aviso[i] +"\n";
+                                }
+                            }
+
+                            if (error_destino_no_ingresado > 0)
+                            {
+                                swal('Atención', 'Ingrese un destino válido en todas las partidas.', 'warning');
+                            }
+                            else if (error_destino_repetido > 0)
+                            {
+                                if(this.dato.opciones == 1){
+                                    swal('Atención', 'Un mismo insumo se intenta cargar  mas de una vez a un mismo concepto, favor de corregir:'+aviso_repetido, 'warning');
+                                }else if(this.dato.opciones == 65537){
+                                    swal('Atención', 'Un mismo insumo se intenta enviar  mas de una vez a un mismo almacén, favor de corregir:'+aviso_repetido, 'warning');
+                                }
+
+                            }
+                            else {
+                                this.store(partidas_store)
                             }
                         }
 
-                        if (error_destino_no_ingresado > 0)
-                        {
-                            swal('Atención', 'Ingrese un destino válido en todas las partidas.', 'warning');
-                        }
-                        else if (error_destino_repetido > 0)
-                        {
-                            if(this.dato.opciones == 1){
-                                swal('Atención', 'Un mismo insumo se intenta cargar  mas de una vez a un mismo concepto, favor de corregir:'+aviso_repetido, 'warning');
-                            }else if(this.dato.opciones == 65537){
-                                swal('Atención', 'Un mismo insumo se intenta enviar  mas de una vez a un mismo almacén, favor de corregir:'+aviso_repetido, 'warning');
-                            }
-
-                        }
-                        else {
-                            this.store(partidas_store)
-                        }
                     }
                 });
             },

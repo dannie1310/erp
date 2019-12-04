@@ -62,7 +62,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Estimación",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -165,7 +165,7 @@ export default {
         aprobar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Aprobar Estimación",
                     icon: "warning",
                     buttons: {
@@ -206,7 +206,7 @@ export default {
         revertirAprobacion(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Revertir Aprobación",
                     icon: "warning",
                     buttons: {
@@ -248,7 +248,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar la Estimación",
-                    text: "¿Estás seguro/a de que desea eliminar esta estimación?",
+                    text: "¿Está seguro de que desea eliminar esta estimación?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
