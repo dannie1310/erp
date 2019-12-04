@@ -29,7 +29,7 @@
                     { title: 'Folio Contrarecibo', field: 'numero_folio',thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Referencia', field: 'referencia',thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Empresa', field: 'id_empresa',thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date'), sortable: true},
+                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, sortable: true},
                     { title: 'Importe', field: 'monto', sortable: true},
                     { title: 'A Cta.', field: 'a_cuenta', sortable: false},
                     { title: 'Saldo', field: 'saldo', sortable: true},

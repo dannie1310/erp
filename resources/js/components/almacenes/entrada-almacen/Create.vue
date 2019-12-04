@@ -130,7 +130,7 @@
                                                                             type="number"
                                                                             step="any"
                                                                             data-vv-as="Cantidad Ingresada"
-                                                                            v-validate="{min_value: 0.01, max_value:partida.cantidad_pendiente, decimal:2}"
+                                                                            v-validate="{min_value: 0.01, max_value:partida.cantidad_pendiente, decimal:2, number}"
                                                                             class="form-control"
                                                                             :name="`cantidad_ingresada[${i}]`"
                                                                             placeholder="Cantidad Ingresada"
@@ -142,7 +142,8 @@
                                                         </td>
                                                         <td class="text-center" >
                                                             <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="form-check-input button" id="defaultUnchecked" v-on:change="validaCumplimiento(partida)" v-model="partida.cumplido">
+                                                                <input type="checkbox" class="custom-control-input" :id="`cumplido${i}`" v-on:change="validaCumplimiento(partida)" v-model="partida.cumplido">
+                                                                <label :for="`cumplido${i}`" class="custom-control-label" v-model="partida.cumplido"></label>
                                                             </div>
                                                         </td>
                                                         <td  v-if="partida.destino ===  ''" >
