@@ -2,7 +2,7 @@
     <span>
         <div class="card" id="asignar-permisos">
             <div class="card-header">
-                <h3 class="card-title">Asignación de Permisos</h3>
+                <h6 class="card-title">Asignación de Permisos</h6>
             </div>
 
             <div class="card-body">

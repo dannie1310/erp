@@ -2,7 +2,7 @@
     <span>
         <div class="card" id="configuracion-sistema">
             <div class="card-header">
-                <h3 class="card-title">Habilitación de Sistemas</h3>
+                <h6 class="card-title">Habilitación de Sistemas</h6>
             </div>
             <div class="card-body">
                 <div class="row">

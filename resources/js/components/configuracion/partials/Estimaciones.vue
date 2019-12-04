@@ -1,7 +1,7 @@
 <template>
     <div class="card" id="configuracion-estimaciones">
         <div class="card-header">
-            <h3 class="card-title">Configuración Finanzas</h3>
+            <h6 class="card-title">Configuración Finanzas</h6>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse">
                     <i class="fa fa-minus"></i>

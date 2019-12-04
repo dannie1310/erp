@@ -2,7 +2,7 @@
     <span>
         <div class="card" id="asignacion">
         <div class="card-header">
-            <h3 class="card-title">Asignación de Roles</h3>
+            <h6 class="card-title">Asignación de Roles</h6>
         </div>
 
         <div class="card-body">

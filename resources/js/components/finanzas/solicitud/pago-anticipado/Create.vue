@@ -122,7 +122,7 @@
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
                                             <div class="col-6">
-                                                <h3>Información de la Transacción</h3>
+                                                <h6>Información de la Transacción</h6>
                                             </div>
                                             <div class="col-6">
                                                 <h6 align="right">Fecha: {{ transaccion.fecha_format }}</h6>
