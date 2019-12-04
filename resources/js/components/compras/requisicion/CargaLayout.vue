@@ -47,7 +47,6 @@
 
 <script>
     import Create from "./Create";
-
     export default {
         name: "carga-layout",
         components: {Create},

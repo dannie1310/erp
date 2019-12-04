@@ -34,7 +34,7 @@
                     { title: 'Estado', field: 'estado', sortable: true},
                     { title: 'Cotizaciones', field: 'cotizacion', sortable: true},
                     { title: 'Observaciones', field: 'observaciones'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

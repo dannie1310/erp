@@ -508,12 +508,12 @@ export const routes = [
             },
             {
                 path: 'asignacion-proveedores',
-                component: require('./components/compras/asignacion/Layout'),
+                component: require('./components/compras/asignacion/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'asignacion-proveedores',
-                        component: require('./components/compras/asignacion/Index'),
+                        component: require('./components/compras/asignacion/Index').default,
                         meta: {
                             title: 'Asignación de Proveedores',
                             breadcrumb: {parent: 'compras', name: 'ASIGNACIÓN DE PROVEEDORES'},
@@ -583,12 +583,12 @@ export const routes = [
             },
             {
                 path: 'cotizacion',
-                component: require('./components/compras/cotizacion/Layout'),
+                component: require('./components/compras/cotizacion/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'cotizacion',
-                        component: require('./components/compras/cotizacion/Index'),
+                        component: require('./components/compras/cotizacion/Index').default,
                         meta: {
                             title: 'Cotizaciones',
                             breadcrumb: {parent: 'compras', name: 'COTIZACIONES'},
@@ -617,12 +617,12 @@ export const routes = [
             },
             {
                 path: 'requisicion',
-                component: require('./components/compras/requisicion/Layout'),
+                component: require('./components/compras/requisicion/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'requisicion',
-                        component: require('./components/compras/requisicion/Index'),
+                        component: require('./components/compras/requisicion/Index').default,
                         meta: {
                             title: 'Requisiciones de Compra',
                             breadcrumb: {parent: 'compras', name: 'REQUISICIONES'},
@@ -632,7 +632,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'requisicion-create',
-                        component: require('./components/compras/requisicion/Create'),
+                        component: require('./components/compras/requisicion/Create').default,
                         meta: {
                             title: 'Registrar Requisición de Compra',
                         breadcrumb: { parent: 'requisicion', name: 'REGISTRAR REQUISICIÓN'},
@@ -661,7 +661,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'solicitud-compra-create',
-                        component: require('./components/compras/solicitud-compra/Create'),
+                        component: require('./components/compras/solicitud-compra/Create').default,
                         meta: {
                             title: 'Registrar Solicitud de Compra',
                             breadcrumb: { parent: 'compras', name: 'REGISTRAR SOLICITUD DE COMPRA'},
@@ -672,7 +672,7 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'solicitud-compra-edit',
-                        component: require('./components/compras/solicitud-compra/Edit'),
+                        component: require('./components/compras/solicitud-compra/Edit').default,
                         props: true,
                         meta: {
                             title: 'Editar Solicitud de Compra',
