@@ -17,7 +17,11 @@ class MovimientoObserver
     public function deleting(Movimiento $movimiento)
     {
         if($movimiento->inventario){
+            /* Este método implementa la lógica del procediminto almacenado
+             * sp_borra_transaccion y se detona al eliminar una salida de almacén (consumo)
+             * */
             $movimiento->inventario->aumentaSaldo($movimiento->cantidad);
+            $movimiento->inventario->disminuyeMontoAplicado($movimiento->monto_pagado);
         }
         MovimientoEliminado::create(
             [
