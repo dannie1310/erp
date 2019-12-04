@@ -75,7 +75,7 @@ export default {
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Guardar cambios de la Prepóliza",
                     icon: "warning",
                     buttons: {

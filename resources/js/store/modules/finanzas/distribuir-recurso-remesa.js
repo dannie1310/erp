@@ -49,7 +49,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar la Dispersión de Recurso de Remesa",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -87,7 +87,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cancelar dispersión de recurso autorizado de remesa",
-                    text: "¿Está seguro/a de que desea cancelar esta dispersión?",
+                    text: "¿Está seguro de que desea cancelar esta dispersión?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -140,7 +140,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Autorización de dispersión de recurso de remesa",
-                    text: "¿Está seguro/a de que desea autorizar está distribución?",
+                    text: "¿Está seguro de que desea autorizar está distribución?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -179,7 +179,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cerrar dispersión de recurso autorizado de remesa",
-                    text: "¿Está seguro/a de que desea cerrar esta dispersión? Perderá los cambios no guardados.",
+                    text: "¿Está seguro de que desea cerrar esta dispersión? Perderá los cambios no guardados.",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -225,7 +225,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cargar Layout manual de pagos",
-                    text: "¿Está seguro/a de que desea generar los pagos?",
+                    text: "¿Está seguro de que desea generar los pagos?",
                     icon: "warning",
                     buttons: {
                         cancel: {
