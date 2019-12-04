@@ -9,7 +9,10 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\RequisicionComplemento;
+use App\Models\CADECO\Compras\RequisicionEliminada;
+use App\Models\CADECO\Compras\RequisicionPartidaEliminada;
 use Illuminate\Support\Facades\DB;
 use App\Models\IGH\Usuario;
 
@@ -51,6 +54,11 @@ class Requisicion extends Transaccion
     public function registro()
     {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
+    }
+
+    public function activoFijo()
+    {
+        return $this->belongsTo(ActivoFijo::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function registrar($datos)
@@ -98,6 +106,63 @@ class Requisicion extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
+        }
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validarParaEliminar();
+            $this->delete();
+            $this->revisar_respaldos($motivo);
+            DB::connection('cadeco')->commit();
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Reglas de negocio que debe cumplir la eliminación
+     */
+    private function validarParaEliminar()
+    {
+        $mensaje = "";
+
+        if($mensaje != "")
+        {
+            abort(400, "No se puede eliminar la requisición debido a que existen las siguientes transacciones relacionadas:\n". $mensaje. "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        }
+    }
+
+    public function eliminar_partidas()
+    {
+        foreach ($this->partidas as $partida){
+            $partida->delete();
+        }
+    }
+
+    private function revisar_respaldos($motivo)
+    {
+        $requisicion_respaldo = RequisicionEliminada::find($this->id_transaccion);
+
+        if ($requisicion_respaldo == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación de la requisición, no se respaldo la requisición.');
+        }else{
+            $requisicion_respaldo->motivo_eliminacion = $motivo;
+            $requisicion_respaldo->save();
+        }
+
+        foreach ($this->partidas as $partida) {
+            $item = RequisicionPartidaEliminada::find($partida->id_item);
+            if ($item == null)
+            {
+                DB::connection('cadeco')->rollBack();
+                abort(400, 'Error en el proceso de eliminación de requisición, no se respaldo partida.');
+            }
         }
     }
 }

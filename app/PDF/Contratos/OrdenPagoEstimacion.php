@@ -6,7 +6,7 @@
  * Time: 02:59 PM
  */
 
-namespace App\PDF;
+namespace App\PDF\Contratos;
 
 
 use App\Facades\Context;

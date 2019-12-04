@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create_requisicion" v-if="" class="btn btn-app btn-info pull-right">
+            <button @click="create_requisicion" v-if="$root.can('registrar_requisicion_compra')" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-plus"></i> Registrar Requisición
             </button>
         </div>
@@ -100,7 +100,8 @@
                         id_usuario: requisicion.registro ? requisicion.registro.nombre : '',
                         buttons: $.extend({}, {
                             id: requisicion.id,
-                            show: true
+                            show: true,
+                            delete: self.$root.can('eliminar_requisicion_compra') ? true : false
                         })
                     }));
                 },

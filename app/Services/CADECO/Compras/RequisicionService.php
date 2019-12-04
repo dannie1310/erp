@@ -11,6 +11,7 @@ namespace App\Services\CADECO\Compras;
 
 use App\Models\CADECO\Material;
 use App\Models\CADECO\Requisicion;
+use App\PDF\Compras\RequisicionFormato;
 use App\Repositories\CADECO\Compras\Requisicion\Repository;
 
 class RequisicionService
@@ -171,7 +172,7 @@ class RequisicionService
             'id_area_solicitante' => $data['id_area_solicitante'],
             'concepto' => $data['concepto'],
             'partidas' => $data['partidas'],
-            'observaciones'=> $data['observaciones']
+            'observaciones' => $data['observaciones']
         ];
         return $this->repository->create($datos);
     }
@@ -179,5 +180,16 @@ class RequisicionService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function pdfRequisicion($id)
+    {
+        $pdf = new RequisicionFormato($id);
+        return $pdf;
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data'][0]);
     }
 }

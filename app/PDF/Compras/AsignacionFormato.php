@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\PDF;
+namespace App\PDF\Compras;
 
 
 use App\Facades\Context;

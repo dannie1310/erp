@@ -100,7 +100,6 @@ $api->version('v1', function ($api) {
         // MATERIALES
         $api->group(['prefix' => 'material'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MaterialController@index');
-            $api->get('almacen', 'App\Http\Controllers\v1\CADECO\MaterialController@porInventario');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\MaterialController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\MaterialController@store');
@@ -445,6 +444,8 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\RequisicionController@store');
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@pdfRequisicion')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Compras\RequisicionController@destroy')->where(['id' => '[0-9]+']);
         });
 
         // SOLICITUD DE COMPRA

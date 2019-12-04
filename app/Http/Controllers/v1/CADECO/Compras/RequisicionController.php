@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteRequisicionRequest;
 use App\Http\Transformers\CADECO\Compras\RequisicionTransformer;
 use App\Services\CADECO\Compras\RequisicionService;
 use App\Traits\ControllerTrait;
@@ -18,7 +19,9 @@ use League\Fractal\Manager;
 
 class RequisicionController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait {
+        destroy as traitDestroy;
+    }
 
     /**
      * @var Manager
@@ -46,6 +49,10 @@ class RequisicionController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_requisicion_compra')->only(['show', 'paginate', 'index', 'find', 'pdfRequisicion']);
+        $this->middleware('permiso:eliminar_requisicion_compra')->only('destroy');
+        $this->middleware('permiso:registrar_requisicion_compra')->only('store');
+
         $this->fractal = $fractal;
         $this->transformer = $transformer;
         $this->service = $service;
@@ -55,5 +62,15 @@ class RequisicionController extends Controller
     {
          $res = $this->service->cargaLayout($request->file);
         return response()->json($res, 200);
+    }
+
+    public function pdfRequisicion($id)
+    {
+        return $this->service->pdfRequisicion($id)->create();
+    }
+
+    public function destroy(DeleteRequisicionRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);
     }
 }
