@@ -24,6 +24,7 @@ class SalidaAlmacenObserver extends TransaccionObserver
     {
        parent::creating($salida);
         $salida->tipo_transaccion = 34;
+        $salida->NumeroFolioAlt = $salida->getFolioAlm();
     }
 
     public function created(Transaccion $salida)
