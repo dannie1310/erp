@@ -1,7 +1,7 @@
 <template>
     <div class="card" id="estado-obra" v-if="$root.can('actualizar_estado_obra')">
         <div class="card-header">
-            <h3 class="card-title">Estado de Obra</h3>
+            <h6 class="card-title">Estado de Obra</h6>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse">
                     <i class="fa fa-minus"></i>
@@ -34,7 +34,7 @@
             </fieldset>
             <div class="form-group row">
                 <div class="col">
-                    <button type="submit" @click="validate" class="btn btn-outline-primary pull-right" :disabled="guardando">
+                    <button type="submit" @click="validate" class="btn btn-outline-primary float-right" :disabled="guardando">
                         <i class="fa fa-spin fa-spinner" v-if="guardando"></i>
                         <i class="fa fa-save" v-else></i>
                     </button>

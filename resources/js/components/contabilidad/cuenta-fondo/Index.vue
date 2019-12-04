@@ -41,7 +41,7 @@
                     { title: 'Cuenta', field: 'cuenta', sortable: true },
                     { title: 'Fondo', field: 'id_fondo', sortable: true },
                     { title: 'Saldo', field: 'saldo', sortable: false },
-                    { title: 'Editar', field: 'buttons', tdComp: require('./partials/ActionButtons')},
+                    { title: 'Editar', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

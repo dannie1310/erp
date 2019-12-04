@@ -14,7 +14,9 @@ use App\Models\SEGURIDAD_ERP\CtgContratista;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
-use App\Models\CADECO\Obra;
+use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use App\Models\CADECO\Contabilidad\HistPoliza;
 
 class Transaccion extends Model
 {
@@ -160,6 +162,22 @@ class Transaccion extends Model
     {
         return $this->hasOne(Moneda::class, 'id_moneda','id_moneda');
     }
+
+    public function poliza()
+    {
+        return $this->hasOne(Poliza::class,'id_transaccion_sao', 'id_transaccion');
+    }
+
+    public function poliza_movimientos()
+    {
+        return $this->hasMany(PolizaMovimiento::class,'id_transaccion_sao', 'id_transaccion');
+    }
+
+    public function polizas_historico()
+    {
+        return $this->hasMany(HistPoliza::class,'id_transaccion_sao', 'id_transaccion');
+    }
+
     public function getCambio($id_moneda,$fecha)
     {
         $moneda = Moneda::find($id_moneda);
@@ -197,5 +215,30 @@ class Transaccion extends Model
         $tc_moneda_obra = $this->getCambio($this->obra->id_moneda, $this->fecha);
         return $tc_moneda_transaccion / $tc_moneda_obra;
 
+    }
+
+    public function desvincularPolizas()
+    {
+        if ($this->poliza) {
+            if($this->poliza->estatus == -3){
+                $this->poliza->id_transaccion_sao = null;
+                $this->poliza->save();
+                $movimientos = $this->poliza_movimientos;
+                if($movimientos){
+                    foreach ($movimientos as $movimiento) {
+                        $movimiento->id_transaccion_sao = null;
+                        $movimiento->save();
+                    }
+                }
+                $polizas_historico = $this->polizas_historico;
+                if($polizas_historico)
+                {
+                    foreach ($polizas_historico as $poliza_historico) {
+                        $poliza_historico->id_transaccion_sao = null;
+                        $poliza_historico->save();
+                    }
+                }
+            }
+        }
     }
 }

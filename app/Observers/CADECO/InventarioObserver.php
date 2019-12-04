@@ -29,6 +29,13 @@ class InventarioObserver
 
     public function deleting(Inventario $inventario)
     {
+        if($inventario->inventario){
+            /* Este método implementa la lógica del procedimiento almacenado
+             * sp_borra_transaccion y se detona al eliminar una salida de almacén (transferenncia)
+             * */
+            $inventario->inventario->aumentaSaldo($inventario->cantidad);
+            $inventario->inventario->disminuyeMontoAplicado($inventario->monto_pagado);
+        }
         InventarioEliminado::create(
             [
                 'id_lote' => $inventario->id_lote,

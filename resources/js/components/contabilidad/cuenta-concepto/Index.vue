@@ -44,7 +44,7 @@
                     { title: 'Ruta', field: 'ruta', sortable: false },
                     { title: 'Usuario que Registró', field: 'usuario', sortable: false },
                     { title: 'Fecha y Hora de Registro', field: 'timestamp', sortable: false },
-                    { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

@@ -6,7 +6,7 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="box box-primary">
                             <div class="box-header with-border">
-                                <h3 class="box-title">Datos de Consulta</h3>
+                                <h6 class="box-title">Datos de Consulta</h6>
                             </div>
                             <div class="row">
                                 <div class="col-md-4">

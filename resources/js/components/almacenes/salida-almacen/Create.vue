@@ -72,6 +72,7 @@
                             </div>
                             <hr>
                             <div class="row">
+                                <!--Tipo-->
                                  <div class="col-md-6">
                                     <div class="form-group row error-content">
                                         <label for="opciones" class="col-sm-3 col-form-label">Tipo: </label>
@@ -94,51 +95,82 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12" v-if="empresas && dato.opciones == 1">
-                                    <div class="form-group">
-                                        <label for="id_empresa">Contratista/Destajista solicitante del material:</label>
-                                           <select
-                                                   class="form-control"
-                                                   name="id_empresa"
-                                                   data-vv-as="Empresa"
-                                                   v-model="dato.id_empresa"
-                                                   id="id_empresa"
-                                           >
-                                            <option value>-- Seleccione una Empresa --</option>
-                                            <option v-for="(empresa, index) in empresas" :value="empresa.id"
-                                                    data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
-                                                {{ empresa.razon_social }}
-                                            </option>
-                                        </select>
+                            <hr>
+                            <template v-if="dato.opciones == 1">
+                                <div class="row">
+                                    <!--Concepto raíz-->
+                                    <div class="col-md-12" >
+                                        <div class="form-group error-content">
+                                        <label for="id_concepto">Concepto:</label>
+                                            <concepto-select
+                                                    name="id_concepto"
+                                                    data-vv-as="Concepto"
+                                                    v-validate="{required: true}"
+                                                    id="id_concepto"
+                                                    v-model="id_concepto"
+                                                    :error="errors.has('id_concepto')"
+                                                    ref="conceptoSelect"
+                                                    :disableBranchNodes="false"
+                                                    onselect="findConcepto"
+                                            ></concepto-select>
+                                        <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                        </div>
                                     </div>
                                 </div>
-                            <div class="col-md-12" v-if="dato.opciones == 1">
-                                <div class="form-group error-content">
-                                <label for="id_concepto">Concepto:</label>
-                                    <concepto-select
-                                            name="id_concepto"
-                                            data-vv-as="Concepto"
-                                            v-validate="{required: true}"
-                                            id="id_concepto"
-                                            v-model="id_concepto"
-                                            :error="errors.has('id_concepto')"
-                                            ref="conceptoSelect"
-                                            :disableBranchNodes="false"
-                                            onselect="findConcepto"
-                                    ></concepto-select>
-                                <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                <!--Entrega a contratista-->
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input button" id="con_prestamo" v-model="dato.con_prestamo" >
+                                            <label class="custom-control-label" for="con_prestamo">Entrega a contratista</label>
+                                        </div>
+                                    </div>
+                                        <div class="col-md-8" v-if="dato.con_prestamo">
+                                            <select
+                                                    class="form-control"
+                                                    name="id_empresa"
+                                                    data-vv-as="Empresa"
+                                                    v-model="dato.id_empresa"
+                                                    id="id_empresa"
+                                                    :disabled="!dato.con_prestamo"
+                                            >
+                                                    <option v-if="dato.con_prestamo" value>-- Seleccione --</option>
+                                                    <option value v-if="!dato.con_prestamo">-- No Aplica --</option>
+                                                    <option v-for="(empresa, index) in empresas" :value="empresa.id"
+                                                            data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
+                                                        {{ empresa.razon_social }}
+                                                    </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2" v-if="dato.con_prestamo">
+                                            <div class="btn-group btn-group-toggle">
+                                                    <label class="btn btn-outline-primary" :class="dato.opcion_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                        <input type="radio"
+                                                               :disabled="!dato.con_prestamo"
+                                                               class="btn-group-toggle "
+                                                               name="opcion_cargo"
+                                                               :id="'opcion_cargo' + key"
+                                                               :value="key"
+
+                                                               v-validate="{required: true}"
+                                                               v-model.number="dato.opcion_cargo">
+                                                            {{ cargo }}
+                                                    </label>
+                                                </div>
+                                        </div>
+
                                 </div>
-                            </div>
-                            <hr>
+                                <hr>
+                            </template>
                             <div class="row">
                                 <div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">
                                     <div class="form-group">
                                         <div v-if="id_almacen">
-                                             <div class="table-responsive">
+                                             <div >
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th class="bg-gray-light index_corto">#</th>
+                                                            <th class="index_corto">#</th>
                                                             <th class="no_parte_input">No. de Parte</th>
                                                             <th>Material</th>
                                                             <th class="unidad">Unidad</th>
@@ -147,7 +179,7 @@
                                                             <th class="icono"></th>
                                                             <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
                                                             <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
-                                                             <th class="bg-gray-light th_index">
+                                                             <th class="icono">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
                                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                                 <i class="fa fa-plus" v-else></i>
@@ -156,7 +188,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr v-for="(partida, i) in dato.partidas">
+                                                        <tr v-for="(partida, i) in partidas">
                                                             <td>{{ i + 1}}</td>
                                                             <td>
                                                                 <select
@@ -196,7 +228,7 @@
                                                                 {{partida.material.unidad}}
                                                             </td>
                                                             <td class="money">
-                                                                {{partida.material.saldo_almacen}}
+                                                                {{partida.material.saldo_almacen_format}}
                                                             </td>
                                                             <td>
                                                                 <input
@@ -204,7 +236,7 @@
                                                                         type="number"
                                                                         step="any"
                                                                         :name="`cantidad[${i}]`"
-                                                                        v-model="partida.material.cantidad"
+                                                                        v-model="partida.cantidad"
                                                                         data-vv-as="Cantidad"
                                                                         v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:2}"
                                                                         class="form-control"
@@ -216,20 +248,24 @@
                                                             </div>
                                                             </td>
                                                             <td  v-if="partida.destino ===  ''" >
-                                                                <small class="badge badge-secondary">
-                                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                                </small>
-                                                            </td>
-                                                            <td v-else >
-                                                                <small class="badge badge-success">
-                                                                    <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                                </small>
-                                                            </td>
-                                                            <td  v-if="partida.destino ===  ''" >
-                                                            </td>
-                                                            <td v-else >
-                                                                <span style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
-                                                            </td>
+                                                            <small class="badge badge-secondary">
+                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                        </td>
+                                                        <td v-else >
+                                                            <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
+                                                                <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                             <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
+                                                                <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                        </td>
+                                                        <td  v-if="partida.destino ===  ''" >
+                                                        </td>
+                                                        <td v-else >
+                                                            <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
+                                                            <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
+                                                        </td>
                                                             <td>
                                                                 <i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>
                                                                 <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" ></i>
@@ -264,14 +300,14 @@
                         </div>
                          <div class="footer">
                            <button type="button" class="btn btn-secondary"  @click="index">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.partidas.length == 0">Guardar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || partidas.length == 0">Guardar</button>
                         </div>
                      </form>
                     </div>
                 </div>
             </div>
         </nav>
-        <nav v-if="concepto.id>0 && concepto.id !==undefined">
+        <nav >
             <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg" >
                     <div class="modal-content">
@@ -283,7 +319,7 @@
                         </div>
                         <form role="form">
                             <div class="modal-body">
-                                <div class="row">
+                                <div class="row" v-if="concepto.id>0 && concepto.id !==undefined && dato.opciones==1">
                                     <div class="col-12">
                                         <div class="form-group row error-content">
                                             <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
@@ -301,6 +337,25 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row" v-if="dato.opciones==65537">
+                                    <div class="col-12">
+                                        <div class="form-group row error-content">
+                                            <label for="id_concepto" class="col-sm-2 col-form-label">Activos:</label>
+                                            <div class="col-sm-10">
+                                                <select
+                                                        name="id_almacen"
+                                                        id="id_almacen_temporal"
+                                                        data-vv-as="Almacén"
+                                                        class="form-control"
+                                                        v-model="almacen_temporal"
+                                                >
+                                                    <option value="">-- Almacén --</option>
+                                                    <option v-for="almacen in almacenes" :value="almacen">{{ almacen.descripcion }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
@@ -310,74 +365,6 @@
                 </div>
             </div>
         </nav>
-
-        <div class="modal fade" ref="contratista" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AGREGAR CONTRATISTA</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                     <form role="form" @submit.prevent="modificarContratista">
-                        <div class="modal-body">
-                            <fieldset class="form-group">
-                                <div class="row"  v-if="contratistas">
-                                      <div class="col-md-8">
-                                        <div class="form-group error-content">
-                                            <label for="empresa_contratista">Empresa Contratista:</label>
-                                               <select
-                                                       class="form-control"
-                                                       name="empresa_contratista"
-                                                       data-vv-as="Material"
-                                                       v-model="contratista.empresa_contratista"
-                                                       v-validate="{required: false}"
-                                                       id="empresa_contratista"
-                                                       :class="{'is-invalid': errors.has('empresa_contratista')}">
-                                                <option value>-- Seleccione --</option>
-                                                <option v-for="(contratista, index) in contratistas" :value="contratista.id"
-                                                        data-toggle="tooltip" data-placement="left" :title="contratista.id ">
-                                                    {{ contratista.razon_social }}
-                                                </option>
-                                            </select>
-                                             <div class="invalid-feedback" v-show="errors.has('id')">{{ errors.first('id') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                     <div class="col-md-6">
-                                        <div class="form-group row error-content">
-                                            <label for="opcion" class="col-sm-3 col-form-label">Tipo: </label>
-                                            <div class="col-sm-10">
-                                                <div class="btn-group btn-group-toggle">
-                                                    <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
-                                                        <input type="radio"
-                                                               class="btn-group-toggle"
-                                                               name="opcion"
-                                                               :id="'opcion' + key"
-                                                               :value="key"
-                                                               autocomplete="on"
-                                                               v-validate="{required: true}"
-                                                               v-model.number="contratista.opcion">
-                                                            {{ cargo }}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </fieldset>
-                        </div>
-                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Contratista</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == '' || (contratista.opcion != 0 && contratista.opcion != 1 )">Registrar Contratista</button>
-                        </div>
-                     </form>
-                </div>
-            </div>
-          </div>
     </span>
 </template>
 
@@ -396,15 +383,19 @@
                 es:es,
                 fechasDeshabilitadas:{},
                 dato:{
+                    con_prestamo: 0,
+                    folio_vale: '',
+                    opcion_cargo: 1,
                     id_concepto:'',
                     fecha:'',
                     id_almacen:'',
                     id_empresa:'',
-                    opciones:'',
+                    opciones:1,
                     referencia:'',
                     observaciones:'',
                     partidas:[]
                 },
+                partidas:[],
                 tipos: {
                     1: "Consumo",
                     65537: "Transferencia"
@@ -423,7 +414,6 @@
                 },
                 emp_cont:'',
                 contratistas:[],
-                partida:{},
                 empresas:[],
                 almacenes:[],
                 materiales:[],
@@ -472,58 +462,7 @@
                 if(this.materiales.length === 0 ) {
                     this.getMateriales();
                 }
-
-                this.dato.partidas.push(array);
-                /*this.getMateriales();
-                this.getAlmacenes();
-                this.getContratista();
-                this.cargando = true;
-                this.contratista.empresa_contratista = '';
-                this.contratista.opcion = 0;
-                this.dato_partida.cantidad ='';
-                this.dato_partida.destino ='';
-                this.partida ={};
-                $(this.$refs.modal).modal('show');
-                this.$validator.reset();
-                this.cargando = false;*/
-            },
-            agregarContratista(index){
-                this.indice = index;
-                if(this.dato.partidas[this.indice][4] == '' && this.dato.partidas[this.indice][5] == ''){
-                    this.contratista.empresa_contratista = '';
-                    this.contratista.opcion = 0;
-                }else{
-                    this.contratista.empresa_contratista = this.dato.partidas[this.indice][4].id;
-                    this.contratista.opcion =  this.dato.partidas[this.indice][5];
-                }
-                this.getContratista().then(data =>{
-                    this.cargando = true;
-                    $(this.$refs.contratista).modal('show');
-                    this.$validator.reset();
-                    this.cargando = false;
-                    this.emp_cont='';
-                });
-            },
-            quitarContratista(){
-                this.cargando = true;
-                this.dato.partidas[this.indice][4] = '';
-                this.dato.partidas[this.indice][5] = '';
-                $(this.$refs.contratista).modal('hide');
-                this.$validator.reset();
-                this.emp_cont='';
-                this.cargando = false;
-            },
-            modificarContratista(){
-                this.cargando = true;
-                this.findContratista().then(data => {
-                    this.dato.partidas[this.indice][4] = this.emp_cont;
-                    this.dato.partidas[this.indice][5] = this.contratista.opcion;
-                    $(this.$refs.contratista).modal('hide');
-                    this.$validator.reset();
-                    this.cargando = false;
-                    this.emp_cont='';
-                });
-
+                this.partidas.push(array);
             },
             getContratista() {
                 return this.$store.dispatch('cadeco/empresa/index', {
@@ -564,15 +503,6 @@
 
                     })
             },
-            findMaterial() {
-                this.$store.commit('cadeco/material/SET_MATERIAL', null);
-                return this.$store.dispatch('cadeco/material/find', {
-                    id: this.partida[0],
-                    params: {}
-                }).then(data => {
-                    this.material = data;
-                })
-            },
             getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
                     id: this.destino_seleccionado.id_destino,
@@ -595,7 +525,7 @@
                         this.concepto = data;
                     });
                 } else {
-                    this.dato.partidas.forEach(function(partida) {
+                    this.partidas.forEach(function(partida) {
                         partida.destino = '';
                     });
                 }
@@ -642,24 +572,86 @@
                     })
             },
             validate() {
+                var error_destino_no_ingresado = 0;
+                var error_destino_repetido = 0;
+                var contador_material_destino = [];
+                var material_aviso = [];
+                var destino_aviso = [];
+                var partidas_store = [];
+                var aviso_repetido = "\n";
+
+
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        this.$data.partidas.forEach(function(element) {
+                            if(!(element.cantidad  === undefined && element.destino  === '' )){
+                                if(element.cantidad > 0 && element.destino === '')
+                                {
+                                    error_destino_no_ingresado = error_destino_no_ingresado + 1
+                                } else {
+                                    /*Validación para evitar que un mismo material se cargue mas de una vez a un mismo concepto*/
+                                    if(isNaN(contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()]))
+                                    {
+                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = parseInt("1");
+                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                    }else{
+                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] += parseInt("1");
+                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                    }
+                                }
+                            }
+                            partidas_store.push({
+                                id_destino : element.destino.id_destino,
+                                id_material : element.material.id_material,
+                                unidad : element.material.unidad,
+                                cantidad: element.cantidad,
+                            });
+
+                        });
+
+                        for(var i in contador_material_destino)
+                        {
+                            if(parseInt(contador_material_destino[i])>1)
+                            {
+                                error_destino_repetido++;
+                                aviso_repetido += '-'+material_aviso[i] +"->"+ destino_aviso[i] +"\n";
+                            }
+                        }
+
+                        if (error_destino_no_ingresado > 0)
+                        {
+                            swal('Atención', 'Ingrese un destino válido en todas las partidas.', 'warning');
+                        }
+                        else if (error_destino_repetido > 0)
+                        {
+                            if(this.dato.opciones == 1){
+                                swal('Atención', 'Un mismo insumo se intenta cargar  mas de una vez a un mismo concepto, favor de corregir:'+aviso_repetido, 'warning');
+                            }else if(this.dato.opciones == 65537){
+                                swal('Atención', 'Un mismo insumo se intenta enviar  mas de una vez a un mismo almacén, favor de corregir:'+aviso_repetido, 'warning');
+                            }
+
+                        }
+                        else {
+                            this.store(partidas_store)
+                        }
                     }
                 });
             },
-            store() {
+            store(partidas) {
+                this.dato.partidas = partidas;
                 return this.$store.dispatch('almacenes/salida-almacen/store', this.dato)
                     .then((data) => {
                         this.$router.push({name: 'salida-almacen'});
                     });
             },
             borrar(){
-                this.dato.partidas=[];
+                this.partidas=[];
                 this.dato.id_concepto='';
             },
             borrarPartida(i){
-                this.dato.partidas.splice(i,1);
+                this.partidas.splice(i,1);
             },
             validarCantidad() {
                 if(parseInt(this.partida[1]) < parseInt(this.dato_partida.cantidad)) {
@@ -679,36 +671,24 @@
             index(){
                 this.$router.push({name: 'salida-almacen'});
             },
-            validatePartida() {
-                this.findMaterial().finally(() => {
-                    this.contratista.opcion = '';
-                });
-                this.findAlmacen().finally(() => {
-                    this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
-                });
-
-                this.emp_cont='';
-                $(this.$refs.modal).modal('hide');
-
-            },
             modalDestino(i) {
                 if(this.id_concepto == null || this.id_concepto == undefined)
                 {
                     swal('Atención', 'Seleccione el concepto raíz', 'warning');
                 }
                 this.index_temporal = i;
-                if(this.dato.partidas[this.index_temporal].destino == undefined || this.dato.partidas[this.index_temporal].destino == ''){
+                if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
                     this.destino_seleccionado.tipo_destino =  '';
                     this.destino_seleccionado.destino = '';
                     this.destino_seleccionado.id_destino = '';
                 }else {
-                    this.destino_seleccionado = this.dato.partidas[this.index_temporal].destino;
+                    this.destino_seleccionado = this.partidas[this.index_temporal].destino;
                 }
                 this.$validator.reset();
                 $(this.$refs.modal_destino).modal('show');
             },
             seleccionarDestino() {
-                this.dato.partidas[this.index_temporal].destino = this.destino_seleccionado;
+                this.partidas[this.index_temporal].destino = this.destino_seleccionado;
                 this.index_temporal = '';
                 this.destino_seleccionado = {
                     tipo_destino : '',
@@ -744,7 +724,7 @@
             id_almacen(value){
                 if(value != ''){
                     this.dato.id_almacen = value;
-                    this.dato.partidas=[];
+                    this.partidas=[];
                     this.materiales = [];
                     this.bandera = 0;
                 }
@@ -761,6 +741,19 @@
                     this.destino_seleccionado.id_destino = value;
                     this.destino_seleccionado.tipo_destino = 1;
                     this.getConcepto();
+                }
+            },
+            almacen_temporal(value){
+                if(value !== '' && value !== null && value !== undefined){
+                    this.id_concepto_temporal = '';
+                    this.destino_seleccionado.id_destino = value.id;
+                    this.destino_seleccionado.tipo_destino = 2;
+                    this.destino_seleccionado.destino = value;
+                    if(value.id != this.id_almacen) {
+                        this.seleccionarDestino();
+                    } else {
+                        swal('Atención', 'No puede seleccionar como destino el almacén origen.', 'warning');
+                    }
                 }
             },
         }

@@ -18,7 +18,7 @@
                 </div>
                 <div class="row">
                      <div class="col-md-12">
-                         <button @click="descargaListado" v-if="form.user_id" class="btn btn-app btn-info pull-right" :disabled="cargando_excel">
+                         <button @click="descargaListado" v-if="form.user_id" class="btn btn-app btn-info float-right" :disabled="cargando_excel">
                             <i class="fa fa-spin fa-spinner" v-if="cargando_excel"></i>
                             <i class="fa fa-download" v-else></i>
                             Descargar excel
@@ -74,11 +74,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Permiso', field: 'permiso', sortable: false, thComp: require('../../globals/th-Filter')},
-                    { title: 'Rol', field: 'rol', sortable: false, thComp: require('../../globals/th-Filter') },
-                    { title: 'Sistema', field: 'sistema', sortable: false , thComp: require('../../globals/th-Filter')},
-                    { title: 'Proyecto', field: 'proyecto', sortable: false, thComp: require('../../globals/th-Filter') },
-                    { title: 'Obra', field: 'obra', sortable: false , thComp: require('../../globals/th-Filter') },
+                    { title: 'Permiso', field: 'permiso', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Rol', field: 'rol', sortable: false, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Sistema', field: 'sistema', sortable: false , thComp: require('../../globals/th-Filter').default},
+                    { title: 'Proyecto', field: 'proyecto', sortable: false, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Obra', field: 'obra', sortable: false , thComp: require('../../globals/th-Filter').default },
                     { title: 'Usuario que Asignó', field: 'asigno', sortable: false},
                     { title: 'Fecha de Asignación', field: 'fecha_asigno', sortable: false }
                 ],

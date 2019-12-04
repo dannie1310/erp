@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-12" v-if="$root.can('registrar_marbetes_manualmente')" :disabled="cargando">
-                <button @click="init" class="btn btn-app btn-info pull-right">
+                <button @click="init" class="btn btn-app btn-info float-right">
                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                     <i class="fa fa-plus" v-else></i>
                     Crear Marbete

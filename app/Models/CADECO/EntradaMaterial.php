@@ -186,7 +186,6 @@ class EntradaMaterial extends Transaccion
 
         if($transacciones != [])
         {
-
             return $transacciones;
         }
         else
@@ -308,21 +307,6 @@ class EntradaMaterial extends Transaccion
      */
     public function eliminar_partidas($partidas)
     {
-        $poliza = Poliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-        if ($poliza != null){
-            $poliza_historico = HistPoliza::query()->where('id_transaccion_sao',$this->id_transaccion)->first();
-            $poliza_movimiento = PolizaMovimiento::query()->where('id_transaccion_sao',$this->id_transaccion)->get();
-
-            if($poliza_historico != null) {
-                    HistPoliza::query()->where('id_int_poliza', $poliza_historico->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
-            }
-            if($poliza_movimiento != null){
-                foreach ($poliza_movimiento as $i) {
-                    PolizaMovimiento::query()->where('id_int_poliza_movimiento', $i->id_int_poliza_movimiento)->update(['id_transaccion_sao' => NULL]);
-                }
-            }
-            Poliza::query()->where('id_int_poliza',$poliza->id_int_poliza)->update(['id_transaccion_sao' => NULL]);
-        }
         foreach ($partidas as $item) {
             ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
             EntradaMaterialPartida::find($item['id_item'])->delete();
@@ -349,7 +333,6 @@ class EntradaMaterial extends Transaccion
 
             foreach ($data['partidas'] as $item){
                 $item_antecedente = OrdenCompraPartida::find($item['id']);
-                /*dd($item_antecedente->entrega->cantidad, $item_antecedente->entrega->surtida);*/
                 if(isset($item['cantidad_ingresada']) == true) {
                     if ($item['destino']['tipo_destino'] == 1) {
                         $item_guardado = $entrada->partidas()->create([

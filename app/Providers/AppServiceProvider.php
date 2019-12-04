@@ -7,6 +7,7 @@ use App\Models\CADECO\AjusteNegativoPartida;
 use App\Models\CADECO\AjustePositivo;
 use App\Models\CADECO\AjustePositivoPartida;
 use App\Models\CADECO\Almacenes\AjusteEliminado;
+use App\Models\CADECO\Almacenes\EntregaContratista;
 use App\Models\CADECO\Anticipo;
 use App\Models\CADECO\Banco;
 use App\Models\CADECO\Compras\EntradaEliminada;
@@ -79,6 +80,7 @@ use App\Models\CADECO\PagoVario;
 use App\Models\CADECO\Requisicion;
 use App\Models\CADECO\RequisicionPartida;
 use App\Models\CADECO\SalidaAlmacen;
+use App\Models\CADECO\SalidaAlmacenPartida;
 use App\Models\CADECO\Seguridad\AuditoriaPermisoRol;
 use App\Models\CADECO\Seguridad\AuditoriaRolUser;
 use App\Models\CADECO\Seguridad\Rol;
@@ -108,6 +110,7 @@ use App\Observers\CADECO\AjusteNegativoPartidaObserver;
 use App\Observers\CADECO\AjustePositivoObserver;
 use App\Observers\CADECO\AjustePositivoPartidaObserver;
 use App\Observers\CADECO\Almacenes\AjusteEliminadoObserver;
+use App\Observers\CADECO\Almacenes\EntregaContratistaObserver;
 use App\Observers\CADECO\AnticipoObserver;
 use App\Observers\CADECO\BancoObserver;
 use App\Observers\CADECO\Compras\EntradaEliminadaObserver;
@@ -180,6 +183,7 @@ use App\Observers\CADECO\PagoObserver;
 use App\Observers\CADECO\PagoVarioObserver;
 use App\Observers\CADECO\RequisicionObserver;
 use App\Observers\CADECO\SalidaAlmacenObserver;
+use App\Observers\CADECO\SalidaAlmacenPartidaObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaPermisoRolObserver;
 use App\Observers\CADECO\Seguridad\AuditoriaRolUserObserver;
 use App\Observers\CADECO\Seguridad\RolObserver;
@@ -228,6 +232,7 @@ class AppServiceProvider extends ServiceProvider
              * Almacenes
              */
             AjusteEliminado::observe(AjusteEliminadoObserver::class);
+            EntregaContratista::observe(EntregaContratistaObserver::class);
 
             /**
              * Compras
@@ -365,6 +370,7 @@ class AppServiceProvider extends ServiceProvider
             Requisicion::observe(RequisicionObserver::class);
             RequisicionPartida::observe(RequisicionPartidaObserver::class);
             SalidaAlmacen::observe(SalidaAlmacenObserver::class);
+            SalidaAlmacenPartida::observe(SalidaAlmacenPartidaObserver::class);
             SolicitudCompra::observe(SolicitudCompraObserver::class);
             SolicitudAnticipoDestajo::observe(SolicitudAnticipoDestajoObserver::class);
             SolicitudPagoAnticipado::observe(SolicitudPagoAnticipadoObserver::class);
