@@ -93,7 +93,7 @@
                     self.$data.data = []
                     self.$data.data = requisiciones.map((requisicion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: `# ${requisicion.numero_folio}`,
+                        numero_folio: requisicion.numero_folio_format,
                         folio: requisicion.complemento ? requisicion.complemento.folio : '',
                         fecha: new Date(requisicion.fecha).toDate(),
                         observaciones: requisicion.observaciones,

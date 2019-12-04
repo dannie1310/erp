@@ -28,4 +28,10 @@ class RequisicionPartidaComplemento extends Model
         'usuario_registo',
         'timestamp_registro'
     ];
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_entrega);
+        return date_format($date,"d/m/Y");
+    }
 }

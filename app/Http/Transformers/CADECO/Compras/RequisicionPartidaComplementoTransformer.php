@@ -37,7 +37,7 @@ class RequisicionPartidaComplementoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'observaciones' => $model->observaciones,
-            'fecha_entrega' => $model->fecha_entrega,
+            'fecha_entrega' => $model->fecha_format,
             'descripcion' => $model->descripcion_material,
             'numero_parte' => $model->numero_parte,
             'unidad' => $model->unidad
