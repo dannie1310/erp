@@ -129,9 +129,9 @@
 <!--                </div>-->
 
                 <div class="modal-footer">
-                    <button v-if="cargando==false" type="button" class="btn btn-secondary pull-right" v-on:click="salir">Cerrar</button>
+                    <button v-if="cargando==false" type="button" class="btn btn-secondary float-right" v-on:click="salir">Cerrar</button>
                     <div v-if="$root.can('autorizar_distribucion_recursos_remesa')" :disabled="cargando" >
-                        <button v-if="cargando==false" @click="autorizar" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
+                        <button v-if="cargando==false" @click="autorizar" title="Autorizar" class="btn btn-primary float-right">Autorizar</button>
                     </div>
                 </div>
             </div>

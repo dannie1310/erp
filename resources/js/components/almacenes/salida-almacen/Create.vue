@@ -14,9 +14,11 @@
                                                 <datepicker v-model = "dato.fecha"
                                                             name = "fecha"
                                                             :format = "formatoFecha"
+                                                            :language = "es"
                                                             :bootstrap-styling = "true"
                                                             class = "form-control"
                                                             v-validate="{required: true}"
+                                                            :disabled-dates="fechasDeshabilitadas"
                                                             :class="{'is-invalid': errors.has('fecha')}"
                                                 ></datepicker>
                                           <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
@@ -49,42 +51,28 @@
                                  <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="id_almacen">Almacen:</label>
-                                               <Almacen
-                                                   class="form-control"
-                                                   name="id_almacen"
-                                                   id="id_almacen"
-                                                   data-vv-as="Almacén"
-                                                   v-validate="{required: true}"
-                                                   v-model="id_almacen"
-                                                   :class="{'is-invalid': errors.has('id_almacen')}"
-                                               ></Almacen>
-                                          <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
+                                        <select
+                                                :disabled="cargando"
+                                                type="text"
+                                                name="id_almacen"
+                                                data-vv-as="Almacén"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="id_almacen"
+                                                v-model="id_almacen"
+                                               :class="{'is-invalid': errors.has('id_almacen')}"
+                                        >
+                                            <option value v-if="!cargando">- Seleccione -</option>
+                                            <option value v-if="cargando">Cargando...</option>
+                                            <option v-for="almacen in almacenes" :value="almacen.id">{{ almacen.descripcion }}</option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                     </div>
                                  </div>
-
-                                <div class="col-md-12" v-if="empresas">
-                                    <div class="form-group error-content">
-                                        <label for="id_empresa">Contratista/Destajista solicitante del material:</label>
-                                           <select
-                                               class="form-control"
-                                               name="id_empresa"
-                                               data-vv-as="Empresa"
-                                               v-model="dato.id_empresa"
-                                               v-validate="{required: true}"
-                                               id="id_empresa"
-                                               :class="{'is-invalid': errors.has('id_empresa')}">
-                                            <option value>-- Seleccione una Empresa --</option>
-                                            <option v-for="(empresa, index) in empresas" :value="empresa.id"
-                                                    data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
-                                                {{ empresa.razon_social }}
-                                            </option>
-                                        </select>
-                                         <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
-                                    </div>
-                                </div>
                             </div>
                             <hr>
                             <div class="row">
+                                <!--Tipo-->
                                  <div class="col-md-6">
                                     <div class="form-group row error-content">
                                         <label for="opciones" class="col-sm-3 col-form-label">Tipo: </label>
@@ -107,67 +95,183 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12" v-if="dato.opciones == 1">
-                                <div class="form-group error-content">
-                                <label for="id_concepto">Concepto:</label>
-                                    <concepto-select
-                                            name="id_concepto"
-                                            data-vv-as="Concepto"
-                                            v-validate="{required: true}"
-                                            id="id_concepto"
-                                            v-model="id_concepto"
-                                            :error="errors.has('id_conceptos')"
-                                            ref="conceptoSelect"
-                                            :disableBranchNodes="false"
-                                            onselect="findConcepto"
-                                    ></concepto-select>
-                                <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
-                                </div>
-                            </div>
                             <hr>
+                            <template v-if="dato.opciones == 1">
+                                <div class="row">
+                                    <!--Concepto raíz-->
+                                    <div class="col-md-12" >
+                                        <div class="form-group error-content">
+                                        <label for="id_concepto">Concepto:</label>
+                                            <concepto-select
+                                                    name="id_concepto"
+                                                    data-vv-as="Concepto"
+                                                    v-validate="{required: true}"
+                                                    id="id_concepto"
+                                                    v-model="id_concepto"
+                                                    :error="errors.has('id_concepto')"
+                                                    ref="conceptoSelect"
+                                                    :disableBranchNodes="false"
+                                                    onselect="findConcepto"
+                                            ></concepto-select>
+                                        <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Entrega a contratista-->
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input button" id="con_prestamo" v-model="dato.con_prestamo" >
+                                            <label class="custom-control-label" for="con_prestamo">Entrega a contratista</label>
+                                        </div>
+                                    </div>
+                                        <div class="col-md-8" v-if="dato.con_prestamo">
+                                            <select
+                                                    class="form-control"
+                                                    name="id_empresa"
+                                                    data-vv-as="Empresa"
+                                                    v-model="dato.id_empresa"
+                                                    id="id_empresa"
+                                                    :disabled="!dato.con_prestamo"
+                                            >
+                                                    <option v-if="dato.con_prestamo" value>-- Seleccione --</option>
+                                                    <option value v-if="!dato.con_prestamo">-- No Aplica --</option>
+                                                    <option v-for="(empresa, index) in empresas" :value="empresa.id"
+                                                            data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
+                                                        {{ empresa.razon_social }}
+                                                    </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2" v-if="dato.con_prestamo">
+                                            <div class="btn-group btn-group-toggle">
+                                                    <label class="btn btn-outline-primary" :class="dato.opcion_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                        <input type="radio"
+                                                               :disabled="!dato.con_prestamo"
+                                                               class="btn-group-toggle "
+                                                               name="opcion_cargo"
+                                                               :id="'opcion_cargo' + key"
+                                                               :value="key"
+
+                                                               v-validate="{required: true}"
+                                                               v-model.number="dato.opcion_cargo">
+                                                            {{ cargo }}
+                                                    </label>
+                                                </div>
+                                        </div>
+
+                                </div>
+                                <hr>
+                            </template>
                             <div class="row">
                                 <div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">
                                     <div class="form-group">
-                                        <div class="col-12">
-                                            <button @click="agregar_partida"class="btn btn-app btn-info pull-right" :disabled="cargando">
-                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                <i class="fa fa-plus" v-else></i>
-                                                Agregar Partida
-                                            </button>
-                                        </div>
-                                        <div v-if="dato.partidas.length > 0">
-                                             <div class="table-responsive">
+                                        <div v-if="id_almacen">
+                                             <div >
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th>No. de Parte</th>
+                                                            <th class="index_corto">#</th>
+                                                            <th class="no_parte_input">No. de Parte</th>
                                                             <th>Material</th>
-                                                            <th>Unidad</th>
-                                                            <th>Existencia</th>
-                                                            <th>Cantidad</th>
-                                                            <th>Destino</th>
-                                                            <th>Acciones</th>
+                                                            <th class="unidad">Unidad</th>
+                                                            <th class="money_input">Existencia</th>
+                                                            <th class="money_input">Cantidad</th>
+                                                            <th class="icono"></th>
+                                                            <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
+                                                            <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
+                                                             <th class="icono">
+                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
+                                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                                <i class="fa fa-plus" v-else></i>
+                                                            </button>
+                                                        </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr v-for="(partida, index) in dato.partidas">
-                                                            <td>{{partida[0].numero_parte}}</td>
-                                                            <td>{{partida[0].descripcion}}</td>
-                                                            <td>{{partida[0].unidad}}</td>
-                                                            <td>{{parseFloat(partida[3][1]).toFixed(2)}}</td>
-                                                            <td>{{parseFloat(partida[1]).toFixed(2)}}</td>
-                                                            <td v-if="partida[2].path" :title="partida[2].path">{{partida[2].descripcion}}</td>
-                                                            <td v-else>{{partida[2].descripcion}}</td>
+                                                        <tr v-for="(partida, i) in partidas">
+                                                            <td>{{ i + 1}}</td>
                                                             <td>
-                                                                <button type="button" @click="agregarContratista(index)" class="btn btn-sm" title="Entrega a contratista" v-if="partida[4] == '' && partida[5] == ''">
-                                                                    <i class="fa fa-user-o"></i>
-                                                                </button>
-                                                                <button type="button" @click="agregarContratista(index)" class="btn btn-sm" title="Entrega a contratista" v-else>
-                                                                    <i class="fa fa-user"></i>
-                                                                </button>
-                                                                <button type="button" @click="borrarPartidas(index)" class="btn btn-sm btn-outline-danger" title="Eliminar partida">
-                                                                    <i class="fa fa-trash"></i>
-                                                                </button>
+                                                                <select
+
+                                                                        :disabled = "!bandera"
+                                                                        class="form-control"
+                                                                        :name="`id_material[${i}]`"
+                                                                        v-model="partida.material"
+                                                                        v-validate="{required: true }"
+                                                                        data-vv-as="No de Parte"
+                                                                        :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
+                                                                >
+                                                                     <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
+                                                                </select>
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
+                                                            </div>
+                                                            </td>
+                                                            <td>
+                                                                <select
+
+                                                                        :disabled = "!bandera"
+                                                                        class="form-control"
+                                                                        :name="`id_material[${i}]`"
+                                                                        v-model="partida.material"
+                                                                        v-validate="{required: true }"
+                                                                        data-vv-as="Descripción"
+                                                                        :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
+                                                                >
+                                                                 <option v-for="material in materiales" :value="material">{{ material.descripcion }}</option>
+                                                            </select>
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
+                                                            </div>
+                                                            </td>
+                                                            <td>
+                                                                {{partida.material.unidad}}
+                                                            </td>
+                                                            <td class="money">
+                                                                {{partida.material.saldo_almacen_format}}
+                                                            </td>
+                                                            <td>
+                                                                <input
+                                                                        :disabled = "!partida.material"
+                                                                        type="number"
+                                                                        step="any"
+                                                                        :name="`cantidad[${i}]`"
+                                                                        v-model="partida.cantidad"
+                                                                        data-vv-as="Cantidad"
+                                                                        v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:2}"
+                                                                        class="form-control"
+                                                                        :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                                        id="cantidad"
+                                                                        placeholder="Cantidad">
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
+                                                            </div>
+                                                            </td>
+                                                            <td  v-if="partida.destino ===  ''" >
+                                                            <small class="badge badge-secondary">
+                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                        </td>
+                                                        <td v-else >
+                                                            <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
+                                                                <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                             <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
+                                                                <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                        </td>
+                                                        <td  v-if="partida.destino ===  ''" >
+                                                        </td>
+                                                        <td v-else >
+                                                            <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
+                                                            <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
+                                                        </td>
+                                                            <td>
+                                                                <i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>
+                                                                <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" ></i>
+                                                            </td>
+                                                            <td class="icono">
+                                                                <button type="button" class="btn btn-outline-danger btn-sm" @click="borrarPartida(i)"><i class="fa fa-trash"></i></button>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -196,253 +300,71 @@
                         </div>
                          <div class="footer">
                            <button type="button" class="btn btn-secondary"  @click="index">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato.partidas > 0">Guardar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || partidas.length == 0">Guardar</button>
                         </div>
                      </form>
                     </div>
                 </div>
             </div>
         </nav>
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AGREGAR PARTIDA</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                     <form role="form" @submit.prevent="validatePartida">
-                        <div class="modal-body">
-                            <fieldset class="form-group">
-                                 <div class="row"  v-if="materiales">
-                                     <div class="col-md-4">
-                                        <div class="form-group error-content">
-                                            <label for="partida">No. de Parte:</label>
-                                               <select
-                                                       class="form-control"
-                                                       name="partida"
-                                                       data-vv-as="Material"
-                                                       v-model="partida"
-                                                       v-validate="{required: true}"
-                                                       id="partida"
-                                                       :class="{'is-invalid': errors.has('partida')}">
-                                                <option value>-- Seleccione --</option>
-                                                <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
-                                                        data-toggle="tooltip" data-placement="left" :title="material.numero_parte ">
-                                                    {{ material.numero_parte }}
-                                                </option>
-                                                </select>
-                                             <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
-                                        </div>
-                                    </div>
-                                      <div class="col-md-8">
-                                        <div class="form-group error-content">
-                                            <label for="partida">Material:</label>
-                                               <select
-                                                       class="form-control"
-                                                       name="partida"
-                                                       data-vv-as="Material"
-                                                       v-model="partida"
-                                                       v-validate="{required: true}"
-                                                       id="partida"
-                                                       :class="{'is-invalid': errors.has('partida')}">
-                                                <option value>-- Seleccione --</option>
-                                                <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
-                                                        data-toggle="tooltip" data-placement="left" :title="material.descripcion ">
-                                                    {{ material.descripcion }}
-                                                </option>
-                                            </select>
-                                             <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                 <div class="row"  v-if="materiales">
-                                     <div class="col-md-6">
-                                        <div class="form-group error-content">
-                                            <label for="partida">Unidad:</label>
-                                               <select
-                                                       class="form-control"
-                                                       name="partida"
-                                                       data-vv-as="Material"
-                                                       v-model="partida"
-                                                       v-validate="{required: true}"
-                                                       id="partida"
-                                                       :class="{'is-invalid': errors.has('partida')}"
-                                                       :disabled="true"
-                                               >
-                                                <option value>-- Unidad --</option>
-                                                <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
-                                                        data-toggle="tooltip" data-placement="left" :title="material.unidad ">
-                                                    {{ material.unidad }}
-                                                </option>
-                                                </select>
-                                             <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
-                                        </div>
-                                    </div>
-                                      <div class="col-md-6">
-                                        <div class="form-group error-content">
-                                            <label for="partida">Existencia:</label>
-                                               <select
-                                                       class="form-control"
-                                                       name="partida"
-                                                       data-vv-as="Material"
-                                                       v-model="partida"
-                                                       v-validate="{required: true}"
-                                                       id="partida"
-                                                       :class="{'is-invalid': errors.has('partida')}"
-                                                       :disabled="true"
-                                               >
-                                                <option value>-- Existencia --</option>
-                                                <option v-for="(material, index) in materiales" :value="[material.id_material,material.saldo]"
-                                                        data-toggle="tooltip" data-placement="left" :title="material.saldo ">
-                                                    {{ parseFloat(material.saldo).toFixed(2) }}
-                                                </option>
-                                            </select>
-                                             <div class="invalid-feedback" v-show="errors.has('partida')">{{ errors.first('partida') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                            <label for="cantidad">Cantidad:</label>
-                                            <input
-                                                ref="input"
-                                                step="0.01"
-                                                type="number"
-                                                name="cantidad"
-                                                data-vv-as="Total"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="cantidad"
-                                                placeholder="Cantidad"
-                                                v-model="dato_partida.cantidad"
-                                                :class="{'is-invalid': errors.has('cantidad')}"
-                                                @change="validarCantidad"
-                                            >
-                                        <div class="invalid-feedback" v-show="errors.has('cantidad')">{{ errors.first('cantidad') }}</div>
-                                    </div>
-                                </div>
-                                <div class="row" v-if="almacenes && dato.opciones == 65537">
-                                    <div class="col-md-12">
-                                        <div class="form-group error-content">
-                                            <label for="id_almacenes">Almacén:</label>
-                                               <select
-                                                       class="form-control"
-                                                       name="id_almacenes"
-                                                       data-vv-as="Almacen"
-                                                       v-model="dato_partida.destino"
-                                                       v-validate="{required: true}"
-                                                       id="id_almacenes"
-                                                       :class="{'is-invalid': errors.has('id_almacenes')}"
-                                                       @click="validarAlmacen"
-                                               >
-                                                <option value>-- Seleccione un Almacén --</option>
-                                                <option v-for="(almacen, index) in almacenes" :value="almacen.id"
-                                                        data-toggle="tooltip" data-placement="left" :title="almacen.descripcion" @click="validarAlmacen">
-                                                    {{ almacen.descripcion }}
-                                                </option>
-                                            </select>
-                                             <div class="invalid-feedback" v-show="errors.has('id_almacenes')">{{ errors.first('id_almacenes') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row" v-if="dato.opciones == 1 && concepto">
-                                    <div class="col-md-12">
-                                        <div class="form-group error-content">
-                                        <label for="id_conceptos">Concepto: {{concepto.descripcion}}</label>
-                                            <ConceptoSelectHijo
-                                                    name="id_conceptos"
-                                                    data-vv-as="Concepto"
-                                                    v-validate="{required: true}"
-                                                    id="id_conceptos"
-                                                    v-model="dato_partida.destino"
-                                                    :error="errors.has('id_conceptos')"
-                                                    ref="conceptoSelect"
-                                                    :disableBranchNodes="true"
-                                                    v-bind:nivel_id="concepto.id"
-                                            ></ConceptoSelectHijo>
-                                        <div class="error-label" v-show="errors.has('id_conceptos')">{{ errors.first('id_conceptos') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </fieldset>
+        <nav >
+            <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || dato_partida.cantidad == '' || dato_partida.destino == '' || partida == {}">Registrar</button>
-                        </div>
-                     </form>
-                </div>
-            </div>
-          </div>
-        <div class="modal fade" ref="contratista" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> AGREGAR CONTRATISTA</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                     <form role="form" @submit.prevent="modificarContratista">
-                        <div class="modal-body">
-                            <fieldset class="form-group">
-                                <div class="row"  v-if="contratistas">
-                                      <div class="col-md-8">
-                                        <div class="form-group error-content">
-                                            <label for="empresa_contratista">Empresa Contratista:</label>
-                                               <select
-                                                       class="form-control"
-                                                       name="empresa_contratista"
-                                                       data-vv-as="Material"
-                                                       v-model="contratista.empresa_contratista"
-                                                       v-validate="{required: false}"
-                                                       id="empresa_contratista"
-                                                       :class="{'is-invalid': errors.has('empresa_contratista')}">
-                                                <option value>-- Seleccione --</option>
-                                                <option v-for="(contratista, index) in contratistas" :value="contratista.id"
-                                                        data-toggle="tooltip" data-placement="left" :title="contratista.id ">
-                                                    {{ contratista.razon_social }}
-                                                </option>
-                                            </select>
-                                             <div class="invalid-feedback" v-show="errors.has('id')">{{ errors.first('id') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                     <div class="col-md-6">
+                        <form role="form">
+                            <div class="modal-body">
+                                <div class="row" v-if="concepto.id>0 && concepto.id !==undefined && dato.opciones==1">
+                                    <div class="col-12">
                                         <div class="form-group row error-content">
-                                            <label for="opcion" class="col-sm-3 col-form-label">Tipo: </label>
+                                            <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
                                             <div class="col-sm-10">
-                                                <div class="btn-group btn-group-toggle">
-                                                    <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
-                                                        <input type="radio"
-                                                               class="btn-group-toggle"
-                                                               name="opcion"
-                                                               :id="'opcion' + key"
-                                                               :value="key"
-                                                               autocomplete="on"
-                                                               v-validate="{required: true}"
-                                                               v-model.number="contratista.opcion">
-                                                            {{ cargo }}
-                                                    </label>
-                                                </div>
+                                                <ConceptoSelectHijo
+                                                        name="id_conceptos"
+                                                        data-vv-as="Concepto"
+                                                        id="id_conceptos"
+                                                        v-model="id_concepto_temporal"
+                                                        ref="conceptoSelect"
+                                                        :disableBranchNodes="true"
+                                                        v-bind:nivel_id="concepto.id"
+                                                ></ConceptoSelectHijo>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </fieldset>
-                        </div>
-                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Contratista</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == '' || (contratista.opcion != 0 && contratista.opcion != 1 )">Registrar Contratista</button>
-                        </div>
-                     </form>
+                                <div class="row" v-if="dato.opciones==65537">
+                                    <div class="col-12">
+                                        <div class="form-group row error-content">
+                                            <label for="id_concepto" class="col-sm-2 col-form-label">Activos:</label>
+                                            <div class="col-sm-10">
+                                                <select
+                                                        name="id_almacen"
+                                                        id="id_almacen_temporal"
+                                                        data-vv-as="Almacén"
+                                                        class="form-control"
+                                                        v-model="almacen_temporal"
+                                                >
+                                                    <option value="">-- Almacén --</option>
+                                                    <option v-for="almacen in almacenes" :value="almacen">{{ almacen.descripcion }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
+                             </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-          </div>
+        </nav>
     </span>
 </template>
 
@@ -451,22 +373,29 @@
     import ConceptoSelect from "../../cadeco/concepto/Select";
     import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
     import datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
 
     export default {
         name: "salida-almacen-create",
         components: {Almacen, ConceptoSelect,ConceptoSelectHijo,datepicker},
         data() {
             return {
+                es:es,
+                fechasDeshabilitadas:{},
                 dato:{
+                    con_prestamo: 0,
+                    folio_vale: '',
+                    opcion_cargo: 1,
                     id_concepto:'',
                     fecha:'',
                     id_almacen:'',
                     id_empresa:'',
-                    opciones:'',
+                    opciones:1,
                     referencia:'',
                     observaciones:'',
                     partidas:[]
                 },
+                partidas:[],
                 tipos: {
                     1: "Consumo",
                     65537: "Transferencia"
@@ -485,7 +414,6 @@
                 },
                 emp_cont:'',
                 contratistas:[],
-                partida:{},
                 empresas:[],
                 almacenes:[],
                 materiales:[],
@@ -495,68 +423,46 @@
                 id_concepto:'',
                 almacen:'',
                 id_almacen:'',
-                cargando: false
-
+                cargando: false,
+                bandera : 0,
+                index_temporal : '',
+                almacen_temporal : '',
+                id_concepto_temporal : '',
+                destino_copiado: {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                },
+                destino_seleccionado: {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                },
             }
         },
+        init() {
+            this.cargando = true;
+        },
         mounted() {
+            this.getAlmacenes();
             this.getEmpresas();
+            this.getContratista();
+            this.dato.fecha = new Date();
+            this.fechasDeshabilitadas.from= new Date();
         },
         methods: {
             formatoFecha(date){
-                return moment(date).format('YYYY-MM-DD');
+                return moment(date).format('DD/MM/YYYY');
             },
             agregar_partida(){
-                this.getMateriales();
-                this.getAlmacenes();
-                this.getContratista();
-                this.cargando = true;
-                this.contratista.empresa_contratista = '';
-                this.contratista.opcion = 0;
-                this.dato_partida.cantidad ='';
-                this.dato_partida.destino ='';
-                this.partida ={};
-                $(this.$refs.modal).modal('show');
-                this.$validator.reset();
-                this.cargando = false;
-            },
-            agregarContratista(index){
-                this.indice = index;
-                if(this.dato.partidas[this.indice][4] == '' && this.dato.partidas[this.indice][5] == ''){
-                    this.contratista.empresa_contratista = '';
-                    this.contratista.opcion = 0;
-                }else{
-                    this.contratista.empresa_contratista = this.dato.partidas[this.indice][4].id;
-                    this.contratista.opcion =  this.dato.partidas[this.indice][5];
+                var array = {
+                    'material' : '',
+                    'destino' : ''
                 }
-                this.getContratista().then(data =>{
-                    this.cargando = true;
-                    $(this.$refs.contratista).modal('show');
-                    this.$validator.reset();
-                    this.cargando = false;
-                    this.emp_cont='';
-                });
-            },
-            quitarContratista(){
-                this.cargando = true;
-                this.dato.partidas[this.indice][4] = '';
-                this.dato.partidas[this.indice][5] = '';
-                $(this.$refs.contratista).modal('hide');
-                this.$validator.reset();
-                this.emp_cont='';
-                this.cargando = false;
-            },
-            modificarContratista(){
-                this.cargando = true;
-                this.findContratista().then(data => {
-                    this.dato.partidas[this.indice][4] = this.emp_cont;
-                    this.dato.partidas[this.indice][5] = this.contratista.opcion;
-                    $(this.$refs.contratista).modal('hide');
-                    this.$validator.reset();
-                    this.cargando = false;
-                    this.emp_cont='';
-                });
-
+                if(this.materiales.length === 0 ) {
+                    this.getMateriales();
+                }
+                this.partidas.push(array);
             },
             getContratista() {
                 return this.$store.dispatch('cadeco/empresa/index', {
@@ -575,31 +481,54 @@
                     })
             },
             getMateriales() {
-                return this.$store.dispatch('cadeco/material/almacen', {
-                    params: {almacen:this.dato.id_almacen}
+                this.materiales = [];
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/almacen/find', {
+                    id: this.id_almacen,
+                    params: { include: 'materiales_salida' }
                 })
                     .then(data => {
-                        this.materiales = data;
+                        this.materiales = data.materiales_salida.data;
+                        if( this.materiales.length != 0 ) {
+                            this.bandera = 1;
+                            this.cargando = false
+                        }
+                    })
+                    .finally(() => {
+                        if( this.materiales.length == 0 ) {
+                            swal('Atención', 'No hay material disponible en este almacén.', 'warning');
+                            this.bandera = 1;
+                            this.cargando = false
+                        }
+
                     })
             },
-            findMaterial() {
-                this.$store.commit('cadeco/material/SET_MATERIAL', null);
-                return this.$store.dispatch('cadeco/material/find', {
-                    id: this.partida[0],
-                    params: {}
-                }).then(data => {
-                    this.material = data;
+            getConcepto() {
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: this.destino_seleccionado.id_destino,
+                    params: {
+                    }
                 })
+                    .then(data => {
+                        this.destino_seleccionado.destino = data;
+                        this.seleccionarDestino();
+                    })
             },
             findConcepto(value) {
                 this.concepto = '';
-                this.$store.commit('cadeco/concepto/SET_CONCEPTO', null);
-                return this.$store.dispatch('cadeco/concepto/find', {
-                    id: value,
-                    params: {}
-                }).then(data => {
-                    this.concepto = data;
-                })
+                if(value !== undefined && value !== null){
+                    this.$store.commit('cadeco/concepto/SET_CONCEPTO', null);
+                    return this.$store.dispatch('cadeco/concepto/find', {
+                        id: value,
+                        params: {}
+                    }).then(data => {
+                        this.concepto = data;
+                    });
+                } else {
+                    this.partidas.forEach(function(partida) {
+                        partida.destino = '';
+                    });
+                }
             },
             findContratista() {
                 this.$store.commit('cadeco/empresa/SET_EMPRESA', null);
@@ -629,33 +558,100 @@
                 }
             },
             getAlmacenes() {
+                this.almacenes = [];
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/almacen/index', {
-                    params: {sort: 'descripcion', order: 'asc'}
+                    params: {
+                        sort: 'descripcion',
+                        order: 'asc'
+                    }
                 })
                     .then(data => {
                         this.almacenes = data.data;
-
+                        this.cargando = false;
                     })
             },
             validate() {
+                var error_destino_no_ingresado = 0;
+                var error_destino_repetido = 0;
+                var contador_material_destino = [];
+                var material_aviso = [];
+                var destino_aviso = [];
+                var partidas_store = [];
+                var aviso_repetido = "\n";
+
+
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        this.$data.partidas.forEach(function(element) {
+                            if(!(element.cantidad  === undefined && element.destino  === '' )){
+                                if(element.cantidad > 0 && element.destino === '')
+                                {
+                                    error_destino_no_ingresado = error_destino_no_ingresado + 1
+                                } else {
+                                    /*Validación para evitar que un mismo material se cargue mas de una vez a un mismo concepto*/
+                                    if(isNaN(contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()]))
+                                    {
+                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = parseInt("1");
+                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                    }else{
+                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] += parseInt("1");
+                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                    }
+                                }
+                            }
+                            partidas_store.push({
+                                id_destino : element.destino.id_destino,
+                                id_material : element.material.id_material,
+                                unidad : element.material.unidad,
+                                cantidad: element.cantidad,
+                            });
+
+                        });
+
+                        for(var i in contador_material_destino)
+                        {
+                            if(parseInt(contador_material_destino[i])>1)
+                            {
+                                error_destino_repetido++;
+                                aviso_repetido += '-'+material_aviso[i] +"->"+ destino_aviso[i] +"\n";
+                            }
+                        }
+
+                        if (error_destino_no_ingresado > 0)
+                        {
+                            swal('Atención', 'Ingrese un destino válido en todas las partidas.', 'warning');
+                        }
+                        else if (error_destino_repetido > 0)
+                        {
+                            if(this.dato.opciones == 1){
+                                swal('Atención', 'Un mismo insumo se intenta cargar  mas de una vez a un mismo concepto, favor de corregir:'+aviso_repetido, 'warning');
+                            }else if(this.dato.opciones == 65537){
+                                swal('Atención', 'Un mismo insumo se intenta enviar  mas de una vez a un mismo almacén, favor de corregir:'+aviso_repetido, 'warning');
+                            }
+
+                        }
+                        else {
+                            this.store(partidas_store)
+                        }
                     }
                 });
             },
-            store() {
+            store(partidas) {
+                this.dato.partidas = partidas;
                 return this.$store.dispatch('almacenes/salida-almacen/store', this.dato)
                     .then((data) => {
                         this.$router.push({name: 'salida-almacen'});
                     });
             },
             borrar(){
-                this.dato.partidas=[];
+                this.partidas=[];
                 this.dato.id_concepto='';
             },
-            borrarPartidas(i){
-                this.dato.partidas.splice(i,1);
+            borrarPartida(i){
+                this.partidas.splice(i,1);
             },
             validarCantidad() {
                 if(parseInt(this.partida[1]) < parseInt(this.dato_partida.cantidad)) {
@@ -675,32 +671,91 @@
             index(){
                 this.$router.push({name: 'salida-almacen'});
             },
-            validatePartida() {
-                this.findMaterial().finally(() => {
-                    this.contratista.opcion = '';
-                });
-                this.findAlmacen().finally(() => {
-                    this.dato.partidas.push([this.material, this.dato_partida.cantidad, this.almacen, this.partida, this.emp_cont, this.contratista.opcion]);
-                });
-
-                this.emp_cont='';
-                $(this.$refs.modal).modal('hide');
-
+            modalDestino(i) {
+                if(this.id_concepto == null || this.id_concepto == undefined)
+                {
+                    swal('Atención', 'Seleccione el concepto raíz', 'warning');
+                }
+                this.index_temporal = i;
+                if(this.partidas[this.index_temporal].destino == undefined || this.partidas[this.index_temporal].destino == ''){
+                    this.destino_seleccionado.tipo_destino =  '';
+                    this.destino_seleccionado.destino = '';
+                    this.destino_seleccionado.id_destino = '';
+                }else {
+                    this.destino_seleccionado = this.partidas[this.index_temporal].destino;
+                }
+                this.$validator.reset();
+                $(this.$refs.modal_destino).modal('show');
+            },
+            seleccionarDestino() {
+                this.partidas[this.index_temporal].destino = this.destino_seleccionado;
+                this.index_temporal = '';
+                this.destino_seleccionado = {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                };
+                this.id_concepto_temporal = '';
+                this.almacen_temporal = '';
+                $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
+            },
+            cerrarModalDestino(){
+                this.id_concepto_temporal = '';
+                this.almacen_temporal = '';
+                $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
+            },
+            copiar_destino(partida){
+                this.destino_copiado = partida.destino;
+            },
+            pegar_destino(partida){
+                partida.destino = {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                };
+                partida.destino.id_destino = this.destino_copiado.id_destino;
+                partida.destino.tipo_destino = this.destino_copiado.tipo_destino;
+                partida.destino.destino = this.destino_copiado.destino;
             }
         },
         watch:{
             id_almacen(value){
                 if(value != ''){
-                    this.dato.id_almacen = value
-                    this.dato.partidas=[];
+                    this.dato.id_almacen = value;
+                    this.partidas=[];
+                    this.materiales = [];
+                    this.bandera = 0;
                 }
             },
             id_concepto(value){
                 if(value != ''){
-                    this.dato.id_concepto = value
+                    this.dato.id_concepto = value;
                     this.findConcepto(value);
                 }
-            }
+            },
+            id_concepto_temporal(value){
+                if(value !== '' && value !== null && value !== undefined){
+                    this.almacen_temporal = '';
+                    this.destino_seleccionado.id_destino = value;
+                    this.destino_seleccionado.tipo_destino = 1;
+                    this.getConcepto();
+                }
+            },
+            almacen_temporal(value){
+                if(value !== '' && value !== null && value !== undefined){
+                    this.id_concepto_temporal = '';
+                    this.destino_seleccionado.id_destino = value.id;
+                    this.destino_seleccionado.tipo_destino = 2;
+                    this.destino_seleccionado.destino = value;
+                    if(value.id != this.id_almacen) {
+                        this.seleccionarDestino();
+                    } else {
+                        swal('Atención', 'No puede seleccionar como destino el almacén origen.', 'warning');
+                    }
+                }
+            },
         }
     }
 </script>

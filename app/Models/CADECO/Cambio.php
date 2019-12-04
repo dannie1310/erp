@@ -17,4 +17,6 @@ class Cambio extends Model
     protected $connection = 'cadeco';
     protected $table = 'cambios';
     protected $primaryKey = 'id_moneda';
+
+
 }

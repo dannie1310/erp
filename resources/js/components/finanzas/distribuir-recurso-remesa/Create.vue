@@ -48,7 +48,7 @@
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
                                             <div class="col-9">
-                                                <h3>Documentos Liberados de la Remesa</h3>
+                                                <h6>Documentos Liberados de la Remesa</h6>
                                             </div>
                                             <div class="col-3">
                                                 <h6 align="right">Total: {{documentos.length}}</h6>

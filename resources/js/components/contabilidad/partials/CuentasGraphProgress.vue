@@ -1,7 +1,7 @@
 <template>
     <div class="card" v-if="config">
         <div class="card-header">
-            <h3 class="card-title">Información de Cuentas Contables</h3>
+            <h6 class="card-title">Información de Cuentas Contables</h6>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
             </div>

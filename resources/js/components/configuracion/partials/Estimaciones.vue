@@ -1,7 +1,7 @@
 <template>
     <div class="card" id="configuracion-estimaciones">
         <div class="card-header">
-            <h3 class="card-title">Configuración Finanzas</h3>
+            <h6 class="card-title">Configuración Finanzas</h6>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse">
                     <i class="fa fa-minus"></i>
@@ -163,7 +163,7 @@
 
             <div class="form-group row">
                 <div class="col">
-                    <button type="submit" @click="validate" class="btn btn-outline-primary pull-right" :disabled="!cambio || !cambio_store|| this.bandera == 0">
+                    <button type="submit" @click="validate" class="btn btn-outline-primary float-right" :disabled="!cambio || !cambio_store|| this.bandera == 0">
                         <i class="fa fa-save"></i>
                     </button>
                 </div>

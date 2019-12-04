@@ -7,32 +7,31 @@
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
                                 <div class="row">
-
-
-                                        <div class="offset-md-10 col-md-2">
+                                        <div class="col-md-2">
                                             <div class="form-group error-content">
                                                 <label for="fecha" class="col-form-label">Fecha:</label>
+
                                                     <datepicker v-model = "fecha"
                                                                     name = "fecha"
                                                                     :format = "formatoFecha"
                                                                     :language = "es"
                                                                     :bootstrap-styling = "true"
-                                                                    :use-utc="true"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
                                                                     :disabled-dates="fechasDeshabilitadas"
                                                                     :class="{'is-invalid': errors.has('fecha')}"
                                                         ></datepicker>
                                                   <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+
                                             </div>
                                         </div>
                                 </div>
 
                                     <div class="row ">
                                          <div class="col-md-2">
-                                            <div class="form-group row error-content">
-                                                <label for="remision" class=" col-form-label col-md-6">Remisión: </label>
-                                                <div class="col-md-6" >
+                                            <div class="form-group  error-content">
+                                                <label for="remision" class=" col-form-label ">Remisión: </label>
+                                                <div  >
                                                     <input
                                                             type="text"
                                                             data-vv-as="Remisión"
@@ -48,9 +47,9 @@
                                             </div>
                                          </div>
                                          <div class="col-md-2">
-                                             <div class="form-group row error-content">
-                                            <label for="id_orden_compra"  class="col-form-label col-md-6">Orden de Compra: </label>
-                                            <div class="col-md-6" >
+                                             <div class="form-group error-content">
+                                            <label for="id_orden_compra"  class="col-form-label">Orden de Compra: </label>
+                                            <div >
                                                 <select
                                                         :disabled="!bandera"
                                                         type="text"
@@ -71,9 +70,9 @@
                                         </div>
                                          </div>
                                         <div class="col-md-8" v-if="orden_compra.length != 0">
-                                            <div class="form-group row">
-                                                <label for="empresa" class="col-md-2 col-form-label">Empresa / Sucursal: </label>
-                                                <div class="col-md-10">
+                                            <div class="form-group">
+                                                <label for="empresa" class="col-form-label">Empresa / Sucursal: </label>
+                                                <div >
                                                     <input
                                                             :disabled="true"
                                                             type="text"
@@ -103,69 +102,81 @@
                                             <table class="table table-bordered">
                                                 <thead>
                                                 <tr>
-                                                    <th>#</th>
-                                                    <th>No. de Parte</th>
+                                                    <th class="index_corto">#</th>
+                                                    <th class="no_parte">No. Parte</th>
                                                     <th>Descripción</th>
-                                                    <th>Unidad</th>
-                                                    <th>Fecha Entrega</th>
+                                                    <th class="unidad">Unidad</th>
+                                                    <th class="fecha">Fecha Entrega</th>
                                                     <th>Cantidad Pendiente</th>
-                                                    <th>Cantidad Ingresada</th>
-                                                    <th>Cumplido</th>
-                                                    <th>Destino</th>
-                                                    <th class="th_icono"></th>
+                                                    <th class="cantidad_input">Cantidad Ingresada</th>
+                                                    <th class="fecha">Cumplido</th>
+                                                    <th class="icono"></th>
+                                                    <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
+                                                    <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
+                                                    <th class="icono"></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(doc, i) in partidas">
+                                                    <tr v-for="(partida, i) in partidas">
                                                         <td>{{i+1}}</td>
-                                                        <td>{{doc.numero_parte}}</td>
-                                                        <td>{{doc.material}}</td>
-                                                        <td>{{doc.unidad}}</td>
-                                                        <td class="fecha">{{doc.fecha_entrega_format}}</td>
-                                                        <td class="td_money">{{doc.cantidad_pendiente}}</td>
-                                                        <td class="td_money_input">
+                                                        <td>{{partida.numero_parte}}</td>
+                                                        <td>{{partida.material}}</td>
+                                                        <td>{{partida.unidad}}</td>
+                                                        <td >{{partida.fecha_entrega_format}}</td>
+                                                        <td class="td_money">{{partida.cantidad_pendiente}}</td>
+                                                        <td >
                                                                 <div class="form-group error-content">
                                                                     <input
                                                                             type="number"
                                                                             step="any"
                                                                             data-vv-as="Cantidad Ingresada"
-                                                                            v-validate="{min_value: 0.01, max_value:doc.cantidad_pendiente, decimal:2}"
+                                                                            v-validate="{min_value: 0.01, max_value:partida.cantidad_pendiente, decimal:2, number}"
                                                                             class="form-control"
                                                                             :name="`cantidad_ingresada[${i}]`"
                                                                             placeholder="Cantidad Ingresada"
-                                                                            v-model="doc.cantidad_ingresada"
-                                                                            :class="{'is-invalid': errors.has(`cantidad_ingresada[${i}]`)}">
+                                                                            v-model="partida.cantidad_ingresada"
+                                                                            :class="{'is-invalid': errors.has(`cantidad_ingresada[${i}]`)}"
+                                                                            v-on:keyup="validaCumplimiento(partida)">
                                                                     <div class="invalid-feedback" v-show="errors.has(`cantidad_ingresada[${i}]`)">{{ errors.first(`cantidad_ingresada[${i}]`) }}</div>
                                                                 </div>
                                                         </td>
                                                         <td class="text-center" >
-                                                             <i class="fa fa-check-square-o" style="font-size: 1.2em;" v-if="parseFloat(doc.cantidad_ingresada) == parseFloat(doc.cantidad_pendiente)"></i>
-                                                             <i class="fa fa-square-o" style="font-size:1.2em;" v-else></i>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" :id="`cumplido${i}`" v-on:change="validaCumplimiento(partida)" v-model="partida.cumplido">
+                                                                <label :for="`cumplido${i}`" class="custom-control-label" v-model="partida.cumplido"></label>
+                                                            </div>
                                                         </td>
-
-                                                        <td  v-if="doc.destino ===  undefined" >
+                                                        <td  v-if="partida.destino ===  ''" >
                                                             <small class="badge badge-secondary">
                                                                 <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
                                                         </td>
                                                         <td v-else >
-                                                            <small class="badge badge-success" v-if="doc.destino.tipo_destino === 1" >
+                                                            <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
                                                                 <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
-                                                             <small class="badge badge-success" v-else="doc.destino.tipo_destino === 2" >
+                                                             <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
                                                                 <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
                                                             </small>
-                                                            <span v-if="doc.destino.tipo_destino === 1" style="text-decoration: underline"  :title="doc.destino.destino.path">{{doc.destino.destino.descripcion}}</span>
-                                                            <span v-if="doc.destino.tipo_destino === 2">{{doc.destino.destino.descripcion}}</span>
                                                         </td>
-                                                        <!--<td v-else>{{doc.descripcion_destino}}</td>-->
-                                                        <td class="text-center" v-if="(doc.contratista_seleccionado === undefined || doc.contratista_seleccionado === '' )">
+                                                        <td  v-if="partida.destino ===  ''" >
+                                                        </td>
+                                                        <td v-else >
+                                                            <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
+                                                            <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>
+                                                            <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" ></i>
+                                                        </td>
+                                                        <!--<td v-else>{{partida.descripcion_destino}}</td>-->
+                                                        <td class="text-center" v-if="(partida.contratista_seleccionado === undefined || partida.contratista_seleccionado === '' )">
                                                             <small class="badge badge-secondary">
-                                                            <i class="fa fa-user-o button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>{{doc.contratista}}
+                                                            <i class="fa fa-user-o button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>{{partida.contratista}}
                                                             </small>
                                                         </td>
-                                                        <td class="text-center" v-else-if="doc.contratista_seleccionado != ''">
-                                                            <small class="badge badge-success" v-if="doc.contratista_seleccionado.opcion == 0">
+                                                        <td class="text-center" v-else-if="partida.contratista_seleccionado != ''">
+                                                            <small class="badge badge-success" v-if="partida.contratista_seleccionado.opcion == 0">
                                                                 <i class="fa fa-user button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>
                                                             </small>
                                                             <small class="badge badge-danger" v-else >
@@ -244,18 +255,18 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group row error-content">
-                                            <label for="almacen" class="col-sm-2 col-form-label">Activos:</label>
+                                            <label for="id_almacen" class="col-sm-2 col-form-label">Activos:</label>
                                             <div class="col-sm-10">
                                                 <select
                                                         name="id_almacen"
                                                         id="id_almacen"
                                                         data-vv-as="Almacén"
                                                         class="form-control"
-                                                        v-model="id_almacen_temporal"
+                                                        v-model="almacen_temporal"
                                                         :class="{'is-invalid': errors.has('id_almacen')}"
                                                 >
-                                                    <option value>-- Almacén --</option>
-                                                    <option v-for="item in almacenes" :value="item.id">{{ item.descripcion }}</option>
+                                                    <option value="">-- Almacén --</option>
+                                                    <option v-for="almacen in almacenes" :value="almacen">{{ almacen.descripcion }}</option>
                                                 </select>
                                                 <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                             </div>
@@ -264,7 +275,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                    <button  type="button"  class="btn btn-primary" v-on:click="seleccionarDestino">Seleccionar</button>
+                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
                              </div>
                         </form>
                     </div>
@@ -348,6 +359,7 @@
         components: {ConceptoSelect, Datepicker},
         data() {
             return {
+                datos_store:{},
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
@@ -361,7 +373,7 @@
                 cargando: false,
                 bandera : 0,
                 index_temporal : '',
-                id_almacen_temporal : '',
+                almacen_temporal : '',
                 id_concepto_temporal : '',
                 almacenes : [],
                 cargos: {
@@ -371,6 +383,11 @@
                 contratista: {
                     empresa_contratista: '',
                     opcion:''
+                },
+                destino_copiado: {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
                 },
                 destino_seleccionado: {
                     tipo_destino : '',
@@ -383,6 +400,9 @@
         },
         mounted() {
             this.getOrdenesCompra();
+            this.fecha_hoy = new Date();
+            this.fecha = new Date();
+            this.fechasDeshabilitadas.from= new Date();
         },
         methods: {
             init() {
@@ -395,7 +415,7 @@
                 this.cargando = false;
                 this.bandera = 0;
                 this.index_temporal = '';
-                this.id_almacen_temporal = '';
+                this.almacen_temporal = '';
                 this.id_concepto_temporal = '';
                 this.almacenes = [];
                 this.partidas = [];
@@ -404,9 +424,6 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             getOrdenesCompra() {
-                this.fecha_hoy = new Date();
-                this.fecha = new Date();
-                this.fechasDeshabilitadas.from= new Date();
                 return this.$store.dispatch('almacenes/entrada-almacen/get_ordenes_compra', {
                     config: {
                         params: {
@@ -444,18 +461,6 @@
                     })
             },
 
-            getAlmacen() {
-                return this.$store.dispatch('cadeco/almacen/find', {
-                    id: this.destino_seleccionado.id_destino,
-                    params: {
-                    }
-                })
-                    .then(data => {
-                        this.destino_seleccionado.destino = data;
-                    })
-
-            },
-
             getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
                     id: this.destino_seleccionado.id_destino,
@@ -464,6 +469,7 @@
                 })
                     .then(data => {
                         this.destino_seleccionado.destino = data;
+                        this.seleccionarDestino();
                     })
             },
 
@@ -516,23 +522,40 @@
                 this.cargando = false;
             },
 
+            validaCumplimiento(partida){
+                var diferencia;
+                diferencia = Math.abs(parseFloat(Math.round(partida.cantidad_pendiente).toFixed(2)) - parseFloat(Math.round(partida.cantidad_ingresada).toFixed(2)));
+                if(diferencia<0.01)
+                {
+                    partida.cumplido = true;
+                }
+                else if(parseFloat(Math.round(partida.cantidad_ingresada).toFixed(2)) == parseFloat(0) || partida.cantidad_ingresada==='' || partida.cantidad_ingresada  === undefined){
+                    partida.cumplido = false;
+                }
+            },
+
             validate() {
                 var error_destino = 0;
                 var item_a_guardar = 0;
+                var partidas_store = [];
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.$data.partidas.forEach(function(element) {
-                            if(!(element.cantidad_ingresada  === undefined && element.destino  === undefined )){
-                                if(element.cantidad_ingresada > 0 && element.destino === undefined)
+                            if(!(element.cantidad_ingresada  === undefined && element.destino  === '' )){
+                                if(element.cantidad_ingresada > 0 && element.destino === '')
                                 {
                                     error_destino = error_destino + 1
                                 }
+                            }
+                            if(element.cantidad_ingresada > 0)
+                            {
                                 item_a_guardar = item_a_guardar + 1;
+                                partidas_store.push(element);
                             }
                        });
                         if(item_a_guardar <= 0)
                         {
-                            swal('¡Error!', 'Debe registrar un material a esta entrada de almacén.', 'error')
+                            swal('¡Error!', 'Debe ingresar al menos un material.', 'error')
                         }
                         else if (error_destino > 0)
                         {
@@ -542,14 +565,19 @@
                             swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
                         }
                         else {
-                           this.store()
+                           this.store(partidas_store)
                         }
                     }
                 });
             },
 
-            store() {
-                return this.$store.dispatch('almacenes/entrada-almacen/store', this.$data)
+            store(partidas) {
+                this.datos_store ["id_orden_compra"] = this.id_orden_compra;
+                this.datos_store ["remision"] = this.remision;
+                this.datos_store ["fecha"] = this.fecha;
+                this.datos_store ["observaciones"] = this.orden_compra.observaciones;
+                this.datos_store ["partidas"] = partidas;
+                return this.$store.dispatch('almacenes/entrada-almacen/store', this.datos_store)
                     .then((data) => {
                         this.$router.push({name: 'entrada-almacen'});
                     });
@@ -583,9 +611,28 @@
                     id_destino : ''
                 };
                 this.id_concepto_temporal = '';
-                this.id_almacen_temporal = '';
+                this.almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
+            },
+            cerrarModalDestino(){
+                this.id_concepto_temporal = '';
+                this.almacen_temporal = '';
+                $(this.$refs.modal_destino).modal('hide');
+                this.$validator.reset();
+            },
+            copiar_destino(partida){
+                this.destino_copiado = partida.destino;
+            },
+            pegar_destino(partida){
+                partida.destino = {
+                    tipo_destino : '',
+                    destino : '',
+                    id_destino : ''
+                };
+                partida.destino.id_destino = this.destino_copiado.id_destino;
+                partida.destino.tipo_destino = this.destino_copiado.tipo_destino;
+                partida.destino.destino = this.destino_copiado.destino;
             }
         },
         watch: {
@@ -596,18 +643,19 @@
             },
             id_concepto_temporal(value){
                 if(value !== '' && value !== null && value !== undefined){
-                    this.id_almacen_temporal = '';
+                    this.almacen_temporal = '';
                     this.destino_seleccionado.id_destino = value;
                     this.destino_seleccionado.tipo_destino = 1;
                     this.getConcepto();
                 }
             },
-            id_almacen_temporal(value){
+            almacen_temporal(value){
                 if(value !== '' && value !== null && value !== undefined){
                     this.id_concepto_temporal = '';
-                    this.destino_seleccionado.id_destino = value;
+                    this.destino_seleccionado.id_destino = value.id;
                     this.destino_seleccionado.tipo_destino = 2;
-                    this.getAlmacen();
+                    this.destino_seleccionado.destino = value;
+                    this.seleccionarDestino();
                 }
             },
         }

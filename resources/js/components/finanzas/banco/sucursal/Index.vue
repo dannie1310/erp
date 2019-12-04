@@ -32,7 +32,7 @@
                     { title: '#', field:'index',sortable: false},
                     { title: 'Descripción', field: 'descripcion', sortable: false},
                     { title: 'Dirección', field:'direccion', sortable: false},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_solicitud_movimiento_fondo_garantia') && tipo_boton ==1" class="btn btn-app pull-right" >
+        <button @click="init" v-if="$root.can('registrar_solicitud_movimiento_fondo_garantia') && tipo_boton ==1" class="btn btn-app float-right" >
             <i class="fa fa-plus"></i> Registrar Solicitud
         </button>
 

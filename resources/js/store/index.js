@@ -35,10 +35,10 @@ import unidad from './modules/cadeco/unidad'
 //COMPRAS
 import asignacion from "./modules/compras/asignacion";
 import cotizacion from './modules/compras/cotizacion';
-import asignacionCompra from './modules/compras/asignacion-compra';
-import solicitudCompra from './modules/compras/solicitud-compra';
-import ordenCompra from './modules/compras/orden-compra';
 import itemContratista from './modules/compras/item-contratista';
+import ordenCompra from './modules/compras/orden-compra';
+import requisicion from './modules/compras/requisicion';
+import solicitudCompra from './modules/compras/solicitud-compra';
 
 //CONFIGURACION
 import areaCompradora from './modules/configuracion/area-compradora';
@@ -92,11 +92,9 @@ import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
-import ctgAreaCompradora from  './modules/seguridad/compras/ctg-area-compradora';
-import ctgAreaSolicitante from './modules/seguridad/compras/ctg-area-solicitante';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
-import ctgtipo from './modules/seguridad/compras/ctg-tipo';
+import ctgtipo from './modules/configuracion/ctg-tipo';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -146,14 +144,15 @@ export default new Vuex.Store({
 
         'compras/asignacion' : asignacion,
         'compras/cotizacion' : cotizacion,
-        'compras/asignacion-compra' : asignacionCompra,
-        'compras/solicitud-compra' : solicitudCompra,
-        'compras/orden-compra' : ordenCompra,
         'compras/item-contratista' : itemContratista,
+        'compras/orden-compra' : ordenCompra,
+        'compras/requisicion' : requisicion,
+        'compras/solicitud-compra' : solicitudCompra,
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
+        'configuracion/ctg-tipo': ctgtipo,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
@@ -205,9 +204,6 @@ export default new Vuex.Store({
         'sci/modelo': modelo,
 
 
-        'seguridad/compras/ctg-area-compradora': ctgAreaCompradora,
-        'seguridad/compras/ctg-area-solicitante': ctgAreaSolicitante,
-        'seguridad/compras/ctg-tipo': ctgtipo,
         'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
         'seguridad/finanzas/configuracion-remesa': configuracionRemesa,

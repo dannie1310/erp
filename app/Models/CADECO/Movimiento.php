@@ -26,6 +26,7 @@ class Movimiento extends Model
         'creado',
         'monto_total',
         'monto_pagado',
+        'monto_original',
     ];
 
     public $timestamps = false;
