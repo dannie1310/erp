@@ -1,7 +1,7 @@
 <template>
     <div class="card" id="configuracion-obra" v-if="$root.can('administracion_configuracion_obra')">
         <div class="card-header">
-            <h3 class="card-title">Configuración de Obra</h3>
+            <h6 class="card-title">Configuración de Obra</h6>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse">
                     <i class="fa fa-minus"></i>

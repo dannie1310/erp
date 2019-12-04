@@ -10,7 +10,7 @@
 			<div class="col-md-6">
 				<div class="card" v-if="subcontrato">
 					<div class="card-header">
-						<h3 class="card-title">Subcontrato</h3>
+						<h6 class="card-title">Subcontrato</h6>
 					</div>
 					<div class="card-body">
 						<form>
@@ -61,7 +61,7 @@
 			<div class="col-md-6">
 				<div class="card" v-if="subcontrato">
 					<div class="card-header">
-						<h3 class="card-title">Periodo de Estimación</h3>
+						<h6 class="card-title">Periodo de Estimación</h6>
 					</div>
 					<div class="card-body">
 						<form>
