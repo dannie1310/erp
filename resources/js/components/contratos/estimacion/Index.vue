@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'estimacion-create'}" v-if="$root.can('registrar_estimacion_subcontrato')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+            <router-link :to="{name: 'estimacion-create'}" v-if="$root.can('registrar_estimacion_subcontrato')" class="btn btn-app btn-info float-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar Estimación
@@ -40,14 +40,14 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter'),  sortable: true},
+                    { title: 'Número de Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default,  sortable: true},
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
                     { title: 'Contratista', field: 'id_empresa',  sortable: true  },
-                    { title: 'Subtotal', field: 'monto', tdClass: 'money', thClass: 'th_money', sortable: true  },
+                    { title: 'Subtotal', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: true  },
                     { title: 'IVA', field: 'impuesto', tdClass: 'money', thClass: 'th_money', sortable: true },
-                    { title: 'Total', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: false },
+                    { title: 'Total', field: 'total', tdClass: 'money', thClass: 'th_money', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel')},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -103,7 +103,7 @@
                     default:
                         return {
                             color: '#d2d6de',
-                            descripcion: 'Descnocido'
+                            descripcion: 'Desconocido'
                         }
                 }
             }
@@ -126,19 +126,22 @@
                     self.$data.data = []
                     self.$data.data = estimaciones.map((estimacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: `# ${estimacion.numero_folio}`,
+                        numero_folio: estimacion.numero_folio_format,
                         observaciones: estimacion.observaciones,
                         id_empresa: estimacion.subcontrato.empresa.razon_social,
                         estado: this.getEstado(estimacion.estado),
-                        monto: `$ ${parseFloat(estimacion.monto).formatMoney(2)}`,
-                        impuesto: `$ ${parseFloat(estimacion.impuesto).formatMoney(2)}`,
-                        subtotal: `$ ${(parseFloat(estimacion.monto) + parseFloat(estimacion.impuesto)).formatMoney(2)}`,
+                        total: estimacion.monto_format,
+                        impuesto:estimacion.impuesto_format,
+                        subtotal: estimacion.subtotal_format,
                         buttons: $.extend({}, {
                             aprobar: (this.$root.can('aprobar_estimacion_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
                             desaprobar: (this.$root.can('revertir_aprobacion_estimacion_subcontrato') && estimacion.estado == 1 ) ? true : undefined ,
                             id: estimacion.id,
-                            estimacion: estimacion
+                            estimacion: estimacion,
+                            estado: estimacion.estado,
+                            delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : true
                         })
+
                     }));
                 },
                 deep: true

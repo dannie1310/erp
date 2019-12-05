@@ -40,7 +40,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Cuenta', field: 'numero', sortable: true },
                     { title: 'Número de Cuentas Registradas', field: 'cuentas_count', sortable: false },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

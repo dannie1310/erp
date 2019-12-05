@@ -58,7 +58,32 @@ export default{
                     })
             });
         },
-
+        get_ordenes_compra(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'orden-compra', payload.config)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+        get_orden_compra(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'orden-compra/' + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -112,7 +137,45 @@ export default{
                         }
                     });
             });
-        }
+        },
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar la entrada de almacén.",
+                    text: "¿Estás seguro/a de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Entrada de almacén registrada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

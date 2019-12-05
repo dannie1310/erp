@@ -14,7 +14,9 @@ use App\Models\SEGURIDAD_ERP\CtgContratista;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
-use App\Models\CADECO\Obra;
+use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use App\Models\CADECO\Contabilidad\HistPoliza;
 
 class Transaccion extends Model
 {
@@ -52,10 +54,6 @@ class Transaccion extends Model
     public function getNumeroFolioFormatAttribute()
     {
         return '# ' . sprintf("%05d", $this->numero_folio);
-    }
-
-    public function getNumeroFolioFormatOrdenAttribute(){
-        return '# '. str_pad($this->numero_folio, 5,"0",STR_PAD_LEFT);
     }
 
     public function getMontoFormatAttribute()
@@ -107,36 +105,40 @@ class Transaccion extends Model
         return substr($cumplimiento, 0, 10);
     }
 
-
     public function getFechaHoraRegistroFormatAttribute()
     {
         $date = date_create($this->FechaHoraRegistro);
-        return date_format($date,"Y-m-d h:i:s a");
-
+        return date_format($date,"d/m/Y H:i:s");
     }
+
+    public function getFechaHoraRegistroOrdenAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"YmdHis");
+    }
+
     public function getCumplimientoFormAttribute()
     {
         $date = date_create($this->cumplimiento);
-        return date_format($date,"Y-m-d");
-
+        return date_format($date,"d/m/Y");
     }
+
     public function getVencimientoFormAttribute()
     {
         $date = date_create($this->vencimiento);
-        return date_format($date,"Y-m-d");
-
+        return date_format($date,"d/m/Y");
     }
+
     public function getVencimientoFormatAttribute()
     {
         $date = date_create($this->vencimiento);
         return date_format($date,"d/m/Y");
-
     }
+
     public function getCumplimientoFormatAttribute()
     {
         $date = date_create($this->cumplimiento);
         return date_format($date,"d/m/Y");
-
     }
     public function  getObservacionesFormatAttribute(){
         return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
@@ -146,12 +148,97 @@ class Transaccion extends Model
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 
     public function getSubtotalAttribute()
     {
         return $this->monto - $this->impuesto;
+    }
+
+    public function moneda()
+    {
+        return $this->hasOne(Moneda::class, 'id_moneda','id_moneda');
+    }
+
+    public function poliza()
+    {
+        return $this->hasOne(Poliza::class,'id_transaccion_sao', 'id_transaccion');
+    }
+
+    public function poliza_movimientos()
+    {
+        return $this->hasMany(PolizaMovimiento::class,'id_transaccion_sao', 'id_transaccion');
+    }
+
+    public function polizas_historico()
+    {
+        return $this->hasMany(HistPoliza::class,'id_transaccion_sao', 'id_transaccion');
+    }
+
+    public function getCambio($id_moneda,$fecha)
+    {
+        $moneda = Moneda::find($id_moneda);
+        if($moneda->tipo ==1)
+        {
+            return 1;
+        }
+        $cambio = Cambio::query()->where("id_moneda","=", $id_moneda)
+            ->where("fecha", "<=",$fecha)
+            ->orderBy("fecha","desc")->first();
+        if($cambio)
+        {
+            return $cambio->cambio;
+        }
+        else{
+            abort(500, "No hay cotización para la moneda");
+        }
+    }
+
+    public function getFactorConversionAttribute()
+    {
+        if(!$this->moneda)
+        {
+            return 1;
+        }
+        if(!$this->obra->moneda)
+        {
+            abort(500,"No se pudo determinar la moneda de la obra");
+        }
+        if($this->moneda->id_moneda == $this->obra->moneda->id_moneda)
+        {
+            return 1;
+        }
+        $tc_moneda_transaccion = $this->getCambio($this->id_moneda, $this->fecha);
+        $tc_moneda_obra = $this->getCambio($this->obra->id_moneda, $this->fecha);
+        return $tc_moneda_transaccion / $tc_moneda_obra;
+
+    }
+
+    public function desvincularPolizas()
+    {
+        if ($this->poliza) {
+            if($this->poliza->estatus == -3){
+                $this->poliza->id_transaccion_sao = null;
+                $this->poliza->save();
+                $movimientos = $this->poliza_movimientos;
+                if($movimientos){
+                    foreach ($movimientos as $movimiento) {
+                        $movimiento->id_transaccion_sao = null;
+                        $movimiento->save();
+                    }
+                }
+                $polizas_historico = $this->polizas_historico;
+                if($polizas_historico)
+                {
+                    foreach ($polizas_historico as $poliza_historico) {
+                        $poliza_historico->id_transaccion_sao = null;
+                        $poliza_historico->save();
+                    }
+                }
+            }
+        }
     }
 }

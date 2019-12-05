@@ -62,7 +62,7 @@
                         this.$emit('deleted');
                     })
             },
-            update() {
+             update() {
                 return this.$store.dispatch('contabilidad/cuenta-banco/update', {
                     id: this.cuenta.id,
                     data: this.form

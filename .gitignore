@@ -20,3 +20,5 @@ yarn-error.log
 /public/mix-manifest.json
 /storage/layouts_bancarios
 /storage/Finanzas
+/storage/Compras
+/public/img/logo_temp.png

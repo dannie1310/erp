@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_solicitud_pago_anticipado')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_solicitud_pago_anticipado')" class="btn btn-app btn-info float-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar Solicitud
@@ -53,6 +53,28 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <div class="col-md-12">
+                                            <div class="form-group error-content">
+                                                <label for="id_empresa">Beneficiario</label>
+                                                <empresa
+                                                        name="id_empresa"
+                                                        placeholder="-- Empresa --"
+                                                        id="id_empresa"
+                                                        data-vv-as="Empresa"
+                                                        v-validate="{required: true}"
+                                                        v-model="id_empresa"
+                                                        scope="proveedorContratista"
+                                                        :error="errors.has('id_empresa')">
+                                                ></empresa>
+                                                <div class="error-label" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
+                                            </div>
+                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
                                         <label for="tipo">Tipo de Transacción:</label>
@@ -90,7 +112,7 @@
                                             <option value>-- Seleccione Transacción --</option>
                                             <option v-for="tran in transacciones" :value="tran.id">{{ tran.numero_folio_format }} ({{ tran.dato_transaccion }})</option>
                                         </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_antecedente')">{{ errors.first('id_antecedente') }}</div>
+                                        <div class="error-label" v-show="errors.has('id_antecedente')">{{ errors.first('id_antecedente') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -100,7 +122,7 @@
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
                                             <div class="col-6">
-                                                <h3>Información de la Transacción</h3>
+                                                <h6>Información de la Transacción</h6>
                                             </div>
                                             <div class="col-6">
                                                 <h6 align="right">Fecha: {{ transaccion.fecha_format }}</h6>
@@ -257,9 +279,10 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale'
     import CostoSelect from "../../../cadeco/costo/Select";
+    import Empresa from "../../../cadeco/empresa/Select";
     export default {
         name: "solicitud-pago-anticipado-create",
-        components: {CostoSelect, Datepicker},
+        components: {CostoSelect, Datepicker,Empresa},
         data() {
             return {
                 es: es,
@@ -267,6 +290,8 @@
                 fecha_limite_1: '',
                 cumplimiento: '',
                 vencimiento: '',
+                id_empresa: '',
+                empresas: [],
                 tipo: '',
                 transacciones: [],
                 id_antecedente: '',
@@ -294,6 +319,7 @@
                     this.fecha_limite_1 = '';
                     this.cumplimiento = '';
                     this.vencimiento = '';
+                    this.id_empresa = '';
                     this.tipo = '';
                     this.transacciones = [];
                     this.id_antecedente = '';
@@ -313,11 +339,22 @@
             formatoFecha(date){
                 return moment(date).format('YYYY-MM-DD');
             },
+            getEmpresas(){
+                return this.$store.dispatch('cadeco/empresa/index', {
+                    params: {
+                        sort: 'razon_social', order: 'asc',
+                        scope: 'proveedorContratista'
+                    }
+                })
+                    .then(data => {
+                        this.empresas = data.data;
+                    })
+            },
             getOrdenes() {
                 return this.$store.dispatch('compras/orden-compra/index',{
                     config: {
                         params: {
-                            scope: 'ordenCompraDisponible'
+                            scope: 'ordenCompraDisponible:'+this.id_empresa
                         }
                     }
                 }).then(data => {
@@ -329,7 +366,7 @@
                 return this.$store.dispatch('contratos/subcontrato/index',{
                     config: {
                         params: {
-                            scope: 'subcontratosDisponible'
+                            scope: 'subcontratosDisponible:'+this.id_empresa
                         }
                     }
                 }).then(data => {
@@ -386,6 +423,19 @@
             },
         },
         watch: {
+            id_empresa(value){
+                this.transacciones = [];
+                this.bandera_transaccion = 0;
+                if(value != '')
+                {
+                    if(this.tipo == 19){
+                        this.getOrdenes();
+                    }
+                    if(this.tipo == 51) {
+                        this.getSubcontratos();
+                    }
+                }
+            },
             tipo(value){
                 this.transacciones = [];
                 this.transaccion = [];
@@ -395,10 +445,10 @@
                 this.observaciones = '';
 
                 if(value){
-                    if(value == 19){
+                    if(value == 19 && this.id_empresa !=''){
                         this.getOrdenes();
                     }
-                    if(value == 51) {
+                    if(value == 51 && this.id_empresa !='') {
                         this.getSubcontratos();
                     }
                 }

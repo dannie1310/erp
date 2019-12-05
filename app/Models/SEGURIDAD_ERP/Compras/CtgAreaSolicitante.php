@@ -4,6 +4,7 @@
 namespace App\Models\SEGURIDAD_ERP\Compras;
 
 
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class CtgAreaSolicitante extends Model
@@ -18,10 +19,15 @@ class CtgAreaSolicitante extends Model
         return $this->hasMany(AreaSolicitanteUsuario::class, 'id_area_solicitante','id');
     }
 
-    public function scopeUsuario($query)
+    public function scopeAsignadas($query)
     {
-        return $query->join('area_usuario')->where('area_usuario.id_usuario','=', auth()->id());
-//        return $this->hasMany('area_usuario')->where('AreaSolicitante.id_usuario','=',auth()->id());
-//        return $query->with('area_usuario')->where('area_usuario.id_usuario','=',auth()->id());
+        return $query->join('Compras.areas_solicitantes_usuario', 'Compras.ctg_areas_solicitantes.id', 'Compras.areas_solicitantes_usuario.id_area_solicitante')
+            ->where('Compras.areas_solicitantes_usuario.id_usuario','=', auth()->id())->select('Compras.ctg_areas_solicitantes.*');
+    }
+
+    public function scopeUsuario($query,$user_id)
+    {
+        $usuario = Usuario::query()->find($user_id);
+        return $usuario->areasSolicitantes();
     }
 }

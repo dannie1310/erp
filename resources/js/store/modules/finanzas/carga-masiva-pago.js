@@ -163,23 +163,16 @@ export default {
             });
         },
         descarga_layout(context, payload){
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI + 'descarga-layout', { params: payload.params, responseType:'blob', })
-                    .then(r => r.data)
-                    .then(data => {
-                        const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.setAttribute('download', 'LayoutPendienesPagos_' + this._vm.$session.get('db') + '.csv');
-                        document.body.appendChild(link);
-                        link.click();
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    })
-            });
+            var urr = URI + 'descarga-layout?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Layout descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
         }
     },
 

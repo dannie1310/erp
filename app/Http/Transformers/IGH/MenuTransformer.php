@@ -9,7 +9,8 @@ use League\Fractal\TransformerAbstract;
 class MenuTransformer extends TransformerAbstract
 {
     public function transform(Menu $model) {
-
-        return $model->toArray();
+        $model_arr = $model->toArray();
+        $model_arr["target"] = $model->target;
+        return $model_arr;
     }
 }

@@ -54,7 +54,7 @@ class SolicitudBajaCuentaBancariaTransformer extends TransformerAbstract
             'estado' => $model->estado,
             'fecha_format' => $model->fecha_format,
             'folio' => $model->numero_folio,
-            'numero_folio_format_orden' => $model->numero_folio_format_orden,
+            'numero_folio_format' => $model->numero_folio_format,
             'sucursal_format' => $model->sucursal_format,
             'tipo_cuenta' => $model->tiposCuentas,
         ];

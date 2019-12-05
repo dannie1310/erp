@@ -10,6 +10,9 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
+use App\Models\SEGURIDAD_ERP\Compras\CtgTipo;
 use Illuminate\Database\Eloquent\Model;
 
 class SolicitudComplemento extends Model
@@ -23,7 +26,6 @@ class SolicitudComplemento extends Model
         'id_transaccion',
         'id_area_compradora',
         'id_tipo',
-        'id_ubicacion',
         'id_area_solicitante',
         'folio_compuesto',
         'estado',
@@ -33,5 +35,44 @@ class SolicitudComplemento extends Model
         'registro',
         'timestamp_registro',
     ];
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_requisicion_origen);
+        return date_format($date,"d/m/Y");
+
+    }
+
+    public function generaFolioCompuesto(){
+
+        $count = $this->query()->where('id_area_compradora','=', $this->id_area_compradora)->where('id_tipo','=', $this->id_tipo)->count();
+        $count++;
+
+        $tipo= CtgTipo::find($this->id_tipo);
+        $area_compradora = CtgAreaCompradora::find($this->id_area_compradora);
+
+        $folio=$area_compradora->descripcion_corta.'-'.$tipo->descripcion_corta.'-'.$count;
+
+        return $folio;
+
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(CtgTipo::class, 'id_tipo', 'id');
+    }
+
+    public function area_compradora()
+    {
+        return $this->belongsTo(CtgAreaCompradora::class, 'id_area_compradora','id');
+    }
+
+    public function area_solicitante()
+    {
+        return $this->belongsTo(CtgAreaSolicitante::class, 'id_area_solicitante', 'id');
+    }
+
+
+
 
 }

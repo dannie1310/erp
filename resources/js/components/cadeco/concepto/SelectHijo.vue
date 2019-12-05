@@ -78,7 +78,7 @@
                         callback();
                     })
                     .catch(error => {
-                        callback(new Error('Failed to load options: network error.'))
+                        callback(new Error('Fallo en la carga de opciones, error de red.'))
                     });
             }
         },

@@ -19,4 +19,7 @@ class ActivoFijo extends Model
     protected $primaryKey = 'id';
     public $timestamps = false;
 
+    protected $fillable = [
+        'id_transaccion',
+    ];
 }

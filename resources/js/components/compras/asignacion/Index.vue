@@ -1,8 +1,8 @@
 <template>
     <div class="row">
-<!--        <div class="col-12">-->
-<!--            <create @created="paginate()"></create>-->
-<!--        </div>-->
+        <div class="col-12">
+            <Layout @change="paginate()"></Layout>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -20,24 +20,25 @@
 </template>
 
 <script>
+    import Layout from "./CargaLayout";
     export default {
         name: "asignacion-proveedores-index",
+        components: {Layout},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio', sortable: true},
-                    { title: 'Fecha/Hora', field: 'fecha_hora_inicio', sortable: true},
-                    { title: 'Tipo de Solicitud', field: 'cantidad_marbetes'},
-                    { title: 'Observaciones', field: 'cantidad_marbetes'},
+                    { title: 'Folio', field: 'folio', tdClass: 'td_money',sortable: true},
+                    { title: 'Fecha/Hora', field: 'fecha_format', tdClass: 'td_money',sortable: true},
                     { title: 'Estado', field: 'estado', sortable: true},
-                    { title: 'Cotizaciones', field: 'estado', sortable: true},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Cotizaciones', field: 'cotizacion', sortable: true},
+                    { title: 'Observaciones', field: 'observaciones'},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['usuario'],sort: 'folio', order: 'desc'},
+                query: {scope:'verCotizaciones', sort: 'id_transaccion', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -54,41 +55,39 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                // return this.$store.dispatch('almacenes/inventario-fisico/paginate', { params: this.query})
-                //     .then(data => {
-                //         this.$store.commit('almacenes/inventario-fisico/SET_INVETARIOS', data.data);
-                //         this.$store.commit('almacenes/inventario-fisico/SET_META', data.meta);
-                //     })
-                //     .finally(() => {
-                //         this.cargando = false;
-                //     })
+                return this.$store.dispatch('compras/asignacion/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('compras/asignacion/SET_ASIGNACIONES', data.data);
+                        this.$store.commit('compras/asignacion/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
             }
         },
         computed: {
-            inventarios(){
-                return this.$store.getters['almacenes/inventario-fisico/inventarios'];
+            asignaciones(){
+                return this.$store.getters['compras/asignacion/asignaciones'];
             },
             meta(){
-                return this.$store.getters['almacenes/inventario-fisico/meta'];
+                return this.$store.getters['compras/asignacion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            inventarios: {
-                handler(inventarios) {
+            asignaciones: {
+                handler(asignaciones) {
                     let self = this
                     self.$data.data = []
-                    inventarios.forEach(function (inventario, i) {
+                    asignaciones.forEach(function (asignacion, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: inventario.folio_format,
-                            id_tipo: inventario.id_tipo,
-                            fecha_hora_inicio: inventario.fecha_hora_inicio_format,
-                            cantidad_marbetes: inventario.cantidad_marbetes,
-                            usuario_inicia: inventario.usuario.nombre,
-                            estado: inventario.estado_format,
+                            folio: asignacion.folio_format,
+                            id_tipo: asignacion.id_tipo,
+                            fecha_format: asignacion.fecha_format,
+                            observaciones: asignacion.observaciones,
                             // buttons: $.extend({}, {
                             //     id:inventario.id,
                             //     marbete: self.$root.can('generar_marbetes'),

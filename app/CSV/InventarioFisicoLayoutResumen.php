@@ -6,11 +6,13 @@ namespace App\CSV;
 
 use App\Models\CADECO\Inventarios\Conteo;
 use App\Models\CADECO\Inventarios\InventarioFisico;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
 {
+    use Exportable;
     protected $inventario;
 
 
@@ -21,7 +23,6 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
     }
     public function collection()
     {
-
         $user = array();
         foreach ($this->inventario->marbetes as $marbete){
             $conteos = array();
@@ -34,17 +35,19 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
                 "almacen"=>$marbete->almacen->descripcion,
                 "id_material" => $marbete->id_material,
                 "material"=>$marbete->material->descripcion,
+                "unidad" => $marbete->unidad,
                 "saldo"=>$marbete->saldo,
-                "nuevo1"=>array_key_exists('1',$conteos)?$conteos[1]->cantidad_nuevo:'  ',
+                "precio_unitario" => number_format((float) ($marbete->precio_unitario != 0 ? $marbete->precio_unitario : $marbete->precioUnitarioPromedio()), 2, '.', ''),
                 "usado1"=>array_key_exists('1',$conteos)?$conteos[1]->cantidad_usados:'  ',
+                "nuevo1"=>array_key_exists('1',$conteos)?$conteos[1]->cantidad_nuevo:'  ',
                 "inservible1"=>array_key_exists('1',$conteos)?$conteos[1]->cantidad_inservible:'  ',
                 "total1"=>array_key_exists('1',$conteos)?$conteos[1]->total:'  ',
-                "nuevo2"=>array_key_exists('2',$conteos)?$conteos[2]->cantidad_nuevo:'  ',
                 "usado2"=>array_key_exists('2',$conteos)?$conteos[2]->cantidad_usados:'  ',
+                "nuevo2"=>array_key_exists('2',$conteos)?$conteos[2]->cantidad_nuevo:'  ',
                 "inservible2"=>array_key_exists('2',$conteos)?$conteos[2]->cantidad_inservible:'  ',
                 "total2"=>array_key_exists('2',$conteos)?$conteos[2]->total:'  ',
-                "nuevo3"=>array_key_exists('3',$conteos)?$conteos[3]->cantidad_nuevo:'  ',
                 "usado3"=>array_key_exists('3',$conteos)?$conteos[3]->cantidad_usados:'  ',
+                "nuevo3"=>array_key_exists('3',$conteos)?$conteos[3]->cantidad_nuevo:'  ',
                 "inservible3"=>array_key_exists('3',$conteos)?$conteos[3]->cantidad_inservible:'  ',
                 "total3"=>array_key_exists('3',$conteos)?$conteos[3]->total:'  ',
             );
@@ -55,6 +58,8 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
     public function headings(): array
     {
         return array([
+            '   ',
+            '   ',
             '   ',
             '   ',
             '   ',
@@ -76,7 +81,9 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
             'Almacen',
             'Id Material',
             'Material',
+            'Unidad',
             'Saldo',
+            'Precio Unitario',
             'usados',
             'nuevos',
             'inservibles',
@@ -90,5 +97,4 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
             'inservibles',
             'total',]);
     }
-
 }

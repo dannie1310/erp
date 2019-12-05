@@ -2,7 +2,7 @@
     <span>
         <div class="card" id="desasignacion">
         <div class="card-header">
-            <h3 class="card-title">Desasignación de Roles</h3>
+            <h6 class="card-title">Desasignación de Roles</h6>
         </div>
 
         <div class="card-body">
@@ -85,7 +85,7 @@
                 </div>
             </div>
             <div>
-                <button class="btn btn-outline-success pull-right" :disabled="!roles_desasignados.length" @click="validate"><i class="fa fa-save"></i></button>
+                <button class="btn btn-outline-success float-right" :disabled="!roles_desasignados.length" @click="validate"><i class="fa fa-save"></i></button>
             </div>
         </div>
     </div>

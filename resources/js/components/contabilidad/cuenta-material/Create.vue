@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cuenta_material')" class="btn btn-app btn-info pull-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_cuenta_material')" class="btn btn-app btn-info float-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i> Registrar Cuenta
         </button>
@@ -27,7 +27,6 @@
                                                 id="id_material"
                                                 v-model="id_material"
                                                 :error="errors.has('id_material')"
-                                                scope="sinCuenta"
                                                 ref="selectMaterial"
                                                 :disableBranchNodes="false"
                                         ></material-select>

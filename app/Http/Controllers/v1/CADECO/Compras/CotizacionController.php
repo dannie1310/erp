@@ -52,7 +52,6 @@ class CotizacionController extends Controller
 
     public function descargaLayout($id)
     {
-
         return $this->service->descargaLayout($id);
     }
 }

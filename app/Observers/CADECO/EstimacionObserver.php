@@ -40,4 +40,19 @@ class EstimacionObserver extends TransaccionObserver
         }
         $estimacion->creaSubcontratoEstimacion();
     }
+
+    public function deleting(Estimacion $estimacion)
+    {
+        $estimacion->validarParaEliminar();
+        if($estimacion->estimacionEliminada == null)
+        {
+            abort(400, "Error al eliminar, respaldo incorrecto.");
+        }
+    }
+
+    public function deleted(Estimacion $estimacion)
+    {
+        $estimacion->subcontratoEstimacion()->delete();
+        $estimacion->subcontrato->cambioEstadoEliminarEstimacion();
+    }
 }

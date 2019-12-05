@@ -159,17 +159,22 @@ class GestionPagoService
                             if ($partida_remesa->documento->transaccion) {
                                 $transaccion = $partida_remesa->documento->transaccion;
                                 $pago_remesa = null;
-                                $partida_remesa->monto_pagado = $partida_remesa->documento->getImporteTotalProcesadoAttribute();
-                                $partida_remesa->fecha_pago = $fecha->format('Y-m-d');
-                                $partida_remesa->cuenta = $partida_remesa->cuentaCargo;
-                                $partida_remesa->referencia_pago = $pago['referencia'];
-                                $partida_remesa->tipo_cambio = $partida_remesa->documento->moneda->tipo_cambio;
+                                $data = [
+                                    'monto_pagado_transaccion' => $partida_remesa->documento->getImporteTotalProcesadoAttribute(),
+                                    'id_cuenta_cargo' => $partida_remesa->cuentaCargo->id_cuenta,
+                                    'fecha_pago' => $fecha->format('Y-m-d'),
+                                    'monto_pagado' => $partida_remesa->documento->getImporteTotalProcesadoAttribute(),
+                                    'referencia_pago' => $pago['referencia'],
+                                    'id_moneda_cuenta_cargo' => $partida_remesa->cuentaCargo->id_moneda,
+                                    'tipo_cambio' => 1
+
+                                ];
                                 switch ($partida_remesa->documento->transaccion->tipo_transaccion) {
                                     case 65:
-                                        $pago_remesa = Factura::find($transaccion->id_transaccion)->generaOrdenPago($partida_remesa);
+                                        $pago_remesa = Factura::find($transaccion->id_transaccion)->generaOrdenPago($data);
                                         break;
                                     case 72:
-                                        $pago_remesa = Solicitud::find($transaccion->id_transaccion)->generaPago($partida_remesa);
+                                        $pago_remesa = Solicitud::find($transaccion->id_transaccion)->generaPago($data);
                                         if(!$pago_remesa){
                                             abort(400, "Hubo un error al generar el pago con referencia: ". $pago['referencia'] . " tipo de solicitud no soportado");
                                         }
@@ -197,11 +202,6 @@ class GestionPagoService
                             $distribucion->estado = 3;
                             $distribucion->save();
 
-                            unset($partida_remesa->monto_pagado);
-                            unset($partida_remesa->fecha_pago);
-                            unset($partida_remesa->cuenta);
-                            unset($partida_remesa->referencia_pago);
-                            unset($partida_remesa->tipo_cambio);
                             $partida_remesa->estado = 2;
                             $partida_remesa->id_transaccion_pago = $pago_remesa->id_transaccion;
                             $partida_remesa->folio_partida_bancaria = $pago['referencia'];
@@ -259,7 +259,6 @@ class GestionPagoService
                     ]);
                 }
             }
-
             $archivo_bitacora->estado = 1;
             $archivo_bitacora->save();
             $this->guardar_bitacora($pagos->file_interbancario);
@@ -315,7 +314,6 @@ class GestionPagoService
                             ->where('id_cuenta_abono', '=', $cuenta_abono->id)
                             ->whereIn('id_documento', $documentos->pluck('IDDocumento'))
                             ->whereNotIn('id_documento', array_values($doctos_repetidos))->get();
-
                         if(count($dist_part) == 0){
                             $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
                             if($transaccion_pagada){
@@ -379,8 +377,42 @@ class GestionPagoService
                             if (count($dist_part) == 1) {
                                 $registros_bitacora[] = $this->bitacoraPago($dist_part[0]->documento, $pago);
                             } else {
-                                $doctos_repetidos[$dist_part[0]->id_documento] = $dist_part[0]->id_documento;
-                                $registros_bitacora[] = $this->bitacoraPago($dist_part[0]->documento, $pago);
+                                /**
+                                 * Se valida si los documentos cuentan con facturas pendientes de pago
+                                 */
+                                $pendiente_pago = $this->pendientePago($dist_part);
+                                if(!is_null($pendiente_pago)) {
+                                    $doctos_repetidos[$pendiente_pago->IDDocumento] = $pendiente_pago->IDDocumento;
+                                    $registros_bitacora[] = $this->bitacoraPago($pendiente_pago, $pago);
+                                }else {
+                                    $registros_bitacora[] = array(
+                                        'id_documento' => null,
+                                        'id_distribucion_recurso' => null,
+                                        'id_transaccion' => null,
+                                        'id_transaccion_tipo' => '   N/A   ',
+                                        'pago_a_generar' => 'N/A',
+                                        'aplicacion_manual' => true,
+                                        'estado' => ['id' => 0, 'estado' => 3, 'descripcion' => 'Pagada'],
+                                        'pagable' => false,
+                                        'concepto' => $pago['concepto'],
+                                        'beneficiario' => $pago['cuenta_abono'],
+                                        'monto' => $pago['monto'],
+                                        'cuenta_cargo' => ['id_cuenta_cargo' => $cta_cargo->id_cuenta,
+                                            'numero' => $cta_cargo->numero,
+                                            'abreviatura' => $cta_cargo->abreviatura,
+                                            'nombre' => $cta_cargo->empresa->razon_social,
+                                            'id_empresa' => $cta_cargo->empresa->id_empresa],
+                                        'cuenta_abono' => [
+                                            'id_cuenta_abono' => $cuenta_abono ? $cuenta_abono->id : null,
+                                            'numero' => $cuenta_abono ? $cuenta_abono->cuenta_clabe : null,
+                                            'abreviatura' => $pago['cuenta_abono'],
+                                            'nombre' => ''],
+                                        'referencia' => $pago['referencia'],
+                                        'referencia_docto' => '   N/A   ',
+                                        'origen_docto' => '   N/A   ',
+                                        'fecha_pago' => $pago['fecha']
+                                    );
+                                }
                             }
                         }
                     }
@@ -391,5 +423,16 @@ class GestionPagoService
             'data' => $registros_bitacora,
             'resumen' => $this->resumenBitacora($registros_bitacora, $bitacora_nombre)
         );
+    }
+
+    private function pendientePago($pendientes_pago)
+    {
+        foreach ($pendientes_pago as $dato)
+        {
+            $factura = Factura::pendientePago()->find($dato->documento->IDTransaccionCDC);
+            if(!is_null($factura)){
+                return $dato->documento;
+            }
+        }
     }
 }

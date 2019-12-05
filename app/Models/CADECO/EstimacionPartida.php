@@ -4,6 +4,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Estimaciones\EstimacionPartidaEliminada;
+
 class EstimacionPartida extends Item
 {
     public function contrato()
@@ -14,6 +16,11 @@ class EstimacionPartida extends Item
     public function concepto()
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function estimacionPartidaEliminada()
+    {
+        return $this->belongsTo(EstimacionPartidaEliminada::class, 'id_item');
     }
 
     public function getEstimadoAnteriorAttribute($id)

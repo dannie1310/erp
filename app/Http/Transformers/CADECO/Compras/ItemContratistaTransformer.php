@@ -15,6 +15,15 @@ class ItemContratistaTransformer extends TransformerAbstract
     ];
 
     /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'empresa'
+    ];
+
+    /**
      * @param ItemContratista $model
      * @return array
      */

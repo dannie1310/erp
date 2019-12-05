@@ -12,7 +12,6 @@ class AsignacionTransformer extends TransformerAbstract
 
     public function transform(Asignacion $model)
     {
-        var_dump($model->fecha_format,$model->observaciones);
         return [
             'id' => (int) $model->getKey(),
             'fecha' => $model->fecha,

@@ -9,9 +9,10 @@
 namespace App\Http\Transformers\CADECO;
 
 
-use App\Http\Transformers\CADECO\Compras\InventarioTransformer;
 use App\Models\CADECO\Almacen;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\CADECO\Almacenes\MaterialAjustesTransformer;
+use App\Http\Transformers\CADECO\Almacenes\MaterialSalidasTransformer;
 
 class AlmacenTransformer extends TransformerAbstract
 {
@@ -23,7 +24,9 @@ class AlmacenTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'inventario',
-
+        'materiales',
+        'materiales_ajuste',
+        'materiales_salida'
     ];
 
 
@@ -35,4 +38,39 @@ class AlmacenTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * Include Materiales
+     * @param Almacen $model
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeMateriales(Almacen $model){
+        if ($materiales = $model->materiales) {
+            return $this->collection($materiales, new MaterialTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Materiales
+     * @param Almacen $model
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeMaterialesAjuste(Almacen $model){
+        if ($materiales = $model->materialesAjustables) {
+            return $this->collection($materiales, new MaterialAjustesTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * Include Materiales
+     * @param Almacen $model
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeMaterialesSalida(Almacen $model){
+        if ($materiales = $model->materialesSalida) {
+            return $this->collection($materiales, new MaterialSalidasTransformer);
+        }
+        return null;
+    }
 }

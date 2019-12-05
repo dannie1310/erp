@@ -1,0 +1,44 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: DBenitezc
+ * Date: 07/10/2019
+ * Time: 04:16 PM
+ */
+
+namespace App\Http\Transformers\CADECO\Almacenes;
+
+
+use App\Models\CADECO\OrdenCompraPartida;
+use League\Fractal\TransformerAbstract;
+
+class OrdenCompraPartidaTransformer extends TransformerAbstract
+{
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [];
+
+
+    public function transform(OrdenCompraPartida $model)
+    {
+        return [
+            'id' => $model->getKey(),
+            'id_transaccion'=> $model->id_transaccion,
+            'cantidad' => $model->cantidad,
+            'cantidad_material' => $model->cantidad_material,
+            'unidad' => $model->unidad,
+            'material' => $model->material->descripcion,
+            'numero_parte'=>$model->material->numero_parte,
+            'fecha_entrega_format'=>$model->entrega->fecha_format,
+            'cantidad_pendiente'=>$model->entrega->pendiente_entrega,
+            'destino' => '',
+            'precio_unitario'=>$model->precio_unitario,
+            'cumplido'=>false,
+            'id_material' => $model->material->id_material,
+        ];
+    }
+}

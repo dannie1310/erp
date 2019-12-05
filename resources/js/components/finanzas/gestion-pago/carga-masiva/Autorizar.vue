@@ -133,9 +133,9 @@
                                 </div>
 
                 <div class="modal-footer">
-                    <button  type="button" class="btn btn-secondary pull-right" @click="index" >Cerrar</button>
+                    <button  type="button" class="btn btn-secondary float-right" @click="index" >Cerrar</button>
                     <div>
-                        <button v-if="layout.estado.estado==0" @click="autorizar" title="Autorizar" class="btn btn-primary pull-right">Autorizar</button>
+                        <button v-if="layout.estado.estado==0" @click="autorizar" title="Autorizar" class="btn btn-primary float-right">Autorizar</button>
                     </div>
                 </div>
             </div>

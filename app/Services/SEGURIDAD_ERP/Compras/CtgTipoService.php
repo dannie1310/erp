@@ -15,28 +15,22 @@ use App\Repositories\Repository;
 
 class CtgTipoService
 {
-
     /**
      * @var Repository
      */
     protected $repository;
 
-
     /**
      * CtgTipoService constructor
      * @param CtgTipo $model
      */
-
     public function __construct(CtgTipo $model)
     {
         $this->repository = new Repository($model);
     }
 
-
     public function index($data)
     {
-
         return $this->repository->all($data);
     }
-
 }

@@ -8,6 +8,9 @@
 
 namespace App\Models\CADECO;
 use App\Facades\Context;
+use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\CADECO\Estimaciones\EstimacionEliminada;
+use App\Models\CADECO\Estimaciones\EstimacionPartidaEliminada;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
@@ -20,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 class Estimacion extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 51;
+    public const OPCION_ANTECEDENTE = 2;
 
     protected $fillable = [
         'id_antecedente',
@@ -279,11 +283,153 @@ class Estimacion extends Transaccion
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
-    public function moneda(){
+    public function moneda()
+    {
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
-    public function items(){
-        return $this->hasMany(EstimacionPartida::class, 'id_transaccion');
+    public function partidas()
+    {
+        return $this->hasMany(EstimacionPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function prepoliza()
+    {
+        return $this->belongsTo(Poliza::class,  'id_transaccion', 'id_transaccion_sao');
+    }
+
+    public function estimacionEliminada()
+    {
+        return $this->belongsTo(EstimacionEliminada::class, 'id_transaccion');
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+                $this->respaldar($motivo);
+                $this->partidas()->delete();
+                $this->delete();
+            DB::connection('cadeco')->commit();
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Reglas de negocio que debe cumplir la eliminación
+     */
+    public function validarParaEliminar()
+    {
+        $mensaje = "";
+
+        if($this->estado != 0)
+        {
+            abort(400, "No se puede eliminar está estimación porque se encuentra Autorizada.");
+        }
+
+        if($this->prepoliza()->first() != null)
+        {
+            if($this->prepoliza->estatus != -3)
+            {
+                $mensaje = $mensaje."-Prepoliza: # ".$this->prepoliza->id_int_poliza." \n";
+            };
+        }
+
+        if($this->facturas()->first() != null)
+        {
+            $factura_item = [];
+            foreach ($this->facturas as $factura){
+                array_push($mensaje_items, "-Factura: #" . $factura->numero_folio . " \n");
+            }
+
+            $factura_item = array_unique($factura_item);
+            if($factura_item != [])
+            {
+                $mensaje_fin = "";
+                foreach ($factura_item as $mensaje_item) {
+                    $mensaje_fin = $mensaje_fin . $mensaje_item;
+                }
+                $mensaje = $mensaje.$mensaje_fin;
+            }
+        }
+
+        if($mensaje != "")
+        {
+            abort(400, "No se puede eliminar la estimación debido a que existen las siguientes transacciones relacionadas:\n". $mensaje. "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        }
+    }
+
+    public function respaldar($motivo)
+    {
+        /**
+         * Respaldar partidas
+         */
+        foreach ($this->partidas as $partida) {
+            EstimacionPartidaEliminada::create([
+                'id_item' => $partida->id_item,
+                'id_transaccion' => $partida->id_transaccion,
+                'id_antecedente' => $partida->id_antecedente,
+                'item_antecedente' => $partida->item_antecedente,
+                'id_concepto' => $partida->id_concepto,
+                'cantidad' => $partida->cantidad,
+                'importe' => $partida->importe,
+                'precio_unitario' => $partida->precio_unitario,
+                'estado' => $partida->estado
+            ]);
+        }
+
+        /**
+         * Respaldar estimación
+         */
+        EstimacionEliminada::create([
+            'id_transaccion' => $this->id_transaccion,
+            'id_antecedente' => $this->id_antecedente,
+            'tipo_transaccion' => $this->tipo_transaccion,
+            'numero_folio' => $this->numero_folio,
+            'fecha' => $this->fecha,
+            'estado' => $this->estado,
+            'impreso' => $this->impreso,
+            'id_obra' => $this->id_obra,
+            'id_empresa' => $this->id_empresa,
+            'id_moneda' => $this->id_moneda,
+            'cumplimiento' => $this->cumplimiento,
+            'vencimiento' => $this->vencimiento,
+            'opciones' => $this->opciones,
+            'monto' => $this->monto,
+            'saldo' => $this->saldo,
+            'autorizado' => $this->autorizado,
+            'impuesto' => $this->impuesto,
+            'anticipo' => $this->anticipo,
+            'tipo_cambio' => $this->anticipo,
+            'comentario' => $this->comentario,
+            'observaciones' => $this->observaciones ? $this->observaciones : '',
+            'FechaHoraRegistro' => $this->FechaHoraRegistro,
+            'IVARetenido' => $this->IVARetenido,
+            'id_usuario' => $this->id_usuario,
+            'motivo_eliminacion' => $motivo,
+        ]);
+    }
+
+    public function getSubtotalAttribute()
+    {
+        return $this->monto - $this->impuesto;
+    }
+
+    public function getSubtotalFormatAttribute()
+    {
+        return '$ ' . number_format($this->subtotal,2);
+    }
+
+    public function getImpuestoFormatAttribute()
+    {
+        return '$ ' . number_format($this->impuesto,2);
     }
 }

@@ -60,6 +60,11 @@ class Obra extends Model
         return $this->hasOne(DatosContables::class, 'id_obra');
     }
 
+    public function moneda()
+    {
+        return $this->hasOne(Moneda::class, 'id_moneda','id_moneda');
+    }
+
     public function datosEstimaciones()
     {
         return $this->hasOne(ConfiguracionEstimacion::class, 'id_obra');
@@ -101,4 +106,10 @@ class Obra extends Model
     public function cuentasPagadorasObra(){
         return $this->hasManyThrough(CuentaPagadora::class,CuentaObra::class,'id_obra','id_cuenta', 'id_obra','id_cuenta');
     }
+
+    public function getMonedaAttribute()
+    {
+        return Moneda::where("tipo",1)->first();
+    }
+
 }

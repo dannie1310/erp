@@ -29,7 +29,7 @@
                     { title: 'Banco', field: 'id_banco', thComp: require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Cuenta/CLABE', field: 'cuenta_clabe', thComp: require('../../../globals/th-Filter'), sortable: true},
                     { title: 'Estatus', field: 'estatus', sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,

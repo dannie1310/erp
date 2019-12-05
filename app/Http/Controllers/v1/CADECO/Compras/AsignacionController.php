@@ -12,9 +12,7 @@ use League\Fractal\Manager;
 
 class AsignacionController extends Controller
 {
-    use ControllerTrait {
-        destroy as traitDestroy;
-    }
+    use ControllerTrait;
 
     /**
      * @var Manager
@@ -47,11 +45,5 @@ class AsignacionController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
-    }
-
-    public function asignacion($id)
-    {
-        $this->service->asignacion($id)->create();
-//        dd('Asignación Controller',$id);
     }
 }

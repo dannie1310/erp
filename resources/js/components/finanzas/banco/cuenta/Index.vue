@@ -36,7 +36,7 @@
                     { title: 'Chequera', field:'chequera', sortable: false},
                     { title: 'Tipo', field:'tipo', sortable: false},
                     { title: 'Abreviatura', field:'abreviatura', sortable: false},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
 
                 ],
                 data: [],

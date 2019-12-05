@@ -2,7 +2,7 @@
     <span>
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Eliminar Roles</h3>
+                <h6 class="card-title">Eliminar Roles</h6>
             </div>
             <!-- /.card-header -->
             <div class="card-body">

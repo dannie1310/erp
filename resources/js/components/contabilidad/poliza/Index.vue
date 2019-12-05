@@ -48,13 +48,13 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Tipo de Póliza', field: 'id_tipo_poliza_interfaz', sortable: true },
                     { title: 'Tipo de Transacción', field: 'id_tipo_poliza_contpaq', sortable: true },
-                    { title: 'Concepto', field: 'concepto', thComp: require('../../globals/th-Filter'), sortable: true },
+                    { title: 'Concepto', field: 'concepto', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Fecha de Prepóliza', field: 'fecha', sortable: true },
                     { title: 'Total', field: 'total', sortable: true },
                     { title: 'Cuadre', field: 'cuadre'},
                     { title: 'Estatus', field: 'estatus', sortable: true, tdComp: require('./partials/EstatusLabel')},
                     { title: 'Poliza ContPaq', field: 'poliza_contpaq', sortable: true },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -148,6 +148,7 @@
                             edit: self.$root.can('editar_prepolizas_generadas') ? true : undefined,
                             show: true,
                             historico: false,
+                            estatus: (poliza.estatusPrepoliza.estatus != 2 && poliza.estatusPrepoliza.estatus != 3 && poliza.estatusPrepoliza.estatus != 1 && poliza.estatusPrepoliza.estatus != -3) ?  true : undefined,
                             id: poliza.id
                         })
                     }));

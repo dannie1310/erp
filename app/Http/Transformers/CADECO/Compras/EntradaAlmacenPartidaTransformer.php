@@ -27,7 +27,8 @@ class EntradaAlmacenPartidaTransformer extends TransformerAbstract
         'concepto',
         'material',
         'inventario',
-        'movimiento'
+        'movimiento',
+        'contratista'
     ];
 
     /**
@@ -47,7 +48,11 @@ class EntradaAlmacenPartidaTransformer extends TransformerAbstract
             'cantidad' => $model->cantidad,
             'cantidad_material' => $model->cantidad_material,
             'cantidad_format' => $model->cantidad_format,
-            'saldo' => $model->saldo
+            'saldo' => $model->saldo,
+            'material_numero_parte' => $model->material->numero_parte,
+            'material_descripcion' => $model->material->descripcion,
+            'destino_descripcion' => $model->destino->descripcion,
+            'destino_path' => $model->destino->path,
         ];
     }
 
@@ -117,6 +122,15 @@ class EntradaAlmacenPartidaTransformer extends TransformerAbstract
         if($mov = $model->movimiento)
         {
             return $this->item($mov, new MovimientoTransformer);
+        }
+        return null;
+    }
+
+    public function includeContratista(EntradaMaterialPartida $model)
+    {
+        if($contratista = $model->itemContratista)
+        {
+            return $this->item($contratista, new ItemContratistaTransformer);
         }
         return null;
     }

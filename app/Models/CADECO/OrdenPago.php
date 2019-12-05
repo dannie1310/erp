@@ -59,16 +59,16 @@ class OrdenPago extends Transaccion
             if (is_null($this->pago)){
                 $datos = [
                     'numero_folio' => $this->numero_folio,
-                    'referencia'=>$data->referencia_pago,
-                    'id_cuenta'=>$data->id_cuenta_cargo,
-                    'fecha'=>$data->fecha_pago,
-                    'monto'=>-1*abs($data->monto_pagado),
+                    'referencia'=>$data["referencia_pago"],
+                    'id_cuenta'=>$data["id_cuenta_cargo"],
+                    'fecha'=>$data["fecha_pago"],
+                    'monto'=>-1*abs($data["monto_pagado"]),
                     'id_empresa'=>$this->id_empresa,
                     'destino'=>$this->empresa->razon_social,
-                    'id_moneda'=>$data->cuenta->id_moneda,
+                    'id_moneda'=>$data["id_moneda_cuenta_cargo"],
                     'observaciones'=>$this->factura->observaciones,
-                    'cumplimiento'=>$data->fecha_pago,
-                    'vencimiento'=>$data->fecha_pago,
+                    'cumplimiento'=>$data["fecha_pago"],
+                    'vencimiento'=>$data["fecha_pago"],
                 ];
                 $pago = PagoFactura::query()->create($datos);
                 return $pago;

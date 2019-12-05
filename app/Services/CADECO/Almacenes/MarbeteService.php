@@ -40,7 +40,7 @@ class MarbeteService
     public function store($data)
     {
 
-        $inventario = InventarioFisico::query()->where('estado',0)->first();
+        $inventario = InventarioFisico::where('estado',0)->first();
 
 
         if (empty($inventario)){
@@ -48,7 +48,7 @@ class MarbeteService
         }
         
 
-        $existe_material = Marbete::query()->where('id_almacen','=', $data['id_almacen'])
+        $existe_material = Marbete::where('id_almacen','=', $data['id_almacen'])
             ->where('id_material', '=', $data['id_material'])
             ->where('id_inventario_fisico','=', $inventario->id)
             ->first();
@@ -57,14 +57,18 @@ class MarbeteService
             abort(400, 'Ya existe un marbete asociado a este material en el inventario');
         }
 
-        $saldo = Inventario::query()->join('almacenes','almacenes.id_almacen', 'inventarios.id_almacen')
+        $saldo = Inventario::join('almacenes','almacenes.id_almacen', 'inventarios.id_almacen')
             ->where('inventarios.id_almacen','=', $data['id_almacen'])
             ->where('inventarios.id_material','=', $data['id_material'])->sum('inventarios.saldo');
 
-        $folio_arr = Marbete::query()->where('id_inventario_fisico','=', $inventario->id )
-            ->orderBy('folio', 'desc')->select('folio')->first()->toArray();
+        $folio_arr = Marbete::where('id_inventario_fisico','=', $inventario->id )
+            ->orderBy('folio', 'desc')->select('folio')->first();
 
-        $folio = $folio_arr['folio']+1;
+        if(is_null($folio_arr)){
+            $folio = 1;
+        }else {
+            $folio = $folio_arr->folio + 1;
+        }
 
         $datos = [
           'id_inventario_fisico'=> $inventario->id,
@@ -73,7 +77,7 @@ class MarbeteService
           'folio'=>$folio,
           'saldo'=>$saldo,
         ];
-       $marbete = Marbete::query()->create($datos);
+       $marbete = Marbete::create($datos);
        return $marbete;
 
     }
@@ -94,7 +98,7 @@ class MarbeteService
 
         if(isset($data['id_almacen']))
         {
-           $almacen = Almacen::query()->where('descripcion','LIKE', '%'.$data['id_almacen'].'%')->get();
+           $almacen = Almacen::where('descripcion','LIKE', '%'.$data['id_almacen'].'%')->get();
 
            $this->repository->whereIn(['id_almacen', $almacen->pluck('id_almacen')]);
 
@@ -102,7 +106,7 @@ class MarbeteService
 
         if(isset($data['id_material']))
         {
-            $material = Material::query()->where([['descripcion', 'LIKE', '%'.$data['id_material'].'%']])->get();
+            $material = Material::where([['descripcion', 'LIKE', '%'.$data['id_material'].'%']])->get();
 
             foreach($material as $e){
                 $marbetes = $marbetes->where([['id_material','=', $e->id_material]]);
@@ -116,7 +120,7 @@ class MarbeteService
     {
 
 
-        $inventario = InventarioFisico::query()->where('id',$data['id_inventario_fisico'])->get()->toArray();
+        $inventario = InventarioFisico::where('id',$data['id_inventario_fisico'])->get()->toArray();
 
         $estado=$inventario[0]['estado'];
 
@@ -124,7 +128,7 @@ class MarbeteService
             abort(400, 'No se puede eliminar un marbete de un Inventario Cerrado');
         }
 
-      Conteo::query()->where('id_marbete','=', $id)->delete();
+      Conteo::where('id_marbete','=', $id)->delete();
        return $this->repository->delete($data, $id);
     }
 
@@ -133,5 +137,4 @@ class MarbeteService
     {
         return $this->repository->all($data);
     }
-
 }

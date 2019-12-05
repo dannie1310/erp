@@ -1,5 +1,5 @@
 <template>
-    <body class="hold-transition sidebar-mini" :class="$router.currentRoute.name == 'portal' ? 'sidebar-collapse' : ''">
+    <body class="hold-transition sidebar-mini layout-footer-fixed layout-navbar-fixed" :class="$router.currentRoute.name == 'portal' ? 'sidebar-collapse' : ''">
     <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
     <div v-if="currentUser && $router.currentRoute.name != 'google-2fa'" class="wrapper">
@@ -46,7 +46,7 @@
                         {{sistema.name}}
                     </router-link>
 
-                    <a :href="`${sistema.url}?origen=${url}`" target="_blank" class="d-flex flex-wrap mb-3" v-else>
+                    <a :href="`${sistema.url}?origen=${url}`" target="_self" class="d-flex flex-wrap mb-3" v-else>
                         <div :class="sistema.color+' elevation-2 text-center'" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
                             <i :class="sistema.icon"></i>
                         </div>

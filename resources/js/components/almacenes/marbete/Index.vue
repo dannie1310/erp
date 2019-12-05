@@ -28,14 +28,14 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Folio Inventario', field:'id_inventario_fisico', sortable:true,  thComp: require('../../globals/th-Filter')},
-                    { title: 'Folio', field: 'folio', sortable: true,  thComp: require('../../globals/th-Filter')},
-                    { title: 'Almacén', field:'id_almacen', sortable: true,  thComp: require('../../globals/th-Filter')},
-                    { title: 'Material', field:'id_material', sortable: true,  thComp: require('../../globals/th-Filter')},
+                    { title: 'Folio Inventario', field:'id_inventario_fisico', sortable:true,  thComp: require('../../globals/th-Filter').default},
+                    { title: 'Folio', field: 'folio', sortable: true,  thComp: require('../../globals/th-Filter').default},
+                    { title: 'Almacén', field:'id_almacen', sortable: true,  thComp: require('../../globals/th-Filter').default},
+                    { title: 'Material', field:'id_material', sortable: true,  thComp: require('../../globals/th-Filter').default},
                     { title: 'Primer Conteo', field:'primer_conteo'},
                     { title: 'Segundo Conteo', field:'segundo_conteo'},
                     { title: 'Tercer Conteo', field:'tercer_conteo'},
-                    { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -109,7 +109,7 @@
             },
             query: {
                 handler(query) {
-                    this.paginate(query)
+                   this.paginate(query)
                 },
                 deep: true
             },

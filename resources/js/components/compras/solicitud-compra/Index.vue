@@ -30,11 +30,11 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter'), sortable: true },
-                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date'), sortable: true },
+                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
-                    { title: 'Registró', field: 'id_usuario',  sortable: true },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Registró', field: 'registro', sortable: false },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
 
 
                 ],
@@ -97,9 +97,11 @@
                         observaciones: solicitud.observaciones,
                         id_usuario: solicitud.usuario ? solicitud.usuario.nombre : '',
                         buttons: $.extend({}, {
+                            id: solicitud.id,
                             show: true,
                             edit: true,
-                            id: solicitud.id
+                            pdf: true,
+
                         })
                     }));
                 },

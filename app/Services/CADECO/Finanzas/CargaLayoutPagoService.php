@@ -21,6 +21,7 @@ use App\Utils\Util;
 use Maatwebsite\Excel\Facades\Excel;
 use DateTime;
 use mysql_xdevapi\Exception;
+use Illuminate\Support\Facades\Storage;
 
 class CargaLayoutPagoService
 {
@@ -60,9 +61,14 @@ class CargaLayoutPagoService
             'data' => $arreglo_para_vista_pagos_layout,
             'cuentas_cargo' => $cuentas_cargo,
             'fechas_validacion' => $fechas_validacion,
-            'resumen' => $this->resumenLayout($arreglo_para_vista_pagos_layout)
+            'resumen' => $this->resumenLayout($arreglo_para_vista_pagos_layout),
+            'id_moneda_obra' => $this->getIdMonedaObra()
         );
         return  $salida;
+    }
+
+    private function getIdMonedaObra(){
+        return  $this->repository->getIdMonedaObra();
     }
 
     private function getfechasValidacion(){
@@ -131,8 +137,15 @@ class CargaLayoutPagoService
 
     private function validaMontoPagadoDocumento($pagos){
         $pagos_validados = array();
+        $moneda_obra = $this->getIdMonedaObra();
         foreach($pagos as $i=>$pago){
-            $pago["monto_pagado_documento"] = number_format($pago["monto_pagado"] * $pago["tipo_cambio"],2,".","");
+            if($pago["cuenta_cargo_obj"]->id_moneda == $moneda_obra){
+                $pago["monto_pagado_documento"] = number_format($pago["monto_pagado"] / $pago["tipo_cambio"],2,".","");
+            }
+            else{
+                $pago["monto_pagado_documento"] = number_format($pago["monto_pagado"] * $pago["tipo_cambio"],2,".","");
+            }
+
             $pagos_validados[] = $pago;
         }
         return $pagos_validados;
@@ -143,8 +156,12 @@ class CargaLayoutPagoService
         return $this->repository->show($id)->autorizar();
     }
 
-    public function descargarLayout(){
-        return Excel::download(new PagoLayout(), 'LayoutRegistroPagos.csv');
+    public function descargarLayout()
+    {
+        Storage::disk('inventario_fisico_descarga')->delete(Storage::disk('inventario_fisico_descarga')->allFiles());
+        $nombre_archivo = 'LayoutRegistroPagos_' . date('dmYY_His') . '.csv';
+        (new PagoLayout())->store($nombre_archivo, 'inventario_fisico_descarga');
+        return Storage::disk('inventario_fisico_descarga')->download($nombre_archivo);
     }
 
     private function getArreglo($arreglo){
