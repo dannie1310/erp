@@ -79,4 +79,17 @@ class OrdenCompraPartida extends Item
         $this->saldo = $saldo;
         $this->save();
     }
+
+    public function aumentaSaldo($monto)
+    {
+        $saldo = $this->saldo+$monto;
+        /*Se realiza esta validación por el error existente en el registro de partida de ordenes de compra con anticipo
+        cuyo saldo queda en 0*/
+        if($saldo>$this->importe)
+        {
+            $saldo = $this->importe * $this->anticipo / 100;
+        }
+        $this->saldo = $saldo;
+        $this->save();
+    }
 }
