@@ -19,6 +19,7 @@ use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use Illuminate\Support\Facades\DB;
 use DateTime;
+use DateTimeZone;
 
 class EntradaMaterial extends Transaccion
 {
@@ -318,6 +319,11 @@ class EntradaMaterial extends Transaccion
     public function registrar($data)
     {
         try {
+            /*
+             * EL front en envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
+             * */
+            $fecha_entrada =New DateTime($data['fecha']);
+            $fecha_entrada->setTimezone(new DateTimeZone('America/Mexico_City'));
             DB::connection('cadeco')->beginTransaction();
             $ordencompra = OrdenCompra::find($data['id_antecedente']);
 
@@ -328,7 +334,7 @@ class EntradaMaterial extends Transaccion
                 'referencia' => $data['remision'],
                 'id_moneda' => $ordencompra->id_moneda,
                 'anticipo' => $ordencompra->anticipo,
-                'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
+                'fecha' => $fecha_entrada->format("Y-m-d"),
                 'observaciones' => $data['observaciones']
             ]);
 
