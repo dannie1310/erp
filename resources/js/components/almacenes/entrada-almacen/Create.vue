@@ -113,7 +113,6 @@
                                                     <th class="icono"></th>
                                                     <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
                                                     <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
-                                                    <th class="icono"></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -169,21 +168,6 @@
                                                             <i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>
                                                             <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" ></i>
                                                         </td>
-                                                        <!--<td v-else>{{partida.descripcion_destino}}</td>-->
-                                                        <td class="text-center" v-if="(partida.contratista_seleccionado === undefined || partida.contratista_seleccionado === '' )">
-                                                            <small class="badge badge-secondary">
-                                                            <i class="fa fa-user-o button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>{{partida.contratista}}
-                                                            </small>
-                                                        </td>
-                                                        <td class="text-center" v-else-if="partida.contratista_seleccionado != ''">
-                                                            <small class="badge badge-success" v-if="partida.contratista_seleccionado.opcion == 0">
-                                                                <i class="fa fa-user button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>
-                                                            </small>
-                                                            <small class="badge badge-danger" v-else >
-                                                                <i class="fa fa-user button" aria-hidden="true" v-on:click="modalContratista(i)" ></i>
-                                                            </small>
-                                                        </td>
-                                                        <!--<td v-else></td>-->
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -281,71 +265,6 @@
                     </div>
                 </div>
             </div>
-        </nav>
-        <nav>
-            <div class="modal fade" ref="contratista" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modal-contratista"> <i class="fa fa-user"></i> Seleccionar Contratista</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                         <form role="form">
-                            <div class="modal-body">
-                                <fieldset class="form-group">
-                                    <div class="row"  v-if="contratistas">
-                                          <div class="col-md-12">
-                                            <div class="form-group error-content">
-                                                <label for="empresa_contratista">Empresa Contratista:</label>
-                                                   <select
-                                                           class="form-control"
-                                                           name="empresa_contratista"
-                                                           data-vv-as="Contratsta"
-                                                           v-model="contratista.empresa_contratista"
-                                                           v-validate="{required: false}"
-                                                           id="empresa_contratista"
-                                                           :class="{'is-invalid': errors.has('empresa_contratista')}">.
-                                                    <option value>-- Seleccione --</option>
-                                                    <option v-for="contratista in contratistas" :value="contratista.id">{{ contratista.razon_social }} </option>
-                                                </select>
-                                                 <div class="invalid-feedback" v-show="errors.has('empresa_contratista')">{{ errors.first('empresa_contratista') }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                         <div class="col-md-12">
-                                            <div class="form-group row error-content">
-                                                <div class="col-sm-12">
-                                                    <div class="btn-group btn-group-toggle">
-                                                        <label class="btn btn-outline-secondary" :class="contratista.opcion === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
-                                                            <input type="radio"
-                                                                   class="btn-group-toggle"
-                                                                   name="opcion"
-                                                                   :id="'opcion' + key"
-                                                                   :value="key"
-                                                                   autocomplete="on"
-                                                                   v-validate="{required: false}"
-                                                                   v-model.number="contratista.opcion">
-                                                                {{ cargo }}
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </div>
-                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="button" class="btn btn-danger" @click="quitarContratista">Quitar Selección</button>
-                                <button type="button" class="btn btn-primary" :disabled="errors.count() > 0 || contratista.empresa_contratista == '' || contratista.opcion === ''" @click="seleccionarContratista">Seleccionar</button>
-                            </div>
-                         </form>
-                    </div>
-                </div>
-          </div>
         </nav>
      </span>
 </template>
