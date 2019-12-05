@@ -13,6 +13,7 @@ use App\Models\IGH\Usuario;
 use App\Models\CADECO\Finanzas\CtgEstadoLayoutPago;
 use App\Models\CADECO\Finanzas\LayoutPagoPartida;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Zend\Validator\Date;
@@ -66,7 +67,11 @@ class LayoutPago extends Model
             foreach ($data['pagos'] as $pago)
             {
                 if(array_key_exists ('fecha_pago_s', $pago)){
+                    /*
+                     * EL front envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
+                     * */
                     $fecha_pago =New DateTime($pago['fecha_pago_s']);
+                    $fecha_pago->setTimezone(new DateTimeZone('America/Mexico_City'));
                 }else{
                     $fecha_pago = DateTime::createFromFormat('d/m/Y', $pago['fecha_pago']);
                 }
