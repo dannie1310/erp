@@ -185,7 +185,7 @@
 						<td class="editable-cell numerico">
 							<input v-on:change="changeCantidad(concepto)" class="text" v-if="concepto.EsActividad == '1'" v-model="concepto.CantidadEstimada"
 								   :name="'CantidadEstimada' + i"
-								   v-validate="{max_value: parseFloat(concepto.CantidadSaldo), min_value: 0}"
+								   v-validate="{max_value: parseFloat(concepto.CantidadSaldo)}"
 								   :class="{'is-invalid': errors.has('CantidadEstimada' + i)}"
 							>
 							<p v-else></p></td>
@@ -291,7 +291,7 @@
 			getConceptos() {
         		var conceptos = [];
         		this.conceptos.forEach(concepto => {
-        			if(parseFloat(concepto.CantidadEstimada) > 0) {
+        			if(parseFloat(concepto.CantidadEstimada) !== 0) {
 						conceptos.push({
 							item_antecedente: concepto.IDConceptoContrato,
 							id_concepto: concepto.IDConceptoDestino,
