@@ -474,7 +474,7 @@
             },
             getEmpresas() {
                 return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {sort: 'razon_social', order: 'asc', scope:'TipoContratista' }
+                    params: {sort: 'razon_social', order: 'asc', scope:'Contratista' }
                 })
                     .then(data => {
                         this.empresas = data.data;
