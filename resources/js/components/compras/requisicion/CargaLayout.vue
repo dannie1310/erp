@@ -25,8 +25,7 @@
                                                name="carga_layout"
                                                data-vv-as="Layout"
                                                ref="carga_layout"
-                                               :class="{'is-invalid': errors.has('carga_layout')}"
-                                        >
+                                               :class="{'is-invalid': errors.has('carga_layout')}">
                                         <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv)</div>
                                     </div>
                                 </div>
