@@ -94,12 +94,17 @@ class EntradaMaterialPartida extends Item
 
     public function getPagadoRegistroAttribute()
     {
-        $anticipo_entrada = round($this->anticipo * $this->precio_unitario * $this->cantidad_original1 / 100, 2);
+        $anticipo_entrada = $this->importe_anticipo;
         $por_aplicar = $this->ordenCompraPartida->por_aplicar;
         if ($anticipo_entrada > $por_aplicar) {
             return $por_aplicar;
         } else {
             return $anticipo_entrada;
         }
+    }
+
+    public function getImporteAnticipoAttribute()
+    {
+        return round($this->anticipo * $this->precio_unitario * $this->cantidad_original1 / 100, 2);
     }
 }
