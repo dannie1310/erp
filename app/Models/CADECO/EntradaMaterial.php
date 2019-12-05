@@ -90,9 +90,11 @@ class EntradaMaterial extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
+            $ordenCompra = $this->ordenCompra;
             $this->validarParaEliminar();
             $this->delete();
             $this->revisar_respaldos($motivo);
+            $ordenCompra->abrir();
             DB::connection('cadeco')->commit();
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
@@ -310,7 +312,6 @@ class EntradaMaterial extends Transaccion
         foreach ($partidas as $item) {
             ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
             EntradaMaterialPartida::find($item['id_item'])->delete();
-
         }
     }
 
@@ -382,7 +383,6 @@ class EntradaMaterial extends Transaccion
                     }
                 }
             }
-
             $ordencompra->cerrar();
             DB::connection('cadeco')->commit();
             return $entrada;

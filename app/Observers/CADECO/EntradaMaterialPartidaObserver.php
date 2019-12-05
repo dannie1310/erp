@@ -89,10 +89,6 @@ class EntradaMaterialPartidaObserver
     }
     public function deleted(EntradaMaterialPartida $partida)
     {
-        $factor = $partida->entrada->factor_conversion;
-        $pagado =  $partida->pagado_registro;
-        $partida->ordenCompraPartida->entrega->recalculaSurtido();
-
         ItemEntradaEliminada::query()->create(
             [
                 'id_item' => $partida['id_item'],
@@ -118,11 +114,17 @@ class EntradaMaterialPartidaObserver
                 'id_asignacion' => $partida['id_asignacion']
             ]
         );
-
-
-        /*if($pagado > 0)
+        /*
+         * Recalcular saldo de partidas de OC, lógica incluida en el procedimiento almacenado:
+         * sp_borra_transaccion y que se manda a llamar al eliminar una entrada de almacén
+         * */
+        $importe_anticipo = $partida->importe_anticipo;
+        $pagado_oc =  $partida->ordenCompraPartida->pagado;
+        $proporcion_pagada = round($importe_anticipo * $pagado_oc/($partida->ordenCompraPartida->importe * $partida->ordenCompraPartida->anticipo/100),2);
+        $partida->ordenCompraPartida->entrega->recalculaSurtido();
+        if($proporcion_pagada > 0)
         {
-            $partida->ordenCompraPartida->disminuyeSaldo($pagado);
-        }*/
+            $partida->ordenCompraPartida->aumentaSaldo($proporcion_pagada);
+        }
     }
 }
