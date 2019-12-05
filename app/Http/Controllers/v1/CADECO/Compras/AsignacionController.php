@@ -62,6 +62,7 @@ class AsignacionController extends Controller
 
     public function descargaLayout($id)
     {
+//        Falta descarga
         var_dump('Descarga de layout de controlador asignacion',$id);
     }
 }
