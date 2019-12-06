@@ -297,7 +297,7 @@
                 almacenes : [],
                 cargos: {
                     1: "Con Cargo",
-                    0: "Sin Cargo"
+                    0: "A Consignación"
                 },
                 contratista: {
                     empresa_contratista: '',
