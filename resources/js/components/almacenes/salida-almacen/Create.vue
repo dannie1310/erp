@@ -402,7 +402,7 @@
                 },
                 cargos: {
                     1: "Con Cargo",
-                    0: "Sin Cargo"
+                    0: "A Consignación"
                 },
                 dato_partida:{
                     cantidad:'',
@@ -474,7 +474,7 @@
             },
             getEmpresas() {
                 return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {sort: 'razon_social', order: 'asc', scope:'TipoContratista' }
+                    params: {sort: 'razon_social', order: 'asc', scope:'Contratista' }
                 })
                     .then(data => {
                         this.empresas = data.data;

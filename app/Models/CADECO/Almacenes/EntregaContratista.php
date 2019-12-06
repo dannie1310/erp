@@ -36,7 +36,7 @@ class EntregaContratista extends Model
 
     public function getTipoStringAttribute()
     {
-        return ($this->tipo == 0)?"Sin Cargo":"Con Cargo";
+        return ($this->tipo == 0)?"A Consignación":"Con Cargo";
     }
 
     public static function calcularFolio($id_empresa)
