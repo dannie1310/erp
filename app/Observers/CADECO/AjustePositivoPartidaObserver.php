@@ -25,12 +25,10 @@ class AjustePositivoPartidaObserver
      * @param AjustePositivoPartida $partida
      */
     public function created(AjustePositivoPartida $partida){
-        $partida->inventario->saldo = $partida->inventario->saldo + $partida->cantidad;
-        $partida->inventario->save();
+        $partida->inventario->aumentaSaldo($partida->cantidad);
     }
 
     public function deleted(AjustePositivoPartida $partida){
-        $partida->inventario->saldo = $partida->inventario->saldo - $partida->cantidad;
-        $partida->inventario->save();
+        $partida->inventario->disminuyeSaldo($partida->cantidad);
     }
 }
