@@ -1463,6 +1463,52 @@ export const routes = [
         ]
     },
     {
+        path: '/sao/ventas',
+        components: {
+            default: require('./components/ventas/partials/Layout.vue').default,
+            menu: require('./components/ventas/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'ventas',
+                component: require('./components/ventas/Index').default,
+                meta: {
+                    title: 'Ventas',
+                    breadcrumb: {parent:'home', name: 'VENTAS'},
+                    middleware: [auth, context, access]
+                }
+            },
+            // {
+            //     path: 'venta',
+            //     component: require('./components/ventas/partials/Layout').default,
+            //     children: [
+            //         {
+            //             path: '/',
+            //             name: 'venta',
+            //             component: require('./components/ventas/venta/Index').default,
+            //             meta: {
+            //                 title: 'Ventas',
+            //                 breadcrumb: {parent: 'ventas', name: 'VENTA'},
+            //                 middleware: [auth, context],
+            //             }
+            //         },
+            //         {
+            //             path: 'create',
+            //             name: 'venta-create',
+            //             component: require('./components/ventas/venta/Create').default,
+            //             meta: {
+            //                 title: 'Registrar Venta',
+            //                 breadcrumb: {name: 'REGISTRAR', parent: 'venta'},
+            //                 middleware: [auth, context, permission],
+            //                 permission: ['registrar_ajuste_positivo','registrar_ajuste_negativo']
+            //             }
+            //         },
+            //     ]
+            // }
+        ]
+    },
+    {
         path: '*',
         name: 'notFound',
         component: require('./components/pages/NotFound.vue').default,
