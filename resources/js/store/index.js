@@ -102,6 +102,8 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
 
+// VENTAS
+import venta from "./modules/ventas/venta";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -196,6 +198,8 @@ export default new Vuex.Store({
         'seguridad/sistema': sistema,
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
+
+        'ventas/venta': venta,
     },
     strict: process.env.NODE_ENV !== 'production'
 })
