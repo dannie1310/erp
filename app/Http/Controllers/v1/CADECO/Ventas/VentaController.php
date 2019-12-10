@@ -42,7 +42,6 @@ class VentaController extends Controller
      */
     public function __construct(Manager $fractal, VentaService $service, VentaTransformer $transformer)
     {
-        dd('Venta Controller');
         $this->middleware('auth:api');
         $this->middleware('context');
 
@@ -50,6 +49,4 @@ class VentaController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
-
-
 }

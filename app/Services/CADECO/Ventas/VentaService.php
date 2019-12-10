@@ -8,8 +8,29 @@
 
 namespace App\Services\CADECO\Ventas;
 
+use App\Models\CADECO\Venta;
+use App\Repositories\Repository;
 
 class VentaService
 {
+    /**
+     * @var Repository
+     */
+    protected $repository;
+
+    /**
+     * VentaService constructor
+     * @param Venta $model
+     */
+    public function __construct(Venta $model)
+    {
+        $this->repository = new Repository($model);
+    }
+
+    public function paginate($data)
+    {
+//        dd('Paginate Venta Servicio',$data);
+        return $this->repository-$this->paginate($data);
+    }
 
 }
