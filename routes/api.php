@@ -718,6 +718,14 @@ $api->version('v1', function ($api) {
         });
     });
 
+    /** Ventas */
+    $api->group(['middleware' => 'api', 'prefix' => 'ventas'], function ($api){
+
+        $api->group(['prefix'=>'venta'], function ($api){
+            $api->get('{id}/pdf_venta', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@pdfVenta');
+        });
+    });
+
     /** IGH */
     $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
         $api->group(['prefix' => 'usuario'], function ($api) {

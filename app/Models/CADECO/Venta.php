@@ -31,4 +31,9 @@ class Venta extends Transaccion
     {
         return $this->hasMany(VentaPartida::class, 'id_transaccion', 'id_transaccion');
     }
+
+    public function pdfVenta(){
+        $venta = new VentaFormato($this);
+        return $venta->create();
+    }
 }
