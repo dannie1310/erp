@@ -27,7 +27,6 @@ class VentaTransformer extends TransformerAbstract
             'opciones' => $model->opciones,
             'operacion' => $model->operacion,
             'folio_format' => $model->numero_folio_format,
-            'almacen_descripcion' => $model->almacen->descripcion,
         ];
     }
 }

@@ -29,8 +29,7 @@ class VentaService
 
     public function paginate($data)
     {
-//        dd('Paginate Venta Servicio',$data);
-        return $this->repository-$this->paginate($data);
+        return $this->repository->paginate($data);
     }
 
 }

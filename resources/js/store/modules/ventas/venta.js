@@ -33,7 +33,6 @@ export default{
 
     actions: {
         paginate(context, payload) {
-            console.log('Venta JS Paginate');
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', {params: payload.params})
@@ -61,45 +60,7 @@ export default{
             });
         },
 
-        store(context, payload) {
-            alert('Store');
-            // return new Promise((resolve, reject) => {
-            //     swal({
-            //         title: "Registrar Venta",
-            //         text: "¿Está seguro/a de que quiere registrar una nueva venta?",
-            //         icon: "info",
-            //         buttons: {
-            //             cancel: {
-            //                 text: 'Cancelar',
-            //                 visible: true
-            //             },
-            //             confirm: {
-            //                 text: 'Si, Registrar',
-            //                 closeModal: false,
-            //             }
-            //         }
-            //     })
-            //         .then((value) => {
-            //             if (value) {
-            //                 axios
-            //                     .post(URI, payload)
-            //                     .then(r => r.data)
-            //                     .then(data => {
-            //                         swal("Venta registrada correctamente", {
-            //                             icon: "success",
-            //                             timer: 2000,
-            //                             buttons: false
-            //                         }).then(() => {
-            //                             resolve(data);
-            //                         })
-            //                     })
-            //                     .catch(error => {
-            //                         reject(error);
-            //                     });
-            //             }
-            //         });
-            // });
-        },
+
     },
 
     getters: {
