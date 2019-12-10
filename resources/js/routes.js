@@ -1479,33 +1479,33 @@ export const routes = [
                     middleware: [auth, context, access]
                 }
             },
-            // {
-            //     path: 'venta',
-            //     component: require('./components/ventas/partials/Layout').default,
-            //     children: [
-            //         {
-            //             path: '/',
-            //             name: 'venta',
-            //             component: require('./components/ventas/venta/Index').default,
-            //             meta: {
-            //                 title: 'Ventas',
-            //                 breadcrumb: {parent: 'ventas', name: 'VENTA'},
-            //                 middleware: [auth, context],
-            //             }
-            //         },
-            //         {
-            //             path: 'create',
-            //             name: 'venta-create',
-            //             component: require('./components/ventas/venta/Create').default,
-            //             meta: {
-            //                 title: 'Registrar Venta',
-            //                 breadcrumb: {name: 'REGISTRAR', parent: 'venta'},
-            //                 middleware: [auth, context, permission],
-            //                 permission: ['registrar_ajuste_positivo','registrar_ajuste_negativo']
-            //             }
-            //         },
-            //     ]
-            // }
+            {
+                path: 'venta',
+                component: require('./components/ventas/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'venta',
+                        component: require('./components/ventas/venta/Index').default,
+                        meta: {
+                            title: 'Ventas',
+                            breadcrumb: {parent: 'ventas', name: 'VENTA'},
+                            middleware: [auth, context],
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'venta-create',
+                        component: require('./components/ventas/venta/Create').default,
+                        meta: {
+                            title: 'Registrar Venta',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'venta'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_ajuste_positivo','registrar_ajuste_negativo']
+                        }
+                    },
+                ]
+            }
         ]
     },
     {
