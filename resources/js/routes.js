@@ -1488,9 +1488,10 @@ export const routes = [
                         name: 'venta',
                         component: require('./components/ventas/venta/Index').default,
                         meta: {
-                            title: 'Ventas',
+                            title: 'Venta',
                             breadcrumb: {parent: 'ventas', name: 'VENTA'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_venta','registrar_venta','cancelar_venta']
                         }
                     },
                     {

@@ -17,7 +17,6 @@ class Venta extends Transaccion
     protected static function boot()
     {
         parent::boot();
-
         self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 38);
         });
