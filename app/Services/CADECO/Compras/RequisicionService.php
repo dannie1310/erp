@@ -97,7 +97,7 @@ class RequisicionService
             }else{
                 if(count($renglon) != 8) {
                     abort(400,'No se puede procesar la Requisición');
-                }else if(count($renglon) == 8 && $renglon[0] != '' && $renglon[5] != '' && $renglon[6] != '' && $renglon[7] != ''){
+                }else if(count($renglon) == 8 && $renglon[5] != '' && $renglon[6] != '' && $renglon[7] != ''){
                     if($renglon[1] == '')
                     {
                         $renglon[1] = null;
