@@ -7,46 +7,82 @@
                      <form role="form" @submit.prevent="validate">
                         <div class="body">
                             <div class="row">
-                                <div class="col-md-2">
-                                    <div class="form-group error-content">
+                                <div class="col-md-2 offset-md-10 ">
+                                    <div class="form-group row error-content">
                                         <label for="fecha">Fecha:</label>
-                                        <div class="col-sm-12">
-                                                <datepicker v-model = "dato.fecha"
-                                                            name = "fecha"
-                                                            :format = "formatoFecha"
-                                                            :language = "es"
-                                                            :bootstrap-styling = "true"
-                                                            class = "form-control"
-                                                            v-validate="{required: true}"
-                                                            :disabled-dates="fechasDeshabilitadas"
-                                                            :class="{'is-invalid': errors.has('fecha')}"
-                                                ></datepicker>
-                                          <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                                        </div>
+                                        <datepicker v-model = "registro_venta.fecha"
+                                                    name = "fecha"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :disabled-dates="fechasDeshabilitadas"
+                                                    :class="{'is-invalid': errors.has('fecha')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                     </div>
                                  </div>
-                                <div class="col-md-10"></div>
                             </div>
-                            <hr>
+
                             <div class="row">
-                                <!--Concepto raíz-->
-                                <div class="col-md-12" >
+                                <div class="col-md-6">
                                     <div class="form-group error-content">
-                                    <label for="id_concepto">Concepto:</label>
+                                        <label for="referencia">Referencia:</label>
+                                        <input class="form-control"
+                                                      style="width: 100%"
+                                                      placeholder="Referencia"
+                                                      name="referencia"
+                                                      id="referencia"
+                                                      data-vv-as="Referencia"
+                                                      v-validate="{required: true}"
+                                                      v-model="registro_venta.referencia"
+                                                      :class="{'is-invalid': errors.has('referencia')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group error-content">
+                                        <label for="id_empresa">Cliente:</label>
+                                        <select
+                                                :disabled="cargando"
+                                                type="text"
+                                                name="id_empresa"
+                                                data-vv-as="Cliente"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="id_empresa"
+                                                v-model="registro_venta.id_empresa"
+                                                :class="{'is-invalid': errors.has('id_empresa')}"
+                                        >
+                                            <option value v-if="!cargando">- Seleccione -</option>
+                                            <option value v-if="cargando">Cargando...</option>
+                                            <option v-for="empresa in empresas" :value="empresa.id">{{ empresa.razon_social }}</option>
+                                        </select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                   <div class="form-group error-content">
+                                        <label for="id_concepto">Concepto:</label>
                                         <concepto-select
                                                 name="id_concepto"
                                                 data-vv-as="Concepto"
                                                 v-validate="{required: true}"
                                                 id="id_concepto"
-                                                v-model="id_concepto"
+                                                v-model="registro_venta.id_concepto"
                                                 :error="errors.has('id_concepto')"
                                                 ref="conceptoSelect"
                                                 :disableBranchNodes="true"
                                         ></concepto-select>
-                                    <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
-                                    </div>
+                                       <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                   </div>
                                 </div>
                             </div>
+                            <hr>
                             <!--<div class="row">-->
                                 <!--<div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">-->
                                     <!--<div class="form-group">-->
@@ -205,9 +241,14 @@
         data() {
             return {
                 es : es,
+                cargando : false,
                 fechasDeshabilitadas : {},
-                dato:{
+                empresas : [],
+                registro_venta:{
                     fecha : '',
+                    id_empresa : '',
+                    id_concepto : '',
+                    registro_venta : '',
                     observaciones : '',
                     partidas : []
                 },
@@ -222,13 +263,22 @@
             this.cargando = true;
         },
         mounted() {
-            this.dato.fecha = new Date();
+            this.registro_venta.fecha = new Date();
             this.fechasDeshabilitadas.from= new Date();
+            this.getClientes();
         },
         methods: {
             formatoFecha(date) {
                 return moment(date).format('DD/MM/YYYY');
             },
+            getClientes(){
+                return this.$store.dispatch('cadeco/empresa/index', {
+                    params: {sort: 'razon_social', order: 'asc', scope:'clienteComprador' }
+                })
+                    .then(data => {
+                        this.empresas = data.data;
+                    })
+            }
         }
     }
 </script>
