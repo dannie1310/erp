@@ -3,11 +3,8 @@
 
 namespace App\Repositories\SEGURIDAD_ERP\AreaCompradora;
 
-use App\Facades\Context;
-use App\Models\SEGURIDAD_ERP\TipoAreaCompradora as Model;
-use App\Models\CADECO\Inventarios\Marbete;
-use App\Models\SEGURIDAD_ERP\UsuarioAreaCompradora;
-use Illuminate\Support\Facades\DB;
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora as Model;
+use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
 
 class Repository extends \App\Repositories\Repository  implements RepositoryInterface
 {
@@ -28,7 +25,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
     public function asignar($data)
     {
-        $usuario = new UsuarioAreaCompradora();
+        $usuario = new AreaCompradoraUsuario();
         $usuario->asignar($data);
     }
 }
