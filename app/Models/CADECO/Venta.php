@@ -8,6 +8,8 @@
 
 namespace App\Models\CADECO;
 
+use App\PDF\VentaFormato;
+
 
 class Venta extends Transaccion
 {
