@@ -19,12 +19,16 @@ class VentaService
     protected $repository;
 
     /**
-     * VentaService constructor
+     * VentaServiceService constructor.
      * @param Venta $model
      */
     public function __construct(Venta $model)
     {
         $this->repository = new Repository($model);
+    }
+
+    public function pdfVenta($id){
+        return $this->repository->show($id)->pdfVenta();
     }
 
     public function paginate($data)
