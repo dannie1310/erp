@@ -8,6 +8,8 @@
 
 namespace App\Models\CADECO;
 
+use App\PDF\VentaFormato;
+
 
 class Venta extends Transaccion
 {
@@ -29,5 +31,10 @@ class Venta extends Transaccion
     public function partidas()
     {
         return $this->hasMany(VentaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function pdfVenta(){
+        $venta = new VentaFormato($this);
+        return $venta->create();
     }
 }

@@ -42,6 +42,7 @@ class VentaController extends Controller
      */
     public function __construct(Manager $fractal, VentaService $service, VentaTransformer $transformer)
     {
+        $this->middleware('addAccessToken')->only('pdfVenta');
         $this->middleware('auth:api');
         $this->middleware('context');
 
@@ -49,4 +50,14 @@ class VentaController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function pdfVenta($id){
+        if(auth()->user()->can('consultar_ventas') || true){
+            return $this->service->pdfVenta($id);
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+        
+    }
+
+
 }

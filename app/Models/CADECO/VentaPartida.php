@@ -17,4 +17,12 @@ class VentaPartida extends Item
         return $this->belongsTo(Venta::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function getImporteFormatAttribute(){
+        return '$ ' . number_format($this->importe,2, '.', ',');
+    }
+
+    public function getPrecioUnitarioFormatAttribute(){
+        return '$ ' . number_format($this->precio_unitario, 2, '.', ',');
+    }
+
 }
