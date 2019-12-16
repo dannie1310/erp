@@ -4,9 +4,9 @@
             <div class="row">
                 <div class="col-md-12" >
                     <div class="invoice p-3 mb-3">
-                     <form role="form" @submit.prevent="validate">
-                        <div class="body">
-                            <div class="row">
+                        <form role="form" @submit.prevent="validate">
+                            <div class="body">
+                                <div class="row">
                                 <div class="col-md-2 offset-md-10 ">
                                     <div class="form-group row error-content">
                                         <label for="fecha">Fecha:</label>
@@ -24,8 +24,7 @@
                                     </div>
                                  </div>
                             </div>
-
-                            <div class="row">
+                                <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="referencia">Referencia:</label>
@@ -64,7 +63,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                                <div class="row">
                                 <div class="col-md-12">
                                    <div class="form-group error-content">
                                         <label for="id_concepto">Concepto:</label>
@@ -82,148 +81,144 @@
                                    </div>
                                 </div>
                             </div>
-                            <hr>
-                            <!--<div class="row">-->
-                                <!--<div class="col-md-12" v-if="id_almacen && ((dato.opciones == 1 && dato.id_concepto != '') || dato.opciones == 65537)">-->
-                                    <!--<div class="form-group">-->
-                                        <!--<div v-if="id_almacen">-->
-                                             <!--<div >-->
-                                                <!--<table class="table table-striped">-->
-                                                    <!--<thead>-->
-                                                        <!--<tr>-->
-                                                            <!--<th class="index_corto">#</th>-->
-                                                            <!--<th class="no_parte_input">No. de Parte</th>-->
-                                                            <!--<th>Material</th>-->
-                                                            <!--<th class="unidad">Unidad</th>-->
-                                                            <!--<th class="money_input">Existencia</th>-->
-                                                            <!--<th class="money_input">Cantidad</th>-->
-                                                            <!--<th class="icono"></th>-->
-                                                            <!--<th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>-->
-                                                            <!--<th style="width: 60px; max-width: 60px; min-width: 60px"></th>-->
-                                                             <!--<th class="icono">-->
-                                                            <!--<button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">-->
-                                                                <!--<i class="fa fa-spin fa-spinner" v-if="cargando"></i>-->
-                                                                <!--<i class="fa fa-plus" v-else></i>-->
-                                                            <!--</button>-->
-                                                        <!--</th>-->
-                                                        <!--</tr>-->
-                                                    <!--</thead>-->
-                                                    <!--<tbody>-->
-                                                        <!--<tr v-for="(partida, i) in partidas">-->
-                                                            <!--<td>{{ i + 1}}</td>-->
-                                                            <!--<td>-->
-                                                                <!--<select-->
+                                <hr>
+                                <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="index_corto">#</th>
+                                                            <th class="no_parte_input">No. de Parte</th>
+                                                            <th>Material</th>
+                                                            <th class="unidad">Unidad</th>
+                                                            <th class="money_input">Existencia</th>
+                                                            <th class="money_input">Cantidad</th>
+                                                            <th class="icono"></th>
+                                                            <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
+                                                            <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
+                                                             <th class="icono">
+                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
+                                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                                <i class="fa fa-plus" v-else></i>
+                                                            </button>
+                                                        </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(partida, i) in partidas">
+                                                            <td>{{ i + 1}}</td>
+                                                            <td>
+                                                                <select
 
-                                                                        <!--:disabled = "!bandera"-->
-                                                                        <!--class="form-control"-->
-                                                                        <!--:name="`id_material[${i}]`"-->
-                                                                        <!--v-model="partida.material"-->
-                                                                        <!--v-validate="{required: true }"-->
-                                                                        <!--data-vv-as="No de Parte"-->
-                                                                        <!--:class="{'is-invalid': errors.has(`id_material[${i}]`)}"-->
-                                                                <!--&gt;-->
-                                                                     <!--<option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>-->
-                                                                <!--</select>-->
-                                                            <!--<div class="invalid-feedback"-->
-                                                                 <!--v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}-->
-                                                            <!--</div>-->
-                                                            <!--</td>-->
-                                                            <!--<td>-->
-                                                                <!--<select-->
+                                                                        :disabled = "!bandera"
+                                                                        class="form-control"
+                                                                        :name="`id_material[${i}]`"
+                                                                        v-model="partida.material"
+                                                                        v-validate="{required: true }"
+                                                                        data-vv-as="No de Parte"
+                                                                        :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
+                                                                >
+                                                                     <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
+                                                                </select>
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
+                                                            </div>
+                                                            </td>
+                                                            <td>
+                                                                <select
 
-                                                                        <!--:disabled = "!bandera"-->
-                                                                        <!--class="form-control"-->
-                                                                        <!--:name="`id_material[${i}]`"-->
-                                                                        <!--v-model="partida.material"-->
-                                                                        <!--v-validate="{required: true }"-->
-                                                                        <!--data-vv-as="Descripción"-->
-                                                                        <!--:class="{'is-invalid': errors.has(`id_material[${i}]`)}"-->
-                                                                <!--&gt;-->
-                                                                 <!--<option v-for="material in materiales" :value="material">{{ material.descripcion }}</option>-->
-                                                            <!--</select>-->
-                                                            <!--<div class="invalid-feedback"-->
-                                                                 <!--v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}-->
-                                                            <!--</div>-->
-                                                            <!--</td>-->
-                                                            <!--<td>-->
-                                                                <!--{{partida.material.unidad}}-->
-                                                            <!--</td>-->
-                                                            <!--<td class="money">-->
-                                                                <!--{{partida.material.saldo_almacen_format}}-->
-                                                            <!--</td>-->
-                                                            <!--<td>-->
-                                                                <!--<input-->
-                                                                        <!--:disabled = "!partida.material"-->
-                                                                        <!--type="number"-->
-                                                                        <!--step="any"-->
-                                                                        <!--:name="`cantidad[${i}]`"-->
-                                                                        <!--v-model="partida.cantidad"-->
-                                                                        <!--data-vv-as="Cantidad"-->
-                                                                        <!--v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:2}"-->
-                                                                        <!--class="form-control"-->
-                                                                        <!--:class="{'is-invalid': errors.has(`cantidad[${i}]`)}"-->
-                                                                        <!--id="cantidad"-->
-                                                                        <!--placeholder="Cantidad">-->
-                                                            <!--<div class="invalid-feedback"-->
-                                                                 <!--v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}-->
-                                                            <!--</div>-->
-                                                            <!--</td>-->
-                                                            <!--<td  v-if="partida.destino ===  ''" >-->
-                                                            <!--<small class="badge badge-secondary">-->
-                                                                <!--<i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>-->
-                                                            <!--</small>-->
-                                                        <!--</td>-->
-                                                        <!--<td v-else >-->
-                                                            <!--<small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >-->
-                                                                <!--<i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>-->
-                                                            <!--</small>-->
-                                                             <!--<small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >-->
-                                                                <!--<i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>-->
-                                                            <!--</small>-->
-                                                        <!--</td>-->
-                                                        <!--<td  v-if="partida.destino ===  ''" >-->
-                                                        <!--</td>-->
-                                                        <!--<td v-else >-->
-                                                            <!--<span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>-->
-                                                            <!--<span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>-->
-                                                        <!--</td>-->
-                                                            <!--<td>-->
-                                                                <!--<i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>-->
-                                                                <!--<i class="fas fa-paste button" v-on:click="pegar_destino(partida)" ></i>-->
-                                                            <!--</td>-->
-                                                            <!--<td class="icono">-->
-                                                                <!--<button type="button" class="btn btn-outline-danger btn-sm" @click="borrarPartida(i)"><i class="fa fa-trash"></i></button>-->
-                                                            <!--</td>-->
-                                                        <!--</tr>-->
-                                                    <!--</tbody>-->
-                                                <!--</table>-->
-                                             <!--</div>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<hr>-->
-                                <!--<div class="col-md-12">-->
-                                    <!--<div class="form-group error-content">-->
-                                        <!--<label for="observaciones">Observaciones:</label>-->
-                                        <!--<textarea-->
-                                                <!--name="observaciones"-->
-                                                <!--id="observaciones"-->
-                                                <!--class="form-control"-->
-                                                <!--v-model="dato.observaciones"-->
-                                                <!--v-validate="{required: true}"-->
-                                                <!--data-vv-as="Observaciones"-->
-                                                <!--:class="{'is-invalid': errors.has('observaciones')}"-->
-                                        <!--&gt;</textarea>-->
-                                        <!--<div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        </div>
-                         <div class="footer">
-                           <button type="button" class="btn btn-secondary">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || partidas.length == 0">Guardar</button>
-                        </div>
-                     </form>
+                                                                        :disabled = "!bandera"
+                                                                        class="form-control"
+                                                                        :name="`id_material[${i}]`"
+                                                                        v-model="partida.material"
+                                                                        v-validate="{required: true }"
+                                                                        data-vv-as="Descripción"
+                                                                        :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
+                                                                >
+                                                                 <option v-for="material in materiales" :value="material">{{ material.descripcion }}</option>
+                                                            </select>
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
+                                                            </div>
+                                                            </td>
+                                                            <td>
+                                                                {{partida.material.unidad}}
+                                                            </td>
+                                                            <td class="money">
+                                                                {{partida.material.saldo_almacen_format}}
+                                                            </td>
+                                                            <td>
+                                                                <input
+                                                                        :disabled = "!partida.material"
+                                                                        type="number"
+                                                                        step="any"
+                                                                        :name="`cantidad[${i}]`"
+                                                                        v-model="partida.cantidad"
+                                                                        data-vv-as="Cantidad"
+                                                                        v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:2}"
+                                                                        class="form-control"
+                                                                        :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                                        id="cantidad"
+                                                                        placeholder="Cantidad">
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
+                                                            </div>
+                                                            </td>
+                                                            <td  v-if="partida.destino ===  ''" >
+                                                            <small class="badge badge-secondary">
+                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                        </td>
+                                                        <td v-else >
+                                                            <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
+                                                                <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                             <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
+                                                                <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
+                                                            </small>
+                                                        </td>
+                                                        <td  v-if="partida.destino ===  ''" >
+                                                        </td>
+                                                        <td v-else >
+                                                            <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
+                                                            <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
+                                                        </td>
+                                                            <td>
+                                                                <i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>
+                                                                <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" ></i>
+                                                            </td>
+                                                            <td class="icono">
+                                                                <button type="button" class="btn btn-outline-danger btn-sm" @click="borrarPartida(i)"><i class="fa fa-trash"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="col-md-12">
+                                    <div class="form-group error-content">
+                                        <label for="observaciones">Observaciones:</label>
+                                        <textarea
+                                                name="observaciones"
+                                                id="observaciones"
+                                                class="form-control"
+                                                v-model="registro_venta.observaciones"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Observaciones"
+                                                :class="{'is-invalid': errors.has('observaciones')}"
+                                        ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="footer">
+                                <button type="button" class="btn btn-secondary">Cerrar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || partidas.length == 0">Guardar</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -242,8 +237,10 @@
             return {
                 es : es,
                 cargando : false,
+                bandera : 0,
                 fechasDeshabilitadas : {},
                 empresas : [],
+                materiales : [],
                 registro_venta:{
                     fecha : '',
                     id_empresa : '',
@@ -278,6 +275,37 @@
                     .then(data => {
                         this.empresas = data.data;
                     })
+            },
+            getMateriales() {
+                this.materiales = [];
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/material/index', {
+                })
+                    .then(data => {
+                        this.materiales = data.materiales.data;
+                        if( this.materiales.length != 0 ) {
+                            this.bandera = 1;
+                            this.cargando = false
+                        }
+                    })
+                    .finally(() => {
+                        if( this.materiales.length == 0 ) {
+                            swal('Atención', 'No hay material disponible.', 'warning');
+                            this.bandera = 1;
+                            this.cargando = false
+                        }
+
+                    })
+            },
+            agregar_partida(){
+                var array = {
+                    'material' : '',
+                    'destino' : ''
+                }
+                if(this.materiales.length === 0 ) {
+                    this.getMateriales();
+                }
+                this.partidas.push(array);
             }
         }
     }
