@@ -31,4 +31,9 @@ class VentaService
         return $this->repository->show($id)->pdfVenta();
     }
 
+    public function paginate($data)
+    {
+        return $this->repository->paginate($data);
+    }
+
 }

@@ -738,4 +738,15 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\IGH\MenuController@index');
         });
     });
+
+//    VENTAS
+    $api->group(['middleware' => 'api', 'prefix' => 'ventas'], function ($api) {
+
+        // ORDEN DE COMPRA
+        $api->group(['prefix' => 'venta'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@show')->where(['id' => '[0-9]+']);
+        });
+    });
 });
