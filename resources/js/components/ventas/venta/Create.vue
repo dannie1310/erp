@@ -245,8 +245,11 @@
                     fecha : '',
                     id_empresa : '',
                     id_concepto : '',
-                    registro_venta : '',
+                    referencia : '',
                     observaciones : '',
+                    monto_total : '',
+                    saldo_total : '',
+                    impuesto_total : '',
                     partidas : []
                 },
                 partidas : [],

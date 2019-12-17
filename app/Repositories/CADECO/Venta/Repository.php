@@ -2,26 +2,28 @@
 /**
  * Created by PhpStorm.
  * User: DBenitezc
- * Date: 19/09/2019
- * Time: 01:24 PM
+ * Date: 16/12/2019
+ * Time: 06:23 PM
  */
 
-namespace App\Repositories\CADECO\SalidaAlmacen;
+namespace App\Repositories\CADECO\Venta;
 
-use App\Models\CADECO\SalidaAlmacen as Model;
+
+use App\Models\CADECO\Venta;
 
 class Repository extends \App\Repositories\Repository implements RepositoryInterface
 {
+
     /**
-     * @var Model
+     * @var Venta
      */
     protected $model;
 
     /**
      * RepositoryInterface constructor.
-     * @param Model $model
+     * @param Venta $model
      */
-    public function __construct(Model $model)
+    public function __construct(Venta $model)
     {
         $this->model = $model;
     }

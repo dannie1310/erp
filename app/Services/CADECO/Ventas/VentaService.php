@@ -9,7 +9,7 @@
 namespace App\Services\CADECO\Ventas;
 
 use App\Models\CADECO\Venta;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Venta\Repository;
 
 class VentaService
 {
@@ -36,4 +36,8 @@ class VentaService
         return $this->repository->paginate($data);
     }
 
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
 }

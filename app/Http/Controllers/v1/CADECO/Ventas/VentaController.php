@@ -45,19 +45,21 @@ class VentaController extends Controller
         $this->middleware('addAccessToken')->only('pdfVenta');
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:consultar_venta')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:eliminar_venta')->only(['destroy']);
+        $this->middleware('permiso:registrar_venta')->only(['store']);
+
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
     }
 
-    public function pdfVenta($id){
-        if(auth()->user()->can('consultar_ventas') || true){
+    public function pdfVenta($id)
+    {
+        if (auth()->user()->can('consultar_ventas') || true) {
             return $this->service->pdfVenta($id);
         }
-        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
-        
+        dd('No cuentas con los permisos necesarios para realizar la acción solicitada');
     }
-
-
 }
