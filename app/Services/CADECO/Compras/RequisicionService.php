@@ -44,25 +44,43 @@ class RequisicionService
         {
             if($partida['No PARTE'] != null) {
                 $material = Material::query()->where('numero_parte', '=', $partida['No PARTE'])->get(['id_material','numero_parte','descripcion', 'unidad', 'FechaHoraRegistro'])->first();
-                $materiales[] = array(
-                    'i' => '',
-                    'material' => [
-                        'id' => $material->id_material,
-                        'label' => $material->numero_parte,
-                        'numero_parte' => $material->numero_parte,
-                        'descripcion' => $material->descripcion,
-                        'unidad' => $material->unidad
-                    ],
-                    'numero_parte' => '',
-                    'no_parte_equi' => $partida['No PARTE EQUIVALENTE'],
-                    'pag' => $partida['PAGINA'],
-                    'descripcion' =>'',
-                    'unidad' => '',
-                    'ref' => $partida['REF.'],
-                    'fecha' => date('Y-m-d'),
-                    'cantidad' => $partida['CANTIDAD'],
-                    'observaciones' => ''
-                );
+                if ($material['numero_parte'] == null)
+                {
+                    $materiales[] = array(
+                        'i' => 1,
+                        'material' => '',
+                        'numero_parte' => $partida['No PARTE'],
+                        'no_parte_equi' => $partida['No PARTE EQUIVALENTE'],
+                        'pag' => $partida['PAGINA'],
+                        'descripcion' => $partida['DESCRIPCION'],
+                        'unidad' => $partida['UNIDAD'],
+                        'ref' => $partida['REF.'],
+                        'fecha' => date('Y-m-d'),
+                        'cantidad' => $partida['CANTIDAD'],
+                        'observaciones' => ''
+                    );
+                }
+                else {
+                    $materiales[] = array(
+                        'i' => '',
+                        'material' => [
+                            'id' => $material->id_material,
+                            'label' => $material->numero_parte,
+                            'numero_parte' => $material->numero_parte,
+                            'descripcion' => $material->descripcion,
+                            'unidad' => $material->unidad
+                        ],
+                        'numero_parte' => '',
+                        'no_parte_equi' => $partida['No PARTE EQUIVALENTE'],
+                        'pag' => $partida['PAGINA'],
+                        'descripcion' => '',
+                        'unidad' => '',
+                        'ref' => $partida['REF.'],
+                        'fecha' => date('Y-m-d'),
+                        'cantidad' => $partida['CANTIDAD'],
+                        'observaciones' => ''
+                    );
+                }
             }else{
                 $materiales[] = array(
                     'i' => 1,
