@@ -32,10 +32,10 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'folio',sortable: true},
-                    { title: 'Empresa', field: 'fecha_format', tdClass: 'td_money',sortable: true},
-                    { title: 'Referencia', field: 'referencia', sortable: true},
-                    { title: 'Estado', field: 'estado'},
+                    { title: 'Fecha', field: 'fecha_format', tdClass: 'td_money',sortable: true},
                     { title: 'Observaciones', field: 'observaciones'},
+                    { title: 'Estado', field: 'estado'},
+                    { title: 'Monto', field: 'monto', tdClass: 'td_money',sortable: false},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -89,6 +89,16 @@
                     ventas.forEach(function (venta, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
+                            folio: venta.folio_format,
+                            estado: venta.estado,
+                            fecha_format: venta.fecha_format,
+                            observaciones: venta.observaciones,
+                            monto: '$20,000.00',
+                            buttons: $.extend({}, {
+                                show: true,
+                                pagina: self.query.offset,
+                                id: venta.id
+                            })
 
                         })
                     });

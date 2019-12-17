@@ -198,7 +198,7 @@
         computed: {
             salida() {
                 console.log('Salida','jorge');
-                return this.$store.getters['almacenes/salida-almacen/currentSalida'];
+                // return this.$store.getters['almacenes/salida-almacen/currentSalida'];
             }
         }
     }
