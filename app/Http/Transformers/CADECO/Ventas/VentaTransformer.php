@@ -21,7 +21,7 @@ class VentaTransformer extends TransformerAbstract
             'fecha_format' => $model->fecha_format,
             'referencia' => (string) $model->referencia,
             'observaciones' => (string) $model->observaciones,
-            'estado' => $model->estado,
+            'estado' => $model->descripcion_estatus,
             'estado_format' => $model->estado_format,
             'folio' => $model->numero_folio,
             'opciones' => $model->opciones,

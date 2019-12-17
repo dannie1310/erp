@@ -94,4 +94,19 @@ class Venta extends Transaccion
             throw $e;
         }
     }
+
+    public function getDescripcionEstatusAttribute()
+    {
+        switch ($this->estado){
+            case(-1):
+                return 'Cancelado';
+                break;
+            case(0):
+                return 'Creado';
+                break;
+            case(1):
+                return 'Pagado';
+                break;
+        }
+    }
 }
