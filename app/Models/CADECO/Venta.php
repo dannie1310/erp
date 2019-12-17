@@ -98,4 +98,8 @@ class Venta extends Transaccion
             throw $e;
         }
     }
+
+    public function eliminar_venta($motivo){
+        dd($motivo);
+    }
 }

@@ -32,10 +32,50 @@ export default{
     },
 
     actions: {
-        paginate(context, payload) {
+        delete(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Venta",
+                    text: "¿Estás seguro/a de que deseas eliminar la venta?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Pago eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        
+        find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + 'paginate', {params: payload.params})
+                    .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -59,10 +99,11 @@ export default{
                     })
             });
         },
-        find(context, payload) {
+
+        paginate(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id, { params: payload.params })
+                    .get(URI + 'paginate', {params: payload.params})
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -72,7 +113,6 @@ export default{
                     })
             });
         },
-
     },
 
     getters: {

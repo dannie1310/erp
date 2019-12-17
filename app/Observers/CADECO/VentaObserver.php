@@ -8,6 +8,8 @@
 
 namespace App\Observers\CADECO;
 
+use App\Models\CADECO\Transaccion;
+
 
 class VentaObserver extends TransaccionObserver
 {

@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Venta">
             <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -16,9 +16,8 @@
                         <div class="row">
                             <div class="col-12">
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
+                            <div class="col-12">
+                                <div class="form-group row error-content">
                                             <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
                                         <div class="col-sm-10">
                                             <textarea
@@ -33,7 +32,6 @@
                                             <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                                         </div>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -52,19 +50,46 @@ export default {
     props: ['id','pagina'],
     data() {
         return {
+            motivo:'',
             cargando: false,
         }
     },
     methods: {
-        find(id) {
-                return this.$store.dispatch('finanzas/pago/detalle', {
-                    id: id
-                }).then(data => {
-                    this.$store.commit('finanzas/pago/SET_PAGO', data);
-                    $(this.$refs.modal).modal('show')
+        destroy() {
+            return this.$store.dispatch('ventas/venta/delete', {
+                id: this.id,
+                params: {data: [this.$data.motivo]}
+            })
+            .then(() => {
+                this.$store.dispatch('ventas/venta/paginate', {})
+                .then(data => {
+                    this.$store.commit('ventas/venta/SET_VENTAS', data.data);
+                    this.$store.commit('ventas/venta/SET_META', data.meta);
                 })
-            },
-
+            }).finally( ()=>{
+                $(this.$refs.modal).modal('hide');
+            });
+        },
+        find(id) {
+            return this.$store.dispatch('ventas/venta/find', {
+                id: id
+            }).then(data => {
+                this.$store.commit('ventas/venta/SET_VENTA', data);
+                $(this.$refs.modal).modal('show')
+            })
+        },
+        validate() {
+            this.$validator.validate().then(result => {
+                if (result) {
+                    if(this.motivo === '') {
+                        swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
+                    }
+                    else {
+                        this.destroy()
+                    }
+                }
+            });
+        },
     }
 }
 </script>
