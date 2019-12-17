@@ -81,7 +81,11 @@ class Venta extends Transaccion
                         'id_material' => $partida['id_material'],
                         'unidad' => $partida['unidad'],
                         'cantidad' => $partida['cantidad'],
-                        ''
+                        'importe' => $partida['importe'],
+                        'saldo' => $partida['saldo'],
+                        'precio_unitario' => $partida['precio_unitario'],
+                        'precio_material' => $partida['precio_material'],
+                        'cantidad_original1' => $partida['cantidad']
                     ]
                 );
             }

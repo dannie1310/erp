@@ -93,6 +93,8 @@ use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Tesoreria\MovimientoBancario;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
+use App\Models\CADECO\Venta;
+use App\Models\CADECO\VentaPartida;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
@@ -191,6 +193,8 @@ use App\Observers\CADECO\SucursalObserver;
 use App\Observers\CADECO\Tesoreria\MovimientoBancarioObserver;
 use App\Observers\CADECO\Tesoreria\TraspasoCuentasObserver;
 use App\Observers\CADECO\TransaccionObserver;
+use App\Observers\CADECO\VentaObserver;
+use App\Observers\CADECO\VentaPartidaObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
 use App\Observers\SEGURIDAD_ERP\TipoAreaCompradoraObserver;
@@ -363,6 +367,8 @@ class AppServiceProvider extends ServiceProvider
             Subcontrato::observe(SubcontratoObserver::class);
             Sucursal::observe(SucursalObserver::class);
             Transaccion::observe(TransaccionObserver::class);
+            Venta::observe(VentaObserver::class);
+            VentaPartida::observe(VentaPartidaObserver::class);
 
         /**
          * SEGURIDAD_ERP
