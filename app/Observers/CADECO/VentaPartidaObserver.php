@@ -13,8 +13,11 @@ use App\Models\CADECO\VentaPartida;
 
 class VentaPartidaObserver
 {
+    /**
+     * @param VentaPartida $partida
+     */
     public function created(VentaPartida $partida)
     {
-
+        $partida->ventaMaterial();
     }
 }
