@@ -13,5 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CtgEstado extends Model
 {
-
+    protected $connection = 'cadeco';
+    protected $table = 'Ventas.ctg_estados_transaccion';
+    protected $primaryKey = 'id';
 }

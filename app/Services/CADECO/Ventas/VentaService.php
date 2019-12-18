@@ -40,4 +40,9 @@ class VentaService
     {
         return $this->repository->create($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

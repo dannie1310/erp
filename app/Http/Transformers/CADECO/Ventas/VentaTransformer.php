@@ -9,24 +9,58 @@
 namespace App\Http\Transformers\CADECO\Ventas;
 
 
+use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\VentaPartidaTransformer;
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Venta;
 use League\Fractal\TransformerAbstract;
 
 class VentaTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = [
+        'partidas',
+        'empresa',
+        'usuario'
+    ];
+
     public function transform(Venta $model) {
         return [
             'id' => (int) $model->getKey(),
-            'fecha' => $model->fecha,
             'fecha_format' => $model->fecha_format,
-            'referencia' => (string) $model->referencia,
+            'monto' => (string) $model->monto_format,
             'observaciones' => (string) $model->observaciones,
+            'observaciones_format' => (string) $model->observaciones_format,
             'estado' => $model->descripcion_estatus,
-            'estado_format' => $model->estado_format,
             'folio' => $model->numero_folio,
             'opciones' => $model->opciones,
-            'operacion' => $model->operacion,
             'folio_format' => $model->numero_folio_format,
+            'subtotal' => $model->subtotal_format,
+            'impuesto' => $model->impuesto_format
         ];
+    }
+
+    public function includePartidas(Venta $model)
+    {
+        if($partida = $model->partidas)
+        {
+            return $this->collection($partida, new VentaPartidaTransformer);
+        }
+        return null;
+    }
+
+    public function includeEmpresa(Venta $model)
+    {
+        if ($empresa = $model->empresa) {
+            return $this->item($empresa, new EmpresaTransformer());
+        }
+        return null;
+    }
+
+    public function includeUsuario(Venta $model)
+    {
+        if ($usuario = $model->usuario) {
+            return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
     }
 }

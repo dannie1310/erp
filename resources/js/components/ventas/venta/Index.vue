@@ -93,7 +93,7 @@
                             estado: venta.estado,
                             fecha_format: venta.fecha_format,
                             observaciones: venta.observaciones,
-                            monto: '$20,000.00',
+                            monto: venta.monto,
                             buttons: $.extend({}, {
                                 show: true,
                                 pagina: self.query.offset,
