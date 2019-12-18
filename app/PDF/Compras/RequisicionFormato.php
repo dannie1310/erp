@@ -216,7 +216,7 @@ class RequisicionFormato extends Rotation
 
             $this->SetRounds(['', '', '', '', '', '']);
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->SetAligns(['C', 'R', 'C', 'L', 'L', 'R']);
+            $this->SetAligns(['C', 'L', 'L', 'R', 'L', 'L']);
             $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
 
             $this->Row([$i+1,
