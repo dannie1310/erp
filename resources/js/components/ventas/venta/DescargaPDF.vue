@@ -1,4 +1,3 @@
-
 <template>
     <span>
         <button @click="mostrar" type="button" class="btn btn-sm btn-outline-secondary" title="visualizar">
