@@ -46,7 +46,12 @@
                                                         <td class="bg-gray-light"><b>RFC:</b></td>
                                                         <td class="bg-gray-light">{{venta.empresa.rfc}}</td>
                                                         <td class="bg-gray-light"><b>Estado:</b></td>
-                                                        <td class="bg-gray-light">{{venta.estado}}</td>
+                                                        <td class="bg-gray-light">
+                                                            <small class="badge" :class="{
+                                                            'badge-danger': venta.estado == 'CANCELADO',
+                                                            'badge-primary': venta.estado == 'CREADO',
+                                                            'badge-success': venta.estado == 'PAGADO'}">
+                                                                 {{ venta.estado }} </small></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Observaciones:</b></td>

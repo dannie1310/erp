@@ -34,7 +34,7 @@
                     { title: 'Folio', field: 'folio',sortable: true},
                     { title: 'Fecha', field: 'fecha_format', tdClass: 'td_money',sortable: true},
                     { title: 'Observaciones', field: 'observaciones'},
-                    { title: 'Estado', field: 'estado'},
+                    { title: 'Estado', field: 'estado',  tdComp: require('./partials/VentaEstatus').default},
                     { title: 'Monto', field: 'monto', tdClass: 'td_money',sortable: false},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
@@ -90,10 +90,12 @@
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
                             folio: venta.folio_format,
-                            estado: venta.estado,
                             fecha_format: venta.fecha_format,
                             observaciones: venta.observaciones,
                             monto: venta.monto,
+                            estado: $.extend({},{
+                                estado: venta.estado
+                            }),
                             buttons: $.extend({}, {
                                 show: true,
                                 pagina: self.query.offset,
