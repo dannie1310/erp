@@ -101,5 +101,12 @@ class Venta extends Transaccion
 
     public function eliminar_venta($motivo){
         dd($motivo);
+        foreach($this->partidas as $partida){
+            $partida->inventario->delete();
+        }
+        $this->estado = -1;
+        $this->save();
+
+        //TODO registrar el motivo
     }
 }
