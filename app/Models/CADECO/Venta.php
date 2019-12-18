@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Ventas\CtgEstado;
 use App\PDF\VentaFormato;
 use Illuminate\Support\Facades\DB;
 use DateTime;
@@ -46,6 +47,11 @@ class Venta extends Transaccion
     public function partidas()
     {
         return $this->hasMany(VentaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
     public function pdfVenta(){
@@ -97,6 +103,11 @@ class Venta extends Transaccion
             abort(400, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function getDescripcionEstatusAttribute()
+    {
+        return strtoupper(CtgEstado::find($this->estado)['descripcion']);
     }
 
     public function cancelar_venta($motivo){
