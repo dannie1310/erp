@@ -47,11 +47,10 @@
                                                         <td class="bg-gray-light">{{venta.empresa.rfc}}</td>
                                                         <td class="bg-gray-light"><b>Estado:</b></td>
                                                         <td class="bg-gray-light">
-                                                            <small class="badge" :class="{
-                                                            'badge-danger': venta.estado == 'CANCELADO',
-                                                            'badge-primary': venta.estado == 'CREADO',
-                                                            'badge-success': venta.estado == 'PAGADO'}">
-                                                                 {{ venta.estado }} </small></td>
+                                                            <small class="badge" :class="{'badge-danger': venta.estado.id == '-1',
+                                                                                         'badge-primary': venta.estado.id == '0',
+                                                                                         'badge-success': venta.estado.id == '1'}">
+                                                                 {{ venta.estado.descripcion }} </small></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="bg-gray-light"><b>Observaciones:</b></td>
@@ -162,7 +161,7 @@
                 this.$store.commit('ventas/venta/SET_VENTA', null);
                 return this.$store.dispatch('ventas/venta/find', {
                     id: this.id,
-                    params: {include: ['empresa', 'partidas.material', 'usuario']}
+                    params: {include: ['empresa', 'partidas.material', 'usuario', 'estado']}
                 }).then(data => {
                     this.$store.commit('ventas/venta/SET_VENTA', data);
                 }).finally(() => {

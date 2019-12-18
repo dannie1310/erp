@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Http\Transformers\CADECO;
+namespace App\Http\Transformers\CADECO\Ventas;
 
 
-use App\Http\Transformers\IGH\UsuarioTransformer;
+use App\Http\Transformers\CADECO\MaterialTransformer;
 use App\Models\CADECO\VentaPartida;
 use League\Fractal\TransformerAbstract;
 
@@ -26,6 +26,10 @@ class VentaPartidaTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param VentaPartida $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeMaterial(VentaPartida $model)
     {
         if ($usuario = $model->material) {
@@ -33,5 +37,4 @@ class VentaPartidaTransformer extends TransformerAbstract
         }
         return null;
     }
-
 }

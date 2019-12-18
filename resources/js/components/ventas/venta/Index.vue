@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {include:'estado'},
                 estado: "",
                 cargando: false
             }

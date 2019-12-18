@@ -1,9 +1,9 @@
 <template>
     <small class="badge" :class="{
-                     'badge-danger': value.estado == 'CANCELADO',
-                     'badge-primary': value.estado == 'CREADO',
-                     'badge-success': value.estado == 'PAGADO'}">
-        {{ value.estado }} </small>
+                     'badge-danger': value.estado.id == '-1',
+                     'badge-primary': value.estado.id == '0',
+                     'badge-success': value.estado.id == '1'}">
+        {{ value.estado.descripcion }} </small>
 </template>
 
 <script>

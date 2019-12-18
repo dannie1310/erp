@@ -54,6 +54,11 @@ class Venta extends Transaccion
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function estadoVenta()
+    {
+        return $this->belongsTo(CtgEstado::class, 'estado', 'id');
+    }
+
     public function pdfVenta(){
         $venta = new VentaFormato($this);
         return $venta->create();
@@ -105,12 +110,7 @@ class Venta extends Transaccion
         }
     }
 
-    public function getDescripcionEstatusAttribute()
-    {
-        return strtoupper(CtgEstado::find($this->estado)['descripcion']);
-    }
-
-    public function cancelar_venta($motivo){
+    public function cancelarVenta($motivo){
         foreach($this->partidas as $partida){
             $partida->movimiento->delete();
         }
