@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+
 class VentaPartida extends Item
 {
     public function movimiento()
@@ -28,5 +29,4 @@ class VentaPartida extends Item
     public function getPrecioUnitarioFormatAttribute(){
         return '$ ' . number_format($this->precio_unitario, 2, '.', ',');
     }
-
 }
