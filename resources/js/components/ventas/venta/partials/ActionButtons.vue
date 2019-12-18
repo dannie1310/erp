@@ -2,7 +2,7 @@
     <div class="btn-group">
         <ShowVenta  v-if="$root.can('consultar_venta')" v-bind:id="value.id" v-bind:pagina="value.pagina"></ShowVenta>
         <DescargaPDF  v-if="$root.can('consultar_venta')" v-bind:id="value.id" v-bind:pagina="value.pagina"></DescargaPDF>
-        <Eliminar  v-if="$root.can('eliminar_venta') || true" v-bind:id="value.id" v-bind:pagina="value.pagina" v-bind:borrar="value.borrar"></Eliminar>
+        <Eliminar  v-if="$root.can('eliminar_venta')" v-bind:id="value.id" v-bind:pagina="value.pagina" v-bind:borrar="value.borrar"></Eliminar>
     </div>
 </template>
 

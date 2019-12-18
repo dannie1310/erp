@@ -11,9 +11,9 @@ namespace App\Models\CADECO;
 
 class VentaPartida extends Item
 {
-    public function inventario()
+    public function movimiento()
     {
-        return $this->belongsTo(Inventario::class, 'id_item', 'id_item');
+        return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
     }
 
     public function venta()

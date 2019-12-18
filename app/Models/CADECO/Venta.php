@@ -99,10 +99,9 @@ class Venta extends Transaccion
         }
     }
 
-    public function eliminar_venta($motivo){
-        dd($motivo);
+    public function cancelar_venta($motivo){
         foreach($this->partidas as $partida){
-            $partida->inventario->delete();
+            $partida->movimiento->delete();
         }
         $this->estado = -1;
         $this->save();

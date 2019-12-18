@@ -50,7 +50,7 @@ class VentaController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_venta')->only(['show','paginate','index','find']);
         $this->middleware('permiso:consultar_venta')->only(['destroy']);
-        // $this->middleware('permiso:eliminar_venta')->only(['destroy']);
+        $this->middleware('permiso:eliminar_venta')->only(['destroy']);
         $this->middleware('permiso:registrar_venta')->only(['store']);
 
 

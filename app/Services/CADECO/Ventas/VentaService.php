@@ -29,7 +29,7 @@ class VentaService
 
     public function delete($data, $id)
     {
-        return $this->show($id)->eliminar_venta($data['data'][0]);
+        return $this->show($id)->cancelar_venta($data['data'][0]);
     }
 
     public function pdfVenta($id){

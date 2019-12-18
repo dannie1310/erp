@@ -15,8 +15,7 @@ class DeleteVentaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('consultar_venta');
-        // return auth()->user()->can('eliminar_venta');
+        return auth()->user()->can('eliminar_venta');
     }
 
     /**
