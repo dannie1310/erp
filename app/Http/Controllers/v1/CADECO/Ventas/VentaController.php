@@ -9,15 +9,18 @@
 namespace App\Http\Controllers\v1\CADECO\Ventas;
 
 
-use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Ventas\VentaTransformer;
-use App\Services\CADECO\Ventas\VentaService;
-use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use App\Traits\ControllerTrait;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteVentaRequest;
+use App\Services\CADECO\Ventas\VentaService;
+use App\Http\Transformers\CADECO\Ventas\VentaTransformer;
 
 class VentaController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        destroy as traitDestroy;
+    }
 
     /**
      * @var Manager
@@ -46,6 +49,7 @@ class VentaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:consultar_venta')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:consultar_venta')->only(['destroy']);
         $this->middleware('permiso:eliminar_venta')->only(['destroy']);
         $this->middleware('permiso:registrar_venta')->only(['store']);
 
@@ -53,6 +57,11 @@ class VentaController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function destroy(DeleteVentaRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);
     }
 
     public function pdfVenta($id)

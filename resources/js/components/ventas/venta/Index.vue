@@ -99,7 +99,8 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 pagina: self.query.offset,
-                                id: venta.id
+                                id: venta.id,
+                                borrar: venta.estado !== -1 ? true : false,
                             })
 
                         })

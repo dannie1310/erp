@@ -27,6 +27,11 @@ class VentaService
         $this->repository = new Repository($model);
     }
 
+    public function delete($data, $id)
+    {
+        return $this->show($id)->cancelar_venta($data['data'][0]);
+    }
+
     public function pdfVenta($id){
         return $this->repository->show($id)->pdfVenta();
     }

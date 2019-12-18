@@ -87,7 +87,11 @@ class Venta extends Transaccion
                         'id_material' => $partida['id_material'],
                         'unidad' => $partida['unidad'],
                         'cantidad' => $partida['cantidad'],
-                        ''
+                        'importe' => $partida['importe'],
+                        'saldo' => $partida['saldo'],
+                        'precio_unitario' => $partida['precio_unitario'],
+                        'precio_material' => $partida['precio_material'],
+                        'cantidad_original1' => $partida['cantidad']
                     ]
                 );
             }
@@ -104,5 +108,15 @@ class Venta extends Transaccion
     public function getDescripcionEstatusAttribute()
     {
         return strtoupper(CtgEstado::find($this->estado)['descripcion']);
+    }
+
+    public function cancelar_venta($motivo){
+        foreach($this->partidas as $partida){
+            $partida->movimiento->delete();
+        }
+        $this->estado = -1;
+        $this->save();
+
+        //TODO registrar el motivo
     }
 }
