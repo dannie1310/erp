@@ -98,4 +98,14 @@ class Venta extends Transaccion
             throw $e;
         }
     }
+
+    public function cancelar_venta($motivo){
+        foreach($this->partidas as $partida){
+            $partida->movimiento->delete();
+        }
+        $this->estado = -1;
+        $this->save();
+
+        //TODO registrar el motivo
+    }
 }
