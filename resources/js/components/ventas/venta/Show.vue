@@ -94,36 +94,28 @@
                                                         <td>{{partida.importe}}</td>
                                                     </tr>
                                                 </tbody>
-                                                <thead>
-                                                    <tr>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light">Subtotal:</th>
-                                                        <th style="border:none;" class="bg-gray-light">{{venta.subtotal}}</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light">IVA(16%)</th>
-                                                        <th style="border:none;" class="bg-gray-light">{{venta.impuesto}}</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light"></th>
-                                                        <th style="border:none;" class="bg-gray-light">Total:</th>
-                                                        <th style="border:none;" class="bg-gray-light">{{venta.monto}}</th>
-                                                    </tr>
-                                                </thead>
                                             </table>
+                                            <div class="row">
+                                                <div class=" col-md-12 bg-gray-light" align="right">
+                                                        <label class="col-sm-2 col-form-label"></label>
+                                                        <label class="col-sm-2 col-form-label">Subtotal:</label>
+                                                        <label class="col-sm-2 col-form-label" style="text-align: center">{{venta.subtotal}}</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class=" col-md-12 bg-gray-light" align="right">
+                                                        <label class="col-sm-2 col-form-label"></label>
+                                                        <label class="col-sm-2 col-form-label">IVA(16%)</label>
+                                                        <label class="col-sm-2 col-form-label" style="text-align: center">{{venta.impuesto}}</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class=" col-md-12 bg-gray-light" align="right">
+                                                        <label class="col-sm-2 col-form-label"></label>
+                                                        <label class="col-sm-2 col-form-label">Total:</label>
+                                                        <label class="col-sm-2 col-form-label" style="text-align: center">{{venta.monto}}</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
