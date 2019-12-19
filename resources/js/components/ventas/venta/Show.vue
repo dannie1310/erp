@@ -89,31 +89,31 @@
                                                         <td >{{partida.material.numero_parte}}</td>
                                                         <td >{{partida.material.descripcion}}</td>
                                                         <td>{{partida.unidad}}</td>
-                                                        <td>{{partida.cantidad_decimal}}</td>
-                                                        <td>{{partida.precio_unitario}}</td>
-                                                        <td>{{partida.importe}}</td>
+                                                        <td style="text-align: right">{{partida.cantidad_decimal}}</td>
+                                                        <td style="text-align: right">{{partida.precio_unitario}}</td>
+                                                        <td style="text-align: right">{{partida.importe}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                             <div class="row">
-                                                <div class=" col-md-12 bg-gray-light" align="right">
+                                                <div class=" col-md-12" align="right">
                                                         <label class="col-sm-2 col-form-label"></label>
                                                         <label class="col-sm-2 col-form-label">Subtotal:</label>
-                                                        <label class="col-sm-2 col-form-label" style="text-align: center">{{venta.subtotal}}</label>
+                                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{venta.subtotal}}</label>
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class=" col-md-12 bg-gray-light" align="right">
+                                                <div class=" col-md-12" align="right">
                                                         <label class="col-sm-2 col-form-label"></label>
                                                         <label class="col-sm-2 col-form-label">IVA(16%)</label>
-                                                        <label class="col-sm-2 col-form-label" style="text-align: center">{{venta.impuesto}}</label>
+                                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{venta.impuesto}}</label>
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class=" col-md-12 bg-gray-light" align="right">
+                                                <div class=" col-md-12" align="right">
                                                         <label class="col-sm-2 col-form-label"></label>
                                                         <label class="col-sm-2 col-form-label">Total:</label>
-                                                        <label class="col-sm-2 col-form-label" style="text-align: center">{{venta.monto}}</label>
+                                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{venta.monto}}</label>
                                                 </div>
                                             </div>
                                         </div>
