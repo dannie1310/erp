@@ -108,15 +108,12 @@
                                                             <th class="unidad">Unidad</th>
                                                             <th class="money_input">Existencia</th>
                                                             <th class="money_input">Cantidad</th>
-                                                            <th class="icono"></th>
-                                                            <th style="width: 200px; max-width: 200px; min-width: 200px">Destino</th>
-                                                            <th style="width: 60px; max-width: 60px; min-width: 60px"></th>
-                                                             <th class="icono">
-                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
-                                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                                <i class="fa fa-plus" v-else></i>
-                                                            </button>
-                                                        </th>
+                                                            <th class="icono">
+                                                                <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
+                                                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                                    <i class="fa fa-plus" v-else></i>
+                                                                </button>
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -160,7 +157,7 @@
                                                                 {{partida.material.unidad}}
                                                             </td>
                                                             <td class="money">
-                                                                {{partida.material.saldo_almacen_format}}
+                                                                {{partida.material.saldo_inventario}}
                                                             </td>
                                                             <td>
                                                                 <input
@@ -170,37 +167,14 @@
                                                                         :name="`cantidad[${i}]`"
                                                                         v-model="partida.cantidad"
                                                                         data-vv-as="Cantidad"
-                                                                        v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:2}"
+                                                                        v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_inventario, decimal:2}"
                                                                         class="form-control"
                                                                         :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                                         id="cantidad"
                                                                         placeholder="Cantidad">
-                                                            <div class="invalid-feedback"
-                                                                 v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
-                                                            </div>
-                                                            </td>
-                                                            <td  v-if="partida.destino ===  ''" >
-                                                            <small class="badge badge-secondary">
-                                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                            </small>
-                                                        </td>
-                                                        <td v-else >
-                                                            <small class="badge badge-success" v-if="partida.destino.tipo_destino === 1" >
-                                                                <i class="fa fa-stream button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                            </small>
-                                                             <small class="badge badge-success" v-else="partida.destino.tipo_destino === 2" >
-                                                                <i class="fa fa-boxes button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
-                                                            </small>
-                                                        </td>
-                                                        <td  v-if="partida.destino ===  ''" >
-                                                        </td>
-                                                        <td v-else >
-                                                            <span v-if="partida.destino.tipo_destino === 1" style="text-decoration: underline"  :title="partida.destino.destino.path">{{partida.destino.destino.descripcion}}</span>
-                                                            <span v-if="partida.destino.tipo_destino === 2">{{partida.destino.destino.descripcion}}</span>
-                                                        </td>
-                                                            <td>
-                                                                <i class="far fa-copy button" v-on:click="copiar_destino(partida)" ></i>
-                                                                <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" ></i>
+                                                                <div class="invalid-feedback"
+                                                                     v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
+                                                                </div>
                                                             </td>
                                                             <td class="icono">
                                                                 <button type="button" class="btn btn-outline-danger btn-sm" @click="borrarPartida(i)"><i class="fa fa-trash"></i></button>
@@ -250,7 +224,6 @@
         data() {
             return {
                 es : es,
-                archivo: null,
                 cargando : false,
                 bandera : 0,
                 fechasDeshabilitadas : {},
@@ -265,6 +238,7 @@
                     monto_total : '',
                     saldo_total : '',
                     impuesto_total : '',
+                    archivo: null,
                     partidas : []
                 },
                 partidas : [],
@@ -298,9 +272,10 @@
                 this.materiales = [];
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
+                    params: { scope : ['disponiblesParaVenta', 'insumos']}
                 })
                     .then(data => {
-                        this.materiales = data.materiales.data;
+                        this.materiales = data.data;
                         if( this.materiales.length != 0 ) {
                             this.bandera = 1;
                             this.cargando = false
@@ -316,11 +291,11 @@
                     })
             },
             onFileChange(e){
-                this.archivo = null;
+                this.registro_venta.archivo = null;
                 var files = e.target.files || e.dataTransfer.files;
                 this.createImage(files[0], 1);
                 setTimeout(() => {
-                    if(this.archivo == null) {
+                    if(this.registro_venta.archivo == null) {
                         onFileChange(e)
                     }
                 }, 500);
@@ -330,7 +305,7 @@
                 var vm = this;
 
                 reader.onload = (e) => {
-                        vm.archivo = e.target.result;
+                        vm.registro_venta.archivo = e.target.result;
                 };
                 reader.readAsDataURL(file);
             },

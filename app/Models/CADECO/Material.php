@@ -195,4 +195,10 @@ class Material extends Model
     {
         return number_format($this->saldo_almacen,2,".","");
     }
+
+    public function scopeDisponiblesParaVenta($query)
+    {
+        return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')
+            ->whereRaw('inventarios.saldo > 0')->select('materiales.*')->distinct();
+    }
 }

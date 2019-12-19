@@ -743,11 +743,11 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'ventas'], function ($api) {
         $api->group(['prefix' => 'venta'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@index');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@show')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/pdf_venta', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@pdfVenta')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Ventas\VentaController@store');
         });
     });
 });
