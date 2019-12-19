@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="mostrar" type="button" class="btn btn-sm btn-outline-secondary" title="visualizar">
+        <button @click="mostrar" type="button" class="btn btn-sm btn-outline-primary" title="Ver PDF">
             <i class="fa fa-file-pdf-o"></i>
         </button>
         <div class="modal fade" ref="modal1" role="dialog">
