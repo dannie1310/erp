@@ -63,8 +63,8 @@
                                     </div>
                                 </div>
                             </div>
-                                <div class="row">
-                                <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
                                    <div class="form-group error-content">
                                         <label for="id_concepto">Concepto:</label>
                                         <concepto-select
@@ -79,6 +79,20 @@
                                         ></concepto-select>
                                        <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row error-content">
+                                        <label for="archivo" >Cargar Archivo de Soporte: </label>
+                                        <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                                                row="3"
+                                                v-validate="{required: true,  ext: ['pdf'], size: 3072}"
+                                                name="archivo"
+                                                data-vv-as="Archivo"
+                                                ref="archivo"
+                                                :class="{'is-invalid': errors.has('archivo')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (pdf)</div>
+                                    </div>
                                 </div>
                             </div>
                                 <hr>
@@ -236,6 +250,7 @@
         data() {
             return {
                 es : es,
+                archivo: null,
                 cargando : false,
                 bandera : 0,
                 fechasDeshabilitadas : {},
@@ -299,6 +314,25 @@
                         }
 
                     })
+            },
+            onFileChange(e){
+                this.archivo = null;
+                var files = e.target.files || e.dataTransfer.files;
+                this.createImage(files[0], 1);
+                setTimeout(() => {
+                    if(this.archivo == null) {
+                        onFileChange(e)
+                    }
+                }, 500);
+            },
+            createImage(file) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                        vm.archivo = e.target.result;
+                };
+                reader.readAsDataURL(file);
             },
             agregar_partida(){
                 var array = {
