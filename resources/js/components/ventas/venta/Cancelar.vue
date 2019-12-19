@@ -145,7 +145,7 @@
 </template>
 <script>
 export default {
-    name: "eliminar-venta",
+    name: "cancelar-venta",
     props: ['id','pagina','borrar'],
     data() {
         return {

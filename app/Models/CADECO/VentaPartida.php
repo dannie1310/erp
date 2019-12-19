@@ -11,9 +11,9 @@ namespace App\Models\CADECO;
 
 class VentaPartida extends Item
 {
-    public function movimiento()
+    public function movimientos()
     {
-        return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
+        return $this->hasMany(Movimiento::class, 'id_item', 'id_item');
     }
 
     public function venta()
@@ -86,5 +86,11 @@ class VentaPartida extends Item
 
         $item = VentaPartida::find($this->id_item);
         $item->update(["importe" => $importe]);
+    }
+
+    public function eliminarMovimientos(){
+        foreach($this->movimientos as $movimiento){
+            $movimiento->delete();
+        }
     }
 }
