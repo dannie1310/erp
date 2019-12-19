@@ -82,7 +82,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row error-content">
-                                        <label for="archivo" >Cargar Archivo de Soporte: </label>
+                                        <label for="archivo" >Agregar Archivo de Factura: </label>
                                         <input type="file" class="form-control" id="archivo" @change="onFileChange"
                                                 row="3"
                                                 v-validate="{required: true,  ext: ['pdf'], size: 3072}"
@@ -347,10 +347,16 @@
             validate(){
                 this.$validator.validate().then(result => {
                     if (result) {
-
+                        this.store()
                     }
                 });
-            }
+            },
+            store() {
+                return this.$store.dispatch('ventas/venta/store', this.registro_venta)
+                    .then((data) => {
+                        this.$router.push({name: 'venta'});
+                    });
+            },
         }
     }
 </script>
