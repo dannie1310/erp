@@ -309,6 +309,13 @@
                     this.getMateriales();
                 }
                 this.partidas.push(array);
+            },
+            validate(){
+                this.$validator.validate().then(result => {
+                    if (result) {
+
+                    }
+                });
             }
         }
     }
