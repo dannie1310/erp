@@ -6,7 +6,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteVentaRequest extends FormRequest
+class CancelarVentaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,7 @@ class DeleteVentaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('eliminar_venta');
+        return auth()->user()->can('cancelar_venta');
     }
 
     /**

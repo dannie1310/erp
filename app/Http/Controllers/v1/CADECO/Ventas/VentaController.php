@@ -49,8 +49,7 @@ class VentaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:consultar_venta')->only(['show','paginate','index','find']);
-        $this->middleware('permiso:consultar_venta')->only(['destroy']);
-        $this->middleware('permiso:eliminar_venta')->only(['destroy']);
+        $this->middleware('permiso:cancelar_venta')->only(['destroy']);
         $this->middleware('permiso:registrar_venta')->only(['store']);
 
 
@@ -59,7 +58,7 @@ class VentaController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function destroy(DeleteVentaRequest $request, $id)
+    public function destroy(CancelarVentaRequest $request, $id)
     {
         return $this->traitDestroy($request, $id);
     }

@@ -114,13 +114,22 @@ class Venta extends Transaccion
     }
 
     public function cancelarVenta($motivo){
-        foreach($this->partidas as $partida){
-            $partida->movimiento->delete();
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            foreach($this->partidas as $partida){
+                $partida->eliminarMovimientos();
+            }
+            $this->estado = -1;
+            $this->observaciones = 'Venta Cancelada: ' . $motivo . ' -- ' . $this->observaciones;
+            $this->save();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
         }
-        $this->estado = -1;
-        $this->save();
 
-        //TODO registrar el motivo
+
     }
 
     private function guardarPdf($pdf_file, $id_transaccion){
