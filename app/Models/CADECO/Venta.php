@@ -8,11 +8,12 @@
 
 namespace App\Models\CADECO;
 
-use App\Models\CADECO\Ventas\CtgEstado;
-use App\PDF\VentaFormato;
-use Illuminate\Support\Facades\DB;
 use DateTime;
 use DateTimeZone;
+use App\PDF\VentaFormato;
+use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\Ventas\CtgEstado;
+use App\Models\CADECO\Ventas\PdfFactura;
 
 
 class Venta extends Transaccion
@@ -101,6 +102,8 @@ class Venta extends Transaccion
                 );
             }
 
+            $this->guardarPdf($data['archivo'], $venta->id_transaccion);
+
             DB::connection('cadeco')->commit();
             return $venta;
         } catch (\Exception $e) {
@@ -118,5 +121,23 @@ class Venta extends Transaccion
         $this->save();
 
         //TODO registrar el motivo
+    }
+
+    private function guardarPdf($pdf_file, $id_transaccion){
+        if($pdf_file == null) {
+            abort(403, 'Archivo de factura inválido');
+        }
+        $file_fingerprint = hash_file('md5', $pdf_file);
+        if(PdfFactura::query()->where('hash_file', '=', $file_fingerprint)->first()){
+            abort(403, 'Archivo de factura registrado previamente');
+        }
+
+        Storage::disk('pdf_factura_venta')->put($id_transaccion . '.pdf', fopen($pdf_file, 'r'));
+
+        PdfFactura::create(
+            ['id_transaccion' => $id_transaccion ,
+            'nombre_archivo' => $id_transaccion . '.pdf',
+            'hash_file' => $file_fingerprint
+            ]);
     }
 }
