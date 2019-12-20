@@ -9,12 +9,13 @@
 namespace App\Observers\CADECO;
 
 use App\Models\CADECO\Transaccion;
+use App\Models\CADECO\Venta;
 
 
 class VentaObserver extends TransaccionObserver
 {
     /**
-     * @param Transaccion $venta
+     * @param Venta $venta
      * @throws \Exception
      */
     public function creating(Transaccion $venta)
@@ -24,7 +25,7 @@ class VentaObserver extends TransaccionObserver
         $venta->opciones = 1;
     }
 
-    public function created(Transaccion $venta)
+    public function created(Venta $venta)
     {
 
     }

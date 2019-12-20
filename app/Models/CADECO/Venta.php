@@ -14,6 +14,7 @@ use App\PDF\VentaFormato;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\Ventas\CtgEstado;
 use App\Models\CADECO\Ventas\PdfFactura;
+use Illuminate\Support\Facades\Storage;
 
 
 class Venta extends Transaccion
@@ -58,6 +59,11 @@ class Venta extends Transaccion
     public function estadoVenta()
     {
         return $this->belongsTo(CtgEstado::class, 'estado', 'id');
+    }
+
+    public function depositoCliente()
+    {
+        return $this->belongsTo(DepositoCliente::class, 'id_transaccion', 'id_antecedente');
     }
 
     public function pdfVenta(){
