@@ -9,19 +9,20 @@
 namespace App\Observers\CADECO;
 
 
-use App\Models\CADECO\Deposito;
 use App\Models\CADECO\DepositoCliente;
-use App\Observers\DepositoObserver;
+use App\Models\CADECO\Transaccion;
 
-class DepositoClienteObserver extends DepositoObserver
+class DepositoClienteObserver extends TransaccionObserver
 {
     /**
      * @param DepositoCliente $deposito
      * @throws \Exception
      */
-    public function creating(Deposito $deposito)
+    public function creating(Transaccion $deposito)
     {
         parent::creating($deposito);
+        $deposito->tipo_transaccion = 81;
         $deposito->opciones = 4;
+        $deposito->estado = 1;
     }
 }

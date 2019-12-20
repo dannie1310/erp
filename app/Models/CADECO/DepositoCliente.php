@@ -11,6 +11,21 @@ namespace App\Models\CADECO;
 
 class DepositoCliente extends Deposito
 {
+    protected $fillable = [
+        'id_antecedente',
+        'id_cuenta',
+        'id_empresa',
+        'id_moneda',
+        'cumplimiento',
+        'vencimiento',
+        'monto',
+        'referencia',
+        'observaciones',
+        'tipo_transaccion',
+        'opciones',
+        'estado'
+    ];
+
     protected static function boot()
     {
         parent::boot();
