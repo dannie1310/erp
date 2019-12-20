@@ -34,7 +34,8 @@ class VentaTransformer extends TransformerAbstract
             'opciones' => $model->opciones,
             'folio_format' => $model->numero_folio_format,
             'subtotal' => $model->subtotal_format,
-            'impuesto' => $model->impuesto_format
+            'impuesto' => $model->impuesto_format,
+            'partidas_items' => $model->partidas_items
         ];
     }
 

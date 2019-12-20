@@ -71,6 +71,33 @@ class Venta extends Transaccion
         return $venta->create();
     }
 
+    public function getPartidasItemsAttribute()
+    {
+        $partidas_agrupadas = [];
+        $conteo = [];
+        $id = 0;
+        foreach ($this->partidas as $partida){
+            if(array_key_exists($partida->id_material, $partidas_agrupadas)){
+                $partidas_agrupadas[$partida->id_material]['cantidad'] = $partidas_agrupadas[$partida->id_material]['cantidad'] + $partida->cantidad;
+                $partidas_agrupadas[$partida->id_material]['importe'] = $partidas_agrupadas[$partida->id_material]['importe'] + ($partida->cantidad * $partida->precio_unitario);
+            }else {
+                $partidas_agrupadas[$partida->id_material] = [
+                    'numero' => $id,
+                    'numero_parte' => $partida->material->numero_parte,
+                    'id_material' => $partida->id_material,
+                    'descripcion' => $partida->material->descripcion,
+                    'unidad' => $partida->material->unidad,
+                    'cantidad' => $partida->cantidad_decimal,
+                    'precio_unitario' => $partida->precio_unitario_format,
+                    'importe' => ($partida->cantidad * $partida->precio_unitario),
+                ];
+                $id = $id + 1;
+            }   
+            $conteo[$id] = $id;
+        }
+        return array_combine($conteo,$partidas_agrupadas);
+    }
+
     public function registrar($data)
     {
         try {
