@@ -13,8 +13,8 @@ use DateTimeZone;
 use App\PDF\VentaFormato;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\Ventas\CtgEstado;
-use App\Models\CADECO\Ventas\PdfFactura;
 use Illuminate\Support\Facades\Storage;
+use App\Models\CADECO\Ventas\PdfFactura;
 
 
 class Venta extends Transaccion
@@ -120,6 +120,9 @@ class Venta extends Transaccion
 
             $venta->registroPartidas($data['partidas']);
 
+            $fecha = new DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+
             $fecha_emision = new DateTime($data['fecha_emision']);
             $fecha_emision->setTimezone(new DateTimeZone('America/Mexico_City'));
 
@@ -132,11 +135,12 @@ class Venta extends Transaccion
                     'id_cuenta' => $data['id_cuenta'],
                     'id_empresa' => $data['id_empresa'],
                     'id_moneda' => 1,
-                    'cumplimiento' => $fecha_emision->format("Y-m-d H:i:s"),
-                    'vencimiento' => $fecha_acreditacion->format("Y-m-d H:i:s"),
+                    'fecha' => $fecha->format("Y-m-d H:i:s"),
+                    'cumplimiento' => $fecha_emision->format("Y-m-d"),
+                    'vencimiento' => $fecha_acreditacion->format("Y-m-d"),
                     'monto' => $data['total'],
                     'referencia' => $data['referencia_deposito'],
-                    'observaciones' => $data['observaciones']
+                    'observaciones' => $data['observaciones'],
                 ]
             );
 

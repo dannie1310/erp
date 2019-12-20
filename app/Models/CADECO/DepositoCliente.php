@@ -23,7 +23,9 @@ class DepositoCliente extends Deposito
         'observaciones',
         'tipo_transaccion',
         'opciones',
-        'estado'
+        'estado',
+        'numero_folio',
+        'fecha',
     ];
 
     protected static function boot()
