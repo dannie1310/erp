@@ -178,105 +178,125 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="index_corto">#</th>
-                                                                <th class="no_parte_input">No. de Parte</th>
-                                                                <th>Material</th>
-                                                                <th class="unidad">Unidad</th>
-                                                                <th class="money_input">Existencia</th>
-                                                                <th class="money_input">Cantidad</th>
-                                                                <th class="icono">
-                                                                    <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
-                                                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                                        <i class="fa fa-plus" v-else></i>
-                                                                    </button>
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-for="(partida, i) in partidas">
-                                                                <td>{{ i + 1}}</td>
-                                                                <td>
-                                                                    <select
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="index_corto">#</th>
+                                                        <th class="no_parte_input">No. de Parte</th>
+                                                        <th>Material</th>
+                                                        <th class="unidad">Unidad</th>
+                                                        <th>Existencia</th>
+                                                        <th class="money_input">Cantidad</th>
+                                                        <th class="money_input">Precio Unitario</th>
+                                                        <th class="money_input">Importe</th>
+                                                        <th class="icono">
+                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
+                                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                                <i class="fa fa-plus" v-else></i>
+                                                            </button>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(partida, i) in registro_venta.partidas">
+                                                        <td>{{ i + 1}}</td>
+                                                        <td>
+                                                            <select
 
-                                                                            :disabled = "!bandera"
-                                                                            class="form-control"
-                                                                            :name="`id_material[${i}]`"
-                                                                            v-model="partida.material"
-                                                                            v-validate="{required: true }"
-                                                                            data-vv-as="No de Parte"
-                                                                            :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                                    >
-                                                                         <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
-                                                                    </select>
-                                                                <div class="invalid-feedback"
-                                                                     v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
-                                                                </div>
-                                                                </td>
-                                                                <td>
-                                                                    <select
+                                                                    :disabled = "!bandera"
+                                                                    class="form-control"
+                                                                    :name="`id_material[${i}]`"
+                                                                    v-model="partida.material"
+                                                                    v-validate="{required: true }"
+                                                                    data-vv-as="No de Parte"
+                                                                    :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
+                                                            >
+                                                                 <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
+                                                            </select>
+                                                        <div class="invalid-feedback"
+                                                             v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
+                                                        </div>
+                                                        </td>
+                                                        <td>
+                                                            <select
 
-                                                                            :disabled = "!bandera"
-                                                                            class="form-control"
-                                                                            :name="`id_material[${i}]`"
-                                                                            v-model="partida.material"
-                                                                            v-validate="{required: true }"
-                                                                            data-vv-as="Descripción"
-                                                                            :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                                    >
-                                                                     <option v-for="material in materiales" :value="material">{{ material.descripcion }}</option>
-                                                                </select>
-                                                                <div class="invalid-feedback"
-                                                                     v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
-                                                                </div>
-                                                                </td>
-                                                                <td>
-                                                                    {{partida.material.unidad}}
-                                                                </td>
-                                                                <td class="money">
-                                                                    {{partida.material.saldo_inventario}}
-                                                                </td>
-                                                                <td>
-                                                                    <input
-                                                                            :disabled = "!partida.material"
-                                                                            type="number"
-                                                                            step="any"
-                                                                            :name="`cantidad[${i}]`"
-                                                                            v-model="partida.cantidad"
-                                                                            data-vv-as="Cantidad"
-                                                                            v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_inventario, decimal:2}"
-                                                                            class="form-control"
-                                                                            :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
-                                                                            id="cantidad"
-                                                                            placeholder="Cantidad">
-                                                                    <div class="invalid-feedback"
-                                                                         v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
-                                                                    </div>
-                                                                </td>
-                                                                <td class="icono">
-                                                                    <button type="button" class="btn btn-outline-danger btn-sm" @click="borrarPartida(i)"><i class="fa fa-trash"></i></button>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-
+                                                                    :disabled = "!bandera"
+                                                                    class="form-control"
+                                                                    :name="`id_material[${i}]`"
+                                                                    v-model="partida.material"
+                                                                    v-validate="{required: true }"
+                                                                    data-vv-as="Descripción"
+                                                                    :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
+                                                            >
+                                                             <option v-for="material in materiales" :value="material">{{ material.descripcion }}</option>
+                                                        </select>
+                                                        <div class="invalid-feedback"
+                                                             v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
+                                                        </div>
+                                                        </td>
+                                                        <td>
+                                                            {{partida.material.unidad}}
+                                                        </td>
+                                                        <td class="money">
+                                                            {{partida.material.saldo_inventario}}
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                    :disabled = "!partida.material"
+                                                                    type="number"
+                                                                    step="any"
+                                                                    :name="`cantidad[${i}]`"
+                                                                    v-model="partida.cantidad"
+                                                                    data-vv-as="Cantidad"
+                                                                    v-validate="{required: true,min_value: 0.0001, max_value:partida.material.saldo_inventario, decimal:4}"
+                                                                    class="form-control"
+                                                                    :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                                    id="cantidad"
+                                                                    placeholder="Cantidad">
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                    :disabled = "!partida.material"
+                                                                    type="number"
+                                                                    step="any"
+                                                                    :name="`precio_unitario[${i}]`"
+                                                                    v-model="partida.precio_unitario"
+                                                                    data-vv-as="Precio unitario"
+                                                                    v-validate="{required: true,min_value: 0.01, decimal:2}"
+                                                                    class="form-control"
+                                                                    :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
+                                                                    id="precio_unitario"
+                                                                    placeholder="Precio Unitario">
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}
+                                                            </div>
+                                                        </td>
+                                                        <td class="money">
+                                                            {{partida.precio_unitario * partida.cantidad}}
+                                                        </td>
+                                                        <td class="icono">
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" @click="borrarPartida(i)"><i class="fa fa-trash"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
-                                     <div class=" col-md-10" align="right">
-                                                        <label class="col-sm-2 col-form-label">Subtotal:</label>
-                                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{'$ '+this.subtotal.formatMoney(2,'.',',')}}</label>
-                                                </div>
-                                                <div class=" col-md-10" align="right">
-                                                        <label class="col-sm-2 col-form-label">IVA(16%)</label>
-                                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{'$ '+(this.subtotal*0.16).formatMoney(2,'.',',')}}</label>
-                                                </div>
-                                                <div class=" col-md-10" align="right">
-                                                        <label class="col-sm-2 col-form-label">Total:</label>
-                                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{'$ '+(this.subtotal*1.16).formatMoney(2,'.',',')}}</label>
-                                                </div>
-
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal:</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right"><b>$&nbsp;{{(parseFloat(totales)).formatMoney(2,'.',',')}}</b></label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">IVA(16%)</label>
+                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(registro_venta.impuesto_total)).formatMoney(2,'.',',')}}</label>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Total:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(registro_venta.total)).formatMoney(2,'.',',')}}</label>
+                                    </div>
                                     <hr>
                                     <div class="col-md-12">
                                         <div class="form-group error-content">
@@ -297,7 +317,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || partidas.length == 0">Guardar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || registro_venta.partidas.length == 0">Guardar</button>
                             </div>
                         </form>
                     </div>
@@ -333,17 +353,10 @@
                     fecha_emision : '',
                     fecha_acreditacion : '',
                     observaciones : '',
-                    monto_total : '',
-                    saldo_total : '',
+                    total : '',
                     impuesto_total : '',
                     archivo: null,
                     partidas : []
-                },
-                subtotal: 0,
-                partidas : [],
-                dato_partida : {
-                    cantidad : '',
-                    destino : ''
                 },
             }
         },
@@ -357,6 +370,18 @@
             this.fechasDeshabilitadas.from= new Date();
             this.getClientes();
             this.getCuentaBancaria();
+        },
+        computed: {
+          totales() {
+              let subtotal = 0;
+              this.registro_venta.partidas.forEach(function (doc, i) {
+                  subtotal += parseFloat(doc.cantidad * doc.precio_unitario);
+
+              })
+              this.registro_venta.impuesto_total = subtotal * 0.16;
+              this.registro_venta.total = subtotal + this.registro_venta.impuesto_total;
+              return subtotal
+          }
         },
         methods: {
             formatoFecha(date) {
@@ -374,7 +399,7 @@
                 this.materiales = [];
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
-                    params: { scope : ['disponiblesParaVenta', 'insumos']}
+                    params: {sort: 'descripcion', order: 'asc', scope : ['disponiblesParaVenta', 'insumos']}
                 })
                     .then(data => {
                         this.materiales = data.data;
@@ -422,12 +447,13 @@
             agregar_partida(){
                 var array = {
                     'material' : '',
-                    'destino' : ''
+                    'precio_unitario' : 0,
+                    'cantidad' : 0
                 }
                 if(this.materiales.length === 0 ) {
                     this.getMateriales();
                 }
-                this.partidas.push(array);
+                this.registro_venta.partidas.push(array);
             },
             validate(){
                 this.$validator.validate().then(result => {

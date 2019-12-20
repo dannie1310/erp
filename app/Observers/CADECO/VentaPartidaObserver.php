@@ -18,6 +18,6 @@ class VentaPartidaObserver
      */
     public function created(VentaPartida $partida)
     {
-        $partida->ventaMaterial();
+
     }
 }

@@ -15,4 +15,11 @@ class PdfFactura extends Model
     protected $connection = 'cadeco';
     protected $table = 'Ventas.pdf_factura';
     protected $primaryKey = 'id';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_transaccion',
+        'hash_file',
+        'nombre_archivo'
+    ];
 }

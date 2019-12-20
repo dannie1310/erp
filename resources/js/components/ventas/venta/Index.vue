@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include:'estado'},
+                query: {sort: 'numero_folio', order: 'desc', include:'estado'},
                 estado: "",
                 cargando: false
             }

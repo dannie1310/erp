@@ -103,5 +103,4 @@ return [
             'root' => storage_path(env('STORAGE_PDF_FACTURA_VENTA')),
         ]
     ],
-
 ];

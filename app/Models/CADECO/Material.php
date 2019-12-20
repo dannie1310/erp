@@ -178,11 +178,18 @@ class Material extends Model
         return $this->nivel.'.'.$num.'.';
     }
 
-    public function getSaldoInventarioAttribute(){
+    public function getSaldoInventarioAttribute()
+    {
         return $this->inventarios->sum('saldo');
     }
 
-    public function getCantidadInventarioAttribute(){
+    public function getSaldoInventarioFormatAttribute()
+    {
+        return number_format($this->saldo_inventario,4,".","");
+    }
+
+    public function getCantidadInventarioAttribute()
+    {
         return $this->inventarios->sum('cantidad');
     }
 
