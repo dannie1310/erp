@@ -261,8 +261,22 @@
                                                             </tr>
                                                         </tbody>
                                                     </table>
+
                                         </div>
                                     </div>
+                                     <div class=" col-md-10" align="right">
+                                                        <label class="col-sm-2 col-form-label">Subtotal:</label>
+                                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{'$ '+this.subtotal.formatMoney(2,'.',',')}}</label>
+                                                </div>
+                                                <div class=" col-md-10" align="right">
+                                                        <label class="col-sm-2 col-form-label">IVA(16%)</label>
+                                                        <label class="col-sm-2 col-form-label" style="text-align: right">{{'$ '+(this.subtotal*0.16).formatMoney(2,'.',',')}}</label>
+                                                </div>
+                                                <div class=" col-md-10" align="right">
+                                                        <label class="col-sm-2 col-form-label">Total:</label>
+                                                        <label class="col-sm-2 col-form-label money" style="text-align: right">{{'$ '+(this.subtotal*1.16).formatMoney(2,'.',',')}}</label>
+                                                </div>
+
                                     <hr>
                                     <div class="col-md-12">
                                         <div class="form-group error-content">
@@ -325,6 +339,7 @@
                     archivo: null,
                     partidas : []
                 },
+                subtotal: 0,
                 partidas : [],
                 dato_partida : {
                     cantidad : '',
