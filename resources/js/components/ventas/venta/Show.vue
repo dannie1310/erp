@@ -163,7 +163,6 @@
         },
         computed: {
             venta() {
-                // console.log('Salida','jorge ventaaaaa');
                 return this.$store.getters['ventas/venta/currentVenta'];
             }
         }
