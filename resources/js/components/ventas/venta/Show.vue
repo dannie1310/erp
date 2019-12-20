@@ -89,7 +89,7 @@
                                                         <td >{{partida.numero_parte}}</td>
                                                         <td >{{partida.descripcion}}</td>
                                                         <td >{{partida.unidad}}</td>
-                                                        <td>{{Math.round(partida.cantidad)}}</td>
+                                                        <td>{{partida.cantidad.formatMoney(2,'.',',')}}</td>
                                                         <td style="text-align: right">{{partida.precio_unitario}}</td>
                                                         <td style="text-align: right">{{'$ '+partida.importe.formatMoney(2,'.',',')}}</td>
                                                     </tr>
