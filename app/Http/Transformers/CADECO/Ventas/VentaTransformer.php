@@ -18,6 +18,7 @@ class VentaTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
         'partidas',
+        'partidas_total',
         'empresa',
         'usuario',
         'estado'
@@ -34,8 +35,7 @@ class VentaTransformer extends TransformerAbstract
             'opciones' => $model->opciones,
             'folio_format' => $model->numero_folio_format,
             'subtotal' => $model->subtotal_format,
-            'impuesto' => $model->impuesto_format,
-            'partidas_items' => $model->partidas_items
+            'impuesto' => $model->impuesto_format
         ];
     }
 
@@ -48,6 +48,19 @@ class VentaTransformer extends TransformerAbstract
         if($partida = $model->partidas)
         {
             return $this->collection($partida, new VentaPartidaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Venta $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidasTotal(Venta $model)
+    {
+        if($partidas_total = $model->partidas_total)
+        {
+            return $this->collection($partidas_total, new VentaPartidaTransformer);
         }
         return null;
     }
