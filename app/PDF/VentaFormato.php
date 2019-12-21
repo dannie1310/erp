@@ -54,13 +54,13 @@ class VentaFormato extends Rotation
         $this->SetFont('Arial', 'B', 10);
         $this->SetY($y_f);
 
-        $this->SetX($x_f);
-        $this->Cell(4.5, .7, 'FOLIO ALM ', 'L', 0, 'L');
-        $this->Cell(3.5, .7, 'Panda', 'R', 0, 'L');
-        $this->Ln(.7);
+        // $this->SetX($x_f);
+        // $this->Cell(4.5, .7, 'FOLIO ALM ', 'L', 0, 'L');
+        // $this->Cell(3.5, .7, 'Panda', 'R', 0, 'L');
+        // $this->Ln(.7);
 
         $this->SetX($x_f);
-        $this->Cell(4.5, .7, 'FOLIO CONTRATISTA ', 'L', 0, 'L');
+        $this->Cell(4.5, .7, 'FOLIO CLIENTE', 'L', 0, 'L');
         $this->Cell(3.5, .7, 'pardo', 'R', 0, 'L');
         $this->Ln(.7);
         
@@ -85,7 +85,7 @@ class VentaFormato extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->Cell(9.5, .5, utf8_decode("Costo"), 0, 0, 'L');
         $this->Cell(.5);
-        $this->Cell(9.5, .5, 'Empresa', 0, 0, 'L');
+        $this->Cell(9.5, .5, 'Cliente', 0, 0, 'L');
         $this->Ln(.5);
         $y_inicial = $this->getY();
         $x_inicial = $this->getX();
@@ -149,7 +149,8 @@ class VentaFormato extends Rotation
         if($this->PageNo()==1){
             $this->tableHeader();
         }
-        foreach ($this->venta->partidas as $i => $partida) {
+        
+        foreach ($this->venta->partidas_total as $i => $partida) {
             if($this->GetY() > 23.5){
                 $this->AddPage();
                 $this->tableHeader();
@@ -158,15 +159,15 @@ class VentaFormato extends Rotation
             $this->SetWidths([1,2.5,8,2,2,2,2]);
             $this->SetRounds([]);
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->SetAligns(['L', 'L', 'L', 'L', 'R', 'R', 'R']);
+            $this->SetAligns(['C', 'L', 'L', 'C', 'R', 'R', 'R']);
             $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
 
             $this->Row([
                 $i + 1,
-                $partida->material['numero_parte'],
-                utf8_decode($partida->material['descripcion']),
-                $partida['unidad'],
-                $partida->cantidad_format,
+                $partida->material->numero_parte,
+                utf8_decode($partida->material->descripcion),
+                $partida->material->unidad,
+                number_format($partida->total, 4, '.', ','),
                 $partida->precio_unitario_format,
                 $partida->importe_format,
             ], '');
