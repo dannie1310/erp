@@ -51,6 +51,10 @@ class Venta extends Transaccion
         return $this->hasMany(VentaPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function pdf_factura(){
+        return $this->belongsTo(PdfFactura::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
@@ -69,6 +73,15 @@ class Venta extends Transaccion
     public function pdfVenta(){
         $venta = new VentaFormato($this);
         return $venta->create();
+    }
+
+    public function pdfFactura(){
+        $path = storage_path('ventas/venta/pdfFactura/'.$this->pdf_factura->nombre_archivo);
+        if(!file_exists($path))
+        {
+            return "El archivo al cual intenta acceder no existe o no se encuentra disponible.";
+        }
+        return response()->file($path);
     }
 
     public function getPartidasItemsAttribute()
@@ -144,7 +157,7 @@ class Venta extends Transaccion
                 ]
             );
 
-            $this->guardarPdf($data['archivo'], $venta->id_transaccion);
+            $venta->guardarPdf($data['archivo'], $venta->id_transaccion);
 
             DB::connection('cadeco')->commit();
             return $venta;
@@ -206,7 +219,7 @@ class Venta extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             foreach($this->partidas as $partida){
-                $partida->eliminarMovimientos();
+                $partida->aumentarSaldoInventario();
             }
             $this->estado = -1;
             $this->observaciones = 'Venta Cancelada: ' . $motivo . ' -- ' . $this->observaciones;
@@ -221,20 +234,19 @@ class Venta extends Transaccion
 
     }
 
-    private function guardarPdf($pdf_file, $id_transaccion){
+    private function guardarPdf($pdf_file){
         if($pdf_file == null) {
             abort(403, 'Archivo de factura inválido');
         }
         $file_fingerprint = hash_file('md5', $pdf_file);
-        if(PdfFactura::query()->where('hash_file', '=', $file_fingerprint)->first()){
+        if(PdfFactura::where('hash_file', '=', $file_fingerprint)->first()){
             abort(403, 'Archivo de factura registrado previamente');
         }
 
-        Storage::disk('pdf_factura_venta')->put($id_transaccion . '.pdf', fopen($pdf_file, 'r'));
+        Storage::disk('pdf_factura_venta')->put($this->id_transaccion . '.pdf', fopen($pdf_file, 'r'));
 
-        PdfFactura::create(
-            ['id_transaccion' => $id_transaccion ,
-            'nombre_archivo' => $id_transaccion . '.pdf',
+        $this->pdf_factura->create(
+            ['nombre_archivo' => $this->id_transaccion . '.pdf',
             'hash_file' => $file_fingerprint
             ]);
     }

@@ -29,11 +29,16 @@ class VentaService
 
     public function delete($data, $id)
     {
-        return $this->show($id)->cancelar_venta($data['data'][0]);
+        return $this->show($id)->cancelarVenta($data['data'][0]);
     }
 
     public function pdfVenta($id){
         return $this->repository->show($id)->pdfVenta();
+    }
+    
+
+    public function pdfFactura($id){
+        return $this->repository->show($id)->pdfFactura();
     }
 
     public function paginate($data)

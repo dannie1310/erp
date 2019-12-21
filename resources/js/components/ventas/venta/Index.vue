@@ -100,7 +100,7 @@
                                 show: true,
                                 pagina: self.query.offset,
                                 id: venta.id,
-                                borrar: venta.estado !== -1 ? true : false,
+                                borrar: venta.estado.id !== -1 ? true : false,
                             })
 
                         })

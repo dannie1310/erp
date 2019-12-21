@@ -12,7 +12,7 @@ namespace App\Http\Controllers\v1\CADECO\Ventas;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DeleteVentaRequest;
+use App\Http\Requests\CancelarVentaRequest;
 use App\Services\CADECO\Ventas\VentaService;
 use App\Http\Transformers\CADECO\Ventas\VentaTransformer;
 
@@ -67,6 +67,13 @@ class VentaController extends Controller
     {
         if (auth()->user()->can('consultar_ventas') || true) {
             return $this->service->pdfVenta($id);
+        }
+        dd('No cuentas con los permisos necesarios para realizar la acción solicitada');
+    }
+
+    public function pdfFactura($id){
+        if (auth()->user()->can('consultar_ventas') || true) {
+            return $this->service->pdfFactura($id);
         }
         dd('No cuentas con los permisos necesarios para realizar la acción solicitada');
     }

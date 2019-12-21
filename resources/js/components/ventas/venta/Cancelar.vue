@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> ELIMINAR VENTA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CANCELAR VENTA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -79,14 +79,14 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(partida, i) in venta.partidas.data">
-                                                        <td>{{i+1}}</td>
-                                                        <td >{{partida.material.numero_parte}}</td>
-                                                        <td >{{partida.material.descripcion}}</td>
-                                                        <td>{{partida.unidad}}</td>
-                                                        <td style="text-align: right">{{partida.cantidad_decimal}}</td>
+                                                    <tr v-for="(partida, i) in venta.partidas_items">
+                                                        <td>{{i}}</td>
+                                                        <td >{{partida.numero_parte}}</td>
+                                                        <td >{{partida.descripcion}}</td>
+                                                        <td >{{partida.unidad}}</td>
+                                                        <td>{{partida.cantidad.formatMoney(2,'.',',')}}</td>
                                                         <td style="text-align: right">{{partida.precio_unitario}}</td>
-                                                        <td style="text-align: right">{{partida.importe}}</td>
+                                                        <td style="text-align: right">{{'$ '+partida.importe.formatMoney(2,'.',',')}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -160,7 +160,7 @@ export default {
                 params: {data: [this.$data.motivo]}
             })
             .then(() => {
-                this.$store.dispatch('ventas/venta/paginate', {})
+                this.$store.dispatch('ventas/venta/paginate', {params: {sort: 'numero_folio', order: 'desc', include:'estado'}})
                 .then(data => {
                     this.$store.commit('ventas/venta/SET_VENTAS', data.data);
                     this.$store.commit('ventas/venta/SET_META', data.meta);

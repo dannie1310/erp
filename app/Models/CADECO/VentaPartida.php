@@ -8,6 +8,8 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Inventario;
+
 
 class VentaPartida extends Item
 {
@@ -25,9 +27,9 @@ class VentaPartida extends Item
         'cantidad_original1'
     ];
 
-    public function movimientos()
+    public function inventario()
     {
-        return $this->hasMany(Movimiento::class, 'id_item', 'id_item');
+        return $this->belongsTo(Inventario::class, 'item_antecedente', 'id_lote');
     }
 
     public function venta()
@@ -45,10 +47,9 @@ class VentaPartida extends Item
         return '$ ' . number_format($this->precio_unitario, 2, '.', ',');
     }
 
-    public function eliminarMovimientos()
+    public function aumentarSaldoInventario()
     {
-        foreach($this->movimientos as $movimiento){
-            $movimiento->delete();
-        }
+        $this->inventario->saldo = $this->inventario->saldo + $this->cantidad;
+        $this->inventario->save();
     }
 }
