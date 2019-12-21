@@ -65,6 +65,11 @@ class Venta extends Transaccion
         return $this->belongsTo(CtgEstado::class, 'estado', 'id');
     }
 
+    public function partidas_total()
+    {
+        return $this->hasMany(VentaPartida::class, 'id_transaccion', 'id_transaccion')->selectRaw('SUM(cantidad) as total, id_material, precio_unitario, (sum(cantidad)*precio_unitario) as importe ')->groupBy(['id_material','precio_unitario']);
+    }
+
     public function depositoCliente()
     {
         return $this->belongsTo(DepositoCliente::class, 'id_transaccion', 'id_antecedente');
@@ -105,7 +110,7 @@ class Venta extends Transaccion
                     'importe' => ($partida->cantidad * $partida->precio_unitario),
                 ];
                 $id = $id + 1;
-            }   
+            }
             $conteo[$id] = $id;
         }
         return array_combine($conteo,$partidas_agrupadas);

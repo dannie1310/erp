@@ -84,14 +84,14 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(partida, i) in venta.partidas_items">
-                                                        <td>{{i}}</td>
-                                                        <td >{{partida.numero_parte}}</td>
-                                                        <td >{{partida.descripcion}}</td>
-                                                        <td >{{partida.unidad}}</td>
-                                                        <td>{{partida.cantidad.formatMoney(2,'.',',')}}</td>
+                                                    <tr v-for="(partida, i) in venta.partidas_total.data">
+                                                        <td>{{i+1}}</td>
+                                                        <td >{{partida.material.numero_parte}}</td>
+                                                        <td >{{partida.material.descripcion}}</td>
+                                                        <td >{{partida.material.unidad}}</td>
+                                                        <td>{{(partida.total)}}</td>
                                                         <td style="text-align: right">{{partida.precio_unitario}}</td>
-                                                        <td style="text-align: right">{{'$ '+partida.importe.formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align: right">{{partida.importe}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -153,7 +153,7 @@
                 this.$store.commit('ventas/venta/SET_VENTA', null);
                 return this.$store.dispatch('ventas/venta/find', {
                     id: this.id,
-                    params: {include: ['empresa', 'partidas.material', 'usuario', 'estado']}
+                    params: {include: ['empresa', 'partidas_total.material', 'usuario', 'estado']}
                 }).then(data => {
                     this.$store.commit('ventas/venta/SET_VENTA', data);
                 }).finally(() => {
