@@ -162,7 +162,7 @@ class Venta extends Transaccion
                 ]
             );
 
-            $venta->guardarPdf($data['archivo'], $venta->id_transaccion);
+            $venta->guardarPdf($data['archivo']);
 
             DB::connection('cadeco')->commit();
             return $venta;
@@ -250,9 +250,10 @@ class Venta extends Transaccion
 
         Storage::disk('pdf_factura_venta')->put($this->id_transaccion . '.pdf', fopen($pdf_file, 'r'));
 
-        $this->pdf_factura->create(
-            ['nombre_archivo' => $this->id_transaccion . '.pdf',
+        $this->pdf_factura()->create(
+            ['id_transaccion' => $this->id_transaccion,
+            'nombre_archivo' => $this->id_transaccion . '.pdf',
             'hash_file' => $file_fingerprint
-            ]);
+            ]);     
     }
 }
