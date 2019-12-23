@@ -65,14 +65,14 @@ class VentaController extends Controller
 
     public function pdfVenta($id)
     {
-        if (auth()->user()->can('consultar_ventas') || true) {
+        if (auth()->user()->can('consultar_venta')) {
             return $this->service->pdfVenta($id);
         }
         dd('No cuentas con los permisos necesarios para realizar la acción solicitada');
     }
 
     public function pdfFactura($id){
-        if (auth()->user()->can('consultar_ventas') || true) {
+        if (auth()->user()->can('consultar_venta')) {
             return $this->service->pdfFactura($id);
         }
         dd('No cuentas con los permisos necesarios para realizar la acción solicitada');

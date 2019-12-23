@@ -1502,7 +1502,7 @@ export const routes = [
                             title: 'Registrar Venta',
                             breadcrumb: {name: 'REGISTRAR', parent: 'venta'},
                             middleware: [auth, context, permission],
-                            permission: ['registrar_ajuste_positivo','registrar_ajuste_negativo']
+                            permission: ['registrar_venta']
                         }
                     },
                 ]
