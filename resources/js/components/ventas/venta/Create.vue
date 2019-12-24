@@ -23,7 +23,28 @@
                                             <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-9"></div>
+                                    <div class="col-md-6">
+                                        <div class="form-group error-content">
+                                            <label for="id_almacen">Almacen:</label>
+                                                <select
+                                                        :disabled="cargando"
+                                                        type="text"
+                                                        name="id_almacen"
+                                                        data-vv-as="Almacén"
+                                                        v-validate="{required: true}"
+                                                        class="form-control"
+                                                        id="id_almacen"
+                                                        v-model="id_almacen"
+                                                    :class="{'is-invalid': errors.has('id_almacen')}"
+                                                    >
+                                                    <option value v-if="!cargando">- Seleccione -</option>
+                                                    <option value v-if="cargando">Cargando...</option>
+                                                    <option v-for="almacen in almacenes" :value="almacen.id">{{ almacen.descripcion }}</option>
+                                                </select>
+                                            <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3"></div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -189,7 +210,7 @@
                                                         <th class="money_input">Precio de Venta</th>
                                                         <th class="money_input">Importe</th>
                                                         <th class="icono">
-                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
+                                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando || id_almacen === ''">
                                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                                 <i class="fa fa-plus" v-else></i>
                                                             </button>
@@ -237,7 +258,7 @@
                                                             {{partida.material.unidad}}
                                                         </td>
                                                         <td class="money">
-                                                            {{partida.material.saldo_inventario}}
+                                                            {{partida.material.saldo_almacen}}
                                                         </td>
                                                         <td>
                                                             <input
@@ -247,7 +268,7 @@
                                                                     :name="`cantidad[${i}]`"
                                                                     v-model="partida.cantidad"
                                                                     data-vv-as="Cantidad"
-                                                                    v-validate="{required: true,min_value: 0.0001, max_value:partida.material.saldo_inventario, decimal:4}"
+                                                                    v-validate="{required: true,min_value: 0.0001, max_value:partida.material.saldo_almacen, decimal:4}"
                                                                     class="form-control"
                                                                     :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                                     id="cantidad"
@@ -337,12 +358,15 @@
             return {
                 es : es,
                 cargando : false,
+                almacenes : [],
                 bandera : 0,
                 fechasDeshabilitadas : {},
                 empresas : [],
+                id_almacen : '',
                 materiales : [],
                 cuentas : [],
                 registro_venta:{
+                    id_almacen : '',
                     fecha : '',
                     id_empresa : '',
                     id_concepto : '',
@@ -367,6 +391,7 @@
             this.registro_venta.fecha_acreditacion = new Date();
             this.registro_venta.fecha_emision = new Date();
             this.fechasDeshabilitadas.from= new Date();
+            this.getAlmacenes();
             this.getClientes();
             this.getCuentaBancaria();
         },
@@ -389,6 +414,20 @@
             formatoFecha(date) {
                 return moment(date).format('DD/MM/YYYY');
             },
+            getAlmacenes() {
+                this.almacenes = [];
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/almacen/index', {
+                    params: {
+                        sort: 'descripcion',
+                        order: 'asc'
+                    }
+                })
+                    .then(data => {
+                        this.almacenes = data.data;
+                        this.cargando = false;
+                    })
+            },
             getClientes(){
                 return this.$store.dispatch('cadeco/empresa/index', {
                     params: {sort: 'razon_social', order: 'asc', scope:'clienteComprador' }
@@ -400,11 +439,12 @@
             getMateriales() {
                 this.materiales = [];
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/material/index', {
-                    params: {sort: 'descripcion', order: 'asc', scope : ['disponiblesParaVenta', 'insumos']}
+                return this.$store.dispatch('cadeco/almacen/find', {
+                    id: this.id_almacen,
+                    params: { include: 'materiales_salida' }
                 })
                     .then(data => {
-                        this.materiales = data.data;
+                        this.materiales = data.materiales_salida.data;
                         if( this.materiales.length != 0 ) {
                             this.bandera = 1;
                             this.cargando = false
@@ -469,6 +509,16 @@
                     .then((data) => {
                         this.$router.push({name: 'venta'});
                     });
+            },
+        },
+        watch:{
+            id_almacen(value){
+                if(value != ''){
+                    this.materiales = [];
+                    this.registro_venta.partidas = [];
+                    this.registro_venta.id_almacen = value;
+                    this.getMateriales();
+                }
             },
         }
     }

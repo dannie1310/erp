@@ -26,6 +26,7 @@ class Venta extends Transaccion
     protected $fillable = [
         'id_concepto',
         'id_empresa',
+        'id_almacen',
         'opciones',
         'fecha',
         'estado',
@@ -139,6 +140,7 @@ class Venta extends Transaccion
                   'fecha' => $fecha_venta->format("Y-m-d"),
                   'id_empresa' => $data['id_empresa'],
                   'id_concepto' => $data['id_concepto'],
+                  'id_almacen' => $data['id_almacen'],
                   'estado' => 1,
                   'referencia' => $data['referencia'],
                   'monto' => $data['total'],
