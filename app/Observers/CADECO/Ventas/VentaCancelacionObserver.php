@@ -8,6 +8,8 @@
 
 namespace App\Observers\CADECO\ventas;
 
+use App\Models\CADECO\Ventas\VentaCancelacion;
+
 class VentaCancelacionObserver {
     /**
      * @param VentaCancelacion $venta_cancelada

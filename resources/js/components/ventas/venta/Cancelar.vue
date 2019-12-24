@@ -136,7 +136,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || motivo === ''" @click="validate">Eliminar</button>
+                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || motivo === ''" @click="validate">Cancelar</button>
                     </div>
                 </div>
             </div>

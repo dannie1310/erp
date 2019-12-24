@@ -28,6 +28,7 @@ class Venta extends Transaccion
         'id_empresa',
         'opciones',
         'fecha',
+        'estado',
         'observaciones',
         'referencia',
         'monto',
@@ -132,7 +133,7 @@ class Venta extends Transaccion
             $fecha_venta = new DateTime($data['fecha']);
             $fecha_venta->setTimezone(new DateTimeZone('America/Mexico_City'));
             DB::connection('cadeco')->beginTransaction();
-            $folioAlt = $this->where('id_empresa', '=', 41)->count() + 1;
+            $folioAlt = $this->where('id_empresa', '=', $data['id_empresa'] )->count() + 1;
             $venta = $this->create(
               [
                   'fecha' => $fecha_venta->format("Y-m-d"),
@@ -239,8 +240,13 @@ class Venta extends Transaccion
                 $partida->aumentarSaldoInventario();
             }
             $this->estado = -1;
-            $this->observaciones = 'Venta Cancelada: ' . $motivo . ' -- ' . $this->observaciones;
             $this->save();
+            $this->depositoCliente->delete();
+            $this->cancelacion()->create([
+                'id_transaccion' => $this->id_transaccion, 
+                'motivo' => $motivo
+                ]);
+
             DB::connection('cadeco')->commit();
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();

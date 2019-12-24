@@ -41,4 +41,8 @@ class DepositoCliente extends Deposito
     {
         return $this->belongsTo(Venta::class, 'id_antecedente', 'id_transaccion');
     }
+
+    public function cuenta(){
+        return $this->belongsTo(cuenta::class, 'id_cuenta', 'id_cuenta');
+    }
 }

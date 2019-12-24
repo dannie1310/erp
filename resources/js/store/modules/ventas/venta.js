@@ -35,8 +35,8 @@ export default{
         delete(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Venta",
-                    text: "¿Estás seguro/a de que deseas eliminar la venta?",
+                    title: "Cancelar Venta",
+                    text: "¿Está seguro/a de que desea cancelar la venta?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -44,7 +44,7 @@ export default{
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Eliminar',
+                            text: 'Si, Cancelar',
                             closeModal: false,
                         }
                     },
@@ -56,7 +56,7 @@ export default{
                                 .delete(URI + payload.id, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Pago eliminado correctamente", {
+                                    swal("Venta cancelada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

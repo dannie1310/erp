@@ -25,4 +25,12 @@ class DepositoClienteObserver extends TransaccionObserver
         $deposito->opciones = 4;
         $deposito->estado = 1;
     }
+
+    public function created(Transaccion $deposito){
+        $deposito->cuenta->aumentaSaldoPorDeposito($deposito);
+    }
+
+    public function deleting(Transaccion $deposito){
+        $deposito->cuenta->disminuyeSaldoPorDeposito($deposito);
+    }
 }
