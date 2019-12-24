@@ -55,7 +55,7 @@ class RequisicionService
                         'descripcion' => $partida['DESCRIPCION'],
                         'unidad' => $partida['UNIDAD'],
                         'ref' => $partida['REF.'],
-                        'fecha' => date('Y-m-d'),
+                        'fecha' => date('Y-m-d H:i:s'),
                         'cantidad' => $partida['CANTIDAD'],
                         'observaciones' => ''
                     );
@@ -76,7 +76,7 @@ class RequisicionService
                         'descripcion' => '',
                         'unidad' => '',
                         'ref' => $partida['REF.'],
-                        'fecha' => date('Y-m-d'),
+                        'fecha' => date('Y-m-d H:i:s'),
                         'cantidad' => $partida['CANTIDAD'],
                         'observaciones' => ''
                     );
@@ -91,7 +91,7 @@ class RequisicionService
                     'descripcion' => $partida['DESCRIPCION'],
                     'unidad' => $partida['UNIDAD'],
                     'ref' => $partida['REF.'],
-                    'fecha' => date('Y-m-d'),
+                    'fecha' => date('Y-m-d H:i:s'),
                     'cantidad' => $partida['CANTIDAD'],
                     'observaciones' => ''
                 );
@@ -115,7 +115,7 @@ class RequisicionService
             }else{
                 if(count($renglon) != 8) {
                     abort(400,'No se puede procesar la Requisición');
-                }else if(count($renglon) == 8 && $renglon[5] != '' && $renglon[6] != '' && $renglon[7] != ''){
+                }else if(count($renglon) == 8 && $renglon[6] != '' && substr($renglon[7],0,-2)   != ''){
                     if($renglon[1] == '')
                     {
                         $renglon[1] = null;
