@@ -7,7 +7,7 @@
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
                                 <div class="row">
-                                    <div class="offset-md-10 col-md-2">
+                                    <div class="col-md-2">
                                         <div class="form-group error-content">
                                             <label for="fecha" class="col-form-label">Fecha:</label>
                                             <datepicker v-model = "fecha"
@@ -103,19 +103,19 @@
                                 </div>
                                 <div class="row">
                                     <div  class="col-md-12">
-                                        <div class="table-responsive">
+                                        <div>
                                             <table class="table table-bordered">
                                                 <thead>
                                                 <tr>
-                                                    <th>#</th>
+                                                    <th class="index_corto">#</th>
                                                     <th>No. de Parte</th>
                                                     <th>Descripción</th>
-                                                    <th></th>
-                                                    <th>Cantidad</th>
+                                                    <th class="icono"></th>
+                                                    <th class="cantidad_input">Cantidad</th>
                                                     <th>Unidad</th>
                                                     <th>Fecha Entrega</th>
                                                     <th>Observaciones</th>
-                                                    <th>
+                                                    <th class="icono">
                                                         <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
                                                             <i class="fa fa-plus"></i>
                                                         </button>
@@ -175,15 +175,17 @@
                                                             <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
                                                         </td>
                                                         <td v-else>{{partida.material.descripcion}}</td>
-                                                        <td style="width: 30px;" v-if="partida.i === 0">
+                                                        <td v-if="partida.i === 0">
                                                             <button  type="button" class="btn btn-outline-primary btn-sm" @click="manual(i)" title="Ingresar material manualmente"><i class="fa fa-hand-paper-o" /></button>
                                                         </td>
-                                                        <td style="width: 30px;" v-else-if="partida.i === 1">
+                                                        <td v-else-if="partida.i === 1">
                                                             <button type="button" class="btn btn-outline-primary btn-sm" @click="busqueda(i)" title="Buscar material"><i class="fa fa-refresh" /></button>
                                                         </td>
                                                         <td style="width: 30px;" v-else></td>
                                                         <td>
                                                             <input type="number"
+                                                                   min="0.01"
+                                                                   step=".01"
                                                                     class="form-control"
                                                                     :name="`cantidad[${i}]`"
                                                                     data-vv-as="Cantidad"
@@ -209,17 +211,18 @@
                                                         </td>
                                                         <td style="width: 100px;" v-else-if="partida.unidad">{{partida.unidad}}</td>
                                                         <td style="width: 100px;" v-else>{{partida.material.unidad}}</td>
-                                                        <td style="width: 50px;">
-                                                            <input type="date"
-                                                                   :name="`fecha[${i}]`"
-                                                                   class="form-control datepicker"
-                                                                   data-vv-as="Fecha"
-                                                                   v-validate="{required: true}"
-                                                                    :format = "formatoFecha"
-                                                                   data-date-end-date="0d"
-                                                                   :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
-                                                                   v-model="partida.fecha">
-                                                            <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
+                                                        <td style="width:100px;">
+                                                            <datepicker v-model="partida.fecha"
+                                                                        :name="`fecha[${i}]`"
+                                                                        :format = "formatoFecha"
+                                                                        :language = "es"
+                                                                        :bootstrap-styling = "true"
+                                                                        class = "form-control"
+                                                                        v-validate="{required: true}"
+                                                                        :disabled-dates="fechasDeshabilitadasHasta"
+                                                                        :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
+                                                            ></datepicker>
+                                                             <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <textarea class="form-control"
@@ -287,6 +290,7 @@
                 cargando: false,
                 es:es,
                 fechasDeshabilitadas:{},
+                fechasDeshabilitadasHasta:{},
                 fecha : '',
                 fecha_hoy : '',
                 areas_compradoras : [],
@@ -350,6 +354,7 @@
                 this.fecha_hoy = new Date();
                 this.fecha = new Date();
                 this.fechasDeshabilitadas.from= new Date();
+                this.fechasDeshabilitadasHasta.to= new Date();
                 return this.$store.dispatch('configuracion/area-compradora/index', {
                     params: {scope: 'asignadas', sort: 'descripcion', order: 'asc'}
                 })
