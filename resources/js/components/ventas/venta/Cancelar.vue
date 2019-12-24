@@ -1,7 +1,7 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar Venta" v-show="borrar">
-            <i class="fa fa-trash"></i>
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar Venta" v-show="borrar">
+            <i class="fa fa-ban"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">

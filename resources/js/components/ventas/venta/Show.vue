@@ -56,9 +56,23 @@
                                                         <td class="bg-gray-light"><b>Observaciones:</b></td>
                                                         <td class="bg-gray-light">{{venta.observaciones_format}}</td>
                                                         <td class="bg-gray-light" v-if="venta.usuario"><b>Usuario Registró</b></td>
-                                                        <td class="bg-gray-light" v-else="venta.usuario"></td>
+                                                        <td class="bg-gray-light" v-else></td>
                                                         <td class="bg-gray-light" v-if="venta.usuario">{{venta.usuario.nombre}}</td>
-                                                        <td class="bg-gray-light" v-else="venta.usuario"></td>
+                                                        <td class="bg-gray-light" v-else></td>
+                                                    </tr>
+                                                    <tr v-if="venta.venta_cancelacion">
+                                                        <td class="bg-gray-light"><b>Motivo Cancelación:</b></td>
+                                                        <td class="bg-gray-light">{{venta.venta_cancelacion.motivo_cancelacion}}</td>
+                                                        <td class="bg-gray-light" v-if="venta.usuario"><b>Usuario Canceló</b></td>
+                                                        <td class="bg-gray-light" v-else></td>
+                                                        <td class="bg-gray-light" v-if="venta.usuario">{{venta.venta_cancelacion.usuario.nombre}}</td>
+                                                        <td class="bg-gray-light" v-else></td>
+                                                    </tr>
+                                                    <tr v-if="venta.venta_cancelacion">
+                                                        <td class="bg-gray-light"><b>Fecha Hora Cancelación:</b></td>
+                                                        <td class="bg-gray-light">{{venta.venta_cancelacion.fecha_hora_cancelacion_format}}</td>
+                                                        <td class="bg-gray-light" ></td>
+                                                        <td class="bg-gray-light" ></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -153,7 +167,7 @@
                 this.$store.commit('ventas/venta/SET_VENTA', null);
                 return this.$store.dispatch('ventas/venta/find', {
                     id: this.id,
-                    params: {include: ['empresa', 'partidas_total.material', 'usuario', 'estado']}
+                    params: {include: ['empresa', 'partidas_total.material', 'usuario', 'estado', 'venta_cancelacion.usuario']}
                 }).then(data => {
                     this.$store.commit('ventas/venta/SET_VENTA', data);
                 }).finally(() => {

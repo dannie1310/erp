@@ -9,10 +9,11 @@
 namespace App\Http\Transformers\CADECO\Ventas;
 
 
-use App\Http\Transformers\CADECO\EmpresaTransformer;
-use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Venta;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\IGH\UsuarioTransformer;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\Ventas\VentaCancelacionTransformer;
 
 class VentaTransformer extends TransformerAbstract
 {
@@ -21,7 +22,8 @@ class VentaTransformer extends TransformerAbstract
         'partidas_total',
         'empresa',
         'usuario',
-        'estado'
+        'estado',
+        'venta_cancelacion'
     ];
 
     public function transform(Venta $model) {
@@ -87,6 +89,18 @@ class VentaTransformer extends TransformerAbstract
         if ($usuario = $model->usuario)
         {
             return $this->item($usuario, new UsuarioTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Venta $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeVentaCancelacion(Venta $model){
+        if ($venta_cancelacion = $model->cancelacion)
+        {
+            return $this->item($venta_cancelacion, new VentaCancelacionTransformer);
         }
         return null;
     }

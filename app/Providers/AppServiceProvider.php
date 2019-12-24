@@ -95,6 +95,7 @@ use App\Models\CADECO\Tesoreria\MovimientoBancario;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Venta;
+use App\Models\CADECO\Ventas\VentaCancelacion;
 use App\Models\CADECO\VentaPartida;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
@@ -196,6 +197,7 @@ use App\Observers\CADECO\Tesoreria\MovimientoBancarioObserver;
 use App\Observers\CADECO\Tesoreria\TraspasoCuentasObserver;
 use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
+use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
@@ -371,6 +373,7 @@ class AppServiceProvider extends ServiceProvider
             Sucursal::observe(SucursalObserver::class);
             Transaccion::observe(TransaccionObserver::class);
             Venta::observe(VentaObserver::class);
+            VentaCancelacion::observe(VentaCancelacionObserver::class);
             VentaPartida::observe(VentaPartidaObserver::class);
 
         /**

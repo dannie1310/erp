@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\Ventas\CtgEstado;
 use Illuminate\Support\Facades\Storage;
 use App\Models\CADECO\Ventas\PdfFactura;
+use App\Models\CADECO\Ventas\VentaCancelacion;
 
 
 class Venta extends Transaccion
@@ -32,6 +33,7 @@ class Venta extends Transaccion
         'monto',
         'saldo',
         'impuesto',
+        'NumeroFolioAlt',
     ];
 
     protected static function boot()
@@ -45,6 +47,10 @@ class Venta extends Transaccion
     /**
      * Relaciones Eloquent
      */
+
+    public function cancelacion(){
+        return $this->belongsTo(VentaCancelacion::class, 'id_transaccion', 'id_transaccion');
+    }
 
     public function partidas()
     {
@@ -89,6 +95,10 @@ class Venta extends Transaccion
         return response()->file($path);
     }
 
+    public function getNumeroFolioAltFormatAttribute(){
+        return '# ' . str_pad($this->NumeroFolioAlt, 5, '0' , STR_PAD_LEFT);
+    }
+
     public function getPartidasItemsAttribute()
     {
         $partidas_agrupadas = [];
@@ -122,17 +132,19 @@ class Venta extends Transaccion
             $fecha_venta = new DateTime($data['fecha']);
             $fecha_venta->setTimezone(new DateTimeZone('America/Mexico_City'));
             DB::connection('cadeco')->beginTransaction();
-
+            $folioAlt = $this->where('id_empresa', '=', 41)->count() + 1;
             $venta = $this->create(
               [
                   'fecha' => $fecha_venta->format("Y-m-d"),
                   'id_empresa' => $data['id_empresa'],
                   'id_concepto' => $data['id_concepto'],
+                  'estado' => 1,
                   'referencia' => $data['referencia'],
                   'monto' => $data['total'],
                   'saldo' => $data['total'],
                   'impuesto' => $data['impuesto_total'],
-                  'observaciones' => $data['observaciones']
+                  'observaciones' => $data['observaciones'],
+                  'NumeroFolioAlt' => $folioAlt
               ]
             );
 

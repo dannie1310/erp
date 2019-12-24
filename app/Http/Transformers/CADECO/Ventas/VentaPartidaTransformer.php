@@ -23,7 +23,7 @@ class VentaPartidaTransformer extends TransformerAbstract
             'cantidad_decimal' => $model->cantidad_decimal,
             'precio_unitario' => $model->precio_unitario_format,
             'importe' => '$'.number_format($model->importe,2,'.',','),
-            'total' => number_format( $model->total,4,'.',',')
+            'total' => number_format( $model->total,2,'.',',')
         ];
     }
 

@@ -61,7 +61,7 @@ class VentaFormato extends Rotation
 
         $this->SetX($x_f);
         $this->Cell(4.5, .7, 'FOLIO CLIENTE', 'L', 0, 'L');
-        $this->Cell(3.5, .7, 'pardo', 'R', 0, 'L');
+        $this->Cell(3.5, .7, $this->venta->numero_folio_alt_format, 'R', 0, 'L');
         $this->Ln(.7);
         
         $this->SetX($x_f);
@@ -83,9 +83,9 @@ class VentaFormato extends Rotation
         $this->Ln(.2);
  
         $this->SetFont('Arial', '', 10);
-        $this->Cell(9.5, .5, utf8_decode("Costo"), 0, 0, 'L');
+        $this->Cell(9.5, .5, utf8_decode("Cliente"), 0, 0, 'L');
         $this->Cell(.5);
-        $this->Cell(9.5, .5, 'Cliente', 0, 0, 'L');
+        $this->Cell(9.5, .5, 'Vendedor', 0, 0, 'L');
         $this->Ln(.5);
         $y_inicial = $this->getY();
         $x_inicial = $this->getX();
@@ -122,8 +122,9 @@ class VentaFormato extends Rotation
         $this->Row([""]);
         $this->setY($y_inicial);
         $this->setX($x_inicial);
-        $this->MultiCell(9.5, .5, utf8_decode(strtoupper('-- COSTO --')), '', '');
-
+        $this->MultiCell(9.5, .5, utf8_decode(strtoupper(utf8_decode($this->venta->empresa->razon_social) . '
+' . 'R.F.C.: ' . $this->venta->empresa->rfc)), '', '');
+// dd($this->venta->empresa->razon_social);
         $this->setY($y_inicial);
         $this->setX($x_inicial + 10);
         $this->Row([""]);
@@ -132,10 +133,9 @@ class VentaFormato extends Rotation
         $this->setX($x_inicial + 10);
         // $this->MultiCell(9.5, .5,' Dirección Cliente', '', 'L');
         $this->MultiCell(9.5, .5,
-                    utf8_decode($this->venta->empresa->razon_social) . '
+                    utf8_decode($this->venta->obra->cliente) . '
         ' . preg_replace( "/\r|\n/", " ", utf8_decode($this->obra->direccion)) . '
-        ' . 'Estado: ' . utf8_decode($this->obra->estado) . ' C.P:' . $this->obra->codigo_postal . '
-        ' . $this->venta->empresa->rfc, '', 'L');
+        ' . $this->obra->rfc, '', 'L');
 
         $this->setY($y_alto);
         $this->Ln(.5);
@@ -167,7 +167,7 @@ class VentaFormato extends Rotation
                 $partida->material->numero_parte,
                 utf8_decode($partida->material->descripcion),
                 $partida->material->unidad,
-                number_format($partida->total, 4, '.', ','),
+                number_format($partida->total, 2, '.', ','),
                 $partida->precio_unitario_format,
                 $partida->importe_format,
             ], '');
@@ -206,7 +206,7 @@ class VentaFormato extends Rotation
         $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
         $this->SetHeights([0.4]);
         $this->SetAligns(['C','C','C','C','C','C','C']);
-        $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad", "Precio Unitario", "Importe"]);
+        $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad", "Precio de Venta", "Importe"]);
     }
 
     public function observaciones(){
@@ -259,10 +259,16 @@ class VentaFormato extends Rotation
         $this->SetX(4);
         $this->CellFitScale(4.89, .4, "Nombre         Fecha         Firma", 'RLB', 0, 'C');
 
+        if($this->venta->estado == -1){
+            $this->SetFont('Arial', 'B', 95);
+            $this->SetTextColor(215,215,215);
+            $this->RotatedText(4,25.5,'C A N C E L A D A',55);
+        }
         //Revisó
         $this->SetY(-2.5);
         $this->SetX(12);
         $this->SetFont('Arial', '', 6);
+        $this->SetTextColor(0,0,0);
         $this->SetFillColor(180, 180, 180);
 
 
@@ -284,7 +290,7 @@ class VentaFormato extends Rotation
         $this->Cell(10, .3, (''), 0, 1, 'L');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de almacenes. Fecha de registro: '  .date("Y-m-d", strtotime($this->venta->fecha_format)) . ' ') , 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de ventas. Fecha de registro: '  .$this->venta->fecha_hora_registro_format . ' ') , 0, 0, 'L');
         $this->Cell(9.5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
@@ -296,8 +302,6 @@ class VentaFormato extends Rotation
         $this->AddPage();
         $this->partidas();
 
-
-
         try {
             $this->Output('I', 'Formato - Venta '.$this->venta->numero_folio_format.'.pdf', 1);
         } catch (\Exception $ex) {
@@ -305,6 +309,14 @@ class VentaFormato extends Rotation
         }
         exit;
 
+    }
+    
+    function RotatedText($x, $y, $txt, $angle)
+    {
+        //Text rotated around its origin
+        $this->Rotate($angle,$x,$y);
+        $this->Text($x,$y,$txt);
+        $this->Rotate(0);
     }
 
 }

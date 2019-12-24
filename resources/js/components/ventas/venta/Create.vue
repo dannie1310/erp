@@ -7,7 +7,7 @@
                         <form role="form" @submit.prevent="validate">
                             <div class="body">
                                 <div class="row">
-                                    <div class="col-md-3 offset-md-9 ">
+                                    <div class="col-md-3">
                                         <div class="form-group row error-content">
                                             <label for="fecha">Fecha:</label>
                                             <datepicker v-model = "registro_venta.fecha"
@@ -23,6 +23,7 @@
                                             <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                         </div>
                                     </div>
+                                    <div class="col-md-9"></div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -101,8 +102,8 @@
                                         <h6>Datos del Depósito</h6>
                                     </div>
                                 </div>
-                                 <div class="row">
-                                     <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-3">
                                         <div class="form-group error-content">
                                             <label for="id_empresa">Cuenta Bancaria:</label>
                                             <select
@@ -122,8 +123,8 @@
                                             </select>
                                             <div class="invalid-feedback" v-show="errors.has('id_cuenta')">{{ errors.first('id_cuenta') }}</div>
                                         </div>
-                                     </div>
-                                     <div class="col-md-3">
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="form-group error-content">
                                             <label for="fecha_emision">Fecha Emisión:</label>
                                             <datepicker v-model = "registro_venta.fecha_emision"
@@ -138,10 +139,24 @@
                                             ></datepicker>
                                             <div class="invalid-feedback" v-show="errors.has('fecha_emision')">{{ errors.first('fecha_emision') }}</div>
                                         </div>
-                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-9">
+                                    </div>
+                                    <div class="col-md-3">
+                                            <div class="form-group error-content">
+                                                <label for="fecha_acreditacion">Fecha Acreditación:</label>
+                                                <datepicker v-model = "registro_venta.fecha_acreditacion"
+                                                            name = "fecha_acreditacion"
+                                                            :format = "formatoFecha"
+                                                            :language = "es"
+                                                            :bootstrap-styling = "true"
+                                                            class = "form-control"
+                                                            v-validate="{required: true}"
+                                                            :disabled-dates="fechasDeshabilitadas"
+                                                            :class="{'is-invalid': errors.has('fecha_acreditacion')}"
+                                                ></datepicker>
+                                                <div class="invalid-feedback" v-show="errors.has('fecha_acreditacion')">{{ errors.first('fecha_acreditacion') }}</div>
+                                            </div>
+                                        </div>
+                                    <div class="col-md-3">
                                         <div class="form-group error-content">
                                             <label for="referencia">Referencia de Depósito:</label>
                                             <input class="form-control"
@@ -156,23 +171,7 @@
                                             >
                                             <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group error-content">
-                                            <label for="fecha_acreditacion">Fecha Acreditación:</label>
-                                            <datepicker v-model = "registro_venta.fecha_acreditacion"
-                                                        name = "fecha_acreditacion"
-                                                        :format = "formatoFecha"
-                                                        :language = "es"
-                                                        :bootstrap-styling = "true"
-                                                        class = "form-control"
-                                                        v-validate="{required: true}"
-                                                        :disabled-dates="fechasDeshabilitadas"
-                                                        :class="{'is-invalid': errors.has('fecha_acreditacion')}"
-                                            ></datepicker>
-                                            <div class="invalid-feedback" v-show="errors.has('fecha_acreditacion')">{{ errors.first('fecha_acreditacion') }}</div>
-                                        </div>
-                                    </div>
+                                    </div>   
                                 </div>
                                 <hr>
                                 <div class="row">
@@ -187,7 +186,7 @@
                                                         <th class="unidad">Unidad</th>
                                                         <th>Existencia</th>
                                                         <th class="money_input">Cantidad</th>
-                                                        <th class="money_input">Precio Unitario</th>
+                                                        <th class="money_input">Precio de Venta</th>
                                                         <th class="money_input">Importe</th>
                                                         <th class="icono">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar_partida" :disabled="cargando">
@@ -275,7 +274,7 @@
                                                             </div>
                                                         </td>
                                                         <td class="money">
-                                                            {{partida.precio_unitario * partida.cantidad}}
+                                                            $ {{parseFloat(partida.precio_unitario * partida.cantidad).formatMoney(2, '.', ',')}}
                                                         </td>
                                                         <td class="icono">
                                                             <button type="button" class="btn btn-outline-danger btn-sm" @click="borrarPartida(i)"><i class="fa fa-trash"></i></button>
@@ -384,6 +383,9 @@
           }
         },
         methods: {
+            borrarPartida(i){
+                this.registro_venta.partidas.splice(i,1);
+            },
             formatoFecha(date) {
                 return moment(date).format('DD/MM/YYYY');
             },
