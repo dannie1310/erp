@@ -57,6 +57,7 @@ class SalidaAlmacenService
     {
         return $this->show($id)->eliminar($data['data'][0]);
     }
+
     public function store($data)
     {
         return $this->repository->create($data);

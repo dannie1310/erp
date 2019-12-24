@@ -35,6 +35,7 @@ use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\CADECO\Credito;
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Debito;
+use App\Models\CADECO\DepositoCliente;
 use App\Models\CADECO\DescuentoFondoGarantia;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EmpresaFondoFijo;
@@ -100,6 +101,9 @@ use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Tesoreria\MovimientoBancario;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
+use App\Models\CADECO\Venta;
+use App\Models\CADECO\Ventas\VentaCancelacion;
+use App\Models\CADECO\VentaPartida;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
@@ -138,6 +142,7 @@ use App\Observers\CADECO\Contratos\AreaSubcontratanteObserver;
 use App\Observers\CADECO\CreditoObserver;
 use App\Observers\CADECO\CuentaObserver;
 use App\Observers\CADECO\DebitoObserver;
+use App\Observers\CADECO\DepositoClienteObserver;
 use App\Observers\CADECO\DescuentoFondoGarantiaObserver;
 use App\Observers\CADECO\EmpresaFondoFijoObserver;
 use App\Observers\CADECO\EmpresaObserver;
@@ -203,6 +208,9 @@ use App\Observers\CADECO\SucursalObserver;
 use App\Observers\CADECO\Tesoreria\MovimientoBancarioObserver;
 use App\Observers\CADECO\Tesoreria\TraspasoCuentasObserver;
 use App\Observers\CADECO\TransaccionObserver;
+use App\Observers\CADECO\VentaObserver;
+use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
+use App\Observers\CADECO\VentaPartidaObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
 use App\Observers\SEGURIDAD_ERP\UsuarioAreaCompradoraObserver;
@@ -341,6 +349,7 @@ class AppServiceProvider extends ServiceProvider
             Credito::observe(CreditoObserver::class);
             Cuenta::observe(CuentaObserver::class);
             Debito::observe(DebitoObserver::class);
+            DepositoCliente::observe(DepositoClienteObserver::class);
             DescuentoFondoGarantia::observe(DescuentoFondoGarantiaObserver::class);
             Empresa::observe(EmpresaObserver::class);
             EmpresaFondoFijo::observe(EmpresaFondoFijoObserver::class);
@@ -378,6 +387,9 @@ class AppServiceProvider extends ServiceProvider
             Subcontrato::observe(SubcontratoObserver::class);
             Sucursal::observe(SucursalObserver::class);
             Transaccion::observe(TransaccionObserver::class);
+            Venta::observe(VentaObserver::class);
+            VentaCancelacion::observe(VentaCancelacionObserver::class);
+            VentaPartida::observe(VentaPartidaObserver::class);
 
         /**
          * SEGURIDAD_ERP
