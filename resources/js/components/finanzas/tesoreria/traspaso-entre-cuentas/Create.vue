@@ -70,7 +70,7 @@
                                                 id="fecha"
                                                 class="form-control"
                                                 v-model="fecha"
-                                                v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
+                                                v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
                                                 data-vv-as="Fecha"
                                                 :class="{'is-invalid': errors.has('fecha')}"
                                         >
@@ -88,7 +88,7 @@
                                                 id="cumplimiento"
                                                 class="form-control"
                                                 v-model="cumplimiento"
-                                                v-validate="{required: true, date_format: 'YYYY-MM-DD'}"
+                                                v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
                                                 data-vv-as="Cumplimiento"
                                                 :class="{'is-invalid': errors.has('cumplimiento')}"
                                         >
