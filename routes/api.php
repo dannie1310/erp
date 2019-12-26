@@ -33,6 +33,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\AlmacenController@show')->where(['id' => '[0-9]+']);
         });
 
+        //BANCOS
         $api->group(['prefix'=>'banco'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\BancoController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\BancoController@paginate');
@@ -82,7 +83,6 @@ $api->version('v1', function ($api) {
             $api->post('/','App\Http\Controllers\v1\CADECO\FamiliaController@store');
         });
 
-
         // FONDOS
         $api->group(['prefix' =>  'fondo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\FondoController@index');
@@ -90,6 +90,11 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\FondoController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\FondoController@store');
 
+        });
+
+        // INVENTARIOS
+        $api->group(['prefix' => 'inventario'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\InventarioController@index');
         });
 
         // MATERIALES
@@ -149,6 +154,18 @@ $api->version('v1', function ($api) {
             $api->get('por-usuario/{user_id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@porUsuario')->where(['user_id' => '[0-9]+']);
             $api->post('asignacion-areas-subcontratantes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSubcontratanteController@asignacionAreas');
         });
+        $api->group(['prefix' => 'area-compradora'], function ($api) {
+            $api->post('asignar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@asignar');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaCompradoraController@show')->where(['id' => '[0-9]+']);
+        });
+        $api->group(['prefix' => 'area-solicitante'], function ($api) {
+            $api->post('asignar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSolicitanteController@asignar');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSolicitanteController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSolicitanteController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\AreaSolicitanteController@show')->where(['id' => '[0-9]+']);
+        });
     });
 
     /**
@@ -206,6 +223,12 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-entrada-almacen', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@pdfEntradaAlmacen')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\EntradaAlmacenController@store');
+            //ORDEN DE COMPRA
+            $api->group(['prefix' => 'orden-compra'], function ($api) {
+                $api->get('/', 'App\Http\Controllers\v1\CADECO\Almacenes\OrdenCompraController@index');
+                $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\OrdenCompraController@show')->where(['id' => '[0-9]+']);
+            });
         });
 
         //INVENTARIO FISICO
@@ -233,6 +256,8 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-salida-almacen', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@pdfSalidaAlmacen')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\SalidaAlmacenController@store');
+
         });
     });
 
@@ -378,7 +403,13 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'compras'], function ($api) {
 
-         // ORDEN DE COMPRA
+         // ITEM CONTRATISTA
+        $api->group(['prefix' => 'item-contratista'], function ($api) {
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Compras\ItemContratistaController@destroy')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Compras\ItemContratistaController@update')->where(['id' => '[0-9]+']);
+        });
+
+        // ORDEN DE COMPRA
         $api->group(['prefix' => 'orden-compra'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@paginate');
@@ -419,6 +450,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@paginate');
             $api->get('{id}/formato-estimacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfEstimacion')->where(['id' => '[0-9]+']);
             $api->get('{id}/showEstimacionTable','App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@showEstimacionTable');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@destroy')->where(['id' => '[0-9]+']);
 
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION
@@ -463,21 +495,21 @@ $api->version('v1', function ($api) {
         /**
          * CUENTA BANCARIA EMPRESA
          */
-        $api->group(['prefix' => 'cuenta-bancaria-empresa'], function ($api){
+        $api->group(['prefix' => 'cuenta-bancaria-empresa'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaEmpresaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaEmpresaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaEmpresaController@show')->where(['id' => '[0-9]+']);
         });
 
         // DATOS ESTIMACIONES
-        $api->group(['prefix' => 'estimacion'], function ($api){
+        $api->group(['prefix' => 'estimacion'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
         });
 
         /**
          * DISTRIBUCIÓN DE RECURSOS AUTORIZADOS EN REMESA
          */
-        $api->group(['prefix' => 'distribuir-recurso-remesa'], function ($api){
+        $api->group(['prefix' => 'distribuir-recurso-remesa'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@store');
             $api->get('{id}/layout', 'App\Http\Controllers\v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayout')->where(['id' => '[0-9]+']);
@@ -489,12 +521,23 @@ $api->version('v1', function ($api) {
         });
 
         /**
+         * FACTURAS
+         */
+        $api->group(['prefix' => 'factura'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@show')->where(['id' => '[0-9]+']);
+            $api->get('autorizada', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@autorizadas');
+            $api->get('{id}/pendientesPago', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pendientesPago');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@paginate');
+        });
+
+        /**
          * FONDO
          */
 
-        $api->group(['prefix'=>'fondo'],function ($api){
+        $api->group(['prefix' => 'fondo'], function ($api) {
 
-            $api->get('tipo-fondo','App\Http\Controllers\v1\CADECO\Finanzas\CtgTipoFondoController@index');
+            $api->get('tipo-fondo', 'App\Http\Controllers\v1\CADECO\Finanzas\CtgTipoFondoController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CtgTipoFondoController@show')->where(['id' => '[0-9]+']);
 
         });
@@ -502,7 +545,7 @@ $api->version('v1', function ($api) {
         /**
          * GESTIÓN CUENTAS BANCARIAS
          */
-        $api->group(['prefix' => 'gestion-cuenta-bancaria'], function ($api){
+        $api->group(['prefix' => 'gestion-cuenta-bancaria'], function ($api) {
 
             /**
              * SOLICITUD DE ALTA
@@ -521,7 +564,7 @@ $api->version('v1', function ($api) {
              * SOLICITUD DE BAJA
              */
             $api->group(['prefix' => 'solicitud-baja'], function ($api) {
-               $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@store');
+                $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@store');
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@paginate');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@show')->where(['id' => '[0-9]+']);
                 $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudBajaCuentaBancariaController@pdf')->where(['id' => '[0-9]+']);
@@ -534,34 +577,18 @@ $api->version('v1', function ($api) {
         /**
          * GESTIÓN PAGOS
          */
-        $api->group(['prefix' => 'gestion-pago'], function ($api){
+        $api->group(['prefix' => 'gestion-pago'], function ($api) {
             $api->post('registrar_pagos', 'App\Http\Controllers\v1\CADECO\Finanzas\GestionPagoController@registrarPagos');
             $api->post('bitacora', 'App\Http\Controllers\v1\CADECO\Finanzas\GestionPagoController@presentaBitacora');
         });
 
-        /**
-         * FACTURAS
-         */
-        $api->group(['prefix' => 'factura'], function ($api){
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@index');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@show')->where(['id' => '[0-9]+']);
-            $api->get('autorizada', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@autorizadas');
-            $api->get('{id}/pendientesPago', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pendientesPago');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@paginate');
-        });
-
-        /**
-         * SOLICITUD
-         */
-
-
         /***
          * PAGOS
          */
-        $api->group(['prefix' => 'pago'], function ($api){
+        $api->group(['prefix' => 'pago'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@paginate');
 
-            $api->group(['prefix' => 'carga-masiva'], function ($api){
+            $api->group(['prefix' => 'carga-masiva'], function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@paginate');
                 $api->post('layout', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@procesaLayoutPagos');
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@store');
@@ -574,7 +601,7 @@ $api->version('v1', function ($api) {
         /**
          * REMESA
          */
-        $api->group(['prefix' => 'remesa'], function ($api){
+        $api->group(['prefix' => 'remesa'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\RemesaController@show')->where(['id' => '[0-9]+']);
         });
@@ -587,7 +614,33 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
-            $api->get('pdf/{id}','App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id'=>'[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id' => '[0-9]+']);
+        });
+
+        /**
+         * TESORERIA
+         */
+        //MOVIMIENTOS BANCARIOS
+        $api->group(['prefix' => 'movimiento-bancario'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\MovimientoBancarioController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\MovimientoBancarioController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\MovimientoBancarioController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\MovimientoBancarioController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\MovimientoBancarioController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        //TRASPASO ENTRE CUENTAS
+        $api->group(['prefix' => 'traspaso-entre-cuentas'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\TraspasoEntreCuentasController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\TraspasoEntreCuentasController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\TraspasoEntreCuentasController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\TraspasoEntreCuentasController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\TraspasoEntreCuentasController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        //TIPOS MOVIMIENTO
+        $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\TipoMovimientoController@index');
         });
     });
 
@@ -608,35 +661,6 @@ $api->version('v1', function ($api) {
             //$api->post('crear-rol', 'App\Http\Controllers\v1\CADECO\Seguridad\RolController@crearRol');
         });
     });
-
-      /**
-     * TESORERIA
-     */
-    $api->group(['middleware' => 'api', 'prefix' => 'tesoreria'], function ($api) {
-        //MOVIMIENTOS BANCARIOS
-        $api->group(['prefix' => 'movimiento-bancario'], function ($api) {
-            $api->post('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@store');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@paginate');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@show')->where(['id' => '[0-9]+']);
-            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@update')->where(['id' => '[0-9]+']);
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\MovimientoBancarioController@destroy')->where(['id' => '[0-9]+']);
-        });
-
-        //TRASPASO ENTRE CUENTAS
-        $api->group(['prefix' => 'traspaso-entre-cuentas'], function ($api) {
-            $api->post('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@store');
-            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@paginate');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@show')->where(['id' => '[0-9]+']);
-            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@update')->where(['id' => '[0-9]+']);
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Tesoreria\TraspasoEntreCuentasController@destroy')->where(['id' => '[0-9]+']);
-        });
-
-        //TIPOS MOVIMIENTO
-        $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Tesoreria\TipoMovimientoController@index');
-        });
-    });
-
 
     /** SEGURIDAD ERP */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {

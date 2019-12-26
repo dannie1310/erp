@@ -41,7 +41,7 @@
                     { title: 'Cuenta', field: 'cuentas_almacenes__cuenta', sortable: true },
                     { title: 'Almacén', field: 'id_almacen', sortable: true },
                     { title: 'Tipo de Almacén', field: 'almacen__tipo_almacen', sortable: true },
-                    { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Editar', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

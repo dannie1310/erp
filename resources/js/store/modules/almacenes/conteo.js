@@ -50,7 +50,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cancelar Conteo",
-                    text: "¿Está seguro/a que quiere cancelar el conteo?",
+                    text: "¿Está seguro que quiere cancelar el conteo?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -91,7 +91,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cargar Layout manual de conteo",
-                    text: "¿Está seguro/a de que desea generar conteo?",
+                    text: "¿Está seguro de que desea generar conteo?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -156,7 +156,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar conteo manual",
-                    text: "¿Está seguro/a de que quiere registrar un conteo manual?",
+                    text: "¿Está seguro de que quiere registrar un conteo manual?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -194,7 +194,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar conteo manual",
-                    text: "¿Está seguro/a de que quiere registrar un conteo por código de barra?",
+                    text: "¿Está seguro de que quiere registrar un conteo por código de barra?",
                     icon: "info",
                     buttons: {
                         cancel: {

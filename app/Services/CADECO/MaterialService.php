@@ -9,8 +9,10 @@
 namespace App\Services\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Material;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\DB;
 
 class MaterialService
 {
@@ -29,14 +31,14 @@ class MaterialService
         $this->repository = new Repository($model);
     }
 
-    public function index($data)
-    {
-        return $this->repository->all($data);
-    }
-
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function index($data)
+    {
+        return $this->repository->all($data);
     }
 
     public function paginate($data)

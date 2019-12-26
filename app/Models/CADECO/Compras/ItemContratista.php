@@ -4,6 +4,8 @@
 namespace App\Models\CADECO\Compras;
 
 
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\EntradaMaterialPartida;
 use Illuminate\Database\Eloquent\Model;
 
 class ItemContratista extends Model
@@ -12,6 +14,21 @@ class ItemContratista extends Model
     protected $table = 'Compras.ItemsXContratista';
     protected $primaryKey = 'id_item';
 
+    protected $fillable = [
+        'id_item',
+        'id_empresa',
+        'con_cargo'
+    ];
+
     public $timestamps = false;
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class,'id_empresa','id_empresa');
+    }
+
+    public function entradaMaterialPartida()
+    {
+        return $this->belongsTo(EntradaMaterialPartida::class,'id_item','id_item');
+    }
 }

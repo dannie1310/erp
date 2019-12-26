@@ -42,6 +42,11 @@ export default {
                     estimacion.estado = 0;
                 }
             })
+        },
+        DELETE_ENTRADA(state, id) {
+            state.estimaciones = state.estimaciones.filter(estimacion => {
+                return estimacion.id != id
+            });
         }
     },
 
@@ -57,7 +62,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Estimación",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -118,8 +123,6 @@ export default {
                     })
             });
         },
-
-
         getConceptos(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -133,7 +136,6 @@ export default {
                     })
             });
         },
-
         paginate (context, payload){
             return new Promise((resolve, reject) => {
                 axios
@@ -147,7 +149,6 @@ export default {
                     })
             });
         },
-
         estimaAnterior (context, payload){
             return new Promise((resolve, reject) => {
                 axios
@@ -161,11 +162,10 @@ export default {
                     })
             });
         },
-
         aprobar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Aprobar Estimación",
                     icon: "warning",
                     buttons: {
@@ -203,11 +203,10 @@ export default {
                     });
             });
         },
-
         revertirAprobacion(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Revertir Aprobación",
                     icon: "warning",
                     buttons: {
@@ -239,6 +238,47 @@ export default {
                                 .catch(error => {
                                     reject(error);
                                 })
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar la Estimación",
+                    text: "¿Está seguro de que desea eliminar esta estimación?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Estimación eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
                         } else {
                             reject();
                         }

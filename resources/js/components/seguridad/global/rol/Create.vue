@@ -1,9 +1,9 @@
 <template>
     <div class="card" id="seguridad-rol-create">
         <div class="card-header">
-            <h3 class="card-title">
+            <h6 class="card-title">
                 Crear Rol
-            </h3>
+            </h6>
         </div>
         <div class="card-body">
             <div class="row" role="form">
@@ -71,7 +71,7 @@
 
             <div class="form-group row" style="margin-top: 15px">
                 <div class="col">
-                    <button type="submit" @click="validate" class="btn btn-outline-primary pull-right" :disabled="guardando">
+                    <button type="submit" @click="validate" class="btn btn-outline-primary float-right" :disabled="guardando">
                         <i class="fa fa-spin fa-spinner" v-if="guardando"></i>
                         <i class="fa fa-save" v-else></i>
                     </button>

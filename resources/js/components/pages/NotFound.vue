@@ -4,7 +4,7 @@
             <h2 class="headline text-warning"> 404</h2>
 
             <div class="error-content">
-                <h3><i class="fa fa-warning text-warning"></i> Oops! Pagina no encontrada.</h3>
+                <h6><i class="fa fa-warning text-warning"></i> Oops! Pagina no encontrada.</h6>
 
                 <p>
                     No pudimos encontrar la página que buscabas <br>

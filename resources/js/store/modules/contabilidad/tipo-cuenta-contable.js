@@ -50,7 +50,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar tipo de cuenta contable",
-                    text: "¿Estás seguro/a de que deseas eliminar este tipo de cuenta contable?",
+                    text: "¿Está seguro de que deseas eliminar este tipo de cuenta contable?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -128,7 +128,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Cuenta Contable",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel:{
@@ -167,7 +167,7 @@ export default {
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Guardar cambios del Tipo de Cuenta Contable",
                     icon: "warning",
                     buttons: {

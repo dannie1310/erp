@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('generar_fondo_garantia')" class="btn btn-app pull-right" :disabled="cargando" >
+        <button @click="init" v-if="$root.can('generar_fondo_garantia')" class="btn btn-app float-right" :disabled="cargando" >
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Generar Fondo de Garantía

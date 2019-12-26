@@ -32,4 +32,13 @@ class Menu extends Model
             return $q->where('usuario.idusuario', '=', $idusuario);
         });
     }
+
+    public function getTargetAttribute()
+    {
+        if(strpos($this->ruta, "http")!==false){
+            return '_blank';
+        }else{
+            return '_self';
+        }
+    }
 }

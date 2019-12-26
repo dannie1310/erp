@@ -61,6 +61,20 @@ export default {
             });
         },
 
+        almacen(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI+'almacen', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
         paginate(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -78,7 +92,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Material",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {

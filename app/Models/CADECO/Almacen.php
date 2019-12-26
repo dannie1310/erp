@@ -40,6 +40,13 @@ class Almacen extends Model
     protected $primaryKey = 'id_almacen';
 
     /**
+     * @var array
+     */
+    public $searchable = [
+        'descripcion'
+    ];
+
+    /**
      * @var bool
      */
     public $timestamps = false;
@@ -113,9 +120,17 @@ class Almacen extends Model
 
     public function MaterialesAjustables(){
         return $this->belongsToMany(Material::class,'inventarios','id_almacen','id_material')
-            ->select(DB::raw('materiales.id_material, materiales.unidad, materiales.numero_parte,  materiales.descripcion, sum(inventarios.cantidad) as cantidad_almacen,sum(inventarios.saldo) as saldo_almacen'))
+            ->select(DB::raw('materiales.id_material, materiales.unidad, materiales.numero_parte,  materiales.descripcion, sum(inventarios.cantidad) as cantidad_almacen, round(sum(inventarios.saldo),2)  as saldo_almacen'))
             ->orderBy('materiales.descripcion')
             ->groupBy('materiales.id_material', 'materiales.unidad', 'materiales.numero_parte', 'materiales.descripcion','inventarios.id_almacen','inventarios.id_material')
             /*->havingRaw('sum(inventarios.cantidad) != sum(inventarios.saldo)')*/;
+    }
+
+    public function MaterialesSalida(){
+        return $this->belongsToMany(Material::class,'inventarios','id_almacen','id_material')
+            ->select(DB::raw('materiales.id_material, materiales.unidad, materiales.numero_parte,  materiales.descripcion, sum(inventarios.cantidad) as cantidad_almacen, round(sum(inventarios.saldo),2) as saldo_almacen'))
+            ->orderBy('materiales.descripcion')
+            ->groupBy('materiales.id_material', 'materiales.unidad', 'materiales.numero_parte', 'materiales.descripcion','inventarios.id_almacen','inventarios.id_material')
+            ->havingRaw('sum(inventarios.saldo) > 0');
     }
 }

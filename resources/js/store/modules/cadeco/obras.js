@@ -44,7 +44,7 @@ export default {
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Actualizar Configuración de Obra",
                     icon: "info",
                     buttons: {
@@ -85,7 +85,7 @@ export default {
         actualizarEstado(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Actualizar Estado de Obra",
                     icon: "info",
                     buttons: {

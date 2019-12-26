@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12"  v-if="$root.can('registrar_distribucion_recursos_remesa')" :disabled="cargando">
-            <button  @click="create" title="Crear" class="btn btn-app btn-info pull-right" >
+            <button  @click="create" title="Crear" class="btn btn-app btn-info float-right" >
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar Dispersión
@@ -39,7 +39,7 @@
                     { title: 'Monto Remesa', field: 'monto_autorizado', tdClass: 'money',sortable: true },
                     { title: 'Monto Dispersado', field: 'monto_distribuido', tdClass: 'money', sortable: true },
                     { title: 'Estatus', field: 'estado', tdComp: require('./partials/DistribuirEstatus'), sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons') },
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default },
                 ],
                 data: [],
                 total: 0,

@@ -65,27 +65,46 @@ class SalidaAlmacenFormato extends Rotation
         $this->Ln(.7);
         $y_f = $this->GetY();
 
-
+        $this->SetY(1);
         if($this->salida['opciones']==='65537'){
             $this->SetFont('Arial', 'B', 18);
             $this->Cell(11.5, $postTitle, utf8_decode( 'TRANSFERENCIA DE MATERIALES'), 0, 0, 'C', 0);
         }
 
         if($this->salida['opciones']==='1'){
-            $this->SetFont('Arial', 'B', 24);
-            $this->Cell(11.5, $postTitle, utf8_decode( 'SALIDA DE MATERIALES'), 0, 0, 'C', 0);
+            if($this->salida->entrega_contratista){
+                $this->SetY(.7);
+                $this->SetFont('Arial', 'B', 20);
+                $this->Cell(11.5, $postTitle, utf8_decode( 'SALIDA DE MATERIALES'), 0, 0, 'C', 0);
+                $this->Ln();
+                $this->SetFont('Arial', 'B', 12);
+                $this->Cell(11.5, $postTitle, utf8_decode( 'Entrega a Contratista ('. $this->salida->entrega_contratista->tipo_string . ')' ), 0, 0, 'C', 0);
+            }else{
+                $this->SetFont('Arial', 'B', 24);
+                $this->Cell(11.5, $postTitle, utf8_decode( 'SALIDA DE MATERIALES'), 0, 0, 'C', 0);
+            }
+
+        }
+        $this->Ln();
+        $this->SetFont('Arial', 'B', 10);
+        $this->SetY($y_f);
+
+
+        if($this->salida['NumeroFolioAlt']>0){
+            $this->SetX($x_f);
+            $this->Cell(4.5, .7, 'FOLIO ALM ', 'L', 0, 'L');
+            $this->Cell(3.5, .7, $this->salida['NumeroFolioAlt'], 'R', 0, 'L');
+            $this->Ln(.7);
         }
 
-        $this->Ln();
+        if($this->salida->entrega_contratista){
+            $this->SetX($x_f);
+            $this->Cell(4.5, .7, 'FOLIO CONTRATISTA ', 'L', 0, 'L');
+            $this->Cell(3.5, .7, $this->salida->entrega_contratista->numero_folio_format, 'R', 0, 'L');
+            $this->Ln(.7);
+        }
 
-        $this->SetY($y_f);
         $this->SetX($x_f);
-        $this->SetFont('Arial', 'B', 10);
-        $this->Cell(4.5, .7, 'FOLIO ALM ', 'L', 0, 'L');
-        $this->Cell(3.5, .7, $this->salida['NumeroFolioAlt'], 'R', 0, 'L');
-        $this->Ln(.7);
-
-        $this->Cell(11.5);
         $this->Cell(4.5, .7, 'FECHA', 'LB', 0, 'L');
         $this->Cell(3.5, .7, $this->fecha, 'RB', 1, 'L');
         $this->Ln(.5);
@@ -103,12 +122,19 @@ class SalidaAlmacenFormato extends Rotation
 
 
         $this->Row([utf8_decode($this->obra->nombre . '  ' . " ")]);
-        $this->Ln(.5);
+        $this->Ln(.2);
+        if($this->salida->entrega_contratista) {
+            $this->SetFont('Arial', 'B', 12);
+            $this->Cell(3, .5, utf8_decode("Contratista:"), 0, 0, 'L');
+            $this->SetFont('Arial', '', 12);
+            $this->MultiCell(16.5, .5, utf8_decode($this->salida->empresa->razon_social), 0, 'L');
+            $this->Ln(.2);
+        }
         $this->SetFont('Arial', '', 10);
-        $this->Cell(9.5, .7, utf8_decode("Almacén"), 0, 0, 'L');
+        $this->Cell(9.5, .5, utf8_decode("Almacén"), 0, 0, 'L');
         $this->Cell(.5);
-        $this->Cell(9.5, .7, 'Empresa', 0, 0, 'L');
-        $this->Ln(.8);
+        $this->Cell(9.5, .5, 'Empresa', 0, 0, 'L');
+        $this->Ln(.5);
         $y_inicial = $this->getY();
         $x_inicial = $this->getX();
         $this->MultiCell(9.5, .5,
@@ -166,11 +192,6 @@ class SalidaAlmacenFormato extends Rotation
 
         $this->SetFont('Arial', '', 6);
         $this->SetHeights([0.8]);
-
-
-
-
-
 
 
     }
@@ -417,7 +438,7 @@ if($this->PageNo()==1){
         $this->Cell(10, .3, (''), 0, 1, 'L');
 
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(10, .3, utf8_decode('Formato generado desde el módulo de ordenes de compra. Fecha de registro: '  .date("Y-m-d", strtotime($this->fecha)) . ' ') , 0, 0, 'L');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de almacenes. Fecha de registro: '  .date("Y-m-d", strtotime($this->fecha)) . ' ') , 0, 0, 'L');
         $this->Cell(9.5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 

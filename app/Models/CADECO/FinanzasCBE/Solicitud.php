@@ -57,10 +57,11 @@ class Solicitud extends Model
 
     /**
      * Tipos de empresa (1,2,3,32)
-     * 1 - proveedor
-     * 2 - contratista
-     * 3 - proveedor y contratista
-     * 4 - Responsables de fondo fijo
+     * 1 - Proveedor
+     * 2 - Contratista
+     * 3 - Proveedor y contratista
+     * 4 - Destajistas
+     * 32 - Responsables de fondo fijo
      */
     public function empresa()
     {

@@ -1,0 +1,40 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: DBenitezc
+ * Date: 31/01/2019
+ * Time: 01:42 PM
+ */
+
+namespace App\Http\Transformers\CADECO\Almacenes;
+
+
+use App\Http\Transformers\CADECO\Contabilidad\CuentaMaterialTransformer;
+use App\Models\CADECO\Material;
+use League\Fractal\TransformerAbstract;
+
+class MaterialSalidasTransformer extends TransformerAbstract
+{
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+
+    ];
+
+    public function transform(Material $model)
+    {
+        return [
+            'id' => $model->getKey(),
+            'id_material' => $model->getKey(),
+            'descripcion' => $model->descripcion,
+            'numero_parte' => $model->numero_parte,
+            'unidad' => $model->unidad,
+            'saldo_almacen' => $model->saldo_almacen_dd,
+            'saldo_almacen_format' => $model->saldo_almacen_format,
+            'cantidad_almacen' => $model->cantidad_almacen,
+        ];
+    }
+}

@@ -1,13 +1,13 @@
 <template>
     <div class="row">
         <div class="col-12"  :disabled="cargando">
-            <button  @click="create" title="Crear" class="btn btn-app btn-info pull-right"  v-if="$root.can('cargar_bitacora')">
+            <button  @click="create" title="Crear" class="btn btn-app btn-info float-right"  v-if="$root.can('cargar_bitacora')">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Bitácora
                 (SANTANDER)
             </button>
-            <button  @click="create_pago" title="Crear" class="btn btn-app btn-info pull-right"   v-if="$root.can('registrar_pago')">
+            <button  @click="create_pago" title="Crear" class="btn btn-app btn-info float-right"   v-if="$root.can('registrar_pago')">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-money" v-else></i>
                 Registrar Pago

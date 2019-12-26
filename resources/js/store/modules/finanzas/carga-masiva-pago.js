@@ -51,7 +51,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registro de Pagos con Carga Masiva",
-                    text: "¿Está seguro/a de que desea salir? Perderá los cambios no guardados.",
+                    text: "¿Está seguro de que desea salir? Perderá los cambios no guardados.",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -126,7 +126,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Autorización de layouts registrados",
-                    text: "¿Está seguro/a de que desea autorizar este layout?",
+                    text: "¿Está seguro de que desea autorizar este layout?",
                     icon: "warning",
                     buttons: {
                         cancel: {

@@ -12,7 +12,7 @@ export const routes = [
         path: '/',
         name: 'portal',
         components: {
-            default: require('./components/pages/Portal.vue'),
+            default: require('./components/pages/Portal.vue').default,
             menu: null
         },
         meta: {
@@ -24,7 +24,7 @@ export const routes = [
         path: '/google-2fa',
         name: 'google-2fa',
         components: {
-            default: require('./components/globals/GoogleAuth.vue'),
+            default: require('./components/globals/GoogleAuth.vue').default,
             menu: null
         },
         meta: {
@@ -35,7 +35,7 @@ export const routes = [
     {
         path: '/sao',
         name: 'home',
-        component: require('./components/pages/Home.vue'),
+        component: require('./components/pages/Home.vue').default,
         meta: {
             title: 'Inicio',
             middleware: [auth, context],
@@ -46,8 +46,8 @@ export const routes = [
         path: '/configuracion',
         name: 'configuracion_',
         components:  {
-            default: require('./components/pages/Configuracion.vue'),
-            menu: require('./components/pages/partials/MenuConfiguracion.vue')
+            default: require('./components/pages/Configuracion.vue').default,
+            menu: require('./components/pages/partials/MenuConfiguracion.vue').default
         },
         meta: {
             title: 'CONFIGURACIÓN',
@@ -60,8 +60,8 @@ export const routes = [
         path: '/control-interno',
         name: 'control-interno',
         components:  {
-            default: require('./components/control-interno/Index.vue'),
-            menu: require('./components/control-interno/partials/Menu.vue')
+            default: require('./components/control-interno/Index.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
         },
         meta: {
             title: 'Control Interno',
@@ -74,14 +74,14 @@ export const routes = [
     {
         path: '/control-interno/permisos',
         components: {
-            default: require('./components/control-interno/partials/Layout.vue'),
-            menu: require('./components/control-interno/partials/Menu.vue')
+            default: require('./components/control-interno/partials/Layout.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
         },
         children: [
             {
                 path: '',
                 name: 'permisos-obra',
-                component: require('./components/control-interno/Index'),
+                component: require('./components/control-interno/Index').default,
                 meta: {
                     title: 'Permisos',
                     breadcrumb: {parent: 'control-interno', name: 'PERMISOS ÁSIGNADOS'},
@@ -91,12 +91,12 @@ export const routes = [
             },
             {
                 path: 'por-obra',
-                component: require('./components/control-interno/por-obra/partials/Layout'),
+                component: require('./components/control-interno/por-obra/partials/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'por-obra',
-                        component: require('./components/control-interno/por-obra/Index'),
+                        component: require('./components/control-interno/por-obra/Index').default,
                         meta: {
                             title: 'Permisos Asignados por Obra',
                             breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR OBRA'},
@@ -110,12 +110,12 @@ export const routes = [
             },
             {
                 path: 'por-usuario',
-                component: require('./components/control-interno/por-usuario/partials/Layout'),
+                component: require('./components/control-interno/por-usuario/partials/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'por-usuario',
-                        component: require('./components/control-interno/por-usuario/Index'),
+                        component: require('./components/control-interno/por-usuario/Index').default,
                         meta: {
                             title: 'Permisos Asignados por Usuario',
                             breadcrumb: {parent: 'permisos-obra', name: 'PERMISOS POR USUARIO'},
@@ -133,8 +133,8 @@ export const routes = [
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {
-            default: require('./components/configuracion/Index.vue'),
-            menu: require('./components/configuracion/partials/Menu.vue')
+            default: require('./components/configuracion/Index.vue').default,
+            menu: require('./components/configuracion/partials/Menu.vue').default
         },
         meta: {
             title: 'CONFIGURACIÓN',
@@ -149,7 +149,7 @@ export const routes = [
     {
         path: '/auth',
         name: 'login',
-        component: require('./components/pages/Login.vue'),
+        component: require('./components/pages/Login.vue').default,
         meta: {
             title: 'INICIAR SESIÓN',
             middleware: guest,
@@ -158,7 +158,7 @@ export const routes = [
     {
         path: '/sao/obras',
         name: 'obras',
-        component: require('./components/pages/Obras.vue'),
+        component: require('./components/pages/Obras.vue').default,
         meta: {
             title: 'Seleccionar Obra',
             middleware: auth,
@@ -168,14 +168,14 @@ export const routes = [
     {
         path: '/sao/almacenes',
         components: {
-            default: require('./components/almacenes/partials/Layout.vue'),
-            menu: require('./components/almacenes/partials/Menu.vue')
+            default: require('./components/almacenes/partials/Layout.vue').default,
+            menu: require('./components/almacenes/partials/Menu.vue').default
         },
         children: [
             {
                 path: '',
                 name: 'almacenes',
-                component: require('./components/almacenes/Index'),
+                component: require('./components/almacenes/Index').default,
                 meta: {
                     title: 'Almacenes',
                     breadcrumb: {parent:'home', name: 'ALMACENES'},
@@ -184,12 +184,12 @@ export const routes = [
             },
             {
                 path: 'ajuste-inventario',
-                component: require('./components/almacenes/ajuste-inventario/Layout'),
+                component: require('./components/almacenes/ajuste-inventario/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'ajuste-inventario',
-                        component: require('./components/almacenes/ajuste-inventario/Index'),
+                        component: require('./components/almacenes/ajuste-inventario/Index').default,
                         meta: {
                             title: 'Ajuste de Inventarios',
                             breadcrumb: {parent: 'almacenes', name: 'AJUSTE DE INVENTARIOS'},
@@ -199,7 +199,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'ajuste-create',
-                        component: require('./components/almacenes/ajuste-inventario/Create'),
+                        component: require('./components/almacenes/ajuste-inventario/Create').default,
                         meta: {
                             title: 'Registrar Ajuste de Inventario',
                             breadcrumb: {name: 'REGISTRAR', parent: 'ajuste-inventario'},
@@ -211,29 +211,40 @@ export const routes = [
             },
             {
                 path: 'entrada-almacen',
-                component: require('./components/almacenes/entrada-almacen/Layout'),
+                component: require('./components/almacenes/entrada-almacen/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'entrada-almacen',
-                        component: require('./components/almacenes/entrada-almacen/Index'),
+                        component: require('./components/almacenes/entrada-almacen/Index').default,
                         meta: {
                             title: 'Entrada de Almacén',
                             breadcrumb: {parent: 'almacenes', name: 'ENTRADA ALMACEN'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_entrada_almacen'
                         }
+                    },
+                    {
+                        path: 'create',
+                        name: 'entrada-almacen-create',
+                        component: require('./components/almacenes/entrada-almacen/Create').default,
+                        meta: {
+                            title: 'Registrar Entrada de Almacén',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'entrada-almacen'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_entrada_almacen']
+                        }
                     }
                 ]
             },
             {
                 path: 'salida-almacen',
-                component: require('./components/almacenes/salida-almacen/Layout'),
+                component: require('./components/almacenes/salida-almacen/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'salida-almacen',
-                        component: require('./components/almacenes/salida-almacen/Index'),
+                        component: require('./components/almacenes/salida-almacen/Index').default,
                         meta: {
                             title: 'Salida de Almacén',
                             breadcrumb: {parent: 'almacenes', name: 'SALIDA ALMACEN'},
@@ -241,17 +252,28 @@ export const routes = [
                             permission: 'consultar_salida_almacen'
 
                         }
+                    },
+                    {
+                        path:'create',
+                        name:'salida-create',
+                        component:require('./components/almacenes/salida-almacen/Create').default,
+                        meta:{
+                            title:'Registrar Salida / Transferencia Almacén',
+                            breadcrumb: {parent: 'salida-almacen', name: 'SALIDA - TRANSFERENCIA ALMACEN'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_salida_almacen'
+                        }
                     }
                 ]
             },
             {
                 path: 'inventario-fisico',
-                component: require('./components/almacenes/inventario-fisico/Layout'),
+                component: require('./components/almacenes/inventario-fisico/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'inventario-fisico',
-                        component: require('./components/almacenes/inventario-fisico/Index'),
+                        component: require('./components/almacenes/inventario-fisico/Index').default,
                         meta: {
                             title: 'Inventario Fisico',
                             breadcrumb: {parent: 'almacenes', name: 'INVENTARIO FÍSICO'},
@@ -263,12 +285,12 @@ export const routes = [
             },
             {
                 path:'marbete',
-                component: require('./components/almacenes/marbete/Layout'),
+                component: require('./components/almacenes/marbete/Layout').default,
                 children: [
                     {
                         path:'/',
                         name: 'marbete',
-                        component: require('./components/almacenes/marbete/Index'),
+                        component: require('./components/almacenes/marbete/Index').default,
                         meta: {
                             title: 'Marbetes',
                             breadcrumb: {parent: 'almacenes', name: 'MARBETES'},
@@ -280,12 +302,12 @@ export const routes = [
             },
             {
                 path: 'conteo',
-                component: require('./components/almacenes/conteo/Layout'),
+                component: require('./components/almacenes/conteo/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'conteo',
-                        component: require('./components/almacenes/conteo/Index'),
+                        component: require('./components/almacenes/conteo/Index').default,
                         meta: {
                             title: 'Conteos',
                             breadcrumb: {parent: 'almacenes', name: 'CONTEOS'},
@@ -300,16 +322,184 @@ export const routes = [
         ]
     },
     {
+        path: '/sao/catalogos',
+        components: {
+            default: require('./components/catalogos/partials/Layout.vue').default,
+            menu: require('./components/catalogos/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'catalogos',
+                component: require('./components/catalogos/Index').default,
+                meta: {
+                    title: 'Catálogos',
+                    breadcrumb: {parent:'home', name: 'CATÁLOGOS'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'insumo-maquinaria',
+                component: require('./components/catalogos/insumo-maquinaria/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'insumo-maquinaria',
+                        component: require('./components/catalogos/insumo-maquinaria/Index').default,
+                        meta: {
+                            title: 'Catálogo de Maquinaria',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE MAQUINARIA'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia-maq',
+                        name: 'familia-maq',
+                        component: require('./components/catalogos/insumo-maquinaria/familia/Index').default,
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'insumo-maquinaria',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_maquinaria']
+                        }
+                    },
+                    {
+                        path: 'maquinaria',
+                        name: 'maquinaria',
+                        component: require('./components/catalogos/insumo-maquinaria/maquinaria/Index').default,
+                        meta: {
+                            title: 'Maquinaria',
+                            breadcrumb: {
+                                parent: 'insumo-maquinaria',
+                                name: 'MAQUINARIA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_maquinaria']
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'insumo-servicio',
+                component: require('./components/finanzas/insumo-servicio/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'insumo-servicio',
+                        component: require('./components/finanzas/insumo-servicio/Index').default,
+                        meta: {
+                            title: 'Catálogo de Servicio',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE SERVICIO'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia-serv',
+                        name: 'cat-familia-serv',
+                        component: require('./components/finanzas/insumo-servicio/familia/Index').default,
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'insumo-servicio',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_servicio']
+                        }
+                    },
+                    {
+                        path: 'servicio',
+                        name: 'cat-servicio',
+                        component: require('./components/finanzas/insumo-servicio/servicio/Index').default,
+                        meta: {
+                            title: 'Servicios',
+                            breadcrumb: {
+                                parent: 'insumo-servicio',
+                                name: 'SERVICIOS'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_servicio']
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'catalogo-insumos',
+                component: require('./components/compras/catalogos/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'catalogo-insumos',
+                        component: require('./components/compras/catalogos/Index').default,
+                        meta: {
+                            title: 'Catálogo de Insumos',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE INSUMOS'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'familia',
+                        name: 'cat-familia',
+                        component: require('./components/compras/catalogos/familia/Index').default,
+                        meta: {
+                            title: 'Familia',
+                            breadcrumb: {
+                                parent: 'catalogo-insumos',
+                                name: 'FAMILIA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_material','consultar_familia_herramienta_equipo']
+                        }
+                    },
+                    {
+                        path: 'material',
+                        name: 'cat-material',
+                        component: require('./components/compras/catalogos/material/Index').default,
+                        meta: {
+                            title: 'Material',
+                            breadcrumb: {
+                                parent: 'catalogo-insumos',
+                                name: 'MATERIAL'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_material']
+                        }
+                    },
+                    {
+                        path: 'herramienta',
+                        name: 'cat-herramienta',
+                        component: require('./components/compras/catalogos/herramienta/Index').default,
+                        meta: {
+                            title: 'Herramienta',
+                            breadcrumb: {
+                                parent: 'catalogo-insumos',
+                                name: 'HERRAMIENTA Y EQUIPOS'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_herramienta_equipo']
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/compras',
         components: {
-            default: require('./components/compras/partials/Layout.vue'),
-            menu: require('./components/compras/partials/Menu.vue')
+            default: require('./components/compras/partials/Layout.vue').default,
+            menu: require('./components/compras/partials/Menu.vue').default
         },
         children: [
             {
                 path: '',
                 name: 'compras',
-                component: require('./components/compras/Index'),
+                component: require('./components/compras/Index').default,
                 meta: {
                     title: 'Compras',
                     breadcrumb: {parent:'home', name: 'COMPRAS'},
@@ -318,12 +508,12 @@ export const routes = [
             },
             {
                 path: 'catalogo-insumo',
-                component: require('./components/compras/catalogos/Layout'),
+                component: require('./components/compras/catalogos/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'catalogo-insumo',
-                        component: require('./components/compras/catalogos/Index'),
+                        component: require('./components/compras/catalogos/Index').default,
                         meta: {
                             title: 'Gestión de Insumos',
                             breadcrumb: {parent: 'compras', name: 'GESTIÓN DE INSUMOS'},
@@ -334,57 +524,57 @@ export const routes = [
                     {
                         path: 'familia',
                         name: 'familia',
-                        component: require('./components/compras/catalogos/familia/Index'),
+                        component: require('./components/compras/catalogos/familia/Index').default,
                         meta: {
                             title: 'Familia',
                             breadcrumb: {
                                 parent: 'catalogo-insumo',
                                 name: 'FAMILIA'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_material','consultar_familia_herramienta_equipo']
                         }
                     },
                     {
                         path: 'material',
                         name: 'material',
-                        component: require('./components/compras/catalogos/material/Index'),
+                        component: require('./components/compras/catalogos/material/Index').default,
                         meta: {
                             title: 'Material',
                             breadcrumb: {
                                 parent: 'catalogo-insumo',
                                 name: 'MATERIAL'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_material']
                         }
                     },
                     {
                         path: 'herramienta',
                         name: 'herramienta',
-                        component: require('./components/compras/catalogos/herramienta/Index'),
+                        component: require('./components/compras/catalogos/herramienta/Index').default,
                         meta: {
                             title: 'Herramienta y Equipo',
                             breadcrumb: {
                                 parent: 'catalogo-insumo',
                                 name: 'HERRAMIENTA Y EQUIPO'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_herramienta_equipo']
                         }
                     }
                 ]
             },
             {
                 path: 'orden-compra',
-                component: require('./components/compras/orden-compra/partials/Layout.vue'),
+                component: require('./components/compras/orden-compra/partials/Layout.vue').default,
                 meta: {
                     middleware: [auth, context]
                 },
                 children: [{
                     path: '/',
                     name: 'orden-compra',
-                    component: require('./components/compras/orden-compra/Index'),
+                    component: require('./components/compras/orden-compra/Index').default,
                     meta: {
                         title: 'Ordenes de Compra',
                         breadcrumb: { parent: 'compras', name: 'ORDENES DE COMPRA' },
@@ -395,12 +585,12 @@ export const routes = [
             },
             {
                 path: 'solicitud-compra',
-                component: require('./components/compras/solicitud-compra/Layout'),
+                component: require('./components/compras/solicitud-compra/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'solicitud-compra',
-                        component: require('./components/compras/solicitud-compra/Index'),
+                        component: require('./components/compras/solicitud-compra/Index').default,
                         meta: {
                             title: 'SOLICITUDES DE COMPRA',
                             breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA'},
@@ -415,14 +605,14 @@ export const routes = [
     {
         path: '/sao/contabilidad',
         components: {
-            default: require('./components/contabilidad/partials/Layout.vue'),
-            menu: require('./components/contabilidad/partials/Menu.vue')
+            default: require('./components/contabilidad/partials/Layout.vue').default,
+            menu: require('./components/contabilidad/partials/Menu.vue').default
         },
         children: [
             {
                 path: '',
                 name: 'sistema_contable',
-                component: require('./components/contabilidad/Index'),
+                component: require('./components/contabilidad/Index').default,
                 meta: {
                     title: 'Contabilidad',
                     breadcrumb: { parent: 'home', name: 'CONTABILIDAD'},
@@ -432,7 +622,7 @@ export const routes = [
             {
                 path: 'cierre-periodo',
                 name: 'cierre-periodo',
-                component: require('./components/contabilidad/cierre-periodo/Index'),
+                component: require('./components/contabilidad/cierre-periodo/Index').default,
                 meta: {
                     title: 'Cierres de periodo',
                     breadcrumb: {name: 'CIERRES DE PERIODO', parent: 'sistema_contable'},
@@ -443,7 +633,7 @@ export const routes = [
             {
                 path: 'cuenta-almacen',
                 name: 'cuenta-almacen',
-                component: require('./components/contabilidad/cuenta-almacen/Index'),
+                component: require('./components/contabilidad/cuenta-almacen/Index').default,
                 meta: {
                     title: 'Cuentas de Almacén',
                     breadcrumb: {name: 'CUENTAS DE ALMACÉN', parent: 'sistema_contable'},
@@ -454,7 +644,7 @@ export const routes = [
             {
                 path: 'cuenta-banco',
                 name: 'cuenta-banco',
-                component: require('./components/contabilidad/cuenta-banco/Index'),
+                component: require('./components/contabilidad/cuenta-banco/Index').default,
                 meta: {
                     title: 'Cuentas de Bancos',
                     breadcrumb: {name: 'CUENTAS DE BANCOS', parent: 'sistema_contable'},
@@ -465,7 +655,7 @@ export const routes = [
             {
                 path: 'cuenta-concepto',
                 name: 'cuenta-concepto',
-                component: require('./components/contabilidad/cuenta-concepto/Index'),
+                component: require('./components/contabilidad/cuenta-concepto/Index').default,
                 meta: {
                     title: 'Cuentas de Conceptos',
                     breadcrumb: {name: 'CUENTAS DE CONCEPTOS', parent: 'sistema_contable'},
@@ -476,7 +666,7 @@ export const routes = [
             {
                 path: 'cuenta-costo',
                 name: 'cuenta-costo',
-                component: require('./components/contabilidad/cuenta-costo/Index'),
+                component: require('./components/contabilidad/cuenta-costo/Index').default,
                 meta: {
                     title: 'Cuentas de Costos',
                     breadcrumb: {name: 'CUENTAS DE COSTOS', parent: 'sistema_contable'},
@@ -487,7 +677,7 @@ export const routes = [
             {
                 path: 'cuenta-empresa',
                 name: 'cuenta-empresa',
-                component: require('./components/contabilidad/cuenta-empresa/Index'),
+                component: require('./components/contabilidad/cuenta-empresa/Index').default,
                 meta: {
                     title: 'Cuentas de Empresas',
                     breadcrumb: {name: 'CUENTAS DE EMPRESAS', parent: 'sistema_contable'},
@@ -498,7 +688,7 @@ export const routes = [
             {
                 path: 'cuenta-fondo',
                 name: 'cuenta-fondo',
-                component: require('./components/contabilidad/cuenta-fondo/Index'),
+                component: require('./components/contabilidad/cuenta-fondo/Index').default,
                 meta: {
                     title: 'Cuentas de Fondos',
                     breadcrumb: {name: 'CUENTAS DE FONDOS', parent: 'sistema_contable'},
@@ -509,7 +699,7 @@ export const routes = [
             {
                 path: 'cuenta-general',
                 name: 'cuenta-general',
-                component: require('./components/contabilidad/cuenta-general/Index'),
+                component: require('./components/contabilidad/cuenta-general/Index').default,
                 meta: {
                     title: 'Cuentas Generales',
                     breadcrumb: {name: 'CUENTAS GENERALES', parent: 'sistema_contable'},
@@ -520,7 +710,7 @@ export const routes = [
             {
                 path: 'cuenta-material',
                 name: 'cuenta-material',
-                component: require('./components/contabilidad/cuenta-material/Index'),
+                component: require('./components/contabilidad/cuenta-material/Index').default,
                 meta: {
                     title: 'Cuentas de Materiales',
                     breadcrumb: {name: 'CUENTAS DE MATERIALES', parent: 'sistema_contable'},
@@ -531,7 +721,7 @@ export const routes = [
             {
                 path: 'tipo-cuenta-contable',
                 name: 'tipo-cuenta-contable',
-                component: require('./components/contabilidad/tipo-cuenta-contable/Index'),
+                component: require('./components/contabilidad/tipo-cuenta-contable/Index').default,
                 meta: {
                     title: 'Tipos de Cuentas Contables',
                     breadcrumb: {name: 'TIPOS DE CUENTAS CONTABLES', parent: 'sistema_contable'},
@@ -541,12 +731,12 @@ export const routes = [
             },
             {
                 path: 'poliza',
-                component: require('./components/contabilidad/poliza/Layout.vue'),
+                component: require('./components/contabilidad/poliza/Layout.vue').default,
                 children: [
                     {
                         path: '/',
                         name: 'poliza',
-                        component: require('./components/contabilidad/poliza/Index'),
+                        component: require('./components/contabilidad/poliza/Index').default,
                         meta: {
                             title: 'Prepólizas Generadas',
                             breadcrumb: {parent: 'sistema_contable', name: 'PREPÓLIZAS GENERADAS'},
@@ -558,7 +748,7 @@ export const routes = [
                         path: ':id',
                         name: 'poliza-show',
                         props: true,
-                        component: require('./components/contabilidad/poliza/Show'),
+                        component: require('./components/contabilidad/poliza/Show').default,
                         meta: {
                             title: 'Ver Prepóliza Generada',
                             breadcrumb: {parent: 'poliza', name: 'VER'},
@@ -569,7 +759,7 @@ export const routes = [
                     {
                         path: ':id/edit',
                         name: 'poliza-edit',
-                        component: require('./components/contabilidad/poliza/Edit'),
+                        component: require('./components/contabilidad/poliza/Edit').default,
                         props: true,
                         meta: {
                             title: 'Editar Prepóliza Generada',
@@ -585,14 +775,14 @@ export const routes = [
     {
         path: '/sao/contratos',
         components: {
-            default: require('./components/contratos/partials/Layout.vue'),
-            menu: require('./components/contratos/partials/Menu.vue')
+            default: require('./components/contratos/partials/Layout.vue').default,
+            menu: require('./components/contratos/partials/Menu.vue').default
         },
         children: [
             {
                 path: '',
                 name: 'contratos',
-                component: require('./components/contratos/Index'),
+                component: require('./components/contratos/Index').default,
                 meta: {
                     title: 'Contratos',
                     breadcrumb: {parent:'home', name: 'CONTRATOS'},
@@ -601,12 +791,12 @@ export const routes = [
             },
             {
                 path: 'proyectado',
-                component: require('./components/contratos/proyectado/partials/Layout'),
+                component: require('./components/contratos/proyectado/partials/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'proyectado',
-                        component: require('./components/contratos/proyectado/Index'),
+                        component: require('./components/contratos/proyectado/Index').default,
                         meta: {
                             title: 'Contratos Proyectados',
                             breadcrumb: {parent: 'contratos', name: 'PROYECTADOS'},
@@ -618,14 +808,14 @@ export const routes = [
             },
             {
                 path: 'estimacion',
-                component: require('./components/contratos/estimacion/Layout'),
+                component: require('./components/contratos/estimacion/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'estimacion',
-                        component: require('./components/contratos/estimacion/Index'),
+                        component: require('./components/contratos/estimacion/Index').default,
                         meta: {
-                            title: 'ESTIMACIONES',
+                            title: 'Estimaciones',
                             breadcrumb: {parent: 'contratos', name: 'ESTIMACIONES'},
                             middleware: [auth, context],
 
@@ -634,30 +824,40 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'estimacion-create',
-                        component: require('./components/contratos/estimacion/Create'),
+                        component: require('./components/contratos/estimacion/Create').default,
                         meta: {
-                            title: 'ESTIMACIONES',
+                            title: 'Estimaciones',
                             breadcrumb: {parent: 'estimacion', name: 'NUEVA'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_estimacion_subcontrato'
                         }
                     },
                     {
+                        path: ':id/eliminar',
+                        name: 'estimacion-delete',
+                        component: require('./components/contratos/estimacion/Delete').default,
+                        meta: {
+                            title: 'Eliminar Estimación',
+                            breadcrumb: {parent: 'estimacion', name: 'ELIMINAR ESTIMACIÓN'},
+                            middleware: [auth, context, permission],
+                            permission: 'eliminar_estimacion_subcontrato'
+                        }
+                    },
+                    {
                         path: ':id',
                         name: 'estimacion-show',
-                        component: require('./components/contratos/estimacion/Show'),
+                        component: require('./components/contratos/estimacion/Show').default,
                         meta: {
-                            title: 'INFORMACIÓN DE ESTIMACIÓN',
+                            title: 'Información de Estimación',
                             breadcrumb: {parent: 'estimacion', name: 'VER ESTIMACIÓN'},
                             middleware: [auth, context,],
 
                         }
                     },
-
                     {
                         path: 'formato-orden-pago',
                         name: 'formato-orden-pago',
-                        component: require('./components/contratos/estimacion/formato-orden-pago/Index'),
+                        component: require('./components/contratos/estimacion/formato-orden-pago/Index').default,
                         meta: {
                             title: 'Formato Orden Pago Estimación',
                             breadcrumb: {
@@ -670,10 +870,9 @@ export const routes = [
                     },
                 ]
             },
-
             {
                 path: 'fondo-garantia',
-                component: require('./components/contratos/fondo-garantia/partials/Layout.vue'),
+                component: require('./components/contratos/fondo-garantia/partials/Layout.vue').default,
                 meta: {
                     middleware: [auth, context]
                 },
@@ -681,7 +880,7 @@ export const routes = [
                     {
                         path: '/',
                         name: 'fondo-garantia',
-                        component: require('./components/contratos/fondo-garantia/Index'),
+                        component: require('./components/contratos/fondo-garantia/Index').default,
                         meta: {
                             title: 'Fondos de Garantía',
                             breadcrumb: {parent: 'contratos', name: 'FONDOS DE GARANTÍA'},
@@ -696,7 +895,7 @@ export const routes = [
             {
                 path: 'solicitud-movimiento',
                 components: {
-                    default: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Layout.vue'),
+                    default: require('./components/contratos/fondo-garantia/solicitud-movimiento/partials/Layout.vue').default,
                 },
                 meta: {
                     middleware: [auth, context]
@@ -705,7 +904,7 @@ export const routes = [
                     {
                         path: '/',
                         name: 'solicitud-movimiento-fg',
-                        component: require('./components/contratos/fondo-garantia/solicitud-movimiento/Index'),
+                        component: require('./components/contratos/fondo-garantia/solicitud-movimiento/Index').default,
                         meta: {
                             title: 'Solicitudes de Movimiento a Fondo de Garantía',
                             breadcrumb: {parent: 'fondo-garantia', name: 'SOLICITUDES DE MOVIMIENTO'},
@@ -725,14 +924,14 @@ export const routes = [
     {
         path: '/sao/finanzas',
         components: {
-            default: require('./components/finanzas/partials/Layout.vue'),
-            menu: require('./components/finanzas/partials/Menu.vue')
+            default: require('./components/finanzas/partials/Layout.vue').default,
+            menu: require('./components/finanzas/partials/Menu.vue').default
         },
         children: [
             {
                 path: '',
                 name: 'finanzas',
-                component: require('./components/finanzas/Index'),
+                component: require('./components/finanzas/Index').default,
                 meta: {
                     title: 'Finanzas',
                     breadcrumb: {parent:'home', name: 'FINANZAS'},
@@ -741,12 +940,12 @@ export const routes = [
             },
             {
                 path:'banco',
-                component: require('./components/finanzas/banco/Layout.vue'),
+                component: require('./components/finanzas/banco/Layout.vue').default,
                 children: [
                     {
                         path:'/',
                         name: 'banco',
-                        component: require('./components/finanzas/banco/Index.vue'),
+                        component: require('./components/finanzas/banco/Index.vue').default,
                         meta:{
                             title: 'Bancos',
                             breadcrumb: {name: 'GESTIÓN DE BANCOS', parent: 'finanzas'},
@@ -757,7 +956,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'banco-create',
-                        component: require('./components/finanzas/banco/Create'),
+                        component: require('./components/finanzas/banco/Create').default,
                         meta: {
                             title: 'Registrar Banco',
                             breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
@@ -769,7 +968,7 @@ export const routes = [
                         path: 'show',
                         name: 'banco-show',
                         props: true,
-                        component: require('./components/finanzas/banco/Show'),
+                        component: require('./components/finanzas/banco/Show').default,
                         meta: {
                             title: 'Ver Banco',
                             breadcrumb: {name: 'VER', parent: 'finanzas'},
@@ -781,7 +980,7 @@ export const routes = [
                         path: ':id',
                         name: 'banco-edit',
                         props: true,
-                        component: require('./components/finanzas/banco/Edit'),
+                        component: require('./components/finanzas/banco/Edit').default,
                         meta: {
                             title: 'Edición de Bancos',
                             breadcrumb: {name: 'EDICIÓN DE BANCOS', parent: 'banco'},
@@ -792,7 +991,7 @@ export const routes = [
                     {
                         path: '/',
                         name: 'sucursal',
-                        component: require('./components/finanzas/banco/sucursal/Index.vue'),
+                        component: require('./components/finanzas/banco/sucursal/Index.vue').default,
                         meta: {
                             title: 'Sucursales',
                             breadcrumb: { name: 'SUCURSALES', parent: 'banco'},
@@ -803,19 +1002,18 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'sucursal-create',
-                        component: require('./components/finanzas/banco/sucursal/Create'),
+                        component: require('./components/finanzas/banco/sucursal/Create').default,
                         meta: {
                             title: 'Registrar Sucursal',
                             breadcrumb: {name: 'REGISTRAR', parent: 'banco'},
                             middleware: [auth, context, permission],
                             permission: 'registrar_sucursal_banco'
-
                         }
                     },
                     {
                         path: 'show',
                         name: 'sucursal-show',
-                        component: require('./components/finanzas/banco/sucursal/Show'),
+                        component: require('./components/finanzas/banco/sucursal/Show').default,
                         meta: {
                             title: 'Ver Sucursal',
                             breadcrumb: {name: 'VER', parent: 'banco'},
@@ -828,12 +1026,12 @@ export const routes = [
             },
             {
                 path: 'distribuir-recurso-remesa',
-                component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue'),
+                component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue').default,
                 children: [
                     {
                         path: '/',
                         name: 'distribuir-recurso-remesa',
-                        component: require('./components/finanzas/distribuir-recurso-remesa/Index'),
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Index').default,
                         meta: {
                             title: 'Dispersión de Recursos Autorizados de Remesa',
                             breadcrumb: {name: 'DISPERSIÓN RECURSOS AUTORIZADOS DE REMESA', parent: 'finanzas'},
@@ -844,7 +1042,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'distribuir-recurso-remesa-create',
-                        component: require('./components/finanzas/distribuir-recurso-remesa/Create'),
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Create').default,
                         meta: {
                             title: 'Registrar Dispersión de Recursos Autorizados',
                             breadcrumb: {name: 'REGISTRAR', parent: 'distribuir-recurso-remesa'},
@@ -856,7 +1054,7 @@ export const routes = [
                         path: ':id',
                         name: 'distribuir-recurso-remesa-show',
                         props: true,
-                        component: require('./components/finanzas/distribuir-recurso-remesa/Show'),
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Show').default,
                         meta: {
                             title: 'Consultar Dispersión de Recursos Autorizados',
                             breadcrumb: {name: 'VER', parent: 'distribuir-recurso-remesa'},
@@ -868,7 +1066,7 @@ export const routes = [
                         path: ':id/autorizar',
                         name: 'distribuir-recurso-remesa-autorizar',
                         props: true,
-                        component: require('./components/finanzas/distribuir-recurso-remesa/Autorizar'),
+                        component: require('./components/finanzas/distribuir-recurso-remesa/Autorizar').default,
                         meta: {
                             title: 'Autorizar Dispersión de Recursos Autorizados',
                             breadcrumb: {name: 'AUTORIZAR', parent: 'distribuir-recurso-remesa'},
@@ -879,13 +1077,31 @@ export const routes = [
                 ]
             },
             {
+                path:'factura',
+                component: require('./components/finanzas/factura/Layout').default,
+                children: [
+                    {
+                        path:'/',
+                        name: 'factura',
+                        component: require('./components/finanzas/factura/Index').default,
+                        meta:{
+                            title: 'Facturas',
+                            breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_banco'
+                        }
+                    },
+
+                ]
+            },
+            {
                 path:'fondo',
-                component: require('./components/finanzas/fondo/Layout.vue'),
+                component: require('./components/finanzas/fondo/Layout.vue').default,
                 children: [
                     {
                         path: '/',
                         name: 'fondo',
-                        component: require('./components/finanzas/fondo/Index.vue'),
+                        component: require('./components/finanzas/fondo/Index.vue').default,
                         meta: {
                             title: 'Fondos',
                             breadcrumb: {name: 'FONDOS', parent: 'finanzas'},
@@ -897,7 +1113,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'fondo-create',
-                        component: require('./components/finanzas/fondo/Create'),
+                        component: require('./components/finanzas/fondo/Create').default,
                         meta: {
                             title: 'Registrar Fondo',
                             breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
@@ -909,7 +1125,7 @@ export const routes = [
                         path: ':id',
                         name: 'fondo-show',
                         props: true,
-                        component: require('./components/finanzas/fondo/Show'),
+                        component: require('./components/finanzas/fondo/Show').default,
                         meta: {
                             title: 'Ver Fondo',
                             breadcrumb: {name: 'VER', parent: 'finanzas'},
@@ -921,12 +1137,12 @@ export const routes = [
             },
             {
                 path: 'gestion-cuenta-bancaria',
-                component: require('./components/finanzas/gestion-cuenta-bancaria/Layout'),
+                component: require('./components/finanzas/gestion-cuenta-bancaria/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'gestion-cuenta-bancaria',
-                        component: require('./components/finanzas/gestion-cuenta-bancaria/Index'),
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/Index').default,
                         meta: {
                             title: 'Gestión de Cuentas Bancarias',
                             breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE CUENTAS BANCARIAS'},
@@ -937,7 +1153,7 @@ export const routes = [
                     {
                         path: 'cuenta-empresa-bancaria',
                         name: 'cuenta-empresa-bancaria',
-                        component: require('./components/finanzas/gestion-cuenta-bancaria/cuenta-empresa/Index'),
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/cuenta-empresa/Index').default,
                         meta: {
                             title: 'Cuentas Bancarias',
                             breadcrumb: {
@@ -951,7 +1167,7 @@ export const routes = [
                     {
                         path: 'solicitud-alta',
                         name: 'solicitud-alta',
-                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-alta/Index'),
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-alta/Index').default,
                         meta: {
                             title: 'Solicitud de Alta de Cuenta Bancaria',
                             breadcrumb: {
@@ -965,7 +1181,7 @@ export const routes = [
                     {
                         path: 'solicitud-baja',
                         name: 'solicitud-baja',
-                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-baja/Index'),
+                        component: require('./components/finanzas/gestion-cuenta-bancaria/solicitud-baja/Index').default,
                         meta: {
                             title: 'Solicitud de Baja de Cuenta Bancaria',
                             breadcrumb: {
@@ -980,12 +1196,12 @@ export const routes = [
             },
             {
                 path: 'gestion-pago',
-                component: require('./components/finanzas/gestion-pago/Layout'),
+                component: require('./components/finanzas/gestion-pago/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'gestion-pago',
-                        component: require('./components/finanzas/gestion-pago/Index'),
+                        component: require('./components/finanzas/gestion-pago/Index').default,
                         meta: {
                             title: 'Gestión de Pagos',
                             breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGOS'},
@@ -996,7 +1212,7 @@ export const routes = [
                     {
                         path: 'pago',
                         name: 'pago',
-                        component: require('./components/finanzas/gestion-pago/pago/Index'),
+                        component: require('./components/finanzas/gestion-pago/pago/Index').default,
                         meta: {
                             title: 'Gestión de Pagos',
                             breadcrumb: {
@@ -1010,7 +1226,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'pago-create',
-                        component: require('./components/finanzas/gestion-pago/pago/Create'),
+                        component: require('./components/finanzas/gestion-pago/pago/Create').default,
                         meta: {
                             title: 'Registrar Pagos con Bitácora Bancaria (SANTANDER)',
                             breadcrumb: {name: 'REGISTRAR (BITÁCORA BSANT)', parent: 'pago'},
@@ -1021,7 +1237,7 @@ export const routes = [
                     {
                         path: 'registro-pago',
                         name: 'gestion-registro-pago',
-                        component: require('./components/finanzas/gestion-pago/pago/RegistrarPago'),
+                        component: require('./components/finanzas/gestion-pago/pago/RegistrarPago').default,
                         meta: {
                             title: 'Registrar Pagos',
                             breadcrumb: {name: 'REGISTRAR PAGOS', parent: 'pago'},
@@ -1032,7 +1248,7 @@ export const routes = [
                     {
                         path: 'carga-masiva',
                         name: 'carga-masiva',
-                        component: require('./components/finanzas/gestion-pago/carga-masiva/Index'),
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Index').default,
                         meta: {
                             title: 'Carga Masiva',
                             breadcrumb: {
@@ -1046,7 +1262,7 @@ export const routes = [
                     {
                         path: 'carga-create',
                         name: 'carga-masiva-create',
-                        component: require('./components/finanzas/gestion-pago/carga-masiva/Create'),
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Create').default,
                         meta: {
                             title: 'Registrar Carga Masiva de Pagos',
                             breadcrumb: {name: 'REGISTRAR CARGA MASIVA DE PAGOS', parent: 'carga-masiva'},
@@ -1057,7 +1273,7 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'autorizar-layout',
-                        component: require('./components/finanzas/gestion-pago/carga-masiva/Autorizar'),
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Autorizar').default,
                         meta: {
                             title: 'Autorizar Layouts',
                             breadcrumb: { name: 'AUTORIZAR', parent:'carga-masiva'},
@@ -1068,7 +1284,7 @@ export const routes = [
                         path: ':id/consultar',
                         name: 'pago-masivo-show',
                         props: true,
-                        component: require('./components/finanzas/gestion-pago/carga-masiva/Show'),
+                        component: require('./components/finanzas/gestion-pago/carga-masiva/Show').default,
                         meta: {
                             title: 'Consultar Layout registrados',
                             breadcrumb: {name: 'VER', parent: 'carga-masiva'},
@@ -1080,12 +1296,12 @@ export const routes = [
             },
             {
                 path: 'insumo-servicio',
-                component: require('./components/finanzas/insumo-servicio/Layout'),
+                component: require('./components/finanzas/insumo-servicio/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'insumo-servicio',
-                        component: require('./components/finanzas/insumo-servicio/Index'),
+                        component: require('./components/finanzas/insumo-servicio/Index').default,
                         meta: {
                             title: 'Insumo de Servicios',
                             breadcrumb: {parent: 'finanzas', name: 'INSUMO SERVICIO'},
@@ -1096,41 +1312,41 @@ export const routes = [
                     {
                         path: 'familia-serv',
                         name: 'familia-serv',
-                        component: require('./components/finanzas/insumo-servicio/familia/Index'),
+                        component: require('./components/finanzas/insumo-servicio/familia/Index').default,
                         meta: {
                             title: 'Familia',
                             breadcrumb: {
                                 parent: 'insumo-servicio',
                                 name: 'FAMILIA'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_familia_servicio']
                         }
                     },
                     {
                         path: 'servicio',
                         name: 'servicio',
-                        component: require('./components/finanzas/insumo-servicio/servicio/Index'),
+                        component: require('./components/finanzas/insumo-servicio/servicio/Index').default,
                         meta: {
                             title: 'Servicio',
                             breadcrumb: {
                                 parent: 'insumo-servicio',
                                 name: 'SERVICIO'
                             },
-                            middleware: [auth, context],
-                            // permission: 'consultar_entrada_almacen'
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_insumo_servicio']
                         }
                     }
                 ]
             },
             {
                 path: 'solicitud',
-                component: require('./components/finanzas/solicitud/Layout'),
+                component: require('./components/finanzas/solicitud/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'solicitud',
-                        component: require('./components/finanzas/solicitud/Index'),
+                        component: require('./components/finanzas/solicitud/Index').default,
                         meta: {
                             title: 'Solicitudes de Pago',
                             breadcrumb: {parent: 'finanzas', name: 'SOLICITUDES DE PAGO'},
@@ -1141,7 +1357,7 @@ export const routes = [
                     {
                         path: 'pago-anticipado',
                         name: 'pago-anticipado',
-                        component: require('./components/finanzas/solicitud/pago-anticipado/Index'),
+                        component: require('./components/finanzas/solicitud/pago-anticipado/Index').default,
                         meta: {
                             title: 'Solicitud de Pago Anticipado',
                             breadcrumb: {
@@ -1154,38 +1370,57 @@ export const routes = [
                     },
                 ]
             },
-
             {
-                path:'factura',
-                component: require('./components/finanzas/factura/Layout'),
+                path: 'tesoreria',
+                component: require('./components/finanzas/tesoreria/Layout').default,
                 children: [
                     {
-                        path:'/',
-                        name: 'factura',
-                        component: require('./components/finanzas/factura/Index'),
-                        meta:{
-                            title: 'Facturas',
-                            breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_banco'
+                        path: '/',
+                        name: 'tesoreria',
+                        component: require('./components/finanzas/tesoreria/Index').default,
+                        meta: {
+                            title: 'Tesorería',
+                            breadcrumb: {parent: 'finanzas', name: 'TESORERÍA'},
+                            middleware: [auth, context],
                         }
                     },
-
+                    {
+                        path: 'movimiento-bancario',
+                        name: 'movimiento-bancario',
+                        component: require('./components/finanzas/tesoreria/movimiento-bancario/Index').default,
+                        meta: {
+                            title: 'Movimientos Bancarios',
+                            breadcrumb: {parent: 'tesoreria', name: 'MOVIMIENTOS BANCARIOS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_movimiento_bancario'
+                        }
+                    },
+                    {
+                        path: 'traspaso-entre-cuentas',
+                        name: 'traspaso-entre-cuentas',
+                        component: require('./components/finanzas/tesoreria/traspaso-entre-cuentas/Index').default,
+                        meta: {
+                            title: 'Traspasos entre Cuentas',
+                            breadcrumb: {parent: 'tesoreria', name: 'TRASPASOS ENTRE CUENTAS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_traspaso_cuenta'
+                        }
+                    },
                 ]
-            },
+            }
         ]
     },
     {
         path: '/sao/formatos',
         components: {
-            default: require('./components/formato/partials/Layout.vue'),
-            menu: require('./components/formato/partials/Menu.vue')
+            default: require('./components/formato/partials/Layout.vue').default,
+            menu: require('./components/formato/partials/Menu.vue').default
         },
         children: [
             {
                 path: '',
                 name: 'formatos',
-                component: require('./components/formato/Index'),
+                component: require('./components/formato/Index').default,
                 meta: {
                     title: 'Formatos',
                     breadcrumb: { parent: 'home', name: 'FORMATOS'},
@@ -1195,7 +1430,7 @@ export const routes = [
             {
                 path: 'orden-pago-estimacion',
                 name: 'orden-pago-estimacion',
-                component: require('./components/contratos/estimacion/formato-orden-pago/Index'),
+                component: require('./components/contratos/estimacion/formato-orden-pago/Index').default,
                 meta: {
                     title: 'Orden de Pago Estimación',
                     breadcrumb: {name: 'ORDEN DE PAGO ESTIMACIÓN', parent: 'formatos'},
@@ -1206,7 +1441,7 @@ export const routes = [
             {
                 path: 'estimacion',
                 name: 'formato-estimacion',
-                component: require('./components/formato/estimacion/Index'),
+                component: require('./components/formato/estimacion/Index').default,
                 meta: {
                     title: 'Formato Estimación',
                     breadcrumb: {name: 'FORMATO ESTIMACIÓN', parent: 'formatos'},
@@ -1217,7 +1452,7 @@ export const routes = [
             {
                 path: 'compra',
                 name: 'formato-orden-compra',
-                component: require('./components/formato/compra/Index'),
+                component: require('./components/formato/compra/Index').default,
                 meta: {
                     title: 'Formato Orden de Compra',
                     breadcrumb: {name: 'FORMATO ORDEN COMPRA', parent: 'formatos'},
@@ -1228,61 +1463,8 @@ export const routes = [
         ]
     },
     {
-        path: '/sao/tesoreria',
-        components: {
-            default: require('./components/tesoreria/partials/Layout.vue'),
-            menu: require('./components/tesoreria/partials/Menu.vue')
-        },
-        children: [
-            {
-                path: '',
-                name: 'tesoreria',
-                component: require('./components/tesoreria/Index'),
-                meta: {
-                    title: 'Tesorería',
-                    breadcrumb: { parent: 'home', name: 'TESORERIA'},
-                    middleware: [auth, context, access]
-                }
-            },
-            {
-                path: 'movimiento-bancario',
-                component: require('./components/tesoreria/movimiento-bancario/Layout.vue'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'movimiento-bancario',
-                        component: require('./components/tesoreria/movimiento-bancario/Index'),
-                        meta: {
-                            title: 'Movimientos Bancarios',
-                            breadcrumb: {parent: 'tesoreria', name: 'MOVIMIENTOS BANCARIOS'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_movimiento_bancario'
-                        }
-                    }
-                ]
-            },
-            {
-                path: 'traspaso-entre-cuentas',
-                component: require('./components/tesoreria/traspaso-entre-cuentas/Layout.vue'),
-                children: [
-                    {
-                        path: '/',
-                        name: 'traspaso-entre-cuentas',
-                        component: require('./components/tesoreria/traspaso-entre-cuentas/Index'),
-                        meta: {
-                            title: 'Traspasos entre Cuentas',
-                            breadcrumb: {parent: 'tesoreria', name: 'TRASPASOS ENTRE CUENTAS'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_traspaso_cuenta'
-                        }
-                    }
-                ]
-            }
-        ]
-    },
-    {
         path: '*',
         name: 'notFound',
-        component: require('./components/pages/NotFound.vue'),
+        component: require('./components/pages/NotFound.vue').default,
     }
 ];

@@ -38,6 +38,11 @@ class OrdenCompra extends Transaccion
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursal()
+    {
+        return $this->hasOne(Sucursal::class, 'id_sucursal', 'id_sucursal');
+    }
+
     public function pago_anticipado()
     {
         return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
@@ -143,5 +148,51 @@ class OrdenCompra extends Transaccion
 
 
        return $query->whereIn('id_transaccion', $transacciones);
+    }
+
+    public function scopeDisponibleEntradaAlmacen($query)
+    {
+        return $query->where('estado', '!=', 2);
+    }
+    public function cerrar()
+    {
+        $partidas = $this->partidas;
+        $cantidad_surtida =0;
+        $cantidad_esperada =0;
+        foreach ($partidas as $partida)
+        {
+            $cantidad_surtida+= $partida->entrega->surtida;
+            $cantidad_esperada+= $partida->entrega->cantidad;
+        }
+        if(abs($cantidad_esperada-$cantidad_surtida)<=0.01)
+        {
+            $this->update(["estado"=>2]);
+        } else {
+            $this->update(["estado"=>1]);
+        }
+    }
+    public function abrir()
+    {
+        $transacciones_referenciadas = Transaccion::withoutGlobalScope("tipo")->where("id_antecedente","=",$this->id_transaccion)
+            ->orWhere("id_referente","=",$this->id_transaccion)->get();
+        if(count($transacciones_referenciadas)>0)
+        {
+            $this->update(["estado"=>1]);
+        }else{
+            $this->update(["estado"=>0]);
+        }
+    }
+    public function getEstadoFormatAttribute()
+    {
+        switch ($this->estado){
+            case 0 :
+                return 'Registrada';
+            case 1:
+                return 'Suministro Parcial';
+            case 2:
+                return 'Suministrada';
+
+                break;
+        }
     }
 }

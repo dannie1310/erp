@@ -86,9 +86,14 @@ class Empresa extends Model
         return $query->has('compras')->distinct('id_empresa')->orderBy('razon_social');
     }
 
-    public function scopeResponsableFondoFijo($query)
+    public function scopeProveedor($query)
     {
-        return $query->where('tipo_empresa',32);
+        return $query->whereIn('tipo_empresa',[1,2]);
+    }
+
+    public function scopeContratista($query)
+    {
+        return $query->whereIn('tipo_empresa',[2,3]);
     }
 
     public function scopeProveedorContratista($query)
@@ -99,6 +104,33 @@ class Empresa extends Model
     public function scopeDestajistas($query)
     {
         return $query->where('tipo_empresa',4);
+    }
+
+    public function scopeBanco($query)
+    {
+        return $query->where('tipo_empresa',8);
+    }
+
+    public function scopeCliente($query)
+    {
+        return $query->where('tipo_empresa',16);
+    }
+
+    public function scopeClienteComprador($query)
+    {
+        return $query->where('tipo_empresa',16)
+            ->whereIn("tipo_cliente", [1,3]);
+    }
+
+    public function scopeClienteInversionista($query)
+    {
+        return $query->where('tipo_empresa',16)
+            ->whereIn("tipo_cliente", [2,3]);
+    }
+
+    public function scopeResponsableFondoFijo($query)
+    {
+        return $query->where('tipo_empresa',32);
     }
 
     public function getTipoAttribute()
@@ -115,6 +147,15 @@ class Empresa extends Model
         if($this->tipo_empresa == 4){
             return 'Destajistas';
         }
+        if($this->tipo_empresa == 16 && $this->tipo_cliente == 1){
+            return 'Cliente Comprador';
+        }
+        if($this->tipo_empresa == 16 && $this->tipo_cliente == 2){
+            return 'Cliente Inversionista';
+        }
+        if($this->tipo_empresa == 16 && $this->tipo_cliente == 3){
+            return 'Cliente Comprador / Inversionista';
+        }
         if($this->tipo_empresa == 32){
             return 'Responsables Fondos Fijos';
         }
@@ -124,4 +165,5 @@ class Empresa extends Model
     {
         return $query->has('cuentasBancarias');
     }
+
 }

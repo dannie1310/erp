@@ -82,7 +82,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Sucursal",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -120,7 +120,7 @@ export default {
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Actualizar Sucursal",
                     icon: "warning",
                     buttons: {
