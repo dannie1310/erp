@@ -115,7 +115,7 @@ class RequisicionService
             }else{
                 if(count($renglon) != 8) {
                     abort(400,'No se puede procesar la Requisición');
-                }else if(count($renglon) == 8 && $renglon[6] != '' && substr($renglon[7],0,-2)   != ''){
+                }else if(count($renglon) == 8 && substr($renglon[7],0,-2)   != ''){
                     if($renglon[1] == '')
                     {
                         $renglon[1] = null;
