@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Ventas;
 
 
+use App\Http\Transformers\CADECO\AlmacenTransformer;
 use App\Models\CADECO\Venta;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\IGH\UsuarioTransformer;
@@ -20,6 +21,7 @@ class VentaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'partidas',
         'partidas_total',
+        'almacen',
         'empresa',
         'usuario',
         'estado',
@@ -32,7 +34,6 @@ class VentaTransformer extends TransformerAbstract
             'fecha_format' => $model->fecha_format,
             'monto' => (string) $model->monto_format,
             'observaciones' => (string) $model->observaciones,
-            'observaciones_format' => (string) $model->observaciones_format,
             'folio' => $model->numero_folio,
             'opciones' => $model->opciones,
             'folio_format' => $model->numero_folio_format,
@@ -63,6 +64,15 @@ class VentaTransformer extends TransformerAbstract
         if($partidas_total = $model->partidas_total)
         {
             return $this->collection($partidas_total, new VentaPartidaTransformer);
+        }
+        return null;
+    }
+
+    public function includeAlmacen(Venta $model)
+    {
+        if($almacen = $model->almacen)
+        {
+            return $this->item($almacen, new AlmacenTransformer);
         }
         return null;
     }
