@@ -54,6 +54,12 @@ class Venta extends Transaccion
         return $this->belongsTo(VentaCancelacion::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class, 'id_almacen', 'id_almacen');
+    }
+
+
     public function partidas()
     {
         return $this->hasMany(VentaPartida::class, 'id_transaccion', 'id_transaccion');
@@ -245,7 +251,7 @@ class Venta extends Transaccion
             $this->save();
             $this->depositoCliente->delete();
             $this->cancelacion()->create([
-                'id_transaccion' => $this->id_transaccion, 
+                'id_transaccion' => $this->id_transaccion,
                 'motivo' => $motivo
                 ]);
 
@@ -274,6 +280,6 @@ class Venta extends Transaccion
             ['id_transaccion' => $this->id_transaccion,
             'nombre_archivo' => $this->id_transaccion . '.pdf',
             'hash_file' => $file_fingerprint
-            ]);     
+            ]);
     }
 }
