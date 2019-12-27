@@ -9,7 +9,7 @@
 namespace App\Http\Transformers\CADECO\Contabilidad;
 
 
-use App\Http\Transformers\CADECO\Tesoreria\TraspasoCuentasTransformer;
+use App\Http\Transformers\CADECO\Finanzas\TraspasoCuentasTransformer;
 use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Models\CADECO\Contabilidad\Poliza;
 use League\Fractal\TransformerAbstract;
