@@ -83,7 +83,7 @@
                                                         <th>Descripción</th>
                                                         <th>Unidad</th>
                                                         <th>Cantidad</th>
-                                                        <th class="money">Precio/U</th>
+                                                        <th class="money">Precio Venta</th>
                                                         <th class="money">Importe</th>
                                                     </tr>
                                                 </thead>

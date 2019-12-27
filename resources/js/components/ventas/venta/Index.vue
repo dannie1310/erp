@@ -30,13 +30,13 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'folio',sortable: true},
-                    { title: 'Fecha', field: 'fecha_format', tdClass: 'td_money',sortable: true},
-                    { title: 'Observaciones', field: 'observaciones'},
-                    { title: 'Estado', field: 'estado',  tdComp: require('./partials/VentaEstatus').default},
-                    { title: 'Monto', field: 'monto', tdClass: 'td_money',sortable: false},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: '#', field: 'index', tdClass: 'icono' ,sortable: false },
+                    { title: 'Folio', field: 'folio', tdClass: 'icono',sortable: true},
+                    { title: 'Fecha', field: 'fecha_format', tdClass: 'fecha',sortable: true},
+                    { title: 'Observaciones', field: 'observaciones', tdClass: 'observacionesVenta'},
+                    { title: 'Estado', field: 'estado', tdClass: 'icono',  tdComp: require('./partials/VentaEstatus').default},
+                    { title: 'Monto', field: 'monto', tdClass: 'money',sortable: false},
+                    { title: 'Acciones', field: 'buttons', tdClass: 'actionVenta' ,tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -131,8 +131,14 @@
     }
 </script>
 <style>
-    .money
+    .observacionesVenta
     {
-        text-align: right;
+        text-align: center;
+        width: 40%;
+    }
+    .actionVenta
+    {
+        /*text-align: center;*/
+        width: 10%;
     }
 </style>
