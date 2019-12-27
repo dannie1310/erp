@@ -53,26 +53,16 @@
                                                                  {{ venta.estado.descripcion }} </small></td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="bg-gray-light"><b>Observaciones:</b></td>
-                                                        <td class="bg-gray-light">{{venta.observaciones_format}}</td>
+                                                        <td class="bg-gray-light"><b>Almacen:</b></td>
+                                                        <td class="bg-gray-light">{{venta.almacen.descripcion}}</td>
                                                         <td class="bg-gray-light" v-if="venta.usuario"><b>Usuario Registró</b></td>
                                                         <td class="bg-gray-light" v-else></td>
                                                         <td class="bg-gray-light" v-if="venta.usuario">{{venta.usuario.nombre}}</td>
                                                         <td class="bg-gray-light" v-else></td>
                                                     </tr>
-                                                    <tr v-if="venta.venta_cancelacion">
-                                                        <td class="bg-gray-light"><b>Motivo Cancelación:</b></td>
-                                                        <td class="bg-gray-light">{{venta.venta_cancelacion.motivo_cancelacion}}</td>
-                                                        <td class="bg-gray-light" v-if="venta.usuario"><b>Usuario Canceló</b></td>
-                                                        <td class="bg-gray-light" v-else></td>
-                                                        <td class="bg-gray-light" v-if="venta.usuario">{{venta.venta_cancelacion.usuario.nombre}}</td>
-                                                        <td class="bg-gray-light" v-else></td>
-                                                    </tr>
-                                                    <tr v-if="venta.venta_cancelacion">
-                                                        <td class="bg-gray-light"><b>Fecha Hora Cancelación:</b></td>
-                                                        <td class="bg-gray-light">{{venta.venta_cancelacion.fecha_hora_cancelacion_format}}</td>
-                                                        <td class="bg-gray-light" ></td>
-                                                        <td class="bg-gray-light" ></td>
+                                                    <tr>
+                                                        <td class="bg-gray-light"><b>Observaciones:</b></td>
+                                                        <td class="bg-gray-light" colspan="3">{{venta.observaciones}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -93,8 +83,8 @@
                                                         <th>Descripción</th>
                                                         <th>Unidad</th>
                                                         <th>Cantidad</th>
-                                                        <th>Precio/U</th>
-                                                        <th>Importe</th>
+                                                        <th class="money">Precio/U</th>
+                                                        <th class="money">Importe</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -130,6 +120,23 @@
                                                         <label class="col-sm-2 col-form-label" style="text-align: right">{{venta.monto}}</label>
                                                 </div>
                                             </div>
+                                            <hr>
+                                            <table class="table table-striped">
+                                                <tbody>
+                                                    <tr v-if="venta.venta_cancelacion">
+                                                        <td class="bg-gray-light"><b>Fecha Hora Cancelación:</b></td>
+                                                        <td class="bg-gray-light">{{venta.venta_cancelacion.fecha_hora_cancelacion_format}}</td>
+                                                        <td class="bg-gray-light" v-if="venta.usuario"><b>Usuario Canceló</b></td>
+                                                        <td class="bg-gray-light" v-else></td>
+                                                        <td class="bg-gray-light" v-if="venta.usuario">{{venta.venta_cancelacion.usuario.nombre}}</td>
+                                                        <td class="bg-gray-light" v-else></td>
+                                                    </tr>
+                                                    <tr v-if="venta.venta_cancelacion">
+                                                        <td class="bg-gray-light"><b>Motivo Cancelación:</b></td>
+                                                        <td class="bg-gray-light" colspan="3">{{venta.venta_cancelacion.motivo_cancelacion}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -167,7 +174,7 @@
                 this.$store.commit('ventas/venta/SET_VENTA', null);
                 return this.$store.dispatch('ventas/venta/find', {
                     id: this.id,
-                    params: {include: ['empresa', 'partidas_total.material', 'usuario', 'estado', 'venta_cancelacion.usuario']}
+                    params: {include: ['empresa', 'partidas_total.material', 'usuario', 'estado', 'venta_cancelacion.usuario', 'almacen']}
                 }).then(data => {
                     this.$store.commit('ventas/venta/SET_VENTA', data);
                 }).finally(() => {
