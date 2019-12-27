@@ -199,6 +199,7 @@ class Venta extends Transaccion
         foreach ($partidas as $partida)
         {
             $inventario_existencia = Inventario::where("id_material", "=", $partida['material']['id'])
+                ->where('id_almacen', '=', $this->id_almacen)
                 ->where("saldo", ">", 0)
                 ->orderBy("id_lote")
                 ->get();

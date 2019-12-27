@@ -142,6 +142,8 @@ class VentaFormato extends Rotation
 
         $this->SetFont('Arial', '', 6);
         $this->SetHeights([0.8]);
+
+        $this->almacen();
     }
 
     public function partidas()
@@ -195,7 +197,7 @@ class VentaFormato extends Rotation
     public function tableHeader()
     {
 
-        $this->Ln(1.8);
+        $this->Ln(.5);
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180,180,180,180,180);
         $this->SetWidths([1,2.5,8,2,2,2,2]);
@@ -238,6 +240,24 @@ class VentaFormato extends Rotation
         $this->encola="observaciones";
 
         $this->Row([utf8_decode($this->venta['observaciones'])]);
+
+    }
+
+    public function almacen(){
+        $this->Ln(1.5);
+        $this->SetWidths([19.5]);
+        $this->SetRounds(['']);
+        $this->SetRadius([0.2]);
+        $this->SetAligns(['J']);
+        $this->SetStyles(['']);
+        $this->SetFills(['255,255,255']);
+        $this->SetTextColors(['0,0,0']);
+        $this->SetHeights([0.5]);
+        $this->SetWidths([19.5]);
+        $this->SetFont('Arial', 'B', 9);
+        $this->Cell(1.6,0,utf8_decode('Almacén : '), 0,0 , 'L');
+        $this->SetFont('Arial', '', 9);
+        $this->Cell(0,0,utf8_decode($this->venta->almacen->descripcion), 0,0 , 'L');
 
     }
 
