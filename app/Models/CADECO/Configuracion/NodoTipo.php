@@ -33,4 +33,8 @@ class NodoTipo extends Model
     {
         return $this->belongsTo(Concepto::class, 'id_concepto_proyecto', 'id_concepto');
     }
+
+    public function getDescripcionPadreAttribute(){
+        return $this->concepto->padre();
+    }
 }

@@ -16,10 +16,11 @@ class NodoTipoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'ctg_tipo_nodo'
     ];
 
     /**
-     * List of resources to automatically include
+     * List of resources to automatically include 
      *
      * @var array
      */
@@ -32,7 +33,20 @@ class NodoTipoTransformer extends TransformerAbstract
         return [
             'tipo_nodo' => $model->id_tipo_nodo,
             'concepto' => $model->id_concepto,
+            'descripcion_padre' => $model->descripcion_padre
         ];
     }
+
+    /**
+     * @param NodoTipo $model
+     * @return \League\Fractal\Resource\NodoTipo|null
+     */
+    public function includeCtgTipoNodo(NodoTipo $model) {
+        if ($tipoNodo = $model->tipoNodo) {
+            return $this->item($tipoNodo, new CtgTipoNodoTransformer);
+        }
+        return null;
+    }
+
 
 }

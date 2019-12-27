@@ -25,20 +25,38 @@
                     <div class="invalid-feedback" v-show="errors.has('nodo_proyecto')">{{ errors.first('nodo_proyecto') }}</div>
                 </div>
             </div>
-            <fieldset class="form-group" v-if="pendientes.length > 0">
-                <div class="row" v-for="pendiente in pendientes">
-                    <legend class="col-form-label col-sm-4 pt-0"><b>Penalización / Devolución Penalización</b></legend>
-                    <div class="col-sm-8" >
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="penalizacion_antes_iva1" value="1">
-                            <label class="form-check-label"> Antes de IVA</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="penalizacion_antes_iva0" value="0">
-                            <label class="form-check-label"> Después de IVA</label>
-                        </div>
+            <fieldset class="form-group" v-if="pendientes.length > 0 || asignados.length > 0">
+                <div class="row" v-for="asignado in asignados">
+                    <legend class="col-form-label col-sm-3 pt-0"><b>{{asignado.ctg_tipo_nodo.descripcion}}</b></legend>
+                    <div class="col-sm-2" >
+                        <b>Asignado</b>
+                    </div>
+                    <div class="col-sm-3" >
+                        <b>{{asignado.descripcion_padre}}</b>
+                    </div>
+                    <div class="col-sm-2" >
+                        <b>Eliminar Asignación</b>
                     </div>
                 </div>
+                <hr>
+                <div class="row" v-for="(pendiente, i) in pendientes">
+                    <legend class="col-form-label col-sm-3 pt-0"><b>{{pendiente.descripcion}}</b></legend>
+                    <div class="col-sm-2" >
+                        <b>Pendiente</b>
+                    </div>
+                    <div class="col-sm-4" >
+                        <concepto-select
+                                name="id_concepto"
+                                data-vv-as="Concepto"
+                                id="id_concepto"
+                                v-model="pendiente.id_concepto"
+                                :error="errors.has('id_concepto')"
+                                ref="conceptoSelect"
+                                :disableBranchNodes="false"
+                        ></concepto-select>
+                    </div>
+                </div>
+                
             </fieldset>
         </div>
         
@@ -46,14 +64,17 @@
 </template>
 
 <script>
+    import ConceptoSelect from "../../cadeco/concepto/Select";
     export default {
         name: "configuracion-conceptos",
+        components: {ConceptoSelect},
         props: ['datosConcepto'],
         data() {
             return {
                 nodo_proyecto:'',
                 asignacion_nodo:[],
                 asignados:[],
+                id_concepto:'',
                 pendientes:[],
                 cargando:false,
             }
@@ -75,10 +96,10 @@
             getAsignacionesNodos(){
                 return this.$store.dispatch('configuracion/nodo-proyecto/find', {
                     id:this.nodo_proyecto,
-                    params: {}
+                    params: {include:['nodo_tipo.ctg_tipo_nodo']}
                 }).then(data => {
                     this.asignacion_nodo = data;
-                    this.asignados = data.tipos_asignados;
+                    this.asignados = data.nodo_tipo.data;
                     this.pendientes = data.tipos_pendiente_asignacion;
                 })
                     .finally(() => {

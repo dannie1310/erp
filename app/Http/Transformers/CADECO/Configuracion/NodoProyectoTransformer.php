@@ -16,7 +16,7 @@ class NodoProyectoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'nodos_pendientes'
+        'nodo_tipo'
     ];
 
     /**
@@ -25,7 +25,6 @@ class NodoProyectoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
     ];
 
     public function transform(NodoProyecto $model)
@@ -35,9 +34,20 @@ class NodoProyectoTransformer extends TransformerAbstract
             'descripcion' => $model->descripcion,
             'nivel' => $model->nivel,
             'path' => $model->path,
-            'tipos_asignados' => $model->asignados,
             'tipos_pendiente_asignacion' => $model->pendientes
         ];
+    }
+
+    /**
+     * @param NodoProyecto $model
+     * @return \League\Fractal\Resource\NodoProyecto|null
+     */
+    public function includeNodoTipo(NodoProyecto $model)
+    {
+        if($nodo_tipo = $model->nodoTipo){
+            return $this->collection($nodo_tipo, new NodoTipoTransformer);
+        }
+        return null;
     }
 
 }
