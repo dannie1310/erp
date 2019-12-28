@@ -29,4 +29,9 @@ class NodoTipoService
         return $this->repository->show($id);
     }
 
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
+    }
+
 }

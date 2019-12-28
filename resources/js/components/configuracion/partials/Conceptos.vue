@@ -26,16 +26,18 @@
                 </div>
             </div>
             <fieldset class="form-group" v-if="pendientes.length > 0 || asignados.length > 0">
-                <div class="row" v-for="asignado in asignados">
+                <div class="row" v-for="(asignado, j) in asignados">
                     <legend class="col-form-label col-sm-3 pt-0"><b>{{asignado.ctg_tipo_nodo.descripcion}}</b></legend>
                     <div class="col-sm-2" >
                         <b>Asignado</b>
                     </div>
-                    <div class="col-sm-3" >
+                    <div class="col-sm-4" >
                         <b>{{asignado.descripcion_padre}}</b>
                     </div>
-                    <div class="col-sm-2" >
-                        <b>Eliminar Asignación</b>
+                    <div>
+                        <button type="submit" @click="eliminar(j)" class="btn btn-outline-danger float-right" tittle="Eliminar Asignación" >
+                        <i class="fa fa-trash"></i>
+                    </button>
                     </div>
                 </div>
                 <hr>
@@ -55,9 +57,19 @@
                                 :disableBranchNodes="false"
                         ></concepto-select>
                     </div>
+                    <button type="submit" @click="asignar(i)" class="btn btn-outline-primary float-right" :disabled="pendiente.id_concepto === undefined" tittle="Asignar">
+                        <i class="fa fa-save"></i>
+                    </button>
                 </div>
                 
             </fieldset>
+            <div class="form-group row">
+                <div class="col">
+                    <!-- <button type="submit" @click="validate" class="btn btn-outline-primary float-right" >
+                        <i class="fa fa-save"></i>
+                    </button> -->
+                </div>
+            </div>
         </div>
         
     </div>
@@ -94,6 +106,8 @@
                 });
             },
             getAsignacionesNodos(){
+                this.asignados = [];
+                this.pendientes =[];
                 return this.$store.dispatch('configuracion/nodo-proyecto/find', {
                     id:this.nodo_proyecto,
                     params: {include:['nodo_tipo.ctg_tipo_nodo']}
@@ -105,7 +119,26 @@
                     .finally(() => {
                         this.cargando = false;
                     });
-            }
+            },
+            asignar(id){
+                this.cargando = true;
+                return this.$store.dispatch('configuracion/nodo-tipo/store', {
+						id_concepto: this.pendientes[id].id_concepto,
+                        id_tipo_nodo: this.pendientes[id].id,
+						id_concepto_proyecto: this.nodo_proyecto,
+					})
+                    .then(data=> {
+                        // console.log(data);
+                        this.getAsignacionesNodos();
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    });
+                console.log(id);
+            },
+            eliminar(id){
+                console.log(id);
+            },
         },
         computed: {
             conceptos() {

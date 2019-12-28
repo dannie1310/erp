@@ -4,15 +4,18 @@
 namespace App\Http\Controllers\v1\CADECO\Configuracion;
 
 
-use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Configuracion\NodoTipoTransformer;
-use App\Services\CADECO\Configuracion\NodoTipoService;
-use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use App\Traits\ControllerTrait;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Ventas\StoreNodoTipoRequest;
+use App\Services\CADECO\Configuracion\NodoTipoService;
+use App\Http\Transformers\CADECO\Configuracion\NodoTipoTransformer;
 
 class NodoTipoController extends Controller
 {
-    use ControllerTrait;
+    use ControllerTrait{
+        store as protected traitStore;
+    }
 
     /**
      * @var Manager
@@ -44,5 +47,11 @@ class NodoTipoController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function store(StoreNodoTipoRequest $request)
+    {
+        // dd($request->all());
+        return $this->traitStore($request);
     }
 }

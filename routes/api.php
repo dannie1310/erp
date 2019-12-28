@@ -466,6 +466,7 @@ $api->version('v1', function ($api) {
         /// NODOS TIPO
         $api->group(['prefix' => 'nodo-tipo'], function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoTipoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoTipoController@store');
         });
         // NODOS PROYECTO
         $api->group(['prefix' => 'nodo-proyecto'], function ($api) {
