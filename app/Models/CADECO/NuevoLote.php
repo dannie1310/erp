@@ -52,8 +52,8 @@ class NuevoLote extends Ajuste
             foreach ($data['items'] as $item){
                 $transaccion->partidas()->create([
                         'id_almacen' => $data['id_almacen'],
-                        'id_material' => $item['id_material']['id'],
-                        'unidad' => $item['id_material']['unidad'],
+                        'id_material' => $item['material']['id'],
+                        'unidad' => $item['material']['unidad'],
                         'cantidad' => $item['cantidad'],
                         'importe' => $item['monto_total'],
                         'saldo' => $item['monto_total'] - $item['monto_pagado'],
