@@ -40,6 +40,7 @@
         "vue-progressbar": "^0.7.5",
         "vue-router": "^3.0.2",
         "vue-router-multiguard": "^1.0.3",
+        "vue-search-select": "^2.9.3",
         "vue-session": "^1.0.0",
         "vue2-datatable-component": "^2.3.1",
         "vue2-dropzone": "^3.5.6",

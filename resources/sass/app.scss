@@ -14,6 +14,7 @@
 @import '~@riophae/vue-treeselect/dist/vue-treeselect.css';
 @import '~vue2-dropzone/dist/vue2Dropzone.min.css';
 @import '~bootstrap-pincode-input/css/bootstrap-pincode-input.css';
+@import '~vue-search-select/dist/VueSearchSelect.css';
 
 body, .form-control, .btn {
   font-size: 13px;
@@ -171,4 +172,13 @@ thead th {text-align: center}
 
 .pull-right {
   float: right !important;
+}
+
+.error > .vue-treeselect__control, .ui.selection.dropdown.error{
+  border-color: #dc3545;
+  background: #fff;
+}
+
+.ui.dropdown.error, .ui.dropdown.error>.default.text, .ui.dropdown.error>.text {
+  color: #dc3545;
 }

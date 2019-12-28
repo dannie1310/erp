@@ -7,7 +7,7 @@
                      <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class= "row">
-                                <div class="offset-md-10 col-md-2">
+                                <div class="col-md-2">
                                     <div class="form-group row error-content">
                                         <label for="fecha" class="col-sm-2 col-form-label">Fecha: </label>
                                             <datepicker v-model = "fecha"
@@ -15,7 +15,6 @@
                                                         :format = "formatoFecha"
                                                         :language = "es"
                                                         :bootstrap-styling = "true"
-                                                        :use-utc="true"
                                                         class = "form-control"
                                                         v-validate="{required: true}"
                                                         :class="{'is-invalid': errors.has('fecha')}"
@@ -121,6 +120,7 @@
         },
         mounted(){
             this.getAlmacen();
+            this.fecha = new Date();
         },
         methods: {
             formatoFecha(date){
