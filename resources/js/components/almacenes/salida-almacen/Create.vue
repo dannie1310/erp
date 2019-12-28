@@ -126,21 +126,18 @@
                                         </div>
                                     </div>
                                         <div class="col-md-8" v-if="dato.con_prestamo">
-                                            <select
-                                                    class="form-control"
+                                            <model-list-select
                                                     name="id_empresa"
-                                                    data-vv-as="Empresa"
-                                                    v-model="dato.id_empresa"
-                                                    id="id_empresa"
                                                     :disabled="!dato.con_prestamo"
-                                            >
-                                                    <option v-if="dato.con_prestamo" value>-- Seleccione --</option>
-                                                    <option value v-if="!dato.con_prestamo">-- No Aplica --</option>
-                                                    <option v-for="(empresa, index) in empresas" :value="empresa.id"
-                                                            data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
-                                                        {{ empresa.razon_social }}
-                                                    </option>
-                                            </select>
+                                                    placeholder="Seleccionar o buscar por RFC y razón social del contratista"
+                                                    data-vv-as="Empresa"
+                                                    v-validate="{required: true}"
+                                                    v-model="dato.id_empresa"
+                                                    option-value="id"
+                                                    :custom-text="rfcAndRazonSocial
+                                                    :list="empresas"
+                                                    :isError="errors.has(`id_empresa`)">
+                                            </model-list-select>
                                         </div>
                                         <div class="col-md-2" v-if="dato.con_prestamo">
                                             <div class="btn-group btn-group-toggle">
@@ -171,7 +168,6 @@
                                                     <thead>
                                                         <tr>
                                                             <th class="index_corto">#</th>
-                                                            <th class="no_parte_input">No. de Parte</th>
                                                             <th>Material</th>
                                                             <th class="unidad">Unidad</th>
                                                             <th class="money_input">Existencia</th>
@@ -190,36 +186,22 @@
                                                     <tbody>
                                                         <tr v-for="(partida, i) in partidas">
                                                             <td>{{ i + 1}}</td>
-                                                            <td>
-                                                                <select
 
-                                                                        :disabled = "!bandera"
-                                                                        class="form-control"
-                                                                        :name="`id_material[${i}]`"
-                                                                        v-model="partida.material"
-                                                                        v-validate="{required: true }"
-                                                                        data-vv-as="No de Parte"
-                                                                        :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                                >
-                                                                     <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
-                                                                </select>
-                                                            <div class="invalid-feedback"
-                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
-                                                            </div>
-                                                            </td>
                                                             <td>
-                                                                <select
-
-                                                                        :disabled = "!bandera"
-                                                                        class="form-control"
+                                                                <model-list-select
                                                                         :name="`id_material[${i}]`"
-                                                                        v-model="partida.material"
-                                                                        v-validate="{required: true }"
-                                                                        data-vv-as="Descripción"
-                                                                        :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                                >
-                                                                 <option v-for="material in materiales" :value="material">{{ material.descripcion }}</option>
-                                                            </select>
+                                                                        :disabled = "!bandera"
+                                                                        :onchange="changeSelect(partida)"
+                                                                        placeholder="Seleccionar o buscar id, número de parte o descripción del material"
+                                                                        data-vv-as="Material"
+                                                                        v-validate="{required: true}"
+                                                                        v-model="partida.id_material"
+                                                                        option-value="id"
+                                                                        :custom-text="idAndNumeroParteAndDescripcion"
+                                                                        :list="materiales"
+                                                                        :isError="errors.has(`id_material[${i}]`)">
+                                                            </model-list-select>
+
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
                                                             </div>
@@ -374,10 +356,11 @@
     import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
     import datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import {ModelListSelect} from 'vue-search-select';
 
     export default {
         name: "salida-almacen-create",
-        components: {Almacen, ConceptoSelect,ConceptoSelectHijo,datepicker},
+        components: {Almacen, ConceptoSelect,ConceptoSelectHijo,datepicker,ModelListSelect},
         data() {
             return {
                 es:es,
@@ -451,6 +434,19 @@
             this.fechasDeshabilitadas.from= new Date();
         },
         methods: {
+            idAndNumeroParteAndDescripcion (item) {
+                return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
+            },
+            rfcAndRazonSocial (item){
+                return `[${item.rfc}] - ${item.razon_social}`
+            },
+            changeSelect(item){
+                var busqueda = this.materiales.find(x=>x.id === item.id_material);
+                if(busqueda != undefined)
+                {
+                    item.material = busqueda;
+                }
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
