@@ -38,20 +38,4 @@ class NodoTipo extends Model
     public function getDescripcionPadreAttribute(){
         return $this->concepto->padre();
     }
-
-    public function create($data){
-        try {
-            DB::connection('cadeco')->beginTransaction();
-            
-
-
-            dd('stop koala');
-            DB::connection('cadeco')->commit();
-            return this;
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
-    }
 }

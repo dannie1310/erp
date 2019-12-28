@@ -33,6 +33,7 @@ class NodoTipoTransformer extends TransformerAbstract
         return [
             'tipo_nodo' => $model->id_tipo_nodo,
             'concepto' => $model->id_concepto,
+            'descripcion_nodo_asignado' => $model->concepto->descripcion,
             'descripcion_padre' => $model->descripcion_padre
         ];
     }

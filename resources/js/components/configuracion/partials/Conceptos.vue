@@ -1,7 +1,7 @@
 <template>
     <div class="card" id="configuracion-conceptos" v-if="true">
         <div class="card-header">
-            <h3 class="card-title">Configuración Conceptos</h3>
+            <h3 class="card-title">Configuración de Conceptos</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-widget="collapse">
                     <i class="fa fa-minus"></i>
@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="card-body">
-            <h5 id="configuracion_conceptos_nodo">Configuración Nodo Tipo</h5>
+            <h6 id="configuracion_conceptos_nodo">Configuración de Tipo de Nodo</h6>
             <div class="form-group row">
                 <label for="nodo_proyecto" class="col-sm-2 col-form-label">Proyecto</label>
                 <div class="col-sm-10">
@@ -32,7 +32,7 @@
                         <b>Asignado</b>
                     </div>
                     <div class="col-sm-4" >
-                        <b>{{asignado.descripcion_padre}}</b>
+                        <b>{{asignado.descripcion_padre}} -> {{asignado.descripcion_nodo_asignado}}</b>
                     </div>
                     <div>
                         <button type="submit" @click="eliminar(j)" class="btn btn-outline-danger float-right" tittle="Eliminar Asignación" >
@@ -55,6 +55,7 @@
                                 :error="errors.has('id_concepto')"
                                 ref="conceptoSelect"
                                 :disableBranchNodes="false"
+                                :nivel_id="nodo_proyecto"
                         ></concepto-select>
                     </div>
                     <button type="submit" @click="asignar(i)" class="btn btn-outline-primary float-right" :disabled="pendiente.id_concepto === undefined" tittle="Asignar">
@@ -76,7 +77,7 @@
 </template>
 
 <script>
-    import ConceptoSelect from "../../cadeco/concepto/Select";
+    import ConceptoSelect from "../../cadeco/concepto/SelectHijo";
     export default {
         name: "configuracion-conceptos",
         components: {ConceptoSelect},
