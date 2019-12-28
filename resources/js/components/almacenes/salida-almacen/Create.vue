@@ -134,7 +134,7 @@
                                                     v-validate="{required: true}"
                                                     v-model="dato.id_empresa"
                                                     option-value="id"
-                                                    :custom-text="rfcAndRazonSocial
+                                                    :custom-text="rfcAndRazonSocial"
                                                     :list="empresas"
                                                     :isError="errors.has(`id_empresa`)">
                                             </model-list-select>
