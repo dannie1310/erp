@@ -51,21 +51,16 @@
                                  <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="id_almacen">Almacen:</label>
-                                        <select
+                                        <model-list-select
                                                 :disabled="cargando"
-                                                type="text"
                                                 name="id_almacen"
-                                                data-vv-as="Almacén"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="id_almacen"
                                                 v-model="id_almacen"
-                                               :class="{'is-invalid': errors.has('id_almacen')}"
-                                        >
-                                            <option value v-if="!cargando">- Seleccione -</option>
-                                            <option value v-if="cargando">Cargando...</option>
-                                            <option v-for="almacen in almacenes" :value="almacen.id">{{ almacen.descripcion }}</option>
-                                        </select>
+                                                option-value="id"
+                                                option-text="descripcion"
+                                                :list="almacenes"
+                                                :placeholder="!cargando?'Seleccionar o buscar almacén por descripcion':'Cargando...'"
+                                                :isError="errors.has(`id_almacen`)">
+                                        </model-list-select>
                                         <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                     </div>
                                  </div>
@@ -200,7 +195,7 @@
                                                                         :custom-text="idAndNumeroParteAndDescripcion"
                                                                         :list="materiales"
                                                                         :isError="errors.has(`id_material[${i}]`)">
-                                                            </model-list-select>
+                                                                </model-list-select>
 
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
