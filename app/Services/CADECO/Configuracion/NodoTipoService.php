@@ -5,7 +5,7 @@ namespace App\Services\CADECO\Configuracion;
 
 
 use App\Models\CADECO\Configuracion\NodoTipo;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Configuracion\Repository;
 
 class NodoTipoService
 {
@@ -32,6 +32,11 @@ class NodoTipoService
     public function store(array $data)
     {
         return $this->repository->create($data);
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->delete($data, $id);
     }
 
 }

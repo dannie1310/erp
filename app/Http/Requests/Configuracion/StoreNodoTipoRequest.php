@@ -6,7 +6,7 @@
  * Time: 04:37 PM
  */
 
-namespace App\Http\Requests\Ventas;
+namespace App\Http\Requests\Configuracion;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -19,7 +19,7 @@ class StoreNodoTipoRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('registrar_nodo_tipo' || true);
+        return auth()->user()->can('registrar_asignacion_nodo_tipo');
     }
 
     /**

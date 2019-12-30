@@ -7,7 +7,8 @@ namespace App\Http\Controllers\v1\CADECO\Configuracion;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Ventas\StoreNodoTipoRequest;
+use App\Http\Requests\Configuracion\StoreNodoTipoRequest;
+use App\Http\Requests\Configuracion\DeleteNodoTipoRequest;
 use App\Services\CADECO\Configuracion\NodoTipoService;
 use App\Http\Transformers\CADECO\Configuracion\NodoTipoTransformer;
 
@@ -15,6 +16,7 @@ class NodoTipoController extends Controller
 {
     use ControllerTrait{
         store as protected traitStore;
+        destroy as protected traitDestroy;
     }
 
     /**
@@ -51,7 +53,11 @@ class NodoTipoController extends Controller
 
     public function store(StoreNodoTipoRequest $request)
     {
-        // dd($request->all());
         return $this->traitStore($request);
+    }
+
+    public function destroy(DeleteNodoTipoRequest $request, $id)
+    {
+        return $this->traitDestroy($request, $id);
     }
 }

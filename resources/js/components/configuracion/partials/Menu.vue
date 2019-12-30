@@ -55,9 +55,9 @@
                 </a>
             </li>
 
-            <li class="nav-header" v-if="true"><a href="#configuracion-conceptos">CONFIGURACIÓN CONCEPTOS</a></li>
-            <li class="nav-item" v-if="true">
-                <a href="#configuracion_conceptos_nodo" class="nav-link">
+            <li class="nav-header" v-if="$root.can('consultar_asignacion_nodo_tipo')"><a href="#configuracion-conceptos">CONFIGURACIÓN CONCEPTOS</a></li>
+            <li class="nav-item" v-if="$root.can('consultar_asignacion_nodo_tipo')">
+                <a href="#configuracion-conceptos" class="nav-link">
                     <i class="fa fa-circle-o nav-icon"></i>
                     <p>Conceptos</p>
                 </a>

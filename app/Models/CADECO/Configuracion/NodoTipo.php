@@ -38,4 +38,8 @@ class NodoTipo extends Model
     public function getDescripcionPadreAttribute(){
         return $this->concepto->padre();
     }
+
+    public function eliminar_asignacion($id){
+        return $this->where('id_concepto', '=', $id)->delete();
+    }
 }
