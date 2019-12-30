@@ -192,7 +192,7 @@
                                             >
                                             <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                         </div>
-                                    </div>   
+                                    </div>
                                 </div>
                                 <hr>
                                 <div class="row">
@@ -336,7 +336,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary">Cerrar</button>
+                                <button type="button" class="btn btn-secondary" @click="index">Cerrar</button>
                                 <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || registro_venta.partidas.length == 0">Guardar</button>
                             </div>
                         </form>
@@ -476,6 +476,9 @@
                         onFileChange(e)
                     }
                 }, 500);
+            },
+            index(){
+                this.$router.push({name: 'venta'});
             },
             createImage(file) {
                 var reader = new FileReader();
