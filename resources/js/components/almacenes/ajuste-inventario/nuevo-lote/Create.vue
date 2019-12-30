@@ -14,7 +14,6 @@
                                                     <thead>
                                                     <tr>
                                                         <th class="bg-gray-light th_index">#</th>
-                                                        <th class="bg-gray-light">No de Parte</th>
                                                         <th class="bg-gray-light">Item</th>
                                                         <th class="bg-gray-light th_unidad">Unidad</th>
                                                         <th class="bg-gray-light th_money_input">Cantidad</th>
@@ -31,42 +30,26 @@
                                                     <tbody>
                                                     <tr v-for="(item, i) in items">
                                                         <td>{{ i + 1}}</td>
-                                                        <td style="width: 180px;">
-                                                             <select
-                                                                     :disabled = "!bandera"
-                                                                     class="form-control"
-                                                                     :name="`id_material[${i}]`"
-                                                                     v-model="item.id_material"
-                                                                     v-validate="{required: true }"
-                                                                     data-vv-as="No de Parte"
-                                                                     :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                             >
-
-                                                                 <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
-                                                            </select>
-                                                            <div class="invalid-feedback"
-                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
-                                                            </div>
-                                                        </td>
                                                         <td>
-                                                              <select
-                                                                      :disabled = "!bandera"
-                                                                      class="form-control"
+                                                              <model-list-select
                                                                       :name="`id_material[${i}]`"
+                                                                      :disabled = "!bandera"
+                                                                      :onchange="changeSelect(item)"
+                                                                      placeholder="Seleccionar o buscar id, número de parte o descripción del material"
+                                                                      data-vv-as="Material"
+                                                                      v-validate="{required: true}"
                                                                       v-model="item.id_material"
-                                                                      v-validate="{required: true }"
-                                                                      data-vv-as="Item"
-                                                                      :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                              >
-
-                                                                 <option v-for="material in materiales" :value="material">{{ material.descripcion }}</option>
-                                                            </select>
+                                                                      option-value="id"
+                                                                      :custom-text="idAndNumeroParteAndDescripcion"
+                                                                      :list="materiales"
+                                                                      :isError="errors.has(`id_material[${i}]`)">
+                                                            </model-list-select>
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            {{item.id_material.unidad}}
+                                                            {{item.material.unidad}}
                                                         </td>
                                                         <td style="width: 120px;">
                                                             <input
@@ -163,10 +146,11 @@
 
 <script>
     import MaterialSelect from "../../../cadeco/material/Select";
+    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "nuevo-lote",
         propos:['id_almacen', 'referencia', 'fecha'],
-        components: {MaterialSelect},
+        components: {MaterialSelect, ModelListSelect},
         data() {
             return {
                 id_material:'',
@@ -188,6 +172,16 @@
         methods: {
             init() {
                 this.cargando = true;
+            },
+            idAndNumeroParteAndDescripcion (item) {
+                return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
+            },
+            changeSelect(item){
+                var busqueda = this.materiales.find(x=>x.id === item.id_material);
+                if(busqueda != undefined)
+                {
+                    item.material = busqueda;
+                }
             },
             getAlmacen(){
                 this.almacenes = [];
