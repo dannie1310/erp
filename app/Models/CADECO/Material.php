@@ -172,11 +172,18 @@ class Material extends Model
         return $this->nivel.'.'.$num.'.';
     }
 
-    public function getSaldoInventarioAttribute(){
+    public function getSaldoInventarioAttribute()
+    {
         return $this->inventarios->sum('saldo');
     }
 
-    public function getCantidadInventarioAttribute(){
+    public function getSaldoInventarioFormatAttribute()
+    {
+        return number_format($this->saldo_inventario,4,".","");
+    }
+
+    public function getCantidadInventarioAttribute()
+    {
         return $this->inventarios->sum('cantidad');
     }
 
@@ -188,5 +195,11 @@ class Material extends Model
     public function getSaldoAlmacenDdAttribute()
     {
         return number_format($this->saldo_almacen,2,".","");
+    }
+
+    public function scopeDisponiblesParaVenta($query)
+    {
+        return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')
+            ->whereRaw('inventarios.saldo > 0')->select('materiales.*')->distinct();
     }
 }

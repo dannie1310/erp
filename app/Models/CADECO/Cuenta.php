@@ -104,4 +104,14 @@ class Cuenta extends Model
         $this->saldo_real = $this->saldo_real - ($pago->monto * -1);
         $this->save();
     }
+
+    public function aumentaSaldoPorDeposito(Transaccion $pago){
+        $this->saldo_real = $this->saldo_real + $pago->monto;
+        $this->save();
+    }
+
+    public function disminuyeSaldoPorDeposito(Transaccion $pago){
+        $this->saldo_real = $this->saldo_real - $pago->monto;
+        $this->save();
+    }
 }

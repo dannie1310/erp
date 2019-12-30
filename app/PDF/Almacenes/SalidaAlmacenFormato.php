@@ -93,7 +93,7 @@ class SalidaAlmacenFormato extends Rotation
         if($this->salida['NumeroFolioAlt']>0){
             $this->SetX($x_f);
             $this->Cell(4.5, .7, 'FOLIO ALM ', 'L', 0, 'L');
-            $this->Cell(3.5, .7, $this->salida['NumeroFolioAlt'], 'R', 0, 'L');
+            $this->Cell(3.5, .7, $this->salida->NumeroFolioAlt, 'R', 0, 'L');
             $this->Ln(.7);
         }
 
@@ -216,9 +216,9 @@ class SalidaAlmacenFormato extends Rotation
 
     public function partidas()
     {
-if($this->PageNo()==1){
-    $this->tableHeader();
-}
+            if($this->PageNo()==1){
+                $this->tableHeader();
+            }
 
 
             foreach ($this->salida->partidas as $i => $p) {
