@@ -95,7 +95,7 @@ class Venta extends Transaccion
     }
 
     public function pdfFactura(){
-        $path = storage_path('ventas/venta/pdfFactura/'.$this->pdf_factura->nombre_archivo);
+        $path = storage_path('ventas/venta/pdfFactura/'.$this->id_transaccion.'.pdf');
         if(!file_exists($path))
         {
             return "El archivo al cual intenta acceder no existe o no se encuentra disponible.";
@@ -251,7 +251,8 @@ class Venta extends Transaccion
             $this->estado = -1;
             $this->save();
             $this->depositoCliente->delete();
-            $this->cancelacion()->create([
+            $this->pdf_factura()->delete();
+            $this->cancelacion('pdf_factura_venta')->create([
                 'id_transaccion' => $this->id_transaccion,
                 'motivo' => $motivo
                 ]);
