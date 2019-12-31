@@ -219,7 +219,7 @@ class OrdenPagoEstimacion extends Rotation
 
 
         $this->Row(['Partida',utf8_decode('Descripción'),'Importe', utf8_decode('Aplicación de Costo'), '%','Cuenta']);
-        foreach ($this->estimacion->items as $item) {
+        foreach ($this->estimacion->partidas as $item) {
             $this->SetFont('Arial', '', 7);
             $this->SetWidths([
                 ($this->w - 2) * 0.07,
