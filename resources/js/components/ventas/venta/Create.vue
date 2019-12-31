@@ -26,22 +26,17 @@
                                     <div class="col-md-6">
                                         <div class="form-group error-content">
                                             <label for="id_almacen">Almacen:</label>
-                                                <select
-                                                        :disabled="cargando"
-                                                        type="text"
-                                                        name="id_almacen"
-                                                        data-vv-as="Almacén"
-                                                        v-validate="{required: true}"
-                                                        class="form-control"
-                                                        id="id_almacen"
-                                                        v-model="id_almacen"
-                                                    :class="{'is-invalid': errors.has('id_almacen')}"
-                                                    >
-                                                    <option value v-if="!cargando">- Seleccione -</option>
-                                                    <option value v-if="cargando">Cargando...</option>
-                                                    <option v-for="almacen in almacenes" :value="almacen.id">{{ almacen.descripcion }}</option>
-                                                </select>
-                                            <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
+                                             <model-list-select
+                                                 :disabled="cargando"
+                                                 name="id_almacen"
+                                                 v-model="id_almacen"
+                                                 option-value="id"
+                                                 option-text="descripcion"
+                                                 :list="almacenes"
+                                                 :placeholder="!cargando?'Seleccionar o buscar almacén por descripcion':'Cargando...'"
+                                                 :isError="errors.has(`id_almacen`)">
+                                        </model-list-select>
+                                        <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                         </div>
                                     </div>
                                     <div class="col-md-3"></div>
@@ -51,14 +46,14 @@
                                         <div class="form-group error-content">
                                             <label for="referencia">Referencia de Venta:</label>
                                             <input class="form-control"
-                                                          style="width: 100%"
-                                                          placeholder="Referencia"
-                                                          name="referencia"
-                                                          id="referencia"
-                                                          data-vv-as="Referencia"
-                                                          v-validate="{required: true}"
-                                                          v-model="registro_venta.referencia"
-                                                          :class="{'is-invalid': errors.has('referencia')}"
+                                                   style="width: 100%"
+                                                   placeholder="Referencia"
+                                                   name="referencia"
+                                                   id="referencia"
+                                                   data-vv-as="Referencia"
+                                                   v-validate="{required: true}"
+                                                   v-model="registro_venta.referencia"
+                                                   :class="{'is-invalid': errors.has('referencia')}"
                                             >
                                             <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                         </div>
@@ -67,15 +62,15 @@
                                         <div class="form-group error-content">
                                             <label for="id_empresa">Cliente:</label>
                                             <select
-                                                    :disabled="cargando"
-                                                    type="text"
-                                                    name="id_empresa"
-                                                    data-vv-as="Cliente"
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
-                                                    id="id_empresa"
-                                                    v-model="registro_venta.id_empresa"
-                                                    :class="{'is-invalid': errors.has('id_empresa')}"
+                                                :disabled="cargando"
+                                                type="text"
+                                                name="id_empresa"
+                                                data-vv-as="Cliente"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="id_empresa"
+                                                v-model="registro_venta.id_empresa"
+                                                :class="{'is-invalid': errors.has('id_empresa')}"
                                             >
                                                 <option value v-if="!cargando">- Seleccione -</option>
                                                 <option value v-if="cargando">Cargando...</option>
@@ -90,14 +85,14 @@
                                        <div class="form-group error-content">
                                             <label for="id_concepto">Concepto:</label>
                                             <concepto-select
-                                                    name="id_concepto"
-                                                    data-vv-as="Concepto"
-                                                    v-validate="{required: true}"
-                                                    id="id_concepto"
-                                                    v-model="registro_venta.id_concepto"
-                                                    :error="errors.has('id_concepto')"
-                                                    ref="conceptoSelect"
-                                                    :disableBranchNodes="true"
+                                                name="id_concepto"
+                                                data-vv-as="Concepto"
+                                                v-validate="{required: true}"
+                                                id="id_concepto"
+                                                v-model="registro_venta.id_concepto"
+                                                :error="errors.has('id_concepto')"
+                                                ref="conceptoSelect"
+                                                :disableBranchNodes="true"
                                             ></concepto-select>
                                            <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
                                        </div>
@@ -106,12 +101,12 @@
                                         <div class="form-group row error-content">
                                             <label for="archivo" >Agregar Archivo de Factura: </label>
                                             <input type="file" class="form-control" id="archivo" @change="onFileChange"
-                                                    row="3"
-                                                    v-validate="{required: true,  ext: ['pdf'], size: 3072}"
-                                                    name="archivo"
-                                                    data-vv-as="Archivo"
-                                                    ref="archivo"
-                                                    :class="{'is-invalid': errors.has('archivo')}"
+                                                   row="3"
+                                                   v-validate="{required: true,  ext: ['pdf'], size: 3072}"
+                                                   name="archivo"
+                                                   data-vv-as="Archivo"
+                                                   ref="archivo"
+                                                   :class="{'is-invalid': errors.has('archivo')}"
                                             >
                                             <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (pdf)</div>
                                         </div>
@@ -128,15 +123,15 @@
                                         <div class="form-group error-content">
                                             <label for="id_empresa">Cuenta Bancaria:</label>
                                             <select
-                                                    :disabled="cargando"
-                                                    type="text"
-                                                    name="id_cuenta"
-                                                    data-vv-as="Cuenta"
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
-                                                    id="id_cuenta"
-                                                    v-model="registro_venta.id_cuenta"
-                                                    :class="{'is-invalid': errors.has('id_cuenta')}"
+                                                :disabled="cargando"
+                                                type="text"
+                                                name="id_cuenta"
+                                                data-vv-as="Cuenta"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="id_cuenta"
+                                                v-model="registro_venta.id_cuenta"
+                                                :class="{'is-invalid': errors.has('id_cuenta')}"
                                             >
                                                 <option value v-if="!cargando">- Seleccione -</option>
                                                 <option value v-if="cargando">Cargando...</option>
@@ -202,7 +197,6 @@
                                                 <thead>
                                                     <tr>
                                                         <th class="index_corto">#</th>
-                                                        <th class="no_parte_input">No. de Parte</th>
                                                         <th>Material</th>
                                                         <th class="unidad">Unidad</th>
                                                         <th>Existencia</th>
@@ -219,41 +213,26 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr v-for="(partida, i) in registro_venta.partidas">
-                                                        <td>{{ i + 1}}</td>
+                                                        <td>{{ i + 1}}</td> <!--                                                        </td>-->
                                                         <td>
-                                                            <select
-
-                                                                    :disabled = "!bandera"
-                                                                    class="form-control"
+                                                                <model-list-select
                                                                     :name="`id_material[${i}]`"
-                                                                    v-model="partida.material"
-                                                                    v-validate="{required: true }"
-                                                                    data-vv-as="No de Parte"
-                                                                    :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                            >
-                                                                 <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
-                                                            </select>
-                                                        <div class="invalid-feedback"
-                                                             v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
-                                                        </div>
-                                                        </td>
-                                                        <td>
-                                                            <select
-
                                                                     :disabled = "!bandera"
-                                                                    class="form-control"
-                                                                    :name="`id_material[${i}]`"
-                                                                    v-model="partida.material"
-                                                                    v-validate="{required: true }"
-                                                                    data-vv-as="Descripción"
-                                                                    :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                            >
-                                                             <option v-for="material in materiales" :value="material">{{ material.descripcion }}</option>
-                                                        </select>
-                                                        <div class="invalid-feedback"
-                                                             v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
-                                                        </div>
-                                                        </td>
+                                                                    :onchange="changeSelect(partida)"
+                                                                    placeholder="Seleccionar o buscar id, número de parte o descripción del material"
+                                                                    data-vv-as="Material"
+                                                                    v-validate="{required: true}"
+                                                                    v-model="partida.id_material"
+                                                                    option-value="id"
+                                                                    :custom-text="idAndNumeroParteAndDescripcion"
+                                                                    :list="materiales"
+                                                                    :isError="errors.has(`id_material[${i}]`)">
+                                                                </model-list-select>
+
+                                                            <div class="invalid-feedback"
+                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
+                                                            </div>
+                                                            </td>
                                                         <td>
                                                             {{partida.material.unidad}}
                                                         </td>
@@ -262,34 +241,34 @@
                                                         </td>
                                                         <td>
                                                             <input
-                                                                    :disabled = "!partida.material"
-                                                                    type="number"
-                                                                    step="any"
-                                                                    :name="`cantidad[${i}]`"
-                                                                    v-model="partida.cantidad"
-                                                                    data-vv-as="Cantidad"
-                                                                    v-validate="{required: true,min_value: 0.0001, max_value:partida.material.saldo_almacen, decimal:4}"
-                                                                    class="form-control"
-                                                                    :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
-                                                                    id="cantidad"
-                                                                    placeholder="Cantidad">
+                                                                :disabled = "!partida.material"
+                                                                type="number"
+                                                                step="any"
+                                                                :name="`cantidad[${i}]`"
+                                                                v-model="partida.cantidad"
+                                                                data-vv-as="Cantidad"
+                                                                v-validate="{required: true,min_value: 0.0001, max_value:partida.material.saldo_almacen, decimal:4}"
+                                                                class="form-control"
+                                                                :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                                id="cantidad"
+                                                                placeholder="Cantidad">
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <input
-                                                                    :disabled = "!partida.material"
-                                                                    type="number"
-                                                                    step="any"
-                                                                    :name="`precio_unitario[${i}]`"
-                                                                    v-model="partida.precio_unitario"
-                                                                    data-vv-as="Precio unitario"
-                                                                    v-validate="{required: true,min_value: 0.01, decimal:2}"
-                                                                    class="form-control"
-                                                                    :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
-                                                                    id="precio_unitario"
-                                                                    placeholder="Precio Unitario">
+                                                                :disabled = "!partida.material"
+                                                                type="number"
+                                                                step="any"
+                                                                :name="`precio_unitario[${i}]`"
+                                                                v-model="partida.precio_unitario"
+                                                                data-vv-as="Precio unitario"
+                                                                v-validate="{required: true,min_value: 0.01, decimal:2}"
+                                                                class="form-control"
+                                                                :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
+                                                                id="precio_unitario"
+                                                                placeholder="Precio Unitario">
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}
                                                             </div>
@@ -322,13 +301,13 @@
                                         <div class="form-group error-content">
                                             <label for="observaciones">Observaciones:</label>
                                             <textarea
-                                                    name="observaciones"
-                                                    id="observaciones"
-                                                    class="form-control"
-                                                    v-model="registro_venta.observaciones"
-                                                    v-validate="{required: true}"
-                                                    data-vv-as="Observaciones"
-                                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                                name="observaciones"
+                                                id="observaciones"
+                                                class="form-control"
+                                                v-model="registro_venta.observaciones"
+                                                v-validate="{required: true}"
+                                                data-vv-as="Observaciones"
+                                                :class="{'is-invalid': errors.has('observaciones')}"
                                             ></textarea>
                                             <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                                         </div>
@@ -336,7 +315,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" @click="index">Cerrar</button>
+                                <button type="button" class="btn btn-secondary">Cerrar</button>
                                 <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || registro_venta.partidas.length == 0">Guardar</button>
                             </div>
                         </form>
@@ -351,9 +330,10 @@
     import datepicker from 'vuejs-datepicker';
     import ConceptoSelect from "../../cadeco/concepto/Select";
     import {es} from 'vuejs-datepicker/dist/locale';
+    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "venta-create",
-        components: {ConceptoSelect, datepicker},
+        components: {ConceptoSelect, datepicker, ModelListSelect},
         data() {
             return {
                 es : es,
@@ -396,20 +376,30 @@
             this.getCuentaBancaria();
         },
         computed: {
-          totales() {
-              let subtotal = 0;
-              this.registro_venta.partidas.forEach(function (doc, i) {
-                  subtotal += parseFloat(doc.cantidad * doc.precio_unitario);
+            totales() {
+                let subtotal = 0;
+                this.registro_venta.partidas.forEach(function (doc, i) {
+                    subtotal += parseFloat(doc.cantidad * doc.precio_unitario);
 
-              })
-              this.registro_venta.impuesto_total = subtotal * 0.16;
-              this.registro_venta.total = subtotal + this.registro_venta.impuesto_total;
-              return subtotal
-          }
+                })
+                this.registro_venta.impuesto_total = subtotal * 0.16;
+                this.registro_venta.total = subtotal + this.registro_venta.impuesto_total;
+                return subtotal
+            }
         },
         methods: {
+            idAndNumeroParteAndDescripcion (item) {
+                return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
+            },
             borrarPartida(i){
                 this.registro_venta.partidas.splice(i,1);
+            },
+            changeSelect(item){
+                var busqueda = this.materiales.find(x=>x.id === item.id_material);
+                if(busqueda != undefined)
+                {
+                    item.material = busqueda;
+                }
             },
             formatoFecha(date) {
                 return moment(date).format('DD/MM/YYYY');
@@ -477,15 +467,12 @@
                     }
                 }, 500);
             },
-            index(){
-                this.$router.push({name: 'venta'});
-            },
             createImage(file) {
                 var reader = new FileReader();
                 var vm = this;
 
                 reader.onload = (e) => {
-                        vm.registro_venta.archivo = e.target.result;
+                    vm.registro_venta.archivo = e.target.result;
                 };
                 reader.readAsDataURL(file);
             },
