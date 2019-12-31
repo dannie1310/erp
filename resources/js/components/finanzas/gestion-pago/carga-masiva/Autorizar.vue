@@ -4,7 +4,7 @@
             <div class="invoice p-3 mb-3">
                 <div class="row">
                     <div class="col-12">
-                        <h4> <i class="fa fa-list-alt"></i> AUTORIZACIÓN DE LAYOUTS REGISTRADOS</h4>
+                        <h4> <i class="fa fa-check-circle"></i> AUTORIZACIÓN DE LAYOUTS REGISTRADOS</h4>
                     </div>
                 </div>
                 <!--                <div class="modal-body">-->
