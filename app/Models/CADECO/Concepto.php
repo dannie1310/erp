@@ -119,6 +119,7 @@ class Concepto extends Model
     {
         return $this->hasMany(self::class, 'id_obra', 'id_obra')
             ->where('nivel', 'LIKE', $this->nivel . '___.')
-            ->whereNull('id_material');
+            ->whereNull('id_material')
+            ->orderBy('nivel', 'ASC');
     }
 }
