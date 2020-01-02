@@ -148,13 +148,22 @@ class Transaccion extends Model
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 
     public function getSubtotalAttribute()
     {
         return $this->monto - $this->impuesto;
+    }
+
+    public function getSubtotalFormatAttribute(){
+        return '$ ' . number_format($this->subtotal, 2, '.', ',');
+    }
+
+    public function getImpuestoFormatAttribute(){
+        return '$ ' . number_format($this->impuesto, 2, '.', ',');
     }
 
     public function moneda()

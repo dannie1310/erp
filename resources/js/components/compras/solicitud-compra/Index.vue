@@ -1,16 +1,12 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <button @click="create_solicitud" v-if="" class="btn btn-app btn-info pull-right">
+                <i class="fa fa-plus"></i> Registrar Solicitud
+            </button>
+        </div>
+        <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -24,17 +20,18 @@
         <!-- /.col -->
     </div>
 </template>
-
 <script>
+  import Create from './Create';
     export default {
         name: "solicitud-compra-index",
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', sortable: true },
-                    { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
                     { title: 'Registró', field: 'registro', sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
@@ -43,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {sort: 'id_transaccion',  order: 'desc'},
                 search: '',
                 cargando: false
             }
@@ -69,7 +66,11 @@
                     .finally(() => {
                         this.cargando = false;
                     })
-            }
+            },
+            create_solicitud() {
+                this.$router.push({name: 'solicitud-compra-create'});
+            },
+
         },
         computed: {
             solicitudes(){
@@ -94,8 +95,14 @@
                         numero_folio: `# ${solicitud.numero_folio}`,
                         fecha: new Date(solicitud.fecha).toDate(),
                         observaciones: solicitud.observaciones,
-                        registro: solicitud.usuario ? solicitud.usuario.nombre : '',
-                        buttons: $.extend({}, {})
+                        id_usuario: solicitud.usuario ? solicitud.usuario.nombre : '',
+                        buttons: $.extend({}, {
+                            id: solicitud.id,
+                            show: true,
+                            edit: true,
+                            pdf: true,
+
+                        })
                     }));
                 },
                 deep: true
@@ -138,14 +145,5 @@
 </script>
 
 <style scoped>
-    .money
-    {
-        text-align: right;
-    }
-    .th_money
-    {
-        width: 150px;
-        max-width: 150px;
-        min-width: 100px;
-    }
+
 </style>
