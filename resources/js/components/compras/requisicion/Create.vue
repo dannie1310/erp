@@ -126,16 +126,6 @@
                                                     <tr v-for="(partida, i) in partidas">
                                                         <td>{{i+1}}</td>
                                                         <td style="width: 50px;" v-if="partida.i === 0 && partida.material === ''">
-<!--                                                            <NumeroParteSelect-->
-                                                            <!--                                                                    scope="insumos"-->
-                                                            <!--                                                                    :name="`material[${i}]`"-->
-                                                            <!--                                                                    v-model="partida.material"-->
-                                                            <!--                                                                    data-vv-as="Material"-->
-                                                            <!--                                                                    v-validate="{required: true}"-->
-                                                            <!--                                                                    ref="MaterialSelect"-->
-                                                            <!--                                                                    :disableBranchNodes="false"-->
-                                                            <!--                                                                    :error="errors.has(`material[${i}]`)"/>-->
-                                                            <!--                                                            <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>-->
                                                         </td>
                                                         <td style="width: 150px;" v-else-if="partida.i === 1">
                                                             <input
@@ -151,25 +141,16 @@
                                                         </td>
                                                         <td v-else>{{partida.material.numero_parte}}</td>
                                                         <td style="width: 200px;" v-if="partida.i === 0 && partida.material === ''">
-<!--                                                            <MaterialSelect-->
-                                                            <!--                                                                 scope="insumos"-->
-                                                            <!--                                                                 :name="`material[${i}]`"-->
-                                                            <!--                                                                 v-model="partida.material"-->
-                                                            <!--                                                                 data-vv-as="Material"-->
-                                                            <!--                                                                 v-validate="{required: true}"-->
-                                                            <!--                                                                 ref="MaterialSelect"-->
-                                                            <!--                                                                 :disableBranchNodes="false"-->
-                                                            <!--                                                                 :error="errors.has(`material[${i}]`)"/>-->
-                                                            <!--                                                            <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>-->
                                                             <model-list-select
-                                                                name="id_material"
+                                                                :name="`material[${i}]`"
                                                                 v-validate="{required: true}"
-                                                                v-model="id_material"
+                                                                v-model="partida.id_material"
+                                                                :onchange="changeSelect(partida)"
                                                                 option-value="id"
                                                                 :custom-text="idAndNumeroParteAndDescripcion"
                                                                 :list="materiales"
                                                                 :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
-                                                                :isError="errors.has(`id_material`)">
+                                                                :isError="errors.has(`material[${i}]`)">
                                                             </model-list-select>
                                                                   <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                                         </td>
@@ -362,6 +343,13 @@
                     observaciones : ""
                 }];
             },
+            changeSelect(item){
+                var busqueda = this.materiales.find(x=>x.id === item.id_material);
+                if(busqueda != undefined)
+                {
+                    item.material = busqueda;
+                }
+            },
             idAndNumeroParteAndDescripcion (item) {
                 return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
             },
@@ -428,12 +416,15 @@
             },
             manual(index){
                 this.partidas[index].material = ""
+                this.partidas[index].id_material = ""
                 this.partidas[index].i = 1;
             },
             busqueda(index){
                 this.partidas[index].unidad = ""
                 this.partidas[index].descripcion = ""
                 this.partidas[index].numero_parte = ""
+                this.partidas[index].material = ""
+                this.partidas[index].id_material = ""
                 this.partidas[index].i = 0;
             },
             getMateriales() {
@@ -441,8 +432,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/material/index', {
                     params: {
-                        scope: 'requisicion',
-                        limit: 15
+                        scope: 'requisicion'
                     }
                 })
                     .then(data => {
