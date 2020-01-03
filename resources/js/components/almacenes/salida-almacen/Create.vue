@@ -215,7 +215,7 @@
                                                                         :name="`cantidad[${i}]`"
                                                                         v-model="partida.cantidad"
                                                                         data-vv-as="Cantidad"
-                                                                        v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:2}"
+                                                                        v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:3}"
                                                                         class="form-control"
                                                                         :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                                         id="cantidad"
