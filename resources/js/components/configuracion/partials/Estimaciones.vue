@@ -1,5 +1,5 @@
 <template>
-    <div class="card" id="configuracion-estimaciones">
+    <div class="card" id="configuracion-estimaciones" v-if="$root.can('editar_configuracion_finanzas_estimaciones')">
         <div class="card-header">
             <h6 class="card-title">Configuración Finanzas</h6>
             <div class="card-tools">
@@ -8,7 +8,7 @@
                 </button>
             </div>
         </div>
-        <div class="card-body" v-if="$root.can('editar_configuracion_finanzas_estimaciones')">
+        <div class="card-body">
             <div class="alert alert-warning" v-if="form || bandera == 0">
                 <h5><i class="icon fa fa-warning"></i>¡Atención!</h5>
                 {{ mensaje }}
