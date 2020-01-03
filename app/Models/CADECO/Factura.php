@@ -50,6 +50,11 @@ class Factura extends Transaccion
         return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function items()
+    {
+        return $this->hasMany(ItemFactura::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function pagos(){
         return $this->hasManyThrough(PagoFactura::class,OrdenPago::class, 'id_referente','numero_folio','id_transaccion','id_transaccion');
     }
@@ -75,7 +80,8 @@ class Factura extends Transaccion
         $pago = $ordenPago->generaPago($data);
 
         $this->validaSaldos($saldo_esperado, $saldo_esperado_cuenta, $pago);
-        DB::connection('cadeco')->commit();
+        abort(500,'eli');
+        /*DB::connection('cadeco')->commit();*/
         return $pago;
     }
 

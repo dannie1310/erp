@@ -76,8 +76,20 @@ class OrdenPago extends Transaccion
 
                 return $this->pago;
             }
+    }
 
+    public function actualizaControlObra()
+    {
+        if($this->factura){
+            $items_factura = $this->factura->items;
+            foreach($items_factura as $item_factura)
+            {
 
+                print_r($item_factura->itemAntecedente);
+            }
+        } else {
+            abort(500, "No se encontraron las partidas de la factura");
+        }
 
     }
 }

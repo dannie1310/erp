@@ -42,6 +42,11 @@ class Item extends Model
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
 
+    public function itemAntecedente()
+    {
+        return $this->belongsTo(Item::class, 'item_antecedente', 'id_item');
+    }
+
     public function getCantidadFormatAttribute()
     {
         return number_format($this->cantidad,2,'.', ',');

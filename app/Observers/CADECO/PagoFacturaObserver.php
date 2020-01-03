@@ -30,5 +30,6 @@ class PagoFacturaObserver extends PagoObserver
         parent::created($pago);
         $pago->orden_pago->factura->disminuyeSaldo($pago);
         $pago->orden_pago->factura->contra_recibo->disminuyeSaldo($pago);
+        $pago->orden_pago->actualizaControlObra();
     }
 }
