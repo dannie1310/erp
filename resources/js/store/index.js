@@ -45,6 +45,10 @@ import areaCompradora from './modules/configuracion/area-compradora';
 import areaSolicitante from './modules/configuracion/area-solicitante';
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
 
+// CONFIGURACION CADECO
+import nodoTipo from './modules/configuracion/nodo-tipo';
+import nodoProyecto from './modules/configuracion/nodo-proyecto';
+
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo';
 import cuentaAlmacen from './modules/contabilidad/cuenta-almacen';
@@ -155,6 +159,9 @@ export default new Vuex.Store({
         'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
         'configuracion/ctg-tipo': ctgtipo,
+
+        'configuracion/nodo-tipo' : nodoTipo,
+        'configuracion/nodo-proyecto' : nodoProyecto,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
