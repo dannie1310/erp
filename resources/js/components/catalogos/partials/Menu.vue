@@ -92,6 +92,12 @@
                     </li>
                 </ul>
             </li>
+            <!-- <li class="nav-item" v-if="$root.can('consultar_proveedor')">
+                <router-link :to="{name: 'proveedor-contratista'}" class="nav-link">
+                    <i class="fa fa-circle nav-icon"></i>
+                    <p>Proveedor / contratista</p>
+                </router-link>
+            </li> -->
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
