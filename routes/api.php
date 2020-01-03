@@ -117,6 +117,10 @@ $api->version('v1', function ($api) {
             $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
         });
 
+        $api->group(['prefix' => 'proveedor-contatista'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@paginate');
+        });
+
         // SUCURSAL
         $api->group(['prefix' => 'sucursal'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\SucursalController@index');

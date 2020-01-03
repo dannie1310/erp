@@ -487,23 +487,23 @@ export const routes = [
                     },
                 ]
             },
-            // {
-            //     path:'proveedor-contratista',
-            //     component: require('./components/catalogos/empresas/proveedor-contratista/Layout').default,
-            //     children: [
-            //         {
-            //             path:'/',
-            //             name: 'proveedor-contratista',
-            //             component: require('./components/catalogos/empresas/proveedor-contratista/Index').default,
-            //             meta:{
-            //                 title: 'Proveedor / Contratista',
-            //                 breadcrumb: {name: 'PROVEEDOR / CONTRATISTA', parent: 'proveedor-contratista'},
-            //                 middleware: [auth, context, permission],
-            //                 permission: 'consultar_proveedor'
-            //             }
-            //         },
-            //     ]
-            // },
+            {
+                path:'proveedor-contratista',
+                component: require('./components/catalogos/empresa/proveedor-contratista/Layout').default,
+                children: [
+                    {
+                        path:'/',
+                        name: 'proveedor-contratista',
+                        component: require('./components/catalogos/empresa/proveedor-contratista/Index').default,
+                        meta:{
+                            title: 'Proveedor / Contratista',
+                            breadcrumb: {name: 'PROVEEDOR-CONTRATISTA', parent: 'catalogos'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_proveedor']
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
