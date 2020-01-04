@@ -1,8 +1,8 @@
 <template>
     <div class="row">
-        <!--<div class="col-12">-->
-        <!--<create @created="paginate()"></create>-->
-        <!--</div>-->
+        <div class="col-12">
+        <create @created="paginate()"></create>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -20,9 +20,10 @@
 </template>
 
 <script>
+    import Create from "./Create";
     export default {
         name: "cliente-index",
-        // components:{Create},
+        components:{Create},
         data() {
             return {
                 HeaderSettings: false,
