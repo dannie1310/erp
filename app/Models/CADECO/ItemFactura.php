@@ -24,4 +24,54 @@ class ItemFactura extends Item
     {
         return $this->belongsTo(Factura::class, 'id_transaccion', 'id_transaccion');
     }
+
+    public function itemAntecedente()
+    {
+        return $this->belongsTo(Item::class, 'item_antecedente', 'id_item');
+    }
+
+    public function antecedente()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function getProporcionItemAttribute()
+    {
+        return $this->importe/$this->factura->monto;
+    }
+
+    /**
+     * Este método implementa la lógica actualización de control de obra del procedimiento almacenado sp_aplicar_pagos
+     * y se detona al registrar una orden de pago
+     */
+    public function actualizaControlObra(OrdenPago $orden_pago)
+    {
+        /**
+         * La lógica de actualización del control de obra es distinta dependiendo del tipo de antecedente del item de factura
+         */
+        switch ($this->numero){
+            case 0:
+                ItemEntradaAlmacen::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                break;
+            case 1:
+                switch ($this->antecedente->tipo_transaccion){
+                    case 51:
+                        break;
+                    case 52:
+                        break;
+                }
+                break;
+            case 2:
+                ItemOrdenCompra::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 7:
+                break;
+        }
+
+    }
+
 }
