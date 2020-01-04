@@ -37,6 +37,25 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row ">
+                                        <label for="rfc" class="col-md-2" ><b>RFC: </b> </label>
+                                        <div class="col-md-10">
+                                            <input class="form-control"
+                                                   name="rfc"
+                                                   data-vv-as="RFC"
+                                                   v-model="rfc"
+                                                   :class="{'is-invalid':rfcValidate}"
+                                                   v-validate="{ required: true, regex: /\.(js|ts)$/ }"
+                                                   id="rfc"
+                                                   placeholder="RFC" :maxlength="16"/>
+                                            <span class="text-danger" v-if="rfcValidate">RFC Inválido</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -50,6 +69,7 @@
 </template>
 
 <script>
+    const rfcRegex =/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
     export default {
         name: "cliente-create",
         data() {
@@ -57,7 +77,8 @@
                 cargando : false,
                 razon_social : '',
                 rfc : '',
-                tipo_cliente : ''
+                tipo_cliente : '',
+                rfcValidate: false
             }
         },
         methods: {
@@ -79,11 +100,20 @@
             },
             validate() {
                 this.$validator.validate().then(result => {
+                    if(!rfcRegex.test(this.banco.rfc)){
+                        return this.invalidRFC();
+                    } else{
+                        this.rfcValidate=false;
+                    }
+
                     if (result) {
                         this.store()
                     }
                 });
             },
+            invalidRFC(){
+                this.rfcValidate=true;
+            }
         }
     }
 </script>
