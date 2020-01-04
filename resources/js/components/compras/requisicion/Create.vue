@@ -125,9 +125,9 @@
                                                 <tbody>
                                                     <tr v-for="(partida, i) in partidas">
                                                         <td>{{i+1}}</td>
-                                                        <td style="width: 50px;" v-if="partida.i === 0 && partida.material === ''">
+                                                        <td style="width: 70px;" v-if="partida.i === 0 && partida.material === ''">
                                                         </td>
-                                                        <td style="width: 150px;" v-else-if="partida.i === 1">
+                                                        <td style="width: 70px;" v-else-if="partida.i === 1">
                                                             <input
                                                                 type="text"
                                                                 data-vv-as="Número Parte"
@@ -139,7 +139,7 @@
                                                                 :class="{'is-invalid': errors.has(`numero_parte[${i}]`)}">
                                                             <div class="invalid-feedback" v-show="errors.has(`numero_parte[${i}]`)">{{ errors.first(`numero_parte[${i}]`) }}</div>
                                                         </td>
-                                                        <td v-else>{{partida.material.numero_parte}}</td>
+                                                        <td style="width: 70px;" v-else>{{partida.material.numero_parte}}</td>
                                                         <td style="width: 200px;" v-if="partida.i === 0 && partida.material === ''">
                                                             <model-list-select
                                                                 :name="`material[${i}]`"
@@ -166,8 +166,8 @@
                                                                 :class="{'is-invalid': errors.has(`descripcion[${i}]`)}">
                                                             <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
                                                         </td>
-                                                        <td v-else>{{partida.material.descripcion}}</td>
-                                                        <td v-if="partida.i === 0">
+                                                        <td style="width: 200px;" v-else>{{partida.material.descripcion}}</td>
+                                                        <td class="" v-if="partida.i === 0">
                                                             <button  type="button" class="btn btn-outline-primary btn-sm" @click="manual(i)" title="Ingresar material manualmente"><i class="fa fa-hand-paper-o" /></button>
                                                         </td>
                                                         <td v-else-if="partida.i === 1">
@@ -203,7 +203,7 @@
                                                         </td>
                                                         <td style="width: 100px;" v-else-if="partida.unidad">{{partida.unidad}}</td>
                                                         <td style="width: 100px;" v-else>{{partida.material.unidad}}</td>
-                                                        <td style="width:100px;">
+                                                        <td style="width:110px;">
                                                             <datepicker v-model="partida.fecha"
                                                                         :name="`fecha[${i}]`"
                                                                         :format = "formatoFecha"
