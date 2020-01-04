@@ -21,21 +21,21 @@
 
 <script>
     export default {
-        name: "familia-maq-index",
+        name: "cliente-index",
         // components:{Create},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'RFC', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Razon Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter')},
-                    { title: 'Tipo Cliente', field: 'tipo_cliente', sortable: true, thComp: require('../../../globals/th-Filter')},
+                    { title: 'RFC', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Razon Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Tipo Cliente', field: 'tipo_cliente', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'tipo:8',  sort: 'razon_social', order: 'desc'},
+                query: {sort: 'razon_social', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -51,10 +51,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/familia/paginate', { params: this.query})
+                return this.$store.dispatch('cadeco/cliente/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('cadeco/familia/SET_FAMILIAS', data.data);
-                        this.$store.commit('cadeco/familia/SET_META', data.meta);
+                        this.$store.commit('cadeco/cliente/SET_CLIENTES', data.data);
+                        this.$store.commit('cadeco/cliente/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -62,24 +62,26 @@
             },
         },
         computed: {
-            familias(){
-                return this.$store.getters['cadeco/familia/familias'];
+            clientes(){
+                return this.$store.getters['cadeco/cliente/clientes'];
             },
             meta(){
-                return this.$store.getters['cadeco/familia/meta'];
+                return this.$store.getters['cadeco/cliente/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            familias: {
-                handler(famls) {
+            clientes: {
+                handler(clientes) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = famls.map((familia, i) => ({
+                    self.$data.data = clientes.map((cliente, i) => ({
                         index: (i + 1) + self.query.offset,
-                        descripcion: familia.descripcion
+                        rfc: cliente.rfc,
+                        razon_social: cliente.razon_social,
+                        tipo_cliente: cliente.tipo
                     }));
                 },
                 deep: true

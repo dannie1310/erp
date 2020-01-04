@@ -18,6 +18,7 @@ import salidaAlmacen from './modules/almacenes/salida-almacen';
 
 import almacen from './modules/cadeco/almacen';
 import banco from './modules/cadeco/banco';
+import cliente from './modules/cadeco/cliente';
 import concepto from './modules/cadeco/concepto';
 import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
@@ -131,6 +132,7 @@ export default new Vuex.Store({
 
         'cadeco/almacen': almacen,
         'cadeco/banco': banco,
+        'cadeco/cliente': cliente,
         'cadeco/concepto': concepto,
         'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
