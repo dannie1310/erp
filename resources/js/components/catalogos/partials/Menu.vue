@@ -91,12 +91,24 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_proveedor')">
-                <router-link :to="{name: 'proveedor-contratista'}" class="nav-link">
-                    <i class="fa fa-circle nav-icon"></i>
-                    <p>Proveedor / contratista</p>
-                </router-link>
+            <li class="nav-item" v-if="catalogo_empresa">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>
+                        Catálogo de Empresas
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_proveedor')">
+                        <router-link :to="{name: 'proveedor-contratista'}" class="nav-link" :class="{active: this.$route.name == 'proveedor-contratista'}">
+                            <i class="fa fa-circle nav-icon"></i>
+                            <p>Proveedor / contratista</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
+            
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
@@ -107,7 +119,12 @@
         name: "catalogos-menu",
 
         computed: {
-
+            catalogo_empresa(){
+                return this.$root.can([
+                   'consultar_insumo_material',
+                   'consultar_proveedor'
+                ]);
+            },
         },
         methods: {
             mostrarMenu(event) {
