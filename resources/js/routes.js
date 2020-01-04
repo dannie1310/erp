@@ -364,7 +364,7 @@ export const routes = [
                                 name: 'CLIENTE'
                             },
                             middleware: [auth, context, permission],
-                            permission: ['consultar_familia_maquinaria']
+                            permission: ['consultar_cliente']
                         }
                     }
                 ]

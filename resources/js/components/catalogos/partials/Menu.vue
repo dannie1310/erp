@@ -100,7 +100,7 @@
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_cliente')">
                     <li class="nav-item" >
                         <router-link :to="{name: 'cliente'}" class="nav-link" :class="{active: this.$route.name == 'cliente'}">
                             <i class="fa fa-circle-o nav-icon"></i>
@@ -121,7 +121,7 @@
         computed: {
             catalogo_empresa(){
                 return this.$root.can([
-                   'consultar_insumo_material'
+                   'consultar_cliente'
                 ]);
             },
         },
