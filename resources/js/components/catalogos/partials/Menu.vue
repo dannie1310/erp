@@ -92,6 +92,23 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item" v-if="catalogo_empresa">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-server"></i>
+                    <p>
+                        Catálogo de Empresas
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_cliente')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'cliente'}" class="nav-link" :class="{active: this.$route.name == 'cliente'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Clientes</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
@@ -102,7 +119,11 @@
         name: "catalogos-menu",
 
         computed: {
-
+            catalogo_empresa(){
+                return this.$root.can([
+                   'consultar_cliente'
+                ]);
+            },
         },
         methods: {
             mostrarMenu(event) {

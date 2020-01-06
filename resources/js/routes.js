@@ -339,6 +339,37 @@ export const routes = [
                 }
             },
             {
+                path: 'empresa',
+                component: require('./components/catalogos/empresa/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'empresa',
+                        component: require('./components/catalogos/empresa/Index').default,
+                        meta: {
+                            title: 'Catálogo de Empresa',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE EMPRESA'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'cliente',
+                        name: 'cliente',
+                        component: require('./components/catalogos/empresa/cliente/Index').default,
+                        meta: {
+                            title: 'Cliente',
+                            breadcrumb: {
+                                parent: 'empresa',
+                                name: 'CLIENTE'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_cliente']
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'insumo-maquinaria',
                 component: require('./components/catalogos/insumo-maquinaria/Layout').default,
                 children: [

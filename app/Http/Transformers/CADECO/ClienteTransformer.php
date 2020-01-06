@@ -1,0 +1,44 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: DBenitezc
+ * Date: 03/01/2020
+ * Time: 01:43 PM
+ */
+
+namespace App\Http\Transformers\CADECO;
+
+
+use App\Models\CADECO\Cliente;
+use League\Fractal\TransformerAbstract;
+
+class ClienteTransformer extends TransformerAbstract
+{
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+
+    ];
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+
+    ];
+
+    public function transform(Cliente $model)
+    {
+        return [
+            'id' => $model->getKey(),
+            'razon_social' => $model->razon_social,
+            'rfc'=> $model->rfc,
+            'tipo' => $model->tipo
+        ];
+    }
+}
