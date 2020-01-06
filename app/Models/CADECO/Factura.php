@@ -162,4 +162,13 @@ class Factura extends Transaccion
         $this->estado = 2;
         $this->save();
     }
+
+    public function getFactorIvaAttribute()
+    {
+        if(($this->monto-$this->impuesto)>0) {
+            return $this->monto / ($this->monto-$this->impuesto);
+        } else {
+            return 1;
+        }
+    }
 }

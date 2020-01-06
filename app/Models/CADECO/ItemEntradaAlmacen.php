@@ -81,6 +81,11 @@ class ItemEntradaAlmacen extends Item
         return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
     }
 
+    public function itemsFactura()
+    {
+        return $this->hasMany(ItemFactura::class,"item_antecedente", "id_item");
+    }
+
     public function itemContratista()
     {
         return $this->belongsTo(ItemContratista::class, 'id_item');
@@ -113,15 +118,14 @@ class ItemEntradaAlmacen extends Item
      */
     public function actualizaControlObra(ItemFactura $item_factura, OrdenPago $orden_pago)
     {
-        $importe = round($orden_pago->monto * -1 * $item_factura->proporcion_item *  $item_factura->factura->tipo_cambio,2);
+        $importe = round($orden_pago->monto * -1 * $item_factura->proporcion_item ,2);
         if($this->inventario){
-            $this->inventario->monto_pagado = $this->inventario->monto_pagado +$importe;
+            $this->inventario->monto_pagado = round($this->inventario->monto_pagado +($importe *  $item_factura->factura->tipo_cambio),2);
             $this->inventario->save();
             $this->inventario->distribuirPagoInventarios();
-
         } else if($this->movimiento){
-            $this->movimiento->monto_pagado = $this->movimiento->monto_pagado +$importe;
-
+            $this->movimiento->monto_pagado = round($this->movimiento->monto_pagado +($importe *  $item_factura->factura->tipo_cambio),2);
+            $this->movimiento->save();
         } else
         {
             abort(500, "No se encontró la entidad de de control de obra relacionada con el item de la entrada");
