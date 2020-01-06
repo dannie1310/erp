@@ -31,7 +31,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'R.F.C', field: 'rfc',thComp: require('../../../globals/th-Filter').default, sortable: true},
+                    { title: 'R.F.C.', field: 'rfc',thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Razón Social', field: 'razon_social',thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Tipo', field: 'tipo_empresa', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
