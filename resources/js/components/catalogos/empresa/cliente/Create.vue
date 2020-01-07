@@ -39,14 +39,14 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group row ">
+                                    <div class="form-group row">
                                         <label for="rfc" class="col-md-2" ><b>RFC: </b> </label>
                                         <div class="col-md-10">
                                             <input class="form-control"
                                                    style="text-transform:uppercase;"
                                                    name="rfc"
                                                    data-vv-as="RFC"
-                                                   v-model="registro_cliente.rfc"
+                                                   v-model="rfc"
                                                    :class="{'is-invalid':rfcValidate}"
                                                    v-validate="{ required: true, regex: /\.(js|ts)$/ }"
                                                    id="rfc"
@@ -100,7 +100,7 @@
                         </div>
                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 || registro_cliente.id_tipo_cliente == ''">Registrar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -122,6 +122,7 @@
                     rfc : '',
                     porcentaje : 0,
                 },
+                rfc : '',
                 tipos_clientes: {
                     1: "Comprador",
                     2: "Inversionista",
@@ -136,7 +137,7 @@
                 $(this.$refs.modal).modal('show');
             },
             store() {
-                return this.$store.dispatch('cadeco/cliente/store', this.$data)
+                return this.$store.dispatch('cadeco/cliente/store', this.$data.registro_cliente)
                     .then(data => {
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');
@@ -146,12 +147,6 @@
             },
             validate() {
                 this.$validator.validate().then(result => {
-                    if(!rfcRegex.test(this.registro_cliente.rfc)){
-                        console.log(this.registro_cliente)
-                        return this.invalidRFC();
-                    } else{
-                        this.rfcValidate=false;
-                    }
                     if (result) {
                         this.store()
                     }
@@ -159,7 +154,26 @@
             },
             invalidRFC(){
                 this.rfcValidate=true;
+            },
+            validateRfc(value)
+            {
+                if(!rfcRegex.test(value)){
+                    console.log(1,rfcRegex.test(value),this.rfc, rfcRegex)
+                    return this.invalidRFC();
+                } else{
+                    console.log(2,rfcRegex.test(value),this.rfc, rfcRegex)
+                    this.rfcValidate=false;
+                    this.$validator.reset();
+                }
             }
+        },
+        watch: {
+            rfc(value) {
+                if(value.length > 12) {
+                    value = value.toLowerCase();
+                    this.validateRfc(value);
+                }
+            },
         }
     }
 </script>

@@ -39,4 +39,10 @@ class ClienteService
 
         return $cliente->paginate($data);
     }
+
+    public function store(array $data)
+    {
+        dd($data);
+        return $this->repository->create($data);
+    }
 }
