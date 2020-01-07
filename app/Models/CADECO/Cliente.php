@@ -32,4 +32,9 @@ class Cliente extends Empresa
             return 'Comprador / Inversionista';
         }
     }
+
+    public function getPorcentajeFormatAttribute()
+    {
+        return $this->porcentaje. ' %';
+    }
 }
