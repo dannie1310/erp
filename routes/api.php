@@ -42,6 +42,15 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\BancoController@update')->where(['id' => '[0-9]+']);
         });
 
+        // CLIENTES
+        $api->group(['prefix' => 'cliente'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\ClienteController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ClienteController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\ClienteController@store');
+
+        });
+
         // CONCEPTOS
         $api->group(['prefix' => 'concepto'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ConceptoController@index');

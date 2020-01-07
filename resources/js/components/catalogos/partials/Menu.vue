@@ -99,16 +99,23 @@
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_cliente')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'cliente'}" class="nav-link" :class="{active: this.$route.name == 'cliente'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Clientes</p>
+                        </router-link>
+                    </li>
+                </ul>
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_proveedor')">
                         <router-link :to="{name: 'proveedor-contratista'}" class="nav-link" :class="{active: this.$route.name == 'proveedor-contratista'}">
                             <i class="fa fa-circle nav-icon"></i>
-                            <p>Proveedor / contratista</p>
+                            <p>Proveedor / Contratista</p>
                         </router-link>
                     </li>
                 </ul>
             </li>
-            
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
@@ -121,8 +128,8 @@
         computed: {
             catalogo_empresa(){
                 return this.$root.can([
-                   'consultar_insumo_material',
-                   'consultar_proveedor'
+                   'consultar_cliente',
+                    'consultar_proveedor'
                 ]);
             },
         },
