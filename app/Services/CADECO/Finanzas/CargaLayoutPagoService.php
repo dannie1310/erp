@@ -283,17 +283,26 @@ class CargaLayoutPagoService
 
     private function validaFechaPago($fecha_pago){
         $fecha_pago = DateTime::createFromFormat('d/m/Y', $fecha_pago);
-        $hoy_str = date('Y-m-d');
-        $hoy = new DateTime();
-        $hace_2Y_str = date("Y-m-d",strtotime($hoy_str."- 2 years"));
-        $hace_2Y = DateTime::createFromFormat('Y-m-d', $hace_2Y_str);
-        if($fecha_pago>$hoy || $fecha_pago<$hace_2Y){
-            $fecha_pago = $hoy;
+        if($fecha_pago)
+        {
+            $hoy_str = date('Y-m-d');
+            $hoy = new DateTime();
+            $hace_2Y_str = date("Y-m-d",strtotime($hoy_str."- 2 years"));
+            $hace_2Y = DateTime::createFromFormat('Y-m-d', $hace_2Y_str);
+            if($fecha_pago>$hoy || $fecha_pago<$hace_2Y){
+                $fecha_pago = $hoy;
+            }
+            $fechas = array(
+                "fecha_hora"=> $fecha_pago->format('Y-m-d H:i:s'),
+                "fecha"=>$fecha_pago->format('Y-m-d')
+            );
+        } else {
+            $fechas = array(
+                "fecha_hora"=> "",
+                "fecha"=>""
+            );
         }
-        $fechas = array(
-            "fecha_hora"=> $fecha_pago->format('Y-m-d H:i:s'),
-            "fecha"=>$fecha_pago->format('Y-m-d')
-        );
+
         return $fechas;
     }
 }

@@ -241,17 +241,16 @@
                                         <div class="form-group row error-content">
                                             <label for="id_almacen" class="col-sm-2 col-form-label">Activos:</label>
                                             <div class="col-sm-10">
-                                                <select
+                                                <model-list-select
                                                         name="id_almacen"
-                                                        id="id_almacen"
+                                                        placeholder="Seleccionar o buscar descripción del almacén"
                                                         data-vv-as="Almacén"
-                                                        class="form-control"
-                                                        v-model="almacen_temporal"
-                                                        :class="{'is-invalid': errors.has('id_almacen')}"
-                                                >
-                                                    <option value="">-- Almacén --</option>
-                                                    <option v-for="almacen in almacenes" :value="almacen">{{ almacen.descripcion }}</option>
-                                                </select>
+                                                        v-model="id_almacen_temporal"
+                                                        option-value="id"
+                                                        option-text="descripcion"
+                                                        :list="almacenes"
+                                                        >
+                                                </model-list-select>
                                                 <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                             </div>
                                         </div>
@@ -273,9 +272,11 @@
     import ConceptoSelect from "../../cadeco/concepto/Select";
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import {ModelListSelect} from 'vue-search-select';
+
     export default {
         name: "entrada-almacen-create",
-        components: {ConceptoSelect, Datepicker},
+        components: {ConceptoSelect, Datepicker, ModelListSelect},
         data() {
             return {
                 datos_store:{},
@@ -292,7 +293,7 @@
                 cargando: false,
                 bandera : 0,
                 index_temporal : '',
-                almacen_temporal : '',
+                id_almacen_temporal : '',
                 id_concepto_temporal : '',
                 almacenes : [],
                 cargos: {
@@ -334,7 +335,7 @@
                 this.cargando = false;
                 this.bandera = 0;
                 this.index_temporal = '';
-                this.almacen_temporal = '';
+                this.id_almacen_temporal = '';
                 this.id_concepto_temporal = '';
                 this.almacenes = [];
                 this.partidas = [];
@@ -373,7 +374,7 @@
                 this.$store.commit('cadeco/almacen/SET_ALMACENES', []);
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/almacen/index', {
-
+                    params: {sort: 'descripcion', order: 'asc', }
                 })
                     .then(data => {
                         this.almacenes = data.data
@@ -382,6 +383,18 @@
 
             getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
+                    id: this.destino_seleccionado.id_destino,
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.destino_seleccionado.destino = data;
+                        this.seleccionarDestino();
+                    })
+            },
+
+            getAlmacen() {
+                return this.$store.dispatch('cadeco/almacen/find', {
                     id: this.destino_seleccionado.id_destino,
                     params: {
                     }
@@ -530,13 +543,13 @@
                     id_destino : ''
                 };
                 this.id_concepto_temporal = '';
-                this.almacen_temporal = '';
+                this.id_almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
             cerrarModalDestino(){
                 this.id_concepto_temporal = '';
-                this.almacen_temporal = '';
+                this.id_almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
@@ -562,19 +575,18 @@
             },
             id_concepto_temporal(value){
                 if(value !== '' && value !== null && value !== undefined){
-                    this.almacen_temporal = '';
+                    this.id_almacen_temporal = '';
                     this.destino_seleccionado.id_destino = value;
                     this.destino_seleccionado.tipo_destino = 1;
                     this.getConcepto();
                 }
             },
-            almacen_temporal(value){
+            id_almacen_temporal(value){
                 if(value !== '' && value !== null && value !== undefined){
                     this.id_concepto_temporal = '';
-                    this.destino_seleccionado.id_destino = value.id;
+                    this.destino_seleccionado.id_destino = value;
                     this.destino_seleccionado.tipo_destino = 2;
-                    this.destino_seleccionado.destino = value;
-                    this.seleccionarDestino();
+                    this.getAlmacen();
                 }
             },
         }
