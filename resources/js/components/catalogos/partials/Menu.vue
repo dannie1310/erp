@@ -58,7 +58,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="catalogo || $root.can('consultar_insumo_material')|| $root.can('consultar_insumo_herramienta_equipo')">
+            <li class="nav-item" v-if="$root.can('consultar_insumo_material')|| $root.can('consultar_insumo_herramienta_equipo')">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-server"></i>
                     <p>
@@ -66,7 +66,6 @@
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
-
                 <ul class="nav nav-treeview">
                     <li class="nav-item" >
                         <router-link :to="{name: 'cat-familia'}" class="nav-link" :class="{active: this.$route.name == 'cat-familia'}">
@@ -108,6 +107,14 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_proveedor')">
+                        <router-link :to="{name: 'proveedor-contratista'}" class="nav-link" :class="{active: this.$route.name == 'proveedor-contratista'}">
+                            <i class="fa fa-circle nav-icon"></i>
+                            <p>Proveedor / Contratista</p>
+                        </router-link>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>
@@ -121,7 +128,8 @@
         computed: {
             catalogo_empresa(){
                 return this.$root.can([
-                   'consultar_cliente'
+                   'consultar_cliente',
+                    'consultar_proveedor'
                 ]);
             },
         },

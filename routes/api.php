@@ -126,6 +126,10 @@ $api->version('v1', function ($api) {
             $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
         });
 
+        $api->group(['prefix' => 'proveedor-contatista'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@paginate');
+        });
+
         // SUCURSAL
         $api->group(['prefix' => 'sucursal'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\SucursalController@index');
@@ -176,8 +180,15 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Compras\AreaSolicitanteController@show')->where(['id' => '[0-9]+']);
         });
 
-        $api->group(['prefix'=>'ctg_tipo'], function ($api){
-            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Compras\CtgTipoController@index');
+        /// NODOS TIPO
+        $api->group(['prefix' => 'nodo-tipo'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoTipoController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoTipoController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoTipoController@store');
+        });
+        // NODOS PROYECTO
+        $api->group(['prefix' => 'nodo-proyecto'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoProyectoController@show')->where(['id' => '[0-9]+']);
         });
     });
 

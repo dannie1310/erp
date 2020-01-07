@@ -29,6 +29,7 @@ import inventario from './modules/cadeco/inventario';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
+import proveedorContratista from './modules/cadeco/proveedor-contratista';
 import sucursal from './modules/cadeco/sucursal';
 import unidad from './modules/cadeco/unidad'
 
@@ -45,6 +46,10 @@ import solicitudCompra from './modules/compras/solicitud-compra';
 import areaCompradora from './modules/configuracion/area-compradora';
 import areaSolicitante from './modules/configuracion/area-solicitante';
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
+
+// CONFIGURACION CADECO
+import nodoTipo from './modules/configuracion/nodo-tipo';
+import nodoProyecto from './modules/configuracion/nodo-proyecto';
 
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo';
@@ -143,6 +148,7 @@ export default new Vuex.Store({
         'cadeco/material': material,
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
+        'cadeco/proveedor-contratista': proveedorContratista,
         'cadeco/sucursal': sucursal,
         'cadeco/unidad': unidad,
 
@@ -157,6 +163,9 @@ export default new Vuex.Store({
         'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
         'configuracion/ctg-tipo': ctgtipo,
+
+        'configuracion/nodo-tipo' : nodoTipo,
+        'configuracion/nodo-proyecto' : nodoProyecto,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,

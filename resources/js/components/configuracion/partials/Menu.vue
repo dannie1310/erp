@@ -55,6 +55,14 @@
                 </a>
             </li>
 
+            <li class="nav-header" v-if="$root.can('consultar_asignacion_nodo_tipo')"><a href="#configuracion-conceptos">CONFIGURACIÓN CONCEPTOS</a></li>
+            <li class="nav-item" v-if="$root.can('consultar_asignacion_nodo_tipo')">
+                <a href="#configuracion-conceptos" class="nav-link">
+                    <i class="fa fa-circle-o nav-icon"></i>
+                    <p>Conceptos</p>
+                </a>
+            </li>
+
             <li class="nav-header" v-if="$root.can('editar_configuracion_contable')"><a href="#configuracion-contable">CONFIGURACIÓN CONTABLE</a></li>
             <li class="nav-item" v-if="$root.can('editar_configuracion_contable')">
                 <a href="#contpaq" class="nav-link">
