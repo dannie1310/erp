@@ -32,12 +32,12 @@
                     { title: 'Razón Social', field: 'razon_social',thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Tipo', field: 'tipo_empresa', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
-
-
                 ],
                 data: [],
                 total: 0,
                 query: {
+                    sort: 'id_empresa',
+                    order: 'desc'
                 },
                 cargando: false
 

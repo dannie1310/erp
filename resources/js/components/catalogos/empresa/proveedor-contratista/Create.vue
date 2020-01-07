@@ -178,7 +178,6 @@ export default {
                 .then((data) => {
                     $(this.$refs.modal).modal('hide');
                     this.$emit('created',data)
-
                 })
         },
         tipos_empresas(){
