@@ -57,10 +57,11 @@
                                         <label for="no_proveedor_virtual" class="col-sm-5 col-form-label">No. Proveedor Virtual: </label>
                                         <div class="col-sm-7">
                                             <input
-                                                    type="text"
+                                                    type="number"
+                                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                                     name="no_proveedor_virtual"
                                                     data-vv-as="No. Proveedor Virtual"
-                                                    v-validate="{required: true}"
+                                                    v-validate="{}"
                                                     class="form-control"
                                                     id="no_proveedor_virtual"
                                                     placeholder="No. Proveedor Virtual"
@@ -75,10 +76,11 @@
                                         <label for="dias_credito" class="col-sm-5 col-form-label">Días Crédito: </label>
                                         <div class="col-sm-7">
                                             <input
-                                                    type="text"
+                                                    type="number"
+                                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                                     name="dias_credito"
                                                     data-vv-as="Días Crédito"
-                                                    v-validate="{required: true}"
+                                                    v-validate="{min_value:0, max_value:365, decimal:0}"
                                                     class="form-control"
                                                     id="dias_credito"
                                                     placeholder="Días Crédito"
@@ -93,10 +95,10 @@
                                         <label for="porcentaje" class="col-sm-5 col-form-label">Descuento Financiero: </label>
                                         <div class="col-sm-7">
                                             <input
-                                                    type="text"
+                                                    type="number"
                                                     name="porcentaje"
                                                     data-vv-as="Descuento Financiero"
-                                                    v-validate="{required: true}"
+                                                    v-validate="{min_value:0, max_value:100, decimal:2}"
                                                     class="form-control"
                                                     id="porcentaje"
                                                     placeholder="Descuento Financiero"
@@ -108,18 +110,18 @@
                                 </div>
                                 <div class="col-md-12">
                                    <div class="form-group row error-content">
-                                        <label for="id_empresa" class="col  sm-2 col-form-label">Tipo Beneficiario: </label>
-                                        <div class="col-sm-10">
+                                        <label for="id_empresa" class="col  sm-3 col-form-label">Tipo Proveedor y/o Contratista: </label>
+                                        <div class="col-sm-9">
                                             <div class="btn-group btn-group-toggle">
-                                                <label class="btn btn-outline-secondary" :class="id_tipo_empresa === Number(key) ? 'active': ''" v-for="(tipo_empresa, key) in tipos_empresas" :key="key">
+                                                <label class="btn btn-outline-secondary" :class="tipo_empresa === Number(key) ? 'active': ''" v-for="(tipo, key) in tipos_empresas()" :key="key">
                                                     <input type="radio"
                                                         class="btn-group-toggle"
                                                         name="id_tipo_empresa"
                                                         :id="'tipo_empresa' + key"
                                                         :value="key"
                                                         autocomplete="on"
-                                                        v-model.number="id_tipo_empresa">
-                                                    {{ tipo_empresa }}
+                                                        v-model.number="tipo_empresa">
+                                                    {{ tipo }}
                                                 </label>
                                             </div>
                                         </div>
@@ -148,12 +150,8 @@ export default {
             no_proveedor_virtual:'',
             dias_credito:'',
             porcentaje:'',
-            id_tipo_empresa:'',
-            tipos_empresas: {
-                1: "Proveedor",
-                2: "Contratista",
-                3: "Proveedor y Contratista"
-            },
+            tipo_empresa:'',
+            tipo_cliente:0,
         }
     },
     mounted() {
@@ -173,15 +171,31 @@ export default {
             this.no_proveedor_virtual = '';
             this.dias_credito = '';
             this.porcentaje = '';
-            this.id_tipo_empresa = '';
+            this.tipo_empresa = '';
         },
         store(){
-            console.log('Panda Store');
+            return this.$store.dispatch('cadeco/proveedor-contratista/store', this.$data)
+                .then((data) => {
+                    $(this.$refs.modal).modal('hide');
+                    this.$emit('created',data)
+
+                })
+        },
+        tipos_empresas(){
+            return {
+                1: "Proveedor",
+                2: "Contratista",
+                3: "Proveedor y Contratista"
+            };
         },
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    this.store()
+                    if(this.tipo_empresa === ''){
+                        swal('¡Error!', 'Seleccione un Tipo Proveedor y/o Contratista.', 'error')
+                    }else{
+                        this.store()
+                    }
                 }
             });
         },

@@ -20,22 +20,4 @@ class ProveedorContratista extends Empresa
             return $query->whereIn('tipo_empresa', [1,2,3]);
         });
     }
-
-    public function getTipoProveedorContratistaAttribute(){
-        switch ($this->tipo_empresa) {
-            case 1:
-                return 'Proveedor';
-                break;
-            case 2:
-                return 'Contratista';
-                break;
-            case 3:
-                return 'Proveedor y Contratista';
-                break;
-            
-            default:
-                return '';
-                break;
-        }
-    }
 }

@@ -27,7 +27,7 @@ class ProveedorContratistaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'tipo_empresa'=> $model->tipo_empresa,
             'razon_social' => $model->razon_social,
-            'tipo' => $model->tipo_proveedor_contratista,
+            'tipo' => $model->tipo,
             'rfc' => $model->rfc,
         ];
     }
