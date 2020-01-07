@@ -38,7 +38,9 @@ class ClienteTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'razon_social' => $model->razon_social,
             'rfc'=> $model->rfc,
-            'tipo' => $model->tipo
+            'tipo' => $model->tipo,
+            'porcentaje' => $model->porcentaje,
+            'porcentaje_format' => $model->porcentaje_format
         ];
     }
 }
