@@ -56,6 +56,7 @@ class ItemFactura extends Item
             case 1:
                 switch ($this->antecedente->tipo_transaccion){
                     case 51:
+                        Subcontrato::find($this->id_antecedente)->actualizaControlObra($this, $orden_pago);
                         break;
                     case 52:
                         break;

@@ -212,4 +212,23 @@ class Subcontrato extends Transaccion
             }
         }
     }
+
+    /**
+     * Este método implementa la lógica actualización de control de obra del procedimiento almacenado sp_aplicar_pagos
+     * y se detona al registrar una orden de pago
+     */
+    public function actualizaControlObra(ItemFactura $item_factura, OrdenPago $orden_pago)
+    {
+        $importe = round($orden_pago->monto * -1 * $item_factura->proporcion_item ,2);
+        if($this->anticipo_monto >0){
+            $factor = $importe / $this->anticipo_monto;
+        } else {
+            $factor = 1;
+        }
+        $estimaciones = $this->estimaciones;
+        if($estimaciones)
+        {
+
+        }
+    }
 }

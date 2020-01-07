@@ -8,9 +8,6 @@
 
 namespace App\Models\CADECO;
 
-
-use App\Models\CADECO\Compras\ItemContratista;
-
 class EntradaMaterialPartida extends ItemEntradaAlmacen
 {
     /*
