@@ -35,7 +35,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item" >
-                        <router-link :to="{name: 'familia'}" class="nav-link" :class="{active: this.$route.name == 'familia'}">
+                        <router-link :to="{name: 'lista-efos'}" class="nav-link" :class="{active: this.$route.name == 'lista-efos'}">
                             <i class="fa fa-times nav-icon"></i>
                             <p>EFO´s</p>
                         </router-link>
