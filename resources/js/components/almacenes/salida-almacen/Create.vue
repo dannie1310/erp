@@ -317,18 +317,18 @@
                                 <div class="row" v-if="dato.opciones==65537">
                                     <div class="col-12">
                                         <div class="form-group row error-content">
-                                            <label for="id_concepto" class="col-sm-2 col-form-label">Activos:</label>
+                                            <label for="id_almacen" class="col-sm-2 col-form-label">Activos:</label>
                                             <div class="col-sm-10">
-                                                <select
-                                                        name="id_almacen"
-                                                        id="id_almacen_temporal"
+                                                <model-list-select
+                                                        :name="id_almacen"
+                                                        placeholder="Seleccionar o buscar descripción del almacén"
                                                         data-vv-as="Almacén"
-                                                        class="form-control"
-                                                        v-model="almacen_temporal"
+                                                        v-model="id_almacen_temporal"
+                                                        option-value="id"
+                                                        option-text="descripcion"
+                                                        :list="almacenes"
                                                 >
-                                                    <option value="">-- Almacén --</option>
-                                                    <option v-for="almacen in almacenes" :value="almacen">{{ almacen.descripcion }}</option>
-                                                </select>
+                                                </model-list-select>
                                             </div>
                                         </div>
                                     </div>
@@ -404,7 +404,7 @@
                 cargando: false,
                 bandera : 0,
                 index_temporal : '',
-                almacen_temporal : '',
+                id_almacen_temporal : '',
                 id_concepto_temporal : '',
                 destino_copiado: {
                     tipo_destino : '',
@@ -496,6 +496,17 @@
             },
             getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
+                    id: this.destino_seleccionado.id_destino,
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.destino_seleccionado.destino = data;
+                        this.seleccionarDestino();
+                    })
+            },
+            getAlmacen() {
+                return this.$store.dispatch('cadeco/almacen/find', {
                     id: this.destino_seleccionado.id_destino,
                     params: {
                     }
@@ -696,13 +707,13 @@
                     id_destino : ''
                 };
                 this.id_concepto_temporal = '';
-                this.almacen_temporal = '';
+                this.id_almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
             cerrarModalDestino(){
                 this.id_concepto_temporal = '';
-                this.almacen_temporal = '';
+                this.id_almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
@@ -743,14 +754,13 @@
                     this.getConcepto();
                 }
             },
-            almacen_temporal(value){
+            id_almacen_temporal(value){
                 if(value !== '' && value !== null && value !== undefined){
                     this.id_concepto_temporal = '';
-                    this.destino_seleccionado.id_destino = value.id;
+                    this.destino_seleccionado.id_destino = value;
                     this.destino_seleccionado.tipo_destino = 2;
-                    this.destino_seleccionado.destino = value;
-                    if(value.id != this.id_almacen) {
-                        this.seleccionarDestino();
+                    if(value != this.id_almacen) {
+                        this.getAlmacen();
                     } else {
                         swal('Atención', 'No puede seleccionar como destino el almacén origen.', 'warning');
                     }
