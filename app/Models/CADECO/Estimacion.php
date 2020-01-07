@@ -65,7 +65,7 @@ class Estimacion extends Transaccion
      */
     public function retencion_fondo_garantia()
     {
-        return $this->hasOne(RetencionFondoGarantia::class,'id_estimacion','id_transaccion');
+        return $this->hasOne(RetencionFondoGarantia::class, 'id_estimacion', 'id_transaccion');
     }
 
     public function subcontrato()
@@ -100,7 +100,7 @@ class Estimacion extends Transaccion
     {
         \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->create([
             'IDEstimacion' => $this->id_transaccion,
-			'NumeroFolioConsecutivo' => $this->generaFolioConsecutivo()
+            'NumeroFolioConsecutivo' => $this->generaFolioConsecutivo()
         ]);
     }
 
@@ -116,7 +116,7 @@ class Estimacion extends Transaccion
             ->where('IDSubcontrato', '=', $this->id_antecedente)
             ->first();
 
-        if($folio) {
+        if ($folio) {
             $folio->UltimoFolio += 1;
             $folio->save();
         } else {
@@ -158,14 +158,13 @@ class Estimacion extends Transaccion
             ->first();
 
         $subcontratoEstimacion->PorcentajeFondoGarantia = ($this->subcontrato->retencion / 100);
-        $subcontratoEstimacion-> ImporteFondoGarantia = $fondo_garantia;
+        $subcontratoEstimacion->ImporteFondoGarantia = $fondo_garantia;
         $subcontratoEstimacion->save();
     }
 
     public function generaRetencion()
     {
-        if(is_null($this->retencion_fondo_garantia))
-        {
+        if (is_null($this->retencion_fondo_garantia)) {
             if ($this->retencion > 0) {
                 $retencion_fondo_garantia = new RetencionFondoGarantia();
                 $retencion_fondo_garantia->id_estimacion = $this->id_transaccion;
@@ -213,12 +212,22 @@ class Estimacion extends Transaccion
 
     public function getImporteRetencionAttribute()
     {
-        return $this->monto*$this->retencion /100;
+        return $this->monto * $this->retencion / 100;
     }
 
     public function getSumaImportesAttribute()
     {
-        return $this->items()->sum('importe');
+        return $this->items->sum('importe');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function movimientos()
+    {
+        return $this->hasManyThrough(Movimiento::class, ItemEstimacion::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
     }
 
     public function getAmortizacionPendienteAttribute()
@@ -270,7 +279,7 @@ class Estimacion extends Transaccion
             $this->monto
 
             - ($this->subcontratoEstimacion ? $this->subcontratoEstimacion->ImporteFondoGarantia : 0)
-            - (!in_array(Context::getDatabase(),['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM']) ? $this->descuentos->sum('importe') : 0)
+            - (!in_array(Context::getDatabase(), ['SAO1814_TERMINAL_NAICM', 'SAO1814_DEV_TERMINAL_NAICM']) ? $this->descuentos->sum('importe') : 0)
             - $this->retenciones->sum('importe')
             - $this->IVARetenido
             + $this->liberaciones->sum('importe')
@@ -300,7 +309,7 @@ class Estimacion extends Transaccion
 
     public function prepoliza()
     {
-        return $this->belongsTo(Poliza::class,  'id_transaccion', 'id_transaccion_sao');
+        return $this->belongsTo(Poliza::class, 'id_transaccion', 'id_transaccion_sao');
     }
 
     public function estimacionEliminada()
@@ -312,11 +321,11 @@ class Estimacion extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-                $this->respaldar($motivo);
-                $this->partidas()->delete();
-                $this->delete();
+            $this->respaldar($motivo);
+            $this->partidas()->delete();
+            $this->delete();
             DB::connection('cadeco')->commit();
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
@@ -330,40 +339,34 @@ class Estimacion extends Transaccion
     {
         $mensaje = "";
 
-        if($this->estado != 0)
-        {
+        if ($this->estado != 0) {
             abort(400, "No se puede eliminar está estimación porque se encuentra Autorizada.");
         }
 
-        if($this->prepoliza()->first() != null)
-        {
-            if($this->prepoliza->estatus != -3)
-            {
-                $mensaje = $mensaje."-Prepoliza: # ".$this->prepoliza->id_int_poliza." \n";
+        if ($this->prepoliza()->first() != null) {
+            if ($this->prepoliza->estatus != -3) {
+                $mensaje = $mensaje . "-Prepoliza: # " . $this->prepoliza->id_int_poliza . " \n";
             };
         }
 
-        if($this->facturas()->first() != null)
-        {
+        if ($this->facturas()->first() != null) {
             $factura_item = [];
-            foreach ($this->facturas as $factura){
+            foreach ($this->facturas as $factura) {
                 array_push($mensaje_items, "-Factura: #" . $factura->numero_folio . " \n");
             }
 
             $factura_item = array_unique($factura_item);
-            if($factura_item != [])
-            {
+            if ($factura_item != []) {
                 $mensaje_fin = "";
                 foreach ($factura_item as $mensaje_item) {
                     $mensaje_fin = $mensaje_fin . $mensaje_item;
                 }
-                $mensaje = $mensaje.$mensaje_fin;
+                $mensaje = $mensaje . $mensaje_fin;
             }
         }
 
-        if($mensaje != "")
-        {
-            abort(400, "No se puede eliminar la estimación debido a que existen las siguientes transacciones relacionadas:\n". $mensaje. "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        if ($mensaje != "") {
+            abort(400, "No se puede eliminar la estimación debido a que existen las siguientes transacciones relacionadas:\n" . $mensaje . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
         }
     }
 
@@ -425,11 +428,34 @@ class Estimacion extends Transaccion
 
     public function getSubtotalFormatAttribute()
     {
-        return '$ ' . number_format($this->subtotal,2);
+        return '$ ' . number_format($this->subtotal, 2);
     }
 
     public function getImpuestoFormatAttribute()
     {
-        return '$ ' . number_format($this->impuesto,2);
+        return '$ ' . number_format($this->impuesto, 2);
+    }
+
+    /**
+     * Este método implementa la lógica actualización de control de obra del procedimiento almacenado sp_aplicar_pagos
+     * y se detona al registrar una orden de pago relacionada a una factura que ampara una estimación
+     */
+    public function actualizaControlObra(ItemFactura $item_factura, OrdenPago $orden_pago)
+    {
+        $importe = round($orden_pago->monto * -1 * $item_factura->proporcion_item, 2);
+        $tipo_cambio = $item_factura->factura->tipo_cambio;
+        $monto_total = 0;
+        if ($this->movimientos) {
+            $monto_total = $this->movimientos->sum("monto_total");
+        }
+        if ($monto_total > 0) {
+            if ($this->movimientos) {
+                foreach ($this->movimientos as $movimiento) {
+                    $movimiento->monto_pagado = round(($movimiento->monto_pagado + $movimiento->monto_total * $importe
+                        * $tipo_cambio / $monto_total), 2);
+                    $movimiento->save();
+                }
+            }
+        }
     }
 }
