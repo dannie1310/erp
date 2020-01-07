@@ -29,7 +29,11 @@ class Empresa extends Model
         'razon_social',
         'UsuarioRegistro',
         'id_ctg_bancos',
-        'rfc'
+        'rfc',
+        'dias_credito',
+        'no_proveedor_virtual',
+        'porcentaje',
+        'tipo_cliente'
     ];
 
     public function cuentasEmpresa()

@@ -8,6 +8,9 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Sucursal;
+use App\Models\CADECO\Suministrados;
+
 
 
 class ProveedorContratista extends Empresa
@@ -19,5 +22,13 @@ class ProveedorContratista extends Empresa
         self::addGlobalScope(function ($query) {
             return $query->whereIn('tipo_empresa', [1,2,3]);
         });
+    }
+
+    public function sucursales(){
+        return $this->hasMany(Sucursal::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function suministrados(){
+        return $this->hasMany(Suministrados::class, 'id_empresa', 'id_empresa');
     }
 }

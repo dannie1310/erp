@@ -45,4 +45,9 @@ class ProveedorContratistaService
     {
         return $this->repository->create($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

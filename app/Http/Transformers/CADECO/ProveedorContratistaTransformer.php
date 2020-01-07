@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO;
 
 use League\Fractal\TransformerAbstract;
 use App\Models\CADECO\ProveedorContratista;
+use App\Http\Transformers\CADECO\SuministradosTransformer;
 
 class ProveedorContratistaTransformer extends TransformerAbstract
 {
@@ -19,6 +20,7 @@ class ProveedorContratistaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'suministrados'
     ];
 
     public function transform(ProveedorContratista $model)
@@ -29,6 +31,20 @@ class ProveedorContratistaTransformer extends TransformerAbstract
             'razon_social' => $model->razon_social,
             'tipo' => $model->tipo,
             'rfc' => $model->rfc,
+            'proveedor_virtual' => $model->no_proveedor_virtual,
+            'dias_credito' => $model->dias_credito,
+            'porcentaje' => $model->porcentaje
         ];
+    }
+
+    /**
+     * @param Suministrados $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSuministrados(ProveedorContratista $model) {
+        if ($suministrados = $model->suministrados) {
+            return $this->collection($suministrados, new SuministradosTransformer);
+        }
+        return null;
     }
 }
