@@ -48,7 +48,7 @@
                                                    data-vv-as="RFC"
                                                    v-model="rfc"
                                                    :class="{'is-invalid':rfcValidate}"
-                                                   v-validate="{ required: true, regex: /\.(js|ts)$/ }"
+                                                   v-validate="{ required: true }"
                                                    id="rfc"
                                                    placeholder="RFC" :maxlength="16"/>
                                             <span class="text-danger" v-if="rfcValidate">RFC Inválido</span>
@@ -59,17 +59,17 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="id_tipo_cliente" class="col  sm-2 col-form-label">Tipo Cliente: </label>
+                                        <label for="tipo_cliente" class="col  sm-2 col-form-label">Tipo Cliente: </label>
                                         <div class="col-sm-10">
                                             <div class="btn-group btn-group-toggle">
-                                                <label class="btn btn-outline-secondary" :class="registro_cliente.id_tipo_cliente === Number(key) ? 'active': ''" v-for="(tipo_cliente, key) in tipos_clientes" :key="key">
+                                                <label class="btn btn-outline-secondary" :class="registro_cliente.tipo_cliente === Number(key) ? 'active': ''" v-for="(tipo_cliente, key) in tipos_clientes" :key="key">
                                                     <input type="radio"
                                                         class="btn-group-toggle"
                                                         name="id_tipo_cliente"
                                                         :id="'tipo_cliente' + key"
                                                         :value="key"
                                                         autocomplete="on"
-                                                        v-model.number="registro_cliente.id_tipo_cliente">
+                                                        v-model.number="registro_cliente.tipo_cliente">
                                                         {{ tipo_cliente }}
                                                 </label>
                                             </div>
@@ -100,7 +100,7 @@
                         </div>
                         <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0">Registrar</button>
+                                <button type="button" class="btn btn-primary" :disabled="errors.count() > 0" v-on:click="validate">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -117,7 +117,7 @@
             return {
                 cargando : false,
                 registro_cliente : {
-                    id_tipo_cliente : '',
+                    tipo_cliente : '',
                     razon_social : '',
                     rfc : '',
                     porcentaje : 0,
@@ -147,7 +147,8 @@
             },
             validate() {
                 this.$validator.validate().then(result => {
-                    if (result) {
+                    this.registro_cliente.razon_social = this.registro_cliente.razon_social.toUpperCase();
+                    if (result && this.rfcValidate == false) {
                         this.store()
                     }
                 });
@@ -155,24 +156,22 @@
             invalidRFC(){
                 this.rfcValidate=true;
             },
-            validateRfc(value)
+            validateRfc()
             {
-                if(!rfcRegex.test(value)){
-                    console.log(1,rfcRegex.test(value),this.rfc, rfcRegex)
+                if(!rfcRegex.test(this.rfc)){
                     return this.invalidRFC();
                 } else{
-                    console.log(2,rfcRegex.test(value),this.rfc, rfcRegex)
                     this.rfcValidate=false;
+                    this.registro_cliente.rfc = this.rfc
                     this.$validator.reset();
                 }
             }
         },
         watch: {
             rfc(value) {
-                if(value.length > 12) {
-                    value = value.toLowerCase();
-                    this.validateRfc(value);
-                }
+                this.rfc = this.rfc.toUpperCase();
+                this.validateRfc();
+
             },
         }
     }

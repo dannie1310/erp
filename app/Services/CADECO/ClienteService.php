@@ -10,7 +10,7 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Cliente;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Cliente\Repository;
 
 class ClienteService
 {
@@ -42,7 +42,6 @@ class ClienteService
 
     public function store(array $data)
     {
-        dd($data);
         return $this->repository->create($data);
     }
 }
