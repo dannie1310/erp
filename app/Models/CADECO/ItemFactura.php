@@ -25,6 +25,21 @@ class ItemFactura extends Item
         return $this->belongsTo(Factura::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function inventario()
+    {
+        return $this->belongsTo(Inventario::class, 'id_item', 'id_item');
+    }
+
+    public function material()
+    {
+        return $this->belongsTo(Material::class, 'id_material');
+    }
+
+    public function movimiento()
+    {
+        return $this->belongsTo(Movimiento::class, 'id_item', 'id_item');
+    }
+
     public function itemAntecedente()
     {
         return $this->belongsTo(Item::class, 'item_antecedente', 'id_item');
@@ -46,6 +61,8 @@ class ItemFactura extends Item
      */
     public function actualizaControlObra(OrdenPago $orden_pago)
     {
+        $importe = round($orden_pago->monto * -1 * $this->proporcion_item ,2);
+        $tipo_cambio = $this->factura->tipo_cambio;
         /**
          * La lógica de actualización del control de obra es distinta dependiendo del tipo de antecedente del item de factura
          */
@@ -78,9 +95,20 @@ class ItemFactura extends Item
                 }
                 break;
             case 7:
+                if($this->inventario){
+                    $this->inventario->monto_pagado = $this->inventario->monto_pagado +
+                        round($importe * $this->factura->tipo_cambio,2);
+                    $this->inventario->monto_pagado->save();
+                    $this->inventario->distribuirPagoInventarios();
+
+                } else {
+                    $this->movimiento->monto_pagado = $this->movimiento->monto_pagado +
+                        round($importe * $tipo_cambio,2);
+                    $this->movimiento->monto_pagado->save();
+                }
                 break;
         }
-        $importe = round($orden_pago->monto * -1 * $this->proporcion_item ,2);
+
         $saldo = (($this->saldo - $importe) > 0.01) ? round(($this->saldo - $importe),2) :0;
         $this->autorizado = $this->autorizado-$importe;
         $this->saldo = $saldo;
