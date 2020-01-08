@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
@@ -64,6 +65,11 @@ class Empresa extends Model
     public function cuentasBancarias()
     {
         return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function efo()
+    {
+        return $this->belongsTo(CtgEfos::class, 'rfc', 'rfc');
     }
 
     public function scopeConCuentas($query)
@@ -171,11 +177,21 @@ class Empresa extends Model
     }
 
     public function validaRFC($data){
-        if(isset($data->rfc1)){
+        $this->rfcValidaEfos($data->rfc);
+        if(isset($data->rfc)){
             if(strlen(str_replace(" ","", $data->rfc))>0){
                 $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tien un formato inválido.');
-                $this->where('rfc', '=', str_replace(" ","", $data->rfc))->count() > 0 ? abort(403, 'La empresa ya esta registrada.'):'';
+                $this->rfcValidaEfos($data->rfc);
+                //$this->where('rfc', '=', str_replace(" ","", $data->rfc))->count() > 0 ? abort(403, 'La empresa ya esta registrada.'):'';
             }   
+        }
+    }
+
+    private function rfcValidaEfos($rfc)
+    {
+        if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 0)->first()))
+        {
+            abort(403, 'Está empresa a registrar es un EFO.');
         }
     }
 

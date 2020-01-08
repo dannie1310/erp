@@ -11,5 +11,8 @@ class CtgEfos extends Model
     protected $connection = 'seguridad';
     protected $table = 'Finanzas.ctg_efos';
 
-
+    public function ctgEstado()
+    {
+        return $this->belongsTo(CtgEstadosEfos::class, 'estado', 'id');
+    }
 }
