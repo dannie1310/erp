@@ -99,6 +99,7 @@ import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
+import ctgEfosLog from './modules/seguridad/finanzas/ctg-efos-log';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
 import ctgtipo from './modules/configuracion/ctg-tipo';
 import permiso from './modules/seguridad/permiso';
@@ -218,6 +219,7 @@ export default new Vuex.Store({
 
 
         'seguridad/finanzas/ctg-banco': ctgbanco,
+        'seguridad/finanzas/ctg-efos-log': ctgEfosLog,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
         'seguridad/finanzas/configuracion-remesa': configuracionRemesa,
         'seguridad/configuracion-obra': configuracionObra,
