@@ -70,11 +70,31 @@ class ItemFactura extends Item
                 ItemEntradaMaquinaria::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
                 break;
             case 4:
+                if($this->antecedente->tipo_transaccion == 99)
+                {
+
+                } else {
+
+                }
                 break;
             case 7:
                 break;
         }
+        $importe = round($orden_pago->monto * -1 * $this->proporcion_item ,2);
+        $saldo = (($this->saldo - $importe) > 0.01) ? round(($this->saldo - $importe),2) :0;
+        $this->autorizado = $this->autorizado-$importe;
+        $this->saldo = $saldo;
+        $this->save();
+        $this->registraItemOrdenPago($orden_pago);
 
     }
-
+    private function registraItemOrdenPago(OrdenPago $orden_pago){
+        $importe = round($orden_pago->monto * -1 * $this->proporcion_item ,2);
+        $datos = [
+            'id_transaccion'=>$orden_pago->id_transaccion,
+            'item_antecedente'=>$this->id_item,
+            'importe'=>$importe,
+        ];
+        ItemOrdenPago::create($datos);
+    }
 }
