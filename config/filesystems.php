@@ -98,6 +98,10 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_RESUMEN_LAYOUT_INVENTARIO_FISICO')),
         ],
+        'layout_pagos_descarga' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_LAYOUT_PAGOS')),
+        ],
     ],
 
 ];
