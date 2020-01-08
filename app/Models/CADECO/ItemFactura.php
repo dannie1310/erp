@@ -59,6 +59,7 @@ class ItemFactura extends Item
                         Subcontrato::find($this->id_antecedente)->actualizaControlObra($this, $orden_pago);
                         break;
                     case 52:
+                        Estimacion::find($this->id_antecedente)->actualizaControlObra($this, $orden_pago);
                         break;
                 }
                 break;
@@ -66,6 +67,7 @@ class ItemFactura extends Item
                 ItemOrdenCompra::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
                 break;
             case 3:
+                ItemEntradaMaquinaria::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
                 break;
             case 4:
                 break;
