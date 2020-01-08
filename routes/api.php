@@ -127,7 +127,9 @@ $api->version('v1', function ($api) {
         });
 
         $api->group(['prefix' => 'proveedor-contatista'], function ($api) {
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@paginate');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@show');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@store');
         });
 
         // SUCURSAL

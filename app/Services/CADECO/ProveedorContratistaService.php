@@ -40,4 +40,14 @@ class ProveedorContratistaService
             return $this->repository->paginate();
         }
     }
+
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

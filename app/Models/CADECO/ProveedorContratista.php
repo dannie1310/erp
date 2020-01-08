@@ -8,6 +8,9 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Sucursal;
+use App\Models\CADECO\Suministrados;
+
 
 
 class ProveedorContratista extends Empresa
@@ -21,21 +24,11 @@ class ProveedorContratista extends Empresa
         });
     }
 
-    public function getTipoProveedorContratistaAttribute(){
-        switch ($this->tipo_empresa) {
-            case 1:
-                return 'Proveedor';
-                break;
-            case 2:
-                return 'Contratista';
-                break;
-            case 3:
-                return 'Proveedor y Contratista';
-                break;
-            
-            default:
-                return '';
-                break;
-        }
+    public function sucursales(){
+        return $this->hasMany(Sucursal::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function suministrados(){
+        return $this->hasMany(Suministrados::class, 'id_empresa', 'id_empresa');
     }
 }
