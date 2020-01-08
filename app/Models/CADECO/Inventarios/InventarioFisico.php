@@ -9,7 +9,7 @@ use App\CSV\InventarioFisicoLayoutResumen;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\IGH\Usuario;
-use App\PDF\InventarioMarbete;
+use App\PDF\Almacenes\InventarioMarbete;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
