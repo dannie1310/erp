@@ -174,9 +174,16 @@ class Empresa extends Model
         if(isset($data->rfc1)){
             if(strlen(str_replace(" ","", $data->rfc))>0){
                 $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tien un formato inválido.');
+
+                // TODO validar si el RFC esta como EFO
+
                 $this->where('rfc', '=', str_replace(" ","", $data->rfc))->count() > 0 ? abort(403, 'La empresa ya esta registrada.'):'';
             }   
         }
+    }
+
+    public function validarRfcEfo(){
+        
     }
 
     private function rfcValido($rfc){
