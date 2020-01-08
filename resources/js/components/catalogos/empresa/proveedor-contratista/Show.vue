@@ -3,8 +3,8 @@
         <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </button>
-        <div class="modal fade" ref="modal" role="dialog">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal fade" ref="modal">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CONSULTA DE PROVEEDOR / CONTRATISTA</h5>
@@ -13,88 +13,39 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row" v-if="proveedorContratista">
-                            <!-- <nav> -->
-                                <div class="col-12">
-                                    <div class="invoice p-3 mb-3">
-                                        <div class="row">
-                                            <div class="table-responsive col-12">
-                                                <table class="table table-striped">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th>Razón Social:</th>
-                                                            <td>{{proveedorContratista.razon_social}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>R.F.C.:</th>
-                                                            <td>{{proveedorContratista.rfc}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>No. de Proveedor Virtual:</th>
-                                                            <td>{{proveedorContratista.proveedor_virtual}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Días de Crédito:</th>
-                                                            <td>{{proveedorContratista.dias_credito}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Descuento Financiero:</th>
-                                                            <td>{{proveedorContratista.porcentaje}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Tipo Proveedor y/o Contratista:</th>
-                                                            <td>{{proveedorContratista.tipo}}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <nav>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label><b>Banco:</b></label>
+                                    BANCO
                                 </div>
-                                <!-- <nav>
-                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                        <a aria-controls="nav-home" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-home"
-                                        id="nav-home-tab" role="tab">Sucursales</a>
-                                        <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
-                                        href="#nav-profile" id="nav-profile-tab" role="tab" >Materiales Suministrados</a>
-                                    </div>
-                                </nav>
-                                <div class="tab-content" id="nav-tabContent">
-                                    <div aria-labelledby="nav-home-tab" class="tab-pane fade show active" id="nav-home" role="tabpanel">
-                                        <div class="col-12">
-                                            <div class="invoice p-3 mb-3">
-                                                <div class="row">
-                                                    <div class="table-responsive col-12">
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>#</th>
-                                                                    <th>Material</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr v-for="(material, i) in proveedorContratista.suministrados.data">
-                                                                    <td>{{i+1}}</td>
-                                                                    <td>{{material.material.descripcion}}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>    
-                                    </div>
-                                    <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
-                                    
-                                    </div>
-                                </div> -->
-                                
-                            <!-- </nav> -->
+                            </div>
+                            <nav>
+                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                    <a aria-controls="nav-home" class="nav-item nav-link active" data-toggle="tab" href="#nav-home"
+                                    id="nav-home-tab" role="tab">Identificación</a>
+                                    <a aria-controls="nav-profile"  class="nav-item nav-link" data-toggle="tab" href="#nav-profile"
+                                     id="nav-profile-tab" role="tab">Cuentas</a>
+                                    <!-- <a aria-controls="nav-contact" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-contact"
+                                    id="nav-contact-tab" role="tab">Sucursales</a> -->
+                                </div>
+                            </nav>
 
-                        </div>
+                            <div class="tab-content" id="nav-tabContent">
+                                <div class="tab-pane fade show active" id="nav-home" >
+                                    polar {{id}}
+                                </div>
+                                <div class="tab-pane fade" id="nav-profile">
+                                    Panda {{id}}
+                                </div>
+                                <!-- <div aria-labelledby="nav-contact-tab" class="tab-pane fade" id="nav-contact" role="tabpanel" style="display:block;">
+                                    Pardo {{id}}
+                                </div> -->
+                            </div>
+                        </nav>   
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-danger" @click="closeModal">Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -115,10 +66,14 @@ export default {
                 }).then(data => {
                     console.log(data);
                     this.$store.commit('cadeco/proveedor-contratista/SET_PROVEEDOR_CONTRATISTA', data);
-                    $(this.$refs.modal).draggable();
+                    // $(this.$refs.modal).draggable();
                     $(this.$refs.modal).modal('show');
                 })
             },
+            closeModal(){
+                // $(this.$refs.modal).modal('clear');
+                $(this.$refs.modal).modal('hide');
+            }
         },
         computed: {
             proveedorContratista() {

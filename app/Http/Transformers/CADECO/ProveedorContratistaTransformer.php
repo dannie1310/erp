@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO;
 
 use League\Fractal\TransformerAbstract;
 use App\Models\CADECO\ProveedorContratista;
+use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\CADECO\SuministradosTransformer;
 
 class ProveedorContratistaTransformer extends TransformerAbstract
@@ -20,7 +21,8 @@ class ProveedorContratistaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'suministrados'
+        'suministrados',
+        'sucursales'
     ];
 
     public function transform(ProveedorContratista $model)
@@ -38,12 +40,23 @@ class ProveedorContratistaTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Suministrados $model
-     * @return \League\Fractal\Resource\Item|null
+     * @param ProveedorContratista $model
+     * @return \League\Fractal\Resource\Collection|null
      */
     public function includeSuministrados(ProveedorContratista $model) {
         if ($suministrados = $model->suministrados) {
             return $this->collection($suministrados, new SuministradosTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param ProveedorContratista $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeSucursales(ProveedorContratista $model){
+        if($sucursales = $model->sucursales){
+            return $this->collection($sucursales, new SucursalTransformer);
         }
         return null;
     }
