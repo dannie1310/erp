@@ -68,7 +68,7 @@ class ItemFactura extends Item
          */
         switch ($this->numero){
             case 0:
-                ItemEntradaAlmacen::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                ItemEntradaAlmacen::find($this->item_antecedente)->actualizaControlObra($importe, $tipo_cambio);
                 break;
             case 1:
                 switch ($this->antecedente->tipo_transaccion){
@@ -101,10 +101,12 @@ class ItemFactura extends Item
                     $this->inventario->monto_pagado->save();
                     $this->inventario->distribuirPagoInventarios();
 
-                } else {
+                } elseif($this->movimiento){
                     $this->movimiento->monto_pagado = $this->movimiento->monto_pagado +
                         round($importe * $tipo_cambio,2);
                     $this->movimiento->monto_pagado->save();
+                } else {
+                    abort(500, "No se encontró la entidad de de control de obra relacionada con el item de la factura de varios");
                 }
                 break;
         }
