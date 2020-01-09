@@ -50,34 +50,19 @@ class Cliente extends Empresa
         return $this->porcentaje. ' %';
     }
 
-    public function registrar($data)
+    public function validaDuplicidadRfc()
     {
-        try {
-            DB::connection('cadeco')->beginTransaction();
-            $this->validaRegistro($data);
-            $cliente = $this->create($data);
-            DB::connection('cadeco')->commit();
-            return $cliente;
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
-    }
+        $cliente = Cliente::whereRaw("(razon_social = '".$this->razon_social."' or rfc ='".$this->rfc."' )")->orderBy('id_empresa', 'desc')->first();
 
-    public function validaRegistro($registro)
-    {
-        $cliente = Cliente::whereRaw("(razon_social = '".$registro['razon_social']."' or rfc ='".$registro['rfc']."' )")->first();
-
-        if($cliente && $cliente->toArray() != [])
+        if(!is_null($cliente))
         {
-            if ($cliente['rfc'] === $registro['rfc'])
-            {
-                throw New \Exception('Está rfc se encuentran registrados');
-            }
-            if ($cliente['razon_social'] === $registro['razon_social'])
-            {
-                throw New \Exception('Está razón social se encuentran registrados');
+            if(is_null($this->id_empresa) || ($this->id_empresa != $cliente->id_empresa)) { //creación
+                if ($cliente->rfc === $this->rfc) {
+                    throw New \Exception('Este rfc se encuentra registrado previamente.');
+                }
+                if ($cliente->razon_social === $this->razon_social) {
+                    throw New \Exception('Está razón social se encuentra registrada previamente.');
+                }
             }
         }
     }

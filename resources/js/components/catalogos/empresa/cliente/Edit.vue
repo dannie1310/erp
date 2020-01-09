@@ -169,8 +169,9 @@
                             }) .then(() => {
                                 $(this.$refs.modal).modal('hide');
                             })
+                        }else {
+                            $(this.$refs.modal).modal('hide');
                         }
-                        $(this.$refs.modal).modal('hide');
                     })
             },
             invalidRFC(){

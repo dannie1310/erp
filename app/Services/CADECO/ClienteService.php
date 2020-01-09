@@ -10,7 +10,7 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Cliente;
-use App\Repositories\CADECO\Cliente\Repository;
+use App\Repositories\Repository;
 
 class ClienteService
 {

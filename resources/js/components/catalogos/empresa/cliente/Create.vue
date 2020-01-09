@@ -161,9 +161,10 @@
                                 this.$emit('created', data);
                                 $(this.$refs.modal).modal('hide');
                             })
+                        }else {
+                            this.$emit('created', data);
+                            $(this.$refs.modal).modal('hide');
                         }
-                        this.$emit('created', data);
-                        $(this.$refs.modal).modal('hide');
 
                     }).finally( ()=>{
                         this.cargando = false;
