@@ -171,9 +171,9 @@ class Empresa extends Model
     }
 
     public function validaRFC($data){
-        if(isset($data->rfc1)){
+        if(isset($data->rfc)){
             if(strlen(str_replace(" ","", $data->rfc))>0){
-                $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tien un formato inválido.');
+                $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tiene un formato inválido.');
 
                 // TODO validar si el RFC esta como EFO
 

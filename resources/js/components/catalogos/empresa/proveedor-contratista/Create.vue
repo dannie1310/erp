@@ -96,6 +96,7 @@
                                         <div class="col-sm-7">
                                             <input
                                                     type="number"
+                                                    step="any"
                                                     name="porcentaje"
                                                     data-vv-as="Descuento Financiero"
                                                     v-validate="{min_value:0, max_value:100, decimal:2}"

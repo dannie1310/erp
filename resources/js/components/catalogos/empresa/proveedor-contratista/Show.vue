@@ -1,9 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-            <i class="fa fa-eye"></i>
-        </button>
-        <div class="modal fade" ref="modal">
+        <div class="modal fade" ref="modal" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -70,7 +67,7 @@
                                                 <div class="invoice p-3 mb-3">
                                                     <div class="row" v-if="proveedorContratista.sucursales">
                                                         <div class="table-responsive col-12">
-                                                            <table class="table table-striped">
+                                                            <table class="table table-striped table-fixed">
                                                                 <thead>
                                                                     <tr>
                                                                         <th>#</th>
@@ -93,12 +90,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div aria-labelledby="nav-materiales-tab" class="tab-pane fade" id="nav-materiales" role="tabpanel"  style="display:block;">
+                                        <div aria-labelledby="nav-materiales-tab" class="tab-pane fade" id="nav-materiales" role="tabpanel">
                                             <div class="col-12" v-if="proveedorContratista">
                                                 <div class="invoice p-3 mb-3">
                                                     <div class="row" v-if="proveedorContratista.suministrados">
                                                         <div class="table-responsive col-12">
-                                                            <table class="table table-striped">
+                                                            <table class="table table-striped table-fixed">
                                                                 <thead>
                                                                     <tr>
                                                                         <th>#</th>
@@ -133,27 +130,28 @@
 <script>
 export default {
     name: "solicitud-alta-show",
-    props: ['id'],
+    props: ['tipo'],
     data(){
         return {
         }
     },
     methods: {
-        find(id) {
-            this.$store.commit('cadeco/proveedor-contratista/SET_PROVEEDOR_CONTRATISTA', null);
-            return this.$store.dispatch('cadeco/proveedor-contratista/find', {
-                id: id,
-                params: {include: ['suministrados.material']}
-            }).then(data => {
-                console.log(data);
-                this.$store.commit('cadeco/proveedor-contratista/SET_PROVEEDOR_CONTRATISTA', data);
-                $(this.$parent.$refs.modal).modal('show');
-            })
-        },
+        // find(id) {
+            // this.$store.commit('cadeco/proveedor-contratista/SET_PROVEEDOR_CONTRATISTA', null);
+            // return this.$store.dispatch('cadeco/proveedor-contratista/find', {
+            //     id: id,
+            //     params: {include: ['suministrados.material']}
+            // }).then(data => {
+            //     console.log(data);
+            //     this.$store.commit('cadeco/proveedor-contratista/SET_PROVEEDOR_CONTRATISTA', data);
+            // console.log('show find')
+            //     $(this.$refs.modal).modal('show');
+            // })
+
+        // },
         closeModal(){
-            // $(this.$refs.modal).modal('clear');
-            // $(this.$refs.modal).modal('hide');
-            // $(this.$parent.$refs.modal).modal('hide');
+            $('.nav-tabs a[href="#nav-identificacion"]').tab('show');
+            $(this.$parent.$refs.modal).modal('hide');
         }
     },
 
@@ -161,10 +159,31 @@ export default {
         proveedorContratista() {
             return this.$store.getters['cadeco/proveedor-contratista/currentProveeedor'];
         }
+    },
+    watch:{
+        tipo(value){
+            if(value !== '' && value === 1){
+                $(this.$refs.modal).modal('show');
+                // this.find(value);
+            }
+        }
     }
+    
 }
 </script>
 
 <style>
-
+.align{
+    text-align: left;
+}
+.table-fixed tbody {
+    display:block;
+    height:218px;
+    overflow:auto;
+}
+.table-fixed thead, .table-fixed tbody tr {
+    display:table;
+    width:100%;
+    text-align: start;
+}
 </style>
