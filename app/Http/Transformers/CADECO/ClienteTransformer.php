@@ -40,6 +40,7 @@ class ClienteTransformer extends TransformerAbstract
             'razon_social' => $model->razon_social,
             'rfc'=> $model->rfc,
             'tipo' => $model->tipo,
+            'tipo_cliente' => (int) $model->tipo_cliente,
             'porcentaje' => $model->porcentaje,
             'porcentaje_format' => $model->porcentaje_format
         ];

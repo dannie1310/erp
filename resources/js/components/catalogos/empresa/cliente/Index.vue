@@ -84,7 +84,11 @@
                         rfc: cliente.rfc,
                         razon_social: cliente.razon_social,
                         tipo_cliente: cliente.tipo,
-                        porcentaje: cliente.porcentaje_format
+                        porcentaje: cliente.porcentaje_format,
+                        buttons: $.extend({}, {
+                            edit: self.$root.can('editar_cliente') ? true : undefined,
+                            id: cliente.id
+                        })
                     }));
                 },
                 deep: true

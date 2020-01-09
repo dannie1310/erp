@@ -23,4 +23,9 @@ class EmpresaObserver
         $empresa->FechaHoraRegistro = date('Y-m-d H:i:s');
         $empresa->UsuarioRegistro = auth()->id();
     }
+
+    public function updating(Empresa $empresa)
+    {
+        $empresa->validaRFC($empresa);
+    }
 }

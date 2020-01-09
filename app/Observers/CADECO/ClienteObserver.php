@@ -22,4 +22,9 @@ class ClienteObserver extends EmpresaObserver
         parent::creating($cliente);
         $cliente->tipo_empresa = 16;
     }
+
+    public function updating(Empresa $cliente)
+    {
+        parent::updating($cliente);
+    }
 }
