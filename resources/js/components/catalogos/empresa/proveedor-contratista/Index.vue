@@ -82,21 +82,21 @@
                                             <div class="invoice p-3 mb-3">
                                                 <div class="row" v-if="proveedorContratista.sucursales">
                                                     <div class="table-responsive col-12">
-                                                        <table class="table table-striped">
+                                                        <table class="table table-striped table-fixed">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>#</th>
-                                                                    <th>Descripción</th>
-                                                                    <th>Dirección</th>
-                                                                    <th>Ciudad</th>
+                                                                    <th style="width: 15%;">#</th>
+                                                                    <th style="width: 35%;">Descripción</th>
+                                                                    <th style="width: 35%;">Dirección</th>
+                                                                    <th style="width: 15%;">Ciudad</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 <tr v-for="(sucursal, i) in proveedorContratista.sucursales.data">
-                                                                    <td>{{i+1}}</td>
-                                                                    <td>{{sucursal.descripcion}}</td>
-                                                                    <td>{{sucursal.direccion}}</td>
-                                                                    <td>{{sucursal.ciudad}}</td>
+                                                                    <td style="width: 15%;">{{i+1}}</td>
+                                                                    <td style="width: 35%;">{{sucursal.descripcion}}</td>
+                                                                    <td style="width: 35%;">{{sucursal.direccion}}</td>
+                                                                    <td style="width: 15%;">{{sucursal.ciudad}}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -274,7 +274,7 @@
 <style scoped>
 .table-fixed tbody {
     display:block;
-    height:400px;
+    height:218px;
     overflow:auto;
 }
 .table-fixed thead, .table-fixed tbody tr {
