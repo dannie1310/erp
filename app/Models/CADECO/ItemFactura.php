@@ -81,7 +81,11 @@ class ItemFactura extends Item
                 }
                 break;
             case 2:
-                ItemOrdenCompra::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                if ($this->antecedente->opciones == 1) {
+                    ItemOrdenCompra::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                } else {
+                    ItemOrdenRenta::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                }
                 break;
             case 3:
                 ItemEntradaMaquinaria::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
