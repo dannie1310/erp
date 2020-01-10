@@ -34,6 +34,11 @@ class PagoFacturaObserver extends PagoObserver
         parent::created($pago);
         $pago->orden_pago->factura->disminuyeSaldo($pago);
         $pago->orden_pago->factura->contra_recibo->disminuyeSaldo($pago);
-        $pago->orden_pago->actualizaControlObra();
+        try{
+            $pago->orden_pago->actualizaControlObra();
+        } catch (\Exception $e){
+            abort(500, "Error al actualizar control de obra en la factura: ".$pago->orden_pago->factura->referencia." ".$e->getMessage());
+        }
+
     }
 }

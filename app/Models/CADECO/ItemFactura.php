@@ -9,6 +9,8 @@
 namespace App\Models\CADECO;
 
 
+use mysql_xdevapi\Exception;
+
 class ItemFactura extends Item
 {
     protected static function boot()
@@ -68,48 +70,108 @@ class ItemFactura extends Item
          */
         switch ($this->numero) {
             case 0:
-                ItemEntradaAlmacen::find($this->item_antecedente)->actualizaControlObra($importe, $tipo_cambio);
+                try{
+                    ItemEntradaAlmacen::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                }
+                catch (\Exception $e){
+                    abort(500,"item: ".$this->id_item.' caso 0 (Item Entrada) '. $e->getMessage().".");
+                }
                 break;
             case 1:
                 switch ($this->antecedente->tipo_transaccion) {
                     case 51:
-                        Subcontrato::find($this->id_antecedente)->actualizaControlObra($this, $orden_pago);
+                        try{
+                            $subcontrato = Subcontrato::withoutGlobalScopes()->find($this->id_antecedente);
+                            if($subcontrato){
+                                $subcontrato->actualizaControlObra($this, $orden_pago);
+                            } else {
+                                abort(500,"No se encontró subcontrato para actualizar control de obra en factura: ".$this->factura->referencia." (".$this->factura->id_transaccion.") item: ".$this->id_item.' caso 1-51 (Subcontrato).');
+                            }
+
+                        }
+                        catch (\Exception $e){
+                            abort(500,"item: ".$this->id_item.' caso 1-51 (Subcontrato) '. $e->getMessage().".");
+                        }
+
                         break;
                     case 52:
-                        Estimacion::find($this->id_antecedente)->actualizaControlObra($this, $orden_pago);
+                        try{
+                            $estimacion = Estimacion::withoutGlobalScopes()->find($this->id_antecedente);
+                            if($estimacion){
+                                $estimacion->actualizaControlObra($this, $orden_pago);
+                            } else {
+                                abort(500,"No se encontró estimacion.");
+                            }
+                        }
+                        catch (\Exception $e){
+                            abort(500,"Item: ".$this->id_item.' caso 1-52 (Estimación): '. $e->getMessage());
+                        }
                         break;
                 }
                 break;
             case 2:
-                if ($this->antecedente->opciones == 1) {
-                    ItemOrdenCompra::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
-                } else {
-                    ItemOrdenRenta::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
-                }
+
+                    if ($this->antecedente->opciones == 1) {
+                        try{
+                            ItemOrdenCompra::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                        }
+                        catch (\Exception $e){
+                            abort(500,"Item: ".$this->id_item.' caso 2 opcion 1 (Item Orden de Compra) '. $e->getMessage().".");
+                        }
+
+                    } else {
+                        try {
+                            ItemOrdenRenta::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                        }
+                        catch (\Exception $e){
+                            abort(500,"Item: ".$this->id_item.' caso 2 (Item Orden de Renta)'. $e->getMessage().".");
+                        }
+                    }
                 break;
             case 3:
-                ItemEntradaMaquinaria::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                try{
+                    ItemEntradaMaquinaria::find($this->item_antecedente)->actualizaControlObra($this, $orden_pago);
+                }
+                catch (\Exception $e){
+                    abort(500,"Item: ".$this->id_item.' caso 3 (Item Maquinaria) '. $e->getMessage().".");
+                }
                 break;
             case 4:
                 if ($this->antecedente->tipo_transaccion == 99) {
-                    ListaRaya::find($this->id_antecedente)->actualizaControlObra($this, $orden_pago);
+                    try{
+                        ListaRaya::find($this->id_antecedente)->actualizaControlObra($this, $orden_pago);
+                    }
+                    catch (\Exception $e){
+                        abort(500,"Item: ".$this->id_item.' caso 4-99 (Lista de Raya) '. $e->getMessage().".");
+                    }
+
                 } else {
-                    Prestacion::find($this->id_antecedente)->actualizaControlObra($this, $orden_pago);
+                    try{
+                        Prestacion::find($this->id_antecedente)->actualizaControlObra($this, $orden_pago);
+                    }
+                    catch (\Exception $e){
+                        abort(500,"Item: ".$this->id_item.' caso 4 (Prestación) '. $e->getMessage().".");
+                    }
                 }
                 break;
             case 7:
-                if ($this->inventario) {
-                    $this->inventario->monto_pagado = $this->inventario->monto_pagado +
-                        round($importe * $this->factura->tipo_cambio, 2);
-                    $this->inventario->monto_pagado->save();
-                    $this->inventario->distribuirPagoInventarios();
+                try{
+                    if ($this->inventario) {
+                        $this->inventario->monto_pagado = $this->inventario->monto_pagado +
+                            round($importe * $this->factura->tipo_cambio, 2);
+                        $this->inventario->monto_pagado->save();
+                        $this->inventario->distribuirPagoInventarios();
 
-                } elseif ($this->movimiento) {
-                    $this->movimiento->monto_pagado = $this->movimiento->monto_pagado +
-                        round($importe * $tipo_cambio, 2);
-                    $this->movimiento->monto_pagado->save();
-                } else {
-                    abort(500, "No se encontró la entidad de de control de obra relacionada con el item de la factura de varios");
+                    } elseif ($this->movimiento) {
+                        $this->movimiento->monto_pagado = $this->movimiento->monto_pagado +
+                            round($importe * $tipo_cambio, 2);
+                        $this->movimiento->save();
+                    } else {
+                        abort(500, "No se encontró la entidad de de control de obra relacionada con el item de la factura de varios");
+                    }
+                }
+                catch (\Exception $e){
+                    abort(500,"Item: ".$this->id_item.' caso 7 (Factura de Varios) '. $e->getMessage().".");
                 }
                 break;
         }

@@ -115,50 +115,60 @@ class ItemOrdenCompra extends Item
      */
     public function amortizaAnticipo($importe_pagado)
     {
-        $items_entradas = $this->items_entrada
-            ->where("saldo", ">", 0)
-            ->where("anticipo", ">", 0)
-            ->orderBy("numero_folio")
-            ->get();
-        foreach ($items_entradas as $item_entrada) {
-            if ($importe_pagado > 0) {
-                $pagado_remision = round($item_entrada->itemsFactura->sum("importe") - $item_entrada->itemsFactura->sum("saldo"), 2);
-                $monto_pagado = $item_entrada->importe - $item_entrada->saldo;
-                $monto_anticipo = round(($item_entrada->cantidad_original1 * $item_entrada->precio_unitario * $item_entrada->anticipo) / 100, 2);
+        try {
+            $items_entradas = $this->items_entrada()
+                ->where("saldo", ">", 0)
+                ->where("anticipo", ">", 0)
+                ->orderBy("id_transaccion")
+                ->get();
+            foreach ($items_entradas as $item_entrada) {
+                if ($importe_pagado > 0) {
+                    $pagado_remision = round($item_entrada->itemsFactura->sum("importe") - $item_entrada->itemsFactura->sum("saldo"), 2);
+                    $monto_pagado = $item_entrada->importe - $item_entrada->saldo;
+                    $monto_anticipo = round(($item_entrada->cantidad_original1 * $item_entrada->precio_unitario * $item_entrada->anticipo) / 100, 2);
 
-                $saldo_remision = $monto_anticipo - ($monto_pagado - $pagado_remision);
+                    $saldo_remision = $monto_anticipo - ($monto_pagado - $pagado_remision);
 
-                if ($saldo_remision > 0) {
-                    if ($importe_pagado < $saldo_remision) {
-                        $pagado_remision = $importe_pagado;
-                    } else {
-                        $pagado_remision = $saldo_remision;
+                    if ($saldo_remision > 0) {
+                        if ($importe_pagado < $saldo_remision) {
+                            $pagado_remision = $importe_pagado;
+                        } else {
+                            $pagado_remision = $saldo_remision;
+                        }
+
+                        if($item_entrada->movimiento) {
+                            $item_entrada->movimiento->monto_pagado = $item_entrada->movimiento->monto_pagado + $pagado_remision;
+                            $item_entrada->movimiento->save();
+                        }
+
+                        if ($item_entrada->inventario) {
+                            $item_entrada->inventario->monto_pagado = $item_entrada->inventario->monto_pagado + $pagado_remision;
+                            $item_entrada->inventario->save();
+                            $item_entrada->inventario->distribuirPagoInventarios();
+                        }
+
+                        $item_entrada->saldo = $item_entrada->saldo - $pagado_remision;
+                        $item_entrada->save();
+
+                        if ($this->ordenCompra->opciones > 65535) {
+                            $this->importe = $this->importe + $pagado_remision;
+                            $this->save();
+                        } else {
+                            $this->saldo = $this->saldo - $pagado_remision;
+                            $this->save();
+                        }
+
+                        $importe_pagado -=$pagado_remision;
+
                     }
-
-                    $item_entrada->movimiento->monto_pagado = $item_entrada->movimiento->monto_pagado + $pagado_remision;
-                    $item_entrada->movimiento->save();
-
-                    if ($item_entrada->inventario) {
-                        $item_entrada->inventario->monto_pagado = $item_entrada->inventario->monto_pagado + $pagado_remision;
-                        $item_entrada->inventario->save();
-                        $item_entrada->inventario->distribuirPagoInventarios();
-                    }
-
-                    $item_entrada->saldo = $item_entrada->saldo - $pagado_remision;
-                    $item_entrada->save();
-
-                    if ($this->ordenCompra->opciones > 65535) {
-                        $this->importe = $this->importe + $pagado_remision;
-                        $this->save();
-                    } else {
-                        $this->saldo = $this->saldo - $pagado_remision;
-                        $this->save();
-                    }
-
-                    $importe_pagado -=$pagado_remision;
-
                 }
             }
+        } catch (\Exception $e){
+            abort(500,"Error al amortizar anticipo de item: ".$this->id_item." ".$e->getMessage());
         }
+
+
+
+
     }
 }

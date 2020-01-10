@@ -61,28 +61,35 @@ class Factura extends Transaccion
 
     public function generaOrdenPago($data)
     {
-        // TODO: Obtener el monto de los pagos relacionados a la factura para determinar si se debe actualizar el estado
-        DB::connection('cadeco')->beginTransaction();
-        $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
-        $saldo_esperado = $this->saldo - ($data["monto_pagado_transaccion"]);
-        $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
+        try{
+            // TODO: Obtener el monto de los pagos relacionados a la factura para determinar si se debe actualizar el estado
+            DB::connection('cadeco')->beginTransaction();
+            $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
+            $saldo_esperado = $this->saldo - ($data["monto_pagado_transaccion"]);
+            $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
 
-        $datos = [
-            'id_antecedente'=>$this->id_antecedente,
-            'id_referente'=>$this->id_transaccion,
-            'monto'=>-1*abs($data["monto_pagado_transaccion"]),
-            'tipo_cambio'=>$data["tipo_cambio"],
-            'fecha'=>$data["fecha_pago"],
-            'id_empresa'=>$this->id_empresa,
-            'id_moneda'=> $this->id_moneda,
-        ];
-        $ordenPago= OrdenPago::create($datos);
-        $pago = $ordenPago->generaPago($data);
+            $datos = [
+                'id_antecedente'=>$this->id_antecedente,
+                'id_referente'=>$this->id_transaccion,
+                'monto'=>-1*abs($data["monto_pagado_transaccion"]),
+                'tipo_cambio'=>$data["tipo_cambio"],
+                'fecha'=>$data["fecha_pago"],
+                'id_empresa'=>$this->id_empresa,
+                'id_moneda'=> $this->id_moneda,
+            ];
+            $ordenPago= OrdenPago::create($datos);
+            $pago = $ordenPago->generaPago($data);
 
-        $this->validaSaldos($saldo_esperado, $saldo_esperado_cuenta, $pago);
-        abort(500,'eli');
-        /*DB::connection('cadeco')->commit();*/
-        return $pago;
+            $this->validaSaldos($saldo_esperado, $saldo_esperado_cuenta, $pago);
+            DB::connection('cadeco')->commit();
+            return $pago;
+        }
+        catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+
     }
 
     public function scopePendientePago($query){

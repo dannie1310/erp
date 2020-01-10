@@ -145,6 +145,8 @@ class LayoutPago extends Model
                         }
 
                     }
+                    $pago->estado = 2;
+                    $pago->save();
                 }
             }
             $this->id_usuario_autorizo = auth()->id();
