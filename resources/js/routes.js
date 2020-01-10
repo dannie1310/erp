@@ -156,8 +156,8 @@ export const routes = [
                         name: 'lista-efos',
                         component: require('./components/control-interno/finanzas/efos/Index').default,
                         meta: {
-                            title: 'Lista de EFO´s',
-                            breadcrumb: {parent: 'control-finanzas', name: 'EFO´s'},
+                            title: 'Lista de EFOS',
+                            breadcrumb: {parent: 'control-finanzas', name: 'EFOS'},
                             middleware: [auth, permission],
                             permission: 'auditoria_consultar_permisos_por_obra',
                             general: true,

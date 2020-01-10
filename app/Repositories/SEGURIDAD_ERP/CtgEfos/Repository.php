@@ -1,11 +1,10 @@
 <?php
 
 
-namespace App\Repositories\SEGURIDAD_ERP\AreaSolicitante;
+namespace App\Repositories\SEGURIDAD_ERP\CtgEfos;
 
 use App\Facades\Context;
-use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante as Model;
-use App\Models\SEGURIDAD_ERP\Compras\AreaSolicitanteUsuario;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use Illuminate\Support\Facades\DB;
 
 class Repository extends \App\Repositories\Repository  implements RepositoryInterface
@@ -20,14 +19,13 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
      * RepositoryInterface constructor.
      * @param Model $model
      */
-    public function __construct(Model $model)
+    public function __construct(CtgEfos $model)
     {
         $this->model = $model;
     }
 
-    public function asignar($data)
+    public function carga($data)
     {
-        $usuario = new AreaSolicitanteUsuario();
-        $usuario->asignar($data);
+       $this->model->reg($data);
     }
 }

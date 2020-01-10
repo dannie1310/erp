@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Repositories\SEGURIDAD_ERP\AreaSolicitante;
+namespace App\Repositories\SEGURIDAD_ERP\CtgEfos;
 
 
 interface RepositoryInterface
