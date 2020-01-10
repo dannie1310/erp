@@ -49,12 +49,12 @@ class ItemEntradaMaquinaria extends Item
             {
                 $inventarios_relacionados = Inventario::where("id_almacen","=",$this->inventario->id_almacen)
                     ->where("id_material","=", $this->inventario->id_material)
-                    ->where("monto_total",">","monto_pagado")
+                    ->whereColumn("monto_total",">","monto_pagado")
                 ->get();
             } else {
                 $inventarios_relacionados = Inventario::where("id_almacen","=",$this->inventario->id_almacen)
                     ->where("id_material","=", $this->inventario->id_material)
-                    ->where("monto_total",">","monto_pagado")
+                    ->whereColumn("monto_total",">","monto_pagado")
                     ->where("referencia","=",$this->inventario->referencia)
                     ->get();
             }

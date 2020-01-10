@@ -36,7 +36,7 @@ class LayoutPago extends Model
 
     public function partidas()
     {
-        return $this->hasMany(LayoutPagoPartida::class,'id_layout_pagos', 'id');
+        return $this->hasMany(LayoutPagoPartida::class, 'id_layout_pagos', 'id');
     }
 
     public function estadoLayout()
@@ -47,7 +47,7 @@ class LayoutPago extends Model
     public function validarArchivo($archivo)
     {
         $file_fingerprint = hash_file('md5', $archivo);
-        if($this->query()->where('hash_file_layout_pagos', '=', $file_fingerprint)->first()){
+        if ($this->query()->where('hash_file_layout_pagos', '=', $file_fingerprint)->first()) {
             abort(403, 'Archivo de carga masiva de pagos procesado previamente');
         }
         return $file_fingerprint;
@@ -64,19 +64,18 @@ class LayoutPago extends Model
                 'monto_layout_pagos' => $monto_pagado
             ]);
             $contador_pagos = 0;
-            foreach ($data['pagos'] as $pago)
-            {
-                if(array_key_exists ('fecha_pago_s', $pago)){
+            foreach ($data['pagos'] as $pago) {
+                if (array_key_exists('fecha_pago_s', $pago)) {
                     /*
                      * EL front envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
                      * */
-                    $fecha_pago =New DateTime($pago['fecha_pago_s']);
+                    $fecha_pago = New DateTime($pago['fecha_pago_s']);
                     $fecha_pago->setTimezone(new DateTimeZone('America/Mexico_City'));
-                }else{
+                } else {
                     $fecha_pago = DateTime::createFromFormat('d/m/Y', $pago['fecha_pago']);
                 }
-                if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 ) ) {
-                    $contador_pagos ++;
+                if (($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10)) {
+                    $contador_pagos++;
                     $layout_pagos->partidas()->create([
                         'id_layout_pagos' => $layout_pagos->id,
                         'id_transaccion' => $pago['id_transaccion'],
@@ -96,10 +95,9 @@ class LayoutPago extends Model
                     ]);
                 }
             }
-            if(count($layout_pagos->partidas) == $contador_pagos && count($layout_pagos->partidas) >0){
+            if (count($layout_pagos->partidas) == $contador_pagos && count($layout_pagos->partidas) > 0) {
                 DB::connection('cadeco')->commit();
-            }
-            else{
+            } else {
                 DB::connection('cadeco')->rollBack();
                 abort(400, 'Hubo un error durante el registro de las partidas');
             }
@@ -113,40 +111,43 @@ class LayoutPago extends Model
     }
 
 
-    private function getTC( $partida){
+    private function getTC($partida)
+    {
         $partida["tipo_cambio"] = $partida["monto_pagado"] / $partida["monto_pagado_transaccion"];
         return $partida;
     }
 
-    public function  autorizar(){
-        try{
+    public function autorizar()
+    {
+        try {
             DB::connection('cadeco')->beginTransaction();
             $partidas = $this->partidas;
             foreach ($partidas as $partida) {
                 $partida_arr = $partida->toArray();
                 $partida_arr = $this->getTC($partida_arr);
-
                 if (is_null($partida->id_transaccion_pago)) {
-                    $transaccion = $partida->transaccion;
+                    $documento_pagable = $partida->documento_pagable;
+                    if (($documento_pagable->saldo_pagable + 0.01) >= $partida->monto_pagado_documento) {
+                        $transaccion = $partida->transaccion;
 
-                    if ($transaccion->tipo_transaccion === '65') {
-                        $pago = Factura::find($partida->id_transaccion)->generaOrdenPago($partida_arr);
-                        $partida->id_transaccion_pago = $pago->id_transaccion;
-                        $partida->save();
-                    }
-
-                    if ($transaccion->tipo_transaccion === '72') {
-                        $pago = Solicitud::find($partida->id_transaccion)->generaPago($partida_arr);
-                        if($pago){
+                        if ($transaccion->tipo_transaccion === '65') {
+                            $pago = Factura::find($partida->id_transaccion)->generaOrdenPago($partida_arr);
                             $partida->id_transaccion_pago = $pago->id_transaccion;
                             $partida->save();
-                        }else{
-                            abort(400, "Hubo un error al generar el pago con referencia: ".$partida->referencia_pago . " tipo de solicitud no soportado");
                         }
 
+                        if ($transaccion->tipo_transaccion === '72') {
+                            $pago = Solicitud::find($partida->id_transaccion)->generaPago($partida_arr);
+                            if ($pago) {
+                                $partida->id_transaccion_pago = $pago->id_transaccion;
+                                $partida->save();
+                            } else {
+                                abort(400, "Hubo un error al generar el pago con referencia: " . $partida->referencia_pago . " tipo de solicitud no soportado");
+                            }
+                        }
+                        $pago->estado = 2;
+                        $pago->save();
                     }
-                    $pago->estado = 2;
-                    $pago->save();
                 }
             }
             $this->id_usuario_autorizo = auth()->id();
@@ -157,25 +158,24 @@ class LayoutPago extends Model
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
-            throw $e;
         }
     }
 
     public function usuario()
     {
-        return $this->belongsTo(Usuario::class,  'id_usuario_carga', 'idusuario');
+        return $this->belongsTo(Usuario::class, 'id_usuario_carga', 'idusuario');
     }
 
-    public  function usuarioAutorizo()
+    public function usuarioAutorizo()
     {
-        return $this->belongsTo(Usuario::class,  'id_usuario_autorizo', 'idusuario');
+        return $this->belongsTo(Usuario::class, 'id_usuario_autorizo', 'idusuario');
     }
 
     public function montoPagado($partidas)
     {
         $monto_total = 0;
         foreach ($partidas as $pago) {
-            if(($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10 ) ) {
+            if (($pago['estado']['estado'] == 1 || $pago['estado']['estado'] == 10)) {
                 $monto_total += $pago['monto_pagado'];
             }
         }
@@ -184,7 +184,7 @@ class LayoutPago extends Model
 
     public function validarRegistro()
     {
-        if($this->monto_layout_pagos == 0){
+        if ($this->monto_layout_pagos == 0) {
             abort(403, 'No se encuentra monto total a pagar.');
         }
     }

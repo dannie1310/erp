@@ -119,12 +119,10 @@
                                 <td style="text-align: right">{{doc.monto_pagado_documento_format}}</td>
                                 <td style="text-align: right">{{doc.tipo_cambio}}</td>
                                 <td style="text-align: right">{{doc.monto_pagado_format}}</td>
-                                <td v-if="doc.id_transaccion_pago===null">
-                                    <small class="badge badge-primary">Por Autorizar</small>
+                                <td>
+                                    <small :class="[doc.clase_badge_estado]">{{doc.estado}}</small>
                                 </td>
-                                <td v-else>
-                                    <small class="badge badge-success">Pagado</small>
-                                </td>
+
                             </tr>
                             </tbody>
                         </table>

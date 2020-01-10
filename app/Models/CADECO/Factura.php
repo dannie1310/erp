@@ -87,7 +87,6 @@ class Factura extends Transaccion
         catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
-            throw $e;
         }
 
     }
@@ -148,11 +147,9 @@ class Factura extends Transaccion
         $this->refresh();
         $pago->load("cuenta");
         if(abs($saldo_esperado_cuenta-$pago->cuenta->saldo_real)>1){
-            DB::connection('cadeco')->rollBack();
             abort(400, 'Hubo un error durante la actualización del saldo de la cuenta por el pago de la factura.');
         }
         if(abs($saldo_esperado-$this->saldo)>1){
-            DB::connection('cadeco')->rollBack();
             abort(400, 'Hubo un error durante la actualización del saldo de la factura');
         }
     }
