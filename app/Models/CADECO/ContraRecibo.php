@@ -21,4 +21,23 @@ class ContraRecibo extends Transaccion
                 ->where('estado', '!=', -2);
         });
     }
+
+    public function disminuyeSaldo(Transaccion $pago){
+        $this->saldo = number_format($this->saldo - ($pago->orden_pago->monto * -1),2,".","");
+        $this->estado = 1;
+        $this->save();
+        if($this->saldo<1){
+            $this->actualizaEstadoPagada();
+        }
+    }
+
+    public function actualizaEstadoPagada(){
+        $this->estado = 2;
+        $this->save();
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
+    }
 }

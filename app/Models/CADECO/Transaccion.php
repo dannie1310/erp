@@ -61,6 +61,11 @@ class Transaccion extends Model
         return '$ ' . number_format(abs($this->monto),2);
     }
 
+    public function getSaldoFormatAttribute()
+    {
+        return '$ ' . number_format($this->saldo,2);
+    }
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha);

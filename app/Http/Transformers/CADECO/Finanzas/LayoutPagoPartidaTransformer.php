@@ -31,6 +31,20 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
     ];
 
     public function transform(LayoutPagoPartida $model){
+        if($model->pago){
+            $clase_badge_estado = "badge badge-success";
+            $estado = "Pagado";
+        }else{
+            if((($model->documento_pagable->saldo_pagable+0.01)>= $model->monto_pagado_documento))
+            {
+                $clase_badge_estado = "badge badge-primary";
+                $estado = "Por Autorizar";
+            }else{
+                $clase_badge_estado = "badge badge-secondary";
+                $estado = "Saldo Insuficionete";
+            }
+
+        }
 
         return [
             'id' => $model->getKey(),
@@ -56,12 +70,14 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
             'referencia' => $model->documento_pagable->referencia_pagable,
             'fecha_format' => $model->documento_pagable->fecha_format,
             'vencimiento_format' => $model->documento_pagable->vencimiento_format,
-            'saldo_format'=>(string) '$ '.number_format(($model->documento_pagable->saldo_pagable),2,".",","),
+            'saldo_format'=>(string)$model->documento_pagable->saldo_pagable_format,
             'beneficiario'=>$model->documento_pagable->beneficiario,
             'folio_pago_format'=>$model->folio_pago_format,
-            'clase_badge_estado'=>($model->pago)?"badge badge-success":"badge badge-primary",
-            'estado'=>($model->pago)?"Pagado":"Por Autorizar",
+            'clase_badge_estado'=>$clase_badge_estado,
+            'estado'=>$estado,
         ];
+
+
     }
 
     /**

@@ -35,7 +35,7 @@ class Subcontrato extends Transaccion
         'observaciones',
         'id_usuario'
     ];
-    protected $with = array( 'estimacion');
+    protected $with = array('estimacion');
     public $usuario_registra = 1;
 
     public $searchable = [
@@ -46,7 +46,7 @@ class Subcontrato extends Transaccion
     protected static function boot()
     {
         parent::boot();
-        self::addGlobalScope('tipo',function ($query) {
+        self::addGlobalScope('tipo', function ($query) {
             return $query->where('tipo_transaccion', '=', 51)
                 ->where('opciones', '=', 2)
                 ->whereIn('estado', [0, 1])
@@ -68,13 +68,15 @@ class Subcontrato extends Transaccion
     {
         return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante', 'id_antecedente');
     }
+
     public function contratoProyectado()
     {
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function estimacion(){
-        return $this->hasMany(Estimacion::class,'id_antecedente','id_transaccion');
+    public function estimacion()
+    {
+        return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function estimaciones()
@@ -82,7 +84,8 @@ class Subcontrato extends Transaccion
         return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function partidas(){
+    public function partidas()
+    {
         return $this->hasMany(SubcontratoPartida::class, 'id_transaccion');
     }
 
@@ -98,8 +101,7 @@ class Subcontrato extends Transaccion
 
     public function generaFondoGarantia()
     {
-        if(is_null($this->fondo_garantia))
-        {
+        if (is_null($this->fondo_garantia)) {
             if ($this->retencion > 0) {
                 $fondo_garantia = new FondoGarantia();
                 $fondo_garantia->id_subcontrato = $this->id_transaccion;
@@ -113,14 +115,16 @@ class Subcontrato extends Transaccion
     }
 
 
-    public function partidasOrdenadas(){
-        return $this->partidas()->join('dbo.contratos','contratos.id_concepto', 'items.id_concepto')
+    public function partidasOrdenadas()
+    {
+        return $this->partidas()->join('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
             ->where('items.id_transaccion', '=', $this->id_transaccion)
             ->orderBy('contratos.nivel', 'asc')->select('items.*');
     }
+
     public function getSubtotalAttribute()
     {
-        return $this->monto-$this->impuesto;
+        return $this->monto - $this->impuesto;
     }
 
     public function scopeSinFondo($query)
@@ -138,11 +142,13 @@ class Subcontrato extends Transaccion
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
-    public function pago_anticipado(){
-        return $this->hasOne(SolicitudPagoAnticipado::class,'id_antecedente', 'id_transaccion');
+    public function pago_anticipado()
+    {
+        return $this->hasOne(SolicitudPagoAnticipado::class, 'id_antecedente', 'id_transaccion');
     }
 
-    public function getNombre(){
+    public function getNombre()
+    {
         return 'SUBCONTRATO';
     }
 
@@ -158,12 +164,12 @@ class Subcontrato extends Transaccion
 
     public function getMontoFacturadoSubcontratoAttribute()
     {
-        return round($this->partidas_facturadas()->sum('importe'),2);
+        return round($this->partidas_facturadas()->sum('importe'), 2);
     }
 
     public function getMontoPagoAnticipadoAttribute()
     {
-        return round($this->pago_anticipado()->where('estado', '>=',0)->sum('monto'), 2);
+        return round($this->pago_anticipado()->where('estado', '>=', 0)->sum('monto'), 2);
     }
 
     public function getMontoDisponibleAttribute()
@@ -177,25 +183,25 @@ class Subcontrato extends Transaccion
                             select s.id_transaccion from transacciones s
                             left join (select SUM(monto) as solicitado, id_antecedente as id from  transacciones
                             where tipo_transaccion = 72 and opciones = 327681 and estado >= 0 and 
-                            id_obra = ".Context::getIdObra()." group by id_antecedente)
+                            id_obra = " . Context::getIdObra() . " group by id_antecedente)
                             as sol on sol.id = s.id_transaccion 
                             left join 
                             (select SUM(i.importe) as suma_anticipo, i.id_antecedente as id from items i
                             join transacciones factura on factura.id_transaccion = i.id_transaccion
                             join transacciones sub on sub.id_transaccion = i.id_antecedente 
                             where factura.tipo_transaccion = 65 and factura.estado >= 0 and
-                            sub.tipo_transaccion = 51 and sub.opciones = 2 and sub.estado >= 0 and sub.id_obra = ".Context::getIdObra()."
+                            sub.tipo_transaccion = 51 and sub.opciones = 2 and sub.estado >= 0 and sub.id_obra = " . Context::getIdObra() . "
                             group by i.id_antecedente)
                             as factura_anticipo on factura_anticipo.id = s.id_transaccion
                             left join (
                             select SUM(i.importe) as suma_e, e.id_antecedente as id  from items i
                             join transacciones f on f.id_transaccion = i.id_transaccion
                             join transacciones e on e.id_transaccion = i.id_antecedente 
-                            where f.tipo_transaccion = 65 and f.estado >= 0 and e.tipo_transaccion = 52 and e.estado >= 0 and f.id_obra =  ".Context::getIdObra()."
+                            where f.tipo_transaccion = 65 and f.estado >= 0 and e.tipo_transaccion = 52 and e.estado >= 0 and f.id_obra =  " . Context::getIdObra() . "
                             group by e.id_antecedente )
                             as facturado_e on facturado_e.id = s.id_transaccion
-                            where s.tipo_transaccion = 51 and s.estado >= 0 and  s.id_obra =  ".Context::getIdObra()."  and s.opciones = 2
-                            and (ROUND(s.saldo, 2) - ROUND((ISNULL(sol.solicitado,0) + ISNULL(factura_anticipo.suma_anticipo, 0) + ISNULL(facturado_e.suma_e, 0)),2)) > 1 and s.id_empresa=".$id_empresa."
+                            where s.tipo_transaccion = 51 and s.estado >= 0 and  s.id_obra =  " . Context::getIdObra() . "  and s.opciones = 2
+                            and (ROUND(s.saldo, 2) - ROUND((ISNULL(sol.solicitado,0) + ISNULL(factura_anticipo.suma_anticipo, 0) + ISNULL(facturado_e.suma_e, 0)),2)) > 1 and s.id_empresa=" . $id_empresa . "
                             order by s.id_transaccion;"));
 
         $transacciones = json_decode(json_encode($transacciones), true);
@@ -209,6 +215,32 @@ class Subcontrato extends Transaccion
             if ($this->estado == 1) {
                 $this->estado = 0;
                 $this->save();
+            }
+        }
+    }
+
+    /**
+     * Este método implementa la lógica actualización de control de obra del procedimiento almacenado sp_aplicar_pagos
+     * y se detona al registrar una orden de pago relacionada a una factura que ampara un subcontrato
+     */
+    public function actualizaControlObra(ItemFactura $item_factura, OrdenPago $orden_pago)
+    {
+        $importe = round($orden_pago->monto * -1 * $item_factura->proporcion_item, 2);
+        if ($this->anticipo_monto > 0) {
+            $factor = $importe / $this->anticipo_monto;
+        } else {
+            $factor = 0;
+        }
+        $estimaciones = $this->estimaciones;
+        if ($estimaciones) {
+            foreach ($estimaciones as $estimacion) {
+                $movimientos = $estimacion->movimientos;
+                foreach ($movimientos as $movimiento) {
+                    $movimiento->monto_pagado = $movimiento->monto_pagado + round($movimiento->monto_total * $factor
+                            * ((100 - $estimacion->retencion) / 100 - ($estimacion->monto - $estimacion->impuesto) / $estimacion->suma_importes)
+                            , 2);
+                    $movimiento->save();
+                }
             }
         }
     }
