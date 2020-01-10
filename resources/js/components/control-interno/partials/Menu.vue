@@ -37,7 +37,7 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'lista-efos'}" class="nav-link" :class="{active: this.$route.name == 'lista-efos'}">
                             <i class="fa fa-times nav-icon"></i>
-                            <p>EFO´s</p>
+                            <p>EFOS</p>
                         </router-link>
                     </li>
                 </ul>
