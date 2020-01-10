@@ -37,6 +37,12 @@ export default {
             state.sucursales = state.sucursales.concat(data);
         },
 
+        DELETE_SUCURSAL(state, id) {
+            state.sucursales = state.sucursales.filter(sucursal => {
+                return sucursal.id != id
+            });
+        }
+
     },
 
     actions: {

@@ -93,7 +93,10 @@ class SucursalService
 
         return $this->repository->update($datos, $id);
     }
-
-
+    
+    public function delete($data, $id)
+    {
+        return $this->repository->delete($data, $id);
+    }
 
 }

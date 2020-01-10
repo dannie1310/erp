@@ -171,7 +171,7 @@
                                                                     <td style="width:30%;">{{sucursal.direccion}}</td>
                                                                     <td style="width:15%;">{{sucursal.ciudad}}</td>
                                                                     <td style="width:15%;">
-                                                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteSucursal(i)" title="Eliminar">
+                                                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteSucursal(sucursal.id)" title="Eliminar">
                                                                             <i class="fa fa-trash"></i>
                                                                         </button>
                                                                         <button type="button" class="btn btn-sm btn-outline-primary" title="Editar">
@@ -263,7 +263,10 @@ export default {
             if(this.proveedorContratista.sucursales.data.length === 1){
                 swal('¡Aviso!', 'El Proveedor / Contratista debe tener al menos una sucursal registrada.', 'warning')
             }else{
-
+                return this.$store.dispatch('cadeco/sucursal/delete', id)
+                    .then(() => {
+                        this.$store.commit('cadeco/sucursal/DELETE_SUCURSAL', id)
+                    })
             }
         },
         fillDataEdit(){
