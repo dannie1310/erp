@@ -101,6 +101,10 @@ return [
         'pdf_factura_venta' =>[
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_PDF_FACTURA_VENTA')),
+        ],
+        'lista_efos' =>[
+                'driver' => 'local',
+                'root' => storage_path(env('STORAGE_LISTA_EFOS')),
         ]
     ],
 ];
