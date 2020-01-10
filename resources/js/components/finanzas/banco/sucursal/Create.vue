@@ -177,7 +177,6 @@
                 fax:'',
                 contacto:'',
                 checkCentral:false,
-                id_banco:'',
             }
         },
 
@@ -189,7 +188,6 @@
 
         methods: {
             init() {
-                this.id_banco = this.id;
                 $(this.$refs.modal).modal('show');
                 this.descripcion = '';
                 this.direccion = '';
@@ -210,7 +208,7 @@
                 });
             },
             store() {
-
+                this.$data.id = this.id;
                 return this.$store.dispatch('cadeco/sucursal/store',  this.$data )
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');

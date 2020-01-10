@@ -47,15 +47,13 @@ class SucursalService
 
     public function store(array $data)
     {
-
-        if($data["checkCentral"]==true){
+        $central='N';
+        if(isset($data["checkCentral"]) && $data["checkCentral"]==true){
             $central='S';
-        }else{
-            $central='N';
         }
 
         $datos = [
-            'id_empresa'=> $data['id_banco'],
+            'id_empresa'=> $data['id'],
             'descripcion' => $data['descripcion'],
             'direccion' => $data['direccion'],
             'ciudad' => $data['ciudad'],
@@ -74,7 +72,7 @@ class SucursalService
     public function update(array $data, $id)
     {
 
-        if($data["checkCentral"]==true){
+        if(isset($data["checkCentral"]) && $data["checkCentral"]==true){
             $central='S';
         }else{
             $central='N';
