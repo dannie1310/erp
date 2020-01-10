@@ -98,6 +98,10 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_RESUMEN_LAYOUT_INVENTARIO_FISICO')),
         ],
+        'pdf_factura_venta' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_PDF_FACTURA_VENTA')),
+        ],
         'layout_pagos_descarga' =>[
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_LAYOUT_PAGOS')),

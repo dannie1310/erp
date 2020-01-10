@@ -18,29 +18,38 @@ import salidaAlmacen from './modules/almacenes/salida-almacen';
 
 import almacen from './modules/cadeco/almacen';
 import banco from './modules/cadeco/banco';
+import cliente from './modules/cadeco/cliente';
 import concepto from './modules/cadeco/concepto';
 import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
 import empresa from './modules/cadeco/empresa';
 import familia from './modules/cadeco/familia';
 import fondo from './modules/cadeco/fondo';
-import Inventario from './modules/cadeco/inventario';
+import inventario from './modules/cadeco/inventario';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
+import proveedorContratista from './modules/cadeco/proveedor-contratista';
 import sucursal from './modules/cadeco/sucursal';
 import unidad from './modules/cadeco/unidad'
 
 
 //COMPRAS
-import solicitudCompra from './modules/compras/solicitud-compra';
-import ordenCompra from './modules/compras/orden-compra';
+import asignacion from "./modules/compras/asignacion";
+import cotizacion from './modules/compras/cotizacion';
 import itemContratista from './modules/compras/item-contratista';
+import ordenCompra from './modules/compras/orden-compra';
+import requisicion from './modules/compras/requisicion';
+import solicitudCompra from './modules/compras/solicitud-compra';
 
 //CONFIGURACION
 import areaCompradora from './modules/configuracion/area-compradora';
 import areaSolicitante from './modules/configuracion/area-solicitante';
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
+
+// CONFIGURACION CADECO
+import nodoTipo from './modules/configuracion/nodo-tipo';
+import nodoProyecto from './modules/configuracion/nodo-proyecto';
 
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo';
@@ -91,6 +100,7 @@ import configuracionObra from './modules/seguridad/configuracion-obra';
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
+import ctgtipo from './modules/configuracion/ctg-tipo';
 import permiso from './modules/seguridad/permiso';
 import rol from './modules/seguridad/rol';
 import rolPersonalizado from './modules/seguridad/rol-personalizado';
@@ -102,6 +112,13 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
 
+
+//SCI
+import marca from "./modules/sci/marca";
+import modelo from "./modules/sci/modelo";
+
+// VENTAS
+import venta from "./modules/ventas/venta";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -120,26 +137,35 @@ export default new Vuex.Store({
 
         'cadeco/almacen': almacen,
         'cadeco/banco': banco,
+        'cadeco/cliente': cliente,
         'cadeco/concepto': concepto,
         'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
         'cadeco/empresa': empresa,
         'cadeco/familia': familia,
         'cadeco/fondo': fondo,
-        'cadeco/inventario': Inventario,
+        'cadeco/inventario': inventario,
         'cadeco/material': material,
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
+        'cadeco/proveedor-contratista': proveedorContratista,
         'cadeco/sucursal': sucursal,
         'cadeco/unidad': unidad,
 
-        'compras/solicitud-compra' : solicitudCompra,
-        'compras/orden-compra' : ordenCompra,
+        'compras/asignacion' : asignacion,
+        'compras/cotizacion' : cotizacion,
         'compras/item-contratista' : itemContratista,
+        'compras/orden-compra' : ordenCompra,
+        'compras/requisicion' : requisicion,
+        'compras/solicitud-compra' : solicitudCompra,
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
+        'configuracion/ctg-tipo': ctgtipo,
+
+        'configuracion/nodo-tipo' : nodoTipo,
+        'configuracion/nodo-proyecto' : nodoProyecto,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
@@ -186,16 +212,23 @@ export default new Vuex.Store({
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
 
+
+        'sci/marca': marca,
+        'sci/modelo': modelo,
+
+
         'seguridad/finanzas/ctg-banco': ctgbanco,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
-        'seguridad/configuracion-obra': configuracionObra,
         'seguridad/finanzas/configuracion-remesa': configuracionRemesa,
+        'seguridad/configuracion-obra': configuracionObra,
         'seguridad/permiso': permiso,
         'seguridad/rol': rol,
         'seguridad/rol-personalizado': rolPersonalizado,
         'seguridad/sistema': sistema,
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
+
+        'ventas/venta': venta,
     },
     strict: process.env.NODE_ENV !== 'production'
 })

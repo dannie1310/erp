@@ -6,24 +6,30 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
 
-
-            <li class="nav-item" v-if="gestion_solicitud">
-                <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-server"></i>
-                    <p>
-                        Gestión de Solicitudes
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can(['consultar_solicitud_compra'])">
-                        <router-link :to="{name: 'solicitud-compra'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-compra'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Solicitudes</p>
-                        </router-link>
-                    </li>
-                </ul>
+            <li class="nav-item" v-if="$root.can('consultar_requisicion_compra')">
+                <router-link :to="{name: 'requisicion'}" class="nav-link">
+                    <i class="fa fa-circle nav-icon"></i>
+                    <p>Requisiciones</p>
+                </router-link>
             </li>
+            <!--<li class="nav-item" v-if="$root.can('consultar_solicitud_compra')">-->
+                <!--<router-link :to="{name: 'solicitud-compra'}" class="nav-link">-->
+                    <!--<i class="fa fa-circle nav-icon"></i>-->
+                    <!--<p>Solicitudes de Compra</p>-->
+                <!--</router-link>-->
+            <!--</li>-->
+            <!--<li class="nav-item" v-if="$root.can('consultar_banco')">-->
+                <!--<router-link :to="{name: 'cotizacion'}" class="nav-link">-->
+                    <!--<i class="fa fa-circle nav-icon"></i>-->
+                    <!--<p>Cotizaciones</p>-->
+                <!--</router-link>-->
+            <!--</li>-->
+            <!--<li class="nav-item" v-if="$root.can('consultar_banco')">-->
+                <!--<router-link :to="{name: 'asignacion-proveedores'}" class="nav-link">-->
+                    <!--<i class="fa fa-circle nav-icon"></i>-->
+                    <!--<p>Asignación de Proveedores</p>-->
+                <!--</router-link>-->
+            <!--</li>-->
             <li class="nav-item" v-if="gestion_orden_compra">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-circle"></i>
@@ -42,7 +48,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="catalogo || $root.can('consultar_insumo_material')|| $root.can('consultar_insumo_herramienta_equipo')">
+            <li class="nav-item" v-if="catalogo">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-circle"></i>
                     <p>
@@ -51,7 +57,7 @@
                     </p>
                 </a>
 
-                <ul class="nav nav-treeview" v-if="catalogo">
+                <ul class="nav nav-treeview"  v-if="$root.can('consultar_familia_material') || $root.can('consultar_familia_herramienta_equipo')">
                     <li class="nav-item" >
                         <router-link :to="{name: 'familia'}" class="nav-link" :class="{active: this.$route.name == 'familia'}">
                             <i class="fa fa-circle-o nav-icon"></i>
@@ -90,7 +96,9 @@
             catalogo(){
                 return this.$root.can([
                     'consultar_familia_material',
-                    'consultar_familia_herramienta_equipo'
+                    'consultar_familia_herramienta_equipo',
+                    'consultar_insumo_material',
+                    'consultar_insumo_herramienta_equipo'
                 ]);
             },
             gestion_almacen() {
@@ -105,6 +113,11 @@
                 ])
             },
             gestion_solicitud(){
+                return this.$root.can([
+                    'consultar_solicitud_compra'
+                ])
+            },
+            gestion_asignacion(){
                 return this.$root.can([
                     'consultar_solicitud_compra'
                 ])
