@@ -24,7 +24,10 @@ class Sucursal extends Model
         'telefono',
         'fax',
         'contacto',
+        'cargo',
+        'email',
         'casa_central',
+        'observaciones'
 
     ];
 }

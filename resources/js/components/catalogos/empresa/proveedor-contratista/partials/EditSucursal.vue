@@ -1,10 +1,10 @@
 <template>
      <span>
-    <button @click="init" v-if="$root.can('registrar_sucursal_proveedor')" class="btn btn-primary">
-        <i class="fa fa-plus"></i> Registrar 
-    </button>
+        <button type="button" @click="find(id)" class="btn btn-sm btn-outline-primary" title="Editar">
+            <i class="fa fa-pencil"></i>
+        </button>
 
-            <div class="modal fade" ref="modalCreateSucursal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="modalEditSucursal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -15,7 +15,7 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row">
+                            <div class="row" v-if="sucursal">
                                 <!-- Descripción -->
                                 <div class="col-md-12" >
                                     <div class="form-group error-content">
@@ -23,7 +23,7 @@
                                         <input type="text" class="form-control"
                                             name="descripcion"
                                             data-vv-as="Descripción"
-                                            v-model="descripcion"
+                                            v-model="sucursal.descripcion"
                                             v-validate="{required: true}"
                                             :class="{'is-invalid': errors.has('descripcion')}"
                                             id="descripcion"
@@ -43,7 +43,7 @@
                                         <textarea row="7" class="form-control"
                                             name="direccion"
                                             data-vv-as="Dirección"
-                                            v-model="direccion"
+                                            v-model="sucursal.direccion"
                                             id="direccion"
                                             placeholder="Dirección de la Sucursal"></textarea>
                                     </div>
@@ -55,7 +55,7 @@
                                         <input type="text" class="form-control"
                                             name="ciudad"
                                             data-vv-as="Descripción"
-                                            v-model="ciudad"
+                                            v-model="sucursal.ciudad"
                                             id="ciudad"
                                             placeholder="Ciudad">
                                     </div>
@@ -67,7 +67,7 @@
                                         <input type="text" class="form-control"
                                             name="codigo_postal"
                                             data-vv-as="Descripción"
-                                            v-model="codigo_postal"
+                                            v-model="sucursal.codigo_postal"
                                             id="codigo_postal"
                                             placeholder="Código Postal" :maxlength="5">
                                     </div>
@@ -79,7 +79,7 @@
                                         <input type="text" class="form-control"
                                             name="estado"
                                             data-vv-as="Estado"
-                                            v-model="estado"
+                                            v-model="sucursal.estado"
                                             id="estado"
                                             placeholder="Estado" >
                                     </div>
@@ -96,7 +96,7 @@
                                         <input type="number" class="form-control"
                                             name="voz"
                                             data-vv-as="Voz"
-                                            v-model="voz"
+                                            v-model="sucursal.telefono"
                                             id="voz"
                                             placeholder="Número de Teléfono" maxlength="10">
                                     </div>
@@ -108,7 +108,7 @@
                                         <input type="text" class="form-control"
                                             name="fax"
                                             data-vv-as="Fax"
-                                            v-model="fax"
+                                            v-model="sucursal.fax"
                                             id="fax"
                                             placeholder="Número de Fax" >
                                     </div>
@@ -125,7 +125,7 @@
                                         <input type="text" class="form-control"
                                             name="contacto"
                                             data-vv-as="Contacto"
-                                            v-model="contacto"
+                                            v-model="sucursal.contacto"
                                             id="contacto"
                                             placeholder="Nombre del Responsble" >
                                     </div>
@@ -137,7 +137,7 @@
                                         <input type="text" class="form-control"
                                             name="cargo"
                                             data-vv-as="Cargo"
-                                            v-model="cargo"
+                                            v-model="sucursal.cargo"
                                             id="cargo"
                                             placeholder="Cargo">
                                     </div>
@@ -149,8 +149,8 @@
                                         <input type="text" class="form-control"
                                             name="mail"
                                             data-vv-as="E-Mail"
-                                            v-model="mail"
-                                            id="v"
+                                            v-model="sucursal.email"
+                                            id="mail"
                                             placeholder="E-Mail" >
                                     </div>
                                 </div>
@@ -161,7 +161,7 @@
                                         <textarea row="7" class="form-control"
                                             name="observaciones"
                                             data-vv-as="Observaciones"
-                                            v-model="observaciones"
+                                            v-model="sucursal.observaciones"
                                             id="observaciones"
                                             placeholder="Observaciones"></textarea>
                                     </div>
@@ -170,75 +170,110 @@
                         </div>
                         <div class="modal-footer">
                            <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="submit" class="btn btn-primary">Actualizar</button>
                         </div>
                     </form>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
+                </div>
+            </div>
         </div>
-     </span>
+    </span>
 </template>
-
 
 <script>
     export default {
-        name: "create-proveedor-sucursal",
+        name: "edit-proveedor-sucursal",
         props: ['id'],
         components: {},
         data() {
             return {
-                
-                descripcion:'',
-                direccion:'',
-                ciudad:'',
-                codigo_postal:'',
-                estado:'',
-                voz:'',
-                fax:'',
-                cargo:'',
-                mail:'',
-                contacto:'',
-                observaciones:'',
+                sucursal:[],
+                cargando:false
             }
         },
         mounted() {
         },
         methods: {
             closeModal(){
-                $(this.$refs.modalCreateSucursal).modal('hide');
+                $(this.$refs.modalEditSucursal).modal('hide');
             },
-            init() {
-                this.descripcion = '';
-                this.direccion = '';
-                this.ciudad = '';
-                this.codigo_postal = '';
-                this.estado = '';
-                this.voz = '';
-                this.fax = '';
-                this.cargo = '';
-                this.mail = '';
-                this.contacto = '';
-                this.observaciones = '';
-                $(this.$refs.modalCreateSucursal).modal('show');
-                this.$validator.reset();
+            find(id){
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/sucursal/find', {
+                    id: id
+                })
+                    .then(data => {
+                        this.sucursal = data;
+                        // this.$store.commit('cadeco/sucursal/SET_SUCURSAL', data);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                        $(this.$refs.modalEditSucursal).modal('show');
+                    })
+                console.log(id);
+               
             },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        this.update()
                     }
                 });
             },
-            store() {
-                this.$data.id_empresa = this.id;
-                return this.$store.dispatch('cadeco/sucursal/store',  this.$data )
-                .then((data) => {
-                    $(this.$refs.modalCreateSucursal).modal('hide');
-                    this.$emit('created',data)
+            update() {
+                return this.$store.dispatch('cadeco/sucursal/update', {
+                    id: this.id,
+                    data: this.sucursal,
+
+                })
+                .then(data => {
+                    this.$store.commit('cadeco/sucursal/UPDATE_SUCURSAL', data);
+                    $(this.$refs.modalEditSucursal).modal('hide');
                 })
             }
+            // updateAttribute(e) {
+            //      console.log(e);
+            //     return this.$store.commit('cadeco/sucursal/UPDATE_ATTR', {attribute: $(e.target).attr('name'), value: e.target.value})
+            // }
+            // init() {
+            //     this.descripcion = '';
+            //     this.direccion = '';
+            //     this.ciudad = '';
+            //     this.codigo_postal = '';
+            //     this.estado = '';
+            //     this.voz = '';
+            //     this.fax = '';
+            //     this.cargo = '';
+            //     this.mail = '';
+            //     this.contacto = '';
+            //     this.observaciones = '';
+            //     $(this.$refs.modalCreateSucursal).modal('show');
+            //     this.$validator.reset();
+            // },
+            // validate() {
+            //     this.$validator.validate().then(result => {
+            //         if (result) {
+            //             this.store()
+            //         }
+            //     });
+            // },
+            // store() {
+            //     this.$data.id = this.id;
+            //     return this.$store.dispatch('cadeco/sucursal/store',  this.$data )
+            //     .then((data) => {
+            //         $(this.$refs.modalCreateSucursal).modal('hide');
+            //         this.$emit('created',data)
+            //     })
+            // }
         },
         computed: {
+            // sucursal(){
+            //     return this.$store.getters['cadeco/sucursal/currentSucursal'];
+            // }
         }
     }
 </script>
+
+<style>
+
+</style>
+                

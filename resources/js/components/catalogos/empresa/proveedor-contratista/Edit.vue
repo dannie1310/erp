@@ -174,9 +174,7 @@
                                                                         <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteSucursal(sucursal.id)" title="Eliminar">
                                                                             <i class="fa fa-trash"></i>
                                                                         </button>
-                                                                        <button type="button" class="btn btn-sm btn-outline-primary" title="Editar">
-                                                                            <i class="fa fa-pencil"></i>
-                                                                        </button>
+                                                                        <edit-sucursal @created="updateSucursal" v-bind:id="sucursal.id"></edit-sucursal>
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
@@ -234,9 +232,10 @@
 
 <script>
 import CreateSucursal from './partials/CreateSucursal';
+import EditSucursal from './partials/EditSucursal';
 export default {
     name: "proveedor-contratista-edit",
-    components: {CreateSucursal},
+    components: {CreateSucursal, EditSucursal},
     props: ['tipo'],
     data(){
         return {
@@ -260,7 +259,7 @@ export default {
             $(this.$refs.modalEdit).modal('hide');
         },
         deleteSucursal(id) {
-            if(this.proveedorContratista.sucursales.data.length === 1){
+            if(this.sucursales.length === 1){
                 swal('¡Aviso!', 'El Proveedor / Contratista debe tener al menos una sucursal registrada.', 'warning')
             }else{
                 return this.$store.dispatch('cadeco/sucursal/delete', id)
