@@ -492,6 +492,11 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {
 
+        // RUBROS
+        $api->group(['prefix' => 'rubro'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\RubroController@index');
+        });
+
         /**
          * CUENTA BANCARIA EMPRESA
          */

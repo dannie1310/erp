@@ -1,8 +1,27 @@
 <template>
+    <span>
     <div class="row">
-        <div class="col-md-12" >
-            <div class="invoice p-3 mb-3">
+        <div class="col-12"  v-if="$root.can('registrar_factura')" :disabled="cargando">
+            <button @click="init" class="btn btn-app btn-info float-right">
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-plus" v-else></i>
+                Registrar
+            </button>
+        </div>
+    </div>
+    <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal_factura"> <i class="fas fa-file-invoice-dollar"></i> REGISTRAR FACTURA</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
                 <form role="form" @submit.prevent="validate">
+
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group error-content">
@@ -39,19 +58,9 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="form-group error-content">
-                                <label for="fecha">Moneda:</label>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!--Referencia-->
-                        <div class="col-md-6">
-                            <div class="form-group error-content">
-                                <label for="referencia">Referencia:</label>
-                                <div class="col-sm-10">
+                            <!--Referencia-->
+                                <div class="form-group error-content">
+                                    <label for="referencia">Referencia:</label>
                                     <input class="form-control"
                                            style="width: 100%"
                                            placeholder="Referencia"
@@ -61,58 +70,202 @@
                                            v-validate="{required: true}"
                                            v-model="dato.referencia"
                                            :class="{'is-invalid': errors.has('referencia')}"
-                                    >
+                                        >
                                     <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                 </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <!--Rubro-->
+                            <div class="form-group error-content">
+                                <label for="referencia">Rubro de Factura:</label>
+                                <model-list-select
+                                        name="id_rubro"
+                                        placeholder="Seleccionar o buscar"
+                                        data-vv-as="Rubro"
+                                        v-validate="{required: true}"
+                                        v-model="dato.id_rubro"
+                                        option-value="id"
+                                        option-text="descripcion"
+                                        :list="rubros"
+                                        :isError="errors.has('id_rubro')">
+                                </model-list-select>
+                                <div class="invalid-feedback" v-show="errors.has('id_rubro')">{{ errors.first('id_rubro') }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group error-content">
+                                <label for="fecha">Emisión:</label>
+                                <datepicker v-model = "dato.emision"
+                                            name = "emision"
+                                            :format = "formatoFecha"
+                                            :language = "es"
+                                            :bootstrap-styling = "true"
+                                            class = "form-control"
+                                            v-validate="{required: true}"
+                                            :disabled-dates="fechasDeshabilitadas"
+                                            :class="{'is-invalid': errors.has('emision')}"
+                                ></datepicker>
+                                <div class="invalid-feedback" v-show="errors.has('emision')">{{ errors.first('emision') }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group error-content">
+                                <label for="fecha">Vencimiento:</label>
+                                <datepicker v-model = "dato.vencimiento"
+                                            name = "vencimiento"
+                                            :format = "formatoFecha"
+                                            :language = "es"
+                                            :bootstrap-styling = "true"
+                                            class = "form-control"
+                                            v-validate="{required: true}"
+                                            :class="{'is-invalid': errors.has('vencimiento')}"
+                                ></datepicker>
+                                <div class="invalid-feedback" v-show="errors.has('vencimiento')">{{ errors.first('vencimiento') }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group error-content">
+                                <label for="total">Total:</label>
+                                <input class="form-control"
+                                       style="width: 100%"
+                                       placeholder="Total de Factura"
+                                       name="total"
+                                       id="total"
+                                       data-vv-as="Total"
+                                       v-validate="{required: true, decimal:2}"
+                                       v-model="dato.total"
+                                       :class="{'is-invalid': errors.has('total')}"
+                                >
+
+                                <div class="invalid-feedback" v-show="errors.has('total')">{{ errors.first('total') }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group error-content">
+                                <label for="total">Moneda:</label>
+                                <select
+                                        class="form-control"
+                                        name="id_moneda"
+                                        data-vv-as="Moneda"
+                                        v-validate="{required: true}"
+                                        v-model="dato.id_moneda"
+                                        >
+                                    <option  v-for="(moneda, i) in monedas" :value="moneda.id" >
+                                        {{ moneda.nombre }}
+                                    </option>
+                                </select>
+
+                                <div class="invalid-feedback" v-show="errors.has('moneda')">{{ errors.first('moneda') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group error-content">
+                                <label for="observaciones">Observaciones:</label>
+                                <textarea
+                                        name="observaciones"
+                                        id="observaciones"
+                                        class="form-control"
+                                        v-model="dato.observaciones"
+                                        v-validate="{required: true}"
+                                        data-vv-as="Observaciones"
+                                        :class="{'is-invalid': errors.has('observaciones')}"
+                                ></textarea>
+                                <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group error-content">
+                                <label for="archivo">Archivo:</label>
+                                <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true>
+                                    <div class="dropzone-custom-content">
+                                    <h3 class="dropzone-custom-title">Arrastra y suelta los archivos para cargaros</h3>
+                                    <div class="subtitle">...o da clic para seleccionar un archivo de tu computadora</div>
+                                  </div>
+
+                                </vue-dropzone>
+
                             </div>
                         </div>
                     </div>
 
 
-
-
                 </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 ">Registrar</button>
+                </div>
             </div>
         </div>
     </div>
+    </span>
+
 </template>
 
 <script>
     import datepicker from 'vuejs-datepicker';
+    import vue2Dropzone from 'vue2-dropzone';
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
     export default {
-        name: "Create",
-        components: {datepicker,ModelListSelect},
+        name: "factura-create",
+        components: {datepicker,ModelListSelect, vue2Dropzone},
         data() {
             return {
+                dropzoneOptions: {
+                    url: 'https://httpbin.org/post',
+                    thumbnailWidth: 150,
+                    maxFilesize: 0.5,
+                    headers: { "My-Awesome-Header": "header value" },
+                    addRemoveLinks: true,
+                    dictDefaultMessage: "<i class='fa fa-cloud-upload'></i>Cargar Archivos"
+                },
+                cargando:true,
                 es:es,
                 fechasDeshabilitadas:{},
                 empresas:[],
+                rubros:[],
+                monedas:[],
                 dato:{
-                    con_prestamo: 0,
-                    folio_vale: '',
-                    opcion_cargo: 1,
-                    id_concepto:'',
                     fecha:'',
-                    id_almacen:'',
+                    emision:'',
+                    vencimiento:'',
                     id_empresa:'',
-                    opciones:1,
+                    id_moneda:'',
+                    id_rubro:'',
                     referencia:'',
+                    total:'',
+                    moneda:'',
                     observaciones:'',
-                    partidas:[]
                 },
             }
         },
-        init() {
-            this.cargando = true;
-        },
+
         mounted() {
-            this.getEmpresas();
+
+            this.getMonedas();
+            this.dato.id_moneda =1;
             this.dato.fecha = new Date();
+            this.dato.emision = new Date();
+            this.dato.vencimiento = new Date();
             this.fechasDeshabilitadas.from= new Date();
         },
         methods:{
+            init() {
+                $(this.$refs.modal).modal('show');
+            },
             rfcAndRazonSocial (item){
                 return `[${item.rfc}] - ${item.razon_social}`
             },
@@ -120,19 +273,55 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             getEmpresas() {
-                this.cargando =true;
                 return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {sort: 'razon_social', order: 'asc', scope:'Contratista' }
+                    params: {sort: 'razon_social', order: 'asc' }
                 })
                     .then(data => {
                         this.empresas = data.data;
+                    })
+                    .finally(()=>{
+                        this.getRubros();
+                    })
+            },
+            getRubros() {
+                return this.$store.dispatch('finanzas/rubro/index', {
+                    params: {sort: 'descripcion', order: 'asc', scope:'paraFactura' }
+                })
+                    .then(data => {
+                        this.rubros = data.data;
                         this.cargando = false;
+                    })
+            },
+            getMonedas() {
+                this.cargando =true;
+                return this.$store.dispatch('cadeco/moneda/index', {
+                    params: {sort: 'nombre', order: 'desc' }
+                })
+                    .then(data => {
+                        this.monedas = data.data;
+                    })
+                    .finally(()=>{
+                        this.getEmpresas();
                     })
             },
         }
     }
 </script>
+<style>
+    .dropzone-custom-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
 
-<style scoped>
+    .dropzone-custom-title {
+        margin-top: 0;
+        color: #999;
+    }
 
+    .subtitle {
+        color: #7ac142;
+    }
 </style>

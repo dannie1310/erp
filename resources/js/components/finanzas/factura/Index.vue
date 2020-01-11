@@ -1,12 +1,7 @@
 <template>
+<span>
+    <create @created="paginate()"></create>
     <div class="row">
-        <div class="col-12"  v-if="$root.can('registrar_factura')" :disabled="cargando">
-            <button @click="create" class="btn btn-app btn-info float-right">
-                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                <i class="fa fa-plus" v-else></i>
-                Registrar
-            </button>
-        </div>
 
         <div class="col-12">
             <div class="card">
@@ -22,11 +17,13 @@
         </div>
         <!-- /.col -->
     </div>
+</span>
 </template>
 <script>
+    import Create from "./Create";
     export default {
         name: "factura-index",
-        components: {},
+        components: {Create},
         data(){
             return{
                 HeaderSettings: false,
