@@ -45,9 +45,14 @@ class Cliente extends Empresa
         }
     }
 
+    public function getPorcentajeRoundFormatAttribute()
+    {
+        return bcdiv($this->porcentaje, '1',2);
+    }
+
     public function getPorcentajeFormatAttribute()
     {
-        return $this->porcentaje. ' %';
+        return  bcdiv($this->porcentaje, '1',2). ' %';
     }
 
     public function validaDuplicidadRfc()

@@ -41,7 +41,7 @@ class ClienteTransformer extends TransformerAbstract
             'rfc'=> $model->rfc,
             'tipo' => $model->tipo,
             'tipo_cliente' => (int) $model->tipo_cliente,
-            'porcentaje' => $model->porcentaje,
+            'porcentaje' => $model->porcentaje_round_format,
             'porcentaje_format' => $model->porcentaje_format
         ];
     }
