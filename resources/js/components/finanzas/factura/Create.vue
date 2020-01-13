@@ -18,9 +18,10 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                <form role="form" @submit.prevent="validate">
                 <div class="modal-body">
 
-                <form role="form" @submit.prevent="validate">
+
 
                         <div class="row">
                             <div class="col-md-2">
@@ -188,25 +189,36 @@
                         <div class="col-md-12">
                             <div class="form-group error-content">
                                 <label for="archivo">Archivo:</label>
+
                                 <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true>
                                     <div class="dropzone-custom-content">
-                                    <h3 class="dropzone-custom-title">Arrastra y suelta los archivos para cargaros</h3>
-                                    <div class="subtitle">...o da clic para seleccionar un archivo de tu computadora</div>
-                                  </div>
-
+                                        <h3 class="dropzone-custom-title"><span class='fas fa-file-invoice-dollar' style='padding-right:5px'></span>Arrastre y suelte los archivos xml y pdf</h3>
+                                        <div class="subtitle">...o de clic para seleccionar los archivos de su computadora</div>
+                                    </div>
                                 </vue-dropzone>
+
+                                <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                                       row="3"
+                                       v-validate="{required: true,  ext: ['xml'], size: 3072}"
+                                       name="archivo"
+                                       data-vv-as="Archivo"
+                                       ref="archivo"
+                                       :class="{'is-invalid': errors.has('archivo')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
 
                             </div>
                         </div>
                     </div>
 
 
-                </form>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 ">Registrar</button>
                 </div>
+                    </form>
             </div>
         </div>
     </div>
@@ -217,11 +229,12 @@
 <script>
     import datepicker from 'vuejs-datepicker';
     import vue2Dropzone from 'vue2-dropzone';
+    import 'vue2-dropzone/dist/vue2Dropzone.min.css'
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "factura-create",
-        components: {datepicker,ModelListSelect, vue2Dropzone},
+        components: {datepicker,ModelListSelect, vueDropzone: vue2Dropzone},
         data() {
             return {
                 dropzoneOptions: {
@@ -230,7 +243,7 @@
                     maxFilesize: 0.5,
                     headers: { "My-Awesome-Header": "header value" },
                     addRemoveLinks: true,
-                    dictDefaultMessage: "<i class='fa fa-cloud-upload'></i>Cargar Archivos"
+                    dictDefaultMessage: "<h2 style='color:#bbb'><span class='fas fa-file-invoice-dollar' style='padding-right:5px'></span>Arraste los archivos xml y pdf de la factura a esta zona.</h2>",
                 },
                 cargando:true,
                 es:es,
@@ -247,8 +260,8 @@
                     id_rubro:'',
                     referencia:'',
                     total:'',
-                    moneda:'',
                     observaciones:'',
+                    archivo:null,
                 },
             }
         },
@@ -265,6 +278,7 @@
         methods:{
             init() {
                 $(this.$refs.modal).modal('show');
+                this.$validator.reset()
             },
             rfcAndRazonSocial (item){
                 return `[${item.rfc}] - ${item.razon_social}`
@@ -304,6 +318,41 @@
                         this.getEmpresas();
                     })
             },
+            onFileChange(e){
+                this.dato.archivo = null;
+                var files = e.target.files || e.dataTransfer.files;
+                this.createImage(files[0], 1);
+                setTimeout(() => {
+                    if(this.dato.archivo == null) {
+                        onFileChange(e)
+                    }
+                }, 500);
+            },
+            createImage(file) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.dato.archivo = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store()
+                    }
+                });
+            },
+            store() {
+                return this.$store.dispatch('finanzas/factura/store', this.$data.dato)
+                    .then(data => {
+                        this.$emit('created', data);
+                        $(this.$refs.modal).modal('hide');
+                    }).finally( ()=>{
+                        this.cargando = false;
+                    });
+            },
         }
     }
 </script>
@@ -323,5 +372,8 @@
 
     .subtitle {
         color: #7ac142;
+    }
+    .vue-dropzone {
+        border: 2px dashed #e5e5e5;
     }
 </style>
