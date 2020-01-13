@@ -36,6 +36,7 @@ class PagoLayout implements FromCollection, WithHeadings
                 'referencia' => str_replace(',', ' ', $factura->referencia),
                 'razon_social' => str_replace(',', ' ', $factura->empresa->razon_social),
                 'monto' => $factura->monto,
+                'saldo' => $factura->saldo,
                 'moneda' => $factura->moneda->nombre,
                 '   ',
                 '   ',
@@ -59,6 +60,7 @@ class PagoLayout implements FromCollection, WithHeadings
                 'referencia' => str_replace(',', ' ', 'S/P ' . $solicitud->numero_folio_format),
                 'razon_social' => str_replace(',', ' ', $proveedor),
                 'monto' => $solicitud->monto,
+                'saldo' => $solicitud->monto,
                 'moneda' => $solicitud->moneda->nombre,
                 '   ',
                 '   ',
@@ -81,11 +83,12 @@ class PagoLayout implements FromCollection, WithHeadings
             'Referencia de Factura',
             'Proveedor',
             'Monto de Factura',
+            'Saldo de Factura',
             'Moneda de Factura',
             'Cuenta Cargo',
             'Fecha de Pago',
             'Referencia de Pago',
             'Tipo de Cambio (de acuerdo a moneda de factura y moneda de cuenta pagadora)',
-            'Monto Pagado (en moneda de la cuenta pagadora)']);
+            'Monto Pagado (en moneda de cuenta pagadora)']);
     }
 }

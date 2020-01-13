@@ -19,10 +19,10 @@ class InventarioObserver
      */
     public function updating(Inventario $inventario)
     {
-        if($inventario->saldo<-0.01){
+        if(round($inventario->getOriginal("saldo"),2) <> round($inventario->saldo,2) &&  $inventario->saldo<-0.01){
             throw New \Exception('El saldo del lote ('.$inventario->id_lote.') '.$inventario->material->descripcion.' no puede ser menor a 0');
         }
-        if($inventario->saldo > ($inventario->cantidad)+0.01){
+        if(round($inventario->getOriginal("saldo"),2) <> round($inventario->saldo,2) && $inventario->saldo > ($inventario->cantidad)+0.01){
             throw New \Exception('El saldo del lote ('.$inventario->id_lote.') '.$inventario->material->descripcion.' no puede ser mayor a '. $inventario->cantidad);
         }
     }

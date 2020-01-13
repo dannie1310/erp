@@ -24,10 +24,12 @@ class FacturaObserver extends TransaccionObserver
     public function creating(Transaccion $factura)
     {
         parent::creating($factura);
+        $factura->tipo_transaccion = 65;
+        $factura->opciones = 0;
     }
 
     public function updating(Factura $factura){
-        if($factura->saldo<-0.01)
+        if($factura->saldo<-0.1)
         {
             throw New \Exception('El saldo de la factura '.$factura->referencia.' no puede ser menor a 0');
         }

@@ -76,8 +76,23 @@ class OrdenPago extends Transaccion
 
                 return $this->pago;
             }
+    }
 
-
+    /**
+     * Este método implementa la lógica actualización de control de obra del procedimiento almacenado sp_aplicar_pagos
+     * y se detona al registrar una orden de pago
+     */
+    public function actualizaControlObra()
+    {
+        if($this->factura){
+            $items_factura = $this->factura->items;
+            foreach($items_factura as $item_factura)
+            {
+                $item_factura->actualizaControlObra($this);
+            }
+        } else {
+            abort(500, "No se encontraron las partidas de la factura");
+        }
 
     }
 }
