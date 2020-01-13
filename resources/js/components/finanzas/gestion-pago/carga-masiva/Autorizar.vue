@@ -4,7 +4,7 @@
             <div class="invoice p-3 mb-3">
                 <div class="row">
                     <div class="col-12">
-                        <h4> <i class="fa fa-list-alt"></i> AUTORIZACIÓN DE LAYOUTS REGISTRADOS</h4>
+                        <h4> <i class="fa fa-check-circle"></i> AUTORIZACIÓN DE LAYOUTS REGISTRADOS</h4>
                     </div>
                 </div>
                 <!--                <div class="modal-body">-->
@@ -119,12 +119,10 @@
                                 <td style="text-align: right">{{doc.monto_pagado_documento_format}}</td>
                                 <td style="text-align: right">{{doc.tipo_cambio}}</td>
                                 <td style="text-align: right">{{doc.monto_pagado_format}}</td>
-                                <td v-if="doc.id_transaccion_pago===null">
-                                    <small class="badge badge-primary">Por Autorizar</small>
+                                <td>
+                                    <small :class="[doc.clase_badge_estado]">{{doc.estado}}</small>
                                 </td>
-                                <td v-else>
-                                    <small class="badge badge-success">Pagado</small>
-                                </td>
+
                             </tr>
                             </tbody>
                         </table>

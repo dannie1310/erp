@@ -112,62 +112,73 @@ class Inventario extends Model
      **/
     public function distribuirPagoInventarios()
     {
-        $tipo_distribucion = null;
-        if ($this->cantidad <= 0) {
-            throw New \Exception('Cantidad erronea para el lote:' . $this->id_lote);
+        try{
+            $tipo_distribucion = null;
+            if ($this->cantidad <= 0) {
+                throw New \Exception('Cantidad erronea para el lote:' . $this->id_lote);
+            }
+            if (in_array($this->almacen->tipo_almacen, [0, 3, 4]) || in_array($this->material->tipo_material, [1, 2])) {
+                $tipo_distribucion = 1;
+                $monto_aplicado = $this->distribucionProporcional();
+            } else if (in_array($this->material->tipo_material, [4, 8])) {
+                $tipo_distribucion = 2;
+                $monto_aplicado = $this->distribucionRentas();
+            }
+            if ($tipo_distribucion == null) {
+                throw New \Exception('No se puede determinar el tipo de distribución del lote:' . $this->id_lote);
+            }
+            $this->aplicarMontoPorAjustes($monto_aplicado);
         }
-        if (in_array($this->almacen->tipo_almacen, [0, 3, 4]) || in_array($this->material->tipo_material, [1, 2])) {
-            $tipo_distribucion = 1;
-            $monto_aplicado = $this->distribucionProporcional();
-        } else if (in_array($this->material->tipo_material, [4, 8])) {
-            $tipo_distribucion = 2;
-            $monto_aplicado = $this->distribucionRentas();
+        catch (\Exception $e){
+            abort(500, "Error en distribución de pago de invetario ".$this->id_lote.": ".$e->getMessage());
         }
-        if ($tipo_distribucion == null) {
-            throw New \Exception('No se puede determinar el tipo de distribución del lote:' . $this->id_lote);
-        }
-        $this->aplicarMontoPorAjustes($monto_aplicado);
+
     }
 
     private function distribucionProporcional()
     {
-        $por_aplicar = $this->monto_pagado;
-        $monto_aplicado = 0;
-        $movimientos = $this->movimientos()->where("cantidad", ">", 0)->get();
-        $inventarios = $this->inventarios_hijos;
-        foreach ($movimientos as $movimiento) {
-            $monto_pagado = round($por_aplicar * $movimiento->cantidad / $this->cantidad, 2);
-            $movimiento->monto_pagado = $monto_pagado;
-            $movimiento->save();
-            $monto_aplicado += $monto_pagado;
-        }
-        foreach ($inventarios as $inventario) {
-            if ($inventario->cantidad > 0) {
-                $monto_pagado = round($por_aplicar * $inventario->cantidad / $this->cantidad, 2);
-                $inventario->monto_pagado = $monto_pagado;
-                $inventario->save();
-                $inventario->distribuirPagoInventarios();
-                $monto_aplicado += $monto_pagado;
-            } else {
-                $monto_pagado = round($por_aplicar * (-1) * $inventario->cantidad / $this->cantidad, 2);
-                $inventario->monto_pagado = $monto_pagado;
-                $inventario->save();
-                /*Inferencia de consumo, se actualizan los movimientos*/
-                $movimientos_inferidos = Movimiento::where("id_item", "=", $inventario->id_item)
-                    ->where("id_material", "=", $this->id_material)
-                    ->get();
-                $inventarios_inferidos = Inventario::where("id_item", "=", $inventario->id_item)
-                    ->where("id_material", "=", $this->id_material)
-                    ->get();
-                $monto_pagado_inventarios_inferidos = $inventarios_inferidos->sum("monto_pagado");
-                foreach ($movimientos_inferidos as $movimiento_inferido) {
-                    $movimiento_inferido->monto_pagado = $monto_pagado_inventarios_inferidos;
-                    $movimiento_inferido->save();
-                }
+        try{
+            $por_aplicar = $this->monto_pagado;
+            $monto_aplicado = 0;
+            $movimientos = $this->movimientos()->where("cantidad", ">", 0)->get();
+            $inventarios = $this->inventarios_hijos;
+            foreach ($movimientos as $movimiento) {
+                $monto_pagado = round($por_aplicar * $movimiento->cantidad / $this->cantidad, 2);
+                $movimiento->monto_pagado = $monto_pagado;
+                $movimiento->save();
                 $monto_aplicado += $monto_pagado;
             }
+            foreach ($inventarios as $inventario) {
+                if ($inventario->cantidad > 0) {
+                    $monto_pagado = round($por_aplicar * $inventario->cantidad / $this->cantidad, 2);
+                    $inventario->monto_pagado = $monto_pagado;
+                    $inventario->save();
+                    $inventario->distribuirPagoInventarios();
+                    $monto_aplicado += $monto_pagado;
+                } else {
+                    $monto_pagado = round($por_aplicar * (-1) * $inventario->cantidad / $this->cantidad, 2);
+                    $inventario->monto_pagado = $monto_pagado;
+                    $inventario->save();
+                    /*Inferencia de consumo, se actualizan los movimientos*/
+                    $movimientos_inferidos = Movimiento::where("id_item", "=", $inventario->id_item)
+                        ->where("id_material", "=", $this->id_material)
+                        ->get();
+                    $inventarios_inferidos = Inventario::where("id_item", "=", $inventario->id_item)
+                        ->where("id_material", "=", $this->id_material)
+                        ->get();
+                    $monto_pagado_inventarios_inferidos = $inventarios_inferidos->sum("monto_pagado");
+                    foreach ($movimientos_inferidos as $movimiento_inferido) {
+                        $movimiento_inferido->monto_pagado = $monto_pagado_inventarios_inferidos;
+                        $movimiento_inferido->save();
+                    }
+                    $monto_aplicado += $monto_pagado;
+                }
+            }
+            return $monto_aplicado;
+        } catch (\Exception $e){
+            abort(500, "Error en distribución proporcional: ".$e->getMessage());
         }
-        return $monto_aplicado;
+
     }
 
     private function distribucionRentas()
@@ -208,13 +219,18 @@ class Inventario extends Model
     }
     private function aplicarMontoPorAjustes($monto_aplicado)
     {
-        $items_ajuste = $this->items_ajuste;
-        $monto_aplicado_ia = 0;
-        foreach($items_ajuste as $item_ajuste)
-        {
-            $monto_aplicado_ia += ($items_ajuste->importe - $items_ajuste->saldo);
+        try{
+            $items_ajuste = $this->items_ajuste;
+            $monto_aplicado_ia = 0;
+            foreach($items_ajuste as $item_ajuste)
+            {
+                $monto_aplicado_ia += ($item_ajuste->importe - $item_ajuste->saldo);
+            }
+            $this->monto_aplicado = round($monto_aplicado+$monto_aplicado_ia,2);
+            $this->save();
         }
-        $this->monto_aplicado = round($monto_aplicado+$monto_aplicado_ia,2);
-        $this->save();
+        catch (\Exception $e){
+            abort(500, "Error en aplicación de monto por ajuste: ".$e->getMessage());
+        }
     }
 }
