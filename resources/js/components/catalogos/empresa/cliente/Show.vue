@@ -34,9 +34,13 @@
                                                 <td class="bg-white"><b>Porcentaje de Participación:</b></td>
                                                 <td class="bg-white">{{cliente.porcentaje_format}}</td>
                                             </tr>
-                                            <tr v-if="cliente.efo">
+                                            <tr v-if="cliente.efo && (cliente.efo.estado == 2 || cliente.efo.estado == 0)">
                                                 <td class="bg-white"><b>Estado en el catálogo de EFOS:</b></td>
-                                                <td class="bg-white"><b>{{cliente.efo.ctg_estado.descripcion}}</b></td>
+                                                <td class="bg-white">
+                                                    <small class="badge" :class="{'badge-warning': cliente.efo.estado == 2, 'badge-danger' : cliente.efo.estado == 0 }">
+                                                          {{cliente.efo.ctg_estado.descripcion}}
+                                                    </small>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
