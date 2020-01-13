@@ -7,8 +7,8 @@ namespace App\Services\CADECO\Finanzas;
 use App\Models\CADECO\ContraRecibo;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
-use App\Repositories\CADECO\Finanzas\RegistrarPago\Repository;
-use http\Env\Request;
+use App\Repositories\CADECO\Finanzas\Facturas\Repository;
+use Illuminate\Support\Facades\Storage;
 
 class FacturaService
 {
@@ -126,5 +126,36 @@ class FacturaService
     public function pendientesPago($id){
         return $this->repository->pendientesPago($id);
     }
+
+    public function store(array $data)
+    {
+        $this->validaRFCFacturaVsEmpresa($data["archivo"],$data["id_empresa"]);
+
+        /*$pagos = $data['pagos'];
+        $pagos = $this->validaTC($pagos);
+        $datos = [
+            'pagos' => $pagos,
+            'resumen' => $data['resumen'],
+            'file_pagos' => $data['file_pagos'],
+            'nombre_archivo' => $data['file_pagos_name']
+        ];
+        return $this->repository->create($datos);*/
+    }
+
+    private function validaRFCFacturaVsEmpresa($archivo, $id_empresa)
+    {
+
+        $factura_xml = simplexml_load_file($archivo);
+        $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
+        $emisor_rfc =(string)$emisor["Rfc"][0];
+        $emisor_nombre =(string)$emisor["Nombre"][0];
+        $rfc = $this->repository->getRFCEmpresa($id_empresa);
+        if($emisor_rfc != $rfc)
+        {
+            abort(500,"El RFC del proveedor (".$rfc.") no corresponde al RFC de la factura cargada (".$emisor_rfc.")");
+        }
+
+    }
+
 }
 
