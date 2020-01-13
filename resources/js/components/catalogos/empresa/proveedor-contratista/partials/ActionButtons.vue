@@ -19,7 +19,7 @@
                 this.$store.commit('cadeco/proveedor-contratista/SET_PROVEEDOR_CONTRATISTA', null);
                 return this.$store.dispatch('cadeco/proveedor-contratista/find', {
                     id: id,
-                    params: {include: ['suministrados.material', 'sucursales']}
+                    params: {include: ['suministrados', 'sucursales']}
                 }).then(data => {
                     data.tipo = tipo;
                     this.$store.commit('cadeco/proveedor-contratista/SET_PROVEEDOR_CONTRATISTA', data);

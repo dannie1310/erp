@@ -143,78 +143,16 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
-                                                <button type="submit" class="btn btn-primary">Acturalizar</button>
+                                                <button type="submit" class="btn btn-primary">Actualizar</button>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <div aria-labelledby="nav-edit-sucursales-tab" class="tab-pane fade" id="nav-edit-sucursales" role="tabpanel">
-                                    <div class="row" v-if="proveedorContratista && $root.can('editar_sucursal_proveedor')" style="height:350px;" >
-                                        <div class="col-12" v-if="sucursales">
-                                            <div class="invoice p-3 mb-3">
-                                                <div class="row" v-if="proveedorContratista.sucursales">
-                                                    <div class="table-responsive col-12">
-                                                        <table class="table table-striped table-fixed">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th style="width:5%;">#</th>
-                                                                    <th style="width:35%;">Descripción</th>
-                                                                    <th style="width:30%;">Dirección</th>
-                                                                    <th style="width:15%;">Ciudad</th>
-                                                                    <th style="width:15%;"></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr v-for="(sucursal, i) in sucursales">
-                                                                    <td style="width:5%;">{{i+1}}</td>
-                                                                    <td style="width:35%;">{{sucursal.descripcion}}</td>
-                                                                    <td style="width:30%;">{{sucursal.direccion}}</td>
-                                                                    <td style="width:15%;">{{sucursal.ciudad}}</td>
-                                                                    <td style="width:15%;">
-                                                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteSucursal(sucursal.id)" title="Eliminar">
-                                                                            <i class="fa fa-trash"></i>
-                                                                        </button>
-                                                                        <edit-sucursal @created="updateSucursal" v-bind:id="sucursal.id"></edit-sucursal>
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                    <create-sucursal @created="updateSucursal" v-bind:id="proveedorContratista.id"></create-sucursal>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <sucursal-tab v-if="proveedorContratista" v-bind:id_empresa="proveedorContratista.id"></sucursal-tab>
                                 </div>
                                 <div aria-labelledby="nav-edit-materiales-tab" class="tab-pane fade" id="nav-edit-materiales" role="tabpanel">
-                                    <div class="col-12" v-if="proveedorContratista" style="height:350px;">
-                                        <div class="invoice p-3 mb-3">
-                                            <div class="row" v-if="proveedorContratista.suministrados">
-                                                <div class="table-responsive col-12">
-                                                    <table class="table table-striped table-fixed">
-                                                        <thead>
-                                                            <tr>
-                                                                <th style="width:10%;">#</th>
-                                                                <th style="width:80%;">Material</th>
-                                                                <th style="width:10%;"></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-for="(material, i) in proveedorContratista.suministrados.data">
-                                                                <td style="width:10%;">{{i+1}}</td>
-                                                                <td style="width:80%; text-align: left">{{material.material.descripcion}}</td>
-                                                                <td style="width:10%;">
-                                                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                                        <i class="fa fa-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>   
+                                    <material-tab v-if="proveedorContratista" v-bind:id_empresa="proveedorContratista.id"></material-tab>
                                 </div>   
                             
                             </div>
@@ -222,7 +160,6 @@
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
-                        <!-- <button type="submit" class="btn btn-primary">Guardar</button> -->
                     </div>
                 </div>
             </div>
@@ -231,11 +168,11 @@
 </template>
 
 <script>
-import CreateSucursal from './partials/CreateSucursal';
-import EditSucursal from './partials/EditSucursal';
+import SucursalTab from './EditTabs/SucursalTab'
+import MaterialTab from './EditTabs/MaterialTab'
 export default {
     name: "proveedor-contratista-edit",
-    components: {CreateSucursal, EditSucursal},
+    components: {SucursalTab, MaterialTab},
     props: ['tipo'],
     data(){
         return {
@@ -258,25 +195,17 @@ export default {
             $('.nav-tabs a[href="#nav-edit-identificacion"]').tab('show');
             $(this.$refs.modalEdit).modal('hide');
         },
-        deleteSucursal(id) {
-            if(this.sucursales.length === 1){
-                swal('¡Aviso!', 'El Proveedor / Contratista debe tener al menos una sucursal registrada.', 'warning')
-            }else{
-                return this.$store.dispatch('cadeco/sucursal/delete', id)
-                    .then(() => {
-                        this.$store.commit('cadeco/sucursal/DELETE_SUCURSAL', id)
-                    })
-            }
-        },
+        
         fillDataEdit(){
             this.edit.razon_social = this.proveedorContratista.razon_social;
             this.edit.rfc = this.proveedorContratista.rfc;
             this.edit.no_proveedor_virtual = this.proveedorContratista.no_proveedor_virtual;
             this.edit.dias_credito = this.proveedorContratista.dias_credito;
             this.edit.porcentaje = this.proveedorContratista.porcentaje;
-            this.edit.tipo_empresa = parseInt(this.proveedorContratista.tipo_empresa);
+            this.edit.tipo_empresa = this.proveedorContratista.tipo_empresa;
 
             this.$store.commit('cadeco/sucursal/SET_SUCURSALES', this.proveedorContratista.sucursales.data);
+            this.$store.commit('cadeco/suministrado/SET_SUMINISTRADOS', this.proveedorContratista.suministrados.data);
 
             $(this.$refs.modalEdit).modal('show');
         },
@@ -289,9 +218,6 @@ export default {
         },
         update(){
             console.log('Panda Update');
-        },
-        updateSucursal(data){
-            this.$store.commit('cadeco/sucursal/INSERT_SUCURSAL', data);
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -310,9 +236,6 @@ export default {
         proveedorContratista() {
             return this.$store.getters['cadeco/proveedor-contratista/currentProveeedor'];
         }, 
-        sucursales(){
-            return this.$store.getters['cadeco/sucursal/sucursales'];
-        }
     },
     watch:{
         tipo(value){

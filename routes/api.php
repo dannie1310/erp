@@ -133,10 +133,15 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@destroy')->where(['id' => '[0-9]+']);
         });
 
+        // SUMINISTRADO
+        $api->group(['prefix'=>'suministrado'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\SuministradoController@store');
+        });
+
         //UNIDAD
         $api->group(['prefix'=>'unidad'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\UnidadController@index');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
+            $api->post('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
         });
 
     });
