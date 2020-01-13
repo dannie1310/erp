@@ -3,7 +3,7 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
-
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -107,11 +107,15 @@ class CtgEfos extends Model
                             $razon = iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $razon);
                         }
                         $fecha_definitivo = (!isset($renglon[$t + 10])) ? '' : $renglon[$t + 10];
+                        if($fecha_definitivo != '')
+                        {
+                            $fecha_definitivo = DateTime::createFromFormat('d-m-y', str_replace('/','-', $fecha_definitivo));
+                        }
                         $content[] = array(
                             'rfc' => $renglon[1],
                             'razon_social' => (str_replace('"','', $razon)),
                             'fecha_presunto' => date("Y-m-d", strtotime(str_replace('/','-', $renglon[$t + 2]))),
-                            'fecha_definitivo' => ($fecha_definitivo != '') ? date("Y-m-d", strtotime(str_replace('/','-', $renglon[$t + 10]))) : NULL,
+                            'fecha_definitivo' => ($fecha_definitivo != '') ? $fecha_definitivo->format('Y-m-d') : NULL,
                             'estado' => $renglon[$t]
                         );
                         $linea++;
