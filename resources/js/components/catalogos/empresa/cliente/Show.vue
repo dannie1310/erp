@@ -4,7 +4,7 @@
             <i class="fa fa-eye"></i>
         </button>
          <div class="modal fade" ref="modal" role="dialog">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> Cliente</h5>
@@ -19,27 +19,27 @@
                                     <table class="table table-striped">
                                         <tbody>
                                             <tr>
-                                                <td class="bg-gray-light"><b>RFC:</b></td>
-                                                <td class="bg-gray-light" colspan="1">{{cliente.rfc}}</td>
-                                                <td class="bg-gray-light"><b>Razón Social:</b></td>
-                                                <td class="bg-gray-light">{{cliente.razon_social}}</td>
+                                                <td class="bg-white"><b>RFC:</b></td>
+                                                <td class="bg-white">{{cliente.rfc}}</td>
                                             </tr>
                                             <tr>
-                                                <td class="bg-gray-light"><b>Tipo:</b></td>
-                                                <td class="bg-gray-light">{{cliente.tipo}}</td>
-                                                <td class="bg-gray-light"><b>Porcentaje de Participación:</b></td>
-                                                <td class="bg-gray-light">{{cliente.porcentaje_format}}</td>
+                                                <td class="bg-white"><b>Razón Social:</b></td>
+                                                <td class="bg-white">{{cliente.razon_social}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bg-white"><b>Tipo:</b></td>
+                                                <td class="bg-white">{{cliente.tipo}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bg-white"><b>Porcentaje de Participación:</b></td>
+                                                <td class="bg-white">{{cliente.porcentaje_format}}</td>
+                                            </tr>
+                                            <tr v-if="cliente.efo">
+                                                <td class="bg-white"><b>Estado en el catálogo de EFOS:</b></td>
+                                                <td class="bg-white"><b>{{cliente.efo.ctg_estado.descripcion}}</b></td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
-                            </div>
-                            <div class="row"  v-if="cliente.efo">
-                                <div class="col-md-2">
-                                    <b>Estado en el catálogo de EFOS:</b>
-                                </div>
-                                <div class="col-sm-10">
-                                    {{cliente.efo.ctg_estado.descripcion}}
                                 </div>
                             </div>
                         </div>
