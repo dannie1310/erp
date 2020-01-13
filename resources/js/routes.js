@@ -130,6 +130,45 @@ export const routes = [
         ]
     },
     {
+        path: '/control-interno/finanzas',
+        components: {
+            default: require('./components/control-interno/partials/Layout.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'control-finanzas',
+                component: require('./components/control-interno/finanzas/Index').default,
+                meta: {
+                    title: 'Finanzas',
+                    breadcrumb: {parent: 'control-interno', name: 'FINANZAS'},
+                    middleware: [auth]
+
+                }
+            },
+            {
+                path: 'efos',
+                component: require('./components/control-interno/finanzas/efos/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'lista-efos',
+                        component: require('./components/control-interno/finanzas/efos/Index').default,
+                        meta: {
+                            title: 'Lista de EFOS',
+                            breadcrumb: {parent: 'control-finanzas', name: 'EFOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_efos',
+                            general: true,
+
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {
