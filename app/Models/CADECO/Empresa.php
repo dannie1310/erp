@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
@@ -29,7 +30,11 @@ class Empresa extends Model
         'razon_social',
         'UsuarioRegistro',
         'id_ctg_bancos',
-        'rfc'
+        'rfc',
+        'dias_credito',
+        'no_proveedor_virtual',
+        'porcentaje',
+        'tipo_cliente'
     ];
 
     public function cuentasEmpresa()
@@ -60,6 +65,11 @@ class Empresa extends Model
     public function cuentasBancarias()
     {
         return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function efo()
+    {
+        return $this->belongsTo(CtgEfos::class, 'rfc', 'rfc');
     }
 
     public function scopeConCuentas($query)
@@ -164,6 +174,34 @@ class Empresa extends Model
     public function scopeBeneficiarioCuentaBancaria($query)
     {
         return $query->has('cuentasBancarias');
+    }
+
+    public function validaRFC($data){
+        if(isset($data->rfc)){
+            if(strlen(str_replace(" ","", $data->rfc))>0){
+                $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tien un formato inválido.');
+                $this->rfcValidaEfos($data->rfc);
+            }
+        }
+    }
+
+    private function rfcValidaEfos($rfc)
+    {
+        if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 0)->first()))
+        {
+            abort(403, 'Está empresa a registrar es un EFO.');
+        }
+    }
+
+    private function rfcValido($rfc){
+        if(strlen(str_replace(" ","", $rfc))>0){
+            $reg_exp = "/^(([A-ZÑ&]{3,4})[\-]?([0-9]{2})([0][13578]|[1][02])(([0][1-9]|[12][\\d])|[3][01])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
+                "(([A-ZÑ&]{3,4})[\-]?([0-9]{2})([0][13456789]|[1][012])(([0][1-9]|[12][\\d])|[3][0])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
+                "(([A-ZÑ&]{3,4})[\-]?([02468][048]|[13579][26])[0][2]([0][1-9]|[12][\\d])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
+                "(([A-ZÑ&]{3,4})[\-]?([0-9]{2})[0][2]([0][1-9]|[1][0-9]|[2][0-8])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))$/";
+            return (bool)preg_match($reg_exp, $rfc);
+        }
+        return true;
     }
 
 }

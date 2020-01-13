@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-        <create @created="paginate()"></create>
+            <Layout @change="paginate()"></Layout>
         </div>
         <div class="col-12">
             <div class="card">
@@ -20,25 +20,20 @@
 </template>
 
 <script>
-    import Create from "./Create";
+    import Layout from  "./CargarLayout";
     export default {
-        name: "cliente-index",
-        components:{Create},
+        name: "lista-efos-index",
+        components: {Layout},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'R.F.C.', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Tipo Cliente', field: 'tipo_cliente', sortable: true},
-                    { title: 'Porcentaje de Participación', field: 'porcentaje', tdClass: 'td_money', thClass: 'th_money', sortable: true},
-                    { title: 'SAT Efos', field: 'efo', tdComp: require('./partials/EfoEstatus').default},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default}
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'razon_social', order: 'desc'},
+                query: {scope:'tipo:8',  sort: 'id_material', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -54,10 +49,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/cliente/paginate', { params: this.query})
+                return this.$store.dispatch('cadeco/familia/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('cadeco/cliente/SET_CLIENTES', data.data);
-                        this.$store.commit('cadeco/cliente/SET_META', data.meta);
+                        this.$store.commit('cadeco/familia/SET_FAMILIAS', data.data);
+                        this.$store.commit('cadeco/familia/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -65,33 +60,24 @@
             },
         },
         computed: {
-            clientes(){
-                return this.$store.getters['cadeco/cliente/clientes'];
+            familias(){
+                return this.$store.getters['cadeco/familia/familias'];
             },
             meta(){
-                return this.$store.getters['cadeco/cliente/meta'];
+                return this.$store.getters['cadeco/familia/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            clientes: {
-                handler(clientes) {
+            familias: {
+                handler(famls) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = clientes.map((cliente, i) => ({
+                    self.$data.data = famls.map((familia, i) => ({
                         index: (i + 1) + self.query.offset,
-                        rfc: cliente.rfc,
-                        razon_social: cliente.razon_social,
-                        tipo_cliente: cliente.tipo,
-                        porcentaje: cliente.porcentaje_format,
-                        efo :  typeof cliente.efo !== 'undefined' ?  cliente.efo : '',
-                        buttons: $.extend({}, {
-                            edit: self.$root.can('editar_cliente') ? true : undefined,
-                            show: self.$root.can('consultar_cliente') ? true : undefined,
-                            id: cliente.id
-                        })
+                        descripcion: familia.descripcion
                     }));
                 },
                 deep: true

@@ -1,12 +1,8 @@
 <template>
     <div class="row">
-        <!-- <div class="col-12"  v-if="$root.can('registrar_proveedor')" :disabled="cargando">
-            <button  @click="create" title="Crear" class="btn btn-app btn-info float-right" >
-                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                <i class="fa fa-plus" v-else></i>
-                Registrar
-            </button>
-        </div> -->
+        <div class="col-12">
+            <create @created="paginate()"></create>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -23,9 +19,10 @@
     </div>
 </template>
 <script>
+    import Create from "./Create";
     export default {
         name: "proveedor-contratista-index",
-        components: {},
+        components: {Create},
         data(){
             return{
                 HeaderSettings: false,
@@ -35,12 +32,12 @@
                     { title: 'Razón Social', field: 'razon_social',thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Tipo', field: 'tipo_empresa', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
-
-
                 ],
                 data: [],
                 total: 0,
                 query: {
+                    sort: 'id_empresa',
+                    order: 'desc'
                 },
                 cargando: false
 
@@ -66,9 +63,9 @@
                     })
 
             },
-            // create() {
-            //     this.$router.push({name: 'distribuir-recurso-remesa-create'});
-            // },
+            create() {
+                this.$router.push({name: 'proveedor-contratista-create'});
+            },
         },
         computed: {
             proveedorContratistas(){

@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO;
 
 
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\EfoTransformer;
 use App\Models\CADECO\Cliente;
 use League\Fractal\TransformerAbstract;
 
@@ -29,7 +30,7 @@ class ClienteTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'efo'
     ];
 
     public function transform(Cliente $model)
@@ -39,8 +40,22 @@ class ClienteTransformer extends TransformerAbstract
             'razon_social' => $model->razon_social,
             'rfc'=> $model->rfc,
             'tipo' => $model->tipo,
-            'porcentaje' => $model->porcentaje,
+            'tipo_cliente' => (int) $model->tipo_cliente,
+            'porcentaje' => $model->porcentaje_round_format,
             'porcentaje_format' => $model->porcentaje_format
         ];
+    }
+
+    /**
+     * @param Cliente $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEfo(Cliente $model)
+    {
+        if($efo = $model->efo)
+        {
+            return $this->item($efo, new EfoTransformer);
+        }
+        return null;
     }
 }
