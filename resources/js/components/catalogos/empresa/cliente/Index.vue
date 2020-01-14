@@ -33,7 +33,7 @@
                     { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Tipo Cliente', field: 'tipo_cliente', sortable: true},
                     { title: 'Porcentaje de Participación', field: 'porcentaje', tdClass: 'td_money', thClass: 'th_money', sortable: true},
-                    { title: 'SAT Efos', field: 'efo', tdComp: require('./partials/EfoEstatus').default},
+                    { title: 'SAT Efos', field: 'efo', tdComp: require('./partials/EfoEstatus').default, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
@@ -86,7 +86,7 @@
                         razon_social: cliente.razon_social,
                         tipo_cliente: cliente.tipo,
                         porcentaje: cliente.porcentaje_format,
-                        efo :  typeof cliente.efo !== 'undefined' ?  cliente.efo : '',
+                        efo :  typeof cliente.efo !== 'undefined' ?  cliente.efo.estado : '',
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_cliente') ? true : undefined,
                             show: self.$root.can('consultar_cliente') ? true : undefined,

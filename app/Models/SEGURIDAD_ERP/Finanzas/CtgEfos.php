@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class CtgEfos extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'Finanzas.ctg_efos';
+    protected $table = 'SEGURIDAD_ERP.Finanzas.ctg_efos';
     public $timestamps = false;
 
     protected $fillable = [
