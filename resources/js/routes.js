@@ -159,7 +159,7 @@ export const routes = [
                             title: 'Lista de EFOS',
                             breadcrumb: {parent: 'control-finanzas', name: 'EFOS'},
                             middleware: [auth, permission],
-                            permission: 'auditoria_consultar_permisos_por_obra',
+                            permission: 'consultar_efos',
                             general: true,
 
                         }
