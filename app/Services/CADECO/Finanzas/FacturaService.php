@@ -9,6 +9,8 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
 use App\Repositories\CADECO\Finanzas\Facturas\Repository;
 use Illuminate\Support\Facades\Storage;
+use DateTime;
+use DateTimeZone;
 
 class FacturaService
 {
@@ -16,6 +18,7 @@ class FacturaService
      * @var Repository
      */
     protected $repository;
+    private $arreglo_factura;
 
     /**
      * FacturaService constructor.
@@ -127,35 +130,92 @@ class FacturaService
         return $this->repository->pendientesPago($id);
     }
 
+    private function setArregloFactura($archivo_xml)
+    {
+        $factura_xml = simplexml_load_file($archivo_xml);
+        $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
+        $this->arreglo_factura["emisor"]["rfc"] =(string)$emisor["Rfc"][0];
+        $this->arreglo_factura["emisor"]["nombre"] =(string)$emisor["Nombre"][0];
+        $this->arreglo_factura["total"] = (float) $factura_xml["Total"];
+    }
+
     public function store(array $data)
     {
-        $this->validaRFCFacturaVsEmpresa($data["archivo"],$data["id_empresa"]);
+        $this->setArregloFactura($data["archivo"]);
+        $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
+        $this->validaEFO();
+        $this->validaTotal($data["total"]);
 
-        /*$pagos = $data['pagos'];
-        $pagos = $this->validaTC($pagos);
-        $datos = [
-            'pagos' => $pagos,
-            'resumen' => $data['resumen'],
-            'file_pagos' => $data['file_pagos'],
-            'nombre_archivo' => $data['file_pagos_name']
+        /** EL front envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
+                     * */
+        $emision = New DateTime($data["emision"]);
+        $emision->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $vencimiento = New DateTime($data["vencimiento"]);
+        $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $fecha = New DateTime($data["fecha"]);
+        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $datos_factura = [
+            'fecha' => $emision->format('Y-m-d'),
+            "id_empresa" => $data["id_empresa"],
+            "id_moneda" => $data["id_moneda"],
+            "vencimiento" => $vencimiento->format('Y-m-d'),
+            'monto' => $data["total"],
+            "saldo" => $data["total"],
+            "referencia" => $data["referencia"],
+            "observaciones" => $data["observaciones"],
         ];
-        return $this->repository->create($datos);*/
+        $datos_rubro = [
+            'id_rubro' => $data["id_rubro"],
+        ];
+        $datos_cr = [
+            'fecha' => $fecha->format('Y-m-d'),
+            "id_empresa" => $data["id_empresa"],
+            "id_moneda" => $data["id_moneda"],
+            'monto' => $data["total"],
+            "saldo" => $data["total"],
+            "observaciones" => $data["observaciones"],
+        ];
+        $datos["factura"] = $datos_factura;
+        $datos["rubro"] = $datos_rubro;
+        $datos["cr"] = $datos_cr;
+
+        return $this->repository->create($datos);
     }
 
-    private function validaRFCFacturaVsEmpresa($archivo, $id_empresa)
+    private function validaRFCFacturaVsEmpresa($id_empresa)
     {
-
-        $factura_xml = simplexml_load_file($archivo);
-        $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
-        $emisor_rfc =(string)$emisor["Rfc"][0];
-        $emisor_nombre =(string)$emisor["Nombre"][0];
         $rfc = $this->repository->getRFCEmpresa($id_empresa);
-        if($emisor_rfc != $rfc)
+        if($this->arreglo_factura["emisor"]["rfc"] != $rfc)
         {
-            abort(500,"El RFC del proveedor (".$rfc.") no corresponde al RFC de la factura cargada (".$emisor_rfc.")");
+            abort(500,"El RFC del proveedor seleccionado (".$rfc.") no corresponde al RFC del emisor en el comprobante digital (".$this->arreglo_factura["emisor"]["rfc"].")");
         }
-
     }
 
+    private function validaEFO()
+    {
+        $efo = $this->repository->getEFO($this->arreglo_factura["emisor"]["rfc"]);
+        if($efo)
+        {
+            if($efo->estado == 0)
+            {
+                abort(500,"El emisor del comprobante es un EFO");
+            } else if($efo->estado == 2)
+            {
+                abort(500,"El emisor del comprobante es un presunto EFO");
+            }
+
+        }
+    }
+
+    private function validaTotal($total)
+    {
+        if(abs($this->arreglo_factura["total"]-$total)>0.99)
+        {
+            abort(500,"El monto ingresado no corresponde al monto en el comprobante digital");
+        }
+    }
 }
 

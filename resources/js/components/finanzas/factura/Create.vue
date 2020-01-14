@@ -190,13 +190,6 @@
                             <div class="form-group error-content">
                                 <label for="archivo">Archivo:</label>
 
-                                <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions" :useCustomSlot=true>
-                                    <div class="dropzone-custom-content">
-                                        <h3 class="dropzone-custom-title"><span class='fas fa-file-invoice-dollar' style='padding-right:5px'></span>Arrastre y suelte los archivos xml y pdf</h3>
-                                        <div class="subtitle">...o de clic para seleccionar los archivos de su computadora</div>
-                                    </div>
-                                </vue-dropzone>
-
                                 <input type="file" class="form-control" id="archivo" @change="onFileChange"
                                        row="3"
                                        v-validate="{required: true,  ext: ['xml'], size: 3072}"

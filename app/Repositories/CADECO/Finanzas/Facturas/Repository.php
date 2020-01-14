@@ -12,6 +12,7 @@ namespace App\Repositories\CADECO\Finanzas\Facturas;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
 use App\Repositories\RepositoryInterface;
+USE Illuminate\Support\Facades\DB;
 
 class Repository extends \App\Repositories\Repository implements RepositoryInterface
 {
@@ -24,15 +25,25 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function getRFCEmpresa($id_empresa)
     {
         $empresa = Empresa::find($id_empresa);
-        if($empresa)
-        {
+        if ($empresa) {
             $rfc = preg_replace("/[^0-9a-zA-Z\s]+/", "", $empresa->rfc);
-            $rfc =  strtoupper($rfc);
+            $rfc = strtoupper($rfc);
             return $rfc;
-        }
-        else{
+        } else {
             return null;
         }
     }
 
+    public function getEFO($rfc)
+    {
+        $efo = DB::connection("seguridad")->table("Finanzas.ctg_efos")
+        ->where("rfc","=",$rfc)
+        ->first();
+        return $efo;
+    }
+
+    public function create(array $datos)
+    {
+        return $this->model->registrar($datos);
+    }
 }
