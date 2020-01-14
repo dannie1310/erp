@@ -405,6 +405,20 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: ['consultar_cliente']
                         }
+                    },
+                    {
+                        path: 'destajista',
+                        name: 'destajista',
+                        component: require('./components/catalogos/empresa/destajista/Index').default,
+                        meta: {
+                            title: 'Destajista',
+                            breadcrumb: {
+                                parent: 'empresa',
+                                name: 'DESTAJISTA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_destajista']
+                        }
                     }
                 ]
             },
