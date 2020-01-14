@@ -25,6 +25,23 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-university"></i>
+                    <p>
+                        Finanzas
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'lista-efos'}" class="nav-link" :class="{active: this.$route.name == 'lista-efos'}">
+                            <i class="fa fa-times nav-icon"></i>
+                            <p>EFOS</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </nav>
 </template>
