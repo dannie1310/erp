@@ -5,18 +5,18 @@ namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgEfosLogTransformer;
-use App\Services\SEGURIDAD_ERP\Finanzas\CtgEfosLogService;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgEfosTransformer;
+use App\Services\SEGURIDAD_ERP\Finanzas\CtgEfosService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
-class CtgEfosLogController extends Controller
+class CtgEfosController extends Controller
 {
     use ControllerTrait;
 
     /**
-     * @var CtgEfosLogService
+     * @var CtgEfosService
      */
     private $service;
 
@@ -26,17 +26,17 @@ class CtgEfosLogController extends Controller
     private $fractal;
 
     /**
-     * @var CtgEfosLogTransformer
+     * @var CtgEfosTransformer
      */
     private $transformer;
 
     /**
      * CtgEfosLogController constructor
-     * @param CtgEfosLogService $service
+     * @param CtgEfosService $service
      * @param Manager $fractal
-     * @param CtgEfosLogTransformer $transformer
+     * @param CtgEfosTransformer $transformer
      */
-    public function __construct(CtgEfosLogService $service, Manager $fractal, CtgEfosLogTransformer $transformer)
+    public function __construct(CtgEfosService $service, Manager $fractal, CtgEfosTransformer $transformer)
     {
         $this->middleware('auth:api');
         $this->middleware('context');
@@ -47,9 +47,8 @@ class CtgEfosLogController extends Controller
     }
 
     public function cargaLayout(Request $request){
-//        dd('Llega la carga desde ctg efos log', $request->file);
         $respuesta = $this->service->cargaLayout($request->file);
-//        return response()->json($respuesta, 200);
+        return response()->json($respuesta, 200);
     }
 
 }
