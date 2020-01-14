@@ -109,13 +109,18 @@ class CtgEfos extends Model
                         $fecha_definitivo = (!isset($renglon[$t + 10])) ? '' : $renglon[$t + 10];
                         if($fecha_definitivo != '')
                         {
-                            $fecha_definitivo = DateTime::createFromFormat('d-m-y', str_replace('/','-', $fecha_definitivo));
+                            if(DateTime::createFromFormat('d/m/y', $fecha_definitivo))
+                            {
+                                $fecha_definitivo = DateTime::createFromFormat('d/m/y', $fecha_definitivo);
+                                $fecha_definitivo = $fecha_definitivo->format('d-m-Y');
+                            }
+                            $fecha_definitivo =  str_replace('/','-', $fecha_definitivo);
                         }
                         $content[] = array(
                             'rfc' => $renglon[1],
                             'razon_social' => (str_replace('"','', $razon)),
-                            'fecha_presunto' => date("Y-m-d", strtotime(str_replace('/','-', $renglon[$t + 2]))),
-                            'fecha_definitivo' => ($fecha_definitivo != '') ? $fecha_definitivo->format('Y-m-d') : NULL,
+                            'fecha_presunto' => date("Y-m-d", strtotime($renglon[$t + 2])),
+                            'fecha_definitivo' => ($fecha_definitivo != '') ? date("Y-m-d", strtotime($fecha_definitivo)) : NULL,
                             'estado' => $renglon[$t]
                         );
                         $linea++;
