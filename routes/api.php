@@ -136,6 +136,7 @@ $api->version('v1', function ($api) {
         // SUMINISTRADO
         $api->group(['prefix'=>'suministrado'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\CADECO\SuministradoController@store');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\SuministradoController@destroy');
         });
 
         //UNIDAD

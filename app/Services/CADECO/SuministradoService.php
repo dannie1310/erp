@@ -11,7 +11,7 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Suministrados;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Suministrados\Repository;
 
 class SuministradoService{
     /**
@@ -34,4 +34,10 @@ class SuministradoService{
     {
         return $this->repository->create($data);
     }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->delete($data, $id);
+    }
+
 }

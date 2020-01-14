@@ -9,23 +9,25 @@
                                 <thead>
                                     <tr>
                                         <th style="width:5%;">#</th>
-                                        <th style="width:35%;">Descripción</th>
+                                        <th style="width:30%;">Descripción</th>
                                         <th style="width:30%;">Dirección</th>
                                         <th style="width:15%;">Ciudad</th>
-                                        <th style="width:15%;"></th>
+                                        <th style="width:20%;"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="(sucursal, i) in sucursales">
                                         <td style="width:5%;">{{i+1}}</td>
-                                        <td style="width:35%;">{{sucursal.descripcion}}</td>
+                                        <td style="width:30%;">{{sucursal.descripcion}}</td>
                                         <td style="width:30%;">{{sucursal.direccion}}</td>
                                         <td style="width:15%;">{{sucursal.ciudad}}</td>
-                                        <td style="width:15%;">
+                                        <td style="width:20%;">
+                                            <show-sucursal v-bind:id="sucursal.id"></show-sucursal>
                                             <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteSucursal(sucursal.id)" title="Eliminar">
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                             <edit-sucursal @created="updateSucursal" v-bind:id="sucursal.id"></edit-sucursal>
+                                            
                                         </td>
                                     </tr>
                                 </tbody>
@@ -42,9 +44,10 @@
 <script>
 import EditSucursal from '../partials/EditSucursal';
 import CreateSucursal from '../partials/CreateSucursal'; 
+import ShowSucursal from '../partials/ShowSucursal'; 
 export default {
     name: "proveedor-contratista-sucursal-tab",
-    components: {CreateSucursal, EditSucursal},
+    components: {CreateSucursal, EditSucursal, ShowSucursal},
     props: ['id_empresa'],
     data(){
         return {

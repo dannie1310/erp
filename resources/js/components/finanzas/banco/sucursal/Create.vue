@@ -208,14 +208,11 @@
                 });
             },
             store() {
-                this.$data.id = this.id;
+                this.$data.id_empresa = this.id;
                 return this.$store.dispatch('cadeco/sucursal/store',  this.$data )
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created',data)
-                        // this.bancos=[];
-
-
                     })
             }
         },

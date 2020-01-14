@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="col-12" v-if="proveedorContratista" style="height:350px;">
+        <div class="col-12" v-if="suministrados" style="height:350px;">
             <div class="invoice p-3 mb-3">
                 <div class="row" v-if="suministrados">
                     <div class="table-responsive col-12">
@@ -17,7 +17,7 @@
                                     <td style="width:10%;">{{i+1}}</td>
                                     <td style="width:80%; text-align: left">{{material.material.descripcion}}</td>
                                     <td style="width:10%;">
-                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="eliminar(i)" title="Eliminar">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="eliminar(material)" title="Eliminar">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </td>
@@ -58,10 +58,13 @@ export default {
         }
     },
     methods: {
-        eliminar(id){
-            return this.$store.dispatch('cadeco/suministrado/delete', id)
+        eliminar(material){
+            return this.$store.dispatch('cadeco/suministrado/delete', {
+                id:material.id_empresa,
+                params: {data: {id_empresa:material.id_empresa,id_material:material.id_material}}
+            })
             .then(() => {
-                // this.$store.commit('cadeco/suministrado/DELETE_SUMINISTRADO', id)
+                this.$store.commit('cadeco/suministrado/DELETE_SUMINISTRADO', material.id_material)
             })
         },
         registrarMaterial(){

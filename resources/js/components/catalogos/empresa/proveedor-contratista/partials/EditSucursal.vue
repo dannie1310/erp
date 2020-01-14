@@ -201,16 +201,14 @@
                 return this.$store.dispatch('cadeco/sucursal/find', {
                     id: id
                 })
-                    .then(data => {
-                        this.sucursal = data;
-                        // this.$store.commit('cadeco/sucursal/SET_SUCURSAL', data);
-                    })
-                    .finally(() => {
-                        this.cargando = false;
-                        $(this.$refs.modalEditSucursal).modal('show');
-                    })
-                console.log(id);
-               
+                .then(data => {
+                    this.sucursal = data;
+                    // this.$store.commit('cadeco/sucursal/SET_SUCURSAL', data);
+                })
+                .finally(() => {
+                    this.cargando = false;
+                    $(this.$refs.modalEditSucursal).modal('show');
+                })
             },
             validate() {
                 this.$validator.validate().then(result => {
@@ -230,45 +228,8 @@
                     $(this.$refs.modalEditSucursal).modal('hide');
                 })
             }
-            // updateAttribute(e) {
-            //      console.log(e);
-            //     return this.$store.commit('cadeco/sucursal/UPDATE_ATTR', {attribute: $(e.target).attr('name'), value: e.target.value})
-            // }
-            // init() {
-            //     this.descripcion = '';
-            //     this.direccion = '';
-            //     this.ciudad = '';
-            //     this.codigo_postal = '';
-            //     this.estado = '';
-            //     this.voz = '';
-            //     this.fax = '';
-            //     this.cargo = '';
-            //     this.mail = '';
-            //     this.contacto = '';
-            //     this.observaciones = '';
-            //     $(this.$refs.modalCreateSucursal).modal('show');
-            //     this.$validator.reset();
-            // },
-            // validate() {
-            //     this.$validator.validate().then(result => {
-            //         if (result) {
-            //             this.store()
-            //         }
-            //     });
-            // },
-            // store() {
-            //     this.$data.id = this.id;
-            //     return this.$store.dispatch('cadeco/sucursal/store',  this.$data )
-            //     .then((data) => {
-            //         $(this.$refs.modalCreateSucursal).modal('hide');
-            //         this.$emit('created',data)
-            //     })
-            // }
         },
         computed: {
-            // sucursal(){
-            //     return this.$store.getters['cadeco/sucursal/currentSucursal'];
-            // }
         }
     }
 </script>

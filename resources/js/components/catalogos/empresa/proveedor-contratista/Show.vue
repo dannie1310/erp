@@ -25,7 +25,7 @@
                             </nav>
                             <div class="tab-content" id="nav-tabContent">
                                 <div aria-labelledby="nav-identificacion-tab" class="tab-pane fade show active" id="nav-identificacion" role="tabpanel">
-                                    <div class="col-12">
+                                    <div class="col-12" style="height:350px;">
                                         <div class="invoice p-3 mb-3">
                                             <div class="row">
                                                 <div class="table-responsive col-12">
@@ -63,25 +63,29 @@
                                     </div>
                                 </div>
                                 <div aria-labelledby="nav-sucursales-tab" class="tab-pane fade" id="nav-sucursales" role="tabpanel">
-                                    <div class="col-12" v-if="proveedorContratista">
+                                    <div class="col-12" v-if="proveedorContratista" style="height:350px;">
                                         <div class="invoice p-3 mb-3">
                                             <div class="row" v-if="proveedorContratista.sucursales">
                                                 <div class="table-responsive col-12">
-                                                    <table class="table table-striped">
+                                                    <table class="table table-striped table-fixed-view">
                                                         <thead>
                                                             <tr>
                                                                 <th style="width:5%;">#</th>
-                                                                <th style="width:40%;">Descripción</th>
-                                                                <th style="width:40%;">Dirección</th>
+                                                                <th style="width:35%;">Descripción</th>
+                                                                <th style="width:35%;">Dirección</th>
                                                                 <th style="width:15%;">Ciudad</th>
+                                                                <th style="width:150%;"></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(sucursal, i) in proveedorContratista.sucursales.data">
                                                                 <td style="width:5%;">{{i+1}}</td>
-                                                                <td style="width:40%;">{{sucursal.descripcion}}</td>
-                                                                <td style="width:40%;">{{sucursal.direccion}}</td>
+                                                                <td style="width:35%;">{{sucursal.descripcion}}</td>
+                                                                <td style="width:35%;">{{sucursal.direccion}}</td>
                                                                 <td style="width:15%;">{{sucursal.ciudad}}</td>
+                                                                <td style="width:10%;">
+                                                                    <show-sucursal v-bind:id="sucursal.id"></show-sucursal>
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -91,11 +95,11 @@
                                     </div>
                                 </div>
                                 <div aria-labelledby="nav-materiales-tab" class="tab-pane fade" id="nav-materiales" role="tabpanel">
-                                    <div class="col-12" v-if="proveedorContratista">
+                                    <div class="col-12" v-if="proveedorContratista" style="height:350px;">
                                         <div class="invoice p-3 mb-3">
                                             <div class="row" v-if="proveedorContratista.suministrados">
                                                 <div class="table-responsive col-12">
-                                                    <table class="table table-striped table-fixed">
+                                                    <table class="table table-striped table-fixed-view">
                                                         <thead>
                                                             <tr>
                                                                 <th style="width:10%;">#</th>
@@ -127,9 +131,11 @@
 </template>
 
 <script>
+import ShowSucursal from './partials/ShowSucursal'; 
 export default {
     name: "proveedor-contratista-show",
     props: ['tipo'],
+    components: {ShowSucursal},
     data(){
         return {
         }
@@ -162,12 +168,12 @@ export default {
 .align{
     text-align: left;
 }
-.table-fixed tbody {
+.table-fixed-view tbody {
     display:block;
-    height:218px;
+    height:265px;
     overflow:auto;
 }
-.table-fixed thead, .table-fixed tbody tr {
+.table-fixed-view thead, .table-fixed tbody tr {
     display:table;
     width:100%;
     text-align: left;
