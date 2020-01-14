@@ -149,7 +149,7 @@
                 return this.$store.dispatch('cadeco/cliente/store', this.$data.registro_cliente)
                     .then(data => {
                         if(typeof data.efo !== 'undefined'){
-                            swal("El Cliente registrado se encuentra en el catálogo de efos con estado "+data.efo.ctg_estado.descripcion+".", {
+                            swal("El Cliente registrado se encuentra en el catálogo de efos con estado "+data.efo.estado.descripcion+".", {
                                 icon: "warning",
                                 buttons: {
                                     confirm: {

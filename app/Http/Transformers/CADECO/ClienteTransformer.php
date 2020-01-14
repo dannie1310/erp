@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO;
 
 
 use App\Http\Transformers\IGH\UsuarioTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgEfosTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\EfoTransformer;
 use App\Models\CADECO\Cliente;
 use League\Fractal\TransformerAbstract;
@@ -58,7 +59,7 @@ class ClienteTransformer extends TransformerAbstract
     {
         if($efo = $model->efo)
         {
-            return $this->item($efo, new EfoTransformer);
+            return $this->item($efo, new CtgEfosTransformer);
         }
         return null;
     }
