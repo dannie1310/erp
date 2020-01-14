@@ -49,6 +49,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\ClienteController@store');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@destroy')->where(['id' => '[0-9]+']);
         });
 
         // CONCEPTOS
@@ -775,8 +776,8 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgPlazaController@index');
         });
         $api->group(['prefix' => 'efo'], function ($api) {
-            $api->post('layout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosLogController@cargaLayout');
-            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosLogController@paginate');
+            $api->post('layout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@cargaLayout');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@paginate');
         });
 
 

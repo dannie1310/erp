@@ -7,13 +7,13 @@
         <button @click="load" class="btn btn-app btn-info float-right" title="Cargar Layout" :disabled="cargando" v-else-if="$root.can('cargar_layout_captura_conteos')">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-upload" v-else></i>
-            Carga de EFO´s
+            Carga de EFOS
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-upload"></i> Actualizar lista de EFO´s registrados en el SAT</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-upload"></i> Actualizar lista de EFOS registrados en el SAT</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -105,7 +105,7 @@
             cargarLayout(){
                 var formData = new FormData();
                 formData.append('file',  this.file);
-                return this.$store.dispatch('seguridad/finanzas/ctg-efos-log/cargaLayoutEfos',
+                return this.$store.dispatch('seguridad/finanzas/ctg-efos/cargaLayoutEfos',
                     {
                         data: formData,
                         config: {

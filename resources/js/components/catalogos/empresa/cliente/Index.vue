@@ -38,7 +38,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'razon_social', order: 'desc'},
+                query: {sort: 'id_empresa', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -90,6 +90,7 @@
                         buttons: $.extend({}, {
                             edit: self.$root.can('editar_cliente') ? true : undefined,
                             show: self.$root.can('consultar_cliente') ? true : undefined,
+                            delete: self.$root.can('eliminar_cliente') ? true : undefined,
                             id: cliente.id
                         })
                     }));

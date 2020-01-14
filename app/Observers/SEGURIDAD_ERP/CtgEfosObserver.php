@@ -16,5 +16,9 @@ class CtgEfosObserver
     {
 
     }
+    public function created(CtgEfos $efos)
+    {
+
+    }
 
 }

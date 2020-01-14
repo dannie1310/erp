@@ -12,6 +12,7 @@ use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
@@ -70,6 +71,16 @@ class Empresa extends Model
     public function efo()
     {
         return $this->belongsTo(CtgEfos::class, 'rfc', 'rfc');
+    }
+
+    public function transacciones()
+    {
+        return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function usuario ()
+    {
+        return $this->belongsTo(Usuario::class, 'UsuarioRegistro', 'idusuario');
     }
 
     public function scopeConCuentas($query)
@@ -189,7 +200,7 @@ class Empresa extends Model
     {
         if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 0)->first()))
         {
-            abort(403, 'Está empresa a registrar es un EFO.');
+            abort(403, 'Está empresa es un EFO.');
         }
     }
 
@@ -204,4 +215,17 @@ class Empresa extends Model
         return true;
     }
 
+    public function validaEliminacion()
+    {
+        if($this->transacciones()->count('id_empresa') > 0)
+        {
+            abort(403, 'Está empresa cuenta con transacciones asociadas.');
+        }
+    }
+
+    public function getFechaHoraRegistroFormatAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"d/m/Y");
+    }
 }

@@ -86,7 +86,7 @@
                                                     type="number"
                                                     name="porcentaje"
                                                     data-vv-as="Porcentaje de Participación"
-                                                    v-validate="{required: true, decimal:2, min_value:0.1, max_value: 100}"
+                                                    v-validate="{required: true, decimal:2, min_value:0, max_value: 100}"
                                                     class="form-control"
                                                     id="porcentaje"
                                                     placeholder="Porcentaje de Participación"
@@ -148,8 +148,8 @@
             store() {
                 return this.$store.dispatch('cadeco/cliente/store', this.$data.registro_cliente)
                     .then(data => {
-                        if(typeof data.efo !== 'undefined'){
-                            swal("El Cliente registrado se encuentra en el catálogo de efos con estado "+data.efo.ctg_estado.descripcion+".", {
+                        if(typeof data.efo !== 'undefined' && (data.efo.estado.id == 0 || data.efo.estado.id == 2)){
+                            swal("El Cliente registrado es un "+data.efo.estado.descripcion+" EFO.", {
                                 icon: "warning",
                                 buttons: {
                                     confirm: {

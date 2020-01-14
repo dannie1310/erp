@@ -9,8 +9,6 @@
 namespace App\Models\CADECO;
 
 
-use Illuminate\Support\Facades\DB;
-
 class Cliente extends Empresa
 {
     protected $fillable = [
@@ -45,14 +43,14 @@ class Cliente extends Empresa
         }
     }
 
-    public function getPorcentajeRoundFormatAttribute()
-    {
-        return bcdiv($this->porcentaje, '1',2);
-    }
-
     public function getPorcentajeFormatAttribute()
     {
-        return  bcdiv($this->porcentaje, '1',2). ' %';
+       return number_format((float)$this->porcentaje, 2, '.', '');
+    }
+
+    public function getPorcentajeConSignoFormatAttribute()
+    {
+        return  $this->porcentaje_format. ' %';
     }
 
     public function validaDuplicidadRfc()
