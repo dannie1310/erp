@@ -36,6 +36,12 @@ export default {
         UPDATE_ATTRIBUTE(state, data) {
             state.currentCliente[data.attribute] = data.value
         },
+
+        DELETE_CLIENTE(state, id) {
+            state.clientes = state.clientes.filter( cliente => {
+                return cliente.id != id
+            });
+        }
     },
 
     actions: {
@@ -157,7 +163,48 @@ export default {
                         }
                     });
             });
-        }
+        },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Cliente",
+                    text: "¿Está seguro de eliminar este cliente?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cliente eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

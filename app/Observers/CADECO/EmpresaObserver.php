@@ -28,4 +28,9 @@ class EmpresaObserver
     {
         $empresa->validaRFC($empresa);
     }
+
+    public function deleting(Empresa $empresa)
+    {
+        $empresa->validaEliminacion();
+    }
 }

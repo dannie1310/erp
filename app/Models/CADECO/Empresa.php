@@ -72,6 +72,11 @@ class Empresa extends Model
         return $this->belongsTo(CtgEfos::class, 'rfc', 'rfc');
     }
 
+    public function transacciones()
+    {
+        return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa');
+    }
+
     public function scopeConCuentas($query)
     {
         return $query->has('cuentasEmpresa');
@@ -202,6 +207,14 @@ class Empresa extends Model
             return (bool)preg_match($reg_exp, $rfc);
         }
         return true;
+    }
+
+    public function validaEliminacion()
+    {
+        if($this->transacciones()->count('id_empresa') > 0)
+        {
+            abort(403, 'Está empresa cuenta con transacciones asociadas.');
+        }
     }
 
 }

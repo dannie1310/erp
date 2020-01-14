@@ -29,4 +29,9 @@ class ClienteObserver extends EmpresaObserver
         parent::updating($cliente);
         $cliente->validaDuplicidadRfc();
     }
+
+    public function deleting(Empresa $cliente)
+    {
+        parent::deleting($cliente);
+    }
 }
