@@ -14,7 +14,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modal_factura"> <i class="fas fa-file-invoice-dollar"></i> REGISTRAR FACTURA</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="cleanData">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -61,7 +61,7 @@
                         <div class="col-md-2">
                             <!--Referencia-->
                                 <div class="form-group error-content">
-                                    <label for="referencia">Referencia:</label>
+                                    <label for="referencia">Folio:</label>
                                     <input class="form-control"
                                            style="width: 100%"
                                            placeholder="Referencia"
@@ -208,7 +208,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="cleanData">Cerrar</button>
                     <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 ">Registrar</button>
                 </div>
                     </form>
@@ -269,6 +269,19 @@
             this.fechasDeshabilitadas.from= new Date();
         },
         methods:{
+            cleanData(){
+                this.dato.id_moneda =1;
+                this.dato.fecha = new Date();
+                this.dato.emision = new Date();
+                this.dato.vencimiento = new Date();
+                this.dato.referencia = '';
+                this.dato.observaciones = '';
+                this.dato.archivo = '';
+                this.dato.total = '';
+                this.dato.id_empresa = '';
+                this.dato.id_rubro = '';
+                this.$refs.archivo.value='';
+            },
             init() {
                 $(this.$refs.modal).modal('show');
                 this.$validator.reset()
@@ -342,6 +355,7 @@
                     .then(data => {
                         this.$emit('created', data);
                         $(this.$refs.modal).modal('hide');
+                        this.cleanData();
                     }).finally( ()=>{
                         this.cargando = false;
                     });
