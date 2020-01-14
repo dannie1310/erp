@@ -101,7 +101,7 @@
                                             <input type="number" class="form-control"
                                                    name="voz"
                                                    data-vv-as="Voz"
-                                                   v-model="voz"
+                                                   v-model="telefono"
                                                    id="voz"
                                                    placeholder="Número de Teléfono" maxlength="10">
                                                </div>
@@ -173,7 +173,7 @@
                 ciudad:'',
                 codigo_postal:'',
                 estado:'',
-                voz:'',
+                telefono:'',
                 fax:'',
                 contacto:'',
                 checkCentral:false,
@@ -194,7 +194,7 @@
                 this.ciudad = '';
                 this.codigo_postal = '';
                 this.estado = '';
-                this.voz = '';
+                this.telefono = '';
                 this.fax ='';
                 this.contacto = '';
                 this.checkCentral = '';

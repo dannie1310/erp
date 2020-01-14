@@ -96,7 +96,7 @@
                                         <input type="number" class="form-control"
                                             name="voz"
                                             data-vv-as="Voz"
-                                            v-model="voz"
+                                            v-model="telefono"
                                             id="voz"
                                             placeholder="Número de Teléfono" maxlength="10">
                                     </div>
@@ -113,6 +113,19 @@
                                             placeholder="Número de Fax" >
                                     </div>
                                 </div>
+                                <!--Movil-->
+                                <div class="col-md-6" >
+                                    <div class="form-group error-content">
+                                        <label for="movil">Móvil</label>
+                                        <input type="text" class="form-control"
+                                            name="movil"
+                                            data-vv-as="Movil"
+                                            v-model="telefono_movil"
+                                            id="movil"
+                                            placeholder="Número de móvil" >
+                                    </div>
+                                </div>
+                                <div class="col-md-6" ></div>
                                 <!--Contacto -->
                                 <div class="col-md-12 mt-2 text-left" >
                                       <label class="text-secondary">Contacto</label>
@@ -149,7 +162,7 @@
                                         <input type="text" class="form-control"
                                             name="mail"
                                             data-vv-as="E-Mail"
-                                            v-model="mail"
+                                            v-model="email"
                                             id="v"
                                             placeholder="E-Mail" >
                                     </div>
@@ -193,10 +206,11 @@
                 ciudad:'',
                 codigo_postal:'',
                 estado:'',
-                voz:'',
+                telefono:'',
                 fax:'',
+                telefono_movil:'',
                 cargo:'',
-                mail:'',
+                email:'',
                 contacto:'',
                 observaciones:'',
             }

@@ -113,6 +113,19 @@
                                             placeholder="Número de Fax" >
                                     </div>
                                 </div>
+                                <!--Movil-->
+                                <div class="col-md-6" >
+                                    <div class="form-group error-content">
+                                        <label for="movil">Móvil</label>
+                                        <input type="text" class="form-control"
+                                            name="movil"
+                                            data-vv-as="Movil"
+                                            v-model="sucursal.telefono_movil"
+                                            id="movil"
+                                            placeholder="Número de móvil" >
+                                    </div>
+                                </div>
+                                <div class="col-md-6" ></div>
                                 <!--Contacto -->
                                 <div class="col-md-12 mt-2 text-left" >
                                       <label class="text-secondary">Contacto</label>
@@ -203,7 +216,6 @@
                 })
                 .then(data => {
                     this.sucursal = data;
-                    // this.$store.commit('cadeco/sucursal/SET_SUCURSAL', data);
                 })
                 .finally(() => {
                     this.cargando = false;
@@ -221,7 +233,6 @@
                 return this.$store.dispatch('cadeco/sucursal/update', {
                     id: this.id,
                     data: this.sucursal,
-
                 })
                 .then(data => {
                     this.$store.commit('cadeco/sucursal/UPDATE_SUCURSAL', data);

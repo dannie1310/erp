@@ -23,4 +23,12 @@ class ProveedorContratistaObserver extends EmpresaObserver
     {
         parent::creating($provedor_contratista);
     }
+    /**
+     * @param Empresa $provedor_contratista
+     * @throws \Exception
+     */
+    public function updating(Empresa $provedor_contratista)
+    {
+        parent::creating($provedor_contratista);
+    }
 }

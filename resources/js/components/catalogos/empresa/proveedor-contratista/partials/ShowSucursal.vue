@@ -1,6 +1,6 @@
 <template>
   <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver Sucursal">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </button>
         <div class="modal fade" ref="modalShowSucursal" role="dialog" aria-hidden="true">
@@ -34,21 +34,21 @@
                                 </div>
                             </div>
                             <!--Ciudad-->
-                            <div class="col-md-12" v-if="sucursal">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label><b>Ciudad: </b></label>
                                     {{ sucursal.ciudad }}
                                 </div>
                             </div>
                             <!--Código Postal-->
-                                <div class="col-md-6" v-if="sucursal">
+                                <div class="col-md-6">
                                 <div class="form-group">
-                                    <label><b>CP: </b></label>
+                                    <label><b>C.P.: </b></label>
                                     {{ sucursal.codigo_postal }}
                                 </div>
                             </div>
                             <!--Estado-->
-                            <div class="col-md-6" v-if="sucursal">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label><b>Estado: </b></label>
                                     {{ sucursal.estado }}
@@ -62,47 +62,55 @@
                             </div>
 
                             <!--Voz-->
-                            <div class="col-md-6" v-if="sucursal">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label><b>Voz: </b></label>
-                                    {{ sucursal.voz }}
+                                    {{ sucursal.telefono }}
                                 </div>
                             </div>
                             <!--Fax-->
-                            <div class="col-md-6" v-if="sucursal">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label><b>Fax: </b></label>
                                     {{ sucursal.fax }}
                                 </div>
                             </div>
+                            <!--Móvil-->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label><b>Móvil: </b></label>
+                                    {{ sucursal.telefono_movil }}
+                                </div>
+                            </div>
+                            <div class="col-md-6"></div>
                             <!--Contacto -->
                             <div class="col-md-12 text-left" >
                                 <label class="text-secondary">Contacto</label>
                                 <hr style="color: #0056b2; margin-top:auto;" width="95%" size="10" />
                             </div>
                             <!--Contacto-->
-                            <div class="col-md-12" v-if="sucursal">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label><b>Contacto: </b></label>
                                     {{ sucursal.contacto}}
                                 </div>
                             </div>
-                            <!--Voz-->
-                            <div class="col-md-6" v-if="sucursal">
+                            <!--Cargo-->
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label><b>Cargo: </b></label>
                                     {{ sucursal.cargo }}
                                 </div>
                             </div>
-                            <!--Fax-->
-                            <div class="col-md-6" v-if="sucursal">
+                            <!--E-Mail-->
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label><b>E-Mail: </b></label>
                                     {{ sucursal.email }}
                                 </div>
                             </div>
                             <!--Observaciones-->
-                            <div class="col-md-12" v-if="sucursal">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label><b>Observaciones: </b></label>
                                     {{ sucursal.observaciones }}

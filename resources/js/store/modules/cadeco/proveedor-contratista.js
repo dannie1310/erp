@@ -19,7 +19,16 @@ export default {
 
         SET_META(state, data) {
             state.meta = data;
-        }
+        },
+        UPDATE_PROVEEDOR_CONTRATISTA(state, data) {
+            state.proveedor_contratistas = state.proveedor_contratistas.map(proveedor_contratista=> {
+                if(proveedor_contratista.id === data.id){
+                    return Object.assign({}, proveedor_contratista, data)
+                }
+                return proveedor_contratista
+            })
+            state.currentProveeedor = data ;
+        },
     },
 
     actions: {
@@ -101,6 +110,46 @@ export default {
                     });
             });
         },
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar Proveedor/Contratista",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Proveedor/Contratista actualizado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        }
 
 
     },

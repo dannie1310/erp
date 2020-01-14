@@ -23,6 +23,7 @@ class Sucursal extends Model
         'estado',
         'telefono',
         'fax',
+        'telefono_movil',
         'contacto',
         'cargo',
         'email',
@@ -30,4 +31,8 @@ class Sucursal extends Model
         'observaciones'
 
     ];
+
+    public function getCodigoPostalFormatAttribute(){
+        return str_pad($this->codigo_postal, 5, 0, STR_PAD_LEFT);
+    }
 }

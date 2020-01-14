@@ -3,7 +3,7 @@
         <button @click="find(value.id, 1)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </button>
-        <button @click="find(value.id, 2)" type="button" class="btn btn-sm btn-outline-primary" title="Ver" v-if="$root.can('editar_proveedor')">
+        <button @click="find(value.id, 2)" type="button" class="btn btn-sm btn-outline-primary" title="Editar" v-if="$root.can('editar_proveedor')">
             <i class="fa fa-pencil"></i>
         </button>
     </div>

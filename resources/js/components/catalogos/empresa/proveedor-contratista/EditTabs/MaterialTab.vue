@@ -36,7 +36,7 @@
                             :disableBranchNodes="false"/>
                     </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary" @click="registrarMaterial()">Registrar</button>
+                        <button type="submit" class="btn btn-primary" @click="registrarMaterial()" :disabled="material.length == 0">Registrar</button>
                     </div>
                 </div>
             </div>
@@ -52,7 +52,6 @@ export default {
     props: ['id_empresa'],
     data(){
         return {
-            materiales:[],
             material:[],
             scope: ['tipos:1'],
         }
@@ -71,6 +70,7 @@ export default {
             return this.$store.dispatch('cadeco/suministrado/store', this.suministrado())
             .then((data) => {
                 this.$store.commit('cadeco/suministrado/INSERT_SUMINISTRADO', data);
+                this.material = [];
             });
         },
         suministrado(){

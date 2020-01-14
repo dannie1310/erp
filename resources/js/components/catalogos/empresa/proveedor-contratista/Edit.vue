@@ -185,8 +185,6 @@ export default {
                 porcentaje:'',
                 tipo_empresa:'',
             },
-            // sucursales:[],
-            // materiales:[],
         }
     },
     methods: {
@@ -199,7 +197,7 @@ export default {
         fillDataEdit(){
             this.edit.razon_social = this.proveedorContratista.razon_social;
             this.edit.rfc = this.proveedorContratista.rfc;
-            this.edit.no_proveedor_virtual = this.proveedorContratista.no_proveedor_virtual;
+            this.edit.no_proveedor_virtual = this.proveedorContratista.proveedor_virtual;
             this.edit.dias_credito = this.proveedorContratista.dias_credito;
             this.edit.porcentaje = this.proveedorContratista.porcentaje;
             this.edit.tipo_empresa = this.proveedorContratista.tipo_empresa;
@@ -217,7 +215,13 @@ export default {
             };
         },
         update(){
-            console.log('Panda Update');
+            return this.$store.dispatch('cadeco/proveedor-contratista/update', {
+                    id: this.proveedorContratista.id,
+                    data: this.edit,
+                })
+                .then(data => {
+                    this.$store.commit('cadeco/proveedor-contratista/UPDATE_PROVEEDOR_CONTRATISTA', data);
+                })
         },
         validate() {
             this.$validator.validate().then(result => {

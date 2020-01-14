@@ -51,6 +51,10 @@
                     this.material = x;
                 });
                 this.$emit('input', this.material)
+                this.val = null;
+                // this.material = [];
+               
+                this.options = {};
             },
             value(value) {
                 if(!value) {

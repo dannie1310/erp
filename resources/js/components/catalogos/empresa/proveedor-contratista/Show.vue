@@ -67,14 +67,14 @@
                                         <div class="invoice p-3 mb-3">
                                             <div class="row" v-if="proveedorContratista.sucursales">
                                                 <div class="table-responsive col-12">
-                                                    <table class="table table-striped table-fixed-view">
+                                                    <table class="table table-striped table-fixed-suc">
                                                         <thead>
                                                             <tr>
                                                                 <th style="width:5%;">#</th>
                                                                 <th style="width:35%;">Descripción</th>
                                                                 <th style="width:35%;">Dirección</th>
                                                                 <th style="width:15%;">Ciudad</th>
-                                                                <th style="width:150%;"></th>
+                                                                <th>Acciones</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -82,10 +82,8 @@
                                                                 <td style="width:5%;">{{i+1}}</td>
                                                                 <td style="width:35%;">{{sucursal.descripcion}}</td>
                                                                 <td style="width:35%;">{{sucursal.direccion}}</td>
-                                                                <td style="width:15%;">{{sucursal.ciudad}}</td>
-                                                                <td style="width:10%;">
-                                                                    <show-sucursal v-bind:id="sucursal.id"></show-sucursal>
-                                                                </td>
+                                                                <td style="width:25%;">{{sucursal.ciudad}}</td>
+                                                                <td><show-sucursal v-bind:id="sucursal.id"></show-sucursal></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -99,17 +97,17 @@
                                         <div class="invoice p-3 mb-3">
                                             <div class="row" v-if="proveedorContratista.suministrados">
                                                 <div class="table-responsive col-12">
-                                                    <table class="table table-striped table-fixed-view">
+                                                    <table class="table table-striped table-fixed-sum">
                                                         <thead>
                                                             <tr>
-                                                                <th style="width:10%;">#</th>
-                                                                <th style="width:90%;">Material</th>
+                                                                <th style="width:5%;">#</th>
+                                                                <th style="width:95%;">Material</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(material, i) in proveedorContratista.suministrados.data">
-                                                                <td style="width:10%;">{{i+1}}</td>
-                                                                <td style="width:90%; text-align: left">{{material.material.descripcion}}</td>
+                                                                <td>{{i+1}}</td>
+                                                                <td style="width:100%; text-align: left">{{material.material.descripcion}}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -122,7 +120,7 @@
                         </nav> 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="closeModal()">Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -144,7 +142,7 @@ export default {
         closeModal(){
             this.$store.commit('cadeco/proveedor-contratista/SET_PROVEEDOR_CONTRATISTA', null);
             $('.nav-tabs a[href="#nav-identificacion"]').tab('show');
-            $(this.$parent.$refs.modal).modal('hide');
+            $(this.$refs.modal).modal('hide');
         }
     },
 
@@ -168,12 +166,22 @@ export default {
 .align{
     text-align: left;
 }
-.table-fixed-view tbody {
+.table-fixed-suc tbody {
     display:block;
     height:265px;
     overflow:auto;
 }
-.table-fixed-view thead, .table-fixed tbody tr {
+.table-fixed-suc thead, .table-fixed tbody tr {
+    display:table;
+    width:100%;
+    text-align: left;
+}
+.table-fixed-sum tbody {
+    display:block;
+    height:265px;
+    overflow:auto;
+}
+.table-fixed-sum thead, .table-fixed tbody tr {
     display:table;
     width:100%;
     text-align: left;

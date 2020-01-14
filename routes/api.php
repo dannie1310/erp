@@ -117,17 +117,19 @@ $api->version('v1', function ($api) {
             $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
         });
 
+        // PROVEEDOR/CONTRATISTA
         $api->group(['prefix' => 'proveedor-contatista'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@show');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@update')->where(['id' => '[0-9]+']);
         });
 
         // SUCURSAL
         $api->group(['prefix' => 'sucursal'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\SucursalController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\SucursalController@paginate');
-            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\SucursalController@store');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@destroy')->where(['id' => '[0-9]+']);
