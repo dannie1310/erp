@@ -200,7 +200,7 @@ class Empresa extends Model
     {
         if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 0)->first()))
         {
-            abort(403, 'Está empresa a registrar es un EFO.');
+            abort(403, 'Está empresa es un EFO.');
         }
     }
 
