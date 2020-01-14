@@ -548,6 +548,11 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {
 
+        // RUBROS
+        $api->group(['prefix' => 'rubro'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\RubroController@index');
+        });
+
         /**
          * CUENTA BANCARIA EMPRESA
          */
@@ -580,6 +585,7 @@ $api->version('v1', function ($api) {
          * FACTURAS
          */
         $api->group(['prefix' => 'factura'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@store');
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@show')->where(['id' => '[0-9]+']);
             $api->get('autorizada', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@autorizadas');

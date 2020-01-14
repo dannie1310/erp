@@ -18,4 +18,8 @@ class Rubro extends Model
     public function tipo_rubro (){
         return $this->belongsTo(TipoRubro::class, 'id_tipo', 'id');
     }
+
+    public function scopeParaFactura($query){
+        return $query->where('id_tipo', '=', 1);
+    }
 }

@@ -1261,6 +1261,17 @@ export const routes = [
                             permission: 'consultar_banco'
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'factura-create',
+                        component: require('./components/finanzas/factura/Create').default,
+                        meta: {
+                            title: 'Registrar Factura',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'factura'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_factura']
+                        }
+                    }
 
                 ]
             },
