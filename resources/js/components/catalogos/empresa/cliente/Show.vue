@@ -34,6 +34,14 @@
                                                 <td class="bg-white"><b>Porcentaje de Participación:</b></td>
                                                 <td class="bg-white">{{cliente.porcentaje_format}}</td>
                                             </tr>
+                                            <tr>
+                                                <td class="bg-white"><b>Fecha de Registro:</b></td>
+                                                <td class="bg-white">{{cliente.fecha_registro_format}}</td>
+                                            </tr>
+                                            <tr v-if="cliente.usuario_registro">
+                                                <td class="bg-white"><b>Usuario que Registró:</b></td>
+                                                <td class="bg-white">{{cliente.usuario_registro.nombre}}</td>
+                                            </tr>
                                             <tr v-if="cliente.efo && (cliente.efo.estado == 2 || cliente.efo.estado == 0)">
                                                 <td class="bg-white"><b>Estado en el catálogo de EFOS:</b></td>
                                                 <td class="bg-white">
@@ -71,7 +79,7 @@
                 this.$store.commit('cadeco/cliente/SET_CLIENTE', null);
                 return this.$store.dispatch('cadeco/cliente/find', {
                     id: this.id,
-                    params: {include: []}
+                    params: {include: ['usuario_registro']}
                 }).then(data => {
                     this.$store.commit('cadeco/cliente/SET_CLIENTE', data);
                     this.cliente = data;

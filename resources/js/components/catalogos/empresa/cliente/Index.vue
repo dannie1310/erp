@@ -38,7 +38,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'razon_social', order: 'desc'},
+                query: {sort: 'id_empresa', order: 'desc'},
                 estado: "",
                 cargando: false
             }

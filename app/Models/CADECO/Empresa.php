@@ -12,6 +12,7 @@ use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
@@ -75,6 +76,11 @@ class Empresa extends Model
     public function transacciones()
     {
         return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function usuario ()
+    {
+        return $this->belongsTo(Usuario::class, 'UsuarioRegistro', 'idusuario');
     }
 
     public function scopeConCuentas($query)
@@ -217,4 +223,9 @@ class Empresa extends Model
         }
     }
 
+    public function getFechaHoraRegistroFormatAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"d/m/Y");
+    }
 }

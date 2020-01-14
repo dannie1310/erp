@@ -87,7 +87,7 @@
                                                     step="any"
                                                     name="porcentaje"
                                                     data-vv-as="Porcentaje de Participación"
-                                                    v-validate="{required: true, min_value:0.01, max_value: 100, decimal:2}"
+                                                    v-validate="{required: true, min_value:0, max_value: 100, decimal:2}"
                                                     class="form-control"
                                                     id="porcentaje"
                                                     placeholder="Porcentaje de Participación"
