@@ -230,7 +230,7 @@
                 });
             },
             update() {
-                return this.$store.dispatch('cadeco/sucursal/update', {
+                return this.$store.dispatch('cadeco/sucursal/updateSucursalProveedor', {
                     id: this.id,
                     data: this.sucursal,
                 })

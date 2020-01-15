@@ -101,6 +101,29 @@ class SucursalService
 
         return $this->repository->update($data, $id);
     }
+
+    public function updateProveedorSucursal(array $data, $id)
+    {
+        $central='N';
+        if(isset($data["checkCentral"]) && $data["checkCentral"]==true){
+            $central='S';
+        }
+
+        // $datos = [
+        //     'id_sucursal'=> $id,
+        //     'descripcion' => $data['descripcion'],
+        //     'direccion' => $data['direccion'],
+        //     'ciudad' => $data['ciudad'],
+        //     'codigo_postal' => $data['codigo_postal'],
+        //     'estado' => $data['estado'],
+        //     'telefono'=> $data['telefono'],
+        //     'fax'=> $data['fax'],
+        //     'contacto'=>$data['contacto'],
+        //     'casa_central'=>$central,
+        // ];
+
+        return $this->repository->update($data, $id);
+    }
     
     public function delete($data, $id)
     {
