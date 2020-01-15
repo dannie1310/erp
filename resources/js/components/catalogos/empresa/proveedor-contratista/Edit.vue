@@ -146,6 +146,21 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!--EFO-->
+                                            <div class="col-md-12" v-if="proveedorContratista.efo">
+                                                <div class="form-group row error-content">
+                                                    <label for="id_empresa" class="col  sm-2 col-form-label">Efo</label>
+                                                    <div class="col-sm-10">
+                                                        <div class="btn-group btn-group-toggle" style="margin-left:5%;">
+                                                            <small v-if="proveedorContratista.efo.estado.id == 2 || proveedorContratista.efo.estado.id == 0" class="badge" 
+                                                                :class="{'badge-warning': proveedorContratista.efo.estado.id == 2, 'badge-danger' 
+                                                                : proveedorContratista.efo.estado.id == 0 }">
+                                                                {{proveedorContratista.efo.estado.descripcion}}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <br><br>
                                             <div class="col-md-12">
                                                 <button type="submit" class="btn btn-primary float-right" v-if="$root.can('editar_proveedor')"><i class="fa fa-save"></i> Actualizar</button>
@@ -230,7 +245,26 @@ export default {
                     data: this.edit,
                 })
                 .then(data => {
-                    this.$store.commit('cadeco/proveedor-contratista/UPDATE_PROVEEDOR_CONTRATISTA', data);
+                    if(data.efo !== null && (data.efo.estado.id == 0 || data.efo.estado.id == 2)){
+                        swal("El Proveedor / Contratista registrado es un "+data.efo.estado.descripcion+" EFO.", {
+                            icon: "warning",
+                            buttons: {
+                                confirm: {
+                                    text: 'Enterado',
+                                    closeModal: true,
+                                }
+                            }
+                        }) .then(() => {
+                            this.$store.commit('cadeco/proveedor-contratista/UPDATE_PROVEEDOR_CONTRATISTA', data);
+                            // this.$emit('created', data);
+                            // $(this.$refs.modal).modal('hide');
+                        })
+                    }else {
+                        this.$store.commit('cadeco/proveedor-contratista/UPDATE_PROVEEDOR_CONTRATISTA', data);
+                        // this.$emit('created', data);
+                        // $(this.$refs.modal).modal('hide');
+                    }
+                    
                     
                 }).finally(()=>{
                     this.fillDataEdit();

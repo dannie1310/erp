@@ -42,6 +42,14 @@
                                                 <th class="align">Tipo:</th>
                                                 <td>{{proveedorContratista.tipo}}</td>
                                             </tr>
+                                            <tr v-if="proveedorContratista.efo">
+                                                <th class="align">Efo:</th>
+                                                <td><small v-if="proveedorContratista.efo.estado.id == 2 || proveedorContratista.efo.estado.id == 0" class="badge" 
+                                                    :class="{'badge-warning': proveedorContratista.efo.estado.id == 2, 'badge-danger' 
+                                                    : proveedorContratista.efo.estado.id == 0 }">
+                                                    {{proveedorContratista.efo.estado.descripcion}}
+                                                </small></td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

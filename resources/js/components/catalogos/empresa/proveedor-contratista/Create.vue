@@ -177,8 +177,23 @@ export default {
         store(){
             return this.$store.dispatch('cadeco/proveedor-contratista/store', this.$data)
                 .then((data) => {
-                    $(this.$refs.modal).modal('hide');
-                    this.$emit('created',data)
+                    if(typeof data.efo !== 'undefined' && (data.efo.estado.id == 0 || data.efo.estado.id == 2)){
+                            swal("El Proveedor / Contratista registrado es un "+data.efo.estado.descripcion+" EFO.", {
+                                icon: "warning",
+                                buttons: {
+                                    confirm: {
+                                        text: 'Enterado',
+                                        closeModal: true,
+                                    }
+                                }
+                            }) .then(() => {
+                                this.$emit('created', data);
+                                $(this.$refs.modal).modal('hide');
+                            })
+                        }else {
+                            this.$emit('created', data);
+                            $(this.$refs.modal).modal('hide');
+                        }
                 })
         },
         tipos_empresas(){

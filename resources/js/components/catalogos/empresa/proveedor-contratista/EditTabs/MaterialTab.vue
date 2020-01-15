@@ -55,7 +55,7 @@ export default {
     data(){
         return {
             material:[],
-            scope: ['tipos:1'],
+            scope: ['insumos', 'suministrables'],
         }
     },
     methods: {

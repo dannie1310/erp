@@ -39,6 +39,7 @@
                     { title: 'R.F.C.', field: 'rfc',thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Razón Social', field: 'razon_social',thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Tipo', field: 'tipo_empresa', sortable: true},
+                    { title: 'Estado EFOS', field: 'efo', tdComp: require('./partials/EfoEstatus').default, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -97,6 +98,7 @@
                             rfc: proveedorContratista.rfc,
                             razon_social: proveedorContratista.razon_social,
                             tipo_empresa: proveedorContratista.tipo,
+                            efo : proveedorContratista.efo !== null?  proveedorContratista.efo.estado : '',
                             buttons: $.extend({}, {
                                 id: proveedorContratista.id,
                                 eliminar:self.$root.can('eliminar_proveedor') ? true : undefined,

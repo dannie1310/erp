@@ -12,6 +12,7 @@ use League\Fractal\TransformerAbstract;
 use App\Models\CADECO\ProveedorContratista;
 use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\CADECO\SuministradosTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgEfosTransformer;
 
 class ProveedorContratistaTransformer extends TransformerAbstract
 {
@@ -25,6 +26,15 @@ class ProveedorContratistaTransformer extends TransformerAbstract
         'sucursales'
     ];
 
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'efo'
+    ];
+
     public function transform(ProveedorContratista $model)
     {
         return [
@@ -35,8 +45,22 @@ class ProveedorContratistaTransformer extends TransformerAbstract
             'rfc' => $model->rfc,
             'proveedor_virtual' => $model->no_proveedor_virtual,
             'dias_credito' => $model->dias_credito,
-            'porcentaje' => $model->porcentaje
+            'porcentaje' => $model->porcentaje,
+            'efo' => $model->efo
         ];
+    }
+
+    /**
+     * @param ProveedorContratista $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEfo(ProveedorContratista $model)
+    {
+        if($efo = $model->efo)
+        {
+            return $this->item($efo, new CtgEfosTransformer);
+        }
+        return null;
     }
 
     /**
