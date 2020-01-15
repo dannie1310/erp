@@ -64,7 +64,7 @@ class Cliente extends Empresa
                     throw New \Exception('Este rfc se encuentra registrado previamente.');
                 }
                 if ($cliente->razon_social === $this->razon_social) {
-                    throw New \Exception('Está razón social se encuentra registrada previamente.');
+                    throw New \Exception('Esta razón social se encuentra registrada previamente.');
                 }
             }
         }
