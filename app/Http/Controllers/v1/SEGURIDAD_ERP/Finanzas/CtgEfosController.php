@@ -40,6 +40,8 @@ class CtgEfosController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:actualizar_efos')->only(['cargaLayout']);
+        $this->middleware('permiso:consultar_efos')->only(['paginate']);
 
         $this->service = $service;
         $this->fractal = $fractal;

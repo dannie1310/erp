@@ -4,7 +4,7 @@
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-upload" v-else></i>
         </button>
-        <button @click="load" class="btn btn-app btn-info float-right" title="Cargar Layout" :disabled="cargando" v-else-if="$root.can('cargar_layout_captura_conteos')">
+        <button @click="load" class="btn btn-app btn-info float-right" title="Cargar Layout" :disabled="cargando" v-else-if="$root.can('actualizar_efos')">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-upload" v-else></i>
             Carga de EFOS

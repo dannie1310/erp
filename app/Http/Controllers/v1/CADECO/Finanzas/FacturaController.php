@@ -57,7 +57,8 @@ class FacturaController extends Controller
         return $this->respondWithPaginator($pendientes);
     }
 
-
-
-
+    public function pdfCR($id)
+    {
+        return $this->service->pdfCR($id)->create();
+    }
 }
