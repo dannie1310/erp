@@ -30,7 +30,7 @@
                     { title: 'R.F.C.', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Dias de Credito', field: 'dias_credito',  tdClass: 'td_money', thClass: 'th_money',  sortable: true},
-                    { title: 'SAT Efos', field: 'efo', tdComp: require('./partials/EfoEstatus').default,  thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Estado EFOS', field: 'efo', tdComp: require('./partials/EfoEstatus').default,  thComp: require('../../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
