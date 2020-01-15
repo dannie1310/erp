@@ -32,6 +32,15 @@ class DestajistaService
             $destajista = $destajista->where([['razon_social', 'LIKE', '%' . request('razon_social') . '%']]);
         }
 
+        if(isset($data['efo']))
+        {
+            $d = Destajista::whereHas('efo.estadoEfo', function ($a){
+                return $a->where('descripcion', 'LIKE', '%'.request('efo').'%');
+            })->pluck('id_empresa');
+
+            $destajista->whereIn(['id_empresa',$d]);
+        }
+
         return $destajista->paginate($data);
     }
 
