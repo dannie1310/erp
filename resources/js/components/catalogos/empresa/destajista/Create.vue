@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_cliente')" class="btn btn-app btn-info float-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_destajista')" class="btn btn-app btn-info float-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar
@@ -9,7 +9,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> REGISTRAR CLIENTE</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> REGISTRAR DESTAJISTA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -19,19 +19,19 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="razon_social" class="col-sm-2 col-form-label">Razón Social:</label>
-                                        <div class="col-sm-10">
+                                        <label for="razon_social" class="col-md-2 col-form-label">Razón Social:</label>
+                                        <div class="col-md-10">
                                             <input
-                                                    style="text-transform:uppercase;"
-                                                    type="text"
-                                                    name="razon_social"
-                                                    data-vv-as="Razón Social"
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
-                                                    id="razon_social"
-                                                    placeholder="Razón Social"
-                                                    v-model="registro_cliente.razon_social"
-                                                    :class="{'is-invalid': errors.has('razon_social')}">
+                                                style="text-transform:uppercase;"
+                                                type="text"
+                                                name="razon_social"
+                                                data-vv-as="Razón Social"
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="razon_social"
+                                                placeholder="Razón Social"
+                                                v-model="registro_destajista.razon_social"
+                                                :class="{'is-invalid': errors.has('razon_social')}">
                                             <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
                                         </div>
                                     </div>
@@ -40,7 +40,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row">
-                                        <label for="rfc" class="col-md-2" ><b>RFC: </b> </label>
+                                        <label for="rfc" class="col-md-2"><b>RFC: </b> </label>
                                         <div class="col-md-10">
                                             <input class="form-control"
                                                    style="text-transform:uppercase;"
@@ -59,40 +59,19 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="tipo_cliente" class="col  sm-2 col-form-label">Tipo Cliente: </label>
-                                        <div class="col-sm-10">
-                                            <div class="btn-group btn-group-toggle">
-                                                <label class="btn btn-outline-secondary" :class="registro_cliente.tipo_cliente === Number(key) ? 'active': ''" v-for="(tipo_cliente, key) in tipos_clientes" :key="key">
-                                                    <input type="radio"
-                                                        class="btn-group-toggle"
-                                                        name="id_tipo_cliente"
-                                                        :id="'tipo_cliente' + key"
-                                                        :value="key"
-                                                        autocomplete="on"
-                                                        v-model.number="registro_cliente.tipo_cliente">
-                                                        {{ tipo_cliente }}
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="porcentaje" class="col-sm-2 col-form-label">Porcentaje de Participación</label>
-                                        <div class="col-sm-10">
+                                        <label for="dias_credito" class="col-md-2 col-form-label">Condición de Pago (días):</label>
+                                        <div class="col-md-10">
                                             <input
-                                                    type="number"
-                                                    name="porcentaje"
-                                                    data-vv-as="Porcentaje de Participación"
-                                                    v-validate="{required: true, decimal:2, min_value:0, max_value: 100}"
-                                                    class="form-control"
-                                                    id="porcentaje"
-                                                    placeholder="Porcentaje de Participación"
-                                                    v-model="registro_cliente.porcentaje"
-                                                    :class="{'is-invalid': errors.has('porcentaje')}">
-                                            <div class="invalid-feedback" v-show="errors.has('porcentaje')">{{ errors.first('porcentaje') }}</div>
+                                                type="number"
+                                                name="dias_credito"
+                                                data-vv-as="Condición de Pago (días)"
+                                                v-validate="{required: true,  min_value:0}"
+                                                class="form-control"
+                                                id="dias_credito"
+                                                placeholder="Condición de Pago (días)"
+                                                v-model="registro_destajista.dias_credito"
+                                                :class="{'is-invalid': errors.has('dias_credito')}">
+                                            <div class="invalid-feedback" v-show="errors.has('dias_credito')">{{ errors.first('dias_credito') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -112,22 +91,16 @@
 <script>
     const rfcRegex =/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
     export default {
-        name: "cliente-create",
+        name: "destajista-create",
         data() {
             return {
                 cargando : false,
-                registro_cliente : {
-                    tipo_cliente : '',
+                registro_destajista : {
                     razon_social : '',
                     rfc : '',
-                    porcentaje : 0,
+                    dias_credito : 0,
                 },
                 rfc : '',
-                tipos_clientes: {
-                    1: "Comprador",
-                    2: "Inversionista",
-                    3: "Comprador e Inversionista"
-                },
                 rfcValidate: false
             }
         },
@@ -135,21 +108,20 @@
             init() {
                 this.$validator.reset();
                 this.cargando = false;
-                this.registro_cliente = {
-                    tipo_cliente : '',
-                        razon_social : '',
-                        rfc : '',
-                        porcentaje : 0,
+                this.registro_destajista = {
+                    razon_social : '',
+                    rfc : '',
+                    dias_credito : 0,
                 };
                 this.rfc = '';
                 $(this.$refs.modal).modal('show');
                 this.rfcValidate =  false;
             },
             store() {
-                return this.$store.dispatch('cadeco/cliente/store', this.$data.registro_cliente)
+                return this.$store.dispatch('cadeco/destajista/store', this.$data.registro_destajista)
                     .then(data => {
                         if(typeof data.efo !== 'undefined' && (data.efo.estado.id == 0 || data.efo.estado.id == 2)){
-                            swal("El Cliente registrado es un "+data.efo.estado.descripcion+" EFO.", {
+                            swal("El Destajista registrado es un "+data.efo.estado.descripcion+" EFO.", {
                                 icon: "warning",
                                 buttons: {
                                     confirm: {
@@ -172,7 +144,7 @@
             },
             validate() {
                 this.$validator.validate().then(result => {
-                    this.registro_cliente.razon_social = this.registro_cliente.razon_social.toUpperCase();
+                    this.registro_destajista.razon_social = this.registro_destajista.razon_social.toUpperCase();
                     if (result && this.rfcValidate == false) {
                         this.store()
                     }
@@ -187,7 +159,7 @@
                     return this.invalidRFC();
                 } else{
                     this.rfcValidate=false;
-                    this.registro_cliente.rfc = this.rfc
+                    this.registro_destajista.rfc = this.rfc
                     this.$validator.reset();
                 }
             }

@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Show" v-if="$root.can('consultar_destajista')">
+        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Ver" v-if="$root.can('consultar_destajista')">
             <i class="fa fa-eye"></i>
         </button>
          <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> Destajista</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> DESTAJISTA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -77,7 +77,6 @@
                     id: this.id,
                     params: {include: ['usuario_registro']}
                 }).then(data => {
-                    console.log(data)
                     this.$store.commit('cadeco/destajista/SET_DESTAJISTA', data);
                     this.destajista = data;
                     $(this.$refs.modal).modal('show');

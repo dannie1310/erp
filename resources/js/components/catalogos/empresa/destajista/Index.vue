@@ -1,8 +1,8 @@
 <template>
     <div class="row">
-<!--        <div class="col-12">-->
-<!--            <create @created="paginate()"></create>-->
-<!--        </div>-->
+        <div class="col-12">
+            <create @created="paginate()"></create>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -20,8 +20,10 @@
 </template>
 
 <script>
+    import Create from "./Create";
     export default {
         name: "destajista-index",
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
@@ -36,7 +38,6 @@
                 data: [],
                 total: 0,
                 query: {sort: 'id_empresa', order: 'desc'},
-                estado: "",
                 cargando: false
             }
         },
