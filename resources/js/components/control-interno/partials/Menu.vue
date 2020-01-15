@@ -25,7 +25,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="$root.can('consultar_efos',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-university"></i>
                     <p>
@@ -33,7 +33,7 @@
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_efos',true)">
                     <li class="nav-item" >
                         <router-link :to="{name: 'lista-efos'}" class="nav-link" :class="{active: this.$route.name == 'lista-efos'}">
                             <i class="fa fa-times nav-icon"></i>
