@@ -9,6 +9,7 @@
 namespace App\Models\CADECO\Finanzas;
 
 
+use App\Models\CADECO\Factura;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,5 +32,10 @@ class TransaccionRubro extends Model
     public function rubro()
     {
         return $this->hasOne(Rubro::class, 'id', 'id_rubro');
+    }
+
+    public function factura()
+    {
+        return $this->belongsTo(Factura::class, 'id_transaccion', 'id_transaccion');
     }
 }

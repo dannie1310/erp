@@ -32,8 +32,16 @@ class CtgEfosService
 
     public function paginate($data)
     {
-        return $this->repository->paginate($data);
-
+            if(isset($data['rfc']) && isset($data['razon_social'])){
+                return $this->repository->where([['rfc','like', '%'.$data['rfc'].'%']])->where([['razon_social','like', '%'.$data['razon_social'].'%']])->paginate();
+            }
+            if(isset($data['rfc'])){
+                return $this->repository->where([['rfc','like', '%'.$data['rfc'].'%']])->paginate();
+            }
+            if(isset($data['razon_social'])){
+                return $this->repository->where([['razon_social','like', '%'.$data['razon_social'].'%']])->paginate();
+            }
+                return $this->repository->paginate();
     }
 
 }
