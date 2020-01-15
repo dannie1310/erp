@@ -30,7 +30,7 @@
                     { title: 'R.F.C.', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Dias de Credito', field: 'dias_credito',  tdClass: 'td_money', thClass: 'th_money',  sortable: true},
-                    { title: 'SAT Efos', field: 'efo', tdComp: require('./partials/EfoEstatus').default,  thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Estado EFOS', field: 'efo', tdComp: require('./partials/EfoEstatus').default,  thComp: require('../../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
@@ -84,9 +84,9 @@
                         dias_credito: destajista.dias_credito,
                         efo :  typeof destajista.efo !== 'undefined' ?  destajista.efo.estado : '',
                         buttons: $.extend({}, {
-                            // edit: self.$root.can('editar_cliente') ? true : undefined,
-                            // show: self.$root.can('consultar_cliente') ? true : undefined,
-                            // delete: self.$root.can('eliminar_cliente') ? true : undefined,
+                            // edit: self.$root.can('editar_destajista') ? true : undefined,
+                            show: self.$root.can('consultar_destajista') ? true : undefined,
+                            // delete: self.$root.can('eliminar_destajista') ? true : undefined,
                             id: destajista.id
                         })
                     }));
