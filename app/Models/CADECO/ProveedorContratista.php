@@ -45,6 +45,14 @@ class ProveedorContratista extends Empresa
         $this->find($id)->update($data);
     }
 
+    public function agregarSucursal(){
+        if($this->sucursales()->count() == 0){
+            $this->sucursales()->create([
+                'descripcion' => 'MATRIZ'
+            ]);
+        }
+    }
+
     public function validarPermisos(){
         if(!auth()->user()->can('editar_proveedor_razon_social')){
             unset($this->razon_social);
@@ -61,7 +69,7 @@ class ProveedorContratista extends Empresa
     public function validarRegistroTransaccion(){
         $cantidad = $this->transacciones()->count();
         if($cantidad > 0){
-            abort(403, 'El Proveedor / Contratisa no puede ser eliminado porque tiene ' . $cantidad . ' transacciones asociadas.');
+            abort(403, 'El Proveedor / Contratisa '. $this->razon_social.' no puede ser eliminado porque tiene ' . $cantidad . ' transaccion(es) asociada(s).');
         }
     }
 }

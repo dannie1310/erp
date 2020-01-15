@@ -43,6 +43,8 @@ class SuministradoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
+        $this->middleware('permiso:eliminar_material_proveedor')->only(['destroy']);
+        $this->middleware('permiso:registrar_material_proveedor')->only(['store']);
 
         $this->fractal = $fractal;
         $this->service = $service;

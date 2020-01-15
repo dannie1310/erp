@@ -8,7 +8,7 @@
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Alta de Sucursal</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Edición de Sucursal</h5>
                         <button type="button" class="close" @click="closeModal()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

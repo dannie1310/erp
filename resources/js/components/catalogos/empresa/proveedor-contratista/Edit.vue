@@ -4,7 +4,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> EDICIÓN DE PROVEEDOR / CONTRATISTA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-pencil"></i> EDICIÓN DE PROVEEDOR / CONTRATISTA</h5>
                         <button type="button" class="close" @click="closeModal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -24,7 +24,7 @@
                             <div class="tab-content" id="nav-tabContent">
                                 
                                 <div aria-labelledby="nav-edit-identificacion-tab" class="tab-pane fade show active" id="nav-edit-identificacion" role="tabpanel">
-                                    <form role="form" @submit.prevent="validate"  style="height:350px;">
+                                    <form role="form" @submit.prevent="validate"  style="height:360px;">
                                         <div class="row" v-if="proveedorContratista">
                                             <div class="col-md-12">
                                                 <br>
@@ -32,7 +32,7 @@
                                                     <label for="razon_social" class="col-md-2 col-form-label">Razón Social: </label>
                                                     <div class="col-md-10">
                                                         <input style="width:94.7%; "
-                                                            :disabled="!$root.can('editar_proveedor_razon_social')"
+                                                            :disabled="!$root.can('editar_proveedor_razon_social') || !$root.can('editar_proveedor')"
                                                             type="text"
                                                             name="razon_social"
                                                             data-vv-as="Razón Social"
@@ -51,7 +51,7 @@
                                                     <label for="rfc" class="col-sm-5 col-form-label">R.F.C.: </label>
                                                     <div class="col-sm-7">
                                                         <input
-                                                            :disabled="!$root.can('editar_proveedor_rfc')"
+                                                            :disabled="!$root.can('editar_proveedor_rfc') || !$root.can('editar_proveedor')"
                                                             type="text"
                                                             name="rfc"
                                                             data-vv-as="R.F.C."
@@ -70,16 +70,17 @@
                                                     <label for="no_proveedor_virtual" class="col-sm-5 col-form-label">No. Proveedor Virtual: </label>
                                                     <div class="col-sm-7">
                                                         <input
-                                                                type="number"
-                                                                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                                                name="no_proveedor_virtual"
-                                                                data-vv-as="No. Proveedor Virtual"
-                                                                v-validate="{}"
-                                                                class="form-control"
-                                                                id="no_proveedor_virtual"
-                                                                placeholder="No. Proveedor Virtual"
-                                                                v-model="edit.no_proveedor_virtual"
-                                                                :class="{'is-invalid': errors.has('no_proveedor_virtual')}">
+                                                            :disabled="!$root.can('editar_proveedor')"
+                                                            type="number"
+                                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                                            name="no_proveedor_virtual"
+                                                            data-vv-as="No. Proveedor Virtual"
+                                                            v-validate="{}"
+                                                            class="form-control"
+                                                            id="no_proveedor_virtual"
+                                                            placeholder="No. Proveedor Virtual"
+                                                            v-model="edit.no_proveedor_virtual"
+                                                            :class="{'is-invalid': errors.has('no_proveedor_virtual')}">
                                                         <div class="invalid-feedback" v-show="errors.has('no_proveedor_virtual')">{{ errors.first('no_proveedor_virtual') }}</div>
                                                     </div>
                                                 </div>
@@ -89,15 +90,16 @@
                                                     <label for="dias_credito" class="col-sm-5 col-form-label">Días Crédito: </label>
                                                     <div class="col-sm-7">
                                                         <input
-                                                                type="number"
-                                                                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                                                name="dias_credito"
-                                                                data-vv-as="Días Crédito"
-                                                                v-validate="{min_value:0, max_value:365, decimal:0}"
-                                                                class="form-control"
-                                                                id="dias_credito"
-                                                                placeholder="Días Crédito"
-                                                                v-model="edit.dias_credito"
+                                                            :disabled="!$root.can('editar_proveedor')"
+                                                            type="number"
+                                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                                            name="dias_credito"
+                                                            data-vv-as="Días Crédito"
+                                                            v-validate="{min_value:0, max_value:365, decimal:0}"
+                                                            class="form-control"
+                                                            id="dias_credito"
+                                                            placeholder="Días Crédito"
+                                                            v-model="edit.dias_credito"
                                                                 :class="{'is-invalid': errors.has('dias_credito')}">
                                                         <div class="invalid-feedback" v-show="errors.has('dias_credito')">{{ errors.first('dias_credito') }}</div>
                                                     </div>
@@ -108,6 +110,7 @@
                                                     <label for="porcentaje" class="col-sm-5 col-form-label">Descuento Financiero: </label>
                                                     <div class="col-sm-7">
                                                         <input
+                                                        :disabled="!$root.can('editar_proveedor')"
                                                                 type="number"
                                                                 name="porcentaje"
                                                                 data-vv-as="Descuento Financiero"
@@ -127,9 +130,10 @@
                                                     <div class="col-sm-10">
                                                         <div class="btn-group btn-group-toggle" style="margin-left:5%;">
                                                             <label class="btn btn-outline-secondary" 
+                                                            
                                                                 :class="edit.tipo_empresa === Number(key) ? 'active': ''" 
                                                                 v-for="(tipo, key) in tipos_empresas()" :key="key">
-                                                                <input type="radio"
+                                                                <input type="radio" :disabled="!$root.can('editar_proveedor')"
                                                                     class="btn-group-toggle"
                                                                     name="id_tipo_empresa"
                                                                     :id="'tipo_empresa' + key"
@@ -144,7 +148,7 @@
                                             </div>
                                             <br><br>
                                             <div class="col-md-12">
-                                                <button type="submit" class="btn btn-primary float-right"><i class="fa fa-save"></i> Actualizar</button>
+                                                <button type="submit" class="btn btn-primary float-right" v-if="$root.can('editar_proveedor')"><i class="fa fa-save"></i> Actualizar</button>
                                             </div>
                                         </div>
                                     </form>

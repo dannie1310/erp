@@ -1,10 +1,15 @@
 <template>
     <span>
-        <div class="row" v-if="$root.can('editar_sucursal_proveedor')" style="height:350px;" >
+        <div class="row" style="height:360px;" >
             <div class="col-12" v-if="sucursales">
                 <div class="invoice p-3 mb-3">
                     <div class="row">
+                        <div class="col-md-12">
+                            <create-sucursal @created="updateSucursal" v-bind:id="id_empresa"></create-sucursal>
+                        </div>
+                        
                         <div class="table-responsive col-12">
+                            <br>
                             <table class="table table-striped table-fixed">
                                 <thead>
                                     <tr>
@@ -23,19 +28,17 @@
                                         <td style="width:15%;">{{sucursal.ciudad}}</td>
                                         <td style="width:20%;">
                                             <show-sucursal v-bind:id="sucursal.id"></show-sucursal>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteSucursal(sucursal.id)" title="Eliminar">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteSucursal(sucursal.id)" title="Eliminar" v-if="$root.can('eliminar_sucursal_proveedor')">
                                                 <i class="fa fa-trash"></i>
                                             </button>
-                                            <edit-sucursal @created="updateSucursal" v-bind:id="sucursal.id"></edit-sucursal>
+                                            <edit-sucursal @created="updateSucursal" v-bind:id="sucursal.id" v-if="$root.can('editar_sucursal_proveedor')"></edit-sucursal>
                                             
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-md-12">
-                            <create-sucursal @created="updateSucursal" v-bind:id="id_empresa"></create-sucursal>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -85,7 +88,7 @@ export default {
 }
 .table-fixed tbody {
     display:block;
-    height:218px;
+    height:215px;
     overflow:auto;
 }
 .table-fixed thead, .table-fixed tbody tr {

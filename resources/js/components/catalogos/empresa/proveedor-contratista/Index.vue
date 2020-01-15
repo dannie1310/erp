@@ -110,7 +110,7 @@
             proveedorContratista:{
                 handler(proveedorContratista) {
                     if(proveedorContratista !== null){
-                        this.tipo = proveedorContratista.tipo;
+                        this.tipo = proveedorContratista.opcion;
                     }else{
                         this.tipo = '';
                     }

@@ -14,6 +14,7 @@ use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Services\CADECO\SucursalService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
 
 class SucursalController extends Controller
 {
@@ -50,10 +51,16 @@ class SucursalController extends Controller
         $this->middleware('permiso:consultar_sucursal_banco')->only(['paginate','index','show']);
         $this->middleware('permiso:editar_sucursal_banco')->only(['update']);
         $this->middleware('permiso:eliminar_sucursal_proveedor')->only(['destroy']);
+        $this->middleware('permiso:registrar_sucursal_proveedor')->only(['storeProveedorSucursal']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
 
+    }
+
+    public function storeProveedorSucursal(Request $request){
+        $sucursal = $this->service->store($request->all());
+        return $this->respondWithItem($sucursal);
     }
 }

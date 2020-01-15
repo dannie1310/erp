@@ -245,7 +245,7 @@
             },
             store() {
                 this.$data.id_empresa = this.id;
-                return this.$store.dispatch('cadeco/sucursal/store',  this.$data )
+                return this.$store.dispatch('cadeco/sucursal/storeSucursalProveedor',  this.$data )
                 .then((data) => {
                     $(this.$refs.modalCreateSucursal).modal('hide');
                     this.$emit('created',data)

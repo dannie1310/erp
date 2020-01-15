@@ -4,7 +4,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CONSULTA DE PROVEEDOR / CONTRATISTA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> CONSULTA DE PROVEEDOR / CONTRATISTA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -52,7 +52,7 @@
                                                                 <td>{{proveedorContratista.porcentaje}}</td>
                                                             </tr>
                                                             <tr>
-                                                                <th class="align">Tipo Proveedor y/o Contratista:</th>
+                                                                <th class="align">Tipo:</th>
                                                                 <td>{{proveedorContratista.tipo}}</td>
                                                             </tr>
                                                         </tbody>

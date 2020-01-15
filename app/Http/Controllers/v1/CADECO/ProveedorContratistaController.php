@@ -44,10 +44,10 @@ class ProveedorContratistaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:consultar_proveedor')->only(['show','paginate','index','find']);
+        // $this->middleware('permiso:consultar_proveedor')->only(['show','paginate','index','find']);
         $this->middleware('permiso:eliminar_proveedor')->only(['destroy']);
         $this->middleware('permiso:editar_proveedor')->only(['update']);
-        // $this->middleware('permiso:registrar_insumo_material|registrar_insumo_herramienta_equipo|registrar_insumo_servicio|registrar_insumo_maquinaria')->only('store');
+        $this->middleware('permiso:registrar_proveedor')->only(['store']);
 
         $this->fractal = $fractal;
         $this->service = $service;

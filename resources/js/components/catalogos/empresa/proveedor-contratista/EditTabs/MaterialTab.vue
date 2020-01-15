@@ -1,9 +1,24 @@
 <template>
     <span>
-        <div class="col-12" v-if="suministrados" style="height:350px;">
+        <div class="col-12" v-if="suministrados" style="height:360px;">
             <div class="invoice p-3 mb-3">
                 <div class="row" v-if="suministrados">
-                    <div class="table-responsive col-12">
+                   
+                        <div class="col-md-10" v-if="$root.can('registrar_material_proveedor')">
+                            <MaterialSelect
+                                :scope="scope"
+                                :name="material"
+                                v-model="material"
+                                data-vv-as="Material"
+                                v-validate="{required: true}"
+                                ref="MaterialSelect"
+                                :disableBranchNodes="false"/>
+                        </div>
+                        <div class="col-md-2" v-if="$root.can('registrar_material_proveedor')">
+                            <button type="submit" class="btn btn-primary float-right" @click="registrarMaterial()" :disabled="material.length == 0"><i class="fa fa-plus"></i>  Registrar</button>
+                        </div>
+                    
+                    <div class="table-responsive col-12"><br>
                         <table class="table table-striped table-fixed">
                             <thead>
                                 <tr>
@@ -17,26 +32,13 @@
                                     <td style="width:10%;">{{i+1}}</td>
                                     <td style="width:100%; text-align: left">{{material.material.descripcion}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="eliminar(material)" title="Eliminar">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="eliminar(material)" title="Eliminar" v-if="$root.can('eliminar_material_proveedor')">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="col-md-10">
-                        <MaterialSelect
-                            :scope="scope"
-                            :name="material"
-                            v-model="material"
-                            data-vv-as="Material"
-                            v-validate="{required: true}"
-                            ref="MaterialSelect"
-                            :disableBranchNodes="false"/>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary float-right" @click="registrarMaterial()" :disabled="material.length == 0"><i class="fa fa-plus"></i>  Registrar</button>
                     </div>
                 </div>
             </div>
@@ -95,7 +97,7 @@ export default {
 }
 .table-fixed tbody {
     display:block;
-    height:218px;
+    height:210px;
     overflow:auto;
 }
 .table-fixed thead, .table-fixed tbody tr {

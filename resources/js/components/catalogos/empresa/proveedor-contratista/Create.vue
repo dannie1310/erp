@@ -20,17 +20,17 @@
                                     <div class="form-group row error-content">
                                         <label for="razon_social" class="col-sm-2 col-form-label">Razón Social: </label>
                                         <div class="col-sm-10">
-                                            <input
+                                            <input style="width:94.7%; "
                                                     type="text"
                                                     name="razon_social"
                                                     data-vv-as="Razón Social"
                                                     v-validate="{required: true}"
-                                                    class="form-control"
+                                                    class="form-control float-right"
                                                     id="razon_social"
                                                     placeholder="Razón Social"
                                                     v-model="razon_social"
                                                     :class="{'is-invalid': errors.has('razon_social')}">
-                                            <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
+                                            <div class="invalid-feedback float-right"   v-show="errors.has('razon_social')"><span style="margin-left:5%;">{{ errors.first('razon_social') }}</span></div>
                                         </div>
                                     </div>
                                 </div>
@@ -111,9 +111,9 @@
                                 </div>
                                 <div class="col-md-12">
                                    <div class="form-group row error-content">
-                                        <label for="id_empresa" class="col  sm-3 col-form-label">Tipo Proveedor y/o Contratista: </label>
-                                        <div class="col-sm-9">
-                                            <div class="btn-group btn-group-toggle">
+                                        <label for="id_empresa" class="col  sm- col-form-label">Tipo: </label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group btn-group-toggle" style="margin-left:5%;">
                                                 <label class="btn btn-outline-secondary" :class="tipo_empresa === Number(key) ? 'active': ''" v-for="(tipo, key) in tipos_empresas()" :key="key">
                                                     <input type="radio"
                                                         class="btn-group-toggle"

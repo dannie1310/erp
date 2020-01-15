@@ -30,6 +30,14 @@ class ProveedorContratistaObserver extends EmpresaObserver
      * @param Empresa $provedor_contratista
      * @throws \Exception
      */
+    public function created(Empresa $provedor_contratista){
+        $provedor_contratista->agregarSucursal();
+    }
+
+    /**
+     * @param Empresa $provedor_contratista
+     * @throws \Exception
+     */
     public function deleting(Empresa $provedor_contratista)
     {
         $provedor_contratista->validarRegistroTransaccion();

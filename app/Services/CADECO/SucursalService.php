@@ -69,6 +69,16 @@ class SucursalService
         return $sucursal;
     }
 
+    public function storeProveedorSucursal(array $data)
+    {
+        $central='N';
+        if(isset($data["checkCentral"]) && $data["checkCentral"]==true){
+            $central='S';
+        }
+        $sucursal = $this->repository->create($data);
+        return $sucursal;
+    }
+
     public function update(array $data, $id)
     {
         $central='N';
