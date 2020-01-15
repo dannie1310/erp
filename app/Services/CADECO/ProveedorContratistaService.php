@@ -54,4 +54,9 @@ class ProveedorContratistaService
     public function update(array $data, $id){
         return $this->repository->update($data, $id);
     }
+    
+    public function delete($data, $id)
+    {
+        $this->repository->delete($data, $id);
+    }
 }

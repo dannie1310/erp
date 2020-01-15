@@ -8,10 +8,11 @@
 
 namespace App\Models\CADECO;
 
-use App\Models\CADECO\Contabilidad\CuentaEmpresa;
-use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
-use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Contabilidad\CuentaEmpresa;
+use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 
 class Empresa extends Model
 {
@@ -176,8 +177,6 @@ class Empresa extends Model
                 $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tiene un formato inválido.');
 
                 // TODO validar si el RFC esta como EFO
-
-                $this->where('rfc', '=', str_replace(" ","", $data->rfc))->count() > 0 ? abort(403, 'La empresa ya esta registrada.'):'';
             }   
         }
     }

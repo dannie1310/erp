@@ -12,7 +12,7 @@
                                         <th style="width:30%;">Descripción</th>
                                         <th style="width:30%;">Dirección</th>
                                         <th style="width:15%;">Ciudad</th>
-                                        <th style="width:20%;"></th>
+                                        <th style="width:20%;">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -33,7 +33,9 @@
                                 </tbody>
                             </table>
                         </div>
-                        <create-sucursal @created="updateSucursal" v-bind:id="id_empresa"></create-sucursal>
+                        <div class="col-md-12">
+                            <create-sucursal @created="updateSucursal" v-bind:id="id_empresa"></create-sucursal>
+                        </div>
                     </div>
                 </div>
             </div>

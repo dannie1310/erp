@@ -9,14 +9,14 @@
                                 <tr>
                                     <th style="width:10%;">#</th>
                                     <th style="width:80%;">Material</th>
-                                    <th style="width:10%;"></th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(material, i) in suministrados">
                                     <td style="width:10%;">{{i+1}}</td>
-                                    <td style="width:80%; text-align: left">{{material.material.descripcion}}</td>
-                                    <td style="width:10%;">
+                                    <td style="width:100%; text-align: left">{{material.material.descripcion}}</td>
+                                    <td>
                                         <button type="button" class="btn btn-sm btn-outline-danger" @click="eliminar(material)" title="Eliminar">
                                             <i class="fa fa-trash"></i>
                                         </button>
@@ -36,7 +36,7 @@
                             :disableBranchNodes="false"/>
                     </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary" @click="registrarMaterial()" :disabled="material.length == 0">Registrar</button>
+                        <button type="submit" class="btn btn-primary float-right" @click="registrarMaterial()" :disabled="material.length == 0"><i class="fa fa-plus"></i>  Registrar</button>
                     </div>
                 </div>
             </div>

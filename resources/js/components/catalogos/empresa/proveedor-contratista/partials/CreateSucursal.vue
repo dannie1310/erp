@@ -1,6 +1,6 @@
 <template>
      <span>
-    <button @click="init" v-if="$root.can('registrar_sucursal_proveedor')" class="btn btn-primary">
+    <button @click="init" v-if="$root.can('registrar_sucursal_proveedor')" class="btn btn-primary float-right">
         <i class="fa fa-plus"></i> Registrar 
     </button>
 
@@ -8,7 +8,7 @@
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Alta de Sucursal</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Registro de Sucursal</h5>
                         <button type="button" class="close" @click="closeModal()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

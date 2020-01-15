@@ -123,6 +123,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@show');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@store');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@destroy')->where(['id' => '[0-9]+']);
         });
 
         // SUCURSAL

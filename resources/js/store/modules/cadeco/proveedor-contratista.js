@@ -20,6 +20,16 @@ export default {
         SET_META(state, data) {
             state.meta = data;
         },
+
+        DELETE_PROVEEDOR_CONTRATISTA(state, id) {
+            state.proveedor_contratistas = state.proveedor_contratistas.filter((proveedor_contratista) => {
+                return proveedor_contratista.id !== id;
+            })
+            if (state.currentProveeedor && state.currentProveeedor.id === id) {
+                state.currentProveeedor = null;
+            }
+        },
+
         UPDATE_PROVEEDOR_CONTRATISTA(state, data) {
             state.proveedor_contratistas = state.proveedor_contratistas.map(proveedor_contratista=> {
                 if(proveedor_contratista.id === data.id){
@@ -32,6 +42,45 @@ export default {
     },
 
     actions: {
+        delete(context, id) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Proveedor / Contratista",
+                    text: "¿Está seguro de que desea eliminar este Proveedor / Contratista?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                .then((value) => {
+                    if (value) {
+                        axios
+                            .delete(URI + id)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Proveedor / Contratista eliminado correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            })
+                    }
+                });
+            });
+        },
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

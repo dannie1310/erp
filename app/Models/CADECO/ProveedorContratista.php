@@ -31,4 +31,28 @@ class ProveedorContratista extends Empresa
     public function suministrados(){
         return $this->hasMany(Suministrados::class, 'id_empresa', 'id_empresa');
     }
+
+    public function transacciones(){
+        return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function validarPermisos(){
+        if(!auth()->user()->can('editar_proveedor_razon_social')){
+            unset($this->razon_social);
+        }
+        if(!auth()->user()->can('editar_proveedor_rfc')){
+            unset($this->rfc);
+        }
+    }
+
+    public function validarProveedorContratistaDuplicado(){
+        $this->where('rfc', '=', str_replace(" ","", $this->rfc))->count() > 0 ? abort(403, 'El Proveedor / Contratisa ya esta registrado.'):'';
+    }
+
+    public function validarRegistroTransaccion(){
+        $cantidad = $this->transacciones()->count();
+        if($cantidad > 0){
+            abort(403, 'El Proveedor / Contratisa no puede ser eliminado porque tiene ' . $cantidad . ' transacciones asociadas.');
+        }
+    }
 }

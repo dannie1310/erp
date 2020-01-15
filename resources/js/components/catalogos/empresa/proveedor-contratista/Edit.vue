@@ -29,15 +29,15 @@
                                             <div class="col-md-12">
                                                 <br>
                                                 <div class="form-group row error-content">
-                                                    <label for="razon_social" class="col-sm-2 col-form-label">Razón Social: </label>
-                                                    <div class="col-sm-10">
-                                                        <input
+                                                    <label for="razon_social" class="col-md-2 col-form-label">Razón Social: </label>
+                                                    <div class="col-md-10">
+                                                        <input style="width:94.7%; "
                                                             :disabled="!$root.can('editar_proveedor_razon_social')"
                                                             type="text"
                                                             name="razon_social"
                                                             data-vv-as="Razón Social"
                                                             v-validate="{required: true}"
-                                                            class="form-control"
+                                                            class="form-control float-right"
                                                             id="razon_social"
                                                             placeholder="Razón Social"
                                                             v-model="edit.razon_social"
@@ -123,9 +123,9 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="form-group row error-content">
-                                                    <label for="id_empresa" class="col  sm-3 col-form-label">Tipo Proveedor y/o Contratista: </label>
-                                                    <div class="col-sm-9">
-                                                        <div class="btn-group btn-group-toggle">
+                                                    <label for="id_empresa" class="col  sm-2 col-form-label">Tipo </label>
+                                                    <div class="col-sm-10">
+                                                        <div class="btn-group btn-group-toggle" style="margin-left:5%;">
                                                             <label class="btn btn-outline-secondary" 
                                                                 :class="edit.tipo_empresa === Number(key) ? 'active': ''" 
                                                                 v-for="(tipo, key) in tipos_empresas()" :key="key">
@@ -142,8 +142,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <br><br>
                                             <div class="col-md-12">
-                                                <button type="submit" class="btn btn-primary">Actualizar</button>
+                                                <button type="submit" class="btn btn-primary float-right"><i class="fa fa-save"></i> Actualizar</button>
                                             </div>
                                         </div>
                                     </form>

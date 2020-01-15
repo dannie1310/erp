@@ -24,4 +24,14 @@ class EmpresaObserver
         $empresa->FechaHoraRegistro = date('Y-m-d H:i:s');
         $empresa->UsuarioRegistro = auth()->id();
     }
+    
+    /**
+     * @param Empresa $empresa
+     */
+    public function updating(Empresa $empresa)
+    {
+        $empresa->validaRFC($empresa);
+        $empresa->razon_social = mb_strtoupper($empresa->razon_social);
+
+    }
 }
