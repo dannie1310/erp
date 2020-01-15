@@ -4,15 +4,21 @@
 namespace App\Http\Transformers\SEGURIDAD_ERP\Finanzas;
 
 
-use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgEstadosEfosTransformer;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use League\Fractal\TransformerAbstract;
 
 class CtgEfosTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = [
+
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
         'estado'
     ];
+
 
     public function transform(CtgEfos $model)
     {
@@ -37,7 +43,7 @@ class CtgEfosTransformer extends TransformerAbstract
         {
             return $this->item($estado, new CtgEstadosEfosTransformer);
         }
-        
+
         return null;
     }
 

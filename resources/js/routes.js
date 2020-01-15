@@ -405,6 +405,20 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: ['consultar_cliente']
                         }
+                    },
+                    {
+                        path: 'destajista',
+                        name: 'destajista',
+                        component: require('./components/catalogos/empresa/destajista/Index').default,
+                        meta: {
+                            title: 'Destajista',
+                            breadcrumb: {
+                                parent: 'empresa',
+                                name: 'DESTAJISTA'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_destajista']
+                        }
                     }
                 ]
             },
@@ -570,6 +584,17 @@ export const routes = [
                             breadcrumb: {name: 'PROVEEDOR-CONTRATISTA', parent: 'catalogos'},
                             middleware: [auth, context, permission],
                             permission: ['consultar_proveedor']
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'proveedor-contratista-create',
+                        component: require('./components/catalogos/empresa/proveedor-contratista/Create').default,
+                        meta: {
+                            title: 'Registrar Proveedor / Contratista',
+                            breadcrumb: { parent: 'proveedor-contratista', name: 'REGISTRAR PROVEEDOR-CONTRATISTA'},
+                            middleware: [auth, context],
+                            permission: 'registrar_proveedor'
                         }
                     },
                 ]

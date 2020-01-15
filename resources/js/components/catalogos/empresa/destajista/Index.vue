@@ -1,8 +1,8 @@
 <template>
     <div class="row">
-        <div class="col-12">
-        <create @created="paginate()"></create>
-        </div>
+<!--        <div class="col-12">-->
+<!--            <create @created="paginate()"></create>-->
+<!--        </div>-->
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -20,10 +20,8 @@
 </template>
 
 <script>
-    import Create from "./Create";
     export default {
-        name: "cliente-index",
-        components:{Create},
+        name: "destajista-index",
         data() {
             return {
                 HeaderSettings: false,
@@ -31,9 +29,8 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'R.F.C.', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Tipo Cliente', field: 'tipo_cliente', sortable: true},
-                    { title: 'Porcentaje de Participación', field: 'porcentaje', tdClass: 'td_money', thClass: 'th_money', sortable: true},
-                    { title: 'Estado EFOS', field: 'efo', tdComp: require('./partials/EfoEstatus').default, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Dias de Credito', field: 'dias_credito',  tdClass: 'td_money', thClass: 'th_money',  sortable: true},
+                    { title: 'SAT Efos', field: 'efo', tdComp: require('./partials/EfoEstatus').default,  thComp: require('../../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
@@ -54,10 +51,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('cadeco/cliente/paginate', { params: this.query})
+                return this.$store.dispatch('cadeco/destajista/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('cadeco/cliente/SET_CLIENTES', data.data);
-                        this.$store.commit('cadeco/cliente/SET_META', data.meta);
+                        this.$store.commit('cadeco/destajista/SET_DESTAJISTAS', data.data);
+                        this.$store.commit('cadeco/destajista/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -65,33 +62,32 @@
             },
         },
         computed: {
-            clientes(){
-                return this.$store.getters['cadeco/cliente/clientes'];
+            destajistas(){
+                return this.$store.getters['cadeco/destajista/destajistas'];
             },
             meta(){
-                return this.$store.getters['cadeco/cliente/meta'];
+                return this.$store.getters['cadeco/destajista/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            clientes: {
-                handler(clientes) {
+            destajistas: {
+                handler(destajistas) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = clientes.map((cliente, i) => ({
+                    self.$data.data = destajistas.map((destajista, i) => ({
                         index: (i + 1) + self.query.offset,
-                        rfc: cliente.rfc,
-                        razon_social: cliente.razon_social,
-                        tipo_cliente: cliente.tipo,
-                        porcentaje: cliente.porcentaje_format,
-                        efo :  typeof cliente.efo !== 'undefined' ?  cliente.efo.estado : '',
+                        rfc: destajista.rfc,
+                        razon_social: destajista.razon_social,
+                        dias_credito: destajista.dias_credito,
+                        efo :  typeof destajista.efo !== 'undefined' ?  destajista.efo.estado : '',
                         buttons: $.extend({}, {
-                            edit: self.$root.can('editar_cliente') ? true : undefined,
-                            show: self.$root.can('consultar_cliente') ? true : undefined,
-                            delete: self.$root.can('eliminar_cliente') ? true : undefined,
-                            id: cliente.id
+                            // edit: self.$root.can('editar_cliente') ? true : undefined,
+                            // show: self.$root.can('consultar_cliente') ? true : undefined,
+                            // delete: self.$root.can('eliminar_cliente') ? true : undefined,
+                            id: destajista.id
                         })
                     }));
                 },

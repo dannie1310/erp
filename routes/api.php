@@ -48,7 +48,8 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ClienteController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\ClienteController@store');
-
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@destroy')->where(['id' => '[0-9]+']);
         });
 
         // CONCEPTOS
@@ -73,6 +74,16 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\CuentaController@store');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\CuentaController@update')->where(['id' => '[0-9]+']);
 
+        });
+
+        // DESTAJISTAS
+        $api->group(['prefix' => 'destajista'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\DestajistaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\DestajistaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\DestajistaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/','App\Http\Controllers\v1\CADECO\DestajistaController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\DestajistaController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\DestajistaController@destroy')->where(['id' => '[0-9]+']);
         });
 
         // EMPRESAS
@@ -127,7 +138,9 @@ $api->version('v1', function ($api) {
         });
 
         $api->group(['prefix' => 'proveedor-contatista'], function ($api) {
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@paginate');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@show');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@store');
         });
 
         // SUCURSAL

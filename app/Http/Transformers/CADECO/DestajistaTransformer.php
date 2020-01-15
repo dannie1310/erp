@@ -1,21 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: DBenitezc
- * Date: 03/01/2020
- * Time: 01:43 PM
- */
+
 
 namespace App\Http\Transformers\CADECO;
 
 
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\CtgEfosTransformer;
-use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\EfoTransformer;
-use App\Models\CADECO\Cliente;
+use App\Models\CADECO\Destajista;
 use League\Fractal\TransformerAbstract;
 
-class ClienteTransformer extends TransformerAbstract
+class DestajistaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -35,27 +29,23 @@ class ClienteTransformer extends TransformerAbstract
         'efo'
     ];
 
-    public function transform(Cliente $model)
+    public function transform(Destajista $model)
     {
         return [
             'id' => $model->getKey(),
             'razon_social' => $model->razon_social,
             'rfc'=> $model->rfc,
-            'tipo' => $model->tipo,
-            'tipo_cliente' => (int) $model->tipo_cliente,
-            'porcentaje' =>  $model->porcentaje_format,
-            'porcentaje_format' => $model->porcentaje_con_signo_format,
+            'dias_credito' => $model->dias_credito,
             'fecha_registro' => $model->FechaHoraRegistro,
             'fecha_registro_format' => $model->fecha_hora_registro_format
-
         ];
     }
 
     /**
-     * @param Cliente $model
+     * @param Destajista $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeEfo(Cliente $model)
+    public function includeEfo(Destajista $model)
     {
         if($efo = $model->efo)
         {
@@ -65,10 +55,10 @@ class ClienteTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Cliente $model
+     * @param Destajista $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeUsuarioRegistro(Cliente $model)
+    public function includeUsuarioRegistro(Destajista $model)
     {
         if($usuario = $model->usuario)
         {

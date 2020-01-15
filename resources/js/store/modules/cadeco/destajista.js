@@ -1,45 +1,45 @@
-const URI = '/api/cliente/';
+const URI = '/api/destajista/';
 
 export default {
     namespaced: true,
     state: {
-        clientes: [],
-        currentCliente: null,
+        destajistas: [],
+        currentDestajista: null,
         meta: {}
     },
 
     mutations: {
-        SET_CLIENTES(state, data) {
-            state.clientes = data;
+        SET_DESTAJISTAS(state, data) {
+            state.destajistas = data;
         },
 
-        SET_CLIENTE(state, data) {
-            state.currentCliente = data;
+        SET_DESTAJISTA(state, data) {
+            state.currentDestajista = data;
         },
 
         SET_META(state, data) {
             state.meta = data;
         },
 
-        UPDATE_CLIENTE(state, data) {
-            state.clientes = state.clientes.map(cliente => {
-                if (cliente.id === data.id) {
-                    return Object.assign([], cliente, data)
+        UPDATE_DESTAJISTA(state, data) {
+            state.destajistas = state.destajistas.map(destajista => {
+                if (destajista.id === data.id) {
+                    return Object.assign([], destajista, data)
                 }
-                return cliente
+                return destajista
             })
-            if (state.currentCliente) {
-                state.currentCliente = data
+            if (state.currentDestajista) {
+                state.currentDestajista = data
             }
         },
 
         UPDATE_ATTRIBUTE(state, data) {
-            state.currentCliente[data.attribute] = data.value
+            state.currentDestajista[data.attribute] = data.value
         },
 
-        DELETE_CLIENTE(state, id) {
-            state.clientes = state.clientes.filter( cliente => {
-                return cliente.id != id
+        DELETE_DESTAJISTA(state, id) {
+            state.destajistas = state.destajistas.filter( destajista => {
+                return destajista.id != id
             });
         }
     },
@@ -90,7 +90,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Cliente",
+                    title: "Registrar Destajista",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -99,7 +99,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Registrar Cliente',
+                            text: 'Si, Registrar Destajista',
                             closeModal: false,
                         }
                     }
@@ -109,7 +109,7 @@ export default {
                             .post(URI, payload)
                             .then(r => r.data)
                             .then(data => {
-                                swal("Cliente registrado correctamente", {
+                                swal("Destajista registrado correctamente", {
                                     icon: "success",
                                     timer: 2000,
                                     buttons: false
@@ -129,7 +129,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar el cliente",
+                    text: "Actualizar el Destajista",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -148,7 +148,7 @@ export default {
                                 .patch(URI + payload.id, payload.data)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cliente actualizado correctamente", {
+                                    swal("Destajista actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -167,8 +167,8 @@ export default {
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Cliente",
-                    text: "¿Está seguro de eliminar este cliente?",
+                    title: "Eliminar Destajista",
+                    text: "¿Está seguro de eliminar este destajista?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -188,7 +188,7 @@ export default {
                                 .delete(URI + payload.id, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cliente eliminado correctamente", {
+                                    swal("Destajista eliminado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -208,16 +208,16 @@ export default {
     },
 
     getters: {
-        clientes(state) {
-            return state.clientes;
+        destajistas(state) {
+            return state.destajistas;
         },
 
         meta(state) {
             return state.meta;
         },
 
-        currentCliente(state) {
-            return state.currentCliente;
+        currentDestajista(state) {
+            return state.currentDestajista;
         }
     }
 }
