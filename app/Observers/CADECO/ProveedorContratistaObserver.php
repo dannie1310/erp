@@ -42,7 +42,7 @@ class ProveedorContratistaObserver extends EmpresaObserver
     public function updating(Empresa $provedor_contratista)
     {
         parent::updating($provedor_contratista);
-        $provedor_contratista->validarProveedorContratistaDuplicado();
+        // $provedor_contratista->validarProveedorContratistaDuplicado($provedor_contratista);
         $provedor_contratista->validarPermisos();
         
     }

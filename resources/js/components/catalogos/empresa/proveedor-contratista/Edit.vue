@@ -59,7 +59,7 @@
                                                             class="form-control"
                                                             id="rfc"
                                                             placeholder="R.F.C."
-                                                            v-model="edit.rfc"
+                                                            v-model="edit.rfc_nuevo"
                                                             :class="{'is-invalid': errors.has('rfc')}">
                                                         <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                                                     </div>
@@ -181,6 +181,7 @@ export default {
             edit:{
                 razon_social:'',
                 rfc:'',
+                rfc_nuevo:'',
                 no_proveedor_virtual:'',
                 dias_credito:'',
                 porcentaje:'',
@@ -198,11 +199,15 @@ export default {
         fillDataEdit(){
             this.edit.razon_social = this.proveedorContratista.razon_social;
             this.edit.rfc = this.proveedorContratista.rfc;
+            this.edit.rfc_nuevo = this.proveedorContratista.rfc;
             this.edit.no_proveedor_virtual = this.proveedorContratista.proveedor_virtual;
             this.edit.dias_credito = this.proveedorContratista.dias_credito;
             this.edit.porcentaje = this.proveedorContratista.porcentaje;
             this.edit.tipo_empresa = this.proveedorContratista.tipo_empresa;
 
+        },
+        init(){
+            this.fillDataEdit();
             this.$store.commit('cadeco/sucursal/SET_SUCURSALES', this.proveedorContratista.sucursales.data);
             this.$store.commit('cadeco/suministrado/SET_SUMINISTRADOS', this.proveedorContratista.suministrados.data);
 
@@ -222,7 +227,11 @@ export default {
                 })
                 .then(data => {
                     this.$store.commit('cadeco/proveedor-contratista/UPDATE_PROVEEDOR_CONTRATISTA', data);
-                })
+                    
+                }).finally(()=>{
+                    this.fillDataEdit();
+                        this.cargando=false;
+                    })
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -245,7 +254,7 @@ export default {
     watch:{
         tipo(value){
             if(value !== '' && value === 2){
-                this.fillDataEdit();
+                this.init();
             }
         }
     }

@@ -98,7 +98,9 @@
                             razon_social: proveedorContratista.razon_social,
                             tipo_empresa: proveedorContratista.tipo,
                             buttons: $.extend({}, {
-                                id: proveedorContratista.id
+                                id: proveedorContratista.id,
+                                eliminar:self.$root.can('eliminar_proveedor') ? true : undefined,
+                                editar:self.$root.can('editar_proveedor') ? true : undefined,   
                             })
                         })
                     });

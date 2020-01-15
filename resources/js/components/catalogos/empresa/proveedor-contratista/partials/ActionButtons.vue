@@ -3,10 +3,10 @@
         <button @click="find(value.id, 1)" type="button" class="btn btn-sm btn-outline-secondary  ex1" title="Ver" style="margin-left:5px">
             <i class="fa fa-eye" aria-hidden="true"></i>
         </button>  
-        <button @click="find(value.id, 2)" type="button" class="btn btn-sm btn-outline-primary  ex1" title="Editar" v-if="$root.can('editar_proveedor')">
+        <button @click="find(value.id, 2)" type="button" class="btn btn-sm btn-outline-primary  ex1" title="Editar" v-if="value.editar">
             <i class="fa fa-pencil" aria-hidden="true"></i>
         </button>  
-        <button type="button" class="btn btn-sm btn-outline-danger  ex1" @click="eliminar" title="Eliminar">
+        <button type="button" v-if="value.eliminar" class="btn btn-sm btn-outline-danger  ex1" @click="eliminar" title="Eliminar">
             <i class="fa fa-trash" aria-hidden="true"></i>
         </button>
     </div>

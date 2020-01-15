@@ -10,7 +10,7 @@ namespace App\Services\CADECO;
 
 
 use App\Facades\Context;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\ProveedorContratista\Repository;
 use App\Models\CADECO\ProveedorContratista;
 
 class ProveedorContratistaService

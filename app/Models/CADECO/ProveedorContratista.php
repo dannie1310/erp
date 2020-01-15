@@ -36,6 +36,15 @@ class ProveedorContratista extends Empresa
         return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa');
     }
 
+    public function actualizar($data, $id){
+        if($data['rfc'] != $data['rfc_nuevo']){
+            $data['rfc'] = $data['rfc_nuevo'];
+            $this->where('rfc', '=', str_replace(" ","", $data['rfc']))->count() > 0 ? abort(403, 'El Proveedor / Contratisa ya esta registrado.'):'';
+        }
+        unset($data['rfc_nuevo']);
+        $this->find($id)->update($data);
+    }
+
     public function validarPermisos(){
         if(!auth()->user()->can('editar_proveedor_razon_social')){
             unset($this->razon_social);
