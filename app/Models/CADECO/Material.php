@@ -150,6 +150,11 @@ class Material extends Model
         return $query->whereRaw('LEN(nivel) = 8');
     }
 
+    public function scopeRequisicion($query)
+    {
+        return $query->whereRaw('LEN(nivel) > 4')->where('unidad','<>','jornal')->where('tipo_material', '!=', 8)->orderBy('descripcion', 'asc');
+    }
+
     public function validarExistente()
     {
         if($this->where('numero_parte','=', $this->numero_parte)->get()->toArray() != [])

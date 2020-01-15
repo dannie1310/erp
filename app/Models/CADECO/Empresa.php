@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
+use App\Models\IGH\Usuario;
 
 class Empresa extends Model
 {
@@ -65,6 +67,21 @@ class Empresa extends Model
     public function cuentasBancarias()
     {
         return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function efo()
+    {
+        return $this->belongsTo(CtgEfos::class, 'rfc', 'rfc');
+    }
+
+    public function transacciones()
+    {
+        return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function usuario ()
+    {
+        return $this->belongsTo(Usuario::class, 'UsuarioRegistro', 'idusuario');
     }
 
     public function scopeConCuentas($query)
@@ -174,10 +191,17 @@ class Empresa extends Model
     public function validaRFC($data){
         if(isset($data->rfc)){
             if(strlen(str_replace(" ","", $data->rfc))>0){
-                $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tiene un formato inválido.');
+                $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tien un formato inválido.');
+                $this->rfcValidaEfos($data->rfc);
+            }
+        }
+    }
 
-                // TODO validar si el RFC esta como EFO
-            }   
+    private function rfcValidaEfos($rfc)
+    {
+        if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 0)->first()))
+        {
+            abort(403, 'Esta empresa es un EFO.');
         }
     }
 
@@ -196,4 +220,17 @@ class Empresa extends Model
         return true;
     }
 
+    public function validaEliminacion()
+    {
+        if($this->transacciones()->count('id_empresa') > 0)
+        {
+            abort(403, 'Esta empresa cuenta con transacciones asociadas.');
+        }
+    }
+
+    public function getFechaHoraRegistroFormatAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"d/m/Y");
+    }
 }

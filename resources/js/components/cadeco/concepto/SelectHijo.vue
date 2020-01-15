@@ -12,7 +12,7 @@
                     noOptionsText="No hay opciones disponibles"
                     :options="rootNodes"
                     :load-options="loadOptions"
-                    placeholder="-- Destino --"
+                    :placeholder="placeholder_"
                     :disableBranchNodes="disableBranchNodes"
                     v-model="val"
         />
@@ -21,11 +21,12 @@
 
 <script>
     export default {
-        props: ['value','id', 'multiple', 'error', 'scope', 'disableBranchNodes','nivel_id'],
+        props: ['value','id', 'multiple', 'error', 'scope', 'disableBranchNodes','nivel_id', 'placeholder'],
         name: "concepto-select-hijo",
         data() {
             return {
                 val: null,
+                placeholder_:"-- Destino --",
                 rootNodes: [],
                 disabled: true
             }
@@ -44,6 +45,11 @@
 
         mounted() {
             this.getRootNodes();
+
+            if(this.placeholder !== ""){
+                this.placeholder_ = this.placeholder;
+            }
+            
         },
 
         methods: {

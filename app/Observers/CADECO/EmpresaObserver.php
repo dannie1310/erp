@@ -18,7 +18,6 @@ class EmpresaObserver
      */
     public function creating(Empresa $empresa)
     {
-        
         $empresa->validaRFC($empresa);
         $empresa->razon_social = mb_strtoupper($empresa->razon_social);
         $empresa->FechaHoraRegistro = date('Y-m-d H:i:s');
@@ -33,5 +32,10 @@ class EmpresaObserver
         $empresa->validaRFC($empresa);
         $empresa->razon_social = mb_strtoupper($empresa->razon_social);
 
+    }
+
+    public function deleting(Empresa $empresa)
+    {
+        $empresa->validaEliminacion();
     }
 }

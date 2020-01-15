@@ -18,6 +18,7 @@ import salidaAlmacen from './modules/almacenes/salida-almacen';
 
 import almacen from './modules/cadeco/almacen';
 import banco from './modules/cadeco/banco';
+import cliente from './modules/cadeco/cliente';
 import concepto from './modules/cadeco/concepto';
 import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
@@ -46,6 +47,10 @@ import solicitudCompra from './modules/compras/solicitud-compra';
 import areaCompradora from './modules/configuracion/area-compradora';
 import areaSolicitante from './modules/configuracion/area-solicitante';
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
+
+// CONFIGURACION CADECO
+import nodoTipo from './modules/configuracion/nodo-tipo';
+import nodoProyecto from './modules/configuracion/nodo-proyecto';
 
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo';
@@ -95,6 +100,7 @@ import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
+import ctgEfos from './modules/seguridad/finanzas/ctg-efos';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
 import ctgtipo from './modules/configuracion/ctg-tipo';
 import permiso from './modules/seguridad/permiso';
@@ -133,6 +139,7 @@ export default new Vuex.Store({
 
         'cadeco/almacen': almacen,
         'cadeco/banco': banco,
+        'cadeco/cliente': cliente,
         'cadeco/concepto': concepto,
         'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
@@ -159,6 +166,9 @@ export default new Vuex.Store({
         'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
         'configuracion/ctg-tipo': ctgtipo,
+
+        'configuracion/nodo-tipo' : nodoTipo,
+        'configuracion/nodo-proyecto' : nodoProyecto,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
@@ -211,6 +221,7 @@ export default new Vuex.Store({
 
 
         'seguridad/finanzas/ctg-banco': ctgbanco,
+        'seguridad/finanzas/ctg-efos': ctgEfos,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
         'seguridad/finanzas/configuracion-remesa': configuracionRemesa,
         'seguridad/configuracion-obra': configuracionObra,

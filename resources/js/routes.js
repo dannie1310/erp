@@ -130,6 +130,45 @@ export const routes = [
         ]
     },
     {
+        path: '/control-interno/finanzas',
+        components: {
+            default: require('./components/control-interno/partials/Layout.vue').default,
+            menu: require('./components/control-interno/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'control-finanzas',
+                component: require('./components/control-interno/finanzas/Index').default,
+                meta: {
+                    title: 'Finanzas',
+                    breadcrumb: {parent: 'control-interno', name: 'FINANZAS'},
+                    middleware: [auth]
+
+                }
+            },
+            {
+                path: 'efos',
+                component: require('./components/control-interno/finanzas/efos/partials/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'lista-efos',
+                        component: require('./components/control-interno/finanzas/efos/Index').default,
+                        meta: {
+                            title: 'Lista de EFOS',
+                            breadcrumb: {parent: 'control-finanzas', name: 'EFOS'},
+                            middleware: [auth, permission],
+                            permission: 'auditoria_consultar_permisos_por_obra',
+                            general: true,
+
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {
@@ -337,6 +376,37 @@ export const routes = [
                     breadcrumb: {parent:'home', name: 'CATÁLOGOS'},
                     middleware: [auth, context, access]
                 }
+            },
+            {
+                path: 'empresa',
+                component: require('./components/catalogos/empresa/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'empresa',
+                        component: require('./components/catalogos/empresa/Index').default,
+                        meta: {
+                            title: 'Catálogo de Empresa',
+                            breadcrumb: {parent: 'catalogos', name: 'CATÁLOGO DE EMPRESA'},
+                            middleware: [auth, context],
+
+                        }
+                    },
+                    {
+                        path: 'cliente',
+                        name: 'cliente',
+                        component: require('./components/catalogos/empresa/cliente/Index').default,
+                        meta: {
+                            title: 'Cliente',
+                            breadcrumb: {
+                                parent: 'empresa',
+                                name: 'CLIENTE'
+                            },
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_cliente']
+                        }
+                    }
+                ]
             },
             {
                 path: 'insumo-maquinaria',

@@ -26,8 +26,19 @@ class PagoFacturaObserver extends PagoObserver
         $pago->opciones = 0;
     }
 
+    /**
+     * Este método implementa la lógica actualización de control de obra del procedimiento almacenado sp_aplicar_pagos
+     * y se detona al registrar una orden de pago
+     */
     public function created(Pago $pago){
         parent::created($pago);
         $pago->orden_pago->factura->disminuyeSaldo($pago);
+        $pago->orden_pago->factura->contra_recibo->disminuyeSaldo($pago);
+        try{
+            $pago->orden_pago->actualizaControlObra();
+        } catch (\Exception $e){
+            abort(500, "Error al actualizar control de obra en la factura: ".$pago->orden_pago->factura->referencia." ".$e->getMessage());
+        }
+
     }
 }
