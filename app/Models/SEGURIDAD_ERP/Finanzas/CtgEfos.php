@@ -27,6 +27,24 @@ class CtgEfos extends Model
         return $this->belongsTo(CtgEstadosEfos::class, 'estado', 'id');
     }
 
+    public function api($rfc)
+    {
+        $api = $this->where('rfc', '=', $rfc)->first();
+        if($api == null)
+        {
+            return  [
+                'rfc' => $rfc,
+                'razon_social' => 'no registrado',
+                'estado' => 'none'
+            ];
+        }
+            return  [
+                'rfc' => $api->rfc,
+                'razon_social' => $api->razon_social,
+                'estado' => (int)$api->estado
+            ];
+    }
+
     public function reg($file)
     { 
         if($file == null) {
