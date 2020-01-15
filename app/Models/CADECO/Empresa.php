@@ -200,7 +200,7 @@ class Empresa extends Model
     {
         if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 0)->first()))
         {
-            abort(403, 'Está empresa es un EFO.');
+            abort(403, 'Esta empresa es un EFO.');
         }
     }
 
@@ -219,7 +219,7 @@ class Empresa extends Model
     {
         if($this->transacciones()->count('id_empresa') > 0)
         {
-            abort(403, 'Está empresa cuenta con transacciones asociadas.');
+            abort(403, 'Esta empresa cuenta con transacciones asociadas.');
         }
     }
 
