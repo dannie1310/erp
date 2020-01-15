@@ -11,6 +11,16 @@ namespace App\Models\CADECO;
 
 class Cliente extends Empresa
 {
+    protected $fillable = [
+        'razon_social',
+        'rfc',
+        'tipo_empresa',
+        'tipo_cliente',
+        'porcentaje',
+        'FechaHoraRegistro',
+        'UsuarioRegistro'
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -35,6 +45,28 @@ class Cliente extends Empresa
 
     public function getPorcentajeFormatAttribute()
     {
-        return $this->porcentaje. ' %';
+       return number_format((float)$this->porcentaje, 2, '.', '');
+    }
+
+    public function getPorcentajeConSignoFormatAttribute()
+    {
+        return  $this->porcentaje_format. ' %';
+    }
+
+    public function validaDuplicidadRfc()
+    {
+        $cliente = Cliente::whereRaw("(razon_social = '".$this->razon_social."' or rfc ='".$this->rfc."' )")->orderBy('id_empresa', 'desc')->first();
+
+        if(!is_null($cliente))
+        {
+            if(is_null($this->id_empresa) || ($this->id_empresa != $cliente->id_empresa)) { //creación
+                if ($cliente->rfc === $this->rfc) {
+                    throw New \Exception('Este rfc se encuentra registrado previamente.');
+                }
+                if ($cliente->razon_social === $this->razon_social) {
+                    throw New \Exception('Esta razón social se encuentra registrada previamente.');
+                }
+            }
+        }
     }
 }
