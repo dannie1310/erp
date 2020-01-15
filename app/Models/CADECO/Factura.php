@@ -37,6 +37,14 @@ class Factura extends Transaccion
         });
     }
 
+    public function getRubroAttribute()
+    {
+        if($this->transaccion_rubro)
+        {
+            return $this->transaccion_rubro->rubro->descripcion;
+        }
+    }
+
     public function transaccion_rubro()
     {
         return $this->hasOne(TransaccionRubro::class, "id_transaccion","id_transaccion");
