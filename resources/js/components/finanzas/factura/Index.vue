@@ -1,4 +1,6 @@
 <template>
+<span>
+    <create @created="paginate()"></create>
     <div class="row">
 
         <div class="col-12">
@@ -15,11 +17,13 @@
         </div>
         <!-- /.col -->
     </div>
+</span>
 </template>
 <script>
+    import Create from "./Create";
     export default {
         name: "factura-index",
-        components: {},
+        components: {Create},
         data(){
             return{
                 HeaderSettings: false,
@@ -67,7 +71,10 @@
                         this.cargando=false;
                     })
 
-            }
+            },
+            create() {
+                this.$router.push({name: 'factura-create'});
+            },
         },
         computed: {
             facturas(){

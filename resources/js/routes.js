@@ -159,7 +159,7 @@ export const routes = [
                             title: 'Lista de EFOS',
                             breadcrumb: {parent: 'control-finanzas', name: 'EFOS'},
                             middleware: [auth, permission],
-                            permission: 'auditoria_consultar_permisos_por_obra',
+                            permission: 'consultar_efos',
                             general: true,
 
                         }
@@ -1286,6 +1286,17 @@ export const routes = [
                             permission: 'consultar_banco'
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'factura-create',
+                        component: require('./components/finanzas/factura/Create').default,
+                        meta: {
+                            title: 'Registrar Factura',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'factura'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_factura']
+                        }
+                    }
 
                 ]
             },

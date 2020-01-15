@@ -95,6 +95,7 @@ import solicitudAlta from './modules/finanzas/solicitud-alta-cuenta-bancaria';
 import solicitudBaja from './modules/finanzas/solicitud-baja-cuenta-bancaria';
 import tipoMovimiento from './modules/finanzas/tipo-movimiento';
 import traspaso from './modules/finanzas/traspaso-entre-cuentas';
+import rubro from './modules/finanzas/rubro';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -191,6 +192,7 @@ export default new Vuex.Store({
         'finanzas/solicitud-pago-anticipado': pagoAnticipado,
         'finanzas/tipo-movimiento': tipoMovimiento,
         'finanzas/traspaso-entre-cuentas': traspaso,
+        'finanzas/rubro': rubro,
 
 
         'contabilidad/cierre-periodo': cierrePeriodo,

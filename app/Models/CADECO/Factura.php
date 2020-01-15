@@ -9,10 +9,25 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Finanzas\ComplementoFactura;
+use App\Models\CADECO\Finanzas\TransaccionRubro;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use Illuminate\Support\Facades\DB;
 class Factura extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = 67;
+    public const OPCION_ANTECEDENTE = 0;
+    protected $fillable = [
+        'fecha',
+        "id_empresa",
+        "id_moneda",
+        "vencimiento",
+        'monto',
+        "saldo",
+        "referencia",
+        "observaciones",
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -20,6 +35,16 @@ class Factura extends Transaccion
             return $query->where('tipo_transaccion', '=', 65)
                 ->where('estado', '!=', -2);
         });
+    }
+
+    public function transaccion_rubro()
+    {
+        return $this->hasOne(TransaccionRubro::class, "id_transaccion","id_transaccion");
+    }
+
+    public function complemento()
+    {
+        return $this->hasOne(ComplementoFactura::class, "id_transaccion","id_transaccion");
     }
 
     public function contra_recibo()
@@ -57,6 +82,45 @@ class Factura extends Transaccion
 
     public function pagos(){
         return $this->hasManyThrough(PagoFactura::class,OrdenPago::class, 'id_referente','numero_folio','id_transaccion','id_transaccion');
+    }
+
+    public function registrar($data)
+    {
+        $factura = null;
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            //Generar CR
+            $cr = ContraRecibo::create($data["cr"]);
+            if($cr){
+                $factura = $cr->facturas()->create($data["factura"]);
+                if($factura){
+                    $complemento   = $factura->complemento()->create(["id_transaccion"=>$factura->id_transaccion]);
+                    if($complemento)
+                    {
+                        $transaccion_rubro   = $factura->transaccion_rubro()->create($data["rubro"]);
+                        if($transaccion_rubro){
+                            DB::connection('cadeco')->commit();
+                            return $factura;
+                        }else{
+                            abort(400, "Hubo un error al registrar el rubro de la factura");
+                        }
+                    }else{
+                        abort(400, "Hubo un error al registrar el complemento de la factura");
+                    }
+
+
+                } else{
+                    abort(400, "Hubo un error al registrar la factura");
+                }
+
+            } else {
+                abort(400, "Hubo un error al registrar el contrarecibo");
+            }
+        }
+        catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 
     public function generaOrdenPago($data)

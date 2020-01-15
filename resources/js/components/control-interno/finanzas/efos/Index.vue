@@ -30,7 +30,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'RFC', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Razon Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Fecha Presunto', field: 'fecha_presunto', sortable: false},
                     { title: 'Fecha Definitivo', field: 'fecha_definitivo', sortable: false},
                     { title: 'Estado', field: 'estado', sortable: false}
