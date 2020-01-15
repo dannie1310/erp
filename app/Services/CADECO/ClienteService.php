@@ -36,6 +36,14 @@ class ClienteService
         {
             $cliente = $cliente->where([['razon_social', 'LIKE', '%' . request('razon_social') . '%']]);
         }
+        if(isset($data['efo']))
+        {
+            $clientes = Cliente::whereHas('efo.estadoEfo', function ($a){
+                return $a->where('descripcion', 'LIKE', '%'.request('efo').'%');
+            })->pluck('id_empresa');
+
+            $cliente->whereIn(['id_empresa',$clientes]);
+        }
 
         return $cliente->paginate($data);
     }
