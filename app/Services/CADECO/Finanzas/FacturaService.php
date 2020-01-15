@@ -11,6 +11,7 @@ use App\Repositories\CADECO\Finanzas\Facturas\Repository;
 use Illuminate\Support\Facades\Storage;
 use DateTime;
 use DateTimeZone;
+use App\PDF\Finanzas\ContrareciboPDF;
 
 class FacturaService
 {
@@ -246,6 +247,12 @@ class FacturaService
         {
             abort(500,"El monto ingresado no corresponde al monto en el comprobante digital");
         }
+    }
+
+    public function pdfCR($id)
+    {
+        $pdf = new ContrareciboPDF($id);
+        return $pdf;
     }
 }
 
