@@ -53,4 +53,8 @@ class CtgEfosController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function rfc(Request $request){
+        $respuesta = $this->service->rfcApi($request->rfc);
+        return response()->json( $respuesta, 200);
+    }
 }
