@@ -112,6 +112,7 @@
                                                         <input
                                                         :disabled="!$root.can('editar_proveedor')"
                                                                 type="number"
+                                                                step="any"
                                                                 name="porcentaje"
                                                                 data-vv-as="Descuento Financiero"
                                                                 v-validate="{min_value:0, max_value:100, decimal:2}"
