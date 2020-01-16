@@ -331,27 +331,17 @@
                     return;
                 this.dato.archivo_name = files[0].name;
                 this.createImage(files[0], 1);
-                /*setTimeout(() => {
-                    if(this.dato.archivo == null) {
-                        onFileChange(e)
-                    }
-                }, 500);*/
-                setTimeout(() => {
-                    this.validate()
-                }, 500);
-            },
 
-            /*onFileChange(e){
-                this.file_pagos = null;
-                var files = e.target.files || e.dataTransfer.files;
-                if (!files.length)
-                    return;
-                this.file_pagos_name = files[0].name;
-                this.createImage(files[0]);
-                setTimeout(() => {
-                    this.validate()
-                }, 500);
-            },*/
+                if(files[0].type == "text/xml")
+                {
+                    setTimeout(() => {
+                        this.cargarXML()
+                    }, 500);
+                } else {
+                    swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
+                }
+
+            },
 
             createImage(file) {
                 var reader = new FileReader();
@@ -375,9 +365,13 @@
                         }
                     })
                     .then(data => {
-                        if(data.data.length > 0){
+                        var count = Object.keys(data).length;
+                        if(count > 0 ){
                             this.dato.total = data.total;
-
+                            this.dato.referencia = data.serie + data.folio;
+                            this.dato.emision = data.fecha;
+                            this.dato.id_empresa = data.empresa_bd.id_empresa;
+                            this.empresas.push({id:data.empresa_bd.id_empresa,razon_social:data.empresa_bd.razon_social,rfc:data.empresa_bd.rfc});
 
                         }else{
                             if(this.$refs.archivo.value !== ''){
@@ -392,6 +386,13 @@
                     });
             },
             validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store()
+                    }
+                });
+            },
+            validate_xml() {
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.store()
