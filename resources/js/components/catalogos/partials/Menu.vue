@@ -110,7 +110,7 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_proveedor')">
                         <router-link :to="{name: 'proveedor-contratista'}" class="nav-link" :class="{active: this.$route.name == 'proveedor-contratista'}">
-                            <i class="fa fa-circle nav-icon"></i>
+                            <i class="fa fa-circle-o nav-icon"></i>
                             <p>Proveedor / Contratista</p>
                         </router-link>
                     </li>
