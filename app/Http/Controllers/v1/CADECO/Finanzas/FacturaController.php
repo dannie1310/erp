@@ -61,4 +61,11 @@ class FacturaController extends Controller
     {
         return $this->service->pdfCR($id)->create();
     }
+
+    public function cargaXML(Request $request)
+    {
+        $respuesta = $this->service->cargaXML($request->xml);
+        return response()->json($respuesta, 200);
+    }
+
 }

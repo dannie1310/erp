@@ -13,6 +13,8 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
 use App\Repositories\RepositoryInterface;
 USE Illuminate\Support\Facades\DB;
+use App\Models\CADECO\Obra;
+use App\Facades\Context;
 
 class Repository extends \App\Repositories\Repository implements RepositoryInterface
 {
@@ -20,6 +22,38 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         parent::__construct($model);
         $this->model = $model;
+    }
+
+    public function getRFCObra()
+    {
+        $obra = Obra::find(Context::getIdObra());
+        if($obra){
+            return $obra->rfc;
+        }
+    }
+
+    public function getEmpresa(Array $datos){
+        $empresa = Empresa::where("rfc","=",$datos["rfc"])
+            ->whereIn("tipo_empresa",[1,2,3,4])->first();
+
+        if($empresa){
+            $salida =[
+                "id_empresa"=>$empresa->id_empresa,
+                "rfc"=>$empresa->rfc,
+                "razon_social"=>$empresa->razon_social,
+                "nuevo"=>0,
+            ];
+        } else {
+            $datos["tipo_empresa"] = 1;
+            $empresa = Empresa::create($datos);
+            $salida =[
+                "id_empresa"=>$empresa->id_empresa,
+                "rfc"=>$empresa->rfc,
+                "razon_social"=>$empresa->razon_social,
+                "nuevo"=>1,
+            ];
+        }
+        return $salida;
     }
 
     public function getRFCEmpresa($id_empresa)
