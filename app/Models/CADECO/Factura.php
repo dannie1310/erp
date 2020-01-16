@@ -12,6 +12,7 @@ namespace App\Models\CADECO;
 use App\Models\CADECO\Finanzas\ComplementoFactura;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use Illuminate\Support\Facades\DB;
 class Factura extends Transaccion
 {
@@ -92,6 +93,11 @@ class Factura extends Transaccion
         return $this->hasManyThrough(PagoFactura::class,OrdenPago::class, 'id_referente','numero_folio','id_transaccion','id_transaccion');
     }
 
+    public function facturaRepositorio()
+    {
+        return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function registrar($data)
     {
         $factura = null;
@@ -107,8 +113,15 @@ class Factura extends Transaccion
                     {
                         $transaccion_rubro   = $factura->transaccion_rubro()->create($data["rubro"]);
                         if($transaccion_rubro){
-                            DB::connection('cadeco')->commit();
-                            return $factura;
+                            $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
+                            if($factura_repositorio)
+                            {
+                                DB::connection('cadeco')->commit();
+                                return $factura;
+                            }else{
+                                abort(400, "Hubo un error al registrar la factura en el repositorio");
+                            }
+
                         }else{
                             abort(400, "Hubo un error al registrar el rubro de la factura");
                         }
