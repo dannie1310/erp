@@ -572,6 +572,17 @@ export const routes = [
                             permission: ['consultar_proveedor']
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'proveedor-contratista-create',
+                        component: require('./components/catalogos/empresa/proveedor-contratista/Create').default,
+                        meta: {
+                            title: 'Registrar Proveedor / Contratista',
+                            breadcrumb: { parent: 'proveedor-contratista', name: 'REGISTRAR PROVEEDOR-CONTRATISTA'},
+                            middleware: [auth, context],
+                            permission: 'registrar_proveedor'
+                        }
+                    },
                 ]
             },
         ]
