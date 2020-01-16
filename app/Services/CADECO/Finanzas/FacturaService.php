@@ -146,9 +146,20 @@ class FacturaService
             $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
             $this->arreglo_factura["receptor"]["rfc"] =(string)$receptor["Rfc"][0];
             $this->arreglo_factura["receptor"]["nombre"] =(string)$receptor["Nombre"][0];
+
         }
         catch (\Exception $e){
             abort(500,"Hubo un error al leer el archivo XML proporcionado: ". $e->getMessage());
+        }
+
+        try{
+            $ns = $factura_xml->getNamespaces(true);
+            $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
+            $factura_xml->registerXPathNamespace('t', $ns['tfd']);
+            $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
+            $this->arreglo_factura["complemento"]["uuid"] =(string)$complemento["UUID"][0];
+        } catch (\Exception $e){
+            abort(500,"Hubo un error al leer la ruta de complemento: ". $e->getMessage());
         }
 
 
@@ -190,14 +201,14 @@ class FacturaService
             'multipart' => $multipart,
         ]);
 
-        dd(json_decode($response->getBody()->getContents()));
+       // dd(json_decode($response->getBody()->getContents()));
     }
 
     public function store(array $data)
     {
         $this->validaCFDI33($data["archivo"]);
         $this->validaExistenciaRepositorio($data["archivo"]);
-        $this->setArregloFactura($data["archivo"]);
+
 
         $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
         $this->validaReceptor();
@@ -243,7 +254,8 @@ class FacturaService
 
         $datos_rfactura =[
             "xml_file"=>$this->repository->getArchivoSQL($data["archivo"]),
-            "hash_file"=>hash_file('md5', $data["archivo"])
+            "hash_file"=>hash_file('md5', $data["archivo"]),
+            "uuid"=>$this->arreglo_factura["complemento"]["uuid"],
         ];
 
         $datos["factura"] = $datos_factura;
@@ -257,9 +269,9 @@ class FacturaService
 
     private function validaExistenciaRepositorio($archivo)
     {
+        $this->setArregloFactura($archivo);
         $hash_file = hash_file('md5', $archivo);
-
-        $this->repository->validaExistenciaRepositorio($hash_file);
+        $this->repository->validaExistenciaRepositorio($hash_file, $this->arreglo_factura["complemento"]["uuid"]);
     }
 
     private function validaReceptor()

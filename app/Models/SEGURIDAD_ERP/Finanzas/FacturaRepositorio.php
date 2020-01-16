@@ -24,6 +24,7 @@ class FacturaRepositorio extends Model
     protected $fillable = [
         'xml_file',
         'hash_file',
+        'uuid',
         'id_proyecto',
         'id_obra',
     ];
