@@ -103,7 +103,15 @@
                     <li class="nav-item" >
                         <router-link :to="{name: 'cliente'}" class="nav-link" :class="{active: this.$route.name == 'cliente'}">
                             <i class="fa fa-circle-o nav-icon"></i>
-                            <p>Clientes</p>
+                            <p>Cliente</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview" v-if="$root.can('consultar_destajista')">
+                    <li class="nav-item" >
+                        <router-link :to="{name: 'destajista'}" class="nav-link" :class="{active: this.$route.name == 'destajista'}">
+                            <i class="fa fa-circle-o nav-icon"></i>
+                            <p>Destajista</p>
                         </router-link>
                     </li>
                 </ul>
@@ -129,6 +137,7 @@
             catalogo_empresa(){
                 return this.$root.can([
                    'consultar_cliente',
+                    'consultar_destajista',
                     'consultar_proveedor'
                 ]);
             },
