@@ -27,7 +27,7 @@
                                                 <td class="bg-white">{{destajista.razon_social}}</td>
                                             </tr>
                                             <tr>
-                                                <td class="bg-white"><b>Días de Crédito:</b></td>
+                                                <td class="bg-white"><b>Condición de Pago (días):</b></td>
                                                 <td class="bg-white">{{destajista.dias_credito}}</td>
                                             </tr>
                                             <tr>
