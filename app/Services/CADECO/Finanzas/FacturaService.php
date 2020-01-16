@@ -135,7 +135,6 @@ class FacturaService
     {
         try{
             $factura_xml = simplexml_load_file($archivo_xml);
-            $fecha_formulario = New DateTime($factura_xml["Fecha"]);
             $this->arreglo_factura["total"] = (float) $factura_xml["Total"];
             $this->arreglo_factura["serie"] = (string) $factura_xml["Serie"];
             $this->arreglo_factura["folio"] = (string) $factura_xml["Folio"];
@@ -164,10 +163,42 @@ class FacturaService
         );
     }
 
+    public function validaCFDI33($xml)
+    {
+        $client = new \GuzzleHttp\Client();
+        $url = "http://services.test.sw.com.mx/validate/cfdi33";
+        $token = "T2lYQ0t4L0RHVkR4dHZ5Nkk1VHNEakZ3Y0J4Nk9GODZuRyt4cE1wVm5tbXB3YVZxTHdOdHAwVXY2NTdJb1hkREtXTzE3dk9pMmdMdkFDR2xFWFVPUXpTUm9mTG1ySXdZbFNja3FRa0RlYURqbzdzdlI2UUx1WGJiKzViUWY2dnZGbFloUDJ6RjhFTGF4M1BySnJ4cHF0YjUvbmRyWWpjTkVLN3ppd3RxL0dJPQ.T2lYQ0t4L0RHVkR4dHZ5Nkk1VHNEakZ3Y0J4Nk9GODZuRyt4cE1wVm5tbFlVcU92YUJTZWlHU3pER1kySnlXRTF4alNUS0ZWcUlVS0NhelhqaXdnWTRncklVSWVvZlFZMWNyUjVxYUFxMWFxcStUL1IzdGpHRTJqdS9Zakw2UGRiMTFPRlV3a2kyOWI5WUZHWk85ODJtU0M2UlJEUkFTVXhYTDNKZVdhOXIySE1tUVlFdm1jN3kvRStBQlpLRi9NeWJrd0R3clhpYWJrVUMwV0Mwd3FhUXdpUFF5NW5PN3J5cklMb0FETHlxVFRtRW16UW5ZVjAwUjdCa2g0Yk1iTExCeXJkVDRhMGMxOUZ1YWlIUWRRVC8yalFTNUczZXdvWlF0cSt2UW0waFZKY2gyaW5jeElydXN3clNPUDNvU1J2dm9weHBTSlZYNU9aaGsvalpQMUxxcmJhZ1pDQm1YRnJFVUFHVlZDeHlMNXp3NzIvampHZFB5bmZ5akh4VllzcjVtNE5QMllvK25qNk9GMVp6Z2RwalBianZSWmRiMGdaOGlQSjZUTUR4cnROdEJQYW5EMWQ3eERWY1h4ZHUyZHN4RGVEd1BpYXZMZ1lCblRYdEhQTVVZNHBBR1NBYllnOCtmQTZ5YjZ0cFk9.5-zUBJKTwxivVbKpSKJSmHfB0KAMnItpC4DDf1de10U";
+
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Accept'        => 'application/json',
+            /*'Content-Type'  => 'application/x-www-form-urlencoded'*/
+        ];
+
+        $form_params =[
+            'xml' => $xml,
+        ];
+        $multipart =[[
+            'name'     => 'xml',
+            'contents' => fopen($xml, 'r'),
+            'filename' => 'custom_filename.xml'
+        ]];
+
+        $response = $client->request('POST', $url, [
+            'headers' => $headers,
+            'multipart' => $multipart,
+        ]);
+
+        dd(json_decode($response->getBody()->getContents()));
+    }
+
     public function store(array $data)
     {
+        $this->validaCFDI33($data["archivo"]);
         $this->validaExistenciaRepositorio($data["archivo"]);
         $this->setArregloFactura($data["archivo"]);
+
         $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
         $this->validaReceptor();
         $this->validaTotal($data["total"]);
