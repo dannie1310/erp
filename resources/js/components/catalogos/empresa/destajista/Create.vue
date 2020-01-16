@@ -63,9 +63,10 @@
                                         <div class="col-md-10">
                                             <input
                                                 type="number"
+                                                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                                 name="dias_credito"
                                                 data-vv-as="Condición de Pago (días)"
-                                                v-validate="{required: true,  min_value:0}"
+                                                v-validate="{ min_value: 0, max_value: 32767 }"
                                                 class="form-control"
                                                 id="dias_credito"
                                                 placeholder="Condición de Pago (días)"
@@ -78,8 +79,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="button" class="btn btn-primary" :disabled="errors.count() > 0" v-on:click="validate">Registrar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" :disabled="errors.count() > 0" v-on:click="validate">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -98,7 +99,7 @@
                 registro_destajista : {
                     razon_social : '',
                     rfc : '',
-                    dias_credito : 0,
+                    dias_credito : '',
                 },
                 rfc : '',
                 rfcValidate: false
@@ -111,7 +112,7 @@
                 this.registro_destajista = {
                     razon_social : '',
                     rfc : '',
-                    dias_credito : 0,
+                    dias_credito : '',
                 };
                 this.rfc = '';
                 $(this.$refs.modal).modal('show');

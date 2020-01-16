@@ -9,6 +9,7 @@ class Destajista extends Empresa
     protected $fillable = [
         'razon_social',
         'rfc',
+        'dias_credito',
         'tipo_empresa',
         'FechaHoraRegistro',
         'UsuarioRegistro'
