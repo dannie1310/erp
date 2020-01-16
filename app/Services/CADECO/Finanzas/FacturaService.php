@@ -254,5 +254,11 @@ class FacturaService
         $pdf = new ContrareciboPDF($id);
         return $pdf;
     }
+
+    public function cargaXML($archivo_xml)
+    {
+        $this->setArregloFactura($archivo_xml);
+        return $this->arreglo_factura;
+    }
 }
 

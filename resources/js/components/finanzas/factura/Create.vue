@@ -20,6 +20,22 @@
                 </div>
                 <form role="form" @submit.prevent="validate">
                 <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group error-content">
+                                <label for="archivo">Archivo:</label>
+                                <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                                       row="3"
+                                       v-validate="{required: true,  ext: ['xml'], size: 3072}"
+                                       name="archivo"
+                                       data-vv-as="Archivo"
+                                       ref="archivo"
+                                       :class="{'is-invalid': errors.has('archivo')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
+                            </div>
+                        </div>
+                    </div>
 
 
 
@@ -185,24 +201,7 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group error-content">
-                                <label for="archivo">Archivo:</label>
 
-                                <input type="file" class="form-control" id="archivo" @change="onFileChange"
-                                       row="3"
-                                       v-validate="{required: true,  ext: ['xml'], size: 3072}"
-                                       name="archivo"
-                                       data-vv-as="Archivo"
-                                       ref="archivo"
-                                       :class="{'is-invalid': errors.has('archivo')}"
-                                >
-                                <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
-
-                            </div>
-                        </div>
-                    </div>
 
 
 
@@ -236,7 +235,7 @@
                     maxFilesize: 0.5,
                     headers: { "My-Awesome-Header": "header value" },
                     addRemoveLinks: true,
-                    dictDefaultMessage: "<h2 style='color:#bbb'><span class='fas fa-file-invoice-dollar' style='padding-right:5px'></span>Arraste los archivos xml y pdf de la factura a esta zona.</h2>",
+                    dictDefaultMessage: "<h2 style='color:#bbb'><span class='fas fa-file-invoice-dollar' style='padding-right:5px'></span>Arrastra y suelta el archivo xml a esta zona.</h2>",
                 },
                 cargando:true,
                 es:es,
@@ -255,6 +254,7 @@
                     total:'',
                     observaciones:'',
                     archivo:null,
+                    archivo_name:null,
                 },
             }
         },
@@ -327,13 +327,32 @@
             onFileChange(e){
                 this.dato.archivo = null;
                 var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.dato.archivo_name = files[0].name;
                 this.createImage(files[0], 1);
-                setTimeout(() => {
+                /*setTimeout(() => {
                     if(this.dato.archivo == null) {
                         onFileChange(e)
                     }
+                }, 500);*/
+                setTimeout(() => {
+                    this.validate()
                 }, 500);
             },
+
+            /*onFileChange(e){
+                this.file_pagos = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.file_pagos_name = files[0].name;
+                this.createImage(files[0]);
+                setTimeout(() => {
+                    this.validate()
+                }, 500);
+            },*/
+
             createImage(file) {
                 var reader = new FileReader();
                 var vm = this;
@@ -342,6 +361,35 @@
                     vm.dato.archivo = e.target.result;
                 };
                 reader.readAsDataURL(file);
+            },
+            cargarXML(){
+                this.cargando = true;
+                var formData = new FormData();
+                formData.append('xml',  this.dato.archivo);
+                formData.append('nombre_archivo',  this.dato.archivo_name);
+                return this.$store.dispatch('finanzas/factura/cargarXML',
+                    {
+                        data: formData,
+                        config: {
+                            params: { _method: 'POST'}
+                        }
+                    })
+                    .then(data => {
+                        if(data.data.length > 0){
+                            this.dato.total = data.total;
+
+
+                        }else{
+                            if(this.$refs.archivo.value !== ''){
+                                this.$refs.archivo.value = '';
+                                this.dato.archivo = null;
+                            }
+                            this.cleanData();
+                            swal('Carga con XML', 'Archivo sin datos válidos', 'warning')
+                        }
+                    }).finally(() => {
+                        this.cargando = false;
+                    });
             },
             validate() {
                 this.$validator.validate().then(result => {

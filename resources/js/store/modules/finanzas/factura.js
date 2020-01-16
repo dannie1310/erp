@@ -62,6 +62,19 @@ export default {
                     })
             });
         },
+        cargarXML(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'xml', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
