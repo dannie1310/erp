@@ -46,7 +46,7 @@ class FacturaRepositorio extends Model
 
     public function getFechaHoraRegistroFormatAttribute()
     {
-        $date = date_create($this->FechaHoraRegistro);
+        $date = date_create($this->fecha_hora_registro);
         return date_format($date,"d/m/Y H:i:s");
     }
 
