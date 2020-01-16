@@ -69,11 +69,23 @@ export default {
             })
         },
         registrarMaterial(){
-            return this.$store.dispatch('cadeco/suministrado/store', this.suministrado())
-            .then((data) => {
-                this.$store.commit('cadeco/suministrado/INSERT_SUMINISTRADO', data);
-                this.material = [];
-            });
+            if(this.suministrados.findIndex(x => parseInt(x.id_material) === this.material.id) === -1){
+                return this.$store.dispatch('cadeco/suministrado/store', this.suministrado())
+                .then((data) => {
+                    this.$store.commit('cadeco/suministrado/INSERT_SUMINISTRADO', data);
+                    this.material = [];
+                });
+            }else{
+                swal("Material registrado previamente.", {
+                    icon: "warning",
+                    buttons: {
+                        confirm: {
+                            text: 'Aceptar',
+                            closeModal: true,
+                        }
+                    }
+                })
+            }
         },
         suministrado(){
             return {
