@@ -11,6 +11,7 @@ namespace App\Repositories\CADECO\Finanzas\Facturas;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\RepositoryInterface;
 USE Illuminate\Support\Facades\DB;
 use App\Models\CADECO\Obra;
@@ -79,5 +80,25 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function create(array $datos)
     {
         return $this->model->registrar($datos);
+    }
+
+    public function getArchivoSQL($archivo)
+    {
+        return DB::raw("CONVERT(VARBINARY(MAX), '" . $archivo . "')");
+    }
+
+    public function validaExistenciaRepositorio($hash_file)
+    {
+        $factura_repositorio = FacturaRepositorio::where('hash_file', '=', $hash_file)->first();
+
+        if($factura_repositorio){
+            $factura_repositorio->load("usuario");
+            abort(403, 'Archivo cargado previamente:
+            Registró: '.$factura_repositorio->usuario->nombre_completo.'
+            BD: '.$factura_repositorio->proyecto->base_datos.'
+            Proyecto: '.$factura_repositorio->obra->nombre.'
+            Factura: '.$factura_repositorio->factura->numero_folio.'
+            Fecha: '.$factura_repositorio->fecha_hora_registro_format);
+        }
     }
 }

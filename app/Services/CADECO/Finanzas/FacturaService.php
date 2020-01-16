@@ -166,6 +166,7 @@ class FacturaService
 
     public function store(array $data)
     {
+        $this->validaExistenciaRepositorio($data["archivo"]);
         $this->setArregloFactura($data["archivo"]);
         $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
         $this->validaReceptor();
@@ -208,11 +209,26 @@ class FacturaService
             "saldo" => $data["total"],
             "observaciones" => $data["observaciones"],
         ];
+
+        $datos_rfactura =[
+            "xml_file"=>$this->repository->getArchivoSQL($data["archivo"]),
+            "hash_file"=>hash_file('md5', $data["archivo"])
+        ];
+
         $datos["factura"] = $datos_factura;
         $datos["rubro"] = $datos_rubro;
         $datos["cr"] = $datos_cr;
+        $datos["factura_repositorio"] = $datos_rfactura;
+
 
         return $this->repository->create($datos);
+    }
+
+    private function validaExistenciaRepositorio($archivo)
+    {
+        $hash_file = hash_file('md5', $archivo);
+
+        $this->repository->validaExistenciaRepositorio($hash_file);
     }
 
     private function validaReceptor()
