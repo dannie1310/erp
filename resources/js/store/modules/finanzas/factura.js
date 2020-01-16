@@ -14,7 +14,7 @@ export default {
         },
 
         SET_FACTURA(state, data) {
-            state.currentfactura = data;
+            state.currentFactura = data;
         },
 
         SET_META(state, data) {
