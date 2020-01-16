@@ -158,13 +158,16 @@
                                 <!--E-Mail-->
                                 <div class="col-md-6" >
                                     <div class="form-group error-content">
-                                        <label for="mail">E-Mail</label>
+                                        <label for="email">E-Mail</label>
                                         <input type="text" class="form-control"
-                                            name="mail"
+                                            name="email"
                                             data-vv-as="E-Mail"
                                             v-model="email"
-                                            id="v"
+                                            v-validate="{email}"
+                                            :class="{'is-invalid': errors.has('email')}"
+                                            id="email"
                                             placeholder="E-Mail" >
+                                            <div class="invalid-feedback" v-show="errors.has('email')">{{ errors.first('email') }}</div>
                                     </div>
                                 </div>
                                 <!--observaciones-->
