@@ -46,6 +46,8 @@ class ClienteController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_cliente')->only(['show','paginate','index','find']);
         $this->middleware('permiso:registrar_cliente')->only('store');
+        $this->middleware('permiso:editar_cliente')->only('update');
+        $this->middleware('permiso:eliminar_cliente')->only('destroy');
 
         $this->fractal = $fractal;
         $this->service = $service;

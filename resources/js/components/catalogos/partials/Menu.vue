@@ -6,7 +6,7 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">CATÁLOGOS</li>
 
-            <li class="nav-item" v-if="$root.can('consultar_familia_maquinaria')|| $root.can('consultar_insumo_maquinaria')">
+            <li class="nav-item" v-if="catalogo_maquinaria">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-tractor"></i>
                     <p>
@@ -32,7 +32,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_familia_servicio')|| $root.can('consultar_insumo_servicio')">
+            <li class="nav-item" v-if="catalogo_servicios">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-cogs"></i>
                     <p>
@@ -58,7 +58,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_insumo_material')|| $root.can('consultar_insumo_herramienta_equipo')">
+            <li class="nav-item" v-if="catalogo_insumo">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-server"></i>
                     <p>
@@ -130,6 +130,24 @@
                 return this.$root.can([
                    'consultar_cliente',
                     'consultar_proveedor'
+                ]);
+            },
+            catalogo_insumo(){
+                return this.$root.can([
+                    'consultar_insumo_material',
+                    'consultar_insumo_herramienta_equipo'
+                ]);
+            },
+            catalogo_maquinaria(){
+                return this.$root.can([
+                    'consultar_familia_maquinaria',
+                    'consultar_insumo_maquinaria'
+                ]);
+            },
+            catalogo_servicios(){
+                return this.$root.can([
+                    'consultar_familia_servicio',
+                    'consultar_insumo_servicio'
                 ]);
             },
         },

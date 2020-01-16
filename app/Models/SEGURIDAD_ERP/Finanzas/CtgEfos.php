@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class CtgEfos extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'Finanzas.ctg_efos';
+    protected $table = 'SEGURIDAD_ERP.Finanzas.ctg_efos';
     public $timestamps = false;
 
     protected $fillable = [
@@ -133,8 +133,8 @@ class CtgEfos extends Model
                     $t = 2;
                     $razon = '';
                 }
-                
-               
+
+
             }
         }
         return $content;

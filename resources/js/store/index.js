@@ -31,6 +31,7 @@ import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
 import proveedorContratista from './modules/cadeco/proveedor-contratista';
 import sucursal from './modules/cadeco/sucursal';
+import suministrado from './modules/cadeco/suministrado';
 import unidad from './modules/cadeco/unidad'
 
 
@@ -152,6 +153,7 @@ export default new Vuex.Store({
         'cadeco/obras': obras,
         'cadeco/proveedor-contratista': proveedorContratista,
         'cadeco/sucursal': sucursal,
+        'cadeco/suministrado': suministrado,
         'cadeco/unidad': unidad,
 
         'compras/asignacion' : asignacion,

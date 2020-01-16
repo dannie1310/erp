@@ -1,8 +1,8 @@
 <template>
     <div class="row">
-        <!--<div class="col-12">-->
-        <!--<create @created="paginate()"></create>-->
-        <!--</div>-->
+        <div class="col-12">
+        <create @created="paginate()"></create>
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -20,9 +20,10 @@
 </template>
 
 <script>
+    import Create from "./Create";
     export default {
         name: "cliente-index",
-        // components:{Create},
+        components:{Create},
         data() {
             return {
                 HeaderSettings: false,
@@ -32,11 +33,12 @@
                     { title: 'Razón Social', field: 'razon_social', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Tipo Cliente', field: 'tipo_cliente', sortable: true},
                     { title: 'Porcentaje de Participación', field: 'porcentaje', tdClass: 'td_money', thClass: 'th_money', sortable: true},
+                    { title: 'Estado EFOS', field: 'efo', tdComp: require('./partials/EfoEstatus').default, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'razon_social', order: 'desc'},
+                query: {sort: 'id_empresa', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -83,7 +85,14 @@
                         rfc: cliente.rfc,
                         razon_social: cliente.razon_social,
                         tipo_cliente: cliente.tipo,
-                        porcentaje: cliente.porcentaje_format
+                        porcentaje: cliente.porcentaje_format,
+                        efo :  typeof cliente.efo !== 'undefined' ?  cliente.efo.estado : '',
+                        buttons: $.extend({}, {
+                            edit: self.$root.can('editar_cliente') ? true : undefined,
+                            show: self.$root.can('consultar_cliente') ? true : undefined,
+                            delete: self.$root.can('eliminar_cliente') ? true : undefined,
+                            id: cliente.id
+                        })
                     }));
                 },
                 deep: true

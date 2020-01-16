@@ -48,7 +48,8 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ClienteController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@show')->where(['id' => '[0-9]+']);
             $api->post('/','App\Http\Controllers\v1\CADECO\ClienteController@store');
-
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ClienteController@destroy')->where(['id' => '[0-9]+']);
         });
 
         // CONCEPTOS
@@ -126,23 +127,37 @@ $api->version('v1', function ($api) {
             $api->patch('estado/{id}', 'App\Http\Controllers\v1\CADECO\ObraController@actualizarEstado');
         });
 
+        // PROVEEDOR/CONTRATISTA
         $api->group(['prefix' => 'proveedor-contatista'], function ($api) {
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@paginate');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@show');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ProveedorcontratistaController@destroy')->where(['id' => '[0-9]+']);
         });
 
         // SUCURSAL
         $api->group(['prefix' => 'sucursal'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\SucursalController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\SucursalController@paginate');
-            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\SucursalController@store');
+            $api->post('proveedor', 'App\Http\Controllers\v1\CADECO\SucursalController@storeProveedorSucursal');
+            $api->patch('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\SucursalController@updateProveedorSucursal');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\SucursalController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        // SUMINISTRADO
+        $api->group(['prefix'=>'suministrado'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\SuministradoController@store');
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\SuministradoController@destroy');
         });
 
         //UNIDAD
         $api->group(['prefix'=>'unidad'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\UnidadController@index');
-            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
+            $api->post('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@show');
         });
 
     });
