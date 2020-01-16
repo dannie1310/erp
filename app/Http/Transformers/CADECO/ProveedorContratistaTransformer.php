@@ -45,7 +45,7 @@ class ProveedorContratistaTransformer extends TransformerAbstract
             'rfc' => $model->rfc,
             'proveedor_virtual' => $model->no_proveedor_virtual,
             'dias_credito' => $model->dias_credito,
-            'porcentaje' => $model->porcentaje,
+            'porcentaje' => $model->porcentaje_format,
             'efo' => $model->efo
         ];
     }

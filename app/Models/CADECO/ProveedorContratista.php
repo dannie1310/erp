@@ -36,6 +36,10 @@ class ProveedorContratista extends Empresa
         return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa');
     }
 
+    public function getPorcentajeFormatAttribute(){
+        return number_format($this->porcentaje, 2, '.', ',');
+    }
+
     public function actualizar($data, $id){
         if($data['rfc'] != $data['rfc_nuevo']){
             $data['rfc'] = $data['rfc_nuevo'];

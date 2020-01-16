@@ -36,7 +36,7 @@
                                             </tr>
                                             <tr>
                                                 <th class="align">Descuento Financiero:</th>
-                                                <td>{{proveedorContratista.porcentaje}}</td>
+                                                <td>{{proveedorContratista.porcentaje}} %</td>
                                             </tr>
                                             <tr>
                                                 <th class="align">Tipo:</th>
