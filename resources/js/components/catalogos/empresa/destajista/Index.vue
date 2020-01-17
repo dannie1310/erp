@@ -85,9 +85,9 @@
                         dias_credito: destajista.dias_credito,
                         efo :  typeof destajista.efo !== 'undefined' ?  destajista.efo.estado : '',
                         buttons: $.extend({}, {
-                            // edit: self.$root.can('editar_destajista') ? true : undefined,
+                            edit: self.$root.can('editar_destajista') ? true : undefined,
                             show: self.$root.can('consultar_destajista') ? true : undefined,
-                            // delete: self.$root.can('eliminar_destajista') ? true : undefined,
+                            delete: self.$root.can('eliminar_destajista') ? true : undefined,
                             id: destajista.id
                         })
                     }));

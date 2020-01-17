@@ -1,15 +1,14 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_destajista')" class="btn btn-app btn-info float-right" :disabled="cargando">
-            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-plus" v-else></i>
-            Registrar
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-info" title="Editar"  :disabled="cargando">
+            <i class="fa fa-pencil" v-if="!cargando"></i>
+            <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> REGISTRAR DESTAJISTA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> EDITAR DESTAJISTA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -30,7 +29,7 @@
                                                 class="form-control"
                                                 id="razon_social"
                                                 placeholder="Razón Social"
-                                                v-model="registro_destajista.razon_social"
+                                                v-model="destajista.razon_social"
                                                 :class="{'is-invalid': errors.has('razon_social')}">
                                             <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
                                         </div>
@@ -68,7 +67,7 @@
                                                 class="form-control"
                                                 id="dias_credito"
                                                 placeholder="Condición de Pago (días)"
-                                                v-model="registro_destajista.dias_credito"
+                                                v-model="destajista.dias_credito"
                                                 :class="{'is-invalid': errors.has('dias_credito')}">
                                             <div class="invalid-feedback" v-show="errors.has('dias_credito')">{{ errors.first('dias_credito') }}</div>
                                         </div>
@@ -78,47 +77,55 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" :disabled="errors.count() > 0" v-on:click="validate">Registrar</button>
+                            <button type="button" class="btn btn-primary" :disabled="errors.count() > 0" v-on:click="validate">Guardar Cambios</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </span>
+
 </template>
 
 <script>
     const rfcRegex =/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
     export default {
-        name: "destajista-create",
+        name: "destajista-edit",
+        props: ['id'],
         data() {
             return {
-                cargando : false,
-                registro_destajista : {
-                    razon_social : '',
-                    rfc : '',
-                    dias_credito : '',
-                },
+                cargando: false,
+                destajista : [],
                 rfc : '',
                 rfcValidate: false
             }
         },
         methods: {
-            init() {
-                this.$validator.reset();
-                this.cargando = false;
-                this.registro_destajista = {
-                    razon_social : '',
-                    rfc : '',
-                    dias_credito : '',
-                };
-                this.rfc = '';
-                $(this.$refs.modal).modal('show');
-                this.rfcValidate =  false;
+            find() {
+                return this.$store.dispatch('cadeco/destajista/find', {
+                    id: this.id
+                }).then(data => {
+                    this.destajista = data;
+                    $(this.$refs.modal).modal('show');
+                }).finally(() => {
+                    this.cargando = false;
+                })
             },
-            store() {
-                return this.$store.dispatch('cadeco/destajista/store', this.$data.registro_destajista)
+            validate() {
+                this.destajista.razon_social = this.destajista.razon_social.toUpperCase()
+                this.$validator.validate().then(result => {
+                    if (result && this.rfcValidate == false) {
+                        this.update()
+                    }
+                });
+            },
+            update() {
+                return this.$store.dispatch('cadeco/destajista/update', {
+                    id: this.id,
+                    data: this.destajista
+                })
                     .then(data => {
+                        this.$store.commit('cadeco/destajista/UPDATE_DESTAJISTA', data);
                         if(typeof data.efo !== 'undefined' && (data.efo.estado.id == 0 || data.efo.estado.id == 2)){
                             swal("El Destajista registrado es un "+data.efo.estado.descripcion+" EFO.", {
                                 icon: "warning",
@@ -129,25 +136,13 @@
                                     }
                                 }
                             }) .then(() => {
-                                this.$emit('created', data);
                                 $(this.$refs.modal).modal('hide');
                             })
                         }else {
-                            this.$emit('created', data);
                             $(this.$refs.modal).modal('hide');
                         }
+                    })
 
-                    }).finally( ()=>{
-                        this.cargando = false;
-                    });
-            },
-            validate() {
-                this.$validator.validate().then(result => {
-                    this.registro_destajista.razon_social = this.registro_destajista.razon_social.toUpperCase();
-                    if (result && this.rfcValidate == false) {
-                        this.store()
-                    }
-                });
             },
             invalidRFC(){
                 this.rfcValidate=true;
@@ -158,7 +153,7 @@
                     return this.invalidRFC();
                 } else{
                     this.rfcValidate=false;
-                    this.registro_destajista.rfc = this.rfc
+                    this.destajista.rfc = this.rfc
                     this.$validator.reset();
                 }
             }
@@ -169,15 +164,13 @@
                 this.validateRfc();
 
             },
+            destajista(value) {
+                this.rfc = value.rfc;
+            }
         }
     }
 </script>
 
 <style scoped>
-    .error-label {
-        width: 100%;
-        margin-top: 0.25rem;
-        font-size: 80%;
-        color: #dc3545;
-    }
+
 </style>

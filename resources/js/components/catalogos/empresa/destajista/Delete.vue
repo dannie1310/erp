@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Ver" v-if="$root.can('consultar_destajista')">
-            <i class="fa fa-eye"></i>
+        <button @click="find" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" v-if="$root.can('eliminar_destajista')">
+            <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> DESTAJISTA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">ELIMINAR DESTAJISTA</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -51,8 +51,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-danger" @click="eliminar">Eliminar</button>
                         </div>
                     </form>
                 </div>
@@ -63,7 +64,7 @@
 
 <script>
     export default {
-        name: "destajista-show",
+        name: "destajista-delete",
         props: ['id'],
         data() {
             return {
@@ -81,7 +82,29 @@
                     this.destajista = data;
                     $(this.$refs.modal).modal('show');
                 })
-            }
+            },
+            eliminar() {
+                this.cargando = true;
+                return this.$store.dispatch('cadeco/destajista/eliminar', {
+                    id: this.id
+                })
+                    .then(data => {
+                        this.$store.commit('cadeco/destajista/DELETE_DESTAJISTA', {id: this.id})
+                        $(this.$refs.modal).modal('hide');
+                        this.$store.dispatch('cadeco/destajista/paginate', {
+                            params: {
+                                sort: 'id_empresa', order: 'desc'
+                            }
+                        })
+                            .then(data => {
+                                this.$store.commit('cadeco/destajista/SET_DESTAJISTAS', data.data);
+                                this.$store.commit('cadeco/destajista/SET_META', data.meta);
+                            })
+                    })
+                    .finally( ()=>{
+                        this.cargando = false;
+                    });
+            },
         }
     }
 </script>
