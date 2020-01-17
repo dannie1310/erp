@@ -63,6 +63,7 @@
                                                 <th>#</th>
                                                 <th>Concepto</th>
                                                 <th>Beneficiario</th>
+                                                <th></th>
                                                <!-- <th>Importe Moneda Original</th>
                                                 <th>Moneda</th>
                                                 <th>Importe en Pesos</th>-->
@@ -78,6 +79,8 @@
                                                     <td>{{doc.concepto}}</td>
                                                     <td v-if="doc.beneficiario != null">{{doc.beneficiario}}</td>
                                                     <td class="text-danger" v-else>No registrado</td>
+                                                    <td v-if="doc.empresa.efos" v-html="doc.empresa.efos.alert_icon"></td>
+                                                    <td v-else></td>
                                                     <!--<td class="text-right">{{doc.monto_total_format}}</td>-->
                                                     <!--<td>{{doc.moneda.abreviatura}}</td>-->
                                                     <!--<td class="text-right">{{doc.saldo_moneda_nacional_format}}</td>-->
@@ -322,7 +325,7 @@
                             'documentosDisponibles.moneda',
                             'documentosDisponibles.montoProcesado',
                             'remesaLiberada',
-                            'documentosDisponibles.fondo.empresa.cuentas_bancarias.banco'],
+                            'documentosDisponibles.fondo.empresa.cuentas_bancarias.banco', 'documentosDisponibles.empresa.efos'],
                     }
                 })
                     .then(data => {

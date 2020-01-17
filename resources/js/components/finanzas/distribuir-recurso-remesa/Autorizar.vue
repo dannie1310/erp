@@ -98,6 +98,7 @@
                                     <th>#</th>
                                     <th>Concepto</th>
                                     <th>Beneficiario</th>
+                                    <th></th>
                                  <!-- <th>Importe</th>
                                     <th>Tipo Cambio</th>
                                     <th>Importe con TC</th>
@@ -113,6 +114,8 @@
                                     <td>{{i+1}}</td>
                                     <td>{{doc.documento.concepto}}</td>
                                     <td>{{doc.documento.beneficiario}}</td>
+                                    <td v-if="doc.documento.empresa.efos" v-html="doc.documento.empresa.efos.alert_icon"></td>
+                                    <td v-else></td>
                                     <!--<td class="text-right">{{doc.documento.monto_total_format}}</td>
                                     <td class="text-right">{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
                                     <td class="text-right">{{doc.documento.saldo_moneda_nacional_format}}</td>
@@ -165,7 +168,7 @@
                 this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', null);
                 return this.$store.dispatch('finanzas/distribuir-recurso-remesa/find', {
                     id: this.id,
-                    params: {include: ['remesa_liberada.remesa.documento', 'partidas.documento.empresa', 'partidas.cuentaAbono.banco.ctgBanco', 'partidas.transaccion', 'usuario_cancelo']}
+                    params: {include: ['partidas.documento.empresa.efos', 'remesa_liberada.remesa.documento', 'partidas.documento.empresa', 'partidas.cuentaAbono.banco.ctgBanco', 'partidas.transaccion', 'usuario_cancelo']}
                 }).then(data => {
                     this.$store.commit('finanzas/distribuir-recurso-remesa/SET_DISTRIBUCION', data);
                 }).finally(() => {
