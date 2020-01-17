@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
@@ -40,6 +41,11 @@ class Empresa extends Model
 
     public function cuentas(){
         return $this->hasMany(Cuenta::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function efo()
+    {
+        return $this->belongsTo(CtgEfos::class,'rfc', 'rfc');
     }
 
     public function compras(){
