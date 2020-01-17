@@ -233,12 +233,25 @@ class FacturaService
 
     public function store(array $data)
     {
-        $this->validaExistenciaRepositorio($data["archivo"]);
-        $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
-        $this->validaReceptor();
-        $this->validaTotal($data["total"]);
-        $this->validaFolio($data["referencia"]);
-        $this->validaCFDI33($data["archivo"]);
+        $datos_rfactura = null;
+        $referencia = $data["referencia"];
+        if($data["es_deducible"] == true)
+        {
+            $this->validaExistenciaRepositorio($data["archivo"]);
+            $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
+            $this->validaReceptor();
+            $this->validaTotal($data["total"]);
+            $this->validaFolio($data["referencia"]);
+            $this->validaCFDI33($data["archivo"]);
+
+            $datos_rfactura =[
+                "xml_file"=>$this->repository->getArchivoSQL($data["archivo"]),
+                "hash_file"=>hash_file('md5', $data["archivo"]),
+                "uuid"=>$this->arreglo_factura["complemento"]["uuid"],
+            ];
+            $referencia = $this->arreglo_factura["serie"].$this->arreglo_factura["folio"];
+        }
+
 
         /** EL front envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
                      * */
@@ -253,7 +266,7 @@ class FacturaService
 
         $this->validaFechas($emision,$vencimiento);
 
-        $referencia = $this->arreglo_factura["serie"].$this->arreglo_factura["folio"];
+
 
         $datos_factura = [
             'fecha' => $emision->format('Y-m-d'),
@@ -277,11 +290,6 @@ class FacturaService
             "observaciones" => $data["observaciones"],
         ];
 
-        $datos_rfactura =[
-            "xml_file"=>$this->repository->getArchivoSQL($data["archivo"]),
-            "hash_file"=>hash_file('md5', $data["archivo"]),
-            "uuid"=>$this->arreglo_factura["complemento"]["uuid"],
-        ];
 
         $datos["factura"] = $datos_factura;
         $datos["rubro"] = $datos_rubro;
