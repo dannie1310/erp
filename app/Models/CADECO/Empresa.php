@@ -223,9 +223,9 @@ class Empresa extends Model
 
     public function validaEliminacion()
     {
-        if($this->transacciones()->withoutGlobalScopes()->count('id_empresa') > 0)
-        {
-            abort(403, 'Esta empresa cuenta con transacciones asociadas.');
+        $cantidad = $this->transacciones()->withoutGlobalScopes()->count('id_empresa');
+        if($cantidad > 0){
+            abort(403, 'La empresa "'. $this->razon_social.'" no puede ser eliminada porque tiene ' . $cantidad . ' transaccion(es) asociada(s).');
         }
     }
 
