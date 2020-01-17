@@ -156,20 +156,21 @@
                                     </div>
                                 </div>
                                 <!--E-Mail-->
-                                <div class="col-md-6" >
+                                <div class="col-md-6" v-if="sucursal">
                                     <div class="form-group error-content">
                                         <label for="email">E-Mail</label>
                                         <input type="text" class="form-control"
                                             name="email"
                                             data-vv-as="E-Mail"
                                             v-model="sucursal.email"
-                                            id="email"
                                             v-validate="{email}"
                                             :class="{'is-invalid': errors.has('email')}"
+                                            id="email"
                                             placeholder="E-Mail" >
                                             <div class="invalid-feedback" v-show="errors.has('email')">{{ errors.first('email') }}</div>
                                     </div>
                                 </div>
+
                                 <!--observaciones-->
                                 <div class="col-md-12" >
                                     <div class="form-group error-content">

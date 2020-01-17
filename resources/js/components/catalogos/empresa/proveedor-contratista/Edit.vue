@@ -51,7 +51,7 @@
                                                     <label for="rfc" class="col-sm-5 col-form-label">R.F.C.: </label>
                                                     <div class="col-sm-7">
                                                         <input
-                                                            :disabled="!$root.can('editar_proveedor_rfc') || !$root.can('editar_proveedor')"
+                                                            :disabled="!$root.can('editar_proveedor_rfc') || emite_factura === 0"
                                                             type="text"
                                                             name="rfc"
                                                             data-vv-as="R.F.C."
@@ -147,6 +147,35 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group row error-content">
+                                                    <label for="emite_factura" class="col  sm- col-form-label">Emite Factura: </label>
+                                                    <div class="col-sm-10">
+                                                        <div class="btn-group btn-group-toggle" style="margin-left:5%;">
+                                                            <label class="btn btn-outline-secondary" :class="emite_factura === Number(1) ? 'active': ''"  :key="1">
+                                                                <input type="radio"
+                                                                    class="btn-group-toggle"
+                                                                    name="emite_factura"
+                                                                    :id="'emite_factura' + 1"
+                                                                    :value="1"
+                                                                    autocomplete="on"
+                                                                    v-model.number="emite_factura">
+                                                                Si
+                                                            </label>
+                                                            <label class="btn btn-outline-secondary" :class="emite_factura === Number(0) ? 'active': ''"  :key="0">
+                                                                <input type="radio"
+                                                                    class="btn-group-toggle"
+                                                                    name="emite_factura"
+                                                                    :id="'emite_factura' + 0"
+                                                                    :value="0"
+                                                                    autocomplete="on"
+                                                                    v-model.number="emite_factura">
+                                                                No
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <!--EFO-->
                                             <div class="col-md-12" v-if="proveedorContratista.efo">
                                                 <div class="form-group row error-content">
@@ -206,7 +235,9 @@ export default {
                 dias_credito:'',
                 porcentaje:'',
                 tipo_empresa:'',
+                emite_factura:'',
             },
+            emite_factura:'',
         }
     },
     methods: {
@@ -224,6 +255,7 @@ export default {
             this.edit.dias_credito = this.proveedorContratista.dias_credito;
             this.edit.porcentaje = this.proveedorContratista.porcentaje;
             this.edit.tipo_empresa = this.proveedorContratista.tipo_empresa;
+            this.emite_factura = this.proveedorContratista.emite_factura;
 
         },
         init(){
@@ -294,6 +326,14 @@ export default {
         tipo(value){
             if(value !== '' && value === 2){
                 this.init();
+            }
+        },
+        emite_factura(value){
+            this.edit.emite_factura = value;
+            if(parseInt(value) === 0){
+                this.edit.rfc_nuevo = 'XXXXXXXXXXXX';
+            }else{
+                this.edit.rfc_nuevo = '';
             }
         }
     }

@@ -46,7 +46,9 @@ class ProveedorContratistaTransformer extends TransformerAbstract
             'proveedor_virtual' => $model->no_proveedor_virtual,
             'dias_credito' => $model->dias_credito,
             'porcentaje' => $model->porcentaje_format,
-            'efo' => $model->efo
+            'efo' => $model->efo,
+            'emite_factura' => (int)$model->emite_factura,
+            'emite_factura_format' => $model->emite_factura_format,
         ];
     }
 
