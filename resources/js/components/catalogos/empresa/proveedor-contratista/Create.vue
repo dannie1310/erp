@@ -20,17 +20,17 @@
                                     <div class="form-group row error-content">
                                         <label for="razon_social" class="col-sm-2 col-form-label">Razón Social: </label>
                                         <div class="col-sm-10">
-                                            <input
+                                            <input style="width:94.7%; "
                                                     type="text"
                                                     name="razon_social"
                                                     data-vv-as="Razón Social"
                                                     v-validate="{required: true}"
-                                                    class="form-control"
+                                                    class="form-control float-right"
                                                     id="razon_social"
                                                     placeholder="Razón Social"
                                                     v-model="razon_social"
                                                     :class="{'is-invalid': errors.has('razon_social')}">
-                                            <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
+                                            <div class="invalid-feedback float-right"   v-show="errors.has('razon_social')"><span style="margin-left:5%;">{{ errors.first('razon_social') }}</span></div>
                                         </div>
                                     </div>
                                 </div>
@@ -39,15 +39,16 @@
                                         <label for="rfc" class="col-sm-5 col-form-label">R.F.C.: </label>
                                         <div class="col-sm-7">
                                             <input
-                                                    type="text"
-                                                    name="rfc"
-                                                    data-vv-as="R.F.C."
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
-                                                    id="rfc"
-                                                    placeholder="R.F.C."
-                                                    v-model="rfc"
-                                                    :class="{'is-invalid': errors.has('rfc')}">
+                                                :disabled="emite_factura === 0"
+                                                type="text"
+                                                name="rfc"
+                                                data-vv-as="R.F.C."
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="rfc"
+                                                placeholder="R.F.C."
+                                                v-model="rfc"
+                                                :class="{'is-invalid': errors.has('rfc')}">
                                             <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                                         </div>
                                     </div>
@@ -96,6 +97,7 @@
                                         <div class="col-sm-7">
                                             <input
                                                     type="number"
+                                                    step="any"
                                                     name="porcentaje"
                                                     data-vv-as="Descuento Financiero"
                                                     v-validate="{min_value:0, max_value:100, decimal:2}"
@@ -110,9 +112,9 @@
                                 </div>
                                 <div class="col-md-12">
                                    <div class="form-group row error-content">
-                                        <label for="id_empresa" class="col  sm-3 col-form-label">Tipo Proveedor y/o Contratista: </label>
-                                        <div class="col-sm-9">
-                                            <div class="btn-group btn-group-toggle">
+                                        <label for="id_empresa" class="col  sm- col-form-label">Tipo: </label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group btn-group-toggle" style="margin-left:5%;">
                                                 <label class="btn btn-outline-secondary" :class="tipo_empresa === Number(key) ? 'active': ''" v-for="(tipo, key) in tipos_empresas()" :key="key">
                                                     <input type="radio"
                                                         class="btn-group-toggle"
@@ -122,6 +124,35 @@
                                                         autocomplete="on"
                                                         v-model.number="tipo_empresa">
                                                     {{ tipo }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                   <div class="form-group row error-content">
+                                        <label for="emite_factura" class="col  sm- col-form-label">Emite Factura: </label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group btn-group-toggle" style="margin-left:5%;">
+                                                <label class="btn btn-outline-secondary" :class="emite_factura === Number(1) ? 'active': ''"  :key="1">
+                                                    <input type="radio"
+                                                        class="btn-group-toggle"
+                                                        name="emite_factura"
+                                                        :id="'emite_factura' + 1"
+                                                        :value="1"
+                                                        autocomplete="on"
+                                                        v-model.number="emite_factura">
+                                                    Si
+                                                </label>
+                                                <label class="btn btn-outline-secondary" :class="emite_factura === Number(0) ? 'active': ''"  :key="0">
+                                                    <input type="radio"
+                                                        class="btn-group-toggle"
+                                                        name="emite_factura"
+                                                        :id="'emite_factura' + 0"
+                                                        :value="0"
+                                                        autocomplete="on"
+                                                        v-model.number="emite_factura">
+                                                    No
                                                 </label>
                                             </div>
                                         </div>
@@ -152,6 +183,7 @@ export default {
             porcentaje:'',
             tipo_empresa:'',
             tipo_cliente:0,
+            emite_factura:1,
         }
     },
     mounted() {
@@ -172,12 +204,28 @@ export default {
             this.dias_credito = '';
             this.porcentaje = '';
             this.tipo_empresa = '';
+            this.emite_factura = 1;
         },
         store(){
             return this.$store.dispatch('cadeco/proveedor-contratista/store', this.$data)
                 .then((data) => {
-                    $(this.$refs.modal).modal('hide');
-                    this.$emit('created',data)
+                    if(data.efo !== null && (data.efo.estado.id == 0 || data.efo.estado.id == 2)){
+                        swal("El Proveedor / Contratista registrado es un "+data.efo.estado.descripcion+" EFO.", {
+                            icon: "warning",
+                            buttons: {
+                                confirm: {
+                                    text: 'Enterado',
+                                    closeModal: true,
+                                }
+                            }
+                        }) .then(() => {
+                            this.$emit('created', data);
+                            $(this.$refs.modal).modal('hide');
+                        })
+                    }else {
+                        this.$emit('created', data);
+                        $(this.$refs.modal).modal('hide');
+                    }
                 })
         },
         tipos_empresas(){
@@ -198,7 +246,16 @@ export default {
                 }
             });
         },
-},
+    },
+    watch:{
+        emite_factura(value){
+            if(value === 0){
+                this.rfc = 'XXXXXXXXXXXX';
+            }else{
+                this.rfc = '';
+            }
+        }
+    }
 
 }
 </script>

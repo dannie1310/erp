@@ -21,4 +21,11 @@ class Suministrados extends Model
     public function material(){
         return $this->belongsTo(Material::class, 'id_material', 'id_material');
     }
+
+    public function eliminarSuministrado($data){
+        $suministro = json_decode($data['data']);
+        return $this->where('id_empresa', '=', $suministro->id_empresa)->where('id_material', '=', $suministro->id_material)->delete();
+
+        // dd('pardo', );
+    }
 }
