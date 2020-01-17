@@ -110,8 +110,8 @@
                             <tr>
                                 <th>#</th>
                                 <th>Concepto</th>
-                                <th>Beneficiario</th>
                                 <th></th>
+                                <th>Beneficiario</th>
                               <!--  <th>Importe</th>
                                 <th>Tipo Cambio</th>
                                 <th>Importe con TC</th>
@@ -127,9 +127,9 @@
                             <tr v-for="(doc, i) in distribucion.partidas.data">
                                 <td>{{i+1}}</td>
                                 <td>{{doc.documento.concepto}}</td>
-                                <td>{{doc.documento.beneficiario}}</td>
                                 <td v-if="doc.documento.empresa.efos" v-html="doc.documento.empresa.efos.alert_icon"></td>
                                 <td v-else></td>
+                                <td>{{doc.documento.beneficiario}}</td>
                                <!-- <td class="text-right">{{doc.documento.monto_total_format}}</td>
                                 <td class="text-right">{{parseFloat(doc.documento.tipo_cambio).formatMoney(2, '.', ',') }}</td>
                                 <td class="text-right">{{doc.documento.saldo_moneda_nacional_format}}</td>
