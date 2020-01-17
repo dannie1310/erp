@@ -87,9 +87,10 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return DB::raw("CONVERT(VARBINARY(MAX), '" . $archivo . "')");
     }
 
-    public function validaExistenciaRepositorio($hash_file)
+    public function validaExistenciaRepositorio($hash_file, $uuid)
     {
-        $factura_repositorio = FacturaRepositorio::where('hash_file', '=', $hash_file)->first();
+        $factura_repositorio = FacturaRepositorio::where('hash_file', '=', $hash_file)
+            ->orWhere("uuid","=", $uuid)->first();
 
         if($factura_repositorio){
             $factura_repositorio->load("usuario");
