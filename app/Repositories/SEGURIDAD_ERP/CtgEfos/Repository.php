@@ -28,4 +28,9 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     {
        $this->model->reg($data);
     }
+
+    public function rfc($data)
+    {
+       return $this->model->api($data);
+    }
 }

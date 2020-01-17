@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Show" v-if="$root.can('consultar_cliente')">
+        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Ver" v-if="$root.can('consultar_cliente')">
             <i class="fa fa-eye"></i>
         </button>
          <div class="modal fade" ref="modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> Cliente</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> Cliente</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

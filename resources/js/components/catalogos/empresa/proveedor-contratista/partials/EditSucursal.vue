@@ -203,7 +203,8 @@
         data() {
             return {
                 sucursal:[],
-                cargando:false
+                cargando:false,
+                email:'',
             }
         },
         mounted() {

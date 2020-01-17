@@ -4,7 +4,7 @@
         <i class="fa fa-plus"></i> Registrar 
     </button>
 
-            <div class="modal fade" ref="modalCreateSucursal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="modalCreateSucursal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -233,7 +233,7 @@
                 this.voz = '';
                 this.fax = '';
                 this.cargo = '';
-                this.mail = '';
+                this.email = '';
                 this.contacto = '';
                 this.observaciones = '';
                 $(this.$refs.modalCreateSucursal).modal('show');

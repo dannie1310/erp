@@ -15,6 +15,9 @@ return [
         'SANTANDER_PORTAL_STORAGE_DESCARGA' => env('SANTANDER_PORTAL_STORAGE_DESCARGA'),
         'SANTANDER_PORTAL_STORAGE_CARGA' => env('SANTANDER_PORTAL_STORAGE_CARGA'),
         'SANTANDER_PORTAL_STORAGE_ZIP' => env('SANTANDER_PORTAL_STORAGE_ZIP'),
+        'SERVICIO_CFDI_URL' => env('SERVICIO_CFDI_URL'),
+        'SERVICIO_CFDI_TOKEN' => env('SERVICIO_CFDI_TOKEN'),
+        'SERVICIO_CFDI_ENV' => env('SERVICIO_CFDI_ENV'),
     ],
     /*
     |--------------------------------------------------------------------------
