@@ -39,7 +39,6 @@
                 data: [],
                 total: 0,
                 query: {sort: 'id_empresa', order: 'desc'},
-                estado: "",
                 cargando: false
             }
         },

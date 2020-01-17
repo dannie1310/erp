@@ -165,21 +165,21 @@
                                         text: 'Enterado',
                                         closeModal: true,
                                     }
-            }
-        }) .then(() => {
-        $(this.$refs.modal).modal('hide');
-    })
-    }else {
-        $(this.$refs.modal).modal('hide');
-    }
-    })
-    },
-    invalidRFC(){
-        this.rfcValidate=true;
-    },
-    validateRfc()
-    {
+                                }
+                            }) .then(() => {
+                                $(this.$refs.modal).modal('hide');
+                            })
+                        }else {
+                            $(this.$refs.modal).modal('hide');
+                        }
+                    })
 
+            },
+            invalidRFC(){
+                this.rfcValidate=true;
+            },
+            validateRfc()
+            {
                 if(!rfcRegex.test(this.rfc)){
                     return this.invalidRFC();
                 } else{
