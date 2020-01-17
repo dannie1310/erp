@@ -74,6 +74,7 @@
                                 <th>Moneda</th>
                                 <th>Importe</th>
                                 <th>Saldo</th>
+                                <th></th>
                                 <th>Beneficiario</th>
                                 <th>Cuenta Cargo</th>
                                 <th>Fecha Pago</th>
@@ -94,6 +95,8 @@
                                 <td >{{doc.moneda.nombre}}</td>
                                 <td style="text-align:right">{{doc.monto_transaccion_format}}</td>
                                 <td style="text-align:right">{{doc.saldo_format}}</td>
+                                <td v-if="doc.factura.empresa.efos" v-html="doc.factura.empresa.efos.alert_icon"></td>
+                                <td v-else></td>
                                 <td>{{doc.beneficiario}}</td>
                                 <td>{{doc.cuenta_cargo}}</td>
                                 <td>{{doc.fecha_pago_format}}</td>
@@ -141,7 +144,7 @@
                 return this.$store.dispatch('finanzas/carga-masiva-pago/find', {
                     id: this.id,
                     params: {
-                        include: ['partidas.solicitud.empresa','partidas.solicitud.fondo','partidas.factura.empresa','usuario','usuario_autorizo','estado','partidas.moneda'],
+                        include: ['partidas.solicitud.empresa','partidas.solicitud.fondo','partidas.factura.empresa.efos','usuario','usuario_autorizo','estado','partidas.moneda'],
                     }
                 }).then(data => {
                     this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', data);
