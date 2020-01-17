@@ -28,6 +28,11 @@ class CtgEfosService
         return [];
     }
 
+    public function rfcApi($rfc)
+    {
+        $rest = $this->repository->rfc($rfc);
+        return $rest;
+    }
 
 
     public function paginate($data)
