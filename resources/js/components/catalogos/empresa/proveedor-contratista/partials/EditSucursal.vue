@@ -203,10 +203,9 @@
         components: {},
         data() {
             return {
-                sucursal:{
-                    email:''
-                },
-                cargando:false
+                sucursal:[],
+                cargando:false,
+                email:'',
             }
         },
         mounted() {

@@ -40,7 +40,7 @@ class ProveedorContratistaObserver extends EmpresaObserver
      */
     public function deleting(Empresa $provedor_contratista)
     {
-        $provedor_contratista->validarRegistroTransaccion();
+        parent::deleting($provedor_contratista);
     }
 
     /**

@@ -133,28 +133,112 @@ class FacturaService
 
     private function setArregloFactura($archivo_xml)
     {
-        $factura_xml = simplexml_load_file($archivo_xml);
-        $this->arreglo_factura["total"] = (float) $factura_xml["Total"];
-        $this->arreglo_factura["serie"] = (string) $factura_xml["Serie"];
-        $this->arreglo_factura["folio"] = (string) $factura_xml["Folio"];
-        $this->arreglo_factura["fecha"] = (string) $factura_xml["Fecha"];
-        $this->arreglo_factura["version"] = (string) $factura_xml["Version"];
-        $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
-        $this->arreglo_factura["emisor"]["rfc"] =(string)$emisor["Rfc"][0];
-        $this->arreglo_factura["emisor"]["nombre"] =(string)$emisor["Nombre"][0];
-        $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
-        $this->arreglo_factura["receptor"]["rfc"] =(string)$receptor["Rfc"][0];
-        $this->arreglo_factura["receptor"]["nombre"] =(string)$receptor["Nombre"][0];
+        try{
+            $factura_xml = simplexml_load_file($archivo_xml);
+            $this->arreglo_factura["total"] = (float) $factura_xml["Total"];
+            $this->arreglo_factura["serie"] = (string) $factura_xml["Serie"];
+            $this->arreglo_factura["folio"] = (string) $factura_xml["Folio"];
+            $this->arreglo_factura["fecha"] = (string) $factura_xml["Fecha"];
+            $this->arreglo_factura["version"] = (string) $factura_xml["Version"];
+            $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
+            $this->arreglo_factura["emisor"]["rfc"] =(string)$emisor["Rfc"][0];
+            $this->arreglo_factura["emisor"]["nombre"] =(string)$emisor["Nombre"][0];
+            $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
+            $this->arreglo_factura["receptor"]["rfc"] =(string)$receptor["Rfc"][0];
+            $this->arreglo_factura["receptor"]["nombre"] =(string)$receptor["Nombre"][0];
 
+        }
+        catch (\Exception $e){
+            abort(500,"Hubo un error al leer el archivo XML proporcionado: ". $e->getMessage());
+        }
+
+        try{
+            $ns = $factura_xml->getNamespaces(true);
+            $factura_xml->registerXPathNamespace('c', $ns['cfdi']);
+            $factura_xml->registerXPathNamespace('t', $ns['tfd']);
+            $complemento = $factura_xml->xpath('//t:TimbreFiscalDigital')[0];
+            $this->arreglo_factura["complemento"]["uuid"] =(string)$complemento["UUID"][0];
+        } catch (\Exception $e){
+            abort(500,"Hubo un error al leer la ruta de complemento: ". $e->getMessage());
+        }
+
+
+        $this->validaEFO();
+        $this->validaReceptor();
+
+        $this->arreglo_factura["empresa_bd"] = $this->repository->getEmpresa(
+            [
+                "rfc"=>$this->arreglo_factura["emisor"]["rfc"],
+                "razon_social"=>$this->arreglo_factura["emisor"]["nombre"]
+            ]
+        );
+    }
+    private function getValidacionCFDI33($xml)
+    {
+        $client = new \GuzzleHttp\Client();
+        $url = config('app.env_variables.SERVICIO_CFDI_URL');
+        $token = config('app.env_variables.SERVICIO_CFDI_TOKEN');
+
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Accept'        => 'application/json',
+        ];
+
+        $multipart =[[
+            'name'     => 'xml',
+            'contents' => fopen($xml, 'r'),
+            'filename' => 'custom_filename.xml'
+        ]];
+
+        $response = $client->request('POST', $url, [
+            'headers' => $headers,
+            'multipart' => $multipart,
+        ]);
+        return json_decode($response->getBody()->getContents(),true);
+    }
+
+    public function validaCFDI33($xml)
+    {
+        $respuesta = $this->getValidacionCFDI33($xml);
+        $estructura_correcta = $respuesta["detail"][0]["detail"][0]["message"];
+        if($estructura_correcta !== "OK" )
+        {
+            abort(500,"Aviso SAT:\nError en la validación de la estructura del comprobante: ".$estructura_correcta);
+        }
+        $validaciones_proveedor_comprobante = $respuesta["detail"][1]["detail"][0]["message"];
+        if($validaciones_proveedor_comprobante !== "OK" )
+        {
+            abort(500,"Error en la validación del proveedor del comprobante: ".$validaciones_proveedor_comprobante);
+        }
+        $validaciones_proveedor_complemento = $respuesta["detail"][2]["detail"][0]["message"];
+        if($validaciones_proveedor_complemento !== "OK" )
+        {
+            abort(500,"Error en la validación del proveedor del timbre: ".$validaciones_proveedor_complemento);
+        }
+
+        $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
+
+        if($env_servicio === "production")
+        {
+            $validacion_status_sat = $respuesta["statusSat"];
+            $validacion_status_code_sat = $respuesta["statusCodeSat"];
+
+            if($validacion_status_sat!== "Vigente")
+            {
+               abort(500,"Aviso SAT:\n".$validacion_status_sat." -".$validacion_status_code_sat."");
+            }
+        }
     }
 
     public function store(array $data)
     {
-        $this->setArregloFactura($data["archivo"]);
+        $this->validaExistenciaRepositorio($data["archivo"]);
         $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
-        $this->validaEFO();
+        $this->validaReceptor();
         $this->validaTotal($data["total"]);
         $this->validaFolio($data["referencia"]);
+        $this->validaCFDI33($data["archivo"]);
 
         /** EL front envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
                      * */
@@ -192,11 +276,36 @@ class FacturaService
             "saldo" => $data["total"],
             "observaciones" => $data["observaciones"],
         ];
+
+        $datos_rfactura =[
+            "xml_file"=>$this->repository->getArchivoSQL($data["archivo"]),
+            "hash_file"=>hash_file('md5', $data["archivo"]),
+            "uuid"=>$this->arreglo_factura["complemento"]["uuid"],
+        ];
+
         $datos["factura"] = $datos_factura;
         $datos["rubro"] = $datos_rubro;
         $datos["cr"] = $datos_cr;
+        $datos["factura_repositorio"] = $datos_rfactura;
+
 
         return $this->repository->create($datos);
+    }
+
+    private function validaExistenciaRepositorio($archivo)
+    {
+        $this->setArregloFactura($archivo);
+        $hash_file = hash_file('md5', $archivo);
+        $this->repository->validaExistenciaRepositorio($hash_file, $this->arreglo_factura["complemento"]["uuid"]);
+    }
+
+    private function validaReceptor()
+    {
+        $rfc_obra = $this->repository->getRFCObra();
+        if($this->arreglo_factura["receptor"]["rfc"] != $rfc_obra)
+        {
+            abort(500,"El RFC de la obra (".$rfc_obra.") no corresponde al RFC del receptor en el comprobante digital (".$this->arreglo_factura["receptor"]["rfc"].")");
+        }
     }
 
     private function validaFechas($emision,$vencimiento)
@@ -253,6 +362,12 @@ class FacturaService
     {
         $pdf = new ContrareciboPDF($id);
         return $pdf;
+    }
+
+    public function cargaXML($archivo_xml)
+    {
+        $this->setArregloFactura($archivo_xml);
+        return $this->arreglo_factura;
     }
 }
 

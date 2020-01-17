@@ -22,6 +22,7 @@ import cliente from './modules/cadeco/cliente';
 import concepto from './modules/cadeco/concepto';
 import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
+import destajista from "./modules/cadeco/destajista";
 import empresa from './modules/cadeco/empresa';
 import familia from './modules/cadeco/familia';
 import fondo from './modules/cadeco/fondo';
@@ -144,6 +145,7 @@ export default new Vuex.Store({
         'cadeco/concepto': concepto,
         'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
+        'cadeco/destajista' : destajista,
         'cadeco/empresa': empresa,
         'cadeco/familia': familia,
         'cadeco/fondo': fondo,

@@ -35,6 +35,7 @@ class FacturaTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
+            'fecha_cr' => $model->contra_recibo->fecha_format,
             'numero_folio' => $model->numero_folio,
             'antecedente' => $model->id_antecedente,
             'subtotal'=>(float)$model->subtotal,
@@ -60,7 +61,10 @@ class FacturaTransformer extends TransformerAbstract
             'tipo_cambio' => $model->tipo_cambio,
             'a_pagar' => $model->autorizado,
             'a_cuenta' => $model->a_cuenta_format,
-            'moneda' => $model->moneda->nombre
+            'moneda' => $model->moneda->nombre,
+            'empresa' => $model->empresa->razon_social,
+            'rubro' => $model->rubro,
+            'datos_registro' => $model->datos_registro,
         ];
     }
 

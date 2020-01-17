@@ -14,7 +14,7 @@ export default {
         },
 
         SET_FACTURA(state, data) {
-            state.currentfactura = data;
+            state.currentFactura = data;
         },
 
         SET_META(state, data) {
@@ -59,6 +59,19 @@ export default {
                     })
                     .catch(error => {
                         reject(error);
+                    })
+            });
+        },
+        cargarXML(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'xml', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
                     })
             });
         },
