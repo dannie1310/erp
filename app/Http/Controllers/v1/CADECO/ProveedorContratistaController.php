@@ -45,9 +45,9 @@ class ProveedorContratistaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         // $this->middleware('permiso:consultar_proveedor')->only(['show','paginate','index','find']);
-        // $this->middleware('permiso:eliminar_proveedor')->only(['destroy']);
-        // $this->middleware('permiso:editar_proveedor')->only(['update']);
-        // $this->middleware('permiso:registrar_proveedor')->only(['store']);
+        $this->middleware('permiso:eliminar_proveedor')->only(['destroy']);
+        $this->middleware('permiso:editar_proveedor')->only(['update']);
+        $this->middleware('permiso:registrar_proveedor')->only(['store']);
 
         $this->fractal = $fractal;
         $this->service = $service;
