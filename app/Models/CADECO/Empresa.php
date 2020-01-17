@@ -48,6 +48,11 @@ class Empresa extends Model
         return $this->hasMany(Cuenta::class, 'id_empresa', 'id_empresa');
     }
 
+    public function efo()
+    {
+        return $this->belongsTo(CtgEfos::class,'rfc', 'rfc');
+    }
+
     public function compras(){
         return $this->hasMany(OrdenCompra::class, 'id_empresa', 'id_empresa');
     }
@@ -66,11 +71,6 @@ class Empresa extends Model
     public function cuentasBancarias()
     {
         return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
-    }
-
-    public function efo()
-    {
-        return $this->belongsTo(CtgEfos::class, 'rfc', 'rfc');
     }
 
     public function transacciones()
