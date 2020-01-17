@@ -178,6 +178,13 @@ class CargaLayoutPagoService
 
     private function complementaPartida($partida){
         $transaccion_pagable = $this->repository->getTransaccionPagable($partida[0]);
+        if(isset($transaccion_pagable->empresa->efo->estado_badge))
+        {
+            $alert = $transaccion_pagable->empresa->efo->estado_badge;
+        }
+        else{
+            $alert = '';
+        }
         $cuenta_cargo = $this->repository->getCuentaCargo($partida[7]);
         $fecha_pago = $this->validaFechaPago($partida[8]);
         $monto_pagado = $this->limpiaCadena($partida[11]);
@@ -197,6 +204,7 @@ class CargaLayoutPagoService
                 "id_moneda_transaccion" => $transaccion_pagable->moneda->id_moneda,
                 'id_documento_remesa' => $transaccion_pagable->id_documento_remesa,
                 'monto_autorizado_remesa' => $transaccion_pagable->monto_autorizado_remesa,
+                'alert_icon' => $alert
             );
         }
         $datos_pago = array(
