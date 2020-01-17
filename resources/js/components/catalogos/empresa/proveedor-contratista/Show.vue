@@ -55,6 +55,10 @@
                                                                 <th class="align">Tipo:</th>
                                                                 <td>{{proveedorContratista.tipo}}</td>
                                                             </tr>
+                                                            <tr>
+                                                                <th class="align">Emite Factura:</th>
+                                                                <td>{{proveedorContratista.emite_factura_format}}</td>
+                                                            </tr>
                                                             <tr v-if="proveedorContratista.efo">
                                                                 <th class="align">Efo:</th>
                                                                 <td><small v-if="proveedorContratista.efo.estado.id == 2 || proveedorContratista.efo.estado.id == 0" class="badge" 

@@ -36,7 +36,8 @@ class Empresa extends Model
         'dias_credito',
         'no_proveedor_virtual',
         'porcentaje',
-        'tipo_cliente'
+        'tipo_cliente',
+        'emite_factura'
     ];
 
     public function cuentasEmpresa()
@@ -189,7 +190,7 @@ class Empresa extends Model
     }
 
     public function validaRFC($data){
-        if(isset($data->rfc)){
+        if(isset($data->rfc) && $data->rfc != 'XXXXXXXXXXXX'){
             if(strlen(str_replace(" ","", $data->rfc))>0){
                 $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tien un formato inválido.');
                 $this->rfcValidaEfos($data->rfc);

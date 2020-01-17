@@ -39,15 +39,16 @@
                                         <label for="rfc" class="col-sm-5 col-form-label">R.F.C.: </label>
                                         <div class="col-sm-7">
                                             <input
-                                                    type="text"
-                                                    name="rfc"
-                                                    data-vv-as="R.F.C."
-                                                    v-validate="{required: true}"
-                                                    class="form-control"
-                                                    id="rfc"
-                                                    placeholder="R.F.C."
-                                                    v-model="rfc"
-                                                    :class="{'is-invalid': errors.has('rfc')}">
+                                                :disabled="emite_factura === 0"
+                                                type="text"
+                                                name="rfc"
+                                                data-vv-as="R.F.C."
+                                                v-validate="{required: true}"
+                                                class="form-control"
+                                                id="rfc"
+                                                placeholder="R.F.C."
+                                                v-model="rfc"
+                                                :class="{'is-invalid': errors.has('rfc')}">
                                             <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                                         </div>
                                     </div>
@@ -128,6 +129,35 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-12">
+                                   <div class="form-group row error-content">
+                                        <label for="emite_factura" class="col  sm- col-form-label">Emite Factura: </label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group btn-group-toggle" style="margin-left:5%;">
+                                                <label class="btn btn-outline-secondary" :class="emite_factura === Number(1) ? 'active': ''"  :key="1">
+                                                    <input type="radio"
+                                                        class="btn-group-toggle"
+                                                        name="emite_factura"
+                                                        :id="'emite_factura' + 1"
+                                                        :value="1"
+                                                        autocomplete="on"
+                                                        v-model.number="emite_factura">
+                                                    Si
+                                                </label>
+                                                <label class="btn btn-outline-secondary" :class="emite_factura === Number(0) ? 'active': ''"  :key="0">
+                                                    <input type="radio"
+                                                        class="btn-group-toggle"
+                                                        name="emite_factura"
+                                                        :id="'emite_factura' + 0"
+                                                        :value="0"
+                                                        autocomplete="on"
+                                                        v-model.number="emite_factura">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -153,6 +183,7 @@ export default {
             porcentaje:'',
             tipo_empresa:'',
             tipo_cliente:0,
+            emite_factura:1,
         }
     },
     mounted() {
@@ -173,6 +204,7 @@ export default {
             this.dias_credito = '';
             this.porcentaje = '';
             this.tipo_empresa = '';
+            this.emite_factura = 1;
         },
         store(){
             return this.$store.dispatch('cadeco/proveedor-contratista/store', this.$data)
@@ -214,7 +246,16 @@ export default {
                 }
             });
         },
-},
+    },
+    watch:{
+        emite_factura(value){
+            if(value === 0){
+                this.rfc = 'XXXXXXXXXXXX';
+            }else{
+                this.rfc = '';
+            }
+        }
+    }
 
 }
 </script>
