@@ -95,6 +95,17 @@ class Empresa extends Model
         return $query->where('tipo_empresa', '=', 8);
     }
 
+    public function scopeNoDeducibles($query)
+    {
+        return $query->where('emite_factura', '=', 0);
+    }
+
+    public function scopeDeducibles($query)
+    {
+        return $query->where('emite_factura', '=', 1)
+            ->whereIn('tipo_empresa', [1,2,3,4]);
+    }
+
     public function scopeFacturasAutorizadas($query){
         return $query->has('facturas')->distinct('id_empresa');
     }
