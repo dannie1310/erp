@@ -26,7 +26,6 @@ class Destajista extends Empresa
 
     public function validaDuplicidadRfc($nuevos_datos)
     {
-
         $destajista = Destajista::whereRaw("(razon_social = '".$nuevos_datos->razon_social."' or rfc ='".$nuevos_datos->rfc."' )")
             ->where('id_empresa', '!=', $nuevos_datos->id_empresa)->first();
 

@@ -20,14 +20,14 @@ class ClienteObserver extends EmpresaObserver
     public function creating(Empresa $cliente)
     {
         parent::creating($cliente);
-        $cliente->validaDuplicidadRfc();
+        $cliente->validaDuplicidadRfc($cliente);
         $cliente->tipo_empresa = 16;
     }
 
     public function updating(Empresa $cliente)
     {
         parent::updating($cliente);
-        $cliente->validaDuplicidadRfc();
+        $cliente->validaDuplicidadRfc($cliente);
     }
 
     public function deleting(Empresa $cliente)
