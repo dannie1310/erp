@@ -192,10 +192,10 @@ class CtgEfos extends Model
     {
         switch ($this->estado){
             case(0):
-                return '<i class="fa fa-exclamation-triangle" style="color:red;" aria-hidden="true" title="Está empresa es un EFO"></i>';
+                return '<i class="fa fa-exclamation-triangle" style="color:red;" aria-hidden="true" title="Esta empresa es un EFO"></i>';
                 break;
             case(2):
-                return '<i class="fa fa-exclamation-triangle" style="color:orange;" aria-hidden="true" title="Está empresa es un PRESUNTO EFO"></i>';
+                return '<i class="fa fa-exclamation-triangle" style="color:orange;" aria-hidden="true" title="Esta empresa es un PRESUNTO EFO"></i>';
                 break;
         }
          return '';
