@@ -85,6 +85,7 @@
                                 <th>Moneda</th>
                                 <th>Importe</th>
                                 <th>Saldo</th>
+                                <th></th>
                                 <th>Beneficiario</th>
                                 <th>Cuenta Cargo</th>
                                 <th>Fecha Pago</th>
@@ -110,6 +111,8 @@
                                 <td v-else-if="doc.solicitud" style="text-align: right">{{doc.solicitud.monto_format}}</td>
                                 <td v-if="doc.factura" style="text-align: right">{{doc.factura.saldo_format}}</td>
                                 <td v-else-if="doc.solicitud" style="text-align: right">{{doc.solicitud.saldo_format}}</td>
+                                <td v-if="doc.factura.empresa.efos" v-html="doc.factura.empresa.efos.alert_icon"></td>
+                                <td v-else></td>
                                 <td v-if="doc.factura">{{doc.factura.empresa.razon_social}}</td>
                                 <td v-else-if="doc.solicitud.empresa">{{doc.solicitud.empresa.razon_social}}</td>
                                 <td v-else-if="doc.solicitud.fondo">{{doc.solicitud.fondo.descripcion}}</td>
@@ -161,7 +164,7 @@
             find() {
                 this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', null);
                 return this.$store.dispatch('finanzas/carga-masiva-pago/find', {
-                    params: { include: ['partidas.solicitud.fondo','usuario', 'usuario_autorizo', 'estado', 'partidas','partidas.solicitud.empresa','partidas.factura','partidas.factura.empresa', 'partidas.moneda']},
+                    params: { include: ['partidas.solicitud.fondo','usuario', 'usuario_autorizo', 'estado', 'partidas','partidas.solicitud.empresa','partidas.factura','partidas.factura.empresa.efos', 'partidas.moneda']},
                     id: this.id
                 }).then(data => {
                     this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', data);
