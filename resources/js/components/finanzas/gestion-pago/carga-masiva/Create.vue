@@ -54,6 +54,7 @@
                                                             <th>Moneda</th>
                                                             <th class="th_money">Importe</th>
                                                             <th class="th_money">Saldo</th>
+                                                            <th></th>
                                                             <th>Beneficiario</th>
                                                             <th>Cuenta Cargo</th>
                                                             <th>Fecha Pago</th>
@@ -74,6 +75,7 @@
                                                                 <td>{{pago.moneda_documento}}</td>
                                                                 <td style="text-align: right">{{pago.monto_documento_format}}</td>
                                                                 <td style="text-align: right">{{pago.saldo_documento_format}}</td>
+                                                                <td v-html="pago.alert_icon"></td>
                                                                 <td >{{pago.beneficiario}}</td>
                                                                 <td >
                                                                     <div class="col-12" v-if="pago.estado.estado == 1 || pago.estado.estado == 10">

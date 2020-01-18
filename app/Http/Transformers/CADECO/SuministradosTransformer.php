@@ -23,6 +23,15 @@ class SuministradosTransformer extends TransformerAbstract
         'material'
     ];
 
+    /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'material'
+    ];
+
     public function transform(Suministrados $model)
     {
         return [

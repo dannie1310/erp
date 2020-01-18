@@ -8,12 +8,13 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Transaccion;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Contabilidad\CuentaEmpresa;
-use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\IGH\Usuario;
-use Illuminate\Database\Eloquent\Model;
 
 class Empresa extends Model
 {
@@ -35,7 +36,8 @@ class Empresa extends Model
         'dias_credito',
         'no_proveedor_virtual',
         'porcentaje',
-        'tipo_cliente'
+        'tipo_cliente',
+        'emite_factura'
     ];
 
     public function cuentasEmpresa()
@@ -91,6 +93,17 @@ class Empresa extends Model
     public function scopeBancos($query)
     {
         return $query->where('tipo_empresa', '=', 8);
+    }
+
+    public function scopeNoDeducibles($query)
+    {
+        return $query->where('emite_factura', '=', 0);
+    }
+
+    public function scopeDeducibles($query)
+    {
+        return $query->where('emite_factura', '=', 1)
+            ->whereIn('tipo_empresa', [1,2,3,4]);
     }
 
     public function scopeFacturasAutorizadas($query){
@@ -188,7 +201,7 @@ class Empresa extends Model
     }
 
     public function validaRFC($data){
-        if(isset($data->rfc)){
+        if(isset($data->rfc) && $data->rfc != 'XXXXXXXXXXXX'){
             if(strlen(str_replace(" ","", $data->rfc))>0){
                 $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tiene formato inválido.');
                 $this->rfcValidaEfos($data->rfc);
@@ -218,9 +231,9 @@ class Empresa extends Model
 
     public function validaEliminacion()
     {
-        if($this->transacciones()->withoutGlobalScopes()->count('id_empresa') > 0)
-        {
-            abort(403, 'Esta empresa cuenta con transacciones asociadas.');
+        $cantidad = $this->transacciones()->withoutGlobalScopes()->count('id_empresa');
+        if($cantidad > 0){
+            abort(403, 'La empresa "'. $this->razon_social.'" no puede ser eliminada porque tiene ' . $cantidad . ' transaccion(es) asociada(s).');
         }
     }
 

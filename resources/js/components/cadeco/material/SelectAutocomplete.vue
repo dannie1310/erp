@@ -47,10 +47,12 @@
         },
         watch: {
             val() {
+                if(this.val !== null && this.val !== undefined){
                 this.options.filter(x=> x.id === this.val).map(x => {
                     this.material = x;
                 });
                 this.$emit('input', this.material)
+                }
             },
             value(value) {
                 if(!value) {

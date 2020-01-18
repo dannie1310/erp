@@ -101,7 +101,7 @@
                                             <input type="number" class="form-control"
                                                    name="voz"
                                                    data-vv-as="Voz"
-                                                   v-model="voz"
+                                                   v-model="telefono"
                                                    id="voz"
                                                    placeholder="Número de Teléfono" maxlength="10">
                                                </div>
@@ -173,11 +173,10 @@
                 ciudad:'',
                 codigo_postal:'',
                 estado:'',
-                voz:'',
+                telefono:'',
                 fax:'',
                 contacto:'',
                 checkCentral:false,
-                id_banco:'',
             }
         },
 
@@ -189,14 +188,13 @@
 
         methods: {
             init() {
-                this.id_banco = this.id;
                 $(this.$refs.modal).modal('show');
                 this.descripcion = '';
                 this.direccion = '';
                 this.ciudad = '';
                 this.codigo_postal = '';
                 this.estado = '';
-                this.voz = '';
+                this.telefono = '';
                 this.fax ='';
                 this.contacto = '';
                 this.checkCentral = '';
@@ -210,14 +208,11 @@
                 });
             },
             store() {
-
+                this.$data.id_empresa = this.id;
                 return this.$store.dispatch('cadeco/sucursal/store',  this.$data )
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created',data)
-                        // this.bancos=[];
-
-
                     })
             }
         },
