@@ -64,8 +64,30 @@ class ProveedorContratistaService
         return $proveedorContratista->paginate($data);
     }
 
+    private function getValidacionLRFC($rfc)
+    {
+        $client = new \GuzzleHttp\Client();
+        $url = config('app.env_variables.SERVICIO_RFC_URL');
+        $token = config('app.env_variables.SERVICIO_CFDI_TOKEN');
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Accept'        => 'application/json',
+        ];
+        try{
+            $client->request('GET', $url."".$rfc, [
+                'headers' => $headers,
+            ]);
+        } catch (\Exception $e){
+            abort(500,"El RFC ingresado del proveedor no es válido ante el SAT");
+        }
+    }
+
     public function store(array $data)
     {
+        if($data["emite_factura"] == 1){
+            $this->getValidacionLRFC($data["rfc"]);
+        }
         return $this->repository->create($data);
     }
 
