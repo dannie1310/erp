@@ -59,10 +59,10 @@ class Cliente extends Empresa
             ->where('id_empresa', '!=', $nuevos_datos->id_empresa)->first();
 
         if(!is_null($cliente)) {
-            if ($cliente->rfc === $this->rfc) {
+            if (strcasecmp($cliente->rfc, $this->rfc) == 0) {
                 throw New \Exception('Este rfc se encuentra registrado previamente.');
             }
-            if ($cliente->razon_social === $this->razon_social) {
+            if (strcasecmp($cliente->razon_social, $this->razon_social) == 0) {
                 throw New \Exception('Esta razón social se encuentra registrada previamente.');
             }
         }

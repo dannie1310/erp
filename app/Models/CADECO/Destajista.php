@@ -30,10 +30,10 @@ class Destajista extends Empresa
             ->where('id_empresa', '!=', $nuevos_datos->id_empresa)->first();
 
         if(!is_null($destajista)) {
-            if ($destajista->rfc === $nuevos_datos->rfc) {
+            if (strcasecmp($destajista->rfc, $nuevos_datos->rfc) == 0) {
                 throw New \Exception('Este rfc se encuentra registrado previamente.');
             }
-            if ($destajista->razon_social === $nuevos_datos->razon_social) {
+            if (strcasecmp($destajista->razon_social, $nuevos_datos->razon_social) == 0) {
                 throw New \Exception('Esta razón social se encuentra registrada previamente.');
             }
         }
