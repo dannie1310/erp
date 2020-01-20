@@ -15,7 +15,7 @@ class DestajistaObserver extends EmpresaObserver
     public function creating(Empresa $destajista)
     {
         parent::creating($destajista);
-        $destajista->validaDuplicidadRfc();
+        $destajista->validaDuplicidadRfc($destajista);
         $destajista->tipo_empresa = 4;
         $destajista->dias_credito = $destajista->dias_credito == '' ? 0 : $destajista->dias_credito;
     }
@@ -23,7 +23,7 @@ class DestajistaObserver extends EmpresaObserver
     public function updating(Empresa $destajista)
     {
         parent::updating($destajista);
-        $destajista->validaDuplicidadRfc();
+        $destajista->validaDuplicidadRfc($destajista);
     }
 
     public function deleting(Empresa $destajista)

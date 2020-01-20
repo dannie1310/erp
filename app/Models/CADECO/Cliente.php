@@ -53,19 +53,17 @@ class Cliente extends Empresa
         return  $this->porcentaje_format. ' %';
     }
 
-    public function validaDuplicidadRfc()
+    public function validaDuplicidadRfc($nuevos_datos)
     {
-        $cliente = Cliente::whereRaw("(razon_social = '".$this->razon_social."' or rfc ='".$this->rfc."' )")->orderBy('id_empresa', 'desc')->first();
+        $cliente = Cliente::whereRaw("(razon_social = '".$nuevos_datos->razon_social."' or rfc ='".$nuevos_datos->rfc."' )")
+            ->where('id_empresa', '!=', $nuevos_datos->id_empresa)->first();
 
-        if(!is_null($cliente))
-        {
-            if(is_null($this->id_empresa) || ($this->id_empresa != $cliente->id_empresa)) { //creación
-                if ($cliente->rfc === $this->rfc) {
-                    throw New \Exception('Este rfc se encuentra registrado previamente.');
-                }
-                if ($cliente->razon_social === $this->razon_social) {
-                    throw New \Exception('Esta razón social se encuentra registrada previamente.');
-                }
+        if(!is_null($cliente)) {
+            if ($cliente->rfc === $this->rfc) {
+                throw New \Exception('Este rfc se encuentra registrado previamente.');
+            }
+            if ($cliente->razon_social === $this->razon_social) {
+                throw New \Exception('Esta razón social se encuentra registrada previamente.');
             }
         }
     }

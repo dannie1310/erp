@@ -138,6 +138,22 @@ class Material extends Model
         return $query->where('descripcion','!=','NULL');
     }
 
+    public function scopeMateriales($query){
+        return $query->where('tipo_material','=',1);
+    }
+
+    public function scopeServicios($query){
+        return $query->where('tipo_material','=',2)->where('equivalencia', '=', 1)->where('marca', '=', 1);
+    }
+
+    public function scopeHerramientas($query){
+        return $query->where('tipo_material','=',4);
+    }
+
+    public function scopeSuministrables($query){
+        
+        return $query->whereIn('tipo_material',[1,2,4])->where('equivalencia', '=', 1);
+    }
 
     public function scopeTipos($query, $tipos)
     {

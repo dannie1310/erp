@@ -113,13 +113,19 @@ class Factura extends Transaccion
                     {
                         $transaccion_rubro   = $factura->transaccion_rubro()->create($data["rubro"]);
                         if($transaccion_rubro){
-                            $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
-                            if($factura_repositorio)
-                            {
+                            if($data["factura_repositorio"]){
+                                $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
+                                if($factura_repositorio)
+                                {
+                                    DB::connection('cadeco')->commit();
+                                    return $factura;
+                                }else{
+                                    abort(400, "Hubo un error al registrar la factura en el repositorio");
+                                }
+
+                            } else {
                                 DB::connection('cadeco')->commit();
                                 return $factura;
-                            }else{
-                                abort(400, "Hubo un error al registrar la factura en el repositorio");
                             }
 
                         }else{

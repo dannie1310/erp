@@ -106,7 +106,7 @@
                                             <input type="number" class="form-control"
                                                    name="voz"
                                                    data-vv-as="Voz"
-                                                   v-model="sucursal.voz"
+                                                   v-model="sucursal.telefono"
                                                    @input="updateAttribute"
                                                    id="voz"
                                                    placeholder="Número de Teléfono" maxlength="10">
@@ -195,7 +195,7 @@
         props: ['id'],
         data() {
             return {
-                sucursal: null,
+                sucursal: [],
                 cargando: false,
                 checkCentral: false,
                 form:[],
@@ -227,21 +227,8 @@
             update() {
 
                 return this.$store.dispatch('cadeco/sucursal/update', {
-                    id: this.sucursal.id,
-                    data: {
-                            id_sucursal: this.sucursal.id,
-                            descripcion : this.sucursal.descripcion,
-                            direccion: this.sucursal.direccion,
-                            ciudad:this.sucursal.ciudad,
-                            codigo_postal: this.sucursal.codigo_postal,
-                            estado : this.sucursal.estado,
-                            telefono: this.sucursal.voz,
-                            fax: this.sucursal.fax,
-                            contacto: this.sucursal.contacto,
-                            checkCentral: this.checkCentral,
-
-                    },
-
+                    id: this.id,
+                    data: this.sucursal,
                 })
                     .then(data => {
                         this.$store.commit('cadeco/sucursal/UPDATE_SUCURSAL', data);

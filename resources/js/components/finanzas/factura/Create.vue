@@ -21,9 +21,15 @@
                 <form role="form" @submit.prevent="validate">
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group error-content">
-                                <label for="archivo">Archivo:</label>
+                        <div class="col-md-3">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input button" id="con_prestamo" v-model="dato.es_deducible" >
+                                <label class="custom-control-label" for="con_prestamo">Es Deducible</label>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group error-content" v-if="dato.es_deducible">
+                                <label for="archivo">Archivo de comprobante:</label>
                                 <input type="file" class="form-control" id="archivo" @change="onFileChange"
                                        row="3"
                                        v-validate="{required: true,  ext: ['xml'], size: 3072}"
@@ -36,8 +42,7 @@
                             </div>
                         </div>
                     </div>
-
-
+                    <hr />
 
                         <div class="row">
                             <div class="col-md-2">
@@ -61,7 +66,7 @@
                         <div class="col-md-10">
                             <div class="form-group error-content">
                                 <label for="fecha">Empresa:</label>
-                                <model-list-select
+                                <model-list-select v-if="dato.es_deducible"
                                         name="id_empresa"
                                         placeholder="Seleccionar o buscar por RFC y razón social"
                                         data-vv-as="Empresa"
@@ -70,6 +75,18 @@
                                         option-value="id"
                                         :custom-text="rfcAndRazonSocial"
                                         :list="empresas"
+                                        :isError="errors.has(`id_empresa`)">
+                                </model-list-select>
+                                <model-list-select
+                                        v-else
+                                        name="id_empresa"
+                                        placeholder="Seleccionar o buscar por razón social"
+                                        data-vv-as="Empresa"
+                                        v-validate="{required: true}"
+                                        v-model="dato.id_empresa"
+                                        option-value="id"
+                                        option-text="razon_social"
+                                        :list="empresas_no_deducibles"
                                         :isError="errors.has(`id_empresa`)">
                                 </model-list-select>
                             </div>
@@ -241,9 +258,11 @@
                 es:es,
                 fechasDeshabilitadas:{},
                 empresas:[],
+                empresas_no_deducibles:[],
                 rubros:[],
                 monedas:[],
                 dato:{
+                    es_deducible:1,
                     fecha:'',
                     emision:'',
                     vencimiento:'',
@@ -277,6 +296,7 @@
                 this.dato.referencia = '';
                 this.dato.observaciones = '';
                 this.dato.archivo = '';
+                this.dato.es_deducible = 1;
                 this.dato.total = '';
                 this.dato.id_empresa = '';
                 this.dato.id_rubro = '';
@@ -294,7 +314,7 @@
             },
             getEmpresas() {
                 return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {sort: 'razon_social', order: 'asc' }
+                    params: {sort: 'razon_social', order: 'asc', scope:'Deducibles' }
                 })
                     .then(data => {
                         this.empresas = data.data;
@@ -309,8 +329,20 @@
                 })
                     .then(data => {
                         this.rubros = data.data;
+                    })
+                    .finally(()=>{
+                        this.getEmpresasNoDeducibles();
+                    })
+            },
+            getEmpresasNoDeducibles() {
+                return this.$store.dispatch('cadeco/empresa/index', {
+                    params: {sort: 'razon_social', order: 'asc', scope:'noDeducibles' }
+                })
+                    .then(data => {
+                        this.empresas_no_deducibles = data.data;
                         this.cargando = false;
                     })
+
             },
             getMonedas() {
                 this.cargando =true;
