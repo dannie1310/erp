@@ -37,4 +37,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
         return $this->show($id);
     }
+
+    public function getRFC($id)
+    {
+        return $this->show($id)->rfc;
+    }
 }
