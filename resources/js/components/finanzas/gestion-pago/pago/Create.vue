@@ -14,7 +14,7 @@
 
                         <div class="modal-body">
                             <div class="row justify-content-between">
-                                <div class="col-md-8">
+                                <div class="col-md-6">
                                      <label for="carga_bitacora" class="col-lg-12 col-form-label">Cargar Bitácora</label>
                                     <div class="col-lg-12">
                                         <input type="file" class="form-control" id="carga_bitacora"
@@ -27,6 +27,26 @@
                                                :class="{'is-invalid': errors.has('carga_bitacora')}"
                                         >
                                         <div class="invalid-feedback" v-show="errors.has('carga_bitacora')">{{ errors.first('carga_bitacora') }} (txt)</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="dispersion" class="col-lg-12 col-form-label">Seleccione Dispersión de recursos</label>
+                                    <div class="col-lg-12">
+                                        <select
+                                                type="text"
+                                                name="dispersion"
+                                                data-vv-as="Inventario"
+                                                
+                                                class="form-control"
+                                                id="dispersion"
+                                                v-model="id_dispersion"
+                                                :class="{'is-invalid': errors.has('dispersion')}"
+                                            >
+                                                    <option value>-- Dispersion --</option>
+                                                    <option v-for="dispersion in dispersiones" :value="dispersion.id" v-if="dispersiones">
+                                                        'Año: '{{ dispersion.remesa_liberada.remesa.año}}' Semana: '{{dispersion.remesa_liberada.remesa.semana}}' Remesa: '{{dispersion.remesa_liberada.remesa.tipo}}' ('{{dispersion.remesa_liberada.remesa.folio}}')'</option>
+                                            </select>
+                                            <div class="invalid-feedback" v-show="errors.has('dispersion')">{{ errors.first('dispersion') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -135,6 +155,8 @@
         data() {
             return {
                 bitacora:[],
+                dispersiones:[],
+                id_dispersion:'',
                 resumen:[],
                 cargando: false,
                 file_interbancario : null,
@@ -221,7 +243,8 @@
                         if(this.$refs.carga_bitacora.value === ''){
                             swal('¡Error!', 'Seleccione un archivo.', 'warning')
                         }else{
-                            this.cargarBitacora()
+                            // this.cargarBitacora()
+                            this.getDispersiones();
                         }
                         //this.cargarLayout()
                     }else{
@@ -234,6 +257,25 @@
                         swal('¡Error!', 'Archivo de bitácora no válido.', 'warning')
                     }
                 });
+            },
+            getDispersiones(){
+                this.cargando = true;
+                let self = this
+                return self.$store.dispatch('finanzas/distribuir-recurso-remesa/paginate', {
+                    params: {
+                        include: 'remesa_liberada',
+                        scope: 'pendientes',
+                        sort: 'id',
+                        order: 'DESC'
+                    }
+                })
+                    .then(data => {
+                        // console.log(data);
+                        this.dispersiones = data.data;
+                    })
+                    .finally(() => {
+                        // this.cargando = false;
+                    });
             },
 
             getRemesas() {
