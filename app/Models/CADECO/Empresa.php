@@ -50,11 +50,6 @@ class Empresa extends Model
         return $this->hasMany(Cuenta::class, 'id_empresa', 'id_empresa');
     }
 
-    public function efo()
-    {
-        return $this->belongsTo(CtgEfos::class,'rfc', 'rfc');
-    }
-
     public function compras(){
         return $this->hasMany(OrdenCompra::class, 'id_empresa', 'id_empresa');
     }
@@ -73,6 +68,11 @@ class Empresa extends Model
     public function cuentasBancarias()
     {
         return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function efo()
+    {
+        return $this->belongsTo(CtgEfos::class, 'rfc', 'rfc');
     }
 
     public function transacciones()
@@ -203,7 +203,7 @@ class Empresa extends Model
     public function validaRFC($data){
         if(isset($data->rfc) && $data->rfc != 'XXXXXXXXXXXX'){
             if(strlen(str_replace(" ","", $data->rfc))>0){
-                $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tien un formato inválido.');
+                $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tiene formato inválido.');
                 $this->rfcValidaEfos($data->rfc);
             }
         }
@@ -217,11 +217,8 @@ class Empresa extends Model
         }
     }
 
-    public function validarRfcEfo(){
-        
-    }
-
-    private function rfcValido($rfc){
+    private function rfcValido($rfc)
+    {
         if(strlen(str_replace(" ","", $rfc))>0){
             $reg_exp = "/^(([A-ZÑ&]{3,4})[\-]?([0-9]{2})([0][13578]|[1][02])(([0][1-9]|[12][\\d])|[3][01])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
                 "(([A-ZÑ&]{3,4})[\-]?([0-9]{2})([0][13456789]|[1][012])(([0][1-9]|[12][\\d])|[3][0])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
