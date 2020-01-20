@@ -172,6 +172,10 @@ class FacturaService
                 "razon_social"=>$this->arreglo_factura["emisor"]["nombre"]
             ]
         );
+        if(!$this->arreglo_factura["empresa_bd"])
+        {
+            abort(500,"El emisor del comprobante no esta dado de alta en el catálogo de proveedores / contratistas; la factura no puede ser registrada.");
+        }
     }
     private function getValidacionCFDI33($xml)
     {
@@ -209,12 +213,12 @@ class FacturaService
         $validaciones_proveedor_comprobante = $respuesta["detail"][1]["detail"][0]["message"];
         if($validaciones_proveedor_comprobante !== "OK" )
         {
-            abort(500,"Error en la validación del proveedor del comprobante: ".$validaciones_proveedor_comprobante);
+            abort(500,"Aviso SAT:\nError en la validación del proveedor del comprobante: ".$validaciones_proveedor_comprobante);
         }
         $validaciones_proveedor_complemento = $respuesta["detail"][2]["detail"][0]["message"];
         if($validaciones_proveedor_complemento !== "OK" )
         {
-            abort(500,"Error en la validación del proveedor del timbre: ".$validaciones_proveedor_complemento);
+            abort(500,"Aviso SAT:\nError en la validación del proveedor del timbre: ".$validaciones_proveedor_complemento);
         }
 
         $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');

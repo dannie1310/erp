@@ -36,6 +36,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function getEmpresa(Array $datos){
         $empresa = Empresa::where("rfc","=",$datos["rfc"])
             ->whereIn("tipo_empresa",[1,2,3,4])->first();
+        $salida = null;
 
         if($empresa){
             $salida =[
@@ -43,15 +44,6 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 "rfc"=>$empresa->rfc,
                 "razon_social"=>$empresa->razon_social,
                 "nuevo"=>0,
-            ];
-        } else {
-            $datos["tipo_empresa"] = 1;
-            $empresa = Empresa::create($datos);
-            $salida =[
-                "id_empresa"=>$empresa->id_empresa,
-                "rfc"=>$empresa->rfc,
-                "razon_social"=>$empresa->razon_social,
-                "nuevo"=>1,
             ];
         }
         return $salida;
@@ -97,7 +89,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             abort(403, 'Archivo cargado previamente:
             Registró: '.$factura_repositorio->usuario->nombre_completo.'
             BD: '.$factura_repositorio->proyecto->base_datos.'
-            Proyecto: '.$factura_repositorio->obra->nombre.'
+            Proyecto: '.$factura_repositorio->obra.'
             Factura: '.$factura_repositorio->factura->numero_folio.'
             Fecha: '.$factura_repositorio->fecha_hora_registro_format);
         }

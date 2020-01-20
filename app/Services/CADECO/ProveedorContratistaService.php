@@ -97,6 +97,11 @@ class ProveedorContratistaService
     }
 
     public function update(array $data, $id){
+        $actual_rfc = $this->repository->getRFC($id);
+        if($data["emite_factura"] == 1 && $data["rfc_nuevo"] != $actual_rfc)
+        {
+            $this->getValidacionLRFC($data["rfc_nuevo"]);
+        }
         return $this->repository->update($data, $id);
     }
     

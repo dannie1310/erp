@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
 
+use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
@@ -34,10 +35,13 @@ class FacturaRepositorio extends Model
         return $this->belongsTo(Proyecto::class, 'id_proyecto', 'id');
     }
 
-    public function obra()
+    public function getObraAttribute()
     {
-        return $this->belongsTo(ConfiguracionObra::class, 'id_obra', 'id_obra')
-            ->where("id_proyecto","=",$this->id_proyecto);
+
+        $configuracion_obra =  ConfiguracionObra::withoutGlobalScopes()
+            ->where("id_proyecto","=",$this->id_proyecto)
+            ->where("id_obra","=", $this->id_obra)->first();
+        return $configuracion_obra->nombre;
     }
 
     public function usuario()
