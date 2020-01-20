@@ -19,6 +19,7 @@ return [
         'SERVICIO_RFC_URL' => env('SERVICIO_RFC_URL'),
         'SERVICIO_CFDI_TOKEN' => env('SERVICIO_CFDI_TOKEN'),
         'SERVICIO_CFDI_ENV' => env('SERVICIO_CFDI_ENV'),
+        'SERVICIO_CFDI_EN_USO' => env('SERVICIO_CFDI_EN_USO'),
     ],
     /*
     |--------------------------------------------------------------------------
