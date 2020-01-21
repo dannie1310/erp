@@ -1,5 +1,5 @@
 <template>
-    <body class="hold-transition sidebar-mini" :class="$router.currentRoute.name == 'portal' ? 'sidebar-collapse' : ''">
+    <body class="hold-transition sidebar-mini layout-footer-fixed layout-navbar-fixed" :class="$router.currentRoute.name == 'portal' ? 'sidebar-collapse' : ''">
     <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
     <div v-if="currentUser && $router.currentRoute.name != 'google-2fa'" class="wrapper">

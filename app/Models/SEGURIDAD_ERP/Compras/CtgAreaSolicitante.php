@@ -19,9 +19,15 @@ class CtgAreaSolicitante extends Model
         return $this->hasMany(AreaSolicitanteUsuario::class, 'id_area_solicitante','id');
     }
 
-    public function scopeUsuarioBelongs($query)
+    public function scopeAsignadas($query)
     {
         return $query->join('Compras.areas_solicitantes_usuario', 'Compras.ctg_areas_solicitantes.id', 'Compras.areas_solicitantes_usuario.id_area_solicitante')
             ->where('Compras.areas_solicitantes_usuario.id_usuario','=', auth()->id())->select('Compras.ctg_areas_solicitantes.*');
+    }
+
+    public function scopeUsuario($query,$user_id)
+    {
+        $usuario = Usuario::query()->find($user_id);
+        return $usuario->areasSolicitantes();
     }
 }

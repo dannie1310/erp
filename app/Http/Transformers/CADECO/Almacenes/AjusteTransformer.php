@@ -41,7 +41,7 @@ class AjusteTransformer extends TransformerAbstract
             'observaciones' => $model->observaciones,
             'estado' => $model->estado,
             'folio' => $model->numero_folio,
-            'numero_folio_format' => $model->numero_folio_format_orden,
+            'numero_folio_format' => $model->numero_folio_format,
             'referencia' => $model->referencia,
             'estado_format' => $model->estatus,
             'opciones'=> $model->opciones,

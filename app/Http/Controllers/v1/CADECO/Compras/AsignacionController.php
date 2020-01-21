@@ -42,7 +42,6 @@ class AsignacionController extends Controller
 
     public function __construct(Manager $fractal, AsignacionService $service, AsignacionTransformer $transformer)
     {
-//        var_dump('Controller asignacion');
         $this->middleware('auth:api');
         $this->middleware('context');
 
@@ -61,9 +60,9 @@ class AsignacionController extends Controller
         return response()->json($respuesta, 200);
     }
 
-    public function descargaLayout()
+    public function descargaLayout($id)
     {
-//        var_dump('Descarga de layout de controlador asignacion controller');
-        return $this->service->descargaLayout();
+//        Falta descarga
+        var_dump('Descarga de layout de controlador asignacion',$id);
     }
 }

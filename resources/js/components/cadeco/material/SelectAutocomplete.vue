@@ -36,8 +36,9 @@
                         this.options = data.data.map(i => ({
                             id: i.id,
                             label: i.descripcion,
+                            descripcion: i.descripcion,
                             numero_parte: i.numero_parte,
-                            unidad: i.unidad,
+                            unidad: i.unidad
                         }))
 
                         callback(null, this.options)

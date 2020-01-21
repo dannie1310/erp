@@ -10,9 +10,9 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
-use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgAreaCompradoraTransformer;
-use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgAreaSolicitanteTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Compras\CtgTipoTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\TipoAreaCompradoraTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Compras\TipoAreaSolicitanteTransformer;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use League\Fractal\TransformerAbstract;
 
@@ -70,7 +70,7 @@ class SolicitudComplementoTransformer extends TransformerAbstract
 
         if($area = $model->area_compradora)
         {
-            return $this->item($area, new CtgAreaCompradoraTransformer);
+            return $this->item($area, new TipoAreaCompradoraTransformer);
         }
         return null;
     }
@@ -84,7 +84,7 @@ class SolicitudComplementoTransformer extends TransformerAbstract
     {
         if($area = $model->area_solicitante)
         {
-            return $this->item($area, new CtgAreaSolicitanteTransformer);
+            return $this->item($area, new TipoAreaSolicitanteTransformer);
         }
         return null;
     }

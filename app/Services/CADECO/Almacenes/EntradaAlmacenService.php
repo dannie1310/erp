@@ -11,7 +11,7 @@ namespace App\Services\CADECO\Almacenes;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EntradaMaterial;
-use App\PDF\EntradaAlmacenFormato;
+use App\PDF\Almacenes\EntradaAlmacenFormato;
 use App\Repositories\CADECO\EntradaAlmacen\Repository;
 
 class EntradaAlmacenService
@@ -75,8 +75,8 @@ class EntradaAlmacenService
             'id_antecedente' => $data['id_orden_compra'],
             'remision' => $data['remision'],
             'fecha' => $data['fecha'],
-            'observaciones' => $data['orden_compra']['observaciones'],
-            'partidas' =>  $data['partidas'][0]
+            'observaciones' => $data['observaciones'],
+            'partidas' =>  $data['partidas']
         ];
         return $this->repository->create($datos);
     }

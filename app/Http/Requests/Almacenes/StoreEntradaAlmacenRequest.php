@@ -40,7 +40,8 @@ class StoreEntradaAlmacenRequest extends FormRequest
         return [
             'remision' => ['required'],
             'id_orden_compra' => ['required', 'exists:cadeco.dbo.transacciones,id_transaccion'],
-            'orden_compra' => ['required'],
+            'observaciones' => ['required'],
+            'fecha' => ['required'],
             'partidas' => ['required']
         ];
     }

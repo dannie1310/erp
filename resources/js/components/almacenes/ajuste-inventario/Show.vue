@@ -113,7 +113,6 @@
         props: ['id' , 'pagina', 'tipo'],
         data() {
             return {
-                motivo: '',
                 ajustes: ''
             }
         },

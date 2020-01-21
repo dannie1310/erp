@@ -28,10 +28,10 @@
                 </div>
             <div class="form-group row">
                 <div class="col">
-                    <button type="submit" @click="crear" class="btn btn-outline-primary pull-right" :disabled="!cambio" v-if="!remesa">
+                    <button type="submit" @click="crear" class="btn btn-outline-primary float-right" :disabled="!cambio" v-if="!remesa">
                         <i class="fa fa-save"></i>
                     </button>
-                    <button type="submit" @click="validate" class="btn btn-outline-primary pull-right" v-else>
+                    <button type="submit" @click="validate" class="btn btn-outline-primary float-right" v-else>
                         <i class="fa fa-save"></i>
                     </button>
                 </div>

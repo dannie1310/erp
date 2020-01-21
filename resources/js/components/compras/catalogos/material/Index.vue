@@ -33,7 +33,7 @@
                     { title: 'Número Parte', field: 'numero_parte',sortable: true, thComp: require('../../../globals/th-Filter')},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
                     { title: 'Unidad', field: 'unidad', thClass: 'th_unidad', tdClass: 'td_unidad', sortable: true},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,

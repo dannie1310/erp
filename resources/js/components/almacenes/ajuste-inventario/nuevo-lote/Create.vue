@@ -9,7 +9,7 @@
                                 <div class="col-12">
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
-                                            <div class="col-12 table-responsive">
+                                            <div class="col-12">
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
@@ -20,7 +20,7 @@
                                                         <th class="bg-gray-light th_money_input">Cantidad</th>
                                                         <th class="bg-gray-light th_money_input">Monto Total</th>
                                                         <th class="bg-gray-light th_money_input">Monto Pagado</th>
-                                                        <th class="bg-gray-light th_index">
+                                                        <th class="bg-gray-light icono">
                                                             <button type="button" class="btn btn-sm btn-outline-success" @click="agregar" :disabled="cargando">
                                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                                 <i class="fa fa-plus" v-else></i>
@@ -120,7 +120,7 @@
                                                             </div>
                                                         </td>
                                                         <td style="text-align:center">
-                                                            <button class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                         </td>
                                                     </tr>
                                                     </tbody>

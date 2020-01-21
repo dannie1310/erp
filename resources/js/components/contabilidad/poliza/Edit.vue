@@ -269,7 +269,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <button class="btn btn-info pull-right" type="submit"
+                                <button class="btn btn-info float-right" type="submit"
                                         :disabled="errors.count() > 0 || !cuadrado || !cambio">
                                     Guardar Cambios
                                 </button>

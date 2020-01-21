@@ -98,4 +98,26 @@ class Poliza extends Model
     public function valido() {
         return $this->hasOne(PolizaValido::class, 'id_int_poliza');
     }
+
+    public function getNumeroFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->id_int_poliza);
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
+    }
+    public function getFechaHoraRegistroFormatAttribute()
+    {
+        $date = date_create($this->timestamp_regsitro);
+        return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public function getFechaHoraRegistroOrdenAttribute()
+    {
+        $date = date_create($this->timestamp_regsitro);
+        return date_format($date,"YmdHis");
+    }
 }

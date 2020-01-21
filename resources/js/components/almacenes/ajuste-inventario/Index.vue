@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12"  v-if="$root.can('registrar_ajuste_positivo') || $root.can('registrar_ajuste_negativo')" :disabled="cargando">
-            <button @click="create" class="btn btn-app btn-info pull-right">
+            <button @click="create" class="btn btn-app btn-info float-right">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar Ajuste
@@ -33,14 +33,14 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date')},
-                    { title: 'Almacén', field: 'id_almacen',sortable: true, thComp: require('../../globals/th-Filter')},
-                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Almacén', field: 'id_almacen',sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Tipo', field: 'opciones', sortable: true},
-                    { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../globals/th-Filter')},
+                    { title: 'Observaciones', field: 'observaciones', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Estatus', field: 'estado', sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

@@ -2,6 +2,7 @@
 
 namespace App\CSV;
 
+use App\Models\CADECO\Cambio;
 use App\Models\CADECO\CotizacionCompra;
 use App\Utils\ValidacionSistema;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -9,6 +10,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+use PhpOffice\PhpSpreadsheet\Style\Protection;
 
 class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
 {
@@ -24,15 +26,17 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
     {
         $this->verifica = new ValidacionSistema();
         $this->cotizacion = $cotizacion;
-        $this->tc_partida_euro = 22.8097;
-        $this->tc_partida_dlls = 18.6361;
 
-//        $this->complemento = $cotizacion->complemento;
+        $tipo_cambio = Cambio::where('fecha', '=', function ($query){
+            $query->from('dbo.cambios')
+                ->selectRaw('fecha')
+                ->orderBy('fecha', 'desc')->take(1);
+        })->get()->toArray();
+        foreach ($tipo_cambio as $k => $v)
+            $this->tipo_cambio[$v['id_moneda']] = $v;
 
-//        $tipo_cambio = Cambio::orderBy('fecha', 'desc')->first();
-//        dd($tipo_cambio);
-//        foreach ($tipo_cambio as $k => $v)
-//            $this->tipo_cambio[$v['id_moneda']] = $v;
+        $this->tc_partida_euro = $cotizacion->complemento->tc_eur > 0?$cotizacion->complemento->tc_eur:$this->tipo_cambio[3]['cambio'];
+        $this->tc_partida_dlls = $cotizacion->complemento->tc_usd > 0?$cotizacion->complemento->tc_usd:$this->tipo_cambio[2]['cambio'];
     }
 
     /**
@@ -44,14 +48,23 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
         return [
             AfterSheet::class    => function(AfterSheet $event) {
                 $cellRange = 'A1:L2'; // All headers
+
                 $event->sheet->getDelegate()->getStyle($cellRange)->applyFromArray([
                     'font' => [
                         'bold' => true
                     ]]);
                 $event->sheet->getProtection()->setSheet(true);
 
+                $event->sheet->getColumnDimension('B')->setAutoSize(false);
+                $event->sheet->getColumnDimension('C')->setAutoSize(false);
+                $event->sheet->getColumnDimension('L')->setAutoSize(false);
+
                 $i=2;
                 foreach ($this->cotizacion->cotizaciones as $cot){
+                    $datos = $cot->id_material;
+                    $cadena_json_id = json_encode($datos);
+                    $cadena_encriptar = $cadena_json_id . ">";
+                    $firmada = $this->verifica->encripta($cadena_encriptar);
                     $i++;
                     $event->sheet->setCellValue("A".$i, ($i-2));
                     $event->sheet->setCellValue("G".$i, 0);
@@ -60,7 +73,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $event->sheet->setCellValue("F".$i, $cot['cantidad']);
                     $event->sheet->setCellValue("B".$i, '['.$cot->material->numero_parte.'] '.$cot->material->descripcion);
                     $event->sheet->setCellValue("D".$i, $cot->material->unidad);
-                    $event->sheet->setCellValue("C".$i, $cot->material->id_material);
+                    $event->sheet->setCellValue("C".$i, $firmada);
 
                     //MONEDAS
                     $objValidation = $event->sheet->getCell('J'.$i)->getDataValidation();
@@ -78,17 +91,19 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $event->sheet->setCellValue('K'.$i,'=IF(J'.$i.'="EURO",I'.$i.'*'.$this->tc_partida_euro.'/1,IF(J'.$i.'="DOLAR USD",I'.$i.'*'.$this->tc_partida_dlls.'/1, IF(J'.$i.'="PESO MXP",I'.$i.',0)))');
                     $event->sheet->setCellValue("I".$i, '=G'.$i.'*E'.$i.'-((G'.$i.'*E'.$i.'*H'.$i.')/100)');
 
-                    $event->sheet->protectCells('G'.$i.':J'.$i, $this->cotizacion->numero_folio);
-                    $event->sheet->protectCells('G'.$i, $this->cotizacion->numero_folio);
-                    $event->sheet->protectCells('L'.$i, $this->cotizacion->numero_folio);
-                    $event->sheet->protectCells('K'.$i, $this->cotizacion->numero_folio);
+                    $event->sheet->getStyle('G'.$i.':H'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                    $event->sheet->getStyle('J'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                    $event->sheet->getStyle('L'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 }
-                $event->sheet->protectCells('G'.($i+1), $this->cotizacion->numero_folio);
-                $event->sheet->protectCells('G'.($i+7), $this->cotizacion->numero_folio);
-                $event->sheet->protectCells('G'.($i+11).':G'.($i+17), $this->cotizacion->numero_folio);
-
-//                $tc_partida_euro = $this->complemento->tc_eur > 0?$this->complemento->tc_eur:$this->tipo_cambio[3]['cambio'];
-//                $tc_partida_dlls = $this->complemento->tc_usd > 0?$this->complemento->tc_usd:$this->tipo_cambio[2]['cambio'];
+                $event->sheet->getStyle('G'.($i+1))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+7))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+11))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+12))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+13))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+14))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+15))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+16))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+17))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
 
                 $event->sheet->setCellValue("G".($i+2), '=SUMIF(J3:J'.$i.',"PESO MXP",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"PESO MXP",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+3), '=SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')*G'.($i+1).'/100)');
@@ -109,9 +124,13 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("F".($i+11), 'Fecha de Cotizacion');
                 $event->sheet->setCellValue("G".($i+11), date("d/m/Y"));
                 $event->sheet->setCellValue("F".($i+12), 'Pago en Parcialdades (%)');
+                $event->sheet->setCellValue("G".($i+12), 0);
                 $event->sheet->setCellValue("F".($i+13), '% Anticipo');
+                $event->sheet->setCellValue("G".($i+13), 0);
                 $event->sheet->setCellValue("F".($i+14), 'Credito (dias)');
+                $event->sheet->setCellValue("G".($i+14), 0);
                 $event->sheet->setCellValue("F".($i+15), 'Tiempo de Entraga (dias)');
+                $event->sheet->setCellValue("G".($i+15), 0);
                 $event->sheet->setCellValue("F".($i+16), 'Vigencia (dias)');
                 $event->sheet->setCellValue("F".($i+17), 'Observaciones Generales');
                 $event->sheet->setCellValue("G".($i+5), $this->tc_partida_dlls);
@@ -132,7 +151,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
 
     public function headings(): array
     {
-        return array([' ',' ',' ',' ',$this->cotizacion->id_transaccion,'#'.$this->cotizacion->numero_folio,$this->cotizacion->empresa->razon_social],
+        return array([' ',' ',' ',' ',' ',' ',$this->cotizacion->empresa->razon_social],
         ['#','DESCRIPCION','IDENTIFICADOR','UNIDAD','CANTIDAD_SOLICITADA','CANTIDAD_APROBADA','Precio Unitario','% Descuento','Precio Total','Moneda',
             'Precio Total Moneda Conversión','Observaciones']);
     }

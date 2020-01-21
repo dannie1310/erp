@@ -32,7 +32,7 @@
                     { title: 'Familia', field: 'tipo_material',sortable: true},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter')},
                     { title: 'Unidad', field: 'unidad', sortable: true},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,

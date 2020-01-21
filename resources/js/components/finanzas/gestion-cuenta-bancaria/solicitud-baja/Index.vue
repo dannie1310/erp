@@ -36,7 +36,7 @@
                     { title: 'Banco', field: 'banco', sortable: false},
                     { title: 'Cuenta/CLABE', field: 'cuenta', sortable: false },
                     { title: 'Estatus', field: 'estado'},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -86,7 +86,7 @@
                     cuentas.forEach(function (cuenta, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            folio: cuenta.numero_folio_format_orden,
+                            folio: cuenta.numero_folio_format,
                             id: cuenta.id,
                             fecha: cuenta.fecha_format,
                             empresa: cuenta.empresa.razon_social,

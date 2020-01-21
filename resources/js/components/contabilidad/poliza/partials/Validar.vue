@@ -1,5 +1,5 @@
 <template>
-    <button v-if="$root.can('validar_prepoliza') && (poliza.estatus == -2 || poliza.estatus == 0)" class="btn btn-app btn-info pull-right" @click="validar">
+    <button v-if="$root.can('validar_prepoliza') && (poliza.estatus == -2 || poliza.estatus == 0)" class="btn btn-app btn-info float-right" @click="validar">
         <i class="fa fa-check-square-o"></i> Validar
     </button>
 </template>

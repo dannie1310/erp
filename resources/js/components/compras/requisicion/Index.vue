@@ -1,10 +1,10 @@
 <template>
     <div class="row">
-        <!-- <div class="col-12">
-            <button @click="create_solicitud" v-if="" class="btn btn-app btn-info pull-right">
-                <i class="fa fa-plus"></i> Registrar Solicitud
+        <div class="col-12">
+            <button @click="create_requisicion" v-if="$root.can('registrar_requisicion_compra')" class="btn btn-app btn-info pull-right">
+                <i class="fa fa-plus"></i> Registrar Requisición
             </button>
-        </div>-->
+        </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
@@ -30,17 +30,18 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter'), sortable: true },
-                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date'), sortable: true },
+                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Folio Compuesto', field: 'folio'},
+                    { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, sortable: true },
                     { title: 'Observaciones', field: 'observaciones', sortable: true },
                     { title: 'Registró', field: 'id_usuario', sortable: true },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
 
 
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'id_transaccion',  order: 'desc'},
+                query: {include: ['registro', 'complemento'], sort: 'id_transaccion',  order: 'desc'},
                 search: '',
                 cargando: false
             }
@@ -56,29 +57,29 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/solicitud-compra/paginate', {
+                return this.$store.dispatch('compras/requisicion/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
-                        this.$store.commit('compras/solicitud-compra/SET_META', data.meta);
+                        this.$store.commit('compras/requisicion/SET_REQUISICIONES', data.data);
+                        this.$store.commit('compras/requisicion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
             },
-            create_solicitud() {
-                this.$router.push({name: 'solicitud-compra-create'});
+            create_requisicion() {
+                this.$router.push({name: 'requisicion-create'});
             },
 
         },
         computed: {
-            solicitudes(){
-                return this.$store.getters['compras/solicitud-compra/solicitudes'];
+            requisiciones(){
+                return this.$store.getters['compras/requisicion/requisiciones'];
             },
 
             meta(){
-                return this.$store.getters['compras/solicitud-compra/meta'];
+                return this.$store.getters['compras/requisicion/meta'];
             },
 
             tbodyStyle() {
@@ -86,22 +87,21 @@
             }
         },
         watch: {
-            solicitudes: {
-                handler(solicitudes) {
+            requisiciones: {
+                handler(requisiciones) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = solicitudes.map((solicitud, i) => ({
+                    self.$data.data = requisiciones.map((requisicion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: `# ${solicitud.numero_folio}`,
-                        fecha: new Date(solicitud.fecha).toDate(),
-                        observaciones: solicitud.observaciones,
-                        id_usuario: solicitud.usuario ? solicitud.usuario.nombre : '',
+                        numero_folio: requisicion.numero_folio_format,
+                        folio: requisicion.complemento ? requisicion.complemento.folio : '',
+                        fecha: new Date(requisicion.fecha).toDate(),
+                        observaciones: requisicion.observaciones,
+                        id_usuario: requisicion.registro ? requisicion.registro.nombre : '',
                         buttons: $.extend({}, {
-                            id: solicitud.id,
+                            id: requisicion.id,
                             show: true,
-                            edit: true,
-                            pdf: true,
-
+                            delete: self.$root.can('eliminar_requisicion_compra') ? true : false
                         })
                     }));
                 },

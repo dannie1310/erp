@@ -36,7 +36,7 @@
                                     <div class="invoice p-3 mb-3">
                                         <div class="row">
                                             <div class="col-9">
-                                                <h3>Pagos</h3>
+                                                <h6>Pagos</h6>
                                             </div>
                                             <div class="col-3">
                                                 <h6 align="right">Total: {{bitacora.length}}</h6>
@@ -160,7 +160,6 @@
                         }
                     })
                     .then(data => {
-                        console.log(data.resumen);
                         if(data.data.length > 0){
                             this.bitacora = data.data;
                             this.resumen = data.resumen;

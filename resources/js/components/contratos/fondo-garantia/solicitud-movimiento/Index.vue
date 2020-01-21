@@ -38,7 +38,7 @@
                     { title: 'Importe', field: 'importe', tdClass: 'money', thClass: 'th_money'},
                     { title: 'Observaciones', field: 'observaciones'},
                     { title: 'Estatus', field: 'ctg_tipos_mov_sol__estado_resultante_desc', thComp: require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons')},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
