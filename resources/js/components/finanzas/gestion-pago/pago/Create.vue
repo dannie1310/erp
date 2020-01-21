@@ -20,7 +20,7 @@
                                         <input type="file" class="form-control" id="carga_bitacora"
                                                @change="onFileChange"
                                                row="3"
-                                               v-validate="{ ext: ['txt']}"
+                                               v-validate="{required:true, ext: ['txt']}"
                                                name="carga_bitacora"
                                                data-vv-as="Bitácora"
                                                ref="carga_bitacora"
@@ -36,7 +36,7 @@
                                                 type="text"
                                                 name="dispersion"
                                                 data-vv-as="Inventario"
-                                                
+                                                v-validate="{required:true}"
                                                 class="form-control"
                                                 id="dispersion"
                                                 v-model="id_dispersion"
@@ -44,7 +44,7 @@
                                             >
                                                     <option value>-- Dispersion --</option>
                                                     <option v-for="dispersion in dispersiones" :value="dispersion.id" v-if="dispersiones">
-                                                        'Año: '{{ dispersion.remesa_liberada.remesa.año}}' Semana: '{{dispersion.remesa_liberada.remesa.semana}}' Remesa: '{{dispersion.remesa_liberada.remesa.tipo}}' ('{{dispersion.remesa_liberada.remesa.folio}}')'</option>
+                                                        Año: {{ dispersion.remesa_liberada.remesa.año}} Semana: {{dispersion.remesa_liberada.remesa.semana}} Remesa: {{dispersion.remesa_liberada.remesa.tipo}} ({{dispersion.remesa_liberada.remesa.folio}})</option>
                                             </select>
                                             <div class="invalid-feedback" v-show="errors.has('dispersion')">{{ errors.first('dispersion') }}</div>
                                     </div>
@@ -132,14 +132,8 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="salir">
-                                <span v-if="cargando">
-                                    <i class="fa fa-spin fa-spinner"></i>
-                                </span>
-                                <span v-else>
-                                    Cerrar
-                                </span>
-                            </button>
+                            <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" v-if="bitacora.length === 0">Validar</button>
                             <button type="button" class="btn btn-primary" @click="store" v-if="bitacora.length > 0 && resumen.pagables > 0 && $root.can('registrar_pagos_bitacora')">Registrar</button>
                         </div>
                     </form>
@@ -164,7 +158,7 @@
             }
         },
         mounted() {
-
+            this.getDispersiones();
         },
         computed: {
         },
@@ -174,6 +168,7 @@
                 var formData = new FormData();
                 formData.append('bitacora',  this.file_interbancario);
                 formData.append('bitacora_nombre',  this.file_interbancario_name);
+                formData.append('id_dispersion',  this.id_dispersion);
                 return this.$store.dispatch('finanzas/gestion-pago/cargarBitacora',
                     {
                         data: formData,
@@ -218,9 +213,9 @@
                     this.file_interbancario_name = files[0].name;
                     this.createImage(files[0]);
                 }
-                setTimeout(() => {
-                    this.validate()
-                }, 500);
+                // setTimeout(() => {
+                //     this.validate()
+                // }, 500);
             },
 
             salir(){
@@ -240,21 +235,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result){
-                        if(this.$refs.carga_bitacora.value === ''){
-                            swal('¡Error!', 'Seleccione un archivo.', 'warning')
-                        }else{
-                            // this.cargarBitacora()
-                            this.getDispersiones();
-                        }
-                        //this.cargarLayout()
-                    }else{
-                        if(this.$refs.carga_bitacora.value !== ''){
-                            this.$refs.carga_bitacora.value = '';
-                            this.file_interbancario = null;
-                        }
-                        this.$validator.errors.clear();
-                        this.bitacora = [];
-                        swal('¡Error!', 'Archivo de bitácora no válido.', 'warning')
+                        this.cargarBitacora();
                     }
                 });
             },

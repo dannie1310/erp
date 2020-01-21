@@ -288,7 +288,169 @@ class GestionPagoService
         );
     }
 
-    public function validarBitacora($bitacora, $bitacora_nombre){
+    public function validarBitacora($bitacora, $bitacora_nombre, $id_dispersion){
+        $file_fingerprint = hash_file('md5', $bitacora);
+        if(BitacoraSantander::query()->where('hash_file_bitacora', '=', $file_fingerprint)->first()){
+            abort(403, 'Archivo de bitácora procesado previamente.');
+        }
+
+        $registros_bitacora = array();
+        $doctos_repetidos = [];
+        foreach ($this->getTxtData($bitacora) as $key => $pago){
+            
+            if($c_cargo = Cuenta::query()->where('numero', $pago['cuenta_abono'])->first()){
+                continue;
+            }
+
+            if(!$cta_cargo = Cuenta::query()->where('numero', $pago['cuenta_cargo'])->pagadora()->first()) {
+                continue;
+            }
+            
+            if (strlen($pago['concepto']) > 10 && is_numeric(substr($pago['concepto'], 1, 9))) {
+                if ($documento = Documento::where('IDDocumento', '=', substr($pago['concepto'], 1, 9))->first()) {
+                    $registros_bitacora[] = $this->bitacoraPago($documento, $pago);
+                    continue;
+                }
+            }
+                 
+            $cuenta_abono = CuentaBancariaEmpresa::query()->where('cuenta_clabe', '=', $pago['cuenta_abono'])->first();
+            $cuenta_abono?'':abort(403, 'El número de cuenta "' . $pago['cuenta_abono'] . '" no está registrado.' );
+            
+            $dist_partidas = DistribucionRecursoRemesaPartida::query()->transaccionPago()->partidaVigente()
+                                ->where('id_cuenta_abono', '=', $cuenta_abono->id)
+                                ->where('id_distribucion_recurso', '=', $id_dispersion)->get();
+
+            if($dist_partidas->count() > 0){
+                $val = false;
+                foreach($dist_partidas as $dist_partida){
+                    $documento = $dist_partida->documento->documentoProcesado->where('IDProceso', '=', 4)->first();
+                    if(($documento->MontoAutorizadoPrimerEnvio + $documento->MontoAutorizadoSegundoEnvio) == $pago['monto']){
+                        $registros_bitacora[] = $this->bitacoraPago($dist_partida->documento, $pago);
+                        $val = true;
+                        break;
+                    }
+                }
+                if($val)continue;
+            }
+            // dd(Transaccion::whereIn('tipo_transaccion', [68,72])->where('id_empresa', '=', $cuenta_abono->id_empresa)->where('saldo')->get());
+            dd('pandi', $pago['monto'], $cuenta_abono);
+
+            $documentos = DocumentoProcesado::procesoAutorizado()->whereRaw('(MontoAutorizadoPrimerEnvio + MontoAutorizadoSegundoEnvio) = '. $pago['monto'])->get();
+            $dist_part = DistribucionRecursoRemesaPartida::query()->transaccionPago()->partidaVigente()
+                ->where('id_cuenta_abono', '=', $cuenta_abono->id)
+                ->whereIn('id_documento', $documentos->pluck('IDDocumento'))
+                ->whereNotIn('id_documento', array_values($doctos_repetidos))->get();
+                        if(count($dist_part) == 0){
+                            $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
+                            if($transaccion_pagada){
+                                $registros_bitacora[] = array(
+                                    'id_documento' => null,
+                                    'id_distribucion_recurso' => null,
+                                    'id_transaccion' => null,
+                                    'id_transaccion_tipo' => '   N/A   ',
+                                    'pago_a_generar' => 'N/A',
+                                    'aplicacion_manual' => true,
+                                    'estado' => ['id' => 0, 'estado' => 3, 'descripcion' => 'Pagada'],
+                                    'pagable' => false,
+                                    'concepto' => $pago['concepto'],
+                                    'beneficiario' => $pago['cuenta_abono'],
+                                    'monto' => $pago['monto'],
+                                    'cuenta_cargo' => ['id_cuenta_cargo' => $cta_cargo->id_cuenta,
+                                        'numero' => $cta_cargo->numero,
+                                        'abreviatura' => $cta_cargo->abreviatura,
+                                        'nombre' => $cta_cargo->empresa->razon_social,
+                                        'id_empresa' => $cta_cargo->empresa->id_empresa],
+                                    'cuenta_abono' => [
+                                        'id_cuenta_abono' => $cuenta_abono?$cuenta_abono->id:null,
+                                        'numero' => $cuenta_abono?$cuenta_abono->cuenta_clabe:null,
+                                        'abreviatura' => $pago['cuenta_abono'],
+                                        'nombre' => ''],
+                                    'referencia' => $pago['referencia'],
+                                    'referencia_docto' => '   N/A   ',
+                                    'origen_docto' => '   N/A   ',
+                                    'fecha_pago' => $pago['fecha']
+                                );
+                            }else {
+                                $registros_bitacora[] = array(
+                                    'id_documento' => null,
+                                    'id_distribucion_recurso' => null,
+                                    'id_transaccion' => null,
+                                    'id_transaccion_tipo' => '   N/A   ',
+                                    'pago_a_generar' => 'Pago a Cuenta (Requiere Aplicación Manual)',
+                                    'aplicacion_manual' => true,
+                                    'estado' => ['id' => 0, 'estado' => -3, 'descripcion' => '   N/A   '],
+                                    'pagable' => true,
+                                    'concepto' => $pago['concepto'],
+                                    'beneficiario' => $pago['cuenta_abono'],
+                                    'monto' => $pago['monto'],
+                                    'cuenta_cargo' => ['id_cuenta_cargo' => $cta_cargo->id_cuenta,
+                                        'numero' => $cta_cargo->numero,
+                                        'abreviatura' => $cta_cargo->abreviatura,
+                                        'nombre' => $cta_cargo->empresa->razon_social,
+                                        'id_empresa' => $cta_cargo->empresa->id_empresa],
+                                    'cuenta_abono' => [
+                                        'id_cuenta_abono' => $cuenta_abono?$cuenta_abono->id:null,
+                                        'numero' => $cuenta_abono?$cuenta_abono->cuenta_clabe:$pago['cuenta_abono'],
+                                        'abreviatura' => $pago['cuenta_abono'],
+                                        'nombre' => ''],
+                                    'referencia' => $pago['referencia'],
+                                    'referencia_docto' => '   N/A   ',
+                                    'origen_docto' => '   N/A   ',
+                                    'fecha_pago' => $pago['fecha']
+                                );
+                            }
+                        }else{
+                            if (count($dist_part) == 1) {
+                                $registros_bitacora[] = $this->bitacoraPago($dist_part[0]->documento, $pago);
+                            } else {
+                                /**
+                                 * Se valida si los documentos cuentan con facturas pendientes de pago
+                                 */
+                                $pendiente_pago = $this->pendientePago($dist_part);
+                                if(!is_null($pendiente_pago)) {
+                                    $doctos_repetidos[$pendiente_pago->IDDocumento] = $pendiente_pago->IDDocumento;
+                                    $registros_bitacora[] = $this->bitacoraPago($pendiente_pago, $pago);
+                                }else {
+                                    $registros_bitacora[] = array(
+                                        'id_documento' => null,
+                                        'id_distribucion_recurso' => null,
+                                        'id_transaccion' => null,
+                                        'id_transaccion_tipo' => '   N/A   ',
+                                        'pago_a_generar' => 'N/A',
+                                        'aplicacion_manual' => true,
+                                        'estado' => ['id' => 0, 'estado' => 3, 'descripcion' => 'Pagada'],
+                                        'pagable' => false,
+                                        'concepto' => $pago['concepto'],
+                                        'beneficiario' => $pago['cuenta_abono'],
+                                        'monto' => $pago['monto'],
+                                        'cuenta_cargo' => ['id_cuenta_cargo' => $cta_cargo->id_cuenta,
+                                            'numero' => $cta_cargo->numero,
+                                            'abreviatura' => $cta_cargo->abreviatura,
+                                            'nombre' => $cta_cargo->empresa->razon_social,
+                                            'id_empresa' => $cta_cargo->empresa->id_empresa],
+                                        'cuenta_abono' => [
+                                            'id_cuenta_abono' => $cuenta_abono ? $cuenta_abono->id : null,
+                                            'numero' => $cuenta_abono ? $cuenta_abono->cuenta_clabe : null,
+                                            'abreviatura' => $pago['cuenta_abono'],
+                                            'nombre' => ''],
+                                        'referencia' => $pago['referencia'],
+                                        'referencia_docto' => '   N/A   ',
+                                        'origen_docto' => '   N/A   ',
+                                        'fecha_pago' => $pago['fecha']
+                                    );
+                                }
+                            }
+                        }
+                    
+                
+            
+        }
+        return array(
+            'data' => $registros_bitacora,
+            'resumen' => $this->resumenBitacora($registros_bitacora, $bitacora_nombre)
+        );
+    }
+    public function validarBitacora_bis($bitacora, $bitacora_nombre, $id_dispersion){
         $file_fingerprint = hash_file('md5', $bitacora);
         if(BitacoraSantander::query()->where('hash_file_bitacora', '=', $file_fingerprint)->first()){
             abort(403, 'Archivo de bitácora procesado previamente.');
