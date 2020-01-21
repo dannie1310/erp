@@ -52,7 +52,7 @@ class CargaLayoutPagoService
         $this->repository->validarArchivo($layout_pagos);
         try{
             $arreglo_contenido_archivo = $this->getCSVData($layout_pagos);
-            $this->validaNumeroColumnasArreglo($arreglo_contenido_archivo,11);
+            $this->validaNumeroColumnasArreglo($arreglo_contenido_archivo,12);
             $arreglo_para_vista_pagos_layout = $this->getArreglo($arreglo_contenido_archivo);
         }catch (\Exception $e){
             abort(403, $e->getMessage());
@@ -158,10 +158,10 @@ class CargaLayoutPagoService
 
     public function descargarLayout()
     {
-        Storage::disk('inventario_fisico_descarga')->delete(Storage::disk('inventario_fisico_descarga')->allFiles());
+        Storage::disk('layout_pagos_descarga')->delete(Storage::disk('layout_pagos_descarga')->allFiles());
         $nombre_archivo = 'LayoutRegistroPagos_' . date('dmYY_His') . '.csv';
-        (new PagoLayout())->store($nombre_archivo, 'inventario_fisico_descarga');
-        return Storage::disk('inventario_fisico_descarga')->download($nombre_archivo);
+        (new PagoLayout())->store($nombre_archivo, 'layout_pagos_descarga');
+        return Storage::disk('layout_pagos_descarga')->download($nombre_archivo);
     }
 
     private function getArreglo($arreglo){
@@ -178,9 +178,16 @@ class CargaLayoutPagoService
 
     private function complementaPartida($partida){
         $transaccion_pagable = $this->repository->getTransaccionPagable($partida[0]);
-        $cuenta_cargo = $this->repository->getCuentaCargo($partida[6]);
-        $fecha_pago = $this->validaFechaPago($partida[7]);
-        $monto_pagado = $this->limpiaCadena($partida[10]);
+        if(isset($transaccion_pagable->empresa->efo->estado_badge))
+        {
+            $alert = $transaccion_pagable->empresa->efo->estado_badge;
+        }
+        else{
+            $alert = '';
+        }
+        $cuenta_cargo = $this->repository->getCuentaCargo($partida[7]);
+        $fecha_pago = $this->validaFechaPago($partida[8]);
+        $monto_pagado = $this->limpiaCadena($partida[11]);
         $datos_documento =[];
         if($transaccion_pagable){
             $datos_documento = array(
@@ -197,6 +204,7 @@ class CargaLayoutPagoService
                 "id_moneda_transaccion" => $transaccion_pagable->moneda->id_moneda,
                 'id_documento_remesa' => $transaccion_pagable->id_documento_remesa,
                 'monto_autorizado_remesa' => $transaccion_pagable->monto_autorizado_remesa,
+                'alert_icon' => $alert
             );
         }
         $datos_pago = array(
@@ -204,13 +212,13 @@ class CargaLayoutPagoService
             /*"cuenta_cargo" => $partida[6], # IMPORTA*/
             "fecha_pago" => $fecha_pago["fecha"], # IMPORTA
             "fecha_pago_s" => $fecha_pago["fecha_hora"], # IMPORTA
-            "referencia_pago" => $partida[8], # IMPORTA
+            "referencia_pago" => $partida[9], # IMPORTA
             "monto_pagado" => $monto_pagado, # IMPORTA
 
             "estado" => $this->getEstadoDocumento($transaccion_pagable, $monto_pagado),
             "id_cuenta_cargo" => $cuenta_cargo["id_cuenta"],
             /*"id_moneda_cuenta_cargo" =>  $cuenta_cargo["id_moneda"],*/
-            "tipo_cambio" => $partida[9], # IMPORTA
+            "tipo_cambio" => $partida[10], # IMPORTA
 
         );
         $partida_completa = array_merge($datos_pago,$datos_documento);
@@ -283,17 +291,26 @@ class CargaLayoutPagoService
 
     private function validaFechaPago($fecha_pago){
         $fecha_pago = DateTime::createFromFormat('d/m/Y', $fecha_pago);
-        $hoy_str = date('Y-m-d');
-        $hoy = new DateTime();
-        $hace_2Y_str = date("Y-m-d",strtotime($hoy_str."- 2 years"));
-        $hace_2Y = DateTime::createFromFormat('Y-m-d', $hace_2Y_str);
-        if($fecha_pago>$hoy || $fecha_pago<$hace_2Y){
-            $fecha_pago = $hoy;
+        if($fecha_pago)
+        {
+            $hoy_str = date('Y-m-d');
+            $hoy = new DateTime();
+            $hace_2Y_str = date("Y-m-d",strtotime($hoy_str."- 2 years"));
+            $hace_2Y = DateTime::createFromFormat('Y-m-d', $hace_2Y_str);
+            if($fecha_pago>$hoy || $fecha_pago<$hace_2Y){
+                $fecha_pago = $hoy;
+            }
+            $fechas = array(
+                "fecha_hora"=> $fecha_pago->format('Y-m-d H:i:s'),
+                "fecha"=>$fecha_pago->format('Y-m-d')
+            );
+        } else {
+            $fechas = array(
+                "fecha_hora"=> "",
+                "fecha"=>""
+            );
         }
-        $fechas = array(
-            "fecha_hora"=> $fecha_pago->format('Y-m-d H:i:s'),
-            "fecha"=>$fecha_pago->format('Y-m-d')
-        );
+
         return $fechas;
     }
 }

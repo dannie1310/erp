@@ -17,7 +17,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar Item por Contratista",
-                    text: "¿Estás seguro/a de que desea eliminar este item por contratista?",
+                    text: "¿Está seguro de que desea eliminar este item por contratista?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {

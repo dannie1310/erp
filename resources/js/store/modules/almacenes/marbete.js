@@ -87,7 +87,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Marbete",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -124,7 +124,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar Marbete",
-                    text: "¿Estás seguro/a de que desea eliminar este Marbete?",
+                    text: "¿Está seguro de que desea eliminar este Marbete?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {

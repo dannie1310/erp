@@ -83,7 +83,7 @@
                                                             <td colspan="2">
                                                                 <span  v-if="partida.contratista.con_cargo == 0">
                                                                     <i class="fa fa-user-o" aria-hidden="true" ></i>
-                                                                    Sin Cargo a:
+                                                                    A Consignación de:
                                                                 </span>
                                                                 <span v-else >
                                                                     <i class="fa fa-user" aria-hidden="true"  ></i>

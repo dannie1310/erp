@@ -8,10 +8,14 @@
 
 namespace App\Models\CADECO;
 
-use App\Models\CADECO\Contabilidad\CuentaEmpresa;
-use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
-use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Contabilidad\CuentaEmpresa;
+use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
+use App\Models\IGH\Usuario;
+use App\Events\IncidenciaCI;
 
 class Empresa extends Model
 {
@@ -29,7 +33,12 @@ class Empresa extends Model
         'razon_social',
         'UsuarioRegistro',
         'id_ctg_bancos',
-        'rfc'
+        'rfc',
+        'dias_credito',
+        'no_proveedor_virtual',
+        'porcentaje',
+        'tipo_cliente',
+        'emite_factura'
     ];
 
     public function cuentasEmpresa()
@@ -62,6 +71,21 @@ class Empresa extends Model
         return $this->hasMany(CuentaBancariaEmpresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function efo()
+    {
+        return $this->belongsTo(CtgEfos::class, 'rfc', 'rfc');
+    }
+
+    public function transacciones()
+    {
+        return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa');
+    }
+
+    public function usuario ()
+    {
+        return $this->belongsTo(Usuario::class, 'UsuarioRegistro', 'idusuario');
+    }
+
     public function scopeConCuentas($query)
     {
         return $query->has('cuentasEmpresa');
@@ -70,6 +94,17 @@ class Empresa extends Model
     public function scopeBancos($query)
     {
         return $query->where('tipo_empresa', '=', 8);
+    }
+
+    public function scopeNoDeducibles($query)
+    {
+        return $query->where('emite_factura', '=', 0);
+    }
+
+    public function scopeDeducibles($query)
+    {
+        return $query->where('emite_factura', '=', 1)
+            ->whereIn('tipo_empresa', [1,2,3,4]);
     }
 
     public function scopeFacturasAutorizadas($query){
@@ -86,9 +121,14 @@ class Empresa extends Model
         return $query->has('compras')->distinct('id_empresa')->orderBy('razon_social');
     }
 
-    public function scopeResponsableFondoFijo($query)
+    public function scopeProveedor($query)
     {
-        return $query->where('tipo_empresa',32);
+        return $query->whereIn('tipo_empresa',[1,2]);
+    }
+
+    public function scopeContratista($query)
+    {
+        return $query->whereIn('tipo_empresa',[2,3]);
     }
 
     public function scopeProveedorContratista($query)
@@ -99,6 +139,33 @@ class Empresa extends Model
     public function scopeDestajistas($query)
     {
         return $query->where('tipo_empresa',4);
+    }
+
+    public function scopeBanco($query)
+    {
+        return $query->where('tipo_empresa',8);
+    }
+
+    public function scopeCliente($query)
+    {
+        return $query->where('tipo_empresa',16);
+    }
+
+    public function scopeClienteComprador($query)
+    {
+        return $query->where('tipo_empresa',16)
+            ->whereIn("tipo_cliente", [1,3]);
+    }
+
+    public function scopeClienteInversionista($query)
+    {
+        return $query->where('tipo_empresa',16)
+            ->whereIn("tipo_cliente", [2,3]);
+    }
+
+    public function scopeResponsableFondoFijo($query)
+    {
+        return $query->where('tipo_empresa',32);
     }
 
     public function getTipoAttribute()
@@ -115,6 +182,15 @@ class Empresa extends Model
         if($this->tipo_empresa == 4){
             return 'Destajistas';
         }
+        if($this->tipo_empresa == 16 && $this->tipo_cliente == 1){
+            return 'Cliente Comprador';
+        }
+        if($this->tipo_empresa == 16 && $this->tipo_cliente == 2){
+            return 'Cliente Inversionista';
+        }
+        if($this->tipo_empresa == 16 && $this->tipo_cliente == 3){
+            return 'Cliente Comprador / Inversionista';
+        }
         if($this->tipo_empresa == 32){
             return 'Responsables Fondos Fijos';
         }
@@ -125,12 +201,60 @@ class Empresa extends Model
         return $query->has('cuentasBancarias');
     }
 
-    public function scopeTipoContratista($query)
-    {
-        return $query->where('tipo_empresa','!=',1);
+    public function validaRFC($data){
+        if(isset($data->rfc) && $data->rfc != 'XXXXXXXXXXXX'){
+            if(strlen(str_replace(" ","", $data->rfc))>0){
+                $this->rfcValido($data->rfc)?'':abort(403, 'El R.F.C. tiene formato inválido.');
+                $this->rfcValidaEfos($data->rfc);
+            }
+        }
     }
-    public function scopeContratista($query)
+
+    private function rfcValidaEfos($rfc)
     {
-        return $query->whereIn('tipo_empresa',[2,3]);
+        if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 0)->first()))
+        {
+            event(new IncidenciaCI(
+                ["id_tipo_incidencia"=>1,
+                    "rfc"=>$rfc,
+                    "empresa"=>$this->efo->razon_social,
+                ]
+            ));
+            abort(403, 'Esta empresa es un EFO.');
+        }else if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 2)->first()))
+        {
+            event(new IncidenciaCI(
+                ["id_tipo_incidencia"=>2,
+                    "rfc"=>$rfc,
+                    "empresa"=>$this->efo->razon_social,
+                ]
+            ));
+        }
+    }
+
+    private function rfcValido($rfc)
+    {
+        if(strlen(str_replace(" ","", $rfc))>0){
+            $reg_exp = "/^(([A-ZÑ&]{3,4})[\-]?([0-9]{2})([0][13578]|[1][02])(([0][1-9]|[12][\\d])|[3][01])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
+                "(([A-ZÑ&]{3,4})[\-]?([0-9]{2})([0][13456789]|[1][012])(([0][1-9]|[12][\\d])|[3][0])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
+                "(([A-ZÑ&]{3,4})[\-]?([02468][048]|[13579][26])[0][2]([0][1-9]|[12][\\d])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
+                "(([A-ZÑ&]{3,4})[\-]?([0-9]{2})[0][2]([0][1-9]|[1][0-9]|[2][0-8])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))$/";
+            return (bool)preg_match($reg_exp, $rfc);
+        }
+        return true;
+    }
+
+    public function validaEliminacion()
+    {
+        $cantidad = $this->transacciones()->withoutGlobalScopes()->count('id_empresa');
+        if($cantidad > 0){
+            abort(403, 'La empresa "'. $this->razon_social.'" no puede ser eliminada porque tiene ' . $cantidad . ' transaccion(es) asociada(s).');
+        }
+    }
+
+    public function getFechaHoraRegistroFormatAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"d/m/Y");
     }
 }

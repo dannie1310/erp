@@ -33,6 +33,16 @@ export default {
             state.currentSucursal = data ;
         },
 
+        INSERT_SUCURSAL(state, data){
+            state.sucursales = state.sucursales.concat(data);
+        },
+
+        DELETE_SUCURSAL(state, id) {
+            state.sucursales = state.sucursales.filter(sucursal => {
+                return sucursal.id != id
+            });
+        }
+
     },
 
     actions: {
@@ -77,12 +87,51 @@ export default {
                     });
             });
         },
+        delete(context, id) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Sucursal",
+                    text: "¿Está seguro de que deseas eliminar la sucursal?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + id)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Sucursal eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         store(context,payload){
 
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Sucursal",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -116,11 +165,50 @@ export default {
             });
 
         },
+        storeSucursalProveedor(context,payload){
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Sucursal",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'proveedor', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Sucursal registrado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+
+        },
 
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Actualizar Sucursal",
                     icon: "warning",
                     buttons: {
@@ -139,6 +227,46 @@ export default {
                         if (value) {
                             axios
                                 .patch(URI + payload.id, payload.data)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Sucursal actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        updateSucursalProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar Sucursal",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/proveedor', payload.data)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Sucursal actualizada correctamente", {

@@ -24,17 +24,14 @@ class EntradaMaterialPartidaObserver
     {
         $partida->estado = 0;
         /*Amoritzación de anticipo, esta lógica estaba incluida en el stored procedure: sp_entrada_material*/
-        $pagado =  $partida->pagado_registro;
-        if($pagado > 0)
-        {
-            $partida->saldo = $partida->saldo-$pagado;
+        $pagado = $partida->pagado_registro;
+        if ($pagado > 0) {
+            $partida->saldo = $partida->saldo - $pagado;
         }
-        if($partida->saldo<-0.01)
-        {
-            throw New \Exception('El saldo de la partida de entrada '.$partida->material->descripcion.' no puede ser menor a 0');
+        if ($partida->saldo < -0.01) {
+            throw New \Exception('El saldo de la partida de entrada ' . $partida->material->descripcion . ' no puede ser menor a 0');
         }
-        if($partida->saldo < 0.01)
-        {
+        if ($partida->saldo < 0.01) {
             $partida->estado = 1;
         }
     }
@@ -45,54 +42,50 @@ class EntradaMaterialPartidaObserver
     public function created(EntradaMaterialPartida $partida)
     {
         $factor = $partida->entrada->factor_conversion;
-        $pagado =  $partida->pagado_registro;
-        if($partida->id_almacen != null) {
+        $pagado = $partida->pagado_registro;
+        if ($partida->id_almacen != null) {
             Inventario::create([
                 'id_almacen' => $partida->id_almacen,
                 'id_material' => $partida->id_material,
                 'id_item' => $partida->id_item,
                 'cantidad' => $partida->cantidad,
                 'saldo' => $partida->cantidad,
-                'monto_total' => round($partida->importe * $factor,2),
-                'monto_original' => round($partida->importe * $factor,2),
-                'monto_pagado' => round($pagado *$factor,2),
+                'monto_total' => round($partida->importe * $factor, 2),
+                'monto_original' => round($partida->importe * $factor, 2),
+                'monto_pagado' => round($pagado * $factor, 2),
                 'monto_anticipo' => 0
             ]);
             $partida->ajustarValoresConsumos();
         }
-        if($partida->id_concepto != null) {
+        if ($partida->id_concepto != null) {
             Movimiento::create([
                 'id_concepto' => $partida->id_concepto,
                 'id_item' => $partida->id_item,
                 'id_material' => $partida->id_material,
                 'cantidad' => $partida->cantidad,
-                'monto_total' => round($partida->importe * $factor,2),
-                'monto_original' => round($partida->importe * $factor,2),
-                'monto_pagado' => round($pagado * $factor,2),
+                'monto_total' => round($partida->importe * $factor, 2),
+                'monto_original' => round($partida->importe * $factor, 2),
+                'monto_pagado' => round($pagado * $factor, 2),
             ]);
         }
         $partida->ordenCompraPartida->entrega->surte($partida->cantidad);
-        if($pagado > 0)
-        {
+        if ($pagado > 0) {
             /*Amoritzación de anticipo, esta lógica estaba incluida en el stored procedure: sp_entrada_material*/
             $partida->ordenCompraPartida->disminuyeSaldo($pagado);
         }
     }
+
     public function deleting(EntradaMaterialPartida $partida)
     {
-        if($partida->inventario)
-        {
+        if ($partida->inventario) {
             $partida->inventario->delete();
-        } else if($partida->movimiento){
+        } else if ($partida->movimiento) {
             $partida->movimiento->delete();
         }
     }
+
     public function deleted(EntradaMaterialPartida $partida)
     {
-        $factor = $partida->entrada->factor_conversion;
-        $pagado =  $partida->pagado_registro;
-        $partida->ordenCompraPartida->entrega->recalculaSurtido();
-
         ItemEntradaEliminada::query()->create(
             [
                 'id_item' => $partida['id_item'],
@@ -118,11 +111,18 @@ class EntradaMaterialPartidaObserver
                 'id_asignacion' => $partida['id_asignacion']
             ]
         );
-
-
-        /*if($pagado > 0)
-        {
-            $partida->ordenCompraPartida->disminuyeSaldo($pagado);
-        }*/
+        /*
+         * Recalcular saldo de partidas de OC, lógica incluida en el procedimiento almacenado:
+         * sp_borra_transaccion y que se manda a llamar al eliminar una entrada de almacén
+         * */
+        $importe_anticipo = $partida->importe_anticipo;
+        $pagado_oc = $partida->ordenCompraPartida->pagado;
+        $partida->ordenCompraPartida->entrega->recalculaSurtido();
+        if ($partida->ordenCompraPartida->anticipo > 0) {
+            $proporcion_pagada = round($importe_anticipo * $pagado_oc / ($partida->ordenCompraPartida->importe * $partida->ordenCompraPartida->anticipo / 100), 2);
+            if ($proporcion_pagada > 0) {
+                $partida->ordenCompraPartida->aumentaSaldo($proporcion_pagada);
+            }
+        }
     }
 }

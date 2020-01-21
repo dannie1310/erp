@@ -29,7 +29,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registro de Pagos con Bitácora Bancaria (SANTANDER)",
-                    text: "¿Está seguro/a de que desea salir? Perderá los cambios no guardados.",
+                    text: "¿Está seguro de que desea salir? Perderá los cambios no guardados.",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -54,7 +54,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Pagos con Bitácora Bancaria (SANTANDER)",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {

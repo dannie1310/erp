@@ -7,7 +7,7 @@
                      <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class= "row">
-                                <div class="offset-md-10 col-md-2">
+                                <div class="col-md-2">
                                     <div class="form-group row error-content">
                                         <label for="fecha" class="col-sm-2 col-form-label">Fecha: </label>
                                             <datepicker v-model = "fecha"
@@ -15,7 +15,6 @@
                                                         :format = "formatoFecha"
                                                         :language = "es"
                                                         :bootstrap-styling = "true"
-                                                        :use-utc="true"
                                                         class = "form-control"
                                                         v-validate="{required: true}"
                                                         :class="{'is-invalid': errors.has('fecha')}"
@@ -49,19 +48,16 @@
                                     <div class="form-group row error-content">
                                                 <label for="id_almacen" class="col-sm-2 col-form-label">Almacén: </label>
                                                 <div class="col-sm-10">
-                                                    <select
-                                                            type="text"
+                                                    <model-list-select
+                                                            :disabled="cargando"
                                                             name="id_almacen"
-                                                            data-vv-as="Almacén"
-                                                            v-validate="{required: true}"
-                                                            class="form-control"
-                                                            id="id_almacen"
                                                             v-model="id_almacen"
-                                                            :class="{'is-invalid': errors.has('id_almacen')}"
-                                                    >
-                                                            <option value>-- Seleccione un almacén --</option>
-                                                            <option v-for="almacen in almacenes" :value="almacen.id">{{ almacen.descripcion }}</option>
-                                                    </select>
+                                                            option-value="id"
+                                                            option-text="descripcion"
+                                                            :list="almacenes"
+                                                            :placeholder="!cargando?'Seleccionar o buscar almacén por descripcion':'Cargando...'"
+                                                            :isError="errors.has(`id_almacen`)">
+                                                    </model-list-select>
                                                     <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                                 </div>
                                             </div>
@@ -106,9 +102,10 @@
     import NuevoLote from "./nuevo-lote/Create";
     import datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "ajuste-create",
-        components: {AjusteNegativo, AjustePositivo, NuevoLote, datepicker},
+        components: {AjusteNegativo, AjustePositivo, NuevoLote, datepicker, ModelListSelect},
         data() {
             return {
                 es: es,
@@ -121,6 +118,10 @@
         },
         mounted(){
             this.getAlmacen();
+            this.fecha = new Date();
+        },
+        init() {
+            this.cargando = true;
         },
         methods: {
             formatoFecha(date){
@@ -128,6 +129,7 @@
             },
             getAlmacen() {
                 this.almacenes = [];
+                this.cargando = true;
                 return this.$store.dispatch('cadeco/almacen/index', {
                     params: {
                         scope: ['tipoMaterialYHerramienta'],
@@ -137,6 +139,7 @@
                 })
                     .then(data => {
                         this.almacenes = data.data;
+                        this.cargando = false;
                     })
             },
         }

@@ -6,7 +6,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Actualizar Datos Financieros",
                     icon: "warning",
                     buttons: {

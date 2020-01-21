@@ -82,22 +82,62 @@ class Requisicion extends Transaccion
 
             foreach ($datos['partidas'] as $partida)
             {
-                $item = $requisicion->partidas()->create([
-                    'id_transaccion' => $requisicion->id_transaccion,
-                    'id_material' => $partida['material'] ? $partida['material']['id'] : NULL,
-                    'unidad' => $partida['material'] ? $partida['material']['unidad'] : NULL,
-                    'cantidad' => $partida['cantidad']
-                ]);
+                if($partida['i'] == 0)
+                {
+                    $item = $requisicion->partidas()->create([
+                        'id_transaccion' => $requisicion->id_transaccion,
+                        'id_material' => $partida['material'] ? $partida['material']['id'] : NULL,
+                        'unidad' => $partida['material'] ? $partida['material']['unidad'] : NULL,
+                        'cantidad' => $partida['cantidad']
+                    ]);
 
-                $complemento =$item->complemento()->create([
-                    'id_item' => $item->id_item,
-                    'descripcion_material' => $partida['material'] ? NULL : $partida['descripcion'],
-                    'numero_parte' => $partida['material'] ? NULL : $partida['numero_parte'],
-                    'unidad' => $partida['material'] ? NULL : $partida['unidad'],
-                    'observaciones' => $partida['observaciones'],
-                    'fecha_entrega' => $partida['fecha']
-                ]);
+                    $complemento =$item->complemento()->create([
+                        'id_item' => $item->id_item,
+                        'descripcion_material' => $partida['material'] ? NULL : $partida['descripcion'],
+                        'numero_parte' => $partida['material'] ? NULL : $partida['numero_parte'],
+                        'unidad' => $partida['material'] ? NULL : $partida['unidad'],
+                        'observaciones' => $partida['observaciones'],
+                        'fecha_entrega' => $partida['fecha']
+                    ]);
+                }else
+                {
+                    $material = Material::query()->where('numero_parte','=',$partida['numero_parte'])->first();
+                    if ($material)
+                    {
+                        $item = $requisicion->partidas()->create([
+                            'id_transaccion' => $requisicion->id_transaccion,
+                            'id_material' => $material['id_material'],
+                            'unidad' => $material['unidad'],
+                            'cantidad' => $partida['cantidad']
+                        ]);
 
+                        $complemento =$item->complemento()->create([
+                            'id_item' => $item->id_item,
+                            'descripcion_material' => NULL,
+                            'numero_parte' => NULL,
+                            'unidad' => NULL,
+                            'observaciones' => $partida['observaciones'],
+                            'fecha_entrega' => $partida['fecha']
+                        ]);
+                    }else
+                    {
+                        $item = $requisicion->partidas()->create([
+                            'id_transaccion' => $requisicion->id_transaccion,
+                            'id_material' => $partida['material'] ? $partida['material']['id'] : NULL,
+                            'unidad' => $partida['material'] ? $partida['material']['unidad'] : NULL,
+                            'cantidad' => $partida['cantidad']
+                        ]);
+
+                        $complemento =$item->complemento()->create([
+                            'id_item' => $item->id_item,
+                            'descripcion_material' => $partida['material'] ? NULL : $partida['descripcion'],
+                            'numero_parte' => $partida['material'] ? NULL : $partida['numero_parte'],
+                            'unidad' => $partida['material'] ? NULL : $partida['unidad'],
+                            'observaciones' => $partida['observaciones'],
+                            'fecha_entrega' => $partida['fecha']
+                        ]);
+                    }
+                }
             }
             DB::connection('cadeco')->commit();
             return $requisicion;

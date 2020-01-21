@@ -51,21 +51,16 @@
                                  <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="id_almacen">Almacen:</label>
-                                        <select
+                                        <model-list-select
                                                 :disabled="cargando"
-                                                type="text"
                                                 name="id_almacen"
-                                                data-vv-as="Almacén"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="id_almacen"
                                                 v-model="id_almacen"
-                                               :class="{'is-invalid': errors.has('id_almacen')}"
-                                        >
-                                            <option value v-if="!cargando">- Seleccione -</option>
-                                            <option value v-if="cargando">Cargando...</option>
-                                            <option v-for="almacen in almacenes" :value="almacen.id">{{ almacen.descripcion }}</option>
-                                        </select>
+                                                option-value="id"
+                                                option-text="descripcion"
+                                                :list="almacenes"
+                                                :placeholder="!cargando?'Seleccionar o buscar almacén por descripcion':'Cargando...'"
+                                                :isError="errors.has(`id_almacen`)">
+                                        </model-list-select>
                                         <div class="invalid-feedback" v-show="errors.has('id_almacen')">{{ errors.first('id_almacen') }}</div>
                                     </div>
                                  </div>
@@ -126,21 +121,18 @@
                                         </div>
                                     </div>
                                         <div class="col-md-8" v-if="dato.con_prestamo">
-                                            <select
-                                                    class="form-control"
+                                            <model-list-select
                                                     name="id_empresa"
-                                                    data-vv-as="Empresa"
-                                                    v-model="dato.id_empresa"
-                                                    id="id_empresa"
                                                     :disabled="!dato.con_prestamo"
-                                            >
-                                                    <option v-if="dato.con_prestamo" value>-- Seleccione --</option>
-                                                    <option value v-if="!dato.con_prestamo">-- No Aplica --</option>
-                                                    <option v-for="(empresa, index) in empresas" :value="empresa.id"
-                                                            data-toggle="tooltip" data-placement="left" :title="empresa.razon_social ">
-                                                        {{ empresa.razon_social }}
-                                                    </option>
-                                            </select>
+                                                    placeholder="Seleccionar o buscar por RFC y razón social del contratista"
+                                                    data-vv-as="Empresa"
+                                                    v-validate="{required: true}"
+                                                    v-model="dato.id_empresa"
+                                                    option-value="id"
+                                                    :custom-text="rfcAndRazonSocial"
+                                                    :list="empresas"
+                                                    :isError="errors.has(`id_empresa`)">
+                                            </model-list-select>
                                         </div>
                                         <div class="col-md-2" v-if="dato.con_prestamo">
                                             <div class="btn-group btn-group-toggle">
@@ -171,7 +163,6 @@
                                                     <thead>
                                                         <tr>
                                                             <th class="index_corto">#</th>
-                                                            <th class="no_parte_input">No. de Parte</th>
                                                             <th>Material</th>
                                                             <th class="unidad">Unidad</th>
                                                             <th class="money_input">Existencia</th>
@@ -190,36 +181,22 @@
                                                     <tbody>
                                                         <tr v-for="(partida, i) in partidas">
                                                             <td>{{ i + 1}}</td>
-                                                            <td>
-                                                                <select
 
-                                                                        :disabled = "!bandera"
-                                                                        class="form-control"
-                                                                        :name="`id_material[${i}]`"
-                                                                        v-model="partida.material"
-                                                                        v-validate="{required: true }"
-                                                                        data-vv-as="No de Parte"
-                                                                        :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                                >
-                                                                     <option v-for="numero in materiales" :value="numero">{{ numero.numero_parte }}</option>
-                                                                </select>
-                                                            <div class="invalid-feedback"
-                                                                 v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
-                                                            </div>
-                                                            </td>
                                                             <td>
-                                                                <select
-
-                                                                        :disabled = "!bandera"
-                                                                        class="form-control"
+                                                                <model-list-select
                                                                         :name="`id_material[${i}]`"
-                                                                        v-model="partida.material"
-                                                                        v-validate="{required: true }"
-                                                                        data-vv-as="Descripción"
-                                                                        :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
-                                                                >
-                                                                 <option v-for="material in materiales" :value="material">{{ material.descripcion }}</option>
-                                                            </select>
+                                                                        :disabled = "!bandera"
+                                                                        :onchange="changeSelect(partida)"
+                                                                        placeholder="Seleccionar o buscar id, número de parte o descripción del material"
+                                                                        data-vv-as="Material"
+                                                                        v-validate="{required: true}"
+                                                                        v-model="partida.id_material"
+                                                                        option-value="id"
+                                                                        :custom-text="idAndNumeroParteAndDescripcion"
+                                                                        :list="materiales"
+                                                                        :isError="errors.has(`id_material[${i}]`)">
+                                                                </model-list-select>
+
                                                             <div class="invalid-feedback"
                                                                  v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}
                                                             </div>
@@ -238,7 +215,7 @@
                                                                         :name="`cantidad[${i}]`"
                                                                         v-model="partida.cantidad"
                                                                         data-vv-as="Cantidad"
-                                                                        v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:2}"
+                                                                        v-validate="{required: true,min_value: 0.01, max_value:partida.material.saldo_almacen, decimal:3}"
                                                                         class="form-control"
                                                                         :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                                         id="cantidad"
@@ -340,18 +317,18 @@
                                 <div class="row" v-if="dato.opciones==65537">
                                     <div class="col-12">
                                         <div class="form-group row error-content">
-                                            <label for="id_concepto" class="col-sm-2 col-form-label">Activos:</label>
+                                            <label for="id_almacen" class="col-sm-2 col-form-label">Activos:</label>
                                             <div class="col-sm-10">
-                                                <select
-                                                        name="id_almacen"
-                                                        id="id_almacen_temporal"
+                                                <model-list-select
+                                                        :name="id_almacen"
+                                                        placeholder="Seleccionar o buscar descripción del almacén"
                                                         data-vv-as="Almacén"
-                                                        class="form-control"
-                                                        v-model="almacen_temporal"
+                                                        v-model="id_almacen_temporal"
+                                                        option-value="id"
+                                                        option-text="descripcion"
+                                                        :list="almacenes"
                                                 >
-                                                    <option value="">-- Almacén --</option>
-                                                    <option v-for="almacen in almacenes" :value="almacen">{{ almacen.descripcion }}</option>
-                                                </select>
+                                                </model-list-select>
                                             </div>
                                         </div>
                                     </div>
@@ -374,10 +351,11 @@
     import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
     import datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import {ModelListSelect} from 'vue-search-select';
 
     export default {
         name: "salida-almacen-create",
-        components: {Almacen, ConceptoSelect,ConceptoSelectHijo,datepicker},
+        components: {Almacen, ConceptoSelect,ConceptoSelectHijo,datepicker,ModelListSelect},
         data() {
             return {
                 es:es,
@@ -402,7 +380,7 @@
                 },
                 cargos: {
                     1: "Con Cargo",
-                    0: "Sin Cargo"
+                    0: "A Consignación"
                 },
                 dato_partida:{
                     cantidad:'',
@@ -426,7 +404,7 @@
                 cargando: false,
                 bandera : 0,
                 index_temporal : '',
-                almacen_temporal : '',
+                id_almacen_temporal : '',
                 id_concepto_temporal : '',
                 destino_copiado: {
                     tipo_destino : '',
@@ -451,6 +429,19 @@
             this.fechasDeshabilitadas.from= new Date();
         },
         methods: {
+            idAndNumeroParteAndDescripcion (item) {
+                return `[${item.id}] - [${item.numero_parte}] -  ${item.descripcion}`
+            },
+            rfcAndRazonSocial (item){
+                return `[${item.rfc}] - ${item.razon_social}`
+            },
+            changeSelect(item){
+                var busqueda = this.materiales.find(x=>x.id === item.id_material);
+                if(busqueda != undefined)
+                {
+                    item.material = busqueda;
+                }
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
@@ -474,7 +465,7 @@
             },
             getEmpresas() {
                 return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {sort: 'razon_social', order: 'asc', scope:'TipoContratista' }
+                    params: {sort: 'razon_social', order: 'asc', scope:'Contratista' }
                 })
                     .then(data => {
                         this.empresas = data.data;
@@ -505,6 +496,17 @@
             },
             getConcepto() {
                 return this.$store.dispatch('cadeco/concepto/find', {
+                    id: this.destino_seleccionado.id_destino,
+                    params: {
+                    }
+                })
+                    .then(data => {
+                        this.destino_seleccionado.destino = data;
+                        this.seleccionarDestino();
+                    })
+            },
+            getAlmacen() {
+                return this.$store.dispatch('cadeco/almacen/find', {
                     id: this.destino_seleccionado.id_destino,
                     params: {
                     }
@@ -583,59 +585,68 @@
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.$data.partidas.forEach(function(element) {
-                            if(!(element.cantidad  === undefined && element.destino  === '' )){
-                                if(element.cantidad > 0 && element.destino === '')
-                                {
-                                    error_destino_no_ingresado = error_destino_no_ingresado + 1
-                                } else {
-                                    /*Validación para evitar que un mismo material se cargue mas de una vez a un mismo concepto*/
-                                    if(isNaN(contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()]))
+                        /*validar que se haya seleccionado contratista en caso de haber indicado que la salida es con préstamo*/
+
+                        if(this.$data.dato.con_prestamo === true && this.$data.dato.id_empresa === '')
+                        {
+                            swal('Atención', 'Seleccione el contratista al que se le hizo la entrega.', 'warning');
+                        }
+                        else{
+                            this.$data.partidas.forEach(function(element) {
+                                if(!(element.cantidad  === undefined && element.destino  === '' )){
+                                    if(element.cantidad > 0 && element.destino === '')
                                     {
-                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = parseInt("1");
-                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
-                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
-                                    }else{
-                                        contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] += parseInt("1");
-                                        material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
-                                        destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                        error_destino_no_ingresado = error_destino_no_ingresado + 1
+                                    } else {
+                                        /*Validación para evitar que un mismo material se cargue mas de una vez a un mismo concepto*/
+                                        if(isNaN(contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()]))
+                                        {
+                                            contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = parseInt("1");
+                                            material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                            destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                        }else{
+                                            contador_material_destino[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] += parseInt("1");
+                                            material_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.material.descripcion;
+                                            destino_aviso[element.material.id_material.toString()+"_"+element.destino.id_destino.toString()] = element.destino.destino.descripcion;
+                                        }
                                     }
                                 }
-                            }
-                            partidas_store.push({
-                                id_destino : element.destino.id_destino,
-                                id_material : element.material.id_material,
-                                unidad : element.material.unidad,
-                                cantidad: element.cantidad,
+                                partidas_store.push({
+                                    id_destino : element.destino.id_destino,
+                                    id_material : element.material.id_material,
+                                    unidad : element.material.unidad,
+                                    cantidad: element.cantidad,
+                                });
+
                             });
 
-                        });
-
-                        for(var i in contador_material_destino)
-                        {
-                            if(parseInt(contador_material_destino[i])>1)
+                            for(var i in contador_material_destino)
                             {
-                                error_destino_repetido++;
-                                aviso_repetido += '-'+material_aviso[i] +"->"+ destino_aviso[i] +"\n";
+                                if(parseInt(contador_material_destino[i])>1)
+                                {
+                                    error_destino_repetido++;
+                                    aviso_repetido += '-'+material_aviso[i] +"->"+ destino_aviso[i] +"\n";
+                                }
+                            }
+
+                            if (error_destino_no_ingresado > 0)
+                            {
+                                swal('Atención', 'Ingrese un destino válido en todas las partidas.', 'warning');
+                            }
+                            else if (error_destino_repetido > 0)
+                            {
+                                if(this.dato.opciones == 1){
+                                    swal('Atención', 'Un mismo insumo se intenta cargar  mas de una vez a un mismo concepto, favor de corregir:'+aviso_repetido, 'warning');
+                                }else if(this.dato.opciones == 65537){
+                                    swal('Atención', 'Un mismo insumo se intenta enviar  mas de una vez a un mismo almacén, favor de corregir:'+aviso_repetido, 'warning');
+                                }
+
+                            }
+                            else {
+                                this.store(partidas_store)
                             }
                         }
 
-                        if (error_destino_no_ingresado > 0)
-                        {
-                            swal('Atención', 'Ingrese un destino válido en todas las partidas.', 'warning');
-                        }
-                        else if (error_destino_repetido > 0)
-                        {
-                            if(this.dato.opciones == 1){
-                                swal('Atención', 'Un mismo insumo se intenta cargar  mas de una vez a un mismo concepto, favor de corregir:'+aviso_repetido, 'warning');
-                            }else if(this.dato.opciones == 65537){
-                                swal('Atención', 'Un mismo insumo se intenta enviar  mas de una vez a un mismo almacén, favor de corregir:'+aviso_repetido, 'warning');
-                            }
-
-                        }
-                        else {
-                            this.store(partidas_store)
-                        }
                     }
                 });
             },
@@ -696,13 +707,13 @@
                     id_destino : ''
                 };
                 this.id_concepto_temporal = '';
-                this.almacen_temporal = '';
+                this.id_almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
             cerrarModalDestino(){
                 this.id_concepto_temporal = '';
-                this.almacen_temporal = '';
+                this.id_almacen_temporal = '';
                 $(this.$refs.modal_destino).modal('hide');
                 this.$validator.reset();
             },
@@ -743,14 +754,13 @@
                     this.getConcepto();
                 }
             },
-            almacen_temporal(value){
+            id_almacen_temporal(value){
                 if(value !== '' && value !== null && value !== undefined){
                     this.id_concepto_temporal = '';
-                    this.destino_seleccionado.id_destino = value.id;
+                    this.destino_seleccionado.id_destino = value;
                     this.destino_seleccionado.tipo_destino = 2;
-                    this.destino_seleccionado.destino = value;
-                    if(value.id != this.id_almacen) {
-                        this.seleccionarDestino();
+                    if(value != this.id_almacen) {
+                        this.getAlmacen();
                     } else {
                         swal('Atención', 'No puede seleccionar como destino el almacén origen.', 'warning');
                     }

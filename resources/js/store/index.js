@@ -18,9 +18,11 @@ import salidaAlmacen from './modules/almacenes/salida-almacen';
 
 import almacen from './modules/cadeco/almacen';
 import banco from './modules/cadeco/banco';
+import cliente from './modules/cadeco/cliente';
 import concepto from './modules/cadeco/concepto';
 import costo from './modules/cadeco/costo';
 import cuenta from './modules/cadeco/cuenta';
+import destajista from "./modules/cadeco/destajista";
 import empresa from './modules/cadeco/empresa';
 import familia from './modules/cadeco/familia';
 import fondo from './modules/cadeco/fondo';
@@ -28,7 +30,9 @@ import inventario from './modules/cadeco/inventario';
 import material from './modules/cadeco/material';
 import moneda from './modules/cadeco/moneda';
 import obras from './modules/cadeco/obras';
+import proveedorContratista from './modules/cadeco/proveedor-contratista';
 import sucursal from './modules/cadeco/sucursal';
+import suministrado from './modules/cadeco/suministrado';
 import unidad from './modules/cadeco/unidad'
 
 
@@ -44,6 +48,10 @@ import solicitudCompra from './modules/compras/solicitud-compra';
 import areaCompradora from './modules/configuracion/area-compradora';
 import areaSolicitante from './modules/configuracion/area-solicitante';
 import areaSubcontratante from './modules/configuracion/area-subcontratante';
+
+// CONFIGURACION CADECO
+import nodoTipo from './modules/configuracion/nodo-tipo';
+import nodoProyecto from './modules/configuracion/nodo-proyecto';
 
 //CONTABILIDAD
 import cierrePeriodo from './modules/contabilidad/cierre-periodo';
@@ -88,11 +96,13 @@ import solicitudAlta from './modules/finanzas/solicitud-alta-cuenta-bancaria';
 import solicitudBaja from './modules/finanzas/solicitud-baja-cuenta-bancaria';
 import tipoMovimiento from './modules/finanzas/tipo-movimiento';
 import traspaso from './modules/finanzas/traspaso-entre-cuentas';
+import rubro from './modules/finanzas/rubro';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import configuracionRemesa from './modules/seguridad/finanzas/configuracion-remesa';
 import ctgbanco from './modules/seguridad/finanzas/ctg-banco';
+import ctgEfos from './modules/seguridad/finanzas/ctg-efos';
 import ctgplaza from './modules/seguridad/finanzas/ctg-plaza';
 import ctgtipo from './modules/configuracion/ctg-tipo';
 import permiso from './modules/seguridad/permiso';
@@ -111,6 +121,8 @@ import aplicacion from "./modules/igh/aplicacion";
 import marca from "./modules/sci/marca";
 import modelo from "./modules/sci/modelo";
 
+// VENTAS
+import venta from "./modules/ventas/venta";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -129,9 +141,11 @@ export default new Vuex.Store({
 
         'cadeco/almacen': almacen,
         'cadeco/banco': banco,
+        'cadeco/cliente': cliente,
         'cadeco/concepto': concepto,
         'cadeco/costo': costo,
         'cadeco/cuenta': cuenta,
+        'cadeco/destajista' : destajista,
         'cadeco/empresa': empresa,
         'cadeco/familia': familia,
         'cadeco/fondo': fondo,
@@ -139,7 +153,9 @@ export default new Vuex.Store({
         'cadeco/material': material,
         'cadeco/moneda': moneda,
         'cadeco/obras': obras,
+        'cadeco/proveedor-contratista': proveedorContratista,
         'cadeco/sucursal': sucursal,
+        'cadeco/suministrado': suministrado,
         'cadeco/unidad': unidad,
 
         'compras/asignacion' : asignacion,
@@ -153,6 +169,9 @@ export default new Vuex.Store({
         'configuracion/area-solicitante' : areaSolicitante,
         'configuracion/area-subcontratante' : areaSubcontratante,
         'configuracion/ctg-tipo': ctgtipo,
+
+        'configuracion/nodo-tipo' : nodoTipo,
+        'configuracion/nodo-proyecto' : nodoProyecto,
 
         'contratos/estimacion' : estimacion,
         'contratos/fondo-garantia': fondoGarantia,
@@ -175,6 +194,7 @@ export default new Vuex.Store({
         'finanzas/solicitud-pago-anticipado': pagoAnticipado,
         'finanzas/tipo-movimiento': tipoMovimiento,
         'finanzas/traspaso-entre-cuentas': traspaso,
+        'finanzas/rubro': rubro,
 
 
         'contabilidad/cierre-periodo': cierrePeriodo,
@@ -205,6 +225,7 @@ export default new Vuex.Store({
 
 
         'seguridad/finanzas/ctg-banco': ctgbanco,
+        'seguridad/finanzas/ctg-efos': ctgEfos,
         'seguridad/finanzas/ctg-plaza': ctgplaza,
         'seguridad/finanzas/configuracion-remesa': configuracionRemesa,
         'seguridad/configuracion-obra': configuracionObra,
@@ -214,6 +235,8 @@ export default new Vuex.Store({
         'seguridad/sistema': sistema,
         'seguridad/sistema-obra': sistemaObra,
         'seguridad/tipo-proyecto': tipoProyecto,
+
+        'ventas/venta': venta,
     },
     strict: process.env.NODE_ENV !== 'production'
 })

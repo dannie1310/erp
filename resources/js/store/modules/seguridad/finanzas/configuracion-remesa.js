@@ -19,7 +19,7 @@ export default {
         actualizar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
+                    title: "¿Está seguro?",
                     text: "Actualizar Datos de Remesa",
                     icon: "warning",
                     buttons: {

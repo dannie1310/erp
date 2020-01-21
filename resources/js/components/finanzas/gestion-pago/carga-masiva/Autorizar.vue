@@ -4,7 +4,7 @@
             <div class="invoice p-3 mb-3">
                 <div class="row">
                     <div class="col-12">
-                        <h4> <i class="fa fa-list-alt"></i> AUTORIZACIÓN DE LAYOUTS REGISTRADOS</h4>
+                        <h4> <i class="fa fa-check-circle"></i> AUTORIZACIÓN DE LAYOUTS REGISTRADOS</h4>
                     </div>
                 </div>
                 <!--                <div class="modal-body">-->
@@ -85,6 +85,7 @@
                                 <th>Moneda</th>
                                 <th>Importe</th>
                                 <th>Saldo</th>
+                                <th></th>
                                 <th>Beneficiario</th>
                                 <th>Cuenta Cargo</th>
                                 <th>Fecha Pago</th>
@@ -110,6 +111,8 @@
                                 <td v-else-if="doc.solicitud" style="text-align: right">{{doc.solicitud.monto_format}}</td>
                                 <td v-if="doc.factura" style="text-align: right">{{doc.factura.saldo_format}}</td>
                                 <td v-else-if="doc.solicitud" style="text-align: right">{{doc.solicitud.saldo_format}}</td>
+                                <td v-if="doc.factura.empresa.efos" v-html="doc.factura.empresa.efos.alert_icon"></td>
+                                <td v-else></td>
                                 <td v-if="doc.factura">{{doc.factura.empresa.razon_social}}</td>
                                 <td v-else-if="doc.solicitud.empresa">{{doc.solicitud.empresa.razon_social}}</td>
                                 <td v-else-if="doc.solicitud.fondo">{{doc.solicitud.fondo.descripcion}}</td>
@@ -119,12 +122,10 @@
                                 <td style="text-align: right">{{doc.monto_pagado_documento_format}}</td>
                                 <td style="text-align: right">{{doc.tipo_cambio}}</td>
                                 <td style="text-align: right">{{doc.monto_pagado_format}}</td>
-                                <td v-if="doc.id_transaccion_pago===null">
-                                    <small class="badge badge-primary">Por Autorizar</small>
+                                <td>
+                                    <small :class="[doc.clase_badge_estado]">{{doc.estado}}</small>
                                 </td>
-                                <td v-else>
-                                    <small class="badge badge-success">Pagado</small>
-                                </td>
+
                             </tr>
                             </tbody>
                         </table>
@@ -163,7 +164,7 @@
             find() {
                 this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', null);
                 return this.$store.dispatch('finanzas/carga-masiva-pago/find', {
-                    params: { include: ['partidas.solicitud.fondo','usuario', 'usuario_autorizo', 'estado', 'partidas','partidas.solicitud.empresa','partidas.factura','partidas.factura.empresa', 'partidas.moneda']},
+                    params: { include: ['partidas.solicitud.fondo','usuario', 'usuario_autorizo', 'estado', 'partidas','partidas.solicitud.empresa','partidas.factura','partidas.factura.empresa.efos', 'partidas.moneda']},
                     id: this.id
                 }).then(data => {
                     this.$store.commit('finanzas/carga-masiva-pago/SET_LAYOUT', data);

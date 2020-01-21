@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 class OrdenCompra extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
+    public const OPCION_ANTECEDENTE = 1;
 
     protected static function boot()
     {
@@ -167,6 +168,19 @@ class OrdenCompra extends Transaccion
         if(abs($cantidad_esperada-$cantidad_surtida)<=0.01)
         {
             $this->update(["estado"=>2]);
+        } else {
+            $this->update(["estado"=>1]);
+        }
+    }
+    public function abrir()
+    {
+        $transacciones_referenciadas = Transaccion::withoutGlobalScope("tipo")->where("id_antecedente","=",$this->id_transaccion)
+            ->orWhere("id_referente","=",$this->id_transaccion)->get();
+        if(count($transacciones_referenciadas)>0)
+        {
+            $this->update(["estado"=>1]);
+        }else{
+            $this->update(["estado"=>0]);
         }
     }
     public function getEstadoFormatAttribute()

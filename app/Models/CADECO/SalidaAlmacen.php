@@ -12,6 +12,7 @@ use App\Models\CADECO\Compras\MovimientoEliminado;
 use App\Models\CADECO\Compras\SalidaEliminada;
 use App\Models\CADECO\Contabilidad\Poliza;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 class SalidaAlmacen extends Transaccion
@@ -296,6 +297,11 @@ class SalidaAlmacen extends Transaccion
     public function registrar($data)
     {
         try {
+            /*
+             * EL front envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
+             * */
+            $fecha_salida =New DateTime($data['fecha']);
+            $fecha_salida->setTimezone(new DateTimeZone('America/Mexico_City'));
             DB::connection('cadeco')->beginTransaction();
             if ($data["opciones"] == 1) {
                 $salida = $this->create(
@@ -304,7 +310,7 @@ class SalidaAlmacen extends Transaccion
                         'id_concepto' => $data["id_concepto"],
                         'id_almacen' => $data["id_almacen"],
                         'opciones' => $data["opciones"],
-                        'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
+                        'fecha' => $fecha_salida->format("Y-m-d"),
                         'referencia' => $data["referencia"],
                         'observaciones' => $data['observaciones']
                     ]
@@ -314,7 +320,7 @@ class SalidaAlmacen extends Transaccion
                     [
                         'id_almacen' => $data["id_almacen"],
                         'opciones' => $data["opciones"],
-                        'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
+                        'fecha' => $fecha_salida->format("Y-m-d"),
                         'referencia' => $data["referencia"],
                         'observaciones' => $data['observaciones']
                     ]

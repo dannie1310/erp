@@ -53,7 +53,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Solicitud de Baja de Cuenta Bancaria",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -105,7 +105,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Solicitud de Baja de Cuenta Bancaria",
-                    text: "¿Estás seguro/a de autorizar la solicitud de baja de cuenta bancaria?",
+                    text: "¿Está seguro de autorizar la solicitud de baja de cuenta bancaria?",
                     icon: "info",
                     closeOnClickOutside: false,
                     buttons: {
@@ -145,7 +145,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Solicitud de Baja de Cuenta Bancaria",
-                    text: "¿Estás seguro/a de cancelar la solicitud de baja de cuenta bancaria?",
+                    text: "¿Está seguro de cancelar la solicitud de baja de cuenta bancaria?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -185,7 +185,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Solicitud de Baja de Cuenta Bancaria",
-                    text: "¿Estás seguro/a de rechazar la solicitud de baja de cuenta bancaria?",
+                    text: "¿Está seguro de rechazar la solicitud de baja de cuenta bancaria?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {

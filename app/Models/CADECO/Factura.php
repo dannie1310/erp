@@ -9,10 +9,26 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Finanzas\ComplementoFactura;
+use App\Models\CADECO\Finanzas\TransaccionRubro;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use Illuminate\Support\Facades\DB;
 class Factura extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = 67;
+    public const OPCION_ANTECEDENTE = 0;
+    protected $fillable = [
+        'fecha',
+        "id_empresa",
+        "id_moneda",
+        "vencimiento",
+        'monto',
+        "saldo",
+        "referencia",
+        "observaciones",
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -20,6 +36,24 @@ class Factura extends Transaccion
             return $query->where('tipo_transaccion', '=', 65)
                 ->where('estado', '!=', -2);
         });
+    }
+
+    public function getRubroAttribute()
+    {
+        if($this->transaccion_rubro)
+        {
+            return $this->transaccion_rubro->rubro->descripcion;
+        }
+    }
+
+    public function transaccion_rubro()
+    {
+        return $this->hasOne(TransaccionRubro::class, "id_transaccion","id_transaccion");
+    }
+
+    public function complemento()
+    {
+        return $this->hasOne(ComplementoFactura::class, "id_transaccion","id_transaccion");
     }
 
     public function contra_recibo()
@@ -50,33 +84,102 @@ class Factura extends Transaccion
         return $this->hasMany(FacturaPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function items()
+    {
+        return $this->hasMany(ItemFactura::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function pagos(){
         return $this->hasManyThrough(PagoFactura::class,OrdenPago::class, 'id_referente','numero_folio','id_transaccion','id_transaccion');
     }
 
+    public function facturaRepositorio()
+    {
+        return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function registrar($data)
+    {
+        $factura = null;
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            //Generar CR
+            $cr = ContraRecibo::create($data["cr"]);
+            if($cr){
+                $factura = $cr->facturas()->create($data["factura"]);
+                if($factura){
+                    $complemento   = $factura->complemento()->create(["id_transaccion"=>$factura->id_transaccion]);
+                    if($complemento)
+                    {
+                        $transaccion_rubro   = $factura->transaccion_rubro()->create($data["rubro"]);
+                        if($transaccion_rubro){
+                            if($data["factura_repositorio"]){
+                                $factura_repositorio = $factura->facturaRepositorio()->create($data["factura_repositorio"]);
+                                if($factura_repositorio)
+                                {
+                                    DB::connection('cadeco')->commit();
+                                    return $factura;
+                                }else{
+                                    abort(400, "Hubo un error al registrar la factura en el repositorio");
+                                }
+
+                            } else {
+                                DB::connection('cadeco')->commit();
+                                return $factura;
+                            }
+
+                        }else{
+                            abort(400, "Hubo un error al registrar el rubro de la factura");
+                        }
+                    }else{
+                        abort(400, "Hubo un error al registrar el complemento de la factura");
+                    }
+
+
+                } else{
+                    abort(400, "Hubo un error al registrar la factura");
+                }
+
+            } else {
+                abort(400, "Hubo un error al registrar el contrarecibo");
+            }
+        }
+        catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
     public function generaOrdenPago($data)
     {
-        // TODO: Obtener el monto de los pagos relacionados a la factura para determinar si se debe actualizar el estado
-        DB::connection('cadeco')->beginTransaction();
-        $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
-        $saldo_esperado = $this->saldo - ($data["monto_pagado_transaccion"]);
-        $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
+        try{
+            // TODO: Obtener el monto de los pagos relacionados a la factura para determinar si se debe actualizar el estado
+            DB::connection('cadeco')->beginTransaction();
+            $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
+            $saldo_esperado = $this->saldo - ($data["monto_pagado_transaccion"]);
+            $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
 
-        $datos = [
-            'id_antecedente'=>$this->id_antecedente,
-            'id_referente'=>$this->id_transaccion,
-            'monto'=>-1*abs($data["monto_pagado_transaccion"]),
-            'tipo_cambio'=>$data["tipo_cambio"],
-            'fecha'=>$data["fecha_pago"],
-            'id_empresa'=>$this->id_empresa,
-            'id_moneda'=> $this->id_moneda,
-        ];
-        $ordenPago= OrdenPago::create($datos);
-        $pago = $ordenPago->generaPago($data);
+            $datos = [
+                'id_antecedente'=>$this->id_antecedente,
+                'id_referente'=>$this->id_transaccion,
+                'monto'=>-1*abs($data["monto_pagado_transaccion"]),
+                'tipo_cambio'=>$data["tipo_cambio"],
+                'fecha'=>$data["fecha_pago"],
+                'id_empresa'=>$this->id_empresa,
+                'id_moneda'=> $this->id_moneda,
+            ];
+            $ordenPago= OrdenPago::create($datos);
+            $pago = $ordenPago->generaPago($data);
 
-        $this->validaSaldos($saldo_esperado, $saldo_esperado_cuenta, $pago);
-        DB::connection('cadeco')->commit();
-        return $pago;
+            $this->validaSaldos($saldo_esperado, $saldo_esperado_cuenta, $pago);
+            DB::connection('cadeco')->commit();
+            return $pago;
+        }
+        catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+
     }
 
     public function scopePendientePago($query){
@@ -135,11 +238,9 @@ class Factura extends Transaccion
         $this->refresh();
         $pago->load("cuenta");
         if(abs($saldo_esperado_cuenta-$pago->cuenta->saldo_real)>1){
-            DB::connection('cadeco')->rollBack();
             abort(400, 'Hubo un error durante la actualización del saldo de la cuenta por el pago de la factura.');
         }
         if(abs($saldo_esperado-$this->saldo)>1){
-            DB::connection('cadeco')->rollBack();
             abort(400, 'Hubo un error durante la actualización del saldo de la factura');
         }
     }
@@ -155,5 +256,14 @@ class Factura extends Transaccion
     public function actualizaEstadoPagada(){
         $this->estado = 2;
         $this->save();
+    }
+
+    public function getFactorIvaAttribute()
+    {
+        if(($this->monto-$this->impuesto)>0) {
+            return $this->monto / ($this->monto-$this->impuesto);
+        } else {
+            return 1;
+        }
     }
 }

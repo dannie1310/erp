@@ -19,6 +19,7 @@ use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use Illuminate\Support\Facades\DB;
 use DateTime;
+use DateTimeZone;
 
 class EntradaMaterial extends Transaccion
 {
@@ -76,6 +77,11 @@ class EntradaMaterial extends Transaccion
         return $this->hasMany(EntradaMaterialPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function movimientos()
+    {
+        return $this->hasManyThrough(Movimiento::class, ItemEntradaAlmacen::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
+    }
+
     public function entregasContratista()
     {
         return $this->hasManyThrough(ItemContratista::class,EntradaMaterialPartida::class,"id_transaccion","id_item","id_transaccion","id_item");
@@ -90,9 +96,11 @@ class EntradaMaterial extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
+            $ordenCompra = $this->ordenCompra;
             $this->validarParaEliminar();
             $this->delete();
             $this->revisar_respaldos($motivo);
+            $ordenCompra->abrir();
             DB::connection('cadeco')->commit();
         }catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
@@ -310,13 +318,17 @@ class EntradaMaterial extends Transaccion
         foreach ($partidas as $item) {
             ItemContratista::query()->where('id_item','=',$item['id_item'])->delete();
             EntradaMaterialPartida::find($item['id_item'])->delete();
-
         }
     }
 
     public function registrar($data)
     {
         try {
+            /*
+             * EL front en envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
+             * */
+            $fecha_entrada =New DateTime($data['fecha']);
+            $fecha_entrada->setTimezone(new DateTimeZone('America/Mexico_City'));
             DB::connection('cadeco')->beginTransaction();
             $ordencompra = OrdenCompra::find($data['id_antecedente']);
 
@@ -327,7 +339,7 @@ class EntradaMaterial extends Transaccion
                 'referencia' => $data['remision'],
                 'id_moneda' => $ordencompra->id_moneda,
                 'anticipo' => $ordencompra->anticipo,
-                'fecha' => date_format(new DateTime($data['fecha']), 'Y-m-d'),
+                'fecha' => $fecha_entrada->format("Y-m-d"),
                 'observaciones' => $data['observaciones']
             ]);
 
@@ -382,7 +394,6 @@ class EntradaMaterial extends Transaccion
                     }
                 }
             }
-
             $ordencompra->cerrar();
             DB::connection('cadeco')->commit();
             return $entrada;
