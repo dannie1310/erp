@@ -15,6 +15,7 @@ use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\IGH\Usuario;
+use App\Events\IncidenciaCI;
 
 class Empresa extends Model
 {
@@ -213,7 +214,21 @@ class Empresa extends Model
     {
         if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 0)->first()))
         {
+            event(new IncidenciaCI(
+                ["id_tipo_incidencia"=>1,
+                    "rfc"=>$rfc,
+                    "empresa"=>$this->efo->razon_social,
+                ]
+            ));
             abort(403, 'Esta empresa es un EFO.');
+        }else if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 2)->first()))
+        {
+            event(new IncidenciaCI(
+                ["id_tipo_incidencia"=>2,
+                    "rfc"=>$rfc,
+                    "empresa"=>$this->efo->razon_social,
+                ]
+            ));
         }
     }
 
