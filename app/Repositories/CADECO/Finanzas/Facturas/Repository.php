@@ -84,14 +84,6 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $factura_repositorio = FacturaRepositorio::where('hash_file', '=', $hash_file)
             ->orWhere("uuid","=", $uuid)->first();
 
-        if($factura_repositorio){
-            $factura_repositorio->load("usuario");
-            abort(403, 'Archivo cargado previamente:
-            Registró: '.$factura_repositorio->usuario->nombre_completo.'
-            BD: '.$factura_repositorio->proyecto->base_datos.'
-            Proyecto: '.$factura_repositorio->obra.'
-            Factura: '.$factura_repositorio->factura->numero_folio.'
-            Fecha: '.$factura_repositorio->fecha_hora_registro_format);
-        }
+        return $factura_repositorio;
     }
 }
