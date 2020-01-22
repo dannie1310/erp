@@ -167,6 +167,7 @@ class FacturaService
             ]
         );
         $this->validaEFO();
+        $this->validaPresuntoEFO();
         $this->validaReceptor();
         if (!$this->arreglo_factura["empresa_bd"]) {
             event(new IncidenciaCI(
@@ -411,16 +412,18 @@ class FacturaService
                         "rfc"=>$this->arreglo_factura["empresa_bd"]["rfc"],
                         "empresa"=>$this->arreglo_factura["empresa_bd"]["razon_social"]]
                 ));
-                abort(500, "El emisor del comprobante es un EFO");
-            } /*else if ($efo->estado == 2) {
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            } else if ($efo->estado == 2) {
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia"=>9,
                         "id_empresa"=>$this->arreglo_factura["empresa_bd"]["id_empresa"],
                         "rfc"=>$this->arreglo_factura["empresa_bd"]["rfc"],
                         "empresa"=>$this->arreglo_factura["empresa_bd"]["razon_social"]]
                 ));
-                abort(500, "El emisor del comprobante es un presunto EFO");
-            }*/
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            }
 
         }
     }
@@ -432,9 +435,6 @@ class FacturaService
             if ($efo->estado == 2) {
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia"=>9,
-                        "id_transaccion"=>$transaccion->id_transaccion,
-                        "folio_transaccion"=>$transaccion->numero_folio_format,
-                        "tipo_transaccion"=>"Factura",
                         "id_empresa"=>$this->arreglo_factura["empresa_bd"]["id_empresa"],
                         "rfc"=>$this->arreglo_factura["empresa_bd"]["rfc"],
                         "empresa"=>$this->arreglo_factura["empresa_bd"]["razon_social"]]
