@@ -257,7 +257,7 @@ class FacturaService
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia"=>3,
                         "rfc"=>$this->arreglo_factura["emisor"]["rfc"],
-                        "empresa"=>$this->arreglo_factura["emisor"]["empresa"],
+                        "empresa"=>$this->arreglo_factura["emisor"]["nombre"],
                         "mensaje"=>$validacion_status_sat . " -" . $validacion_status_code_sat,
                         "xml"=>$xml
                     ]
