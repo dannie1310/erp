@@ -167,7 +167,6 @@ class FacturaService
             ]
         );
         $this->validaEFO();
-        $this->validaPresuntoEFO();
         $this->validaReceptor();
         if (!$this->arreglo_factura["empresa_bd"]) {
             event(new IncidenciaCI(
