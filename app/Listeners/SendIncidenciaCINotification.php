@@ -31,7 +31,10 @@ class SendIncidenciaCINotification
     public function handle(IncidenciaCI $event)
     {
         $incidencia = Incidencia::create($event->data);
-        $usuario = Usuario::notificacionCI()->get();
-        Notification::send($usuario, new NotificacionIncidenciasCI($incidencia, $event->data));
+        if($incidencia->tipo->notificable == 1)
+        {
+            $usuario = Usuario::notificacionCI()->get();
+            Notification::send($usuario, new NotificacionIncidenciasCI($incidencia, $event->data));
+        }
     }
 }
