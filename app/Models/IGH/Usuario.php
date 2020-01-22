@@ -13,6 +13,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\Seguridad\Rol;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
+use App\Models\SEGURIDAD_ERP\ControlInterno\UsuarioNotificacion;
 use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
 use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
@@ -31,6 +32,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Notifications\Notification;
 
 class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     AuthorizableContract,
@@ -117,6 +119,19 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function usuarioCadeco()
     {
         return $this->hasOne(\App\Models\CADECO\Usuario::class, 'usuario', 'usuario');
+    }
+
+    public function usuarioNotificacionCI()
+    {
+        return $this->hasOne(UsuarioNotificacion::class, 'id_usuario', 'idusuario');
+    }
+
+    public function scopeNotificacionCI($query){
+        $usuarios = UsuarioNotificacion::all();
+        $usuarios->transform(function($item, $key){
+            return $item->id_usuario;
+        });
+        return $query->whereIn("idusuario",$usuarios->all());
     }
 
     /**
@@ -253,5 +268,10 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function google2faSecret()
     {
         return $this->hasOne(Google2faSecret::class, 'id_user', 'idusuario');
+    }
+
+    public function routeNotificationForMail($notification)
+    {
+        return $this->correo;
     }
 }

@@ -12,6 +12,7 @@ namespace App\Services\CADECO;
 use App\Facades\Context;
 use App\Repositories\CADECO\ProveedorContratista\Repository;
 use App\Models\CADECO\ProveedorContratista;
+use App\Events\IncidenciaCI;
 
 class ProveedorContratistaService
 {
@@ -64,29 +65,39 @@ class ProveedorContratistaService
         return $proveedorContratista->paginate($data);
     }
 
-    private function getValidacionLRFC($rfc)
+    private function getValidacionLRFC($rfc, $razon_social, $tipo_incidencia)
     {
-        $client = new \GuzzleHttp\Client();
-        $url = config('app.env_variables.SERVICIO_RFC_URL');
-        $token = config('app.env_variables.SERVICIO_CFDI_TOKEN');
+        $usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
+        if ($usa_servicio == 1) {
+            $client = new \GuzzleHttp\Client();
+            $url = config('app.env_variables.SERVICIO_RFC_URL');
+            $token = config('app.env_variables.SERVICIO_CFDI_TOKEN');
 
-        $headers = [
-            'Authorization' => 'Bearer ' . $token,
-            'Accept'        => 'application/json',
-        ];
-        try{
-            $client->request('GET', $url."".$rfc, [
-                'headers' => $headers,
-            ]);
-        } catch (\Exception $e){
-            abort(500,"El RFC ingresado del proveedor no es válido ante el SAT");
+            $headers = [
+                'Authorization' => 'Bearer ' . $token,
+                'Accept'        => 'application/json',
+            ];
+            try{
+                $client->request('GET', $url."".$rfc, [
+                    'headers' => $headers,
+                ]);
+            } catch (\Exception $e){
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia"=>$tipo_incidencia,
+                        "rfc"=>$rfc,
+                        "empresa"=>$razon_social,
+                        "mensaje"=>"El RFC ingresado del proveedor no es válido ante el SAT",
+                    ]
+                ));
+                abort(500,"El RFC ingresado del proveedor no es válido ante el SAT");
+            }
         }
     }
 
     public function store(array $data)
     {
         if($data["emite_factura"] == 1){
-            $this->getValidacionLRFC($data["rfc"]);
+            $this->getValidacionLRFC($data["rfc"], $data["razon_social"],7);
         }
         return $this->repository->create($data);
     }
@@ -97,6 +108,11 @@ class ProveedorContratistaService
     }
 
     public function update(array $data, $id){
+        $actual_rfc = $this->repository->getRFC($id);
+        if($data["emite_factura"] == 1 && $data["rfc_nuevo"] != $actual_rfc)
+        {
+            $this->getValidacionLRFC($data["rfc_nuevo"], $data["razon_social"],17);
+        }
         return $this->repository->update($data, $id);
     }
     

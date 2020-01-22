@@ -40,6 +40,7 @@ use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Debito;
 use App\Models\CADECO\DepositoCliente;
 use App\Models\CADECO\DescuentoFondoGarantia;
+use App\Models\CADECO\Destajista;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\EmpresaFondoFijo;
 use App\Models\CADECO\EntradaMaterial;
@@ -112,6 +113,7 @@ use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
 use App\Models\SEGURIDAD_ERP\Compras\AreaSolicitanteUsuario;
+use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
@@ -154,6 +156,7 @@ use App\Observers\CADECO\CuentaObserver;
 use App\Observers\CADECO\DebitoObserver;
 use App\Observers\CADECO\DepositoClienteObserver;
 use App\Observers\CADECO\DescuentoFondoGarantiaObserver;
+use App\Observers\CADECO\DestajistaObserver;
 use App\Observers\CADECO\EmpresaFondoFijoObserver;
 use App\Observers\CADECO\EmpresaObserver;
 use App\Observers\CADECO\EntradaMaterialObserver;
@@ -224,6 +227,7 @@ use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
 use App\Observers\SEGURIDAD_ERP\ConfiguracionObraObserver;
+use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
 use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
@@ -336,6 +340,7 @@ class AppServiceProvider extends ServiceProvider
             AuditoriaPermisoRol::observe(AuditoriaPermisoRolObserver::class);
             AuditoriaRolUser::observe(AuditoriaRolUserObserver::class);
             Rol::observe(RolObserver::class);
+            Incidencia::observe(IncidenciaObserver::class);
 
             /**
              * SubcontratosEstimaciones
@@ -373,6 +378,7 @@ class AppServiceProvider extends ServiceProvider
             Debito::observe(DebitoObserver::class);
             DepositoCliente::observe(DepositoClienteObserver::class);
             DescuentoFondoGarantia::observe(DescuentoFondoGarantiaObserver::class);
+            Destajista::observe(DestajistaObserver::class);
             Empresa::observe(EmpresaObserver::class);
             EmpresaFondoFijo::observe(EmpresaFondoFijoObserver::class);
             Entrega::observe(EntregaObserver::class);
