@@ -76,9 +76,9 @@
                                                             <th>Cuenta Cargo</th>
                                                             <th>Cuenta Abono</th>
                                                             <th>Estado</th>
-                                                            <th>Origen</th>
+                                                            <!-- <th>Origen</th> -->
                                                             <th>Tipo de Transacción Pagada</th>
-                                                            <th>Referencia de Transacción Pagada</th>
+                                                            <!-- <th>Referencia de Transacción Pagada</th> -->
                                                             <th>Tipo de Pago a Generar</th>
                                                             <th></th>
                                                         </tr>
@@ -88,7 +88,7 @@
                                                                 <td>{{i+1}}</td>
                                                                 <td>{{pago.concepto.substr(0,30)}}</td>
                                                                 <td>{{pago.beneficiario}}</td>
-                                                                <td class="text-right">$ {{parseFloat(pago.monto).formatMoney(2, '.', ',')}}</td>
+                                                                <td class="text-right">{{pago.monto_format}}</td>
                                                                 <td>{{pago.cuenta_cargo.numero}} ({{pago.cuenta_cargo.abreviatura}})</td>
                                                                 <td>{{pago.cuenta_abono.numero}} ({{pago.cuenta_abono.abreviatura}})</td>
                                                                 <td class="text-center">
@@ -96,20 +96,41 @@
                                                                         {{ pago.estado.descripcion }}
                                                                     </small>
                                                                 </td>
-                                                                <td>{{pago.origen_docto}}</td>
+                                                                <!-- <td>{{pago.origen_docto}}</td> -->
                                                                 <td>{{pago.id_transaccion_tipo}}</td>
-                                                                <td>{{pago.referencia_docto}}</td>
+                                                                <!-- <td>{{pago.referencia_docto}}</td> -->
                                                                 <td>
 
                                                                     <span v-if="!pago.pagable" >
                                                                         <i class="fa fa-exclamation-triangle"style="color: red" title="Partida pagada previamente"></i>
                                                                         N/A
                                                                     </span>
+                                                                    <span v-else-if="pago.select_transacciones">
+                                                                        <select
+                                                                            type="text"
+                                                                            :name="`pago[${i}]`"
+                                                                            data-vv-as="Pagos"
+                                                                            v-validate="{required:true}"
+                                                                            class="form-control"
+                                                                            id="pago"
+                                                                            v-model="pago.id_transaccion"
+                                                                            :class="{'is-invalid': errors.has(`pago[${i}]`)}"
+                                                                        >
+                                                                            <option value=''>-- Seleccione --</option>
+                                                                            <option v-for="transaccion in pago.select_transacciones" :value="transaccion.id">{{transaccion.folio}} {{transaccion.saldo}}</option>
+                                                                            <option value=0>Aplicación Manual</option>
+                                                                        </select>
+                                                                        <div class="invalid-feedback" v-show="errors.has(`pago[${i}]`)">{{ errors.first(`pago[${i}]`) }}</div>
+                                                                    </span>
                                                                     <span v-else>
                                                                         <span v-if="pago.aplicacion_manual" >
                                                                             <i class="fa fa-exclamation-triangle"style="color: orange" title="El pago requiere aplicación manual en CADECO"></i>
+                                                                            {{pago.pago_a_generar}}
                                                                         </span>
-                                                                        {{pago.pago_a_generar}}
+                                                                        <span v-else>
+                                                                            {{pago.pago_a_generar}}, Referencia: {{pago.referencia_docto}}, Folio:{{pago.folio}}, Saldo: {{pago.saldo}}
+                                                                        </span>
+                                                                        
                                                                     </span>
                                                                 </td>
                                                                 <td>
@@ -134,7 +155,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
                             <button type="submit" class="btn btn-primary" v-if="bitacora.length === 0">Validar</button>
-                            <button type="button" class="btn btn-primary" @click="store" v-if="bitacora.length > 0 && resumen.pagables > 0 && $root.can('registrar_pagos_bitacora')">Registrar</button>
+                            <button type="button" class="btn btn-primary" @click="validate_pagos" v-if="bitacora.length > 0 && resumen.pagables > 0 && $root.can('registrar_pagos_bitacora')">Registrar</button>
                         </div>
                     </form>
                 </div>
@@ -236,6 +257,13 @@
                 this.$validator.validate().then(result => {
                     if (result){
                         this.cargarBitacora();
+                    }
+                });
+            },
+            validate_pagos() {
+                this.$validator.validate().then(result => {
+                    if (result){
+                        this.store();
                     }
                 });
             },

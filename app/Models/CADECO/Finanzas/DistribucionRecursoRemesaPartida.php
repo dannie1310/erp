@@ -106,6 +106,10 @@ class DistribucionRecursoRemesaPartida extends Model
         return $this->estado == 1;
     }
 
+    public function scopePartidaPagable($query){
+        return $query->where('estado', '=', 1);
+    }
+
     public function scopePartidaVigente($query){
         return $query->where('estado', '>=', 0);
     }
