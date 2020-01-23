@@ -271,7 +271,7 @@ class FacturaService
     {
         $datos_rfactura = null;
         $referencia = $data["referencia"];
-        if ($data["es_deducible"] == true) {
+        if ($data["es_deducible"] == true && $data["es_nacional"] == true) {
             $this->validaExistenciaRepositorio($data["archivo"]);
             $this->validaRFCFacturaVsEmpresa($data["id_empresa"]);
             $this->validaReceptor();
