@@ -98,12 +98,21 @@ class Empresa extends Model
 
     public function scopeNoDeducibles($query)
     {
-        return $query->where('emite_factura', '=', 0);
+        return $query->where('emite_factura', '=', 0)
+            ->where('es_nacional', '=', 1)
+            ->whereIn('tipo_empresa', [1,2,3,4]);
     }
 
     public function scopeDeducibles($query)
     {
         return $query->where('emite_factura', '=', 1)
+            ->where('es_nacional', '=', 1)
+            ->whereIn('tipo_empresa', [1,2,3,4]);
+    }
+
+    public function scopeExtranjeras($query)
+    {
+        return $query->where('es_nacional', '=', 0)
             ->whereIn('tipo_empresa', [1,2,3,4]);
     }
 
