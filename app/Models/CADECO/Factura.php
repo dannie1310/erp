@@ -10,10 +10,15 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Finanzas\ComplementoFactura;
+use App\Models\CADECO\Finanzas\FacturaEliminada;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use Illuminate\Support\Facades\DB;
+use App\Facades\Context;
+use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\SEGURIDAD_ERP\Proyecto;
+
 class Factura extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 67;
@@ -98,6 +103,17 @@ class Factura extends Transaccion
         return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function facturaRepositorioEliminar()
+    {
+        
+        return $this->hasOne(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')->where('id_proyecto', '=',  Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+    }
+
+    public function poliza()
+    {
+        return $this->belongsTo(Poliza::class,'id_transaccion', 'id_transaccion_sao');
+    }
+
     public function registrar($data)
     {
         $factura = null;
@@ -148,6 +164,56 @@ class Factura extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
+    }
+
+    public function eliminarFactura($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+        $id_antecedente = $this->id_antecedente;
+        FacturaEliminada::create([
+            'id_transaccion' => $this->id_transaccion,
+            'tipo_transaccion' => $this->tipo_transaccion,
+            'numero_folio' => $this->numero_folio,
+            'fecha' => $this->fecha,
+            'vencimiento' => $this->vencimiento,
+            'estado' => $this->estado,
+            'id_obra' => $this->id_obra,
+            'id_empresa' => $this->id_empresa,
+            'monto' => $this->monto,
+            'saldo' => $this->saldo,
+            'observaciones' => $this->observaciones,
+            'FechaHoraRegistro' => $this->FechaHoraRegistro,
+            'id_usuario_registro' => $this->id_usuario,
+            'motivo_elimino' => $motivo,
+        ]);
+
+        if($this->facturaRepositorioEliminar)
+        {
+            FacturaRepositorio::find($this->facturaRepositorioEliminar->id)->delete();
+        }
+        Factura::find($this->id_transaccion)->delete();
+        if(Factura::find($id_antecedente))
+        {
+            Factura::find($id_antecedente)->delete();
+        }
+        DB::connection('cadeco')->commit();
+    } catch (\Exception $e) {
+        DB::connection('cadeco')->rollBack();
+        abort(400, $e->getMessage());
+        throw $e;
+    }
+    }
+
+    public function validarEliminacion()  
+    { 
+        if($this->poliza)
+        {
+            if ($this->poliza->estatus != -3) {
+                throw New \Exception("La factura se encuentra asociada a la Prepoliza: #" . $this->poliza->id_int_poliza);
+            };
+        }
+
     }
 
     public function generaOrdenPago($data)
