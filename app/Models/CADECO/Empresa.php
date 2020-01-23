@@ -220,7 +220,8 @@ class Empresa extends Model
                     "empresa"=>$this->efo->razon_social,
                 ]
             ));
-            abort(403, 'Esta empresa es un EFO.');
+            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
         }else if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 2)->first()))
         {
             event(new IncidenciaCI(
@@ -229,6 +230,8 @@ class Empresa extends Model
                     "empresa"=>$this->efo->razon_social,
                 ]
             ));
+            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
         }
     }
 

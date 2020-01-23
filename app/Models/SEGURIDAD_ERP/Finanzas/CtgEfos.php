@@ -91,7 +91,7 @@ class CtgEfos extends Model
         $linea = 1;
         $t = 2;
         $razon = '';
-        $estado = array('Definitivo', 'Desvirtuado', 'Presunto', 'Sentencia Favorable', 'Situación del contribuyente');
+        $estado = array('DEFINITIVO', 'DESVIRTUADO', 'PRESUNTO', 'SENTENCIAFAVORABLE');
         while(!feof($myfile)) {
             $renglon = explode(",",fgets($myfile));
             if($linea <= 3){
@@ -106,7 +106,7 @@ class CtgEfos extends Model
                     if(substr_count($renglon[1], substr($renglon[1], 0,1)) > 6)
                     {
                     }else{
-                        while (!in_array($renglon[$t], $estado))
+                        while (!in_array(str_replace(' ', '', strtoupper($renglon[$t])), $estado))
                         {
                             $razon = $razon.$renglon[$t];
                             $t++;
@@ -139,7 +139,7 @@ class CtgEfos extends Model
                             'razon_social' => (str_replace('"','', $razon)),
                             'fecha_presunto' => date("Y-m-d", strtotime($renglon[$t + 2])),
                             'fecha_definitivo' => ($fecha_definitivo != '') ? date("Y-m-d", strtotime($fecha_definitivo)) : NULL,
-                            'estado' => $renglon[$t]
+                            'estado' => str_replace(' ', '', strtoupper($renglon[$t]))
                         );
                         $linea++;
                         $t = 2;
@@ -170,20 +170,17 @@ class CtgEfos extends Model
     public function estadoId($id)
     {
         switch ($id){
-            case('Definitivo'):
+            case('DEFINITIVO'):
                 return 0;
                 break;
-            case('Desvirtuado'):
+            case('DESVIRTUADO'):
                 return 1;
                 break;
-            case('Presunto'):
+            case('PRESUNTO'):
                 return 2;
                 break;
-            case('Sentencia Favorable'):
+            case('SENTENCIAFAVORABLE'):
                 return 3;
-                break;
-            case('Situación del contribuyente'):
-                return 4;
                 break;
         }
     }

@@ -3,8 +3,9 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item" v-if="$root.can('auditoria_consultar_permisos_por_obra',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                   <i class="nav-icon fa fa-circle"></i>
                     <p>
-                        CONSULTA DE PERMISOS
+                        Consulta de Permisos
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
@@ -27,7 +28,7 @@
             </li>
             <li class="nav-item" v-if="$root.can('consultar_efos',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa-university"></i>
+                    <i class="nav-icon fa fa-circle"></i>
                     <p>
                         Finanzas
                         <i class="right fa fa-angle-left"></i>
@@ -36,7 +37,7 @@
                 <ul class="nav nav-treeview" v-if="$root.can('consultar_efos',true)">
                     <li class="nav-item" >
                         <router-link :to="{name: 'lista-efos'}" class="nav-link" :class="{active: this.$route.name == 'lista-efos'}">
-                            <i class="fa fa-times nav-icon"></i>
+                            <i class="fa fa-circle-o nav-icon"></i>
                             <p>EFOS</p>
                         </router-link>
                     </li>
