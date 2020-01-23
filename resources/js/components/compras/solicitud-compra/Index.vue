@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12">
             <button @click="create_solicitud" v-if="" class="btn btn-app btn-info pull-right">
-                <i class="fa fa-plus"></i> Registrar Solicitud
+                <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
         <div class="col-12">
