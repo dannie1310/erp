@@ -44,6 +44,11 @@ class FacturaService
         return $this->repository->show($id);
     }
 
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminarFactura($data['data'][0]);
+    }
+
     public function paginate($data)
     {
 
@@ -269,6 +274,8 @@ class FacturaService
 
     public function store(array $data)
     {
+        dd('Store en servicio', $data);
+        
         $datos_rfactura = null;
         $referencia = $data["referencia"];
         if ($data["es_deducible"] == true) {

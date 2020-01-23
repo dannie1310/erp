@@ -34,4 +34,10 @@ class FacturaObserver extends TransaccionObserver
             throw New \Exception('El saldo de la factura '.$factura->referencia.' no puede ser menor a 0');
         }
     }
+
+    public function deleting(Factura $factura)
+    {
+        $factura->validarEliminacion();
+        $factura->desvincularPolizas();
+    }
 }
