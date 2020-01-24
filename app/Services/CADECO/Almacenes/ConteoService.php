@@ -153,8 +153,8 @@ class ConteoService
                         'cantidad_nuevo' =>  $renglon[4],
                         'cantidad_inservible' =>  $renglon[5],
                         'total' =>  $renglon[6],
-                        'iniciales' =>  $renglon[7],
-                        'observaciones' =>  $renglon[8],
+                        'iniciales' =>  iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $renglon[7]) ,
+                        'observaciones' =>  iconv("WINDOWS-1252", "UTF-8//TRANSLIT", $renglon[8]) ,
                     );
                 }else if ($renglon[1] == ''){
                     $i++;
