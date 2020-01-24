@@ -1,7 +1,7 @@
 <template>
    <span>
         <button @click="show" v-if="$root.can('registrar_cuenta_corriente')" class="btn btn-app btn-info float-right">
-            <i class="fa fa-plus"></i> Registrar Cuenta
+            <i class="fa fa-plus"></i> Registrar
         </button>
        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
