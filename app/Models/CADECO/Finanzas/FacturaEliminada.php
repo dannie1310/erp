@@ -29,17 +29,4 @@ class FacturaEliminada extends Model
         'id_usuario_registro',
         'motivo_elimino',
     ];
-
-    public function validarEstado($estado)
-    {
-        if($this->estado == 1)
-        {
-            throw New \Exception("No se puede eliminar la factura debido a que ya se encuentra Autorizada");
-        }
-
-        if($this->estado == 2)
-        {
-            throw New \Exception("No se puede eliminar la factura debido a que ya se encuentra Pagada");
-        }
-    }
 }

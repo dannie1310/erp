@@ -140,6 +140,19 @@ class Factura extends Transaccion
         }
     }
 
+    public function validarEstado()
+    {
+        if($this->estado == 1)
+        {
+            throw New \Exception("No se puede eliminar la factura debido a que ya se encuentra Revisada");
+        }
+
+        if($this->estado == 2)
+        {
+            throw New \Exception("No se puede eliminar la factura debido a que ya se encuentra Pagada");
+        }
+    }
+
     private function registrarFacturaRepositorio($factura, $data)
     {
         $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["factura_repositorio"]["uuid"])->first();

@@ -38,6 +38,7 @@ class FacturaObserver extends TransaccionObserver
 
     public function deleting(Factura $factura)
     {
+        $factura->validarEstado();
         $factura->validarEliminacion();
         $factura->desvincularPolizas();
         $factura->desvinculaFacturaRepositorio();
