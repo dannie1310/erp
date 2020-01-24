@@ -133,7 +133,6 @@ class ConteoService
                 $linea++;
             }else{
                 if(count($renglon) != 9) {
-                    dd($renglon);
                     abort(400,'No se pueden procesar los conteos');
                 }else if(count($renglon) == 9 && $renglon[0] != '' && $renglon[1] != '' && $renglon[2] != '' && $renglon[4] != '' && $renglon[6] != ''){
                     if($renglon[3] == ''){
