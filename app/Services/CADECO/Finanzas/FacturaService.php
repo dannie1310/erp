@@ -357,7 +357,7 @@ class FacturaService
                 ["id_tipo_incidencia"=>4,
                 "id_factura_repositorio"=>$factura_repositorio->id]
             ));
-            abort(403, 'Archivo cargado previamente:
+            abort(403, 'Comprobante utilizado previamente:
             Registró: '.$factura_repositorio->usuario->nombre_completo.'
             BD: '.$factura_repositorio->proyecto->base_datos.'
             Proyecto: '.$factura_repositorio->obra.'
