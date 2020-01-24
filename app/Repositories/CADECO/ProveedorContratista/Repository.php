@@ -42,4 +42,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         return $this->show($id)->rfc;
     }
+
+    public function validarRegistroXml($id){
+        return $this->show($id)->validarXmlRegistrados();
+    }
 }

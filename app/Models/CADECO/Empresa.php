@@ -38,7 +38,8 @@ class Empresa extends Model
         'no_proveedor_virtual',
         'porcentaje',
         'tipo_cliente',
-        'emite_factura'
+        'emite_factura',
+        'es_nacional'
     ];
 
     public function cuentasEmpresa()

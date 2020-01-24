@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 class FacturaRepositorio extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'Finanzas.repositorio_facturas';
+    protected $table = 'SEGURIDAD_ERP.Finanzas.repositorio_facturas';
     public $timestamps = false;
 
     protected $fillable = [
