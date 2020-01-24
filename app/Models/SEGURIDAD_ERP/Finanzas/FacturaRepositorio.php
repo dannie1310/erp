@@ -27,6 +27,8 @@ class FacturaRepositorio extends Model
         'uuid',
         'id_proyecto',
         'id_obra',
+        'rfc_emisor',
+        'rfc_receptor',
     ];
 
     public function proyecto()

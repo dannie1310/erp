@@ -288,6 +288,8 @@ class FacturaService
                 "xml_file" => $this->repository->getArchivoSQL($data["archivo"]),
                 "hash_file" => hash_file('md5', $data["archivo"]),
                 "uuid" => $this->arreglo_factura["complemento"]["uuid"],
+                "rfc_emisor" => $this->arreglo_factura["emisor"]["rfc"],
+                "rfc_receptor" => $this->arreglo_factura["receptor"]["rfc"],
             ];
             $referencia = $this->arreglo_factura["serie"] . $this->arreglo_factura["folio"];
         }
