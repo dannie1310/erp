@@ -109,7 +109,7 @@ class ProveedorContratista extends Empresa
         }
 
         if($cantidad > 0){
-            abort(403, 'El Proveedor / Contratisa '. $this->razon_social.' no puede ser eliminado porque tiene ' . $cantidad . ' comprobantes digitales (XML) asociado(s).');
+            abort(403, 'El R.F.C. del Proveedor / Contratisa '. $this->razon_social.' no puede ser editado porque tiene ' . $cantidad . ' comprobante(s) digital(es) (XML) asociado(s).');
         }
 
     }
