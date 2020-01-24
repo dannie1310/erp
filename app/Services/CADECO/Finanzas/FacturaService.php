@@ -274,8 +274,6 @@ class FacturaService
 
     public function store(array $data)
     {
-        dd('Store en servicio', $data);
-        
         $datos_rfactura = null;
         $referencia = $data["referencia"];
         if ($data["es_deducible"] == true && $data["es_nacional"] == true) {
