@@ -144,6 +144,7 @@ class FacturaService
             $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
             $this->arreglo_factura["fecha"] = (string)$factura_xml["Fecha"];
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
+            $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["nombre"] = (string)$emisor["Nombre"][0];
@@ -182,6 +183,7 @@ class FacturaService
             ));
             abort(500, "El emisor del comprobante no esta dado de alta en el catálogo de proveedores / contratistas; la factura no puede ser registrada.");
         }
+        $this->arreglo_factura["moneda_bd"]["id_moneda"] = $this->repository->getIdMoneda($this->arreglo_factura["moneda"]);
     }
 
     private function getValidacionCFDI33($xml)

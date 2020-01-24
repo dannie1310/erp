@@ -442,6 +442,7 @@
                             this.dato.referencia = data.serie + data.folio;
                             this.dato.emision = data.fecha;
                             this.dato.id_empresa = data.empresa_bd.id_empresa;
+                            this.dato.id_moneda = data.moneda_bd.id_moneda;
                             this.empresas.push({id:data.empresa_bd.id_empresa,razon_social:data.empresa_bd.razon_social,rfc:data.empresa_bd.rfc});
 
                         }else{
