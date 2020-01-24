@@ -81,9 +81,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function validaExistenciaRepositorio($hash_file, $uuid)
     {
-        $factura_repositorio = FacturaRepositorio::where('hash_file', '=', $hash_file)
-            ->orWhere("uuid","=", $uuid)->first();
-
+        $factura_repositorio = FacturaRepositorio::whereNotNull("id_transaccion")
+            ->where("uuid","=", $uuid)->first();
         return $factura_repositorio;
     }
 }
