@@ -98,6 +98,8 @@
                                 <hr />
                                 <div class="d-flex flex-row-reverse">
                                     <div class="p-2">
+                                        <button  type="button" class="btn btn-info" @click="lista"><i class="fa fa-list-ul "></i> Lista de Materiales</button>
+                                        &nbsp;
                                         <Layout v-model="partidas"></Layout>
                                     </div>
                                 </div>
@@ -413,6 +415,10 @@
             },
             destroy(index){
                 this.partidas.splice(index, 1);
+            },
+            lista()
+            {
+                alert('Lista de Materiales');
             },
             manual(index){
                 this.partidas[index].material = ""
