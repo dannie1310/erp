@@ -160,7 +160,7 @@
                                 </div>
                                 <div class="col-md-6">
                                    <div class="form-group row error-content">
-                                        <label for="emite_factura" class="col-sm-5 col-form-label">Emite Factura: </label>
+                                        <label for="emite_factura" class="col-sm-5 col-form-label">Emite Factura (XML): </label>
                                         <div class="col-sm-7">
                                             <div class="btn-group btn-group-toggle">
                                                 <label class="btn btn-outline-secondary" :class="emite_factura === Number(1) ? 'active': ''"  :key="1">

@@ -153,7 +153,7 @@
                                                     <div class="col-sm-7">
                                                         <div class="btn-group btn-group-toggle">
                                                             <label class="btn btn-outline-secondary" :class="es_nacional === Number(1) ? 'active': ''"  :key="1">
-                                                                <input type="radio"
+                                                                <input type="radio" :disabled="!$root.can('editar_proveedor_es_nacional')"
                                                                     class="btn-group-toggle"
                                                                     name="es_nacional"
                                                                     :id="'es_nacional' + 1"
@@ -163,7 +163,7 @@
                                                                 Si
                                                             </label>
                                                             <label class="btn btn-outline-secondary" :class="es_nacional === Number(0) ? 'active': ''"  :key="0">
-                                                                <input type="radio"
+                                                                <input type="radio" :disabled="!$root.can('editar_proveedor_es_nacional')"
                                                                     class="btn-group-toggle"
                                                                     name="es_nacional"
                                                                     :id="'es_nacional' + 0"
@@ -178,11 +178,11 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group row error-content">
-                                                    <label for="emite_factura" class="col-sm-5 col-form-label">Emite Factura: </label>
+                                                    <label for="emite_factura" class="col-sm-5 col-form-label">Emite Factura (XML): </label>
                                                     <div class="col-sm-7">
                                                         <div class="btn-group btn-group-toggle">
                                                             <label class="btn btn-outline-secondary" :class="emite_factura === Number(1) ? 'active': ''"  :key="1">
-                                                                <input type="radio" :disabled="es_nacional === 0"
+                                                                <input type="radio" :disabled="!$root.can('editar_proveedor_emite_factura') ||es_nacional === 0"
                                                                     class="btn-group-toggle"
                                                                     name="emite_factura"
                                                                     :id="'emite_factura' + 1"
@@ -192,7 +192,7 @@
                                                                 Si
                                                             </label>
                                                             <label class="btn btn-outline-secondary" :class="emite_factura === Number(0) ? 'active': ''"  :key="0">
-                                                                <input type="radio" :disabled="es_nacional === 0"
+                                                                <input type="radio" :disabled="!$root.can('editar_proveedor_emite_factura') || es_nacional === 0"
                                                                     class="btn-group-toggle"
                                                                     name="emite_factura"
                                                                     :id="'emite_factura' + 0"
