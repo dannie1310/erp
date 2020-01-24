@@ -43,6 +43,10 @@
                                                 <td>{{proveedorContratista.tipo}}</td>
                                             </tr>
                                             <tr>
+                                                <th class="align">Es Proveedor Nacional:</th>
+                                                <td>{{proveedorContratista.es_nacional_format}}</td>
+                                            </tr>
+                                            <tr>
                                                 <th class="align">Emite Factura:</th>
                                                 <td>{{proveedorContratista.emite_factura_format}}</td>
                                             </tr>

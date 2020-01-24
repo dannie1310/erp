@@ -44,6 +44,10 @@ class ProveedorContratista extends Empresa
         return $this->emite_factura == 1? 'Si':'No';
     }
 
+    public function getEsNacionalFormatAttribute(){
+        return $this->es_nacional == 1? 'Si':'No';
+    }
+
     public function actualizar($data, $id){
         if($data['rfc'] != $data['rfc_nuevo'] && $data['rfc_nuevo'] != 'XXXXXXXXXXXX'){
             $this->where('rfc', '=', str_replace(" ","", $data['rfc_nuevo']))->count() > 0 ? abort(403, 'El Proveedor / Contratisa ya esta registrado.'):'';

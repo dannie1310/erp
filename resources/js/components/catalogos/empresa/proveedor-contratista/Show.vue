@@ -25,7 +25,7 @@
                             </nav>
                             <div class="tab-content" id="nav-tabContent">
                                 <div aria-labelledby="nav-identificacion-tab" class="tab-pane fade show active" id="nav-identificacion" role="tabpanel">
-                                    <div class="col-12" style="height:350px;">
+                                    <div class="col-12" style="height:430px;">
                                         <div class="invoice p-3 mb-3">
                                             <div class="row">
                                                 <div class="table-responsive col-12">
@@ -56,6 +56,10 @@
                                                                 <td>{{proveedorContratista.tipo}}</td>
                                                             </tr>
                                                             <tr>
+                                                                <th class="align">Es Proveedor Nacional:</th>
+                                                                <td>{{proveedorContratista.es_nacional_format}}</td>
+                                                            </tr>
+                                                            <tr>
                                                                 <th class="align">Emite Factura:</th>
                                                                 <td>{{proveedorContratista.emite_factura_format}}</td>
                                                             </tr>
@@ -75,7 +79,7 @@
                                     </div>
                                 </div>
                                 <div aria-labelledby="nav-sucursales-tab" class="tab-pane fade" id="nav-sucursales" role="tabpanel">
-                                    <div class="col-12" v-if="proveedorContratista" style="height:350px;">
+                                    <div class="col-12" v-if="proveedorContratista" style="height:430px;">
                                         <div class="invoice p-3 mb-3">
                                             <div class="row" v-if="proveedorContratista.sucursales">
                                                 <div class="table-responsive col-12">
@@ -105,7 +109,7 @@
                                     </div>
                                 </div>
                                 <div aria-labelledby="nav-materiales-tab" class="tab-pane fade" id="nav-materiales" role="tabpanel">
-                                    <div class="col-12" v-if="proveedorContratista" style="height:350px;">
+                                    <div class="col-12" v-if="proveedorContratista" style="height:430px;">
                                         <div class="invoice p-3 mb-3">
                                             <div class="row" v-if="proveedorContratista.suministrados">
                                                 <div class="table-responsive col-12">

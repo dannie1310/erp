@@ -39,7 +39,7 @@
                                         <label for="rfc" class="col-sm-5 col-form-label">R.F.C.: </label>
                                         <div class="col-sm-7">
                                             <input
-                                                :disabled="emite_factura === 0"
+                                                :disabled="emite_factura === 0 || es_nacional === 0"
                                                 type="text"
                                                 name="rfc"
                                                 data-vv-as="R.F.C."
@@ -129,13 +129,42 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                    <div class="form-group row error-content">
-                                        <label for="emite_factura" class="col  sm- col-form-label">Emite Factura: </label>
-                                        <div class="col-sm-10">
-                                            <div class="btn-group btn-group-toggle" style="margin-left:5%;">
-                                                <label class="btn btn-outline-secondary" :class="emite_factura === Number(1) ? 'active': ''"  :key="1">
+                                        <label for="es_nacional" class="col-sm-5 col-form-label">Es Proveedor Nacional: </label>
+                                        <div class="col-sm-7">
+                                            <div class="btn-group btn-group-toggle">
+                                                <label class="btn btn-outline-secondary" :class="es_nacional === Number(1) ? 'active': ''"  :key="1">
                                                     <input type="radio"
+                                                        class="btn-group-toggle"
+                                                        name="es_nacional"
+                                                        :id="'es_nacional' + 1"
+                                                        :value="1"
+                                                        autocomplete="on"
+                                                        v-model.number="es_nacional">
+                                                    Si
+                                                </label>
+                                                <label class="btn btn-outline-secondary" :class="es_nacional === Number(0) ? 'active': ''"  :key="0">
+                                                    <input type="radio"
+                                                        class="btn-group-toggle"
+                                                        name="es_nacional"
+                                                        :id="'es_nacional' + 0"
+                                                        :value="0"
+                                                        autocomplete="on"
+                                                        v-model.number="es_nacional">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                   <div class="form-group row error-content">
+                                        <label for="emite_factura" class="col-sm-5 col-form-label">Emite Factura: </label>
+                                        <div class="col-sm-7">
+                                            <div class="btn-group btn-group-toggle">
+                                                <label class="btn btn-outline-secondary" :class="emite_factura === Number(1) ? 'active': ''"  :key="1">
+                                                    <input type="radio" :disabled="es_nacional === 0"
                                                         class="btn-group-toggle"
                                                         name="emite_factura"
                                                         :id="'emite_factura' + 1"
@@ -145,7 +174,7 @@
                                                     Si
                                                 </label>
                                                 <label class="btn btn-outline-secondary" :class="emite_factura === Number(0) ? 'active': ''"  :key="0">
-                                                    <input type="radio"
+                                                    <input type="radio" :disabled="es_nacional === 0"
                                                         class="btn-group-toggle"
                                                         name="emite_factura"
                                                         :id="'emite_factura' + 0"
@@ -184,6 +213,7 @@ export default {
             tipo_empresa:'',
             tipo_cliente:0,
             emite_factura:1,
+            es_nacional:1,
         }
     },
     mounted() {
@@ -205,6 +235,7 @@ export default {
             this.porcentaje = '';
             this.tipo_empresa = '';
             this.emite_factura = 1;
+            this.es_nacional = 1;
         },
         store(){
             return this.$store.dispatch('cadeco/proveedor-contratista/store', this.$data)
@@ -246,15 +277,43 @@ export default {
                 }
             });
         },
+        validar_emite(){
+            console.log('pando')
+            if(this.emite_factura === 0){
+                this.rfc = 'XXXXXXXXXXXX';
+                this.emite_factura = 0;
+            }
+            else{
+                this.rfc = '';
+            }
+        },
+        validar_nacional(){
+            console.log('koala');
+            if(this.es_nacional === 0){
+                this.rfc = 'XXXXXXXXXXXX';
+                this.emite_factura = 0;
+            }
+            else{
+                this.rfc = '';
+            }
+        }
     },
     watch:{
-        emite_factura(value){
+        
+        es_nacional(value){
             if(value === 0){
+                this.emite_factura = 0;
+            }else{
+                this.emite_factura = 1;
+            }
+        },
+        emite_factura(value){
+            if(value === 0 || this.es_nacional === 0){
                 this.rfc = 'XXXXXXXXXXXX';
             }else{
                 this.rfc = '';
             }
-        }
+        },
     }
 
 }

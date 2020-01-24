@@ -48,7 +48,9 @@ class ProveedorContratistaTransformer extends TransformerAbstract
             'porcentaje' => $model->porcentaje_format,
             'efo' => $model->efo,
             'emite_factura' => (int)$model->emite_factura,
+            'es_nacional' => (int)$model->es_nacional,
             'emite_factura_format' => $model->emite_factura_format,
+            'es_nacional_format' => $model->es_nacional_format,
         ];
     }
 
