@@ -346,7 +346,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetFont('Arial', '', 8);
         $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención de Fondo de Garantia Estimación :'), 0, 0, 'R');
         $this->CellFitScale(($this->w - 2) * 0.10, 0.4, round($this->estimacion->retencion, 2) . ' %', 'B', 0, 'L');
-        $this->CellFitScale(($this->w - 2) * 0.15, 0.4,$this->estimacion->retencion_fondo_garantia_orden_pago_format, 'B', 1, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.15, 0.4,$this->estimacion->retencion_fondo_garantia_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
         $this->SetX(($this->w) * 0.45);
