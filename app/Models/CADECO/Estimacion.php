@@ -456,16 +456,16 @@ class Estimacion extends Transaccion
     }
     # retencion_fondo_garantia_orden_pago_format
 
-    public function getRetencionFondoGarantiaOrdenPagoAttribute()
+    public function getRetencionFondoGarantiaAttribute()
     {
         $configuracion = $this->obra->configuracionEstimaciones;
-        return $this->suma_importes * $this->retencion * 0.16;
+        return $this->suma_importes * ($this->retencion/100) * 1.16;
     }
 
-    public function getRetencionFondoGarantiaOrdenPagoFormatAttribute()
+    public function getRetencionFondoGarantiaFormatAttribute()
     {
         $configuracion = $this->obra->configuracionEstimaciones;
-        return '$ ' . number_format($this->suma_importes * ($this->retencion/100) * 0.16, 2);
+        return '$ ' . number_format($this->suma_importes * ($this->retencion/100) * 1.16, 2);
     }
 
     public function getTotalOrdenPagoFormatAttribute()
