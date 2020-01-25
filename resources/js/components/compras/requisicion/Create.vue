@@ -418,7 +418,13 @@
             },
             lista()
             {
-                alert('Lista de Materiales');
+                 this.cargando = true;
+                return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'requisicion'})
+                    .then(() => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.cargando = false;
+                    })
             },
             manual(index){
                 this.partidas[index].material = ""
