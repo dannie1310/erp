@@ -1,0 +1,70 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: DBenitezc
+ * Date: 03/01/2020
+ * Time: 01:44 PM
+ */
+
+namespace App\Services\CADECO;
+
+
+use App\Models\CADECO\Cliente;
+use App\Repositories\Repository;
+
+class ClienteService
+{
+    /**
+     * @var Repository
+     */
+    protected $repository;
+
+    public function __construct(Cliente $model)
+    {
+        $this->repository = new Repository($model);
+    }
+
+    public function paginate($data)
+    {
+        $cliente = $this->repository;
+
+        if(isset($data['rfc']))
+        {
+            $cliente = $cliente->where([['rfc', 'LIKE', '%' . request('rfc') . '%']]);
+        }
+        if(isset($data['razon_social']))
+        {
+            $cliente = $cliente->where([['razon_social', 'LIKE', '%' . request('razon_social') . '%']]);
+        }
+        if(isset($data['efo']))
+        {
+            $clientes = Cliente::whereHas('efo.estadoEfo', function ($a){
+                return $a->where('descripcion', 'LIKE', '%'.request('efo').'%');
+            })->pluck('id_empresa');
+
+            $cliente->whereIn(['id_empresa',$clientes]);
+        }
+
+        return $cliente->paginate($data);
+    }
+
+    public function store(array $data)
+    {
+        return $this->repository->create($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->update($data, $id);
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->delete($data, $id);
+    }
+}

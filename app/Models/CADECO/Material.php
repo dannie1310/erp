@@ -35,13 +35,7 @@ class Material extends Model
 
     public $searchable = [
         'descripcion',
-        'numero_parte',
-        'unidad',
-        'cuentaMaterial.cuenta',
-        'cuentaMaterial.tipo.descripcion',
-        'tipo_material',
-        'equivalencia',
-        'marca'
+        'numero_parte'
     ];
 
     public function getTieneHijosAttribute()
@@ -144,6 +138,22 @@ class Material extends Model
         return $query->where('descripcion','!=','NULL');
     }
 
+    public function scopeMateriales($query){
+        return $query->where('tipo_material','=',1);
+    }
+
+    public function scopeServicios($query){
+        return $query->where('tipo_material','=',2)->where('equivalencia', '=', 1)->where('marca', '=', 1);
+    }
+
+    public function scopeHerramientas($query){
+        return $query->where('tipo_material','=',4);
+    }
+
+    public function scopeSuministrables($query){
+        
+        return $query->whereIn('tipo_material',[1,2,4])->where('equivalencia', '=', 1);
+    }
 
     public function scopeTipos($query, $tipos)
     {
@@ -154,6 +164,11 @@ class Material extends Model
     public function scopeInsumos($query)
     {
         return $query->whereRaw('LEN(nivel) = 8');
+    }
+
+    public function scopeRequisicion($query)
+    {
+        return $query->whereRaw('LEN(nivel) > 4')->where('unidad','<>','jornal')->where('tipo_material', '!=', 8)->orderBy('descripcion', 'asc');
     }
 
     public function validarExistente()
@@ -178,11 +193,18 @@ class Material extends Model
         return $this->nivel.'.'.$num.'.';
     }
 
-    public function getSaldoInventarioAttribute(){
+    public function getSaldoInventarioAttribute()
+    {
         return $this->inventarios->sum('saldo');
     }
 
-    public function getCantidadInventarioAttribute(){
+    public function getSaldoInventarioFormatAttribute()
+    {
+        return number_format($this->saldo_inventario,4,".","");
+    }
+
+    public function getCantidadInventarioAttribute()
+    {
         return $this->inventarios->sum('cantidad');
     }
 
@@ -194,5 +216,11 @@ class Material extends Model
     public function getSaldoAlmacenDdAttribute()
     {
         return number_format($this->saldo_almacen,2,".","");
+    }
+
+    public function scopeDisponiblesParaVenta($query)
+    {
+        return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')
+            ->whereRaw('inventarios.saldo > 0')->select('materiales.*')->distinct();
     }
 }

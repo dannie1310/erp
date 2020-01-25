@@ -11,6 +11,17 @@ namespace App\Models\CADECO;
 
 class ContraRecibo extends Transaccion
 {
+    public const TIPO_ANTECEDENTE = null;
+    public const OPCION_ANTECEDENTE = null;
+    protected $fillable = [
+        'tipo_transaccion',
+        'fecha',
+        "id_empresa",
+        "id_moneda",
+        'monto',
+        "saldo",
+        "observaciones",
+    ];
     protected static function boot()
     {
         parent::boot();
@@ -20,6 +31,11 @@ class ContraRecibo extends Transaccion
                 ->where('opciones', '=', 0)
                 ->where('estado', '!=', -2);
         });
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function disminuyeSaldo(Transaccion $pago){
@@ -34,10 +50,5 @@ class ContraRecibo extends Transaccion
     public function actualizaEstadoPagada(){
         $this->estado = 2;
         $this->save();
-    }
-
-    public function facturas()
-    {
-        return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
     }
 }

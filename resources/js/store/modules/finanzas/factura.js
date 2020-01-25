@@ -14,7 +14,7 @@ export default {
         },
 
         SET_FACTURA(state, data) {
-            state.currentfactura = data;
+            state.currentFactura = data;
         },
 
         SET_META(state, data) {
@@ -60,6 +60,57 @@ export default {
                     .catch(error => {
                         reject(error);
                     })
+            });
+        },
+        cargarXML(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'xml', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Factura",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Factura registrada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
             });
         },
         autorizadas(context, payload) {

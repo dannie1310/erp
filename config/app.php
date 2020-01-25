@@ -15,6 +15,11 @@ return [
         'SANTANDER_PORTAL_STORAGE_DESCARGA' => env('SANTANDER_PORTAL_STORAGE_DESCARGA'),
         'SANTANDER_PORTAL_STORAGE_CARGA' => env('SANTANDER_PORTAL_STORAGE_CARGA'),
         'SANTANDER_PORTAL_STORAGE_ZIP' => env('SANTANDER_PORTAL_STORAGE_ZIP'),
+        'SERVICIO_CFDI_URL' => env('SERVICIO_CFDI_URL'),
+        'SERVICIO_RFC_URL' => env('SERVICIO_RFC_URL'),
+        'SERVICIO_CFDI_TOKEN' => env('SERVICIO_CFDI_TOKEN'),
+        'SERVICIO_CFDI_ENV' => env('SERVICIO_CFDI_ENV'),
+        'SERVICIO_CFDI_EN_USO' => env('SERVICIO_CFDI_EN_USO'),
     ],
     /*
     |--------------------------------------------------------------------------
@@ -181,6 +186,7 @@ return [
          * Package Service Providers...
          */
         Maatwebsite\Excel\ExcelServiceProvider::class,
+     //   SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Dingo\Api\Provider\LaravelServiceProvider::class,
 
@@ -233,6 +239,7 @@ return [
         'Notification' => Illuminate\Support\Facades\Notification::class,
         'Password' => Illuminate\Support\Facades\Password::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
+        'QrCode'=>SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
         'Request' => Illuminate\Support\Facades\Request::class,

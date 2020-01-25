@@ -105,6 +105,15 @@ class Transaccion extends Model
         return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
     }
 
+    public function getDatosRegistroAttribute()
+    {
+        $salida = "Registrada el ".$this->fecha_hora_registro_format;
+        if($this->usuario){
+            $salida.=" por ". $this->usuario->nombre_completo;
+        }
+        return $salida;
+    }
+
     public function getCumplimientoAttribute($cumplimiento)
     {
         return substr($cumplimiento, 0, 10);
@@ -153,13 +162,22 @@ class Transaccion extends Model
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
 
-    public function usuario(){
+    public function usuario()
+    {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 
     public function getSubtotalAttribute()
     {
         return $this->monto - $this->impuesto;
+    }
+
+    public function getSubtotalFormatAttribute(){
+        return '$ ' . number_format($this->subtotal, 2, '.', ',');
+    }
+
+    public function getImpuestoFormatAttribute(){
+        return '$ ' . number_format($this->impuesto, 2, '.', ',');
     }
 
     public function moneda()

@@ -1,4 +1,6 @@
 <template>
+<span>
+    <create @created="paginate()"></create>
     <div class="row">
 
         <div class="col-12">
@@ -15,11 +17,13 @@
         </div>
         <!-- /.col -->
     </div>
+</span>
 </template>
 <script>
+    import Create from "./Create";
     export default {
         name: "factura-index",
-        components: {},
+        components: {Create},
         data(){
             return{
                 HeaderSettings: false,
@@ -36,8 +40,7 @@
                     { title: 'Estado', field: 'estado',thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Tipo', field: 'opciones',thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Observaciones Contrarecibo', field: 'observaciones',thComp: require('../../globals/th-Filter').default, sortable: false},
-
-
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -67,7 +70,10 @@
                         this.cargando=false;
                     })
 
-            }
+            },
+            create() {
+                this.$router.push({name: 'factura-create'});
+            },
         },
         computed: {
             facturas(){
@@ -98,7 +104,12 @@
                             fecha: factura.fecha_format,
                             estado: factura.estado_format,
                             opciones: factura.opciones_format,
-                            observaciones: factura.contra_recibo.observaciones
+                            observaciones: factura.contra_recibo.observaciones,
+                            buttons: $.extend({}, {
+                                id: factura.id,
+                                show: self.$root.can('consultar_factura') ? true : false,
+                                factura: factura,
+                            })
 
                         })
 
