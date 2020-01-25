@@ -98,7 +98,7 @@
                                 <hr />
                                 <div class="d-flex flex-row-reverse">
                                     <div class="p-2">
-                                        <button  type="button" class="btn btn-info" @click="lista"><i class="fa fa-list-ul "></i> Lista de Materiales</button>
+                                        <button  type="button" :disabled="cargando" class="btn btn-info" @click="lista"><i class="fa fa-list-ul "></i> Lista de Materiales</button>
                                         &nbsp;
                                         <Layout v-model="partidas"></Layout>
                                     </div>
