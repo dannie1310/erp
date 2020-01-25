@@ -60,6 +60,11 @@ class Obra extends Model
         return $this->hasOne(DatosContables::class, 'id_obra');
     }
 
+    public function configuracionEstimaciones()
+    {
+        return $this->hasOne(ConfiguracionEstimacion::class, 'id_obra');
+    }
+
     public function moneda()
     {
         return $this->hasOne(Moneda::class, 'id_moneda','id_moneda');

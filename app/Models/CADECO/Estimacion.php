@@ -220,6 +220,11 @@ class Estimacion extends Transaccion
         return $this->items->sum('importe');
     }
 
+    public function getSumaImportesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_importes, 2,".",",");
+    }
+
     public function items()
     {
         return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
@@ -429,6 +434,43 @@ class Estimacion extends Transaccion
     public function getSubtotalFormatAttribute()
     {
         return '$ ' . number_format($this->subtotal, 2);
+    }
+
+    public function getSubtotalOrdenPagoAttribute()
+    {
+        $configuracion = $this->obra->configuracionEstimaciones;
+
+        return $this->suma_importes - $this->monto_anticipo_aplicado;
+    }
+
+    public function getSubtotalOrdenPagoFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_importes - $this->monto_anticipo_aplicado, 2);
+    }
+
+    public function getTotalOrdenPagoAttribute()
+    {
+        $configuracion = $this->obra->configuracionEstimaciones;
+
+        return $this->suma_importes - $this->monto_anticipo_aplicado + $this->impuesto;
+    }
+    # retencion_fondo_garantia_orden_pago_format
+
+    public function getRetencionFondoGarantiaOrdenPagoAttribute()
+    {
+        $configuracion = $this->obra->configuracionEstimaciones;
+        return $this->suma_importes * $this->retencion * 0.16;
+    }
+
+    public function getRetencionFondoGarantiaOrdenPagoFormatAttribute()
+    {
+        $configuracion = $this->obra->configuracionEstimaciones;
+        return '$ ' . number_format($this->suma_importes * ($this->retencion/100) * 0.16, 2);
+    }
+
+    public function getTotalOrdenPagoFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_importes - $this->monto_anticipo_aplicado + $this->impuesto, 2);
     }
 
     public function getImpuestoFormatAttribute()
